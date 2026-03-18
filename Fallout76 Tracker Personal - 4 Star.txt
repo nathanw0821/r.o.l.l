@@ -1,0 +1,33 @@
+Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlocked	Notes				
+Aegis	Power Armor	Fortifies Physical & Energy Resists by +50 and Poison/Cryo/Fire Resists by +20 for wearer & teammates within 50ft.	5 Circuitry	120	Yes	RAID: Gleaming Depths (Stage 3 only)		Tier Progress		
+Battle-Loader's	Armor • Power Armor	15% chance to instantly reload when bashing (up to 75% on full stack).	1 Talons Serum	120	No	RAID: Gleaming Depths (Stage 2 only)		Unlocked	18	
+Bruiser's	Armor • Power Armor	Melee weapons deal +5% bonus damage (up to +25% on full stack).	1 Bufftats	120	No	RAID: Gleaming Depths (Stage 4 only)		Total	32	
+Bully's	Weapon: Ranged • Weapon: Melee	+25% damage per crippled limb the target has.	1 Buffout	120	Yes	RAID: Gleaming Depths (Stage 1 only)		% Complete	56.3%	
+Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3 Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)				
+Choo-Choo's	Power Armor	10% chance for 500 damage & Bloody Mess when sprinting into targets (up to 50% on full stack).	15 Cannonballs	120	Yes	RAID: Gleaming Depths (Stage 3 only)		Weapons	Weapons Unlocked	10
+Combo-Breaker's	Weapon: Melee	When dealing damage, 50% chance to not use AP (10% chance for auto melee).	1 Day Tripper	120	No	RAID: Gleaming Depths (Stage 3 only)		Armor	Armor Unlocked	8
+Conductor's	Weapon: Ranged • Weapon: Melee	Critical hits restore 10 Health & AP instantly and 100 more over 5s for you & teammates within 100ft.	5 Pure Crimson Flux	120	Yes	RAID: Gleaming Depths (Stage 3 only)		Power Armor	Power Armor Unlocked	8
+Electrician's	Weapon: Ranged	When reloading, emit a shock wave that stuns nearby targets for 3s.	1 Bobblehead: Energy Weapons	120	Yes	RAID: Gleaming Depths (Stage 2 only)			Power Armor Locked	8
+Encircler's	Weapon: Ranged • Weapon: Melee	+10% damage for each combat target around you (up to +50%).	1 Overdrive	120	Yes	RAID: Gleaming Depths (Stage 4 only)				
+Fencer's	Weapon: Melee	+12.5% melee damage; +12.5% per nearby teammate (up to +50% on full team).	1 Bobblehead: Melee	120	No	RAID: Gleaming Depths (Stage 2 only)				
+Fracturer's	Weapon: Ranged • Weapon: Melee	When crippling limbs, they explode and deal up to 50 explosion damage to nearby targets.	25 Gunpowder	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
+Icemen's	Weapon: Melee	Applies Cryo on hit that slows targets when dealing damage in V.A.T.S.	5 Pure Fluorescent Flux	120	No	RAID: Gleaming Depths (Stage 4 only)				
+Limit-Breaking	Armor • Power Armor	Each worn armor piece reduces critical hit cost by -10% (up to -50% on full stack).	5 Pure Violet Flux	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
+Miasma's	Armor • Power Armor	When hit, a poisonous DoT cloud harms nearby targets for 10s (damage increases per equipped piece).	1 Plague Walker Serum	120	No	RAID: Gleaming Depths (Stage 4 only)				
+Pin-Pointer's	Weapon: Ranged	+20% weak spot damage.	1 Formula P	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
+Polished	Weapon: Ranged • Weapon: Melee	Greater equipped item condition increases weapon damage (up to +60% at 100%).	1 Improved Repair Kit	120	No	RAID: Gleaming Depths (Stage 4 only)				
+Pounder's	Weapon: Melee	+10% damage per Onslaught stack, +10 max stacks.	1 Fury	120	Yes	RAID: Gleaming Depths (Stage 3 only)				
+Propelling	Power Armor	Movement & sprint speed increased by +5% (up to +25% on full stack).	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (Stage 5 only)				
+Pyromaniac's	Weapon: Ranged • Weapon: Melee	When a combat target is burning, deal +50% bonus damage.	15 Asbestos	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
+Radioactive-Powered	Power Armor	+2 AP regeneration at cost of RADS (up to +10 AP on full stack).	5 Pure Cobalt Flux	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
+Ranger's	Armor • Power Armor	Ranged weapons deal +5% bonus damage (up to +25% on full stack).	1 Psychobuff	120	Yes	RAID: Gleaming Depths (Stage 4 only)				
+Reflective	Power Armor	Return 10% of damage received back toward enemy target (up to 50% on full stack).	1 Bobblehead: Science	120	No	RAID: Gleaming Depths (Stage 3 only)				
+Rejuvenator's	Power Armor	Gradually restores wearer's & teammates Health & AP within 50ft.	5 Stimpak Diffuser	120	No	RAID: Gleaming Depths (Stage 2 only)				
+Runner's	Armor • Power Armor	Sprinting AP cost reduced by -20% (up to -100% on full stack).	10 Purified Water	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
+Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)				
+Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)				
+Stabilizer's	Weapon: Ranged	Improves weapon recoil & stability by 50%.	25 Rubber	120	No	RAID: Gleaming Depths (Stage 2 only)				
+Stalwart's	Power Armor	Power Armor breaks 5% slower for owner & teammates within 50ft (up to 25% on full stack).	1 Bobblehead: Leader	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
+Tanky's	Armor • Power Armor	+200 DR for 10s when standing still (20s cooldown; up to +1000 on full stack).	5 Ballistic Fiber	120	Yes	RAID: Gleaming Depths (Stage 2 only)				
+Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Grants 3% Melee Weapon Speed and 3% Reload Speed per Kill Streak stack (max 30% each).	1 Adrenal Reaction Serum	120	No					
+Viper's	Weapon: Ranged • Weapon: Melee	When a combat target is poisoned, deal +50% bonus damage.	15 Acid	120	Yes	RAID: Gleaming Depths (Stage 5 only)				

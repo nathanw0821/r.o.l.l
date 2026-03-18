@@ -1,0 +1,142 @@
+1 STAR					2 STAR						Tier	Effect	Unlocked	Effect	Unlocked	Effect	Unlocked	Effect	Unlocked
+											1 Star	Adrenal	No	Agility	No	Acrobat's	No	Aegis	Yes
+Adrenal | LOCKED	Furious | UNLOCKED	Overeater's | UNLOCKED			Agility | LOCKED	Hardy | UNLOCKED	Poisoner's | LOCKED				1 Star	Anti-armor	Yes	Antiseptic	Yes	Active	No	Battle-Loader's	No
+											1 Star	Aristocrat's	Yes	Basher's	Yes	Adamantium	No	Bruiser's	No
+Anti-armor | UNLOCKED	Ghoul Slayer's | UNLOCKED	Quad | UNLOCKED			Antiseptic | UNLOCKED	HazMat | UNLOCKED	Powered | UNLOCKED				1 Star	Assassin's	Yes	Charisma	Yes	Agility	Yes	Bully's	Yes
+											1 Star	Auto Stim	Yes	Crippling	Yes	Arms Keeper's	No	Charged	Yes
+Aristocrat's | UNLOCKED	Gourmand's | UNLOCKED	Regenerating | UNLOCKED			Basher's | UNLOCKED	Heavy Hitter's | UNLOCKED	Rapid | UNLOCKED				1 Star	Berserker's	Yes	Elementalist	No	Barbarian	No	Choo-Choo's	Yes
+											1 Star	Bloodied	Yes	Endurance	Yes	Belted	No	Combo-Breaker's	No
+Assassin's | UNLOCKED	Hunter's | UNLOCKED	Sniper's | LOCKED			Charisma | UNLOCKED	Hitman's | UNLOCKED	Riposting | UNLOCKED				1 Star	Bolstering	Yes	Explosive	Yes	Blocker	No	Conductor's	Yes
+											1 Star	Chameleon	No	Fierce	No	Burning	Yes	Electrician's	Yes
+Auto Stim | UNLOCKED	Instigating | UNLOCKED	Stalker's | LOCKED			Crippling | UNLOCKED	Inertial | UNLOCKED	Rushing | LOCKED				1 Star	Cloaking	Yes	Fireproof	No	Cavalier's	Yes	Encircler's	Yes
+											1 Star	Executioner's	Yes	Glutton	No	Charisma	Yes	Fencer's	No
+Berserker's | UNLOCKED	Juggernaut's | UNLOCKED	Suppressor's | UNLOCKED			Elementalist | LOCKED	Intelligence | UNLOCKED	Steady | UNLOCKED				1 Star	Exterminator's	Yes	Hardy	Yes	Defender's	Yes	Fracturer's	Yes
+											1 Star	Feral's	No	HazMat	Yes	Dissipating	Yes	Icemen's	No
+Bloodied | UNLOCKED	Junkie's | UNLOCKED	Troubleshooter's | UNLOCKED			Endurance | UNLOCKED	Last Shot | UNLOCKED	Strength | UNLOCKED				1 Star	Furious	Yes	Heavy Hitter's	Yes	Diver's	No	Limit-Breaking	Yes
+											1 Star	Ghoul Slayer's	Yes	Hitman's	Yes	Doctor's	No	Miasma's	No
+Bolstering | UNLOCKED	Life Saving | LOCKED	Two Shot | UNLOCKED			Explosive | UNLOCKED	Luck | UNLOCKED	V.A.T.S. Enhanced | UNLOCKED				1 Star	Gourmand's	Yes	Inertial	Yes	Durability	Yes	Pin-Pointer's	Yes
+											1 Star	Hunter's	Yes	Intelligence	Yes	Electrified	Yes	Polished	No
+Chameleon | LOCKED	Lucid | LOCKED	Unyielding | LOCKED			Fierce | LOCKED	Pain Killer | LOCKED	Vital | UNLOCKED				1 Star	Instigating	Yes	Last Shot	Yes	Endurance	Yes	Pounder's	Yes
+											1 Star	Juggernaut's	Yes	Luck	Yes	Frozen	Yes	Propelling	No
+Cloaking | UNLOCKED	Medic's | UNLOCKED	Vampire's | UNLOCKED			Fireproof | LOCKED	Perception | LOCKED	Warming | UNLOCKED				1 Star	Junkie's	Yes	Pain Killer	No	Ghost's	Yes	Pyromaniac's	Yes
+											1 Star	Life Saving	No	Perception	No	Glowing	No	Radioactive-Powered	Yes
+Executioner's | UNLOCKED	Mutant Slayer's | UNLOCKED	Vanguard's | UNLOCKED			Glutton | LOCKED	Pick Pocketer's | LOCKED					1 Star	Lucid	No	Pick Pocketer's	No	Healthy	No	Ranger's	Yes
+											1 Star	Medic's	Yes	Poisoner's	No	Intelligence	Yes	Reflective	No
+Exterminator's | UNLOCKED	Mutant's | UNLOCKED	Heavyweight | LOCKED									1 Star	Mutant Slayer's	Yes	Powered	Yes	Lightweight	Yes	Rejuvenator's	No
+											1 Star	Mutant's	Yes	Rapid	Yes	Luck	No	Runner's	Yes
+Feral's | LOCKED	Nocturnal | UNLOCKED	Zealot's | UNLOCKED									1 Star	Nocturnal	Yes	Riposting	Yes	Lucky	Yes	Sawbones's	No
+											1 Star	Overeater's	Yes	Rushing	No	Nimble	No	Scanner's	No
+											1 Star	Quad	Yes	Steady	Yes	Pack Rat's	Yes	Stabilizer's	No
+											1 Star	Regenerating	Yes	Strength	Yes	Perception	Yes	Stalwart's	Yes
+3 STAR					4 STAR						1 Star	Sniper's	No	V.A.T.S. Enhanced	Yes	Reflex	Yes	Tanky's	Yes
+											1 Star	Stalker's	No	Vital	Yes	Resilient	Yes	Thrill-Seeker's	No
+Acrobat's | LOCKED	Diver's | LOCKED	Nimble | LOCKED			Aegis | UNLOCKED	Fracturer's | UNLOCKED	Reflective | LOCKED				1 Star	Suppressor's	Yes	Warming	Yes	Safecracker's	Yes	Viper's	Yes
+											1 Star	Troubleshooter's	Yes			Secret Agent's	Yes		
+Active | LOCKED	Doctor's | LOCKED	Pack Rat's | UNLOCKED			Battle-Loader's | LOCKED	Icemen's | LOCKED	Rejuvenator's | LOCKED				1 Star	Two Shot	Yes			Sentinel's	No		
+											1 Star	Unyielding	No			Steadfast	Yes		
+Adamantium | LOCKED	Durability | UNLOCKED	Perception | UNLOCKED			Bruiser's | LOCKED	Limit-Breaking | UNLOCKED	Runner's | UNLOCKED				1 Star	Vampire's	Yes			Strength	Yes		
+											1 Star	Vanguard's	Yes			Swift	Yes		
+Agility | UNLOCKED	Electrified | UNLOCKED	Reflex | UNLOCKED			Bully's | UNLOCKED	Miasma's | LOCKED	Sawbones's | LOCKED				1 Star	Heavyweight	No			Thru-hiker's	Yes		
+											1 Star	Zealot's	Yes			Toxic	Yes		
+Arms Keeper's | LOCKED	Endurance | UNLOCKED	Resilient | UNLOCKED			Charged | UNLOCKED	Pin-Pointer's | UNLOCKED	Scanner's | LOCKED				2 Star					V.A.T.S. Optimized	Yes		
+											2 Star								
+Barbarian | LOCKED	Frozen | UNLOCKED	Safecracker's | UNLOCKED			Choo-Choo's | UNLOCKED	Polished | LOCKED	Stabilizer's | LOCKED				2 Star								
+											2 Star								
+Belted | LOCKED	Ghost's | UNLOCKED	Secret Agent's | UNLOCKED			Combo-Breaker's | LOCKED	Pounder's | UNLOCKED	Stalwart's | UNLOCKED				2 Star								
+											2 Star								
+Blocker | LOCKED	Glowing | LOCKED	Sentinel's | LOCKED			Conductor's | UNLOCKED	Propelling | LOCKED	Tanky's | UNLOCKED				2 Star								
+											2 Star								
+Burning | UNLOCKED	Healthy | LOCKED	Steadfast | UNLOCKED			Electrician's | UNLOCKED	Pyromaniac's | UNLOCKED	Thrill-Seeker's | LOCKED				2 Star								
+											2 Star								
+Cavalier's | UNLOCKED	Intelligence | UNLOCKED	Strength | UNLOCKED			Encircler's | UNLOCKED	Radioactive-Powered | UNLOCKED	Viper's | UNLOCKED				2 Star								
+											2 Star								
+Charisma | UNLOCKED	Lightweight | UNLOCKED	Swift | UNLOCKED			Fencer's | LOCKED	Ranger's | UNLOCKED					2 Star								
+											2 Star								
+Defender's | UNLOCKED	Luck | LOCKED	Thru-hiker's | UNLOCKED									2 Star								
+											2 Star								
+Dissipating | UNLOCKED	Lucky | UNLOCKED	Toxic | UNLOCKED									2 Star								
+											2 Star								
+		V.A.T.S. Optimized | UNLOCKED									2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											2 Star								
+											3 Star								
+											3 Star								
+											3 Star								
+											3 Star								
+											3 Star								
+											3 Star								
+											3 Star								
+											3 Star	Burning	Yes						
+											3 Star	Cavalier's	Yes						
+											3 Star	Charisma	Yes						
+											3 Star	Defender's	Yes						
+											3 Star	Dissipating	Yes						
+											3 Star	Diver's	No						
+											3 Star	Doctor's	No						
+											3 Star	Durability	Yes						
+											3 Star	Electrified	Yes						
+											3 Star	Endurance	Yes						
+											3 Star	Frozen	Yes						
+											3 Star	Ghost's	Yes						
+											3 Star	Glowing	No						
+											3 Star	Healthy	No						
+											3 Star	Intelligence	Yes						
+											3 Star	Lightweight	Yes						
+											3 Star	Luck	No						
+											3 Star	Lucky	Yes						
+											3 Star	Nimble	No						
+											3 Star	Pack Rat's	Yes						
+											3 Star	Perception	Yes						
+											3 Star	Reflex	Yes						
+											3 Star	Resilient	Yes						
+											3 Star	Safecracker's	Yes						
+											3 Star	Secret Agent's	Yes						
+											3 Star	Sentinel's	No						
+											3 Star	Steadfast	Yes						
+											3 Star	Strength	Yes						
+											3 Star	Swift	Yes						
+											3 Star	Thru-hiker's	Yes						
+											3 Star	Toxic	Yes						
+											3 Star	V.A.T.S. Optimized	Yes						
+											4 Star	Aegis	Yes						
+											4 Star	Battle-Loader's	No						
+											4 Star	Bruiser's	No						
+											4 Star	Bully's	Yes						
+											4 Star	Charged	Yes						
+											4 Star	Choo-Choo's	Yes						
+											4 Star	Combo-Breaker's	No						
+											4 Star	Conductor's	Yes						
+											4 Star	Electrician's	Yes						
+											4 Star	Encircler's	Yes						
+											4 Star	Fencer's	No						
+											4 Star	Fracturer's	Yes						
+											4 Star	Icemen's	No						
+											4 Star	Limit-Breaking	Yes						
+											4 Star	Miasma's	No						
+											4 Star	Pin-Pointer's	Yes						
+											4 Star	Polished	No						
+											4 Star	Pounder's	Yes						
+											4 Star	Propelling	No						
+											4 Star	Pyromaniac's	Yes						
+											4 Star	Radioactive-Powered	Yes						
+											4 Star	Ranger's	Yes						
+											4 Star	Reflective	No						
+											4 Star	Rejuvenator's	No						
+											4 Star	Runner's	Yes						
+											4 Star	Sawbones's	No						
+											4 Star	Scanner's	No						
+											4 Star	Stabilizer's	No						
+											4 Star	Stalwart's	Yes						
+											4 Star	Tanky's	Yes						
+											4 Star	Viper's	No						

@@ -1,0 +1,33 @@
+Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlocked	Notes				
+Agility	Armor • Power Armor	+2 Agility.	1 Bobblehead: Agility	30	No			Tier Progress		
+Antiseptic	Armor • Power Armor	+25% reduced disease chance from environmental hazards.	10 Disease Cure	30	Yes			Unlocked	22	
+Basher's	Weapon: Ranged	+50% bash damage.	25 Concrete	30	Yes			Total	32	
+Charisma	Armor • Power Armor	+2 Charisma.	1 Bobblehead: Charisma	30	Yes			% Complete	68.8%	
+Crippling	Weapon: Ranged • Weapon: Melee	+50% limb damage.	5 Black Titanium	30	Yes					
+Elementalist	Armor • Power Armor	Increase all resistances by 5.	1 Bobblehead: Endurance	30	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt		Weapons	Weapons Unlocked	12
+Endurance	Armor • Power Armor	+2 Endurance.	1 Bobblehead: Endurance	30	Yes			Armor	Armor Unlocked	10
+Explosive	Weapon: Ranged	Projectiles explode for +20% weapon damage.	1 Bobblehead: Explosive	30	Yes			Power Armor	Power Armor Unlocked	10
+Fierce	Armor • Power Armor	Fortify limb resistance based on Kill Streak count (1% per kill).	1 Bobblehead: Strength	30	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt			Power Armor Locked	9
+Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Pus Sac	30	No					
+Glutton	Armor • Power Armor	Hunger and Thirst grow 10% slower.	1 Perfect Bubblegum	30	No					
+Hardy	Armor • Power Armor	Receive 7% less explosion damage.	1 Bobblehead: Explosive	30	Yes					
+HazMat	Armor • Power Armor	+25 Radiation Resistance.	10 Rad-x	30	Yes					
+Heavy Hitter's	Weapon: Melee	+40% power attack damage.	25 Concrete	30	Yes					
+Hitman's	Weapon: Ranged	+25% damage while aiming.	10 Fiber Optics	30	Yes					
+Inertial	Weapon: Ranged • Weapon: Melee	Replenish 15 Action Points with each kill.	10 Canned Coffee	30	Yes					
+Intelligence	Armor • Power Armor	+2 Intelligence.	1 Bobblehead: Intelligence	30	Yes					
+Last Shot	Weapon: Ranged	Last round in a magazine has a 25% chance to deal +100% damage.	15 Gunpowder	30	Yes					
+Luck	Armor • Power Armor	+2 Luck.	1 Bobblehead: Luck	30	Yes					
+Pain Killer	Armor • Power Armor	Gain Health over time while on a Kill Streak; stronger with higher streak.	1 Bobblehead: Medicine	30	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Perception	Armor • Power Armor	+2 Perception.	1 Bobblehead: Perception	30	No					
+Pick Pocketer's	Weapon: Melee	Target kills have 50% chance to grant 1–4 Caps.	1 Bobblehead: Caps	30	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Poisoner's	Armor • Power Armor	+25 Poison Resistance.	10 Floater Gnasher Puc Sac	30	No					
+Powered	Armor • Power Armor	+5% Action Point regen.	10 Canned Coffee	30	Yes					
+Rapid	Weapon: Ranged • Weapon: Melee	[Ranged] +25% weapon speed. [Melee] +40% weapon speed.	1 Speed Demon Serum	30	Yes					
+Riposting	Weapon: Melee	+50% melee damage reflection while blocking.	25 Glass	30	Yes					
+Rushing	Armor • Power Armor	Gain Action Points over time while on a Kill Streak; stronger with higher streak.	1 Bobblehead: Agility	30	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Steady	Weapon: Melee	+25% melee damage while not moving.	3 Orange Mentats	30	Yes					
+Strength	Armor • Power Armor	+2 Strength.	1 Bobblehead: Strength	30	Yes					
+V.A.T.S. Enhanced	Weapon: Ranged	+50% chance to hit a target in V.A.T.S.	3 Berry Mentats	30	Yes					
+Vital	Weapon: Ranged • Weapon: Melee	+50% critical damage.	1 Eagle Eyes Serum	30	Yes					
+Warming	Armor • Power Armor	+25 Cryo Resistance.	10 Floater Freezer Pus Sac	30	Yes					

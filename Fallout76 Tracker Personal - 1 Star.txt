@@ -1,0 +1,40 @@
+Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlocked	Notes				
+Adrenal	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Weapon] +10% damage per kill while on a Kill Streak. [Armor] +10 Damage and Energy Resistance per kill while on a Kill Streak (Max 10).	1 Adrenal Reaction Serum	15	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt		Tier Progress		
+Anti-armor	Weapon: Ranged • Weapon: Melee	+50% Armor Penetration	5 Black Titanium	15	Yes			Unlocked	30	
+Aristocrat's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] Up to +20 ER/DR based on Caps. [Weapon] Up to +50% damage based on Caps.	1 Bobblehead: Caps	15	Yes			Total	39	
+Assassin's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Humans. [Weapon] +50% damage to Humans.	1 Liquid Courage	15	Yes			% Complete	76.9%	
+Auto Stim	Armor • Power Armor	Automatically use a Stimpak when hit while Health is 25% or less, once every 60 seconds.	5 Stimpak	15	Yes					
+Berserker's	Weapon: Ranged • Weapon: Melee	Damage increases up to +50% as Damage Resistance decreases.	5 Psycho	15	Yes			Weapons	Weapons Unlocked	24
+Bloodied	Weapon: Ranged • Weapon: Melee	Damage increases up to +130% as Health decreases.	1 Adrenal Reaction Serum	15	Yes			Armor	Armor Unlocked	16
+Bolstering	Armor • Power Armor	Grants up to +35 ER/DR, the lower your Health.	5 Med-X	15	Yes			Power Armor	Power Armor Unlocked	16
+Chameleon	Armor • Power Armor	Become invisible while sneaking and not moving.	1 Chameleon Serum	15	No				Power Armor Locked	3
+Cloaking	Armor • Power Armor	Being hit in melee causes you to become invisible once every 30 seconds.	1 Stealth Boy	15	Yes					
+Executioner's	Weapon: Ranged • Weapon: Melee	+50% more damage when your target is below 40% Health.	25 Leather	15	Yes					
+Exterminator's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Mirelurks and Insects. [Weapon] +50% damage to Mirelurks and Insects.	1 Bloodbug Proboscis; 1 Stinging Barb	15	Yes					
+Feral's	Weapon: Melee	[Ghoul] Target kills make you go feral faster.	5 Black Titanium	15	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Furious	Weapon: Ranged • Weapon: Melee	+5% damage per Onslaught stack, +9 max stacks.	1 Fury	15	Yes					
+Ghoul Slayer's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Ghouls. [Weapon] +50% damage to Ghouls.	1 RadShield	15	Yes					
+Gourmand's	Weapon: Ranged • Weapon: Melee	Damage increases up to +40% as you fill Hunger/Thirst meters.	1 Vegetarian Ham	15	Yes					
+Hunter's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Animals. [Weapon] +50% damage to Animals.	1 Yao Guai Hide	15	Yes					
+Instigating	Weapon: Ranged • Weapon: Melee	+50% damage against targets above 60% Health.	5 Whiskey	15	Yes					
+Juggernaut's	Weapon: Ranged • Weapon: Melee	Damage increases up to +100% as Health increases (1000HP = 100%).	5 Buffout	15	Yes					
+Junkie's	Weapon: Ranged • Weapon: Melee	Damage increases per Addiction up to +100%.	5 Mentats	15	Yes					
+Life Saving	Armor	When incapacitated, gain a 50% chance to revive yourself with a Stimpak, once every 60 seconds.	5 Stimpak	15	No					
+Lucid	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Ghoul] [Armor] Damage reduction up to +6% as you fill Feral meter. [Weapon] Damage increases up to +40% as you fill Feral meter.	1 Bobblehead: Medicine	15	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Medic's	Weapon: Ranged • Weapon: Melee	Attacks will heal friendly targets by 5% Health.	1 Bobblehead: Medicine	15	Yes					
+Mutant Slayer's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Super Mutants. [Weapon] +50% damage to Super Mutants.	1 Super Mutant Head	15	Yes					
+Mutant's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] +10 DR/ER while mutated. [Weapon] Damage increases up to +50% as you gain Mutations.	10 Asbestos	15	Yes					
+Nocturnal	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] +4 Perception and Agility while cloaked. [Weapon] +50% damage while cloaked.	10 Nuclear Material	15	Yes					
+Overeater's	Armor • Power Armor	Increases Damage Reduction up to 6% as you fill Hunger/Thirst meters.	1 Perfect Bubblegum	15	Yes					
+Quad	Weapon: Ranged	+300% ammo capacity.	1 Fusion Core	15	Yes					
+Regenerating	Armor • Power Armor	+0.5% heal rate.	1 Healing Factor Serum	15	Yes					
+Sniper's	Weapon: Ranged	100% damage to distant targets.	1 Bobblehead: Perception	15	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Stalker's	Weapon: Ranged	+100% sneak attack damage.	1 Calmex	15	No					
+Suppressor's	Weapon: Ranged • Weapon: Melee	Reduce your target's damage output by 25% for 5 seconds.	1 Grounded Serum	15	Yes					
+Troubleshooter's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Robots. [Weapon] +50% damage to Robots.	10 Circuitry	15	Yes					
+Two Shot	Weapon: Ranged	+1 projectile, +75% damage, -150% hip-fire accuracy, +100% recoil.	20 Lead	15	Yes					
+Unyielding	Armor	Gain up to +3 to all S.P.E.C.I.A.L. (except END) when Health is low.	5 X-Cell	15	No					
+Vampire's	Weapon: Ranged • Weapon: Melee	Restore 2% Health over 2 seconds when you hit a target.	10 Bloodpacks	15	Yes					
+Vanguard's	Armor • Power Armor	Grants up to +35 ER/DR, the higher your Health.	5 Blood Pack	15	Yes					
+Heavyweight	Armor	-90% weight and does not count as armor for the Chameleon Mutation.	1 Bird Bones Serum	15	No					
+Zealot's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Scorched. [Weapon] +50% damage to Scorched.	10 Ultracite	15	Yes					

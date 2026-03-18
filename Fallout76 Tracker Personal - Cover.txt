@@ -1,0 +1,42 @@
+FALLOUT 76 LEGENDARY UNLOCK TRACKER
+
+HOW TO USE THIS DOCUMENT
+(I use Google Sheets as a free option, file type can be converted directly on Sheets when downloading)
+
+STEP 1 — SAVE YOUR OWN COPY (REQUIRED)
+• In Google Sheets, click File in the top-left menu.
+• Select Make a Copy.
+• Choose a name and save location in your Google Drive
+• Click Make a Copy to create your personal editable version.
+
+You must complete Step 1 before making any changes.
+This ensures you have full editing access and your own tracked progress.
+
+STEP 2 — TRACK YOUR LEGENDARY UNLOCKS
+• Open your copied file from Google Drive.
+• Navigate to the 1Star, 2Star, 3Star, or 4Star sheets.
+• Change the 'Unlocked' dropdown from NO to YES for learned effects.
+
+Progress percentages update automatically per sheet.
+
+Optional: Download your copy anytime via File → Download → Microsoft Excel (.xlsx).
+
+I don't currently have plans of making this a revolving W.I.P as it was made for personal use
+
+
+If that changes ever. New editions will be submitted to this link to prevent new links
+
+In case of a new version, you won't lose your progress if you just follow the guide below.
+
+
+How it works
+
+Open the new tracker & Save a new version to your Google Sheets
+
+Go to “Import” on the new Tracker version
+
+Paste a link to your prior edited sheet (or paste the exported table)
+
+Click “Allow access” (if it even asks)
+
+Everything fills in automatically.

@@ -1,0 +1,41 @@
+Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlocked	Notes				
+Acrobat's	Armor	-50% fall damage.	1 Marsupial Serum	60	No			Tier Progress		
+Active	Armor • Power Armor	Max AP increased by +20.	1 Bobblehead: Agility	60	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt		Unlocked	26	
+Adamantium	Armor	Receive 15% less limb damage.	1 Twisted Muscles Serum	60	No			Total	40	
+Agility	Weapon: Ranged • Weapon: Melee	+3 Agility.	1 Bobblehead: Agility	60	Yes			% Complete	65.0%	
+Arms Keeper's	Armor • Power Armor	Weapon weights reduced by 20%.	1 Bobblehead: Small Guns	60	No					
+Barbarian	Weapon: Melee	+1 STR per kill while on a Kill Streak (max 10).	1 Bobblehead: Melee	60	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt		Weapons	Weapons Unlocked	15
+Belted	Armor • Power Armor	Ammo weight reduced by 20%.	25 Lead	60	No			Armor	Armor Unlocked	13
+Blocker	Weapon: Melee	+15% more damage blocked.	10 Oil	60	No			Power Armor	Power Armor Unlocked	12
+Burning	Armor • Power Armor	5% chance to deal 12 Fire damage per second for 3s to melee attackers.	15 Floater Flamer Pus Sac	60	Yes				Power Armor Locked	6
+Cavalier's	Armor • Power Armor	-5% damage taken while sprinting.	10 Oil	60	Yes					
+Charisma	Weapon: Ranged • Weapon: Melee	+3 Charisma.	1 Bobblehead: Charisma	60	Yes					
+Defender's	Armor • Power Armor • Weapon: Melee	[Armor] -15% damage taken while blocking. [Melee] -40% damage taken while power attacking.	25 Steel	60	Yes					
+Dissipating	Armor • Power Armor	+0.25% radiation damage recovery.	10 RadAway	60	Yes					
+Diver's	Armor	Breathe underwater.	15 Plastic	60	No					
+Doctor's	Armor • Power Armor	+5% effectiveness of Stimpaks, RadAway, and Rad-X.	1 Stimpak: Super	60	No					
+Durability	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	Breaks 50% slower.	1 Bobblehead: Repair	60	Yes					
+Electrified	Armor • Power Armor	5% chance to deal 12 Energy damage per second for 3s to melee attackers.	1 Electrically Charged Serum	60	Yes					
+Endurance	Weapon: Ranged • Weapon: Melee	+3 Endurance.	1 Bobblehead: Endurance	60	Yes					
+Frozen	Armor • Power Armor	5% chance to deal 12 Cryo damage per second for 4s to melee attackers.	15 Floater Freezer Pus Sac	60	Yes					
+Ghost's	Weapon: Ranged	10% chance to become invisible for 2 seconds when hitting a target.	1 Stealth Boy	60	Yes					
+Glowing	Weapon: Ranged • Weapon: Melee	[Ghoul] Target kills increase Glow by a small amount. [Human] Target kills increase Rads by a small amount (20 RADs).	1 Bobblehead: Science	60	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Healthy	Armor • Power Armor	Max HP increased by +20.	1 Bobblehead: Endurance	60	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Intelligence	Weapon: Ranged • Weapon: Melee	+3 Intelligence.	1 Bobblehead: Intelligence	60	Yes					
+Lightweight	Weapon: Ranged • Weapon: Melee	-90% weight.	10 Cork	60	Yes					
+Luck	Weapon: Ranged • Weapon: Melee	+3 Luck.	1 Bobblehead: Luck	60	No					
+Lucky	Weapon: Ranged • Weapon: Melee	+15 bonus V.A.T.S. critical charge.	1 Bobblehead: Luck	60	Yes					
+Nimble	Weapon: Ranged	+100% faster movement speed while aiming.	25 Springs	60	No					
+Pack Rat's	Armor • Power Armor	Junk item weights reduced by 20%.	1 Marsupial Serum	60	Yes					
+Perception	Weapon: Ranged • Weapon: Melee	+3 Perception.	1 Bobblehead: Perception	60	Yes					
+Reflex	Armor • Power Armor	2% evade.	1 Bobblehead: Agility	60	Yes	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt				
+Resilient	Weapon: Ranged	+500 damage resistance while reloading.	5 Med-X	60	Yes					
+Safecracker's	Armor • Power Armor	+1 lockpicking skill +1 hacking skill.	1 Bobblehead: Lock Picking	60	Yes					
+Secret Agent's	Armor	+25% less noise while sneaking +25% reduce detection chance.	1 Bobblehead: Sneak	60	Yes					
+Sentinel's	Armor • Power Armor	-5% damage taken while not moving.	1 Scaly Skin Serum	60	No					
+Steadfast	Weapon: Ranged	+50 damage resistance while aiming.	5 Ballistic Fiber	60	Yes					
+Strength	Weapon: Ranged • Weapon: Melee	+3 Strength.	1 Bobblehead: Strength	60	Yes					
+Swift	Weapon: Ranged	+15% reload speed.	1 Speed Demon Serum	60	Yes					
+Thru-hiker's	Armor • Power Armor	Food, drink, and chem weights reduced by 20%.	10 Purified Water	60	Yes					
+Toxic	Armor • Power Armor	5% chance to deal 12 Poison damage per second for 7s to melee attackers.	15 Floater Gnasher Pus Sac	60	Yes					
+V.A.T.S. Optimized	Weapon: Ranged • Weapon: Melee	-35% action point cost.	10 Sugar	60	Yes					
