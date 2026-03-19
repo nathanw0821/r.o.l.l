@@ -13,6 +13,10 @@ const toggleSchema = z.object({
   unlocked: z.boolean().nullable()
 });
 
+const bulkToggleSchema = z.object({
+  entries: z.array(toggleSchema).min(1).max(500)
+});
+
 function revalidateTrackerPaths() {
   revalidatePath("/");
   revalidatePath("/achievements");
@@ -21,6 +25,7 @@ function revalidateTrackerPaths() {
   revalidatePath("/2-star");
   revalidatePath("/3-star");
   revalidatePath("/4-star");
+  revalidatePath("/screenshot-assist");
   revalidatePath("/still-need");
   revalidatePath("/summary");
 }
@@ -61,6 +66,47 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
       }
     });
   }
+
+  await syncUserAchievements(session.user.id);
+  revalidateTrackerPaths();
+}
+
+export async function bulkUpdateProgress(input: { entries: { effectTierId: string; unlocked: boolean | null }[] }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  const parsed = bulkToggleSchema.safeParse(input);
+  if (!parsed.success) {
+    throw new Error("Invalid input");
+  }
+
+  await prisma.$transaction(
+    parsed.data.entries.map((entry) =>
+      entry.unlocked === null
+        ? prisma.userProgress.deleteMany({
+            where: {
+              userId: session.user.id,
+              effectTierId: entry.effectTierId
+            }
+          })
+        : prisma.userProgress.upsert({
+            where: {
+              userId_effectTierId: {
+                userId: session.user.id,
+                effectTierId: entry.effectTierId
+              }
+            },
+            update: { unlocked: entry.unlocked },
+            create: {
+              userId: session.user.id,
+              effectTierId: entry.effectTierId,
+              unlocked: entry.unlocked
+            }
+          })
+    )
+  );
 
   await syncUserAchievements(session.user.id);
   revalidateTrackerPaths();
