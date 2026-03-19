@@ -11,59 +11,75 @@ export default async function HomePage() {
         <CardContent>
           <div className="space-y-4 text-sm text-foreground/80">
             <div>
-              Record Of Legendary Loadouts is a Fallout 76 companion tracker for manually managing your legendary
-              unlock progress across every star tier.
+              Record Of Legendary Loadouts is a Fallout 76 companion tracker for logging unlocks, checking farm targets, and syncing progress without touching the live game process.
             </div>
             <div>
-              Your data is user-managed. R.O.L.L. does not read the live game process, inspect memory, or depend on
-              patch-sensitive hooks, which makes it safer to host publicly and easier to maintain over time.
+              It stays manual, patch-safe, and public-hosting friendly.
             </div>
-            <div className="grid gap-3 md:grid-cols-2">
+
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Core Views</div>
+                <div className="text-xs uppercase text-foreground/60">Track</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Summary dashboard with tier snapshots, filters, and quick progress editing.</li>
-                  <li>All Effects registry with full detail tables and compact tile mode.</li>
-                  <li>Tier-specific views from 1-star through 4-star, plus Still Need for anything still locked.</li>
+                  <li>Summary, All Effects, star-tier pages, and Still Need.</li>
+                  <li>Direct Locked or Unlocked editing across views.</li>
+                  <li>Per-tier completion in the sidebar and Command Hub.</li>
+                  <li>Undo for the last five changes.</li>
                 </ul>
               </div>
+
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Progress & Profiles</div>
+                <div className="text-xs uppercase text-foreground/60">Sync</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Manual tracking is the core system.</li>
-                  <li>Sign in to sync your personal progress across devices.</li>
-                  <li>Manual edits always stay under your control and override imported defaults.</li>
+                  <li>Guest progress saves locally in the browser.</li>
+                  <li>Signed-in progress syncs to your account.</li>
+                  <li>Imports and exports cover backup, restore, and migration.</li>
+                  <li>Settings handles theme, accessibility, linked accounts, and reset tools.</li>
                 </ul>
               </div>
+
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Import & Export</div>
+                <div className="text-xs uppercase text-foreground/60">Command Hub</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Use import and export for backup, restore, or migration.</li>
-                  <li>Admin Import supports multi-sheet Excel workbooks.</li>
-                  <li>Export filtered or full progress as Excel, CSV, or JSON.</li>
+                  <li>Search plus filters for source, status, origin, and category.</li>
+                  <li>Theme, accent, scanlines, color assistance, and density.</li>
+                  <li>Compact and Comfortable switch instantly across the app.</li>
                 </ul>
               </div>
+
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Safe Companion Workflow</div>
+                <div className="text-xs uppercase text-foreground/60">Session Assist</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>No live game-process reading or passive auto-detection.</li>
-                  <li>User-managed entries are clearer, more trustworthy, and patch-friendly.</li>
-                  <li>Reference-source updates are handled in admin tools, separate from player progress.</li>
+                  <li>Upload a screenshot for local reference and confirm unlocks manually.</li>
+                  <li>Use it as a floating box, a pinned tab, or a full page.</li>
+                  <li>Modes: Manual Review, New Unlock Sweep, or AI Suggestions.</li>
+                  <li>Optional OpenAI review uses your own key and stays suggestion-only.</li>
                 </ul>
                 <div className="mt-4 rounded-[var(--radius)] border border-border bg-background/40 p-3">
-                  <div className="text-xs uppercase text-foreground/60">Readme Subsection: Session Assist</div>
+                  <div className="text-xs uppercase text-foreground/60">Quick Actions</div>
                   <div className="mt-2 text-sm text-foreground/75">
-                    Use Screenshot Assist as a guided session workflow for confirming new unlocks manually. It does not auto-detect or auto-save your legendary unlocks. You can keep it as a floating in-app window, pin it into the main tabs, or optionally request suggestion-only AI review with your own OpenAI API key.
+                    Nothing auto-detects or auto-saves. You review and save the changes you want.
                   </div>
                   <SessionAssistReadmeActions />
                 </div>
               </div>
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4 md:col-span-2">
-                <div className="text-xs uppercase text-foreground/60">Accessibility & Display</div>
+
+              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+                <div className="text-xs uppercase text-foreground/60">Data</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Light/dark themes, accent palettes, and color-assistance presets.</li>
-                  <li>Compact density switches list tables to tile layouts.</li>
-                  <li>Sticky navigation with a floating Command Hub panel.</li>
+                  <li>Effects include categories, descriptions, costs, and notes.</li>
+                  <li>Named scrap-source notes are appended where confirmed.</li>
+                  <li>Crafting costs use consistent module and component colors.</li>
+                  <li>Achievements track progress, exploration, and hidden finds.</li>
+                </ul>
+              </div>
+
+              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+                <div className="text-xs uppercase text-foreground/60">Admin and Hosting</div>
+                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
+                  <li>Admin Import and source monitoring maintain the public dataset.</li>
+                  <li>Saved sync sources support manual checks and controlled feed updates.</li>
+                  <li>The app is built for safer long-term public hosting across patches.</li>
                 </ul>
               </div>
             </div>

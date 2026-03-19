@@ -140,9 +140,9 @@ export default function AdminSyncPanel() {
                 className={cn(
                   "rounded-full border px-2 py-0.5 text-[11px]",
                   source.lastStatus === "success"
-                    ? "border-emerald-500/60 text-emerald-200"
+                    ? "border-[color:color-mix(in_srgb,var(--color-success)_44%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-success)_12%,var(--color-panel))] text-[color:var(--color-success)]"
                     : source.lastStatus === "failed"
-                      ? "border-amber-500/60 text-amber-200"
+                      ? "border-[color:color-mix(in_srgb,var(--color-warning)_44%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-warning)_12%,var(--color-panel))] text-[color:var(--color-warning)]"
                       : "border-border text-foreground/60"
                 )}
               >
@@ -214,11 +214,11 @@ export default function AdminSyncPanel() {
                     className={cn(
                       "rounded-full border px-2 py-0.5 text-[11px]",
                       source.lastCheckStatus === "changed"
-                        ? "border-amber-500/60 text-amber-200"
+                        ? "border-[color:color-mix(in_srgb,var(--color-warning)_44%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-warning)_12%,var(--color-panel))] text-[color:var(--color-warning)]"
                         : source.lastCheckStatus === "unchanged"
-                          ? "border-emerald-500/60 text-emerald-200"
+                          ? "border-[color:color-mix(in_srgb,var(--color-success)_44%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-success)_12%,var(--color-panel))] text-[color:var(--color-success)]"
                           : source.lastCheckStatus === "baseline"
-                            ? "border-sky-500/60 text-sky-200"
+                            ? "border-[color:color-mix(in_srgb,var(--color-accent)_44%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-accent)_12%,var(--color-panel))] text-[color:var(--color-accent)]"
                             : "border-border text-foreground/60"
                     )}
                   >
@@ -234,14 +234,14 @@ export default function AdminSyncPanel() {
               Last synced: {source.lastSyncedAt ? new Date(source.lastSyncedAt).toLocaleString() : "Never"}
             </div>
             {source.lastError ? (
-              <div className="mt-2 text-xs text-amber-300">Error: {source.lastError}</div>
+              <div className="mt-2 text-xs text-[color:var(--color-warning)]">Error: {source.lastError}</div>
             ) : null}
           </div>
         ))}
       </div>
 
-      {message ? <div className="text-xs text-emerald-300">{message}</div> : null}
-      {error ? <div className="text-xs text-amber-300">{error}</div> : null}
+      {message ? <div className="text-xs text-[color:var(--color-success)]">{message}</div> : null}
+      {error ? <div className="text-xs text-[color:var(--color-warning)]">{error}</div> : null}
     </div>
   );
 }

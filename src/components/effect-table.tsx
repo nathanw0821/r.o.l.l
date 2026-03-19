@@ -7,6 +7,7 @@ import { useProgressHistory } from "@/components/progress-history-provider";
 import ProgressToggle from "@/components/progress-toggle";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
+import { getCraftComponentKind } from "@/lib/legendary-mod-sources";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 
@@ -118,6 +119,24 @@ export default function EffectTable({
     setPendingId(null);
   }
 
+  function renderModules(value?: number | null) {
+    if (value === null || value === undefined) return "-";
+    return (
+      <span className="craft-badge craft-badge--modules">
+        {value} modules
+      </span>
+    );
+  }
+
+  function renderComponent(value?: string | null) {
+    if (!value) return "-";
+    return (
+      <span className="craft-badge" data-kind={getCraftComponentKind(value)}>
+        {value}
+      </span>
+    );
+  }
+
   return (
     <div className="space-y-2">
       <div className="text-xs text-foreground/60">
@@ -137,7 +156,7 @@ export default function EffectTable({
         <div>Status</div>
         <div>Notes</div>
       </div>
-      <div className="space-y-3 effect-table-list">
+      <div className="effect-table-list">
         {filteredRows.length === 0 ? (
           <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
             No effects match your filters yet.
@@ -153,17 +172,12 @@ export default function EffectTable({
               : row.selectionSource === "edited"
                 ? "Edited"
                 : "Default";
-          const sourceClass =
-            row.selectionSource === "imported"
-              ? "border-emerald-500/60 text-emerald-200"
-              : row.selectionSource === "edited"
-                ? "border-sky-500/60 text-sky-200"
-                : "border-border text-foreground/60";
           return (
             <div
               key={row.id}
+              data-status={row.unlocked ? "unlocked" : "locked"}
               className={cn(
-                "rounded-[var(--radius)] border border-border bg-panel p-4",
+                "effect-table-row summary-status-card rounded-[var(--radius)] border",
                 "md:grid md:items-start md:gap-3 table-grid"
               )}
             >
@@ -192,14 +206,14 @@ export default function EffectTable({
                 )}
               </div>
               <div className="min-w-0 text-sm text-foreground/80">{row.description || "-"}</div>
-              <div className="min-w-0 text-sm text-foreground/80">{row.extraComponent || "-"}</div>
+              <div className="min-w-0 text-sm text-foreground/80">{renderComponent(row.extraComponent)}</div>
               <div className="min-w-0 text-sm text-foreground/80 tabular-nums">
-                {row.legendaryModules ?? "-"}
+                {renderModules(row.legendaryModules)}
               </div>
               <div className="min-w-0">
                 <ProgressToggle unlocked={row.unlocked} onToggle={() => toggleRow(row)} disabled={isPending} className="w-full justify-center" />
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <div className={cn("inline-flex rounded-full border px-2 py-0.5 text-[11px]", sourceClass)}>
+                  <div className="source-pill" data-source={row.selectionSource ?? "default"}>
                     {sourceLabel}
                   </div>
                 </div>
@@ -226,7 +240,15 @@ export default function EffectTable({
           const isPending = pendingId === row.id;
           const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
           return (
-            <div key={`tile-${row.id}`} className="effect-tile">
+            <button
+              key={`tile-${row.id}`}
+              type="button"
+              onClick={() => toggleRow(row)}
+              disabled={isPending}
+              aria-pressed={row.unlocked}
+              data-status={row.unlocked ? "unlocked" : "locked"}
+              className={cn("effect-tile effect-tile--button summary-status-card", isPending && "opacity-60")}
+            >
               <div className="effect-tile__header">
                 <div>
                   <div className="font-semibold">{row.effect.name}</div>
@@ -236,11 +258,10 @@ export default function EffectTable({
                     </div>
                   ) : null}
                 </div>
-                <div className="text-right text-xs text-foreground/60">
-                  {row.unlocked ? "Unlocked" : "Locked"}
+                <div className="effect-tile__status">
+                  {isPending ? "Saving..." : row.unlocked ? "Unlocked" : "Locked"}
                 </div>
               </div>
-              <ProgressToggle unlocked={row.unlocked} onToggle={() => toggleRow(row)} disabled={isPending} className="w-full justify-center" />
               {categoryList.length > 0 ? (
                 <div className="effect-tile__chips">
                   {categoryList.slice(0, 4).map((category) => (
@@ -253,16 +274,10 @@ export default function EffectTable({
                   ))}
                 </div>
               ) : null}
-              <div className="effect-tile__row">
-                <span>Modules</span>
-                <span className="tabular-nums">{row.legendaryModules ?? "-"}</span>
+              <div className="effect-tile__costs">
+                {row.legendaryModules !== null && row.legendaryModules !== undefined ? renderModules(row.legendaryModules) : null}
+                {row.extraComponent ? renderComponent(row.extraComponent) : null}
               </div>
-              {row.extraComponent ? (
-                <div className="effect-tile__row">
-                  <span>Extra</span>
-                  <span>{row.extraComponent}</span>
-                </div>
-              ) : null}
               <div className="effect-tile__row">
                 <span>Source</span>
                 <span>{sourceLabel}</span>
@@ -270,7 +285,7 @@ export default function EffectTable({
               <div className="effect-tile__notes">
                 {row.notes || "No notes"}
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

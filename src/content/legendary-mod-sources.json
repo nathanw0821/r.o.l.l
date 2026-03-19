@@ -1,0 +1,342 @@
+{
+  "legendary_mod_sources": [
+    {
+      "item_name": "Medical Malpractice",
+      "weapon_type": ".44 pistol",
+      "source_category": "daily_ops_minerva",
+      "source_detail": "Daily Ops plan + Minerva",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Medic's",
+        "star_2": "VATS Enhanced",
+        "star_3": "-25% VATS Cost",
+        "star_4": ""
+      },
+      "notes": "Top source for Medic's and VATS rolls.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Mechanic's Best Friend",
+      "weapon_type": "pipe wrench",
+      "source_category": "daily_ops_minerva",
+      "source_detail": "Daily Ops plan + Minerva",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Troubleshooter's",
+        "star_2": "Heavy Hitter's",
+        "star_3": "Strength",
+        "star_4": ""
+      },
+      "notes": "Reliable Troubleshooter's melee craft.",
+      "recommended_farm_priority": 2
+    },
+    {
+      "item_name": "Face Breaker",
+      "weapon_type": "power fist",
+      "source_category": "daily_ops_gold_bullion",
+      "source_detail": "Daily Ops plan + Mortimer",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Furious",
+        "star_2": "Heavy Hitter's",
+        "star_3": "Strength",
+        "star_4": ""
+      },
+      "notes": "Good bullion option for Furious melee farming.",
+      "recommended_farm_priority": 2
+    },
+    {
+      "item_name": "The Gutter",
+      "weapon_type": "assaultron blade",
+      "source_category": "daily_ops_minerva",
+      "source_detail": "Daily Ops plan + Minerva",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Vampire's",
+        "star_2": "",
+        "star_3": "",
+        "star_4": ""
+      },
+      "notes": "Named Vampire's craft source.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Sole Survivor",
+      "weapon_type": "lever action rifle",
+      "source_category": "daily_ops_minerva",
+      "source_detail": "Daily Ops plan + Minerva",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Assassin's",
+        "star_2": "Hitman's",
+        "star_3": "Steadfast",
+        "star_4": ""
+      },
+      "notes": "Covers three ranged effects from one plan.",
+      "recommended_farm_priority": 2
+    },
+    {
+      "item_name": "Whistle in the Dark",
+      "weapon_type": "assault rifle",
+      "source_category": "daily_ops_minerva",
+      "source_detail": "Daily Ops plan + Minerva",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Nocturnal",
+        "star_2": "VATS Enhanced",
+        "star_3": "Perception",
+        "star_4": ""
+      },
+      "notes": "Good backup source for VATS Enhanced.",
+      "recommended_farm_priority": 2
+    },
+    {
+      "item_name": "Unstoppable Monster",
+      "weapon_type": "deathclaw gauntlet",
+      "source_category": "daily_ops_minerva",
+      "source_detail": "Daily Ops plan + Minerva",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Bloodied",
+        "star_2": "Heavy Hitter's",
+        "star_3": "Cavalier's",
+        "star_4": ""
+      },
+      "notes": "Top Bloodied melee farming target.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Head Hunter Scythe",
+      "weapon_type": "pickaxe",
+      "source_category": "stamps_vendor",
+      "source_detail": "Giuseppe for 500 stamps",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Assassin's",
+        "star_2": "Rapid",
+        "star_3": "Lightweight",
+        "star_4": ""
+      },
+      "notes": "Stamp vendor pickup for swing speed farming.",
+      "recommended_farm_priority": 2
+    },
+    {
+      "item_name": "Cold Shoulder",
+      "weapon_type": "double-barrel shotgun",
+      "source_category": "stamps_vendor",
+      "source_detail": "Giuseppe for 500 stamps",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Quad",
+        "star_2": "",
+        "star_3": "",
+        "star_4": ""
+      },
+      "notes": "Direct stamp unlock for Quad.",
+      "recommended_farm_priority": 2
+    },
+    {
+      "item_name": "Nuka Launcher",
+      "weapon_type": "auto grenade launcher",
+      "source_category": "season_unlock",
+      "source_detail": "Nuka-World season unlock",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Two Shot",
+        "star_2": "Crippling",
+        "star_3": "Lightweight",
+        "star_4": ""
+      },
+      "notes": "Season craft with strong explosive farming value.",
+      "recommended_farm_priority": 2
+    },
+    {
+      "item_name": "Valkyrie",
+      "weapon_type": "Gatling laser",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Troubleshooter's",
+        "star_2": "Rapid",
+        "star_3": "Ghost's",
+        "star_4": "Bully's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Drill Fist",
+      "weapon_type": "gauntlet",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Anti-Armour",
+        "star_2": "Crippling",
+        "star_3": "Strength",
+        "star_4": "Combo-Breaker's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Flatliner",
+      "weapon_type": "Gauss rifle",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Assassin's",
+        "star_2": "VATS Enhanced",
+        "star_3": "Nimble",
+        "star_4": "Conductor's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Resolve Breaker",
+      "weapon_type": "auto grenade launcher",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Bloodied",
+        "star_2": "Inertial",
+        "star_3": "Steadfast",
+        "star_4": "Electrician's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Lickety-Split",
+      "weapon_type": "railway rifle",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Juggernaut's",
+        "star_2": "Crippling",
+        "star_3": "Resilient",
+        "star_4": "Fracturer's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Cauterizer",
+      "weapon_type": "chainsaw",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Vampire's",
+        "star_2": "Vital",
+        "star_3": "Lucky",
+        "star_4": "Encircler's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Ultracite Terror Sword",
+      "weapon_type": "two-handed sword",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Anti-Armour",
+        "star_2": "Rapid",
+        "star_3": "Defender's",
+        "star_4": "Viper's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    },
+    {
+      "item_name": "Boiling Point",
+      "weapon_type": "flamer",
+      "source_category": "raid_plan",
+      "source_detail": "Gleaming Depths raid plan",
+      "craftable": true,
+      "scrappable_for_learning": true,
+      "effects": {
+        "star_1": "Furious",
+        "star_2": "Basher's",
+        "star_3": "Swift",
+        "star_4": "Pyromaniac's"
+      },
+      "notes": "Raid craft with 4-star learning value.",
+      "recommended_farm_priority": 1
+    }
+  ],
+  "meta": {
+    "high_value_targets": [
+      "Bloodied",
+      "Vampire's",
+      "Medic's",
+      "VATS Enhanced",
+      "-25% VATS Cost",
+      "Faster Swing Speed"
+    ],
+    "raid_4_star_targets": [
+      "Bully's",
+      "Combo-Breaker's",
+      "Conductor's",
+      "Electrician's",
+      "Fracturer's",
+      "Encircler's",
+      "Viper's",
+      "Pyromaniac's"
+    ],
+    "notes_version": "gleaming-depths-supported"
+  },
+  "ui_theme": {
+    "effect_cards": {
+      "compact": {
+        "layout": "horizontal-condensed",
+        "show_icons": true,
+        "show_star_tiers": true,
+        "spacing": "tight"
+      },
+      "comfortable": {
+        "layout": "stacked",
+        "show_icons": true,
+        "show_star_tiers": true,
+        "spacing": "relaxed",
+        "highlight_effects": true
+      }
+    },
+    "colors": {
+      "module_cost": "#E6C35C",
+      "components": {
+        "bobblehead": "#7ED957",
+        "chem": "#FF6B6B",
+        "food_drink": "#4D96FF",
+        "magazine": "#C77DFF",
+        "junk": "#A0A0A0",
+        "flux": "#2EC4B6",
+        "default": "#FFFFFF"
+      }
+    }
+  }
+}

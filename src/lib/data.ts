@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { extractOriginsFromNotes, normalizeDisplayNotes } from "@/lib/import-normalize";
+import { appendLegendaryModSourceNotes } from "@/lib/legendary-mod-sources";
 import { applyImportedProfileIfNeeded, getImportedBaselineMap } from "@/lib/profile";
 
 async function ensureProfileApplied(userId?: string) {
@@ -60,9 +61,10 @@ export async function getEffectTiersByTierLabel(tierLabel: string, userId?: stri
     const baseline = baselineMap.get(item.id);
     const unlocked = userId ? progress?.unlocked ?? baseline ?? false : false;
     const origins = extractOriginsFromNotes(item.notes);
+    const displayNotes = normalizeDisplayNotes(item.notes, origins);
     return {
       ...item,
-      notes: normalizeDisplayNotes(item.notes, origins) ?? undefined,
+      notes: appendLegendaryModSourceNotes(displayNotes, item.effect.name, item.tier?.label) ?? undefined,
       origins,
       unlocked,
       selectionSource: resolveSelectionSource({
@@ -96,9 +98,10 @@ export async function getAllEffectTiers(userId?: string) {
     const baseline = baselineMap.get(item.id);
     const unlocked = userId ? progress?.unlocked ?? baseline ?? false : false;
     const origins = extractOriginsFromNotes(item.notes);
+    const displayNotes = normalizeDisplayNotes(item.notes, origins);
     return {
       ...item,
-      notes: normalizeDisplayNotes(item.notes, origins) ?? undefined,
+      notes: appendLegendaryModSourceNotes(displayNotes, item.effect.name, item.tier?.label) ?? undefined,
       origins,
       unlocked,
       selectionSource: resolveSelectionSource({

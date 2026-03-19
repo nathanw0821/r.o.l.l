@@ -7,9 +7,9 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const toneStyles: Record<NonNullable<BadgeProps["tone"]>, string> = {
   neutral: "bg-accentMuted text-foreground",
-  success: "bg-[var(--color-success)] text-white",
-  warning: "bg-[var(--color-warning)] text-black",
-  danger: "bg-[var(--color-danger)] text-white"
+  success: "bg-[var(--color-success)] text-[color:var(--text-primary)]",
+  warning: "bg-[var(--color-warning)] text-[color:var(--text-primary)]",
+  danger: "bg-[var(--color-danger)] text-[color:var(--text-primary)]"
 };
 
 export function Badge({ className, tone = "neutral", ...props }: BadgeProps) {

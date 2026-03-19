@@ -79,7 +79,7 @@ export default async function AchievementsPage() {
                   className={cn(
                     "rounded-[var(--radius)] border bg-panel p-4",
                     achievement.unlocked
-                      ? "border-accent/70 shadow-[0_0_0_1px_rgba(99,196,121,0.2)]"
+                      ? "border-accent/70 shadow-[0_0_0_1px_color-mix(in_srgb,var(--color-success)_20%,transparent)]"
                       : "border-border"
                   )}
                 >

@@ -1,5 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/app-config";
+import { prisma } from "@/lib/prisma";
+import AdminImportForm from "@/components/admin-import-form";
 import ThemeSettings from "@/components/theme-settings";
 import ProgressControls from "@/components/progress-controls";
 import AccountLinks from "@/components/account-links";
@@ -7,6 +10,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
+  const user =
+    session?.user?.id
+      ? await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { email: true, username: true }
+        })
+      : null;
+  const canManageWorkbookImport = isAdminUser(user);
 
   return (
     <div className="space-y-6">
@@ -14,7 +25,7 @@ export default async function SettingsPage() {
         <CardHeader>
           <CardTitle>Settings & Accessibility</CardTitle>
           <CardDescription>
-            Tune contrast, color assistance, and layout density for your companion-tracker setup. All controls are keyboard accessible.
+            Tune contrast, accent color, and color assistance for your companion-tracker setup. Density and Session Assist controls live in the Command Hub.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -81,6 +92,20 @@ export default async function SettingsPage() {
           </ul>
         </CardContent>
       </Card>
+
+      {canManageWorkbookImport ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Workbook Import</CardTitle>
+            <CardDescription>
+              Upload a workbook to publish a new tracker dataset version and migrate matchable progress when possible.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AdminImportForm />
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>

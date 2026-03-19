@@ -19,10 +19,10 @@ const links = [
   { href: "/summary", label: "Summary", icon: Sparkles },
   { href: "/achievements", label: "Achievements", icon: Award, requiresAuth: true },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
-  { href: "/1-star", label: "☆", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
-  { href: "/2-star", label: "☆☆", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
-  { href: "/3-star", label: "☆☆☆", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
-  { href: "/4-star", label: "☆☆☆☆", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
+  { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
+  { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
+  { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
+  { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
   { href: "/still-need", label: "Still Need", icon: ClipboardList }
 ];
 

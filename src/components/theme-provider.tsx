@@ -4,16 +4,22 @@ import * as React from "react";
 
 type ThemeMode = "light" | "dark" | "system";
 type ColorBlindMode = "none" | "deuteranopia" | "protanopia" | "tritanopia" | "high-contrast";
+type ScanlineMode = "off" | "soft" | "balanced" | "strong";
+type UiTone = "neutral" | "vault" | "copper" | "olive" | "rose";
 
 type ThemeContextValue = {
   theme: ThemeMode;
   accent: string;
   colorBlind: ColorBlindMode;
   density: "comfortable" | "compact";
+  scanlineMode: ScanlineMode;
+  uiTone: UiTone;
   setTheme: (theme: ThemeMode) => void;
   setAccent: (accent: string) => void;
   setColorBlind: (mode: ColorBlindMode) => void;
   setDensity: (density: "comfortable" | "compact") => void;
+  setScanlineMode: (mode: ScanlineMode) => void;
+  setUiTone: (tone: UiTone) => void;
 };
 
 const ThemeContext = React.createContext<ThemeContextValue | undefined>(undefined);
@@ -22,6 +28,8 @@ const THEME_KEY = "roll-theme";
 const ACCENT_KEY = "roll-accent";
 const COLORBLIND_KEY = "roll-colorblind";
 const DENSITY_KEY = "roll-density";
+const SCANLINE_KEY = "roll-scanline-mode";
+const UI_TONE_KEY = "roll-ui-tone";
 
 function resolveTheme(theme: ThemeMode): "light" | "dark" {
   if (theme !== "system") return theme;
@@ -48,6 +56,8 @@ export function ThemeProvider({
   const [accent, setAccentState] = React.useState<string>(defaultAccent);
   const [colorBlind, setColorBlindState] = React.useState<ColorBlindMode>(defaultColorBlind);
   const [density, setDensityState] = React.useState<"comfortable" | "compact">(defaultDensity);
+  const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>("balanced");
+  const [uiTone, setUiToneState] = React.useState<UiTone>("neutral");
   const hydrated = React.useRef(false);
 
   React.useEffect(() => {
@@ -57,15 +67,21 @@ export function ThemeProvider({
     const storedAccent = window.localStorage.getItem(ACCENT_KEY);
     const storedColorBlind = window.localStorage.getItem(COLORBLIND_KEY) as ColorBlindMode | null;
     const storedDensity = window.localStorage.getItem(DENSITY_KEY) as "comfortable" | "compact" | null;
+    const storedScanline = window.localStorage.getItem(SCANLINE_KEY) as ScanlineMode | null;
+    const storedUiTone = window.localStorage.getItem(UI_TONE_KEY) as UiTone | null;
     if (preferDefaults) {
       setThemeState(defaultTheme);
       setAccentState(defaultAccent);
       setColorBlindState(defaultColorBlind);
       setDensityState(defaultDensity);
+      setScanlineModeState("balanced");
+      setUiToneState("neutral");
       window.localStorage.setItem(THEME_KEY, defaultTheme);
       window.localStorage.setItem(ACCENT_KEY, defaultAccent);
       window.localStorage.setItem(COLORBLIND_KEY, defaultColorBlind);
       window.localStorage.setItem(DENSITY_KEY, defaultDensity);
+      window.localStorage.setItem(SCANLINE_KEY, "balanced");
+      window.localStorage.setItem(UI_TONE_KEY, "neutral");
       return;
     }
     if (storedTheme) {
@@ -79,6 +95,12 @@ export function ThemeProvider({
     }
     if (storedDensity === "compact" || storedDensity === "comfortable") {
       setDensityState(storedDensity);
+    }
+    if (storedScanline === "off" || storedScanline === "soft" || storedScanline === "balanced" || storedScanline === "strong") {
+      setScanlineModeState(storedScanline);
+    }
+    if (storedUiTone === "neutral" || storedUiTone === "vault" || storedUiTone === "copper" || storedUiTone === "olive" || storedUiTone === "rose") {
+      setUiToneState(storedUiTone);
     }
   }, [defaultAccent, defaultColorBlind, defaultDensity, defaultTheme, preferDefaults]);
 
@@ -103,18 +125,32 @@ export function ThemeProvider({
     window.localStorage.setItem(DENSITY_KEY, density);
   }, [density]);
 
+  React.useEffect(() => {
+    document.documentElement.setAttribute("data-scanlines", scanlineMode);
+    window.localStorage.setItem(SCANLINE_KEY, scanlineMode);
+  }, [scanlineMode]);
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute("data-ui-tone", uiTone);
+    window.localStorage.setItem(UI_TONE_KEY, uiTone);
+  }, [uiTone]);
+
   const value = React.useMemo(
     () => ({
       theme,
       accent,
       colorBlind,
       density,
+      scanlineMode,
+      uiTone,
       setTheme: setThemeState,
       setAccent: setAccentState,
       setColorBlind: setColorBlindState,
-      setDensity: setDensityState
+      setDensity: setDensityState,
+      setScanlineMode: setScanlineModeState,
+      setUiTone: setUiToneState
     }),
-    [theme, accent, colorBlind, density]
+    [theme, accent, colorBlind, density, scanlineMode, uiTone]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

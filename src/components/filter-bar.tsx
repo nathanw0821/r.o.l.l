@@ -51,15 +51,15 @@ function FilterDropdown({
         )}
       >
         <span className="text-foreground">{label}</span>
-        {count > 0 ? <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-black">{count}</span> : null}
+        {count > 0 ? <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-[color:var(--text-primary)]">{count}</span> : null}
       </summary>
-      <div className="absolute left-0 z-20 mt-2 w-56 rounded-[var(--radius)] border border-border bg-panel p-2 shadow-lg">
+      <div className="absolute left-0 z-20 mt-2 w-56 rounded-[var(--radius)] border border-border bg-panel p-2 shadow-panel">
         {options.length === 0 ? (
           <div className="px-2 py-1 text-xs text-foreground/60">{emptyLabel ?? "No options"}</div>
         ) : (
           <div className="space-y-1">
             {options.map((option) => (
-              <label key={option.value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-panel/70">
+              <label key={option.value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-accentMuted/20">
                 <input
                   type="checkbox"
                   checked={selected.includes(option.value)}

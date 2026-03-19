@@ -16,7 +16,7 @@ module.exports = {
         danger: "var(--color-danger)"
       },
       boxShadow: {
-        panel: "0 1px 0 rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.12)"
+        panel: "var(--shadow-panel)"
       }
     }
   },
