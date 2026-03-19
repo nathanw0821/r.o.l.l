@@ -35,35 +35,6 @@ export default async function HomePage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Links</CardTitle>
-          <CardDescription>Jump straight into your next crafting session.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-3 text-sm">
-            {[
-              ["All Effects", "/all-effects"],
-              ["1 Star", "/1-star"],
-              ["2 Star", "/2-star"],
-              ["3 Star", "/3-star"],
-              ["4 Star", "/4-star"],
-              ["Still Need", "/still-need"],
-              ["Settings", "/settings"],
-              ["Admin Import", "/admin-import"]
-            ].map(([label, href]) => (
-              <Link
-                key={href}
-                href={href}
-                className="rounded-[var(--radius)] border border-border px-3 py-1.5 hover:border-accent"
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {!session ? (
         <Card>
           <CardHeader>

@@ -9,9 +9,9 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  default: "bg-accent text-black hover:brightness-105",
+  default: "bg-accent text-black hover:brightness-105 shadow-[0_0_16px_rgba(63,141,93,0.18)]",
   secondary: "bg-panel text-foreground border border-border hover:bg-accentMuted",
-  outline: "border border-border text-foreground hover:border-accent",
+  outline: "border border-border text-foreground hover:border-accent hover:shadow-[0_0_0_1px_var(--color-accent)]",
   ghost: "text-foreground hover:bg-accentMuted"
 };
 

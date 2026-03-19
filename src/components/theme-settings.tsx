@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
 import { Button } from "@/components/ui/button";
@@ -13,8 +12,7 @@ const accents = [
 ] as const;
 
 export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
-  const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
-  const [density, setDensity] = React.useState("comfortable");
+  const { theme, accent, colorBlind, density, setTheme, setAccent, setColorBlind, setDensity } = useThemeSettings();
 
   async function persistSettings(next: { theme?: string; accent?: string; density?: string; colorBlind?: string }) {
     if (!canPersist) return;
@@ -109,7 +107,7 @@ export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
               size="sm"
               variant={density === option.value ? "default" : "outline"}
               onClick={() => {
-                setDensity(option.value);
+                setDensity(option.value as "comfortable" | "compact");
                 persistSettings({ density: option.value });
               }}
             >

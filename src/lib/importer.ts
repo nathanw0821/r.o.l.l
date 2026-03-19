@@ -1,8 +1,10 @@
 import fs from "fs";
 import path from "path";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { normalizeNoteValue, parseUnlockedValue } from "@/lib/import-normalize";
+import { convertXlsToXlsx } from "@/lib/convert-xls";
 
 export type ImportError = {
   type: "missing-sheet" | "header-mismatch" | "invalid" | "exception";
@@ -34,13 +36,16 @@ const canonicalRowSchema = z.object({
 });
 
 function readExpectedSheetsFromTsv(): ExpectedSheet[] {
-  const root = process.cwd();
+  const dataRoot = path.join(process.cwd(), "data");
+  if (!fs.existsSync(dataRoot)) {
+    return [];
+  }
   const files = fs
-    .readdirSync(root)
+    .readdirSync(dataRoot)
     .filter((name) => name.toLowerCase().endsWith(".txt"));
 
   return files.map((fileName) => {
-    const fullPath = path.join(root, fileName);
+    const fullPath = path.join(dataRoot, fileName);
     const firstLine = fs.readFileSync(fullPath, "utf8").split(/\r?\n/)[0] ?? "";
     const header = firstLine.split("\t");
     const baseName = fileName.replace(/\.txt$/i, "");
@@ -58,6 +63,27 @@ function readExpectedSheetsFromTsv(): ExpectedSheet[] {
 
 function normalizeHeader(raw: unknown[]): string[] {
   return raw.map((value) => (value === null || value === undefined ? "" : String(value)));
+}
+
+function normalizeSheetName(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function getSheetAliases(name: string): string[] {
+  const aliases = new Set<string>();
+  aliases.add(name);
+
+  const dashParts = name.split(" - ");
+  if (dashParts.length > 1) {
+    aliases.add(dashParts[dashParts.length - 1]);
+  }
+
+  const prefix = "Fallout76 Tracker Personal - ";
+  if (name.startsWith(prefix)) {
+    aliases.add(name.slice(prefix.length));
+  }
+
+  return Array.from(aliases);
 }
 
 function getHeaderMismatch(expected: string[], actual: string[]) {
@@ -99,15 +125,16 @@ function toIntOrNull(raw?: string | number): number | undefined {
 function buildHeaderIndex(header: string[]) {
   const map = new Map<string, number>();
   header.forEach((name, index) => {
-    if (!map.has(name)) {
-      map.set(name, index);
+    const key = name.trim().toLowerCase();
+    if (!map.has(key)) {
+      map.set(key, index);
     }
   });
   return map;
 }
 
 function getColumnValue(row: (string | number | boolean | null)[], headerIndex: Map<string, number>, name: string) {
-  const index = headerIndex.get(name);
+  const index = headerIndex.get(name.trim().toLowerCase());
   if (index === undefined) return undefined;
   const value = row[index];
   if (value === null || value === undefined) return undefined;
@@ -224,54 +251,143 @@ async function cleanupDatasetVersion(datasetVersionId: string) {
   });
 }
 
-function parseWorkbook(buffer: Buffer): ParsedSheet[] {
-  const workbook = XLSX.read(buffer, { type: "buffer", raw: true });
-  return workbook.SheetNames.map((name) => {
-    const sheet = workbook.Sheets[name];
-    const rows = XLSX.utils.sheet_to_json<(string | number | boolean | null)[]>(sheet, {
-      header: 1,
-      raw: true,
-      defval: null
-    });
-    const header = normalizeHeader(rows[0] ?? []);
-    const dataRows = rows.slice(1);
+function normalizeCellValue(value: ExcelJS.CellValue): string | number | boolean | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return value;
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === "object") {
+    const typed = value as {
+      text?: string;
+      richText?: { text?: string }[];
+      result?: string | number | boolean | null;
+      hyperlink?: string;
+    };
+    if (typeof typed.text === "string") return typed.text;
+    if (Array.isArray(typed.richText)) {
+      return typed.richText.map((part) => part.text ?? "").join("");
+    }
+    if (typeof typed.result === "string" || typeof typed.result === "number" || typeof typed.result === "boolean") {
+      return typed.result;
+    }
+    if (typeof typed.hyperlink === "string") return typed.hyperlink;
+  }
+  return String(value);
+}
 
-    return { name, header, rows: dataRows };
+async function parseWorkbook(buffer: Buffer): Promise<ParsedSheet[]> {
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
+
+  return workbook.worksheets.map((worksheet) => {
+    const rows: (string | number | boolean | null)[][] = [];
+    let header: string[] = [];
+
+    worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+      const values = Array.isArray(row.values) ? row.values.slice(1) : [];
+      const normalized = values.map((value) => normalizeCellValue(value as ExcelJS.CellValue));
+      if (rowNumber === 1) {
+        header = normalizeHeader(normalized);
+      } else {
+        rows.push(normalized);
+      }
+    });
+
+    return { name: worksheet.name, header, rows };
   });
 }
 
-export async function importWorkbook(buffer: Buffer, filename: string) {
-  const errors: ImportError[] = [];
-  const expectedSheets = readExpectedSheetsFromTsv();
-  const parsedSheets = parseWorkbook(buffer);
+function findParsedMatch(expected: ExpectedSheet, parsedSheets: ParsedSheet[], usedSheets: Set<string>) {
+  const aliasKeys = getSheetAliases(expected.name).map(normalizeSheetName);
+  for (const sheet of parsedSheets) {
+    if (usedSheets.has(sheet.name)) continue;
+    if (aliasKeys.includes(normalizeSheetName(sheet.name))) {
+      return sheet;
+    }
+  }
 
-  const expectedMap = new Map(expectedSheets.map((sheet) => [sheet.name, sheet]));
-  const parsedMap = new Map(parsedSheets.map((sheet) => [sheet.name, sheet]));
+  const headerMatches = parsedSheets.filter((sheet) => {
+    if (usedSheets.has(sheet.name)) return false;
+    return getHeaderMismatch(expected.header, sheet.header) === null;
+  });
+
+  if (headerMatches.length === 1) {
+    return headerMatches[0];
+  }
+
+  return undefined;
+}
+
+export async function importWorkbook(buffer: Buffer, filename: string, userId?: string) {
+  const errors: ImportError[] = [];
+  const baselineCounts = {
+    yes: 0,
+    no: 0,
+    unknown: 0,
+    total: 0
+  };
+  const userBaselineMap = new Map<string, boolean>();
+
+  let workingBuffer = buffer;
+  let workingName = filename;
+  const lowerName = filename.toLowerCase();
+  if (lowerName.endsWith(".xls") && !lowerName.endsWith(".xlsx")) {
+    const converted = await convertXlsToXlsx(buffer, filename);
+    if (!converted.ok) {
+      errors.push({ type: "invalid", message: converted.message });
+      return { ok: false, errors } as const;
+    }
+    workingBuffer = converted.buffer;
+    workingName = converted.filename;
+  }
+  const audit = await prisma.importAudit.create({
+    data: {
+      userId: userId ?? null,
+      filename,
+      status: "started"
+    }
+  });
+  const expectedSheets = readExpectedSheetsFromTsv();
+  const parsedSheets = await parseWorkbook(workingBuffer);
+
+  const matches = [] as { expected: ExpectedSheet; parsed: ParsedSheet }[];
+  const usedSheets = new Set<string>();
 
   for (const expected of expectedSheets) {
-    if (expected.required && !parsedMap.has(expected.name)) {
+    const matched = findParsedMatch(expected, parsedSheets, usedSheets);
+    if (!matched) {
+      if (!expected.required) continue;
       errors.push({
         type: "missing-sheet",
         sheet: expected.name,
         message: `Missing required sheet: ${expected.name}`
       });
+      continue;
     }
+    usedSheets.add(matched.name);
+    matches.push({ expected, parsed: matched });
   }
 
-  for (const [name, sheet] of parsedMap.entries()) {
-    const expected = expectedMap.get(name);
-    if (!expected) continue;
-    const mismatch = getHeaderMismatch(expected.header, sheet.header);
+  for (const { expected, parsed } of matches) {
+    const mismatch = getHeaderMismatch(expected.header, parsed.header);
     if (mismatch) {
       errors.push({
         type: "header-mismatch",
-        sheet: name,
+        sheet: parsed.name,
         message: mismatch
       });
     }
   }
 
   if (errors.length > 0) {
+    await prisma.importAudit.update({
+      where: { id: audit.id },
+      data: {
+        status: "failed",
+        errorCount: errors.length,
+        errorSummary: errors,
+        completedAt: new Date()
+      }
+    });
     return { ok: false, errors } as const;
   }
 
@@ -282,18 +398,21 @@ export async function importWorkbook(buffer: Buffer, filename: string) {
 
   const datasetVersion = await prisma.datasetVersion.create({
     data: {
-      label: `${path.basename(filename, path.extname(filename))} ${new Date().toISOString()}`,
+      label: `${path.basename(workingName, path.extname(workingName))} ${new Date().toISOString()}`,
       sourceType: "xlsx",
       isActive: true
     }
   });
 
+  await prisma.importAudit.update({
+    where: { id: audit.id },
+    data: { datasetVersionId: datasetVersion.id }
+  });
+
   const canonicalSheet = expectedSheets.find((sheet) => sheet.canonical)?.name;
 
   try {
-    for (const parsed of parsedSheets) {
-      const expected = expectedMap.get(parsed.name);
-      if (!expected) continue;
+    for (const { expected, parsed } of matches) {
 
       const sourceDataset = await prisma.sourceDataset.create({
         data: {
@@ -324,12 +443,12 @@ export async function importWorkbook(buffer: Buffer, filename: string) {
           extraComponent: getColumnValue(rawColumns, headerIndex, "Extra Component") ?? undefined,
           legendaryModules: toIntOrNull(getColumnValue(rawColumns, headerIndex, "Legendary Modules")),
           unlockedRaw: getColumnValue(rawColumns, headerIndex, "Unlocked") ?? undefined,
-          notes: getColumnValue(rawColumns, headerIndex, "Notes") ?? undefined,
+          notes: normalizeNoteValue(getColumnValue(rawColumns, headerIndex, "Notes")) ?? undefined,
           effectTierId: undefined as string | undefined
         };
       });
 
-      if (expected.canonical && parsed.name === canonicalSheet) {
+      if (expected.canonical && expected.name === canonicalSheet) {
         for (const row of rowsToInsert) {
           const parsedRow = canonicalRowSchema.safeParse({
             tier: row.tierLabel,
@@ -361,6 +480,15 @@ export async function importWorkbook(buffer: Buffer, filename: string) {
 
           row.effectTierId = effectTier.id;
 
+          const parsedUnlock = parseUnlockedValue(row.unlockedRaw ?? undefined);
+          if (parsedUnlock === true) baselineCounts.yes += 1;
+          else if (parsedUnlock === false) baselineCounts.no += 1;
+          else baselineCounts.unknown += 1;
+          baselineCounts.total += 1;
+          if (userId && parsedUnlock !== null) {
+            userBaselineMap.set(effectTier.id, parsedUnlock);
+          }
+
           const categoryNames = splitCategories(categories);
           if (categoryNames.length > 0) {
             const joinRows = [] as { effectTierId: string; categoryId: number }[];
@@ -386,14 +514,44 @@ export async function importWorkbook(buffer: Buffer, filename: string) {
       await migrateProgress(previous.id, datasetVersion.id);
       await prisma.datasetVersion.update({ where: { id: previous.id }, data: { isActive: false } });
     }
+
+    if (userId && userBaselineMap.size > 0) {
+      const baselineRows = Array.from(userBaselineMap.entries()).map(([effectTierId, unlocked]) => ({
+        userId,
+        datasetVersionId: datasetVersion.id,
+        effectTierId,
+        unlocked
+      }));
+      await prisma.userImportBaseline.deleteMany({
+        where: { userId, datasetVersionId: datasetVersion.id }
+      });
+      await prisma.userImportBaseline.createMany({ data: baselineRows });
+    }
   } catch (error) {
     errors.push({
       type: "exception",
       message: error instanceof Error ? error.message : "Unknown import error"
     });
     await cleanupDatasetVersion(datasetVersion.id);
+    await prisma.importAudit.update({
+      where: { id: audit.id },
+      data: {
+        status: "failed",
+        errorCount: errors.length,
+        errorSummary: errors,
+        completedAt: new Date()
+      }
+    });
     return { ok: false, errors } as const;
   }
 
-  return { ok: true, datasetVersionId: datasetVersion.id } as const;
+  await prisma.importAudit.update({
+    where: { id: audit.id },
+    data: {
+      status: "success",
+      errorCount: 0,
+      completedAt: new Date()
+    }
+  });
+  return { ok: true, datasetVersionId: datasetVersion.id, baseline: baselineCounts } as const;
 }

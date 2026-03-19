@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { applyImportedProfile } from "@/lib/profile";
 import { z } from "zod";
 
 const toggleSchema = z.object({
@@ -40,6 +41,64 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
   });
 
   revalidatePath("/");
+  revalidatePath("/all-effects");
+  revalidatePath("/1-star");
+  revalidatePath("/2-star");
+  revalidatePath("/3-star");
+  revalidatePath("/4-star");
+  revalidatePath("/still-need");
+  revalidatePath("/summary");
+}
+
+export async function resetToImportedProfile() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  await applyImportedProfile(session.user.id, { force: true });
+
+  revalidatePath("/");
+  revalidatePath("/summary");
+  revalidatePath("/all-effects");
+  revalidatePath("/1-star");
+  revalidatePath("/2-star");
+  revalidatePath("/3-star");
+  revalidatePath("/4-star");
+  revalidatePath("/still-need");
+}
+
+export async function resetToPublicDefaults() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  const dataset = await prisma.datasetVersion.findFirst({
+    where: { isActive: true },
+    orderBy: { importedAt: "desc" }
+  });
+
+  if (dataset) {
+    await prisma.userProgress.deleteMany({
+      where: { userId: session.user.id, effectTier: { datasetVersionId: dataset.id } }
+    });
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { profileDatasetVersionId: dataset.id }
+    });
+  } else {
+    await prisma.userProgress.deleteMany({
+      where: { userId: session.user.id }
+    });
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { profileDatasetVersionId: null }
+    });
+  }
+
+  revalidatePath("/");
+  revalidatePath("/summary");
   revalidatePath("/all-effects");
   revalidatePath("/1-star");
   revalidatePath("/2-star");

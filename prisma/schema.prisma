@@ -1,48 +1,42 @@
-// Prisma schema for R.O.L.L.
-
-datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// -----------------------------
-// Dataset versions (raw source + normalized)
-// -----------------------------
-model DatasetVersion {
-  id          String        @id @default(cuid())
-  label       String
-  sourceType  String
-  importedAt  DateTime      @default(now())
-  isActive    Boolean       @default(true)
-  sheets      SourceDataset[]
-  effects     Effect[]
-  effectTiers EffectTier[]
+datasource db {
+  provider = "postgresql"
 }
 
-// -----------------------------
-// Source dataset (raw rows)
-// -----------------------------
+model DatasetVersion {
+  id           String          @id @default(cuid())
+  label        String
+  sourceType   String
+  sourceName   String?
+  sourceUrl    String?
+  syncMetadata Json?
+  importedAt   DateTime        @default(now())
+  isActive     Boolean         @default(true)
+  effects      Effect[]
+  effectTiers  EffectTier[]
+  importAudits ImportAudit[]
+  sheets       SourceDataset[]
+}
+
 model SourceDataset {
-  id               String           @id @default(cuid())
+  id               String            @id @default(cuid())
   datasetVersionId String
   name             String
   sourcePath       String?
-  canonical        Boolean          @default(false)
+  canonical        Boolean           @default(false)
   headerColumns    Json?
-  createdAt        DateTime         @default(now())
+  createdAt        DateTime          @default(now())
+  datasetVersion   DatasetVersion    @relation(fields: [datasetVersionId], references: [id])
   rows             SourceEffectRow[]
-
-  datasetVersion   DatasetVersion   @relation(fields: [datasetVersionId], references: [id])
 
   @@unique([datasetVersionId, name])
 }
 
 model SourceEffectRow {
-  id               String       @id @default(cuid())
+  id               String        @id @default(cuid())
   datasetId        String
   rowIndex         Int
   rawColumns       Json
@@ -54,19 +48,13 @@ model SourceEffectRow {
   legendaryModules Int?
   unlockedRaw      String?
   notes            String?
-
-  // Optional link to normalized entry
   effectTierId     String?
-
   dataset          SourceDataset @relation(fields: [datasetId], references: [id])
   effectTier       EffectTier?   @relation(fields: [effectTierId], references: [id])
 
   @@unique([datasetId, rowIndex])
 }
 
-// -----------------------------
-// Normalized app dataset
-// -----------------------------
 model Tier {
   id      Int          @id @default(autoincrement())
   label   String       @unique
@@ -74,12 +62,11 @@ model Tier {
 }
 
 model Effect {
-  id               String       @id @default(cuid())
+  id               String         @id @default(cuid())
   datasetVersionId String
   name             String
-  tiers            EffectTier[]
-
   datasetVersion   DatasetVersion @relation(fields: [datasetVersionId], references: [id])
+  tiers            EffectTier[]
 
   @@unique([datasetVersionId, name])
 }
@@ -93,13 +80,13 @@ model EffectTier {
   extraComponent   String?
   legendaryModules Int?
   notes            String?
-
+  datasetVersion   DatasetVersion       @relation(fields: [datasetVersionId], references: [id])
   effect           Effect               @relation(fields: [effectId], references: [id])
   tier             Tier                 @relation(fields: [tierId], references: [id])
-  datasetVersion   DatasetVersion       @relation(fields: [datasetVersionId], references: [id])
-  sourceRows       SourceEffectRow[]
   categories       EffectTierCategory[]
+  sourceRows       SourceEffectRow[]
   progress         UserProgress[]
+  importBaselines  UserImportBaseline[]
 
   @@unique([datasetVersionId, effectId, tierId])
 }
@@ -113,25 +100,28 @@ model Category {
 model EffectTierCategory {
   effectTierId String
   categoryId   Int
-
-  effectTier   EffectTier @relation(fields: [effectTierId], references: [id])
   category     Category   @relation(fields: [categoryId], references: [id])
+  effectTier   EffectTier @relation(fields: [effectTierId], references: [id])
 
   @@id([effectTierId, categoryId])
 }
 
-// -----------------------------
-// User progress (separate from source)
-// -----------------------------
 model User {
   id            String         @id @default(cuid())
+  username      String?        @unique
+  passwordHash  String?
+  authCode      String?
+  secondaryCode String?        @unique
+  profileDatasetVersionId String?
   name          String?
   email         String?        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
+  importAudits  ImportAudit[]
   sessions      Session[]
   progress      UserProgress[]
+  importBaseline UserImportBaseline[]
   settings      UserSettings?
 }
 
@@ -148,8 +138,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -159,8 +148,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -172,26 +160,81 @@ model VerificationToken {
 }
 
 model UserSettings {
-  id         String  @id @default(cuid())
-  userId     String  @unique
-  theme      String  @default("system")
-  accent     String  @default("ember")
-  density    String  @default("comfortable")
-  colorBlind String  @default("none")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String @id @default(cuid())
+  userId     String @unique
+  theme      String @default("system")
+  accent     String @default("ember")
+  density    String @default("comfortable")
+  colorBlind String @default("none")
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserProgress {
-  id           String   @id @default(cuid())
+  id           String     @id @default(cuid())
   userId       String
   effectTierId String
-  unlocked     Boolean  @default(false)
+  unlocked     Boolean    @default(false)
   notes        String?
-  updatedAt    DateTime @updatedAt
-
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt    DateTime   @updatedAt
   effectTier   EffectTier @relation(fields: [effectTierId], references: [id])
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, effectTierId])
+}
+
+model UserImportBaseline {
+  id               String     @id @default(cuid())
+  userId           String
+  datasetVersionId String
+  effectTierId     String
+  unlocked         Boolean
+  createdAt        DateTime   @default(now())
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  effectTier       EffectTier @relation(fields: [effectTierId], references: [id])
+
+  @@unique([userId, effectTierId])
+  @@index([userId, datasetVersionId])
+}
+
+model ImportAudit {
+  id               String          @id @default(cuid())
+  userId           String?
+  datasetVersionId String?
+  filename         String
+  status           String
+  errorCount       Int             @default(0)
+  errorSummary     Json?
+  createdAt        DateTime        @default(now())
+  completedAt      DateTime?
+  datasetVersion   DatasetVersion? @relation(fields: [datasetVersionId], references: [id])
+  user             User?           @relation(fields: [userId], references: [id])
+}
+
+model SyncSource {
+  id           String   @id @default(cuid())
+  name         String
+  kind         String
+  url          String?
+  format       String?
+  enabled      Boolean  @default(true)
+  lastSyncedAt DateTime?
+  lastStatus   String?
+  lastError    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  runs         SyncRun[]
+
+  @@unique([name])
+}
+
+model SyncRun {
+  id               String   @id @default(cuid())
+  status           String
+  startedAt        DateTime @default(now())
+  completedAt      DateTime?
+  summary          Json?
+  errorSummary     Json?
+  datasetVersionId String?
+  sourceId         String?
+  source           SyncSource? @relation(fields: [sourceId], references: [id], onDelete: Cascade)
 }

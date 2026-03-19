@@ -1,0 +1,397 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useFilters } from "@/components/filter-context";
+import { cn } from "@/lib/utils";
+import { useThemeSettings } from "@/components/theme-provider";
+import { updateUserSettings } from "@/actions/settings";
+
+type CommandHubProps = {
+  summary: { total: number; unlocked: number; percent: number };
+  dataset?: {
+    importedAt?: string | null;
+    sourceType?: string | null;
+    sourceName?: string | null;
+  } | null;
+};
+
+export default function CommandHub({ summary, dataset }: CommandHubProps) {
+  const { data: session } = useSession();
+  const {
+    query,
+    setQuery,
+    sourceFilters,
+    statusFilters,
+    originFilters,
+    categoryFilters,
+    originOptions,
+    clearFilters,
+    toggleSource,
+    toggleStatus,
+    toggleOrigin,
+    toggleCategory
+  } = useFilters();
+  const [expanded, setExpanded] = React.useState(false);
+  const [scanlines, setScanlines] = React.useState(true);
+  const [animateBars, setAnimateBars] = React.useState(false);
+  const [hydrated, setHydrated] = React.useState(false);
+  const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
+  const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
+  const hasActiveFilters =
+    query.trim().length > 0 ||
+    sourceFilters.length > 0 ||
+    statusFilters.length > 0 ||
+    originFilters.length > 0 ||
+    categoryFilters.length > 0;
+
+  const locked = Math.max(summary.total - summary.unlocked, 0);
+  const unlockedPercent = summary.total > 0 ? Math.round((summary.unlocked / summary.total) * 100) : 0;
+  const lockedPercent = 100 - unlockedPercent;
+  const lastSynced = dataset?.importedAt ? new Date(dataset.importedAt).toLocaleString() : "Unknown";
+  const displayLastSynced = hydrated ? lastSynced : "Loading...";
+  const isSignedIn = hydrated && Boolean(session);
+
+  React.useEffect(() => {
+    setAnimateBars(true);
+  }, []);
+
+  React.useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  React.useEffect(() => {
+    const stored = window.localStorage.getItem("roll.scanlines");
+    if (stored === "off") {
+      setScanlines(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    document.documentElement.dataset.scanlines = scanlines ? "on" : "off";
+    window.localStorage.setItem("roll.scanlines", scanlines ? "on" : "off");
+  }, [scanlines]);
+
+  async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
+    if (!session) return;
+    await updateUserSettings({
+      theme: next.theme as "light" | "dark" | "system" | undefined,
+      accent: next.accent as "ember" | "vault" | "radburst" | "glow" | undefined,
+      colorBlind: next.colorBlind as
+        | "none"
+        | "deuteranopia"
+        | "protanopia"
+        | "tritanopia"
+        | "high-contrast"
+        | undefined
+    });
+  }
+
+  return (
+    <div className={cn("command-hub", expanded && "command-hub--open")}>
+      <div className="command-hub__bar">
+        <div className="command-hub__search">
+          <Search className="h-4 w-4 text-foreground/50" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search effects, tiers, origins"
+            className="w-full bg-transparent text-sm text-foreground placeholder:text-foreground/40 focus:outline-none"
+          />
+        </div>
+        <div className="command-hub__stat">
+          <div className="text-[10px] uppercase text-foreground/50">Completion</div>
+          <div className="text-base font-semibold">{summary.percent}%</div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setExpanded((value) => !value)}
+          className="command-hub__expand"
+          aria-expanded={expanded}
+        >
+          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </button>
+      </div>
+
+      <div className="command-hub__body">
+        <section className="hub-zone">
+          <div className="hub-zone__title">
+            <Zap className="h-4 w-4" />
+            Data Overview
+          </div>
+          <div className="hub-metric">
+            <div className="flex items-center justify-between text-xs text-foreground/60">
+              <span>Unlocked</span>
+              <span>{summary.unlocked} / {summary.total}</span>
+            </div>
+            <div className="hub-bar">
+              <div
+                className="hub-bar__fill hub-bar__fill--success"
+                style={{ width: animateBars ? `${unlockedPercent}%` : "0%" }}
+              />
+            </div>
+          </div>
+          <div className="hub-metric">
+            <div className="flex items-center justify-between text-xs text-foreground/60">
+              <span>Locked</span>
+              <span>{locked}</span>
+            </div>
+            <div className="hub-bar">
+              <div
+                className="hub-bar__fill hub-bar__fill--warning"
+                style={{ width: animateBars ? `${lockedPercent}%` : "0%" }}
+              />
+            </div>
+          </div>
+          <div className="mt-3 rounded-[var(--radius)] border border-border bg-panel/80 px-3 py-2 text-xs text-foreground/60">
+            Data source: {dataset?.sourceName ?? dataset?.sourceType ?? "Unknown"}
+            <div>Last synced: {displayLastSynced}</div>
+          </div>
+        </section>
+
+        <section className="hub-zone">
+          <div className="hub-zone__title">
+            <SlidersHorizontal className="h-4 w-4" />
+            Interaction
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Source</div>
+            <div className="hub-options">
+              {(["default", "imported", "edited"] as const).map((source) => (
+                <label key={source} className="hub-option">
+                  <input
+                    type="checkbox"
+                    checked={sourceFilters.includes(source)}
+                    onChange={() => toggleSource(source)}
+                    className="h-4 w-4 accent-[var(--accent)]"
+                  />
+                  <span>{source}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Status</div>
+            <div className="hub-options">
+              {(["unlocked", "locked"] as const).map((status) => (
+                <label key={status} className="hub-option">
+                  <input
+                    type="checkbox"
+                    checked={statusFilters.includes(status)}
+                    onChange={() => toggleStatus(status)}
+                    className="h-4 w-4 accent-[var(--accent)]"
+                  />
+                  <span>{status}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Origins</div>
+            <div className="hub-options hub-options--scroll">
+              {originOptions.length === 0 ? (
+                <div className="text-xs text-foreground/40">No origins detected.</div>
+              ) : (
+                originOptions.map((origin) => (
+                  <label key={origin} className="hub-option">
+                    <input
+                      type="checkbox"
+                      checked={originFilters.includes(origin)}
+                      onChange={() => toggleOrigin(origin)}
+                      className="h-4 w-4 accent-[var(--accent)]"
+                    />
+                    <span>{origin}</span>
+                  </label>
+                ))
+              )}
+            </div>
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Categories</div>
+            <div className="hub-options">
+              {categoryOptions.map((category) => (
+                <label key={category} className="hub-option">
+                  <input
+                    type="checkbox"
+                    checked={categoryFilters.includes(category)}
+                    onChange={() => toggleCategory(category)}
+                    className="h-4 w-4 accent-[var(--accent)]"
+                  />
+                  <span>{category}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={clearFilters}>
+              Clear filters
+            </Button>
+          </div>
+          {hasActiveFilters ? (
+            <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-foreground/60">
+              {query.trim().length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
+                >
+                  Search: {query} x
+                </button>
+              ) : null}
+              {sourceFilters.map((source) => (
+                <button
+                  key={`source-${source}`}
+                  type="button"
+                  onClick={() => toggleSource(source)}
+                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
+                >
+                  Source: {source} x
+                </button>
+              ))}
+              {statusFilters.map((status) => (
+                <button
+                  key={`status-${status}`}
+                  type="button"
+                  onClick={() => toggleStatus(status)}
+                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
+                >
+                  Status: {status} x
+                </button>
+              ))}
+              {categoryFilters.map((category) => (
+                <button
+                  key={`category-${category}`}
+                  type="button"
+                  onClick={() => toggleCategory(category)}
+                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
+                >
+                  Category: {category} x
+                </button>
+              ))}
+              {originFilters.map((origin) => (
+                <button
+                  key={`origin-${origin}`}
+                  type="button"
+                  onClick={() => toggleOrigin(origin)}
+                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
+                >
+                  Origin: {origin} x
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </section>
+
+        <section className="hub-zone">
+          <div className="hub-zone__title">System</div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Theme</div>
+            <div className="flex flex-wrap gap-2">
+              {(["dark", "light"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => {
+                    setTheme(value);
+                    persistSettings({ theme: value });
+                  }}
+                  className={cn(
+                    "rounded-full border px-2 py-1 text-xs",
+                    theme === value
+                      ? "border-accent text-foreground"
+                      : "border-border text-foreground/60 hover:border-accent"
+                  )}
+                >
+                  {value}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Accent</div>
+            <div className="flex flex-wrap gap-2">
+              {(["ember", "vault", "glow"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => {
+                    setAccent(value);
+                    persistSettings({ accent: value });
+                  }}
+                  className={cn(
+                    "rounded-full border px-2 py-1 text-xs capitalize",
+                    accent === value
+                      ? "border-accent text-foreground"
+                      : "border-border text-foreground/60 hover:border-accent"
+                  )}
+                >
+                  {value}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Color Assistance</div>
+            <select
+              value={colorBlind}
+              onChange={(event) => {
+                setColorBlind(event.target.value as typeof colorBlind);
+                persistSettings({ colorBlind: event.target.value });
+              }}
+              className="w-full rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-xs"
+            >
+              <option value="none">Default</option>
+              <option value="deuteranopia">Deuteranopia</option>
+              <option value="protanopia">Protanopia</option>
+              <option value="tritanopia">Tritanopia</option>
+              <option value="high-contrast">High Contrast</option>
+            </select>
+          </div>
+          <div className="hub-group">
+            <label className="flex items-center gap-2 text-xs text-foreground/60">
+              <input
+                type="checkbox"
+                checked={scanlines}
+                onChange={(event) => setScanlines(event.target.checked)}
+                className="h-4 w-4 accent-[var(--accent)]"
+              />
+              Scanline overlay
+            </label>
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">Import</div>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="outline" size="sm" asChild>
+                <Link href="/admin-import">Open Import</Link>
+              </Button>
+              <Button type="button" variant="outline" size="sm" asChild>
+                <Link href="/settings">Settings</Link>
+              </Button>
+            </div>
+          </div>
+          <div className="hub-group">
+            {hydrated ? (
+              isSignedIn ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                  Sign out
+                </Button>
+              ) : (
+                <Button type="button" variant="outline" size="sm" asChild>
+                  <Link href="/auth/sign-in">Sign in</Link>
+                </Button>
+              )
+            ) : null}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}

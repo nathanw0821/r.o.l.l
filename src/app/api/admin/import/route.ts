@@ -1,23 +1,30 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireUser } from "@/lib/api/auth";
+import { parseFormData } from "@/lib/api/validation";
+import { badRequest, internalError, ok } from "@/lib/api/responses";
+import { importWorkbookSchema } from "@/lib/validation/admin-import";
 import { importWorkbook } from "@/lib/importer";
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ ok: false, errors: [{ type: "invalid", message: "Unauthorized" }] }, { status: 401 });
+  const auth = await requireUser();
+  if ("response" in auth) return auth.response;
+
+  const parsed = await parseFormData(request, importWorkbookSchema);
+  if ("response" in parsed) return parsed.response;
+
+  const buffer = Buffer.from(await parsed.data.file.arrayBuffer());
+
+  try {
+    const result = await importWorkbook(buffer, parsed.data.file.name, auth.session.user.id);
+    if (!result.ok) {
+      const details = result.errors.map((error) => ({
+        path: error.sheet ? `sheet:${error.sheet}` : undefined,
+        message: error.message
+      }));
+      return badRequest("Import failed. Fix the errors and try again.", details);
+    }
+    return ok({ datasetVersionId: result.datasetVersionId, baseline: result.baseline }, 200);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown import error";
+    return internalError(message);
   }
-
-  const formData = await request.formData();
-  const file = formData.get("file");
-
-  if (!file || !(file instanceof File)) {
-    return NextResponse.json({ ok: false, errors: [{ type: "invalid", message: "Missing file" }] }, { status: 400 });
-  }
-
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const result = await importWorkbook(buffer, file.name);
-
-  return NextResponse.json(result, { status: result.ok ? 200 : 400 });
 }
