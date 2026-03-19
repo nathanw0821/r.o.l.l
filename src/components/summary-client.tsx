@@ -3,16 +3,15 @@
 import * as React from "react";
 import ExcelJS from "exceljs";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { updateProgress } from "@/actions/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/components/filter-context";
-import ProgressToggle from "@/components/progress-toggle";
+import { useProgressHistory } from "@/components/progress-history-provider";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
 import { shapeExportRows } from "@/lib/export-utils";
+import { subscribeProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 
 export type SummaryRow = {
@@ -94,7 +93,6 @@ export default function SummaryClient({
   summary: { total: number; unlocked: number; percent: number };
 }) {
   const { data: session } = useSession();
-  const router = useRouter();
   const {
     query,
     sourceFilters,
@@ -106,7 +104,8 @@ export default function SummaryClient({
   } = useFilters();
   const [localRows, setLocalRows] = React.useState(rows);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
-  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!session);
+  const { map: localProgress } = useLocalProgress(!session);
+  const { commitEntries } = useProgressHistory();
   const [exportMode, setExportMode] = React.useState<"filtered" | "all">("filtered");
 
   React.useEffect(() => {
@@ -121,6 +120,24 @@ export default function SummaryClient({
     });
     setLocalRows(merged);
   }, [rows, localProgress]);
+
+  React.useEffect(() => {
+    return subscribeProgressChange((entries) => {
+      if (entries.length === 0) return;
+      const entryMap = new Map(entries.map((entry) => [entry.effectTierId, entry]));
+      setLocalRows((prev) =>
+        prev.map((row) => {
+          const entry = entryMap.get(row.id);
+          if (!entry) return row;
+          return {
+            ...row,
+            unlocked: entry.unlocked,
+            selectionSource: entry.selectionSource ?? row.selectionSource
+          };
+        })
+      );
+    });
+  }, []);
 
   const displayRows = React.useMemo<SummaryRow[]>(() => {
     if (session) return localRows;
@@ -152,6 +169,7 @@ export default function SummaryClient({
 
   async function toggleRow(row: SummaryRow) {
     const nextUnlocked = !row.unlocked;
+    const previousUnlocked = row.selectionSource === "edited" ? row.unlocked : null;
     setPendingId(row.id);
     setLocalRows((prev) =>
       prev.map((item) =>
@@ -160,18 +178,18 @@ export default function SummaryClient({
           : item
       )
     );
-    if (!session) {
-      setLocalEntry(row.id, nextUnlocked);
-      setPendingId(null);
-      return;
-    }
-    try {
-      await updateProgress({
+    const saved = await commitEntries([
+      {
         effectTierId: row.id,
-        unlocked: nextUnlocked
-      });
-      router.refresh();
-    } catch {
+        previousUnlocked,
+        nextUnlocked,
+        previousResolvedUnlocked: row.unlocked,
+        nextResolvedUnlocked: nextUnlocked,
+        previousSelectionSource: row.selectionSource,
+        nextSelectionSource: "edited"
+      }
+    ]);
+    if (!saved) {
       setLocalRows((prev) =>
         prev.map((item) =>
           item.id === row.id
@@ -179,9 +197,8 @@ export default function SummaryClient({
             : item
         )
       );
-    } finally {
-      setPendingId(null);
     }
+    setPendingId(null);
   }
 
   async function handleExport(kind: "xlsx" | "csv" | "json") {
@@ -293,31 +310,26 @@ export default function SummaryClient({
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {items.map((row) => (
-                  <div
+                  <button
                     key={row.id}
+                    type="button"
+                    onClick={() => toggleRow(row)}
+                    disabled={pendingId === row.id}
+                    aria-pressed={row.unlocked}
+                    data-status={row.unlocked ? "unlocked" : "locked"}
                     className={cn(
-                      "rounded-[var(--radius)] border border-border bg-panel px-3 py-2"
+                      "summary-status-card rounded-[var(--radius)] border px-3 py-2 text-left transition",
+                      "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                      pendingId === row.id && "opacity-60"
                     )}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="text-sm font-semibold">{row.effect.name}</div>
-                        <div
-                          className="mt-1 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-semibold status-pill"
-                          data-status={row.unlocked ? "unlocked" : "locked"}
-                        >
-                          {row.unlocked ? "Unlocked" : "Locked"}
-                        </div>
-                      </div>
-                      <div className="min-w-[220px]">
-                        <ProgressToggle
-                          unlocked={row.unlocked}
-                          onToggle={() => toggleRow(row)}
-                          disabled={pendingId === row.id}
-                        />
+                    <div>
+                      <div className="text-sm font-semibold">{row.effect.name}</div>
+                      <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
+                        {pendingId === row.id ? "Saving..." : row.unlocked ? "Unlocked" : "Locked"}
                       </div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
