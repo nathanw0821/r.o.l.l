@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/source-check",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/source-sync",
+      "schedule": "15 9 * * *"
+    }
+  ]
+}
