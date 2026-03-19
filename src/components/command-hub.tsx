@@ -22,6 +22,7 @@ type CommandHubProps = {
 };
 
 export default function CommandHub({ summary, isAdmin = false, dataset }: CommandHubProps) {
+  const hubRef = React.useRef<HTMLDivElement | null>(null);
   const { data: session } = useSession();
   const {
     query,
@@ -80,6 +81,19 @@ export default function CommandHub({ summary, isAdmin = false, dataset }: Comman
     window.localStorage.setItem("roll.scanlines", scanlines ? "on" : "off");
   }, [scanlines]);
 
+  React.useEffect(() => {
+    if (!expanded) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!hubRef.current) return;
+      if (hubRef.current.contains(event.target as Node)) return;
+      setExpanded(false);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [expanded]);
+
   async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
     if (!session) return;
     await updateUserSettings({
@@ -96,7 +110,7 @@ export default function CommandHub({ summary, isAdmin = false, dataset }: Comman
   }
 
   return (
-    <div className={cn("command-hub", expanded && "command-hub--open")}>
+    <div ref={hubRef} className={cn("command-hub", expanded && "command-hub--open")}>
       <div className="command-hub__bar">
         <div className="command-hub__search">
           <Search className="h-4 w-4 text-foreground/50" />
