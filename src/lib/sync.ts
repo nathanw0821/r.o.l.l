@@ -1,5 +1,6 @@
+import { getSyncUrlError } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
-import { normalizeNoteValue } from "@/lib/import-normalize";
+import { normalizeNoteValue, type ImportCellValue } from "@/lib/import-normalize";
 
 type SyncSourceRecord = {
   id: string;
@@ -8,6 +9,14 @@ type SyncSourceRecord = {
   url: string | null;
   format: string | null;
   enabled: boolean;
+};
+
+export type SyncSourceDetails = SyncSourceRecord & {
+  lastSyncedAt: Date | null;
+  lastStatus: string | null;
+  lastError: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 type NormalizedRow = {
@@ -115,12 +124,12 @@ function normalizeRowsFromTable(header: string[], rows: string[][], source: Sync
           const parsed = toInt(value);
           if (parsed !== undefined) normalized.legendaryModules = parsed;
         } else if (key === "notes") {
-          const note = normalizeNoteValue(value);
+          const note = normalizeNoteValue(value as ImportCellValue);
           if (note) normalized.notes = note;
         } else {
           const trimmed = value?.toString().trim();
           if (trimmed) {
-            (normalized as Record<string, string>)[key] = trimmed;
+            (normalized as unknown as Record<string, string>)[key] = trimmed;
           }
         }
       });
@@ -150,13 +159,13 @@ function normalizeFromJson(data: unknown, source: SyncSourceRecord) {
           continue;
         }
         if (mapped === "notes") {
-          const note = normalizeNoteValue(value);
+          const note = normalizeNoteValue(value as ImportCellValue);
           if (note) row.notes = note;
           continue;
         }
         const trimmed = value?.toString().trim();
         if (trimmed) {
-          (row as Record<string, string>)[mapped] = trimmed;
+          (row as unknown as Record<string, string>)[mapped] = trimmed;
         }
       }
       if (!row.tier || !row.effectName) return null;
@@ -195,8 +204,7 @@ function mergeRows(rows: NormalizedRow[]) {
 function splitCategories(raw?: string) {
   if (!raw) return [];
   return raw
-    .split("â€¢")
-    .flatMap((part) => part.split("|"))
+    .split(/\||,|;|\u2022|\u00e2\u20ac\u00a2|\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a2/g)
     .map((part) => part.trim())
     .filter((part) => part.length > 0);
 }
@@ -283,7 +291,7 @@ async function migrateProgress(previousVersionId: string, newVersionId: string) 
     );
 
   if (migrated.length > 0) {
-    await prisma.userProgress.createMany({ data: migrated });
+    await prisma.userProgress.createMany({ data: migrated, skipDuplicates: true });
   }
 }
 
@@ -343,7 +351,7 @@ async function createDatasetVersionFromRows(rows: NormalizedRow[], sources: Sync
         joinRows.push({ effectTierId: effectTier.id, categoryId: category.id });
       }
       if (joinRows.length > 0) {
-        await prisma.effectTierCategory.createMany({ data: joinRows });
+        await prisma.effectTierCategory.createMany({ data: joinRows, skipDuplicates: true });
       }
     }
   }
@@ -413,7 +421,15 @@ async function fetchSourceRows(source: SyncSourceRecord) {
     throw new Error("Missing source URL");
   }
 
-  const response = await fetch(source.url, { headers: { "user-agent": "R.O.L.L Sync/1.0" } });
+  const urlError = getSyncUrlError(source.url);
+  if (urlError) {
+    throw new Error(urlError);
+  }
+
+  const response = await fetch(source.url, {
+    headers: { "user-agent": "R.O.L.L Sync/1.0" },
+    signal: AbortSignal.timeout(15000)
+  });
   if (!response.ok) {
     throw new Error(`Fetch failed (${response.status})`);
   }
@@ -462,6 +478,11 @@ export async function getSyncSources() {
 }
 
 export async function updateSyncSource(params: { id: string; url?: string | null; enabled?: boolean; format?: string | null }) {
+  const urlError = getSyncUrlError(params.url);
+  if (urlError) {
+    throw new Error(urlError);
+  }
+
   return prisma.syncSource.update({
     where: { id: params.id },
     data: {

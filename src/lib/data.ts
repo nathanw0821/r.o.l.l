@@ -6,7 +6,7 @@ async function ensureProfileApplied(userId?: string) {
   if (!userId) return;
   try {
     await applyImportedProfileIfNeeded(userId);
-  } catch (error) {
+  } catch {
     // Do not block data reads if profile application fails.
   }
 }

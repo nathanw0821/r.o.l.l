@@ -63,7 +63,7 @@ export function usePersistentFilters(storageKey: string) {
       setStatusFilters(parsed.status);
       setOriginFilters(parsed.origins);
       setCategoryFilters(parsed.categories);
-    } catch (error) {
+    } catch {
       // ignore malformed storage
     } finally {
       hasLoaded.current = true;
@@ -81,7 +81,7 @@ export function usePersistentFilters(storageKey: string) {
     };
     try {
       window.localStorage.setItem(storageKey, JSON.stringify(payload));
-    } catch (error) {
+    } catch {
       // ignore storage quota errors
     }
   }, [storageKey, query, sourceFilters, statusFilters, originFilters, categoryFilters]);

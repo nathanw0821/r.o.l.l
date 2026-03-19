@@ -8,6 +8,7 @@ import RedditProvider from "next-auth/providers/reddit";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { isPublicRegistrationEnabled } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
@@ -19,7 +20,7 @@ const credentialsSchema = z.object({
 async function applyProfile(userId: string) {
   try {
     await applyImportedProfileIfNeeded(userId);
-  } catch (error) {
+  } catch {
     // Skip profile application errors to avoid blocking sign-in.
   }
 }
@@ -30,6 +31,7 @@ function normalizeUsername(raw: string) {
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt"
   },
@@ -59,6 +61,7 @@ export const authOptions: NextAuthOptions = {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
+        const publicRegistrationEnabled = isPublicRegistrationEnabled();
         const username = normalizeUsername(parsed.data.username);
         const password = parsed.data.password.trim();
         if (!username || !password) return null;
@@ -72,16 +75,6 @@ export const authOptions: NextAuthOptions = {
           if (!valid) return null;
           await applyProfile(existing.id);
           return existing;
-        }
-
-        if (existing && !existing.passwordHash) {
-          const passwordHash = await bcrypt.hash(password, 12);
-          const updated = await prisma.user.update({
-            where: { id: existing.id },
-            data: { passwordHash }
-          });
-          await applyProfile(updated.id);
-          return updated;
         }
 
         const legacyAuthCode = username.toUpperCase();
@@ -115,6 +108,14 @@ export const authOptions: NextAuthOptions = {
           return updated;
         }
 
+        if (existing) {
+          return null;
+        }
+
+        if (!publicRegistrationEnabled) {
+          return null;
+        }
+
         try {
           const passwordHash = await bcrypt.hash(password, 12);
           const created = await prisma.user.create({
@@ -129,7 +130,7 @@ export const authOptions: NextAuthOptions = {
 
           await applyProfile(created.id);
           return created;
-        } catch (error) {
+        } catch {
           const fallback = await prisma.user.findUnique({
             where: { username }
           });

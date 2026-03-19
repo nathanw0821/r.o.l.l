@@ -7,6 +7,10 @@ type ConversionResult =
   | { ok: true; buffer: Buffer; filename: string }
   | { ok: false; message: string };
 
+function toArrayBuffer(buffer: Uint8Array) {
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
+}
+
 function sanitizeBaseName(name: string) {
   const base = name.replace(/[^a-z0-9-_]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
   return base || "workbook";
@@ -65,7 +69,7 @@ async function convertWithLibreOffice(inputPath: string, outputDir: string) {
   await runLibreOffice(command, ["--headless", "--convert-to", "xlsx", "--outdir", outputDir, inputPath], outputDir);
 }
 
-export async function convertXlsToXlsx(buffer: Buffer, filename: string): Promise<ConversionResult> {
+export async function convertXlsToXlsx(buffer: Uint8Array, filename: string): Promise<ConversionResult> {
   const base = sanitizeBaseName(path.parse(filename).name);
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "roll-xls-"));
   const inputPath = path.join(tempDir, `${base}.xls`);
@@ -85,7 +89,7 @@ export async function convertXlsToXlsx(buffer: Buffer, filename: string): Promis
           "content-type": "application/vnd.ms-excel",
           ...(process.env.XLS_CONVERTER_TOKEN ? { authorization: `Bearer ${process.env.XLS_CONVERTER_TOKEN}` } : {})
         },
-        body: buffer
+        body: toArrayBuffer(buffer)
       });
       if (!response.ok) {
         throw new Error(`Remote converter failed (${response.status})`);

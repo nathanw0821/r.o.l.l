@@ -87,7 +87,7 @@ function normalizeName(value?: string): string | undefined {
 function splitCategories(raw?: string): string[] {
   if (!raw) return [];
   return raw
-    .split("•")
+    .split(/[|•â€¢,;]/g)
     .map((part) => part.trim())
     .filter((part) => part.length > 0);
 }
@@ -263,7 +263,8 @@ async function ingestDataset(datasetVersionId: string, filePath: string) {
       extraComponent,
       legendaryModules: toIntOrNull(legendaryModulesRaw),
       unlockedRaw,
-      notes: normalizeNoteValue(notes) ?? undefined,\n    };
+      notes: normalizeNoteValue(notes) ?? undefined,
+    };
   });
 
   if (fileKind === "all-tiers") {
@@ -308,7 +309,10 @@ async function main() {
     await prisma.datasetVersion.update({ where: { id: previous.id }, data: { isActive: false } });
   }
 
-  const root = process.cwd();
+  const root = path.join(process.cwd(), "data");
+  if (!fs.existsSync(root)) {
+    throw new Error(`Seed data directory not found: ${root}`);
+  }
   const fileNames = fs.readdirSync(root).filter((name) => name.endsWith(".txt"));
   const filePaths = fileNames.map((name) => path.join(root, name));
 

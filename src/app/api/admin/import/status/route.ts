@@ -1,9 +1,9 @@
-import { requireUser } from "@/lib/api/auth";
+import { requireAdmin } from "@/lib/api/auth";
 import { ok } from "@/lib/api/responses";
 import { detectLibreOffice } from "@/lib/convert-xls";
 
 export async function GET() {
-  const auth = await requireUser();
+  const auth = await requireAdmin();
   if ("response" in auth) return auth.response;
 
   const libreOffice = await detectLibreOffice();
