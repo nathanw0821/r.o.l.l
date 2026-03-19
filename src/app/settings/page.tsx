@@ -6,6 +6,8 @@ import AdminImportForm from "@/components/admin-import-form";
 import ThemeSettings from "@/components/theme-settings";
 import ProgressControls from "@/components/progress-controls";
 import AccountLinks from "@/components/account-links";
+import RewardsPanel from "@/components/rewards-panel";
+import SupportLink from "@/components/support-link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function SettingsPage() {
@@ -90,6 +92,24 @@ export default async function SettingsPage() {
             <li>Imports and exports are optional tools for backup, restore, or moving your data.</li>
             <li>Manual tracking stays the source of truth for everyday use.</li>
           </ul>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Support & Rewards</CardTitle>
+          <CardDescription>
+            Rewarded ads stay optional. Points and donations only support cosmetic extras and future development.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <RewardsPanel mode="settings" />
+          <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-xs text-foreground/60">
+            Help keep the tool alive without changing the core tracker for anyone else.
+            <div className="mt-2">
+              <SupportLink href={process.env.SUPPORT_URL ?? null} label="Support this App" />
+            </div>
+          </div>
         </CardContent>
       </Card>
 

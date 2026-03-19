@@ -6,11 +6,16 @@ import { useSession, signOut } from "next-auth/react";
 import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
+import RewardsPanel from "@/components/rewards-panel";
+import SupportLink from "@/components/support-link";
+import { useRewards } from "@/components/rewards-provider";
+import { useSessionAssist } from "@/components/session-assist-provider";
 import { cn } from "@/lib/utils";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { formatTierStars } from "@/lib/tier-format";
+import { ASSIST_PRESETS, assistPresetContent } from "@/lib/session-assist-presets";
 
 type CommandHubProps = {
   summary: { total: number; unlocked: number; percent: number };
@@ -64,6 +69,15 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     setUiTone
   } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
+  const { status: rewardsStatus } = useRewards();
+  const {
+    open: assistOpen,
+    pinned: assistPinned,
+    preset: assistPreset,
+    toggleOpen,
+    togglePinned,
+    setPreset: setAssistPreset
+  } = useSessionAssist();
   const isSignedIn = hydrated && Boolean(session);
   const hasActiveFilters =
     query.trim().length > 0 ||
@@ -122,7 +136,17 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     if (!session) return;
     await updateUserSettings({
       theme: next.theme as "light" | "dark" | "system" | undefined,
-      accent: next.accent as "ember" | "vault" | "radburst" | "glow" | "brass" | "frost" | undefined,
+      accent: next.accent as
+        | "ember"
+        | "vault"
+        | "radburst"
+        | "glow"
+        | "brass"
+        | "frost"
+        | "sunset"
+        | "mint"
+        | "nightfall"
+        | undefined,
       density: next.density as "comfortable" | "compact" | undefined,
       colorBlind: next.colorBlind as
         | "none"
@@ -384,6 +408,41 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               ))}
             </div>
           </div>
+          <div className="hub-section">
+            <div className="hub-section__title">Earn Points</div>
+            <RewardsPanel mode="hub" />
+          </div>
+          <div className="hub-section">
+            <div className="hub-section__title">Assist Float Box</div>
+            <div className="hub-section__copy">
+              Keep Session Assist open while you browse, or pin it into the sidebar.
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={toggleOpen}>
+                {assistOpen ? "Hide Float Box" : "Show Float Box"}
+              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={togglePinned}>
+                {assistPinned ? "Unpin Tab" : "Pin Tab"}
+              </Button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {ASSIST_PRESETS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setAssistPreset(value)}
+                  className={cn(
+                    "rounded-full border px-2 py-1 text-xs",
+                    assistPreset === value
+                      ? "border-accent text-foreground"
+                      : "border-border text-foreground/60 hover:border-accent"
+                  )}
+                >
+                  {assistPresetContent[value].shortLabel}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Theme</div>
             <div className="flex flex-wrap gap-2">
@@ -415,7 +474,17 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Accent</div>
             <div className="flex flex-wrap gap-2">
-              {(["ember", "vault", "radburst", "glow", "brass", "frost"] as const).map((value) => (
+              {([
+                "ember",
+                "vault",
+                "radburst",
+                "glow",
+                "brass",
+                "frost",
+                ...(["sunset", "mint", "nightfall"] as const).filter((value) =>
+                  rewardsStatus?.unlockedItemIds?.includes(`accent-${value}`)
+                )
+              ] as const).map((value) => (
                 <button
                   key={value}
                   type="button"
@@ -514,6 +583,15 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               <Button type="button" variant="outline" size="sm" asChild>
                 <Link href="/settings">Settings</Link>
               </Button>
+            </div>
+          </div>
+          <div className="hub-section">
+            <div className="hub-section__title">Support</div>
+            <div className="hub-section__copy">
+              Donations stay optional and never gate tracking features.
+            </div>
+            <div className="mt-3">
+              <SupportLink href={rewardsStatus?.supportUrl} label="Support this App ❤️" />
             </div>
           </div>
           <div className="hub-group">

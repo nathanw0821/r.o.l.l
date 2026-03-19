@@ -117,13 +117,19 @@ model User {
   email                   String?              @unique
   emailVerified           DateTime?
   image                   String?
+  points                  Int                  @default(0)
+  lastAdWatchAt           DateTime?
+  dailyPoints             Int                  @default(0)
+  dailyPointsDate         DateTime?
   accounts                Account[]
+  adRewardLogs            AdRewardLog[]
   achievements            UserAchievement[]
   importAudits            ImportAudit[]
   sessions                Session[]
   progress                UserProgress[]
   importBaseline          UserImportBaseline[]
   settings                UserSettings?
+  storeUnlocks            UserStoreUnlock[]
 }
 
 model Account {
@@ -167,6 +173,7 @@ model UserSettings {
   accent     String @default("ember")
   density    String @default("comfortable")
   colorBlind String @default("none")
+  adsEnabled Boolean @default(false)
   user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -205,6 +212,35 @@ model UserAchievement {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, key])
+  @@index([userId, unlockedAt])
+}
+
+model AdRewardLog {
+  id            String   @id @default(cuid())
+  userId        String
+  adSessionToken String  @unique
+  provider      String
+  status        String
+  rewardAmount  Int
+  grantedPoints Int?
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  metadata      Json?
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, startedAt])
+  @@index([userId, completedAt])
+}
+
+model UserStoreUnlock {
+  id         String   @id @default(cuid())
+  userId     String
+  itemId     String
+  cost       Int
+  unlockedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
   @@index([userId, unlockedAt])
 }
 

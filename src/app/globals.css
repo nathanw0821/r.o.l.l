@@ -145,6 +145,21 @@
   --color-accent-muted: #d7e7f7;
 }
 
+[data-accent="sunset"] {
+  --color-accent: #d86f52;
+  --color-accent-muted: #f5cdc0;
+}
+
+[data-accent="mint"] {
+  --color-accent: #3ca37e;
+  --color-accent-muted: #c7eddc;
+}
+
+[data-accent="nightfall"] {
+  --color-accent: #6c6cda;
+  --color-accent-muted: #d5d5fb;
+}
+
 [data-ui-tone="neutral"] {
   --ui-tone-color: #8e8274;
 }
@@ -634,6 +649,10 @@ a {
   gap: 0.4rem;
 }
 
+.app-sidebar__support {
+  margin-top: auto;
+}
+
 .app-nav__link {
   display: flex;
   align-items: center;
@@ -662,6 +681,26 @@ a {
   width: 100%;
   text-align: left;
   background: transparent;
+}
+
+.support-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-panel));
+  padding: 0.45rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.support-link:hover {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-panel));
+  transform: translateY(-1px);
 }
 
 .app-main {
@@ -753,6 +792,54 @@ a {
   max-height: calc(100vh - 10rem);
   overflow: auto;
   padding: 1rem;
+}
+
+.rewarded-video-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--background-primary) 68%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.rewarded-video-dialog {
+  width: min(720px, 100%);
+  border-radius: 18px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-overlay-strong);
+  box-shadow: var(--shadow-floating);
+  padding: 1rem;
+}
+
+.rewarded-video-dialog__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.rewarded-video-dialog__copy,
+.rewarded-video-dialog__meta {
+  margin-top: 0.45rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.rewarded-video-dialog__player {
+  width: 100%;
+  margin-top: 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: #000;
+}
+
+.rewarded-video-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1rem;
 }
 
 @media (max-width: 1100px) {

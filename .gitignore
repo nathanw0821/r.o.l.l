@@ -23,3 +23,6 @@ Thumbs.db
 dev.db
 *.db
 *.tsbuildinfo
+
+.vercel
+.env*.local
