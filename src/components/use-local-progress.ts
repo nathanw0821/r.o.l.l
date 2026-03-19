@@ -4,6 +4,7 @@ import * as React from "react";
 
 const COOKIE_NAME = "roll_local_progress";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+const LOCAL_PROGRESS_EVENT = "roll:local-progress";
 
 export type LocalProgressMap = Record<string, boolean>;
 
@@ -22,6 +23,15 @@ function writeCookieValue(name: string, value: string) {
 function clearCookieValue(name: string) {
   if (typeof document === "undefined") return;
   document.cookie = `${name}=; path=/; max-age=0; samesite=lax`;
+}
+
+function broadcastLocalProgress(map: LocalProgressMap) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent<LocalProgressMap>(LOCAL_PROGRESS_EVENT, {
+      detail: map
+    })
+  );
 }
 
 export function readLocalProgress(): LocalProgressMap {
@@ -48,12 +58,31 @@ export function clearLocalProgress() {
 
 export function useLocalProgress(enabled = true) {
   const [map, setMap] = React.useState<LocalProgressMap>({});
-  const hasLoaded = React.useRef(false);
 
   React.useEffect(() => {
-    if (!enabled || hasLoaded.current) return;
-    hasLoaded.current = true;
+    if (!enabled) return;
     setMap(readLocalProgress());
+  }, [enabled]);
+
+  React.useEffect(() => {
+    if (!enabled || typeof window === "undefined") return;
+
+    const sync = () => setMap(readLocalProgress());
+    const handleLocalProgress = (event: Event) => {
+      const customEvent = event as CustomEvent<LocalProgressMap>;
+      if (customEvent.detail && typeof customEvent.detail === "object") {
+        setMap(customEvent.detail);
+        return;
+      }
+      sync();
+    };
+
+    window.addEventListener(LOCAL_PROGRESS_EVENT, handleLocalProgress);
+    window.addEventListener("focus", sync);
+    return () => {
+      window.removeEventListener(LOCAL_PROGRESS_EVENT, handleLocalProgress);
+      window.removeEventListener("focus", sync);
+    };
   }, [enabled]);
 
   const setEntry = React.useCallback(
@@ -67,6 +96,7 @@ export function useLocalProgress(enabled = true) {
           next[id] = unlocked;
         }
         writeLocalProgress(next);
+        broadcastLocalProgress(next);
         return next;
       });
     },
@@ -86,6 +116,7 @@ export function useLocalProgress(enabled = true) {
           }
         }
         writeLocalProgress(next);
+        broadcastLocalProgress(next);
         return next;
       });
     },
@@ -95,6 +126,7 @@ export function useLocalProgress(enabled = true) {
   const clear = React.useCallback(() => {
     setMap({});
     clearLocalProgress();
+    broadcastLocalProgress({});
   }, []);
 
   const unlockedCount = React.useMemo(

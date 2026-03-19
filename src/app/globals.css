@@ -683,6 +683,22 @@ a {
   background: color-mix(in srgb, var(--color-warning) 18%, transparent);
 }
 
+.summary-status-card {
+  border-color: var(--color-border);
+  background: color-mix(in srgb, var(--color-panel) 88%, transparent);
+  color: var(--color-fg);
+}
+
+.summary-status-card[data-status="unlocked"] {
+  border-color: color-mix(in srgb, var(--color-success) 60%, var(--color-border));
+  background: color-mix(in srgb, var(--color-success) 14%, var(--color-panel));
+}
+
+.summary-status-card[data-status="locked"] {
+  border-color: color-mix(in srgb, var(--color-warning) 60%, var(--color-border));
+  background: color-mix(in srgb, var(--color-warning) 14%, var(--color-panel));
+}
+
 @media (max-width: 960px) {
   .table-grid {
     grid-template-columns: 1fr;

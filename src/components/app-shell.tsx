@@ -15,10 +15,10 @@ const links = [
   { href: "/screenshot-assist", label: "Session Assist", icon: Camera },
   { href: "/achievements", label: "Achievements", icon: Award, requiresAuth: true },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
-  { href: "/1-star", label: "1-Star", ariaLabel: "1 Star", icon: Star },
-  { href: "/2-star", label: "2-Star", ariaLabel: "2 Star", icon: Star },
-  { href: "/3-star", label: "3-Star", ariaLabel: "3 Star", icon: Star },
-  { href: "/4-star", label: "4-Star", ariaLabel: "4 Star", icon: Star },
+  { href: "/1-star", label: "☆", ariaLabel: "1 Star", icon: Star },
+  { href: "/2-star", label: "☆☆", ariaLabel: "2 Star", icon: Star },
+  { href: "/3-star", label: "☆☆☆", ariaLabel: "3 Star", icon: Star },
+  { href: "/4-star", label: "☆☆☆☆", ariaLabel: "4 Star", icon: Star },
   { href: "/still-need", label: "Still Need", icon: ClipboardList }
 ];
 

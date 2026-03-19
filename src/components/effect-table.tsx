@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { updateProgress } from "@/actions/progress";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/components/filter-context";
+import { useProgressHistory } from "@/components/progress-history-provider";
 import ProgressToggle from "@/components/progress-toggle";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
+import { subscribeProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 
 export type EffectTierRow = {
@@ -34,8 +34,8 @@ export default function EffectTable({
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
   const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions } = useFilters();
-  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!canEdit);
-  const router = useRouter();
+  const { map: localProgress } = useLocalProgress(!canEdit);
+  const { commitEntries } = useProgressHistory();
 
   React.useEffect(() => {
     const merged: EffectTierRow[] = rows.map((row) => {
@@ -49,6 +49,24 @@ export default function EffectTable({
     });
     setLocalRows(merged);
   }, [rows, localProgress]);
+
+  React.useEffect(() => {
+    return subscribeProgressChange((entries) => {
+      if (entries.length === 0) return;
+      const entryMap = new Map(entries.map((entry) => [entry.effectTierId, entry]));
+      setLocalRows((prev) =>
+        prev.map((row) => {
+          const entry = entryMap.get(row.id);
+          if (!entry) return row;
+          return {
+            ...row,
+            unlocked: entry.unlocked,
+            selectionSource: entry.selectionSource ?? row.selectionSource
+          };
+        })
+      );
+    });
+  }, []);
 
   React.useEffect(() => {
     setOriginOptions(collectOriginOptions(localRows));
@@ -68,6 +86,7 @@ export default function EffectTable({
 
   async function toggleRow(row: EffectTierRow) {
     const nextUnlocked = !row.unlocked;
+    const previousUnlocked = row.selectionSource === "edited" ? row.unlocked : null;
     setPendingId(row.id);
     setLocalRows((prev) =>
       prev.map((item) =>
@@ -76,18 +95,18 @@ export default function EffectTable({
           : item
       )
     );
-    if (!canEdit) {
-      setLocalEntry(row.id, nextUnlocked);
-      setPendingId(null);
-      return;
-    }
-    try {
-      await updateProgress({
+    const saved = await commitEntries([
+      {
         effectTierId: row.id,
-        unlocked: nextUnlocked
-      });
-      router.refresh();
-    } catch {
+        previousUnlocked,
+        nextUnlocked,
+        previousResolvedUnlocked: row.unlocked,
+        nextResolvedUnlocked: nextUnlocked,
+        previousSelectionSource: row.selectionSource,
+        nextSelectionSource: "edited"
+      }
+    ]);
+    if (!saved) {
       setLocalRows((prev) =>
         prev.map((item) =>
           item.id === row.id
@@ -95,9 +114,8 @@ export default function EffectTable({
             : item
         )
       );
-    } finally {
-      setPendingId(null);
     }
+    setPendingId(null);
   }
 
   return (
@@ -152,7 +170,7 @@ export default function EffectTable({
               <div className="min-w-0">
                 <div className="font-semibold">{row.effect.name}</div>
                 {tierDisplay.stars ? (
-                  <div className="text-xs text-foreground/60" title={tierDisplay.label}>
+                  <div className="mt-1 text-lg font-semibold leading-none tracking-[0.16em] text-foreground/70" title={tierDisplay.label}>
                     {tierDisplay.stars}
                   </div>
                 ) : null}
@@ -213,7 +231,7 @@ export default function EffectTable({
                 <div>
                   <div className="font-semibold">{row.effect.name}</div>
                   {tierDisplay.stars ? (
-                    <div className="effect-tile__meta" title={tierDisplay.label}>
+                    <div className="mt-1 text-base font-semibold leading-none tracking-[0.14em] text-foreground/65" title={tierDisplay.label}>
                       {tierDisplay.stars}
                     </div>
                   ) : null}
