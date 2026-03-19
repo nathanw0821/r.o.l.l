@@ -1,11 +1,25 @@
 import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/app-config";
+import { prisma } from "@/lib/prisma";
 import AdminImportForm from "@/components/admin-import-form";
 import AdminSyncPanel from "@/components/admin-sync-panel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function AdminImportPage() {
   const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    notFound();
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { email: true, username: true }
+  });
+  if (!isAdminUser(user)) {
+    notFound();
+  }
 
   return (
     <div className="space-y-6">
@@ -17,13 +31,7 @@ export default async function AdminImportPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {session ? (
-            <AdminImportForm />
-          ) : (
-            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-sm">
-              Sign in to import a workbook.
-            </div>
-          )}
+          <AdminImportForm />
         </CardContent>
       </Card>
 
@@ -35,13 +43,7 @@ export default async function AdminImportPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {session ? (
-            <AdminSyncPanel />
-          ) : (
-            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-sm">
-              Sign in to run a websheet sync.
-            </div>
-          )}
+          <AdminSyncPanel />
         </CardContent>
       </Card>
 

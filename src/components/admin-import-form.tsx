@@ -77,7 +77,7 @@ export default function AdminImportForm() {
               success: false;
               error: { code: string; message: string; details?: { path?: string; message: string }[] };
             };
-      } catch (error) {
+      } catch {
         payload = null;
       }
 
@@ -94,7 +94,7 @@ export default function AdminImportForm() {
         setSuccess(true);
         setBaseline(payload.data.baseline ?? null);
       }
-    } catch (error) {
+    } catch {
       setErrors([{ type: "invalid", message: "Import failed. Check the server logs." }]);
     } finally {
       setPending(false);

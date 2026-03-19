@@ -4,12 +4,17 @@ import * as React from "react";
 import { getProviders, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
-export default function SignInForm() {
+export default function SignInForm({
+  allowPublicRegistration = false
+}: {
+  allowPublicRegistration?: boolean;
+}) {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [isAutofilled, setIsAutofilled] = React.useState(false);
   const [pending, setPending] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
   const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }> | null>(null);
 
   React.useEffect(() => {
@@ -31,12 +36,26 @@ export default function SignInForm() {
     event.preventDefault();
     if (!username.trim() || !password.trim()) return;
     setPending(true);
-    await signIn("credentials", {
+    setError(null);
+
+    const result = await signIn("credentials", {
       username,
       password,
-      callbackUrl: "/"
+      callbackUrl: "/",
+      redirect: false
     });
-    setPending(false);
+
+    if (result?.error) {
+      setError(
+        allowPublicRegistration
+          ? "Unable to sign in with that username and password."
+          : "Unable to sign in. Check your credentials or ask an admin to provision local access."
+      );
+      setPending(false);
+      return;
+    }
+
+    window.location.assign(result?.url ?? "/");
   }
 
   return (
@@ -105,8 +124,9 @@ export default function SignInForm() {
         ) : null}
       </label>
       <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Signing in..." : "Sign In"}
+        {pending ? "Signing in..." : allowPublicRegistration ? "Sign In / Create Account" : "Sign In"}
       </Button>
+      {error ? <div className="text-xs text-amber-300">{error}</div> : null}
     </form>
   );
 }

@@ -80,7 +80,7 @@ export function ThemeProvider({
     if (storedDensity === "compact" || storedDensity === "comfortable") {
       setDensityState(storedDensity);
     }
-  }, [defaultAccent, defaultColorBlind, defaultTheme, preferDefaults]);
+  }, [defaultAccent, defaultColorBlind, defaultDensity, defaultTheme, preferDefaults]);
 
   React.useEffect(() => {
     const resolved = resolveTheme(theme);

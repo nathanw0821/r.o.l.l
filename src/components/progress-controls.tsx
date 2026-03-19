@@ -25,7 +25,7 @@ export default function ProgressControls({ enabled }: { enabled: boolean }) {
         setMessage("Profile reset to public defaults.");
       }
       router.refresh();
-    } catch (err) {
+    } catch {
       setError("Reset failed. Please try again.");
     } finally {
       setPending(null);

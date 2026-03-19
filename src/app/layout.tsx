@@ -6,9 +6,13 @@ import AppShell from "@/components/app-shell";
 import CommandHubShell from "@/components/command-hub-shell";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getSiteUrl } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
+  metadataBase: siteUrl ?? undefined,
   title: "R.O.L.L | Registry Of Legendary Loadouts",
   description: "Registry of legendary effects, components, and acquisition paths for Fallout 76.",
 };

@@ -5,7 +5,7 @@ export async function parseJson<T>(request: Request, schema: ZodSchema<T>) {
   let payload: unknown;
   try {
     payload = await request.json();
-  } catch (error) {
+  } catch {
     return { response: badRequest("Invalid JSON body.") } as const;
   }
 
@@ -20,7 +20,7 @@ export async function parseFormData<T>(request: Request, schema: ZodSchema<T>) {
   let formData: FormData;
   try {
     formData = await request.formData();
-  } catch (error) {
+  } catch {
     return { response: badRequest("Invalid form data.") } as const;
   }
 

@@ -29,7 +29,7 @@ export default function AdminSyncPanel() {
       if (payload?.success) {
         setSources(payload.data.sources ?? []);
       }
-    } catch (err) {
+    } catch {
       // ignore
     }
   }
@@ -51,7 +51,7 @@ export default function AdminSyncPanel() {
         setMessage("Sync completed.");
       }
       await loadSources();
-    } catch (err) {
+    } catch {
       setError("Sync failed.");
     } finally {
       setPending(false);
@@ -72,7 +72,7 @@ export default function AdminSyncPanel() {
       } else {
         await loadSources();
       }
-    } catch (err) {
+    } catch {
       setError("Update failed.");
     }
   }

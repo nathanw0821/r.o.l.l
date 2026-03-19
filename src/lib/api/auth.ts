@@ -1,7 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
-import { unauthorized } from "@/lib/api/responses";
+import { forbidden, unauthorized } from "@/lib/api/responses";
 
 export async function requireUser() {
   const session = await getServerSession(authOptions);
@@ -15,4 +16,17 @@ export async function requireUser() {
   }
 
   return { session, user } as const;
+}
+
+export async function requireAdmin() {
+  const auth = await requireUser();
+  if ("response" in auth) {
+    return auth;
+  }
+
+  if (!isAdminUser(auth.user)) {
+    return { response: forbidden("Admin access required.") } as const;
+  }
+
+  return auth;
 }

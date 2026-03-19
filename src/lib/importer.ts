@@ -25,6 +25,10 @@ type ParsedSheet = {
   rows: (string | number | boolean | null)[][];
 };
 
+function toArrayBuffer(buffer: Uint8Array) {
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
+}
+
 const canonicalRowSchema = z.object({
   tier: z.string().min(1),
   effectName: z.string().min(1),
@@ -108,7 +112,7 @@ function getHeaderMismatch(expected: string[], actual: string[]) {
 function splitCategories(raw?: string): string[] {
   if (!raw) return [];
   return raw
-    .split("•")
+    .split(/\||,|;|\u2022|\u00e2\u20ac\u00a2|\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a2/g)
     .map((part) => part.trim())
     .filter((part) => part.length > 0);
 }
@@ -223,7 +227,7 @@ async function migrateProgress(previousVersionId: string, newVersionId: string) 
     );
 
   if (migrated.length > 0) {
-    await prisma.userProgress.createMany({ data: migrated });
+    await prisma.userProgress.createMany({ data: migrated, skipDuplicates: true });
   }
 }
 
@@ -274,9 +278,10 @@ function normalizeCellValue(value: ExcelJS.CellValue): string | number | boolean
   return String(value);
 }
 
-async function parseWorkbook(buffer: Buffer): Promise<ParsedSheet[]> {
+async function parseWorkbook(buffer: Uint8Array): Promise<ParsedSheet[]> {
   const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(buffer);
+  const workbookSource = Buffer.from(toArrayBuffer(buffer)) as unknown as Parameters<typeof workbook.xlsx.load>[0];
+  await workbook.xlsx.load(workbookSource);
 
   return workbook.worksheets.map((worksheet) => {
     const rows: (string | number | boolean | null)[][] = [];
@@ -317,7 +322,7 @@ function findParsedMatch(expected: ExpectedSheet, parsedSheets: ParsedSheet[], u
   return undefined;
 }
 
-export async function importWorkbook(buffer: Buffer, filename: string, userId?: string) {
+export async function importWorkbook(buffer: Uint8Array, filename: string, userId?: string) {
   const errors: ImportError[] = [];
   const baselineCounts = {
     yes: 0,
@@ -498,7 +503,8 @@ export async function importWorkbook(buffer: Buffer, filename: string, userId?: 
             }
             if (joinRows.length > 0) {
               await prisma.effectTierCategory.createMany({
-                data: joinRows
+                data: joinRows,
+                skipDuplicates: true
               });
             }
           }

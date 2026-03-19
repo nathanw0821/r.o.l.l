@@ -1,16 +1,16 @@
-import { requireUser } from "@/lib/api/auth";
+import { requireAdmin } from "@/lib/api/auth";
 import { ok, badRequest, internalError } from "@/lib/api/responses";
 import { parseJson } from "@/lib/api/validation";
-import { getSyncSources, runSync, updateSyncSource } from "@/lib/sync";
+import { getSyncSources, runSync, updateSyncSource, type SyncSourceDetails } from "@/lib/sync";
 import { syncUpdateSchema } from "@/lib/validation/sync";
 
 export async function GET() {
-  const auth = await requireUser();
+  const auth = await requireAdmin();
   if ("response" in auth) return auth.response;
 
   const sources = await getSyncSources();
   return ok({
-    sources: sources.map((source) => ({
+    sources: sources.map((source: SyncSourceDetails) => ({
       id: source.id,
       name: source.name,
       kind: source.kind,
@@ -25,7 +25,7 @@ export async function GET() {
 }
 
 export async function POST() {
-  const auth = await requireUser();
+  const auth = await requireAdmin();
   if ("response" in auth) return auth.response;
 
   try {
@@ -41,18 +41,28 @@ export async function POST() {
 }
 
 export async function PATCH(request: Request) {
-  const auth = await requireUser();
+  const auth = await requireAdmin();
   if ("response" in auth) return auth.response;
 
   const parsed = await parseJson(request, syncUpdateSchema);
   if ("response" in parsed) return parsed.response;
 
-  const updated = await updateSyncSource(parsed.data);
-  return ok({
-    id: updated.id,
-    name: updated.name,
-    url: updated.url,
-    format: updated.format,
-    enabled: updated.enabled
-  });
+  try {
+    const updated = await updateSyncSource({
+      id: parsed.data.id,
+      url: parsed.data.url,
+      format: parsed.data.format,
+      enabled: typeof parsed.data.enabled === "boolean" ? parsed.data.enabled : undefined
+    });
+    return ok({
+      id: updated.id,
+      name: updated.name,
+      url: updated.url,
+      format: updated.format,
+      enabled: updated.enabled
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Update failed";
+    return badRequest(message);
+  }
 }
