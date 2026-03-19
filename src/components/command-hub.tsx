@@ -10,9 +10,17 @@ import { cn } from "@/lib/utils";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
 import { useLocalProgress } from "@/components/use-local-progress";
+import { formatTierStars } from "@/lib/tier-format";
 
 type CommandHubProps = {
   summary: { total: number; unlocked: number; percent: number };
+  tierProgress: {
+    tierLabel: string;
+    total: number;
+    unlocked: number;
+    percent: number;
+    effectTierIds: string[];
+  }[];
   isAdmin?: boolean;
   dataset?: {
     importedAt?: string | null;
@@ -21,7 +29,7 @@ type CommandHubProps = {
   } | null;
 };
 
-export default function CommandHub({ summary, isAdmin = false, dataset }: CommandHubProps) {
+export default function CommandHub({ summary, tierProgress, isAdmin = false, dataset }: CommandHubProps) {
   const hubRef = React.useRef<HTMLDivElement | null>(null);
   const { data: session } = useSession();
   const {
@@ -51,7 +59,7 @@ export default function CommandHub({ summary, isAdmin = false, dataset }: Comman
     statusFilters.length > 0 ||
     originFilters.length > 0 ||
     categoryFilters.length > 0;
-  const { unlockedCount } = useLocalProgress(!isSignedIn);
+  const { map: localProgress, unlockedCount } = useLocalProgress(!isSignedIn);
 
   const displayUnlocked = isSignedIn ? summary.unlocked : unlockedCount;
   const locked = Math.max(summary.total - displayUnlocked, 0);
@@ -60,6 +68,22 @@ export default function CommandHub({ summary, isAdmin = false, dataset }: Comman
   const lockedPercent = 100 - unlockedPercent;
   const lastSynced = dataset?.importedAt ? new Date(dataset.importedAt).toLocaleString() : "Unknown";
   const displayLastSynced = hydrated ? lastSynced : "Loading...";
+  const displayTierProgress = React.useMemo(
+    () =>
+      tierProgress.map((tier) => {
+        if (isSignedIn) return tier;
+        const unlocked = tier.effectTierIds.reduce(
+          (count, effectTierId) => count + (localProgress[effectTierId] ? 1 : 0),
+          0
+        );
+        return {
+          ...tier,
+          unlocked,
+          percent: tier.total > 0 ? Math.round((unlocked / tier.total) * 100) : 0
+        };
+      }),
+    [isSignedIn, localProgress, tierProgress]
+  );
 
   React.useEffect(() => {
     setAnimateBars(true);
@@ -168,6 +192,23 @@ export default function CommandHub({ summary, isAdmin = false, dataset }: Comman
           <div className="mt-3 rounded-[var(--radius)] border border-border bg-panel/80 px-3 py-2 text-xs text-foreground/60">
             Data source: {dataset?.sourceName ?? dataset?.sourceType ?? "Unknown"}
             <div>Last synced: {displayLastSynced}</div>
+          </div>
+          <div className="mt-4 space-y-2">
+            <div className="text-xs uppercase tracking-[0.08em] text-foreground/50">Per Tier</div>
+            {displayTierProgress.map((tier) => (
+              <div key={tier.tierLabel} className="hub-metric">
+                <div className="flex items-center justify-between text-xs text-foreground/60">
+                  <span>{formatTierStars(tier.tierLabel) || tier.tierLabel}</span>
+                  <span>{tier.percent}%</span>
+                </div>
+                <div className="hub-bar">
+                  <div
+                    className="hub-bar__fill hub-bar__fill--success"
+                    style={{ width: animateBars ? `${tier.percent}%` : "0%" }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

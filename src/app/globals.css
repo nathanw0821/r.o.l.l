@@ -464,6 +464,12 @@ a {
   background: var(--sidebar-active-bg);
 }
 
+.app-nav__button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+}
+
 .app-main {
   padding: 2rem 2.5rem;
 }
@@ -482,6 +488,63 @@ a {
   gap: 1.5rem;
 }
 
+.session-assist-window-wrap {
+  position: fixed;
+  top: 7rem;
+  right: 2rem;
+  z-index: 45;
+  width: min(720px, calc(100vw - 19rem));
+  pointer-events: none;
+}
+
+.session-assist-window {
+  pointer-events: auto;
+  border-radius: 18px;
+  border: 1px solid var(--hub-shell-border);
+  background: var(--hub-shell-bg);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--hub-shell-shadow);
+  overflow: hidden;
+}
+
+.session-assist-window__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--hub-panel-border);
+}
+
+.session-assist-window__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.session-assist-window__subtitle {
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--hub-muted-text);
+}
+
+.session-assist-window__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.session-assist-window__body {
+  max-height: calc(100vh - 10rem);
+  overflow: auto;
+  padding: 1rem;
+}
+
 @media (max-width: 1100px) {
   .app-layout {
     grid-template-columns: 88px minmax(0, 1fr);
@@ -496,6 +559,9 @@ a {
   .brand-stack__title {
     font-size: 0.95rem;
     letter-spacing: 0.18em;
+  }
+  .session-assist-window-wrap {
+    width: min(680px, calc(100vw - 8rem));
   }
 }
 
@@ -522,6 +588,9 @@ a {
   .app-nav__link span {
     display: inline;
   }
+  .app-nav__button {
+    width: auto;
+  }
   .app-main {
     padding: 1.5rem;
   }
@@ -538,6 +607,22 @@ a {
   }
   .brand-stack__support {
     font-size: 0.6rem;
+  }
+  .session-assist-window-wrap {
+    top: 6.5rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+  }
+  .session-assist-window__header {
+    flex-direction: column;
+  }
+  .session-assist-window__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .session-assist-window__body {
+    max-height: calc(100vh - 9rem);
   }
 }
 

@@ -116,6 +116,53 @@ export async function getStillNeed(userId?: string) {
   return all.filter((row) => !row.unlocked);
 }
 
+export type TierProgressSummary = {
+  tierLabel: string;
+  total: number;
+  unlocked: number;
+  percent: number;
+  effectTierIds: string[];
+};
+
+export async function getTierProgressSummary(userId?: string) {
+  const all = await getAllEffectTiers(userId);
+  const tierMap = new Map<string, TierProgressSummary>();
+
+  for (const row of all) {
+    const tierLabel = row.tier?.label ?? "Unknown";
+    const existing = tierMap.get(tierLabel);
+
+    if (existing) {
+      existing.total += 1;
+      if (row.unlocked) existing.unlocked += 1;
+      existing.effectTierIds.push(row.id);
+      continue;
+    }
+
+    tierMap.set(tierLabel, {
+      tierLabel,
+      total: 1,
+      unlocked: row.unlocked ? 1 : 0,
+      percent: 0,
+      effectTierIds: [row.id]
+    });
+  }
+
+  return Array.from(tierMap.values())
+    .map((tier) => ({
+      ...tier,
+      percent: tier.total > 0 ? Math.round((tier.unlocked / tier.total) * 100) : 0
+    }))
+    .sort((a, b) => {
+      const left = Number.parseInt(a.tierLabel, 10);
+      const right = Number.parseInt(b.tierLabel, 10);
+      if (Number.isNaN(left) && Number.isNaN(right)) return a.tierLabel.localeCompare(b.tierLabel);
+      if (Number.isNaN(left)) return 1;
+      if (Number.isNaN(right)) return -1;
+      return left - right;
+    });
+}
+
 export async function getProgressSummary(userId?: string) {
   await ensureProfileApplied(userId);
   const dataset = await getActiveDatasetVersion();

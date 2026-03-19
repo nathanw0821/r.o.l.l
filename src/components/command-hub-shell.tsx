@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { isAdminUser } from "@/lib/app-config";
-import { getProgressSummary, getActiveDatasetVersion } from "@/lib/data";
+import { type TierProgressSummary, getProgressSummary, getActiveDatasetVersion } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import CommandHub from "@/components/command-hub";
 
-export default async function CommandHubShell() {
+export default async function CommandHubShell({ tierProgress }: { tierProgress: TierProgressSummary[] }) {
   const session = await getServerSession(authOptions);
   const summary = await getProgressSummary(session?.user?.id);
   const dataset = await getActiveDatasetVersion();
@@ -19,6 +19,7 @@ export default async function CommandHubShell() {
   return (
     <CommandHub
       summary={summary}
+      tierProgress={tierProgress}
       isAdmin={isAdminUser(user)}
       dataset={{
         importedAt: dataset?.importedAt ? dataset.importedAt.toISOString() : null,

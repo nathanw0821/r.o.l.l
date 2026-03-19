@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,24 +9,68 @@ import { Award, BookOpen, Camera, ClipboardList, ListChecks, Sparkles, Star } fr
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import LocalProgressSync from "@/components/local-progress-sync";
+import SessionAssistWindow from "@/components/session-assist-window";
+import { useSessionAssist } from "@/components/session-assist-provider";
+import { useLocalProgress } from "@/components/use-local-progress";
+import { formatTierStars } from "@/lib/tier-format";
 
 const links = [
   { href: "/", label: "Readme", icon: BookOpen },
   { href: "/summary", label: "Summary", icon: Sparkles },
-  { href: "/screenshot-assist", label: "Session Assist", icon: Camera },
   { href: "/achievements", label: "Achievements", icon: Award, requiresAuth: true },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
-  { href: "/1-star", label: "☆", ariaLabel: "1 Star", icon: Star },
-  { href: "/2-star", label: "☆☆", ariaLabel: "2 Star", icon: Star },
-  { href: "/3-star", label: "☆☆☆", ariaLabel: "3 Star", icon: Star },
-  { href: "/4-star", label: "☆☆☆☆", ariaLabel: "4 Star", icon: Star },
+  { href: "/1-star", label: "☆", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
+  { href: "/2-star", label: "☆☆", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
+  { href: "/3-star", label: "☆☆☆", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
+  { href: "/4-star", label: "☆☆☆☆", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
   { href: "/still-need", label: "Still Need", icon: ClipboardList }
 ];
 
-export default function AppShell({ children, hub }: { children: ReactNode; hub?: ReactNode }) {
+type TierProgressSummary = {
+  tierLabel: string;
+  total: number;
+  unlocked: number;
+  percent: number;
+  effectTierIds: string[];
+};
+
+export default function AppShell({
+  children,
+  hub,
+  tierProgress
+}: {
+  children: ReactNode;
+  hub?: ReactNode;
+  tierProgress: TierProgressSummary[];
+}) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { open, pinned, toggleOpen } = useSessionAssist();
+  const isSignedIn = Boolean(session?.user);
+  const { map: localProgress } = useLocalProgress(!isSignedIn);
   const visibleLinks = links.filter((link) => !link.requiresAuth || session?.user);
+
+  const displayTierProgress = React.useMemo(
+    () =>
+      tierProgress.map((tier) => {
+        if (isSignedIn) return tier;
+        const unlocked = tier.effectTierIds.reduce(
+          (count, effectTierId) => count + (localProgress[effectTierId] ? 1 : 0),
+          0
+        );
+        return {
+          ...tier,
+          unlocked,
+          percent: tier.total > 0 ? Math.round((unlocked / tier.total) * 100) : 0
+        };
+      }),
+    [isSignedIn, localProgress, tierProgress]
+  );
+
+  const tierLookup = React.useMemo(
+    () => new Map(displayTierProgress.map((tier) => [tier.tierLabel, tier])),
+    [displayTierProgress]
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground pip-shell">
@@ -41,24 +86,41 @@ export default function AppShell({ children, hub }: { children: ReactNode; hub?:
             {visibleLinks.map((link) => {
               const active = pathname === link.href;
               const Icon = link.icon;
+              const tier = link.tierLabel ? tierLookup.get(link.tierLabel) : null;
+              const linkLabel = tier ? `${formatTierStars(link.tierLabel)} ${tier.percent}%` : link.label;
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  aria-label={link.ariaLabel ?? link.label}
+                  aria-label={
+                    tier ? `${link.ariaLabel ?? link.label} ${tier.percent}% complete` : link.ariaLabel ?? link.label
+                  }
                   className={cn("app-nav__link", active && "app-nav__link--active")}
                 >
                   <Icon className="h-4 w-4" />
-                  <span>{link.label}</span>
+                  <span>{linkLabel}</span>
                 </Link>
               );
             })}
+            {pinned ? (
+              <button
+                type="button"
+                onClick={toggleOpen}
+                className={cn("app-nav__link app-nav__button", open && "app-nav__link--active")}
+                aria-pressed={open}
+              >
+                <Camera className="h-4 w-4" />
+                <span>Session Assist</span>
+              </button>
+            ) : null}
           </nav>
         </aside>
         <div className="app-main">
           <div className="content-canvas">
             <LocalProgressSync />
             {hub}
+            <SessionAssistWindow />
             <main id="main-content" className="content-panel">
               {children}
             </main>
