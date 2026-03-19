@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { assistPresetContent } from "@/lib/session-assist-presets";
 import { z } from "zod";
 
 const candidateSchema = z.object({
@@ -11,7 +12,8 @@ const candidateSchema = z.object({
 const requestSchema = z.object({
   apiKey: z.string().min(20),
   imageDataUrl: z.string().startsWith("data:image/"),
-  candidates: z.array(candidateSchema).min(1).max(120)
+  candidates: z.array(candidateSchema).min(1).max(120),
+  assistPreset: z.enum(["manual", "session", "ai"]).optional()
 });
 
 const responseFormat = {
@@ -67,8 +69,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const { apiKey, imageDataUrl, candidates } = parsed.data;
+  const { apiKey, imageDataUrl, candidates, assistPreset = "manual" } = parsed.data;
   const candidateIds = new Set(candidates.map((candidate) => candidate.effectTierId));
+  const presetContent = assistPresetContent[assistPreset];
 
   const openAiResponse = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -86,7 +89,7 @@ export async function POST(request: Request) {
             {
               type: "input_text",
               text:
-                "You help manually review Fallout 76 legendary screenshot uploads. Only return candidate effectTierIds that are clearly supported by the screenshot. If you are unsure, leave the effect out. Never invent ids outside the candidate list."
+                `You help manually review Fallout 76 legendary screenshot uploads. Only return candidate effectTierIds that are clearly supported by the screenshot. If you are unsure, leave the effect out. Never invent ids outside the candidate list. ${presetContent.analysisGuidance}`
             }
           ]
         },

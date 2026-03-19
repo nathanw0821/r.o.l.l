@@ -6,6 +6,7 @@ import { Camera, ExternalLink, PanelLeftOpen, Pin, PinOff, X } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import ScreenshotAssistClient from "@/components/screenshot-assist-client";
 import { useSessionAssist } from "@/components/session-assist-provider";
+import { assistPresetContent } from "@/lib/session-assist-presets";
 import type { SessionAssistRow } from "@/lib/session-assist";
 
 type LoadState =
@@ -14,8 +15,9 @@ type LoadState =
   | { status: "error"; message: string };
 
 export default function SessionAssistWindow() {
-  const { open, setOpen, pinned, togglePinned } = useSessionAssist();
+  const { open, setOpen, pinned, togglePinned, preset } = useSessionAssist();
   const [loadState, setLoadState] = React.useState<LoadState>({ status: "idle" });
+  const presetContent = assistPresetContent[preset];
 
   React.useEffect(() => {
     if (!open || loadState.status === "ready" || loadState.status === "loading") return;
@@ -56,8 +58,9 @@ export default function SessionAssistWindow() {
               Session Assist
             </div>
             <div className="session-assist-window__subtitle">
-              Keep this open while you move through the tracker. Suggestions stay manual until you confirm them.
+              {presetContent.windowSubtitle}
             </div>
+            <div className="session-assist-window__preset">{presetContent.label}</div>
           </div>
           <div className="session-assist-window__actions">
             <Button type="button" variant="outline" size="sm" onClick={togglePinned}>

@@ -100,7 +100,7 @@ export default function AccountLinks() {
         </div>
       </div>
 
-      {error ? <div className="text-xs text-amber-300">{error}</div> : null}
+      {error ? <div className="text-xs text-[color:var(--color-warning)]">{error}</div> : null}
     </div>
   );
 }

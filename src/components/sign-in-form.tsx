@@ -126,7 +126,7 @@ export default function SignInForm({
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Signing in..." : allowPublicRegistration ? "Sign In / Create Account" : "Sign In"}
       </Button>
-      {error ? <div className="text-xs text-amber-300">{error}</div> : null}
+      {error ? <div className="text-xs text-[color:var(--color-warning)]">{error}</div> : null}
     </form>
   );
 }

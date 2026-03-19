@@ -118,7 +118,7 @@ export default function AdminImportForm() {
       {libreOfficeStatus ? (
         <div className="text-xs text-foreground/60">
           LibreOffice conversion:{" "}
-          <span className={libreOfficeStatus.available ? "text-emerald-300" : "text-amber-300"}>
+          <span className={libreOfficeStatus.available ? "text-[color:var(--color-success)]" : "text-[color:var(--color-warning)]"}>
             {libreOfficeStatus.available ? "Detected" : "Not detected"}
           </span>
           {!libreOfficeStatus.available ? (

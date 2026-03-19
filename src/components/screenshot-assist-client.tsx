@@ -5,7 +5,9 @@ import { useSession } from "next-auth/react";
 import { useProgressHistory } from "@/components/progress-history-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSessionAssist } from "@/components/session-assist-provider";
 import { useLocalProgress } from "@/components/use-local-progress";
+import { ASSIST_PRESETS, assistPresetContent } from "@/lib/session-assist-presets";
 import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
@@ -83,6 +85,7 @@ export default function ScreenshotAssistClient({
   rows: SessionAssistRow[];
   mode?: "page" | "window";
 }) {
+  const { preset, setPreset } = useSessionAssist();
   const { data: session } = useSession();
   const { map: localProgress } = useLocalProgress(!session);
   const { commitEntries } = useProgressHistory();
@@ -310,6 +313,7 @@ export default function ScreenshotAssistClient({
         body: JSON.stringify({
           apiKey: openAiKey.trim(),
           imageDataUrl,
+          assistPreset: preset,
           candidates: filteredRows.map((row) => ({
             effectTierId: row.id,
             effectName: row.effect.name,
@@ -377,10 +381,32 @@ export default function ScreenshotAssistClient({
 
   const isWindow = mode === "window";
   const aiSuggestionSet = React.useMemo(() => new Set(aiSuggestedIds), [aiSuggestedIds]);
+  const presetContent = assistPresetContent[preset];
 
   return (
     <div className={cn(isWindow ? "space-y-4" : "grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]")}>
       <div className="space-y-4">
+        <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+          <div className="text-sm font-semibold">{presetContent.label}</div>
+          <div className="mt-1 text-xs text-foreground/60">{presetContent.checklistHint}</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {ASSIST_PRESETS.map((value) => {
+              const option = assistPresetContent[value];
+              return (
+                <Button
+                  key={value}
+                  type="button"
+                  size="sm"
+                  variant={preset === value ? "default" : "outline"}
+                  onClick={() => setPreset(value)}
+                >
+                  {option.shortLabel}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
           <div className="text-sm font-semibold">1. Add a screenshot</div>
           <div className="mt-1 text-xs text-foreground/60">
@@ -444,7 +470,7 @@ export default function ScreenshotAssistClient({
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <div className="text-sm font-semibold">3. Optional AI review</div>
+              <div className="text-sm font-semibold">3. {presetContent.aiTitle}</div>
               <div className="mt-1 text-xs text-foreground/60">
                 This is suggestion-only. R.O.L.L. never auto-detects or auto-saves unlocks from screenshots.
               </div>
@@ -467,7 +493,7 @@ export default function ScreenshotAssistClient({
             </label>
             <div className="flex flex-wrap items-end gap-2">
               <Button type="button" variant="outline" size="sm" onClick={requestAiSuggestions} disabled={aiPending}>
-                {aiPending ? "Analyzing..." : "Suggest From Screenshot"}
+                {aiPending ? "Analyzing..." : presetContent.aiButton}
               </Button>
               <Button
                 type="button"
@@ -533,7 +559,7 @@ export default function ScreenshotAssistClient({
                     selected
                       ? "border-accent bg-accentMuted/20"
                       : aiSuggested
-                        ? "border-sky-500/60 bg-sky-500/10"
+                        ? "border-[color:color-mix(in_srgb,var(--color-accent)_46%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-accent)_12%,var(--color-panel))]"
                         : "border-border bg-panel/70"
                   )}
                 >
@@ -550,7 +576,7 @@ export default function ScreenshotAssistClient({
                       {categories ? ` | ${categories}` : ""}
                     </div>
                     {aiSuggested ? (
-                      <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-sky-300">
+                      <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-accent)]">
                         AI Suggested
                       </div>
                     ) : null}

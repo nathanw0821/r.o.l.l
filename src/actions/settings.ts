@@ -8,7 +8,7 @@ import { z } from "zod";
 
 const settingsSchema = z.object({
   theme: z.enum(["light", "dark", "system"]).optional(),
-  accent: z.enum(["ember", "vault", "radburst", "glow"]).optional(),
+  accent: z.enum(["ember", "vault", "radburst", "glow", "brass", "frost"]).optional(),
   density: z.enum(["comfortable", "compact"]).optional(),
   colorBlind: z
     .enum(["none", "deuteranopia", "protanopia", "tritanopia", "high-contrast"])
@@ -17,7 +17,7 @@ const settingsSchema = z.object({
 
 export async function updateUserSettings(input: {
   theme?: "light" | "dark" | "system";
-  accent?: "ember" | "vault" | "radburst" | "glow";
+  accent?: "ember" | "vault" | "radburst" | "glow" | "brass" | "frost";
   density?: "comfortable" | "compact";
   colorBlind?: "none" | "deuteranopia" | "protanopia" | "tritanopia" | "high-contrast";
 }) {

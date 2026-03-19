@@ -214,7 +214,7 @@ export async function awardAchievementsView(userId: string) {
 
 export async function awardSettingsAchievements(userId: string, input: {
   theme?: "light" | "dark" | "system";
-  accent?: "ember" | "vault" | "radburst" | "glow";
+  accent?: "ember" | "vault" | "radburst" | "glow" | "brass" | "frost";
 }) {
   const earned: string[] = [];
   if (input.theme === "dark") earned.push("midnight_oil");

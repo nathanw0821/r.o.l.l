@@ -318,7 +318,7 @@ export default function SummaryClient({
                     aria-pressed={row.unlocked}
                     data-status={row.unlocked ? "unlocked" : "locked"}
                     className={cn(
-                      "summary-status-card rounded-[var(--radius)] border px-3 py-2 text-left transition",
+                      "summary-status-card rounded-[var(--radius)] border text-left transition",
                       "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                       pendingId === row.id && "opacity-60"
                     )}

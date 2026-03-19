@@ -8,18 +8,19 @@ const accents = [
   { value: "ember", label: "Ember" },
   { value: "vault", label: "Vault" },
   { value: "radburst", label: "Radburst" },
-  { value: "glow", label: "Glow" }
+  { value: "glow", label: "Glow" },
+  { value: "brass", label: "Brass" },
+  { value: "frost", label: "Frost" }
 ] as const;
 
 export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
-  const { theme, accent, colorBlind, density, setTheme, setAccent, setColorBlind, setDensity } = useThemeSettings();
+  const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
 
-  async function persistSettings(next: { theme?: string; accent?: string; density?: string; colorBlind?: string }) {
+  async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
     if (!canPersist) return;
     await updateUserSettings({
       theme: next.theme as "light" | "dark" | "system" | undefined,
       accent: next.accent as "ember" | "vault" | "radburst" | "glow" | undefined,
-      density: next.density as "comfortable" | "compact" | undefined,
       colorBlind: next.colorBlind as
         | "none"
         | "deuteranopia"
@@ -49,6 +50,11 @@ export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
             </Button>
           ))}
         </div>
+        {theme === "light" ? (
+          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-[color:var(--color-warning)]">
+            Caution, bright
+          </p>
+        ) : null}
       </div>
       <div>
         <label className="text-sm font-semibold">Accent</label>
@@ -93,30 +99,6 @@ export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
         </div>
         <p className="mt-2 text-xs text-foreground/60">
           Adjusts status colors to remain distinct under common color-vision deficiencies.
-        </p>
-      </div>
-      <div>
-        <label className="text-sm font-semibold">Density</label>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {[
-            { value: "comfortable", label: "Comfortable" },
-            { value: "compact", label: "Compact" }
-          ].map((option) => (
-            <Button
-              key={option.value}
-              size="sm"
-              variant={density === option.value ? "default" : "outline"}
-              onClick={() => {
-                setDensity(option.value as "comfortable" | "compact");
-                persistSettings({ density: option.value });
-              }}
-            >
-              {option.label}
-            </Button>
-          ))}
-        </div>
-        <p className="mt-2 text-xs text-foreground/60">
-          Density affects table spacing. Compact mode reduces vertical padding.
         </p>
       </div>
       {!canPersist ? (

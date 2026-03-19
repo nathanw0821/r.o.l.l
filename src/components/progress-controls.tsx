@@ -55,8 +55,8 @@ export default function ProgressControls({ enabled }: { enabled: boolean }) {
       {!enabled ? (
         <div className="text-xs text-foreground/60">Sign in to reset your progress.</div>
       ) : null}
-      {message ? <div className="text-xs text-emerald-300">{message}</div> : null}
-      {error ? <div className="text-xs text-amber-300">{error}</div> : null}
+      {message ? <div className="text-xs text-[color:var(--color-success)]">{message}</div> : null}
+      {error ? <div className="text-xs text-[color:var(--color-warning)]">{error}</div> : null}
     </div>
   );
 }

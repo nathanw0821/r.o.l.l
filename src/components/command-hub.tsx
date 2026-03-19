@@ -47,10 +47,22 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     toggleCategory
   } = useFilters();
   const [expanded, setExpanded] = React.useState(false);
-  const [scanlines, setScanlines] = React.useState(true);
   const [animateBars, setAnimateBars] = React.useState(false);
   const [hydrated, setHydrated] = React.useState(false);
-  const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
+  const {
+    theme,
+    accent,
+    colorBlind,
+    density,
+    scanlineMode,
+    uiTone,
+    setTheme,
+    setAccent,
+    setColorBlind,
+    setDensity,
+    setScanlineMode,
+    setUiTone
+  } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
   const isSignedIn = hydrated && Boolean(session);
   const hasActiveFilters =
@@ -94,18 +106,6 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   }, []);
 
   React.useEffect(() => {
-    const stored = window.localStorage.getItem("roll.scanlines");
-    if (stored === "off") {
-      setScanlines(false);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    document.documentElement.dataset.scanlines = scanlines ? "on" : "off";
-    window.localStorage.setItem("roll.scanlines", scanlines ? "on" : "off");
-  }, [scanlines]);
-
-  React.useEffect(() => {
     if (!expanded) return;
 
     function handlePointerDown(event: PointerEvent) {
@@ -118,11 +118,12 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, [expanded]);
 
-  async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
+  async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string; density?: string }) {
     if (!session) return;
     await updateUserSettings({
       theme: next.theme as "light" | "dark" | "system" | undefined,
-      accent: next.accent as "ember" | "vault" | "radburst" | "glow" | undefined,
+      accent: next.accent as "ember" | "vault" | "radburst" | "glow" | "brass" | "frost" | undefined,
+      density: next.density as "comfortable" | "compact" | undefined,
       colorBlind: next.colorBlind as
         | "none"
         | "deuteranopia"
@@ -347,6 +348,42 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
         <section className="hub-zone">
           <div className="hub-zone__title">System</div>
+          <div className="hub-section">
+            <div className="hub-section__title">View Density</div>
+            <div className="hub-section__copy">
+              {density === "compact"
+                ? "Compact tightens cards, rows, and spacing for faster scanning."
+                : "Comfortable adds breathing room for easier reading."}
+            </div>
+            <div className="hub-choice-grid hub-choice-grid--two">
+              {([
+                {
+                  value: "comfortable",
+                  label: "Comfortable",
+                  meta: "More spacing, clearer grouping"
+                },
+                {
+                  value: "compact",
+                  label: "Compact",
+                  meta: "Denser cards, tighter scanning"
+                }
+              ] as const).map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  data-active={density === option.value}
+                  className="hub-choice"
+                  onClick={() => {
+                    setDensity(option.value);
+                    persistSettings({ density: option.value });
+                  }}
+                >
+                  <span className="hub-choice__label">{option.label}</span>
+                  <span className="hub-choice__meta">{option.meta}</span>
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Theme</div>
             <div className="flex flex-wrap gap-2">
@@ -369,11 +406,16 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 </button>
               ))}
             </div>
+            {theme === "light" ? (
+              <div className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-[color:var(--color-warning)]">
+                Caution, bright
+              </div>
+            ) : null}
           </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Accent</div>
             <div className="flex flex-wrap gap-2">
-              {(["ember", "vault", "glow"] as const).map((value) => (
+              {(["ember", "vault", "radburst", "glow", "brass", "frost"] as const).map((value) => (
                 <button
                   key={value}
                   type="button"
@@ -389,6 +431,32 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   )}
                 >
                   {value}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="hub-group">
+            <div className="text-xs text-foreground/60">UI Tone</div>
+            <div className="flex flex-wrap gap-2">
+              {([
+                { value: "neutral", label: "Neutral" },
+                { value: "vault", label: "Vault" },
+                { value: "copper", label: "Copper" },
+                { value: "olive", label: "Olive" },
+                { value: "rose", label: "Rose" }
+              ] as const).map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setUiTone(option.value)}
+                  className={cn(
+                    "rounded-full border px-2 py-1 text-xs",
+                    uiTone === option.value
+                      ? "border-accent text-foreground"
+                      : "border-border text-foreground/60 hover:border-accent"
+                  )}
+                >
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -411,15 +479,29 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             </select>
           </div>
           <div className="hub-group">
-            <label className="flex items-center gap-2 text-xs text-foreground/60">
-              <input
-                type="checkbox"
-                checked={scanlines}
-                onChange={(event) => setScanlines(event.target.checked)}
-                className="h-4 w-4 accent-[var(--accent)]"
-              />
-              Scanline overlay
-            </label>
+            <div className="text-xs text-foreground/60">Scanlines</div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {([
+                { value: "off", label: "Off" },
+                { value: "soft", label: "Soft" },
+                { value: "balanced", label: "Balanced" },
+                { value: "strong", label: "Strong" }
+              ] as const).map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setScanlineMode(option.value)}
+                  className={cn(
+                    "rounded-full border px-2 py-1 text-xs",
+                    scanlineMode === option.value
+                      ? "border-accent text-foreground"
+                      : "border-border text-foreground/60 hover:border-accent"
+                  )}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Navigation</div>
