@@ -1,3 +1,4 @@
+import SessionAssistReadmeActions from "@/components/session-assist-readme-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function HomePage() {
@@ -10,7 +11,7 @@ export default async function HomePage() {
         <CardContent>
           <div className="space-y-4 text-sm text-foreground/80">
             <div>
-              Registry Of Legendary Loadouts is a Fallout 76 companion tracker for manually managing your legendary
+              Record Of Legendary Loadouts is a Fallout 76 companion tracker for manually managing your legendary
               unlock progress across every star tier.
             </div>
             <div>
@@ -49,6 +50,13 @@ export default async function HomePage() {
                   <li>User-managed entries are clearer, more trustworthy, and patch-friendly.</li>
                   <li>Reference-source updates are handled in admin tools, separate from player progress.</li>
                 </ul>
+                <div className="mt-4 rounded-[var(--radius)] border border-border bg-background/40 p-3">
+                  <div className="text-xs uppercase text-foreground/60">Readme Subsection: Session Assist</div>
+                  <div className="mt-2 text-sm text-foreground/75">
+                    Use Screenshot Assist as a guided session workflow for confirming new unlocks manually. It does not auto-detect or auto-save your legendary unlocks. You can keep it as a floating in-app window, pin it into the main tabs, or optionally request suggestion-only AI review with your own OpenAI API key.
+                  </div>
+                  <SessionAssistReadmeActions />
+                </div>
               </div>
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4 md:col-span-2">
                 <div className="text-xs uppercase text-foreground/60">Accessibility & Display</div>

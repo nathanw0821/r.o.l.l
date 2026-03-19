@@ -27,7 +27,7 @@ export default function BrandStack({
       ) : (
         <div className="brand-stack__title">{titleSlot ?? "R.O.L.L"}</div>
       )}
-      <div className="brand-stack__subtitle">Registry Of Legendary Loadouts</div>
+      <div className="brand-stack__subtitle">Record Of Legendary Loadouts</div>
       <div className="brand-stack__support">Effects • Components • Acquisition</div>
     </div>
   );

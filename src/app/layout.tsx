@@ -7,14 +7,15 @@ import CommandHubShell from "@/components/command-hub-shell";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/app-config";
+import { getTierProgressSummary } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 
 const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
-  title: "R.O.L.L | Registry Of Legendary Loadouts",
-  description: "Registry of legendary effects, components, and acquisition paths for Fallout 76.",
+  title: "R.O.L.L | Record Of Legendary Loadouts",
+  description: "Record of legendary effects, components, and acquisition paths for Fallout 76.",
 };
 
 const THEME_MODES = ["light", "dark", "system"] as const;
@@ -33,6 +34,7 @@ function isColorBlindMode(value: string | null | undefined): value is ColorBlind
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
+  const tierProgress = await getTierProgressSummary(session?.user?.id);
   const settings = session?.user?.id
     ? await prisma.userSettings.findUnique({ where: { userId: session.user.id } })
     : null;
@@ -61,7 +63,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           initialDensity={initialDensity}
           preferDefaults={Boolean(settings)}
         >
-          <AppShell hub={<CommandHubShell />}>{children}</AppShell>
+          <AppShell tierProgress={tierProgress} hub={<CommandHubShell tierProgress={tierProgress} />}>
+            {children}
+          </AppShell>
         </Providers>
       </body>
     </html>
