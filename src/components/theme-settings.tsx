@@ -1,10 +1,11 @@
 "use client";
 
 import { useThemeSettings } from "@/components/theme-provider";
+import { useRewards } from "@/components/rewards-provider";
 import { updateUserSettings } from "@/actions/settings";
 import { Button } from "@/components/ui/button";
 
-const accents = [
+const baseAccents = [
   { value: "ember", label: "Ember" },
   { value: "vault", label: "Vault" },
   { value: "radburst", label: "Radburst" },
@@ -13,14 +14,35 @@ const accents = [
   { value: "frost", label: "Frost" }
 ] as const;
 
+const premiumAccents = [
+  { value: "sunset", label: "Sunset", unlockId: "accent-sunset" },
+  { value: "mint", label: "Mint", unlockId: "accent-mint" },
+  { value: "nightfall", label: "Nightfall", unlockId: "accent-nightfall" }
+] as const;
+
 export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
   const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
+  const { status } = useRewards();
+  const accents = [
+    ...baseAccents,
+    ...premiumAccents.filter((option) => status?.unlockedItemIds?.includes(option.unlockId))
+  ];
 
   async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
     if (!canPersist) return;
     await updateUserSettings({
       theme: next.theme as "light" | "dark" | "system" | undefined,
-      accent: next.accent as "ember" | "vault" | "radburst" | "glow" | undefined,
+      accent: next.accent as
+        | "ember"
+        | "vault"
+        | "radburst"
+        | "glow"
+        | "brass"
+        | "frost"
+        | "sunset"
+        | "mint"
+        | "nightfall"
+        | undefined,
       colorBlind: next.colorBlind as
         | "none"
         | "deuteranopia"

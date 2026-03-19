@@ -9,9 +9,11 @@ import { Award, BookOpen, Camera, ClipboardList, ListChecks, Sparkles, Star } fr
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import LocalProgressSync from "@/components/local-progress-sync";
+import SupportLink from "@/components/support-link";
 import SessionAssistWindow from "@/components/session-assist-window";
 import { useSessionAssist } from "@/components/session-assist-provider";
 import { useLocalProgress } from "@/components/use-local-progress";
+import { useRewards } from "@/components/rewards-provider";
 import { formatTierStars } from "@/lib/tier-format";
 
 const links = [
@@ -46,6 +48,7 @@ export default function AppShell({
   const pathname = usePathname();
   const { data: session } = useSession();
   const { open, pinned, toggleOpen } = useSessionAssist();
+  const { status: rewardsStatus } = useRewards();
   const isSignedIn = Boolean(session?.user);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
   const visibleLinks = links.filter((link) => !link.requiresAuth || session?.user);
@@ -115,6 +118,9 @@ export default function AppShell({
               </button>
             ) : null}
           </nav>
+          <div className="app-sidebar__support">
+            <SupportLink href={rewardsStatus?.supportUrl} label="Help keep this tool alive" />
+          </div>
         </aside>
         <div className="app-main">
           <div className="content-canvas">
