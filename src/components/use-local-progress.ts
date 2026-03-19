@@ -73,6 +73,25 @@ export function useLocalProgress(enabled = true) {
     [enabled]
   );
 
+  const setEntries = React.useCallback(
+    (entries: { id: string; unlocked: boolean | null }[]) => {
+      if (!enabled || entries.length === 0) return;
+      setMap((prev) => {
+        const next = { ...prev };
+        for (const entry of entries) {
+          if (entry.unlocked === null) {
+            delete next[entry.id];
+          } else {
+            next[entry.id] = entry.unlocked;
+          }
+        }
+        writeLocalProgress(next);
+        return next;
+      });
+    },
+    [enabled]
+  );
+
   const clear = React.useCallback(() => {
     setMap({});
     clearLocalProgress();
@@ -86,6 +105,7 @@ export function useLocalProgress(enabled = true) {
   return {
     map,
     setEntry,
+    setEntries,
     clear,
     unlockedCount,
     hasLocal: Object.keys(map).length > 0

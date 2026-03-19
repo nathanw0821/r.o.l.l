@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Award, BookOpen, ClipboardList, ListChecks, Sparkles, Star } from "lucide-react";
+import { Award, BookOpen, Camera, ClipboardList, ListChecks, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import LocalProgressSync from "@/components/local-progress-sync";
@@ -12,6 +12,7 @@ import LocalProgressSync from "@/components/local-progress-sync";
 const links = [
   { href: "/", label: "Readme", icon: BookOpen },
   { href: "/summary", label: "Summary", icon: Sparkles },
+  { href: "/screenshot-assist", label: "Session Assist", icon: Camera },
   { href: "/achievements", label: "Achievements", icon: Award, requiresAuth: true },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "1-Star", ariaLabel: "1 Star", icon: Star },
