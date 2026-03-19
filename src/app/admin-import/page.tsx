@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AdminImportForm from "@/components/admin-import-form";
+import AdminSyncPanel from "@/components/admin-sync-panel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function AdminImportPage() {
@@ -12,7 +13,7 @@ export default async function AdminImportPage() {
         <CardHeader>
           <CardTitle>Admin Import</CardTitle>
           <CardDescription>
-            Upload a multi-sheet workbook to create a new dataset version and migrate progress when possible.
+            Upload a multi-sheet workbook (.xlsx, .xlsm, .xls) to create a new dataset version and migrate progress when possible. Legacy .xls files are converted server-side.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -21,6 +22,24 @@ export default async function AdminImportPage() {
           ) : (
             <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-sm">
               Sign in to import a workbook.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Websheet Sync</CardTitle>
+          <CardDescription>
+            Pull data from configured Fallout 76 sources and refresh the dataset. Partial failures are reported per source.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {session ? (
+            <AdminSyncPanel />
+          ) : (
+            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-sm">
+              Sign in to run a websheet sync.
             </div>
           )}
         </CardContent>

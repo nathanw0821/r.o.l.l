@@ -71,6 +71,7 @@ export interface EffectTierCategory {
 // -----------------------------
 export interface User {
   id: Id;
+  profileDatasetVersionId?: Id;
   name?: string;
   email?: string;
   emailVerified?: Date;
@@ -90,6 +91,9 @@ export interface DatasetVersion {
   id: Id;
   label: string;
   sourceType: string;
+  sourceName?: string;
+  sourceUrl?: string;
+  syncMetadata?: Record<string, unknown>;
   importedAt: Date;
   isActive: boolean;
 }

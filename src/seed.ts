@@ -3,6 +3,7 @@ import path from "path";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import { isTsvLike, readTsvFile } from "./tsv";
+import { normalizeNoteValue } from "./lib/import-normalize";
 
 const prisma = new PrismaClient();
 
@@ -63,15 +64,16 @@ function toIntOrNull(raw?: string): number | undefined {
 function buildHeaderIndex(header: string[]): Map<string, number> {
   const map = new Map<string, number>();
   header.forEach((name, index) => {
-    if (!map.has(name)) {
-      map.set(name, index);
+    const key = name.trim().toLowerCase();
+    if (!map.has(key)) {
+      map.set(key, index);
     }
   });
   return map;
 }
 
 function getColumnValue(row: string[], headerIndex: Map<string, number>, name: string): string | undefined {
-  const index = headerIndex.get(name);
+  const index = headerIndex.get(name.trim().toLowerCase());
   if (index === undefined) return undefined;
   return row[index];
 }
@@ -181,7 +183,7 @@ async function seedNormalizedFromCanonical(
       description: normalizeName(rawDescription),
       extraComponent: normalizeName(rawExtra),
       legendaryModules: rawModules,
-      notes: normalizeName(rawNotes),
+      notes: normalizeNoteValue(rawNotes) ?? undefined,
     });
 
     if (!parsed.success) {
@@ -261,8 +263,7 @@ async function ingestDataset(datasetVersionId: string, filePath: string) {
       extraComponent,
       legendaryModules: toIntOrNull(legendaryModulesRaw),
       unlockedRaw,
-      notes,
-    };
+      notes: normalizeNoteValue(notes) ?? undefined,\n    };
   });
 
   if (fileKind === "all-tiers") {
@@ -324,3 +325,6 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+
+
