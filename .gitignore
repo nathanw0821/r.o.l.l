@@ -1,5 +1,6 @@
 node_modules
 .next
+out
 .env
 .env.local
 .env.*.local
@@ -13,8 +14,12 @@ pnpm-debug.log*
 coverage
 .turbo
 .vercel
+.vscode
+.idea
+.eslintcache
 .DS_Store
 Thumbs.db
 *.pem
 dev.db
 *.db
+*.tsbuildinfo

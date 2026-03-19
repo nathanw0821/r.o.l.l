@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getEffectTiersByTierLabel } from "@/lib/data";
 import EffectTable from "@/components/effect-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatTierStars } from "@/lib/tier-format";
 
 const tierLabel = "4 Star";
 
@@ -14,8 +15,8 @@ export default async function TierFourPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>4 Star Effects</CardTitle>
-          <CardDescription>Top-tier rolls for late-game crafting sessions.</CardDescription>
+          <CardTitle>{formatTierStars(tierLabel)} 4-Star Legendaries</CardTitle>
+          <CardDescription>Browse all 4-Star Legendaries.</CardDescription>
         </CardHeader>
         <CardContent />
       </Card>

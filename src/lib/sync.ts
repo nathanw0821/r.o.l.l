@@ -1,4 +1,5 @@
 import { getSyncUrlError } from "@/lib/app-config";
+import { createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { normalizeNoteValue, type ImportCellValue } from "@/lib/import-normalize";
 
@@ -7,6 +8,7 @@ type SyncSourceRecord = {
   name: string;
   kind: string;
   url: string | null;
+  referenceUrl: string | null;
   format: string | null;
   enabled: boolean;
 };
@@ -15,6 +17,9 @@ export type SyncSourceDetails = SyncSourceRecord & {
   lastSyncedAt: Date | null;
   lastStatus: string | null;
   lastError: string | null;
+  lastCheckedAt: Date | null;
+  lastChangedAt: Date | null;
+  lastCheckStatus: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -32,10 +37,38 @@ type NormalizedRow = {
 };
 
 const DEFAULT_SOURCES = [
-  { name: "NukaKnights", kind: "nukaknights", url: "", format: "csv" },
-  { name: "TheDuchessFlame", kind: "theduchessflame", url: "", format: "csv" },
-  { name: "Fallout 76 Wiki", kind: "fallout-wiki", url: "", format: "json" },
-  { name: "Bethesda Fallout 76", kind: "bethesda", url: "", format: "json" }
+  {
+    name: "NukaKnights",
+    kind: "nukaknights",
+    url: "",
+    referenceUrl: "https://nukaknights.com/en/",
+    format: "csv",
+    enabled: false
+  },
+  {
+    name: "TheDuchessFlame",
+    kind: "theduchessflame",
+    url: "",
+    referenceUrl: "https://www.theduchessflame.com/",
+    format: "csv",
+    enabled: false
+  },
+  {
+    name: "Fallout 76 Portal",
+    kind: "fallout-fandom",
+    url: "",
+    referenceUrl: "https://fallout.fandom.com/wiki/Category:Fallout_76_portal",
+    format: "json",
+    enabled: false
+  },
+  {
+    name: "Bethesda Fallout 76",
+    kind: "bethesda",
+    url: "",
+    referenceUrl: "https://fallout.bethesda.net/en",
+    format: "json",
+    enabled: false
+  }
 ];
 
 const headerMap = new Map<string, keyof NormalizedRow>([
@@ -463,11 +496,27 @@ async function fetchWithRetry(source: SyncSourceRecord, attempts = 3) {
 }
 
 export async function ensureSyncSources() {
-  const existing = await prisma.syncSource.count();
-  if (existing > 0) return;
-  await prisma.syncSource.createMany({
-    data: DEFAULT_SOURCES
-  });
+  const existing = await prisma.syncSource.findMany();
+  const existingByKind = new Map(existing.map((source) => [source.kind, source]));
+
+  for (const source of DEFAULT_SOURCES) {
+    const current = existingByKind.get(source.kind);
+    if (!current) {
+      await prisma.syncSource.create({
+        data: source
+      });
+      continue;
+    }
+
+    await prisma.syncSource.update({
+      where: { id: current.id },
+      data: {
+        name: source.name,
+        referenceUrl: current.referenceUrl ?? source.referenceUrl,
+        format: current.format ?? source.format
+      }
+    });
+  }
 }
 
 export async function getSyncSources() {
@@ -477,25 +526,124 @@ export async function getSyncSources() {
   });
 }
 
-export async function updateSyncSource(params: { id: string; url?: string | null; enabled?: boolean; format?: string | null }) {
+export async function updateSyncSource(params: {
+  id: string;
+  url?: string | null;
+  referenceUrl?: string | null;
+  enabled?: boolean;
+  format?: string | null;
+}) {
   const urlError = getSyncUrlError(params.url);
   if (urlError) {
     throw new Error(urlError);
+  }
+  const referenceUrlError = getSyncUrlError(params.referenceUrl);
+  if (referenceUrlError) {
+    throw new Error(referenceUrlError);
   }
 
   return prisma.syncSource.update({
     where: { id: params.id },
     data: {
       url: params.url ?? undefined,
+      referenceUrl: params.referenceUrl ?? undefined,
       enabled: params.enabled ?? undefined,
       format: params.format ?? undefined
     }
   });
 }
 
+function normalizePageContent(text: string) {
+  return text
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function fetchReferenceHash(source: SyncSourceRecord) {
+  if (!source.referenceUrl) {
+    throw new Error("Missing reference URL");
+  }
+
+  const urlError = getSyncUrlError(source.referenceUrl);
+  if (urlError) {
+    throw new Error(urlError);
+  }
+
+  const response = await fetch(source.referenceUrl, {
+    headers: { "user-agent": "R.O.L.L Source Monitor/1.0" },
+    signal: AbortSignal.timeout(15000)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Fetch failed (${response.status})`);
+  }
+
+  const html = await response.text();
+  return createHash("sha256").update(normalizePageContent(html)).digest("hex");
+}
+
+export async function checkSyncSourcesForChanges() {
+  await ensureSyncSources();
+  const sources = await prisma.syncSource.findMany({
+    where: { referenceUrl: { not: null } },
+    orderBy: { name: "asc" }
+  });
+
+  const checkedAt = new Date();
+  const results: {
+    source: string;
+    status: "baseline" | "unchanged" | "changed" | "failed";
+    message?: string;
+  }[] = [];
+
+  for (const source of sources) {
+    try {
+      const contentHash = await fetchReferenceHash(source);
+      const status =
+        !source.lastContentHash
+          ? "baseline"
+          : source.lastContentHash === contentHash
+            ? "unchanged"
+            : "changed";
+
+      await prisma.syncSource.update({
+        where: { id: source.id },
+        data: {
+          lastCheckedAt: checkedAt,
+          lastChangedAt: status === "changed" ? checkedAt : source.lastChangedAt ?? undefined,
+          lastCheckStatus: status,
+          lastContentHash: contentHash
+        }
+      });
+
+      results.push({ source: source.name, status });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Check failed";
+      await prisma.syncSource.update({
+        where: { id: source.id },
+        data: {
+          lastCheckedAt: checkedAt,
+          lastCheckStatus: "failed",
+          lastError: message
+        }
+      });
+      results.push({ source: source.name, status: "failed", message });
+    }
+  }
+
+  return results;
+}
+
 export async function runSync() {
   await ensureSyncSources();
-  const sources = await prisma.syncSource.findMany({ where: { enabled: true } });
+  const sources = (
+    await prisma.syncSource.findMany({
+      where: { enabled: true, url: { not: null } }
+    })
+  ).filter((source) => Boolean(source.url?.trim()));
   const priority = ["NukaKnights", "TheDuchessFlame", "Fallout 76 Wiki", "Bethesda Fallout 76"];
   sources.sort((a, b) => {
     const aIndex = priority.indexOf(a.name);

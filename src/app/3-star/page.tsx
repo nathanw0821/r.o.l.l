@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getEffectTiersByTierLabel } from "@/lib/data";
 import EffectTable from "@/components/effect-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatTierStars } from "@/lib/tier-format";
 
 const tierLabel = "3 Star";
 
@@ -14,8 +15,8 @@ export default async function TierThreePage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>3 Star Effects</CardTitle>
-          <CardDescription>High-impact modifiers for endgame crafting.</CardDescription>
+          <CardTitle>{formatTierStars(tierLabel)} 3-Star Legendaries</CardTitle>
+          <CardDescription>Browse all 3-Star Legendaries.</CardDescription>
         </CardHeader>
         <CardContent />
       </Card>

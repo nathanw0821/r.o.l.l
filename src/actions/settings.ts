@@ -2,6 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { awardSettingsAchievements } from "@/lib/achievements";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -35,4 +36,6 @@ export async function updateUserSettings(input: {
     update: parsed.data,
     create: { userId: session.user.id, ...parsed.data }
   });
+
+  await awardSettingsAchievements(session.user.id, parsed.data);
 }

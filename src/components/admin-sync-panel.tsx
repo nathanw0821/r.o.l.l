@@ -9,16 +9,21 @@ type SyncSource = {
   name: string;
   kind: string;
   url: string | null;
+  referenceUrl: string | null;
   format: string | null;
   enabled: boolean;
   lastSyncedAt: string | null;
   lastStatus: string | null;
   lastError: string | null;
+  lastCheckedAt: string | null;
+  lastChangedAt: string | null;
+  lastCheckStatus: string | null;
 };
 
 export default function AdminSyncPanel() {
   const [sources, setSources] = React.useState<SyncSource[]>([]);
-  const [pending, setPending] = React.useState(false);
+  const [syncPending, setSyncPending] = React.useState(false);
+  const [checkPending, setCheckPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [message, setMessage] = React.useState<string | null>(null);
 
@@ -39,7 +44,7 @@ export default function AdminSyncPanel() {
   }, []);
 
   async function handleSync() {
-    setPending(true);
+    setSyncPending(true);
     setError(null);
     setMessage(null);
     try {
@@ -54,11 +59,35 @@ export default function AdminSyncPanel() {
     } catch {
       setError("Sync failed.");
     } finally {
-      setPending(false);
+      setSyncPending(false);
     }
   }
 
-  async function handleUpdate(sourceId: string, patch: Partial<Pick<SyncSource, "url" | "enabled" | "format">>) {
+  async function handleCheck() {
+    setCheckPending(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/admin/sync/check", { method: "POST" });
+      const payload = await response.json();
+      if (!response.ok || !payload?.success) {
+        setError(payload?.error?.message ?? "Change check failed.");
+      } else {
+        const changedCount = payload?.data?.changedCount ?? 0;
+        setMessage(changedCount > 0 ? `${changedCount} source page(s) changed.` : "No source page changes detected.");
+      }
+      await loadSources();
+    } catch {
+      setError("Change check failed.");
+    } finally {
+      setCheckPending(false);
+    }
+  }
+
+  async function handleUpdate(
+    sourceId: string,
+    patch: Partial<Pick<SyncSource, "url" | "referenceUrl" | "enabled" | "format">>
+  ) {
     setError(null);
     try {
       const response = await fetch("/api/admin/sync", {
@@ -83,15 +112,20 @@ export default function AdminSyncPanel() {
         <div>
           <div className="text-sm font-semibold">Websheet Sync</div>
           <div className="text-xs text-foreground/60">
-            Pulls data from configured Fallout 76 sources and refreshes the dataset.
+            Track source pages here and maintain the companion tracker’s reference dataset.
           </div>
           <div className="mt-1 text-xs text-foreground/50">
-            Provide CSV/TSV/JSON export URLs for each source to enable syncing.
+            “Check for Changes” monitors saved source pages. “Run Sync” only uses enabled CSV/TSV/JSON feed URLs and never reads live game data.
           </div>
         </div>
-        <Button type="button" variant="outline" size="sm" onClick={handleSync} disabled={pending}>
-          {pending ? "Syncing..." : "Run Sync"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={handleCheck} disabled={checkPending}>
+            {checkPending ? "Checking..." : "Check for Changes"}
+          </Button>
+          <Button type="button" variant="outline" size="sm" onClick={handleSync} disabled={syncPending}>
+            {syncPending ? "Syncing..." : "Run Sync"}
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-3">
@@ -115,9 +149,23 @@ export default function AdminSyncPanel() {
                 {source.lastStatus ?? "Not synced"}
               </div>
             </div>
-            <div className="mt-3 grid gap-3 md:grid-cols-3">
+            <div className="mt-3 grid gap-3 md:grid-cols-4">
+              <label className="text-xs text-foreground/60 md:col-span-2">
+                Reference URL
+                <input
+                  value={source.referenceUrl ?? ""}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setSources((current) =>
+                      current.map((item) => (item.id === source.id ? { ...item, referenceUrl: value } : item))
+                    );
+                  }}
+                  onBlur={(event) => handleUpdate(source.id, { referenceUrl: event.target.value || null })}
+                  className="mt-1 w-full rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
+                />
+              </label>
               <label className="text-xs text-foreground/60">
-                Source URL
+                Sync Feed URL
                 <input
                   value={source.url ?? ""}
                   onChange={(event) => {
@@ -143,8 +191,10 @@ export default function AdminSyncPanel() {
                   <option value="json">JSON</option>
                 </select>
               </label>
+            </div>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
               <label className="text-xs text-foreground/60">
-                Enabled
+                Enabled for Sync
                 <div className="mt-2 flex items-center gap-2 text-xs text-foreground/70">
                   <input
                     type="checkbox"
@@ -155,6 +205,30 @@ export default function AdminSyncPanel() {
                   {source.enabled ? "On" : "Off"}
                 </div>
               </label>
+              <div className="text-xs text-foreground/60">
+                <div>
+                  Last checked: {source.lastCheckedAt ? new Date(source.lastCheckedAt).toLocaleString() : "Never"}
+                </div>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <span
+                    className={cn(
+                      "rounded-full border px-2 py-0.5 text-[11px]",
+                      source.lastCheckStatus === "changed"
+                        ? "border-amber-500/60 text-amber-200"
+                        : source.lastCheckStatus === "unchanged"
+                          ? "border-emerald-500/60 text-emerald-200"
+                          : source.lastCheckStatus === "baseline"
+                            ? "border-sky-500/60 text-sky-200"
+                            : "border-border text-foreground/60"
+                    )}
+                  >
+                    {source.lastCheckStatus ?? "Not checked"}
+                  </span>
+                  {source.lastChangedAt ? (
+                    <span>Last changed: {new Date(source.lastChangedAt).toLocaleString()}</span>
+                  ) : null}
+                </div>
+              </div>
             </div>
             <div className="mt-2 text-xs text-foreground/60">
               Last synced: {source.lastSyncedAt ? new Date(source.lastSyncedAt).toLocaleString() : "Never"}

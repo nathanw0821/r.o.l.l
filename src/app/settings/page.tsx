@@ -14,11 +14,27 @@ export default async function SettingsPage() {
         <CardHeader>
           <CardTitle>Settings & Accessibility</CardTitle>
           <CardDescription>
-            Tune contrast, color assistance, and layout density. All controls are keyboard accessible.
+            Tune contrast, color assistance, and layout density for your companion-tracker setup. All controls are keyboard accessible.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ThemeSettings canPersist={Boolean(session)} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Tracker Notes</CardTitle>
+          <CardDescription>
+            R.O.L.L. is built for safe, user-managed progress tracking.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc pl-5 text-sm text-foreground/70">
+            <li>Your legendary progress is entered and reviewed by you.</li>
+            <li>R.O.L.L. does not read the live game process, inspect memory, or rely on patch-sensitive hooks.</li>
+            <li>This companion-app approach is lower risk for public hosting and easier to maintain across game updates.</li>
+          </ul>
         </CardContent>
       </Card>
 
@@ -42,7 +58,7 @@ export default async function SettingsPage() {
         <CardHeader>
           <CardTitle>Progress Reset</CardTitle>
           <CardDescription>
-            Restore your selections to the imported profile or the public defaults.
+            Restore your tracked selections to an imported backup or the public defaults.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -52,9 +68,25 @@ export default async function SettingsPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Backup & Sync</CardTitle>
+          <CardDescription>
+            Use sign-in for cloud save, and use imports or exports for backup and migration when needed.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc pl-5 text-sm text-foreground/70">
+            <li>Signed-in accounts keep progress available across devices.</li>
+            <li>Imports and exports are optional tools for backup, restore, or moving your data.</li>
+            <li>Manual tracking stays the source of truth for everyday use.</li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Connected Accounts</CardTitle>
           <CardDescription>
-            Manage external sign-in methods. Keep at least one method linked to avoid lockout.
+            Manage external sign-in methods for account sync. Keep at least one method linked to avoid lockout.
           </CardDescription>
         </CardHeader>
         <CardContent>

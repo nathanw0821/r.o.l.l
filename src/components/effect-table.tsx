@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Lock, LockOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { updateProgress } from "@/actions/progress";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
+import ProgressToggle from "@/components/progress-toggle";
+import { useLocalProgress } from "@/components/use-local-progress";
 import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
+import { formatTierStarsWithLabel } from "@/lib/tier-format";
 
 export type EffectTierRow = {
   id: string;
@@ -33,11 +34,21 @@ export default function EffectTable({
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
   const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions } = useFilters();
+  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!canEdit);
   const router = useRouter();
 
   React.useEffect(() => {
-    setLocalRows(rows);
-  }, [rows]);
+    const merged: EffectTierRow[] = rows.map((row) => {
+      const localValue = localProgress[row.id];
+      if (localValue === undefined) return row;
+      return {
+        ...row,
+        unlocked: localValue,
+        selectionSource: "edited" as const
+      };
+    });
+    setLocalRows(merged);
+  }, [rows, localProgress]);
 
   React.useEffect(() => {
     setOriginOptions(collectOriginOptions(localRows));
@@ -56,20 +67,27 @@ export default function EffectTable({
   );
 
   async function toggleRow(row: EffectTierRow) {
-    if (!canEdit) return;
     const nextUnlocked = !row.unlocked;
     setPendingId(row.id);
     setLocalRows((prev) =>
       prev.map((item) =>
         item.id === row.id
-          ? { ...item, unlocked: nextUnlocked, selectionSource: "edited" }
+          ? { ...item, unlocked: nextUnlocked, selectionSource: "edited" as const }
           : item
       )
     );
+    if (!canEdit) {
+      setLocalEntry(row.id, nextUnlocked);
+      setPendingId(null);
+      return;
+    }
     try {
-      await updateProgress({ effectTierId: row.id, unlocked: nextUnlocked });
+      await updateProgress({
+        effectTierId: row.id,
+        unlocked: nextUnlocked
+      });
       router.refresh();
-    } catch (error) {
+    } catch {
       setLocalRows((prev) =>
         prev.map((item) =>
           item.id === row.id
@@ -89,7 +107,7 @@ export default function EffectTable({
       </div>
       {!canEdit ? (
         <div className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-xs text-foreground/70">
-          Public data is visible. Sign in to apply your imported profile and edit unlocks.
+          Changes are saved locally in this browser. Sign in to sync them to your account.
         </div>
       ) : null}
       <div className="hidden text-xs font-semibold uppercase text-foreground/60 md:grid table-grid">
@@ -110,6 +128,7 @@ export default function EffectTable({
         {filteredRows.map((row) => {
           const categoryList = row.categories.map((c) => c.category.name).filter(Boolean);
           const isPending = pendingId === row.id;
+          const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
           const sourceLabel =
             row.selectionSource === "imported"
               ? "Imported"
@@ -132,8 +151,10 @@ export default function EffectTable({
             >
               <div className="min-w-0">
                 <div className="font-semibold">{row.effect.name}</div>
-                {row.tier?.label ? (
-                  <div className="text-xs text-foreground/60">{row.tier.label}</div>
+                {tierDisplay.stars ? (
+                  <div className="text-xs text-foreground/60" title={tierDisplay.label}>
+                    {tierDisplay.stars}
+                  </div>
                 ) : null}
               </div>
               <div className="min-w-0 text-sm text-foreground/80">
@@ -158,27 +179,7 @@ export default function EffectTable({
                 {row.legendaryModules ?? "-"}
               </div>
               <div className="min-w-0">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => toggleRow(row)}
-                  disabled={!canEdit || isPending}
-                  data-status={row.unlocked ? "unlocked" : "locked"}
-                  className={cn(
-                    "w-full justify-center gap-2 text-center status-button",
-                    !canEdit && "opacity-70"
-                  )}
-                >
-                  {row.unlocked ? (
-                    <>
-                      <LockOpen className="h-3 w-3" /> Unlocked
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="h-3 w-3" /> Locked
-                    </>
-                  )}
-                </Button>
+                <ProgressToggle unlocked={row.unlocked} onToggle={() => toggleRow(row)} disabled={isPending} className="w-full justify-center" />
                 <div className="mt-2 flex flex-wrap gap-2">
                   <div className={cn("inline-flex rounded-full border px-2 py-0.5 text-[11px]", sourceClass)}>
                     {sourceLabel}
@@ -205,28 +206,23 @@ export default function EffectTable({
                 ? "Edited"
                 : "Default";
           const isPending = pendingId === row.id;
+          const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
           return (
             <div key={`tile-${row.id}`} className="effect-tile">
               <div className="effect-tile__header">
                 <div>
                   <div className="font-semibold">{row.effect.name}</div>
-                  {row.tier?.label ? <div className="effect-tile__meta">{row.tier.label}</div> : null}
+                  {tierDisplay.stars ? (
+                    <div className="effect-tile__meta" title={tierDisplay.label}>
+                      {tierDisplay.stars}
+                    </div>
+                  ) : null}
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => toggleRow(row)}
-                  disabled={!canEdit || isPending}
-                  data-status={row.unlocked ? "unlocked" : "locked"}
-                  className={cn(
-                    "gap-1 px-2 py-1 text-xs status-button",
-                    !canEdit && "opacity-70"
-                  )}
-                >
-                  {row.unlocked ? <LockOpen className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+                <div className="text-right text-xs text-foreground/60">
                   {row.unlocked ? "Unlocked" : "Locked"}
-                </Button>
+                </div>
               </div>
+              <ProgressToggle unlocked={row.unlocked} onToggle={() => toggleRow(row)} disabled={isPending} className="w-full justify-center" />
               {categoryList.length > 0 ? (
                 <div className="effect-tile__chips">
                   {categoryList.slice(0, 4).map((category) => (

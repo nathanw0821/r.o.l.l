@@ -107,22 +107,23 @@ model EffectTierCategory {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  username      String?        @unique
-  passwordHash  String?
-  authCode      String?
-  secondaryCode String?        @unique
+  id                      String               @id @default(cuid())
+  username                String?              @unique
+  passwordHash            String?
+  authCode                String?
+  secondaryCode           String?              @unique
   profileDatasetVersionId String?
-  name          String?
-  email         String?        @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  importAudits  ImportAudit[]
-  sessions      Session[]
-  progress      UserProgress[]
-  importBaseline UserImportBaseline[]
-  settings      UserSettings?
+  name                    String?
+  email                   String?              @unique
+  emailVerified           DateTime?
+  image                   String?
+  accounts                Account[]
+  achievements            UserAchievement[]
+  importAudits            ImportAudit[]
+  sessions                Session[]
+  progress                UserProgress[]
+  importBaseline          UserImportBaseline[]
+  settings                UserSettings?
 }
 
 model Account {
@@ -196,6 +197,17 @@ model UserImportBaseline {
   @@index([userId, datasetVersionId])
 }
 
+model UserAchievement {
+  id         String   @id @default(cuid())
+  userId     String
+  key        String
+  unlockedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@index([userId, unlockedAt])
+}
+
 model ImportAudit {
   id               String          @id @default(cuid())
   userId           String?
@@ -211,18 +223,23 @@ model ImportAudit {
 }
 
 model SyncSource {
-  id           String   @id @default(cuid())
-  name         String
-  kind         String
-  url          String?
-  format       String?
-  enabled      Boolean  @default(true)
-  lastSyncedAt DateTime?
-  lastStatus   String?
-  lastError    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  runs         SyncRun[]
+  id              String   @id @default(cuid())
+  name            String
+  kind            String
+  url             String?
+  referenceUrl    String?
+  format          String?
+  enabled         Boolean  @default(true)
+  lastSyncedAt    DateTime?
+  lastStatus      String?
+  lastError       String?
+  lastCheckedAt   DateTime?
+  lastChangedAt   DateTime?
+  lastCheckStatus String?
+  lastContentHash String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  runs            SyncRun[]
 
   @@unique([name])
 }

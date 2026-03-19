@@ -2,11 +2,18 @@
 
 import * as React from "react";
 import ExcelJS from "exceljs";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { updateProgress } from "@/actions/progress";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/components/filter-context";
+import ProgressToggle from "@/components/progress-toggle";
+import { useLocalProgress } from "@/components/use-local-progress";
 import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
 import { shapeExportRows } from "@/lib/export-utils";
+import { formatTierStarsWithLabel } from "@/lib/tier-format";
 
 export type SummaryRow = {
   id: string;
@@ -79,36 +86,106 @@ function exportJson(rows: SummaryRow[], filename: string) {
 }
 
 
-export default function SummaryClient({ rows }: { rows: SummaryRow[] }) {
+export default function SummaryClient({
+  rows,
+  summary
+}: {
+  rows: SummaryRow[];
+  summary: { total: number; unlocked: number; percent: number };
+}) {
+  const { data: session } = useSession();
+  const router = useRouter();
   const {
     query,
     sourceFilters,
     statusFilters,
     originFilters,
     categoryFilters,
-    setOriginOptions
+    setOriginOptions,
+    toggleStatus
   } = useFilters();
+  const [localRows, setLocalRows] = React.useState(rows);
+  const [pendingId, setPendingId] = React.useState<string | null>(null);
+  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!session);
   const [exportMode, setExportMode] = React.useState<"filtered" | "all">("filtered");
 
   React.useEffect(() => {
-    setOriginOptions(collectOriginOptions(rows));
-  }, [rows, setOriginOptions]);
+    const merged = rows.map((row) => {
+      const localValue = localProgress[row.id];
+      if (localValue === undefined) return row;
+      return {
+        ...row,
+        unlocked: localValue,
+        selectionSource: "edited" as const
+      };
+    });
+    setLocalRows(merged);
+  }, [rows, localProgress]);
 
-  const filteredRows = React.useMemo(
+  const displayRows = React.useMemo<SummaryRow[]>(() => {
+    if (session) return localRows;
+    return localRows;
+  }, [localRows, session]);
+
+  React.useEffect(() => {
+    setOriginOptions(collectOriginOptions(displayRows));
+  }, [displayRows, setOriginOptions]);
+
+  const filteredRows = React.useMemo<SummaryRow[]>(
     () =>
-      applyFilters(rows, {
+      applyFilters(displayRows, {
         query,
         sources: sourceFilters,
         status: statusFilters,
         origins: originFilters,
         categories: categoryFilters
       }),
-    [rows, query, sourceFilters, statusFilters, originFilters, categoryFilters]
+    [displayRows, query, sourceFilters, statusFilters, originFilters, categoryFilters]
   );
 
+  const displaySummary = React.useMemo(() => {
+    const total = displayRows.length;
+    const unlocked = displayRows.filter((row) => row.unlocked).length;
+    const percent = total === 0 ? summary.percent : Math.round((unlocked / total) * 100);
+    return { total, unlocked, percent };
+  }, [displayRows, summary.percent]);
+
+  async function toggleRow(row: SummaryRow) {
+    const nextUnlocked = !row.unlocked;
+    setPendingId(row.id);
+    setLocalRows((prev) =>
+      prev.map((item) =>
+        item.id === row.id
+          ? { ...item, unlocked: nextUnlocked, selectionSource: "edited" as const }
+          : item
+      )
+    );
+    if (!session) {
+      setLocalEntry(row.id, nextUnlocked);
+      setPendingId(null);
+      return;
+    }
+    try {
+      await updateProgress({
+        effectTierId: row.id,
+        unlocked: nextUnlocked
+      });
+      router.refresh();
+    } catch {
+      setLocalRows((prev) =>
+        prev.map((item) =>
+          item.id === row.id
+            ? { ...item, unlocked: row.unlocked, selectionSource: row.selectionSource }
+            : item
+        )
+      );
+    } finally {
+      setPendingId(null);
+    }
+  }
 
   async function handleExport(kind: "xlsx" | "csv" | "json") {
-    const exportRows = exportMode === "filtered" ? filteredRows : rows;
+    const exportRows = exportMode === "filtered" ? filteredRows : displayRows;
     const stamp = new Date().toISOString().slice(0, 10);
     if (kind === "xlsx") await exportXlsx(exportRows, `roll-export-${stamp}.xlsx`);
     if (kind === "csv") exportCsv(exportRows, `roll-export-${stamp}.csv`);
@@ -117,9 +194,30 @@ export default function SummaryClient({ rows }: { rows: SummaryRow[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-[var(--radius)] border border-border bg-panel p-4 text-xs text-foreground/60">
-        Use the Command Hub to search and filter the summary view.
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Summary</CardTitle>
+          <CardDescription>
+            Track legendary crafting unlocks across tiers with a compact, high-signal view.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+              <div className="text-xs text-foreground/60">Total Effects</div>
+              <div className="text-2xl font-semibold">{displaySummary.total}</div>
+            </div>
+            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+              <div className="text-xs text-foreground/60">Unlocked</div>
+              <div className="text-2xl font-semibold">{displaySummary.unlocked}</div>
+            </div>
+            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+              <div className="text-xs text-foreground/60">Completion</div>
+              <div className="text-2xl font-semibold">{displaySummary.percent}%</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:text-left text-center">
@@ -154,10 +252,32 @@ export default function SummaryClient({ rows }: { rows: SummaryRow[] }) {
             </button>
           </div>
         </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-foreground/60">Status filter:</span>
+          {(["unlocked", "locked"] as const).map((status) => (
+            <button
+              key={status}
+              type="button"
+              onClick={() => toggleStatus(status)}
+              aria-pressed={statusFilters.includes(status)}
+              className={cn(
+                "rounded-full border px-2 py-1 text-xs capitalize",
+                statusFilters.includes(status)
+                  ? "border-accent text-foreground"
+                  : "border-border text-foreground/60 hover:border-accent"
+              )}
+            >
+              {statusFilters.includes(status) ? `${status} x` : status}
+            </button>
+          ))}
+        </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" onClick={() => handleExport("xlsx")}>Export Excel</Button>
           <Button type="button" variant="outline" size="sm" onClick={() => handleExport("csv")}>Export CSV</Button>
           <Button type="button" variant="outline" size="sm" onClick={() => handleExport("json")}>Export JSON</Button>
+        </div>
+        <div className="mt-3 text-xs text-foreground/60">
+          Update any entry here and the same effect will reflect everywhere else in the tracker.
         </div>
       </div>
 
@@ -165,19 +285,38 @@ export default function SummaryClient({ rows }: { rows: SummaryRow[] }) {
         {tierOrder.map((tierLabel) => {
           const items = filteredRows.filter((row) => row.tier?.label === tierLabel);
           if (items.length === 0) return null;
+          const tierDisplay = formatTierStarsWithLabel(tierLabel);
           return (
             <div key={tierLabel} className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="text-sm font-semibold">{tierLabel}</div>
+              <div className="text-sm font-semibold" title={tierDisplay.label}>
+                {tierDisplay.stars || tierLabel}
+              </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {items.map((row) => (
                   <div
                     key={row.id}
                     className={cn(
-                      "rounded-md border px-2 py-1 text-xs font-semibold status-pill"
+                      "rounded-[var(--radius)] border border-border bg-panel px-3 py-2"
                     )}
-                    data-status={row.unlocked ? "unlocked" : "locked"}
                   >
-                    {row.effect.name} | {row.unlocked ? "UNLOCKED" : "LOCKED"}
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold">{row.effect.name}</div>
+                        <div
+                          className="mt-1 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-semibold status-pill"
+                          data-status={row.unlocked ? "unlocked" : "locked"}
+                        >
+                          {row.unlocked ? "Unlocked" : "Locked"}
+                        </div>
+                      </div>
+                      <div className="min-w-[220px]">
+                        <ProgressToggle
+                          unlocked={row.unlocked}
+                          onToggle={() => toggleRow(row)}
+                          disabled={pendingId === row.id}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
