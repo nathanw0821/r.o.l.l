@@ -20,8 +20,10 @@ coverage
 .DS_Store
 Thumbs.db
 *.pem
-dev.db
-*.db
+# dev.db and *.db are intentionally now left available for cross-DB local workflow.
+# Uncomment the following lines to ignore local sqlite/db files instead.
+# dev.db
+# *.db
 *.tsbuildinfo
 
 .vercel
