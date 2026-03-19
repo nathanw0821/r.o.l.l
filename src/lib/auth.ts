@@ -8,6 +8,7 @@ import RedditProvider from "next-auth/providers/reddit";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements";
 import { isPublicRegistrationEnabled } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
@@ -48,6 +49,13 @@ export const authOptions: NextAuthOptions = {
         session.user.id = id;
       }
       return session;
+    }
+  },
+  events: {
+    async signIn({ user }) {
+      if (!user.id) return;
+      await awardLoginAchievement(user.id);
+      await syncUserAchievements(user.id);
     }
   },
   providers: [

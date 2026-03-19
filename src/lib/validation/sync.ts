@@ -4,6 +4,7 @@ import { cuidSchema } from "@/lib/validation/common";
 export const syncUpdateSchema = z.object({
   id: cuidSchema,
   url: z.string().trim().url().nullable().optional(),
+  referenceUrl: z.string().trim().url().nullable().optional(),
   enabled: z.preprocess((value) => {
     if (typeof value === "string") {
       const normalized = value.trim().toLowerCase();

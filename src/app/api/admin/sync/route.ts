@@ -15,11 +15,15 @@ export async function GET() {
       name: source.name,
       kind: source.kind,
       url: source.url,
+      referenceUrl: source.referenceUrl,
       format: source.format,
       enabled: source.enabled,
       lastSyncedAt: source.lastSyncedAt,
       lastStatus: source.lastStatus,
-      lastError: source.lastError
+      lastError: source.lastError,
+      lastCheckedAt: source.lastCheckedAt,
+      lastChangedAt: source.lastChangedAt,
+      lastCheckStatus: source.lastCheckStatus
     }))
   });
 }
@@ -51,6 +55,7 @@ export async function PATCH(request: Request) {
     const updated = await updateSyncSource({
       id: parsed.data.id,
       url: parsed.data.url,
+      referenceUrl: parsed.data.referenceUrl,
       format: parsed.data.format,
       enabled: typeof parsed.data.enabled === "boolean" ? parsed.data.enabled : undefined
     });
@@ -58,6 +63,7 @@ export async function PATCH(request: Request) {
       id: updated.id,
       name: updated.name,
       url: updated.url,
+      referenceUrl: updated.referenceUrl,
       format: updated.format,
       enabled: updated.enabled
     });

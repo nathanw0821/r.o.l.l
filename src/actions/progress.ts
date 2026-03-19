@@ -3,16 +3,29 @@
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { syncUserAchievements } from "@/lib/achievements";
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfile } from "@/lib/profile";
 import { z } from "zod";
 
 const toggleSchema = z.object({
   effectTierId: z.string().min(1),
-  unlocked: z.boolean()
+  unlocked: z.boolean().nullable()
 });
 
-export async function updateProgress(input: { effectTierId: string; unlocked: boolean }) {
+function revalidateTrackerPaths() {
+  revalidatePath("/");
+  revalidatePath("/achievements");
+  revalidatePath("/all-effects");
+  revalidatePath("/1-star");
+  revalidatePath("/2-star");
+  revalidatePath("/3-star");
+  revalidatePath("/4-star");
+  revalidatePath("/still-need");
+  revalidatePath("/summary");
+}
+
+export async function updateProgress(input: { effectTierId: string; unlocked: boolean | null }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     throw new Error("Not authenticated");
@@ -25,29 +38,32 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
 
   const { effectTierId, unlocked } = parsed.data;
 
-  await prisma.userProgress.upsert({
-    where: {
-      userId_effectTierId: {
+  if (unlocked === null) {
+    await prisma.userProgress.deleteMany({
+      where: {
         userId: session.user.id,
         effectTierId
       }
-    },
-    update: { unlocked },
-    create: {
-      userId: session.user.id,
-      effectTierId,
-      unlocked
-    }
-  });
+    });
+  } else {
+    await prisma.userProgress.upsert({
+      where: {
+        userId_effectTierId: {
+          userId: session.user.id,
+          effectTierId
+        }
+      },
+      update: { unlocked },
+      create: {
+        userId: session.user.id,
+        effectTierId,
+        unlocked
+      }
+    });
+  }
 
-  revalidatePath("/");
-  revalidatePath("/all-effects");
-  revalidatePath("/1-star");
-  revalidatePath("/2-star");
-  revalidatePath("/3-star");
-  revalidatePath("/4-star");
-  revalidatePath("/still-need");
-  revalidatePath("/summary");
+  await syncUserAchievements(session.user.id);
+  revalidateTrackerPaths();
 }
 
 export async function resetToImportedProfile() {
@@ -58,14 +74,8 @@ export async function resetToImportedProfile() {
 
   await applyImportedProfile(session.user.id, { force: true });
 
-  revalidatePath("/");
-  revalidatePath("/summary");
-  revalidatePath("/all-effects");
-  revalidatePath("/1-star");
-  revalidatePath("/2-star");
-  revalidatePath("/3-star");
-  revalidatePath("/4-star");
-  revalidatePath("/still-need");
+  await syncUserAchievements(session.user.id);
+  revalidateTrackerPaths();
 }
 
 export async function resetToPublicDefaults() {
@@ -97,12 +107,6 @@ export async function resetToPublicDefaults() {
     });
   }
 
-  revalidatePath("/");
-  revalidatePath("/summary");
-  revalidatePath("/all-effects");
-  revalidatePath("/1-star");
-  revalidatePath("/2-star");
-  revalidatePath("/3-star");
-  revalidatePath("/4-star");
-  revalidatePath("/still-need");
+  await syncUserAchievements(session.user.id);
+  revalidateTrackerPaths();
 }

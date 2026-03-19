@@ -27,7 +27,7 @@ export default async function AdminImportPage() {
         <CardHeader>
           <CardTitle>Admin Import</CardTitle>
           <CardDescription>
-            Upload a multi-sheet workbook (.xlsx, .xlsm, .xls) to create a new dataset version and migrate progress when possible. Legacy .xls files are converted server-side.
+            Upload a multi-sheet workbook (.xlsx, .xlsm, .xls) to create a new dataset version and migrate progress when possible. This updates companion-tracker reference data only; it does not detect anything from a live game session.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -39,7 +39,7 @@ export default async function AdminImportPage() {
         <CardHeader>
           <CardTitle>Websheet Sync</CardTitle>
           <CardDescription>
-            Pull data from configured Fallout 76 sources and refresh the dataset. Partial failures are reported per source.
+            Refresh source-backed reference data for the tracker. Partial failures are reported per source.
           </CardDescription>
         </CardHeader>
         <CardContent>

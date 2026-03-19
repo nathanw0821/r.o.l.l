@@ -4,16 +4,32 @@
 
 :root {
   color-scheme: light;
-  --color-bg: #f5f2ed;
-  --color-fg: #1d1c1a;
+  --color-bg: #f2ede7;
+  --color-fg: #141311;
   --color-panel: #ffffff;
-  --color-border: #ded7cf;
-  --color-accent: #d4761a;
-  --color-accent-muted: #f5d2a5;
-  --color-success: #2f8f61;
-  --color-warning: #b07f00;
-  --color-danger: #b5483f;
+  --color-border: #cfc6bb;
+  --color-accent: #c86a12;
+  --color-accent-muted: #f0c590;
+  --color-success: #1e7a51;
+  --color-warning: #9b6a00;
+  --color-danger: #a7443c;
   --radius: 10px;
+  --hub-shell-bg: rgba(255, 255, 255, 0.92);
+  --hub-shell-border: rgba(20, 19, 17, 0.12);
+  --hub-shell-shadow: 0 20px 50px rgba(20, 19, 17, 0.16);
+  --hub-panel-bg: rgba(255, 255, 255, 0.96);
+  --hub-panel-bg-strong: rgba(255, 255, 255, 0.98);
+  --hub-panel-border: rgba(20, 19, 17, 0.1);
+  --hub-muted-text: rgba(20, 19, 17, 0.68);
+  --hub-soft-text: rgba(20, 19, 17, 0.52);
+  --sidebar-bg: rgba(255, 255, 255, 0.9);
+  --sidebar-border: rgba(20, 19, 17, 0.1);
+  --sidebar-muted-text: rgba(20, 19, 17, 0.7);
+  --sidebar-soft-text: rgba(20, 19, 17, 0.56);
+  --sidebar-hover-bg: rgba(20, 19, 17, 0.05);
+  --sidebar-hover-border: rgba(20, 19, 17, 0.12);
+  --sidebar-active-bg: rgba(20, 19, 17, 0.08);
+  --sidebar-active-border: rgba(20, 19, 17, 0.16);
 }
 
 [data-theme="dark"] {
@@ -27,6 +43,22 @@
   --color-success: #4cc38a;
   --color-warning: #d9a441;
   --color-danger: #e07c6f;
+  --hub-shell-bg: rgba(22, 25, 28, 0.82);
+  --hub-shell-border: rgba(255, 255, 255, 0.08);
+  --hub-shell-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  --hub-panel-bg: rgba(10, 12, 14, 0.68);
+  --hub-panel-bg-strong: rgba(22, 25, 28, 0.92);
+  --hub-panel-border: rgba(255, 255, 255, 0.08);
+  --hub-muted-text: rgba(240, 236, 231, 0.68);
+  --hub-soft-text: rgba(240, 236, 231, 0.5);
+  --sidebar-bg: rgba(12, 14, 16, 0.85);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-muted-text: rgba(240, 236, 231, 0.68);
+  --sidebar-soft-text: rgba(240, 236, 231, 0.55);
+  --sidebar-hover-bg: rgba(22, 25, 28, 0.7);
+  --sidebar-hover-border: rgba(255, 255, 255, 0.12);
+  --sidebar-active-bg: rgba(22, 25, 28, 0.9);
+  --sidebar-active-border: rgba(255, 255, 255, 0.2);
 }
 
 [data-accent="ember"] {
@@ -162,13 +194,13 @@ html[data-scanlines="off"] .pip-shell::before {
   position: sticky;
   top: 1.5rem;
   z-index: 30;
-  max-width: 560px;
+  max-width: 520px;
   margin-left: auto;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(22, 25, 28, 0.72);
+  border: 1px solid var(--hub-shell-border);
+  background: var(--hub-shell-bg);
   backdrop-filter: blur(14px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--hub-shell-shadow);
   overflow: visible;
 }
 
@@ -178,7 +210,7 @@ html[data-scanlines="off"] .pip-shell::before {
   gap: 0.75rem;
   align-items: center;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--hub-panel-border);
 }
 
 .command-hub__search {
@@ -187,8 +219,8 @@ html[data-scanlines="off"] .pip-shell::before {
   gap: 0.5rem;
   border-radius: 999px;
   padding: 0.35rem 0.75rem;
-  background: rgba(11, 13, 15, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--hub-panel-bg);
+  border: 1px solid var(--hub-panel-border);
 }
 
 .command-hub__stat {
@@ -198,7 +230,7 @@ html[data-scanlines="off"] .pip-shell::before {
 
 .command-hub__expand {
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--hub-panel-border);
   padding: 0.35rem;
   color: var(--color-fg);
   transition: border-color 0.2s ease;
@@ -219,14 +251,14 @@ html[data-scanlines="off"] .pip-shell::before {
   pointer-events: none;
   transform: translateY(-6px);
   transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.25s ease;
-  background: rgba(22, 25, 28, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--hub-panel-bg-strong);
+  border: 1px solid var(--hub-panel-border);
   border-radius: 16px;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--hub-shell-shadow);
 }
 
 .command-hub--open .command-hub__body {
-  max-height: 1200px;
+  max-height: min(70vh, 720px);
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -237,15 +269,16 @@ html[data-scanlines="off"] .pip-shell::before {
   flex-wrap: wrap;
   gap: 1rem;
   padding: 1rem;
+  overflow: auto;
 }
 
 .hub-zone {
   flex: 1 1 240px;
   min-width: 220px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--hub-panel-border);
   padding: 0.9rem;
-  background: rgba(10, 12, 14, 0.6);
+  background: var(--hub-panel-bg);
 }
 
 .hub-zone__title {
@@ -255,7 +288,7 @@ html[data-scanlines="off"] .pip-shell::before {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(240, 236, 231, 0.6);
+  color: var(--hub-muted-text);
   margin-bottom: 0.75rem;
 }
 
@@ -266,7 +299,7 @@ html[data-scanlines="off"] .pip-shell::before {
 .hub-bar {
   height: 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: color-mix(in srgb, var(--color-fg) 10%, transparent);
   overflow: hidden;
   margin-top: 0.35rem;
 }
@@ -308,8 +341,9 @@ html[data-scanlines="off"] .pip-shell::before {
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(12, 14, 17, 0.6);
+  border: 1px solid var(--hub-panel-border);
+  background: color-mix(in srgb, var(--color-panel) 86%, transparent);
+  color: var(--color-fg);
 }
 
 a {
@@ -355,8 +389,8 @@ a {
 
 .app-sidebar {
   padding: 1.5rem 1.25rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(12, 14, 16, 0.85);
+  border-right: 1px solid var(--sidebar-border);
+  background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -391,13 +425,13 @@ a {
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(240, 236, 231, 0.7);
+  color: var(--sidebar-muted-text);
 }
 
 .brand-stack__support {
   font-size: 0.65rem;
   letter-spacing: 0.08em;
-  color: rgba(240, 236, 231, 0.55);
+  color: var(--sidebar-soft-text);
 }
 
 .app-nav {
@@ -412,7 +446,7 @@ a {
   gap: 0.6rem;
   padding: 0.55rem 0.7rem;
   border-radius: 10px;
-  color: rgba(240, 236, 231, 0.65);
+  color: var(--sidebar-muted-text);
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   border: 1px solid transparent;
   font-size: 0.8rem;
@@ -420,14 +454,14 @@ a {
 
 .app-nav__link:hover {
   color: var(--color-fg);
-  border-color: rgba(255, 255, 255, 0.12);
-  background: rgba(22, 25, 28, 0.7);
+  border-color: var(--sidebar-hover-border);
+  background: var(--sidebar-hover-bg);
 }
 
 .app-nav__link--active {
   color: var(--color-fg);
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(22, 25, 28, 0.9);
+  border-color: var(--sidebar-active-border);
+  background: var(--sidebar-active-bg);
 }
 
 .app-main {
@@ -474,7 +508,7 @@ a {
     align-items: center;
     gap: 1rem;
     border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--sidebar-border);
     position: sticky;
     top: 0;
     height: auto;
@@ -572,6 +606,48 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+}
+
+.status-toggle {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.status-toggle__button {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--color-fg) 72%, transparent);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.status-toggle__button:hover {
+  border-color: var(--color-accent);
+  color: var(--color-fg);
+}
+
+.status-toggle__button--active {
+  color: var(--color-fg);
+}
+
+.status-toggle[data-state="default"] .status-toggle__button--active {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+
+.status-toggle[data-state="locked"] .status-toggle__button--active {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 16%, transparent);
+}
+
+.status-toggle[data-state="unlocked"] .status-toggle__button--active {
+  border-color: var(--color-success);
+  color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 16%, transparent);
 }
 
 .status-button {

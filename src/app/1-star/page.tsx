@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getEffectTiersByTierLabel } from "@/lib/data";
 import EffectTable from "@/components/effect-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatTierStars } from "@/lib/tier-format";
 
 const tierLabel = "1 Star";
 
@@ -14,8 +15,8 @@ export default async function TierOnePage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>1 Star Effects</CardTitle>
-          <CardDescription>Single-star legendary effects for quick crafting runs.</CardDescription>
+          <CardTitle>{formatTierStars(tierLabel)} 1-Star Legendaries</CardTitle>
+          <CardDescription>Browse all 1-Star Legendaries.</CardDescription>
         </CardHeader>
         <CardContent />
       </Card>

@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getEffectTiersByTierLabel } from "@/lib/data";
 import EffectTable from "@/components/effect-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatTierStars } from "@/lib/tier-format";
 
 const tierLabel = "2 Star";
 
@@ -14,8 +15,8 @@ export default async function TierTwoPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>2 Star Effects</CardTitle>
-          <CardDescription>Two-star effects for balanced builds and synergy.</CardDescription>
+          <CardTitle>{formatTierStars(tierLabel)} 2-Star Legendaries</CardTitle>
+          <CardDescription>Browse all 2-Star Legendaries.</CardDescription>
         </CardHeader>
         <CardContent />
       </Card>

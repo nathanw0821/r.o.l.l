@@ -9,9 +9,11 @@ import { useFilters } from "@/components/filter-context";
 import { cn } from "@/lib/utils";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
+import { useLocalProgress } from "@/components/use-local-progress";
 
 type CommandHubProps = {
   summary: { total: number; unlocked: number; percent: number };
+  isAdmin?: boolean;
   dataset?: {
     importedAt?: string | null;
     sourceType?: string | null;
@@ -19,7 +21,7 @@ type CommandHubProps = {
   } | null;
 };
 
-export default function CommandHub({ summary, dataset }: CommandHubProps) {
+export default function CommandHub({ summary, isAdmin = false, dataset }: CommandHubProps) {
   const { data: session } = useSession();
   const {
     query,
@@ -41,19 +43,22 @@ export default function CommandHub({ summary, dataset }: CommandHubProps) {
   const [hydrated, setHydrated] = React.useState(false);
   const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
+  const isSignedIn = hydrated && Boolean(session);
   const hasActiveFilters =
     query.trim().length > 0 ||
     sourceFilters.length > 0 ||
     statusFilters.length > 0 ||
     originFilters.length > 0 ||
     categoryFilters.length > 0;
+  const { unlockedCount } = useLocalProgress(!isSignedIn);
 
-  const locked = Math.max(summary.total - summary.unlocked, 0);
-  const unlockedPercent = summary.total > 0 ? Math.round((summary.unlocked / summary.total) * 100) : 0;
+  const displayUnlocked = isSignedIn ? summary.unlocked : unlockedCount;
+  const locked = Math.max(summary.total - displayUnlocked, 0);
+  const displayPercent = summary.total > 0 ? Math.round((displayUnlocked / summary.total) * 100) : 0;
+  const unlockedPercent = displayPercent;
   const lockedPercent = 100 - unlockedPercent;
   const lastSynced = dataset?.importedAt ? new Date(dataset.importedAt).toLocaleString() : "Unknown";
   const displayLastSynced = hydrated ? lastSynced : "Loading...";
-  const isSignedIn = hydrated && Boolean(session);
 
   React.useEffect(() => {
     setAnimateBars(true);
@@ -104,7 +109,7 @@ export default function CommandHub({ summary, dataset }: CommandHubProps) {
         </div>
         <div className="command-hub__stat">
           <div className="text-[10px] uppercase text-foreground/50">Completion</div>
-          <div className="text-base font-semibold">{summary.percent}%</div>
+          <div className="text-base font-semibold">{displayPercent}%</div>
         </div>
         <button
           type="button"
@@ -125,7 +130,7 @@ export default function CommandHub({ summary, dataset }: CommandHubProps) {
           <div className="hub-metric">
             <div className="flex items-center justify-between text-xs text-foreground/60">
               <span>Unlocked</span>
-              <span>{summary.unlocked} / {summary.total}</span>
+              <span>{displayUnlocked} / {summary.total}</span>
             </div>
             <div className="hub-bar">
               <div
@@ -362,11 +367,13 @@ export default function CommandHub({ summary, dataset }: CommandHubProps) {
             </label>
           </div>
           <div className="hub-group">
-            <div className="text-xs text-foreground/60">Import</div>
+            <div className="text-xs text-foreground/60">Navigation</div>
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" size="sm" asChild>
-                <Link href="/admin-import">Open Import</Link>
-              </Button>
+              {isAdmin ? (
+                <Button type="button" variant="outline" size="sm" asChild>
+                  <Link href="/admin-import">Admin Tools</Link>
+                </Button>
+              ) : null}
               <Button type="button" variant="outline" size="sm" asChild>
                 <Link href="/settings">Settings</Link>
               </Button>
