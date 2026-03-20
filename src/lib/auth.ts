@@ -9,14 +9,12 @@ import AzureADProvider from "next-auth/providers/azure-ad";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements";
-import { isPublicRegistrationEnabled } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
 const credentialsSchema = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1),
-  email: z.string().email().optional()
+  identifier: z.string().min(1),
+  password: z.string().min(1)
 });
 
 async function applyProfile(userId: string) {
@@ -29,6 +27,14 @@ async function applyProfile(userId: string) {
 
 function normalizeUsername(raw: string) {
   return raw.trim().toLowerCase();
+}
+
+function normalizeIdentifier(raw: string) {
+  return raw.trim().toLowerCase();
+}
+
+function isEmailIdentifier(value: string) {
+  return z.string().email().safeParse(value).success;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -61,41 +67,45 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: "Username",
+      name: "Username or Email",
       credentials: {
-        username: { label: "Username", type: "text" },
+        identifier: { label: "Username or Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const publicRegistrationEnabled = isPublicRegistrationEnabled();
-        const username = normalizeUsername(parsed.data.username);
+        const identifier = normalizeIdentifier(parsed.data.identifier);
         const password = parsed.data.password.trim();
-        const email = parsed.data.email?.trim().toLowerCase();
-        if (!username || !password) return null;
+        if (!identifier || !password) return null;
 
-        const existing = await prisma.user.findUnique({
-          where: { username }
-        });
+        const username = normalizeUsername(identifier);
+        const identifierIsEmail = isEmailIdentifier(identifier);
+
+        const existing = identifierIsEmail
+          ? await prisma.user.findUnique({
+              where: { email: identifier }
+            })
+          : await prisma.user.findUnique({
+              where: { username }
+            });
 
         if (existing?.passwordHash) {
           const valid = await bcrypt.compare(password, existing.passwordHash);
           if (!valid) return null;
-          if (!existing.email && email) {
-            await prisma.user.update({ where: { id: existing.id }, data: { email } });
-          }
           await applyProfile(existing.id);
           return existing;
         }
 
-        const legacyAuthCode = username.toUpperCase();
+        const legacyAuthCode = identifier.toUpperCase();
         const legacySecondary = password.toUpperCase();
 
-        const legacy = await prisma.user.findFirst({
-          where: { authCode: legacyAuthCode, secondaryCode: legacySecondary }
-        });
+        const legacy = identifierIsEmail
+          ? null
+          : await prisma.user.findFirst({
+              where: { authCode: legacyAuthCode, secondaryCode: legacySecondary }
+            });
 
         if (legacy) {
           const passwordHash = await bcrypt.hash(password, 12);
@@ -107,9 +117,11 @@ export const authOptions: NextAuthOptions = {
           return updated;
         }
 
-        const legacyNoSecondary = await prisma.user.findFirst({
-          where: { authCode: legacyAuthCode, secondaryCode: null }
-        });
+        const legacyNoSecondary = identifierIsEmail
+          ? null
+          : await prisma.user.findFirst({
+              where: { authCode: legacyAuthCode, secondaryCode: null }
+            });
 
         if (legacyNoSecondary) {
           const passwordHash = await bcrypt.hash(password, 12);
@@ -124,50 +136,7 @@ export const authOptions: NextAuthOptions = {
         if (existing) {
           return null;
         }
-
-        if (!publicRegistrationEnabled) {
-          return null;
-        }
-
-        if (!email) {
-          return null;
-        }
-
-        const existingEmail = await prisma.user.findUnique({
-          where: { email }
-        });
-        if (existingEmail) {
-          return null;
-        }
-
-        try {
-          const passwordHash = await bcrypt.hash(password, 12);
-          const created = await prisma.user.create({
-            data: {
-              username,
-              passwordHash,
-              email,
-              settings: {
-                create: {}
-              }
-            }
-          });
-
-          await applyProfile(created.id);
-          return created;
-        } catch {
-          const fallback = await prisma.user.findUnique({
-            where: { username }
-          });
-          if (fallback?.passwordHash) {
-            const valid = await bcrypt.compare(password, fallback.passwordHash);
-            if (valid) {
-              await applyProfile(fallback.id);
-              return fallback;
-            }
-          }
-          return null;
-        }
+        return null;
       }
     }),
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET

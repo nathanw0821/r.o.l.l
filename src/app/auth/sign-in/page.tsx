@@ -11,8 +11,8 @@ export default function SignInPage() {
         <BrandStack align="center" className="mb-4" />
         <p className="text-sm text-foreground/70 text-center">
           {allowPublicRegistration
-            ? "Enter your username and password. New local accounts can be created automatically."
-            : "Enter your username and password. Local username access is limited to existing or pre-provisioned accounts."}
+            ? "Sign in with your username or email and password. New accounts are created on the sign-up page."
+            : "Sign in with your username or email and password. Local access is limited to existing or pre-provisioned accounts."}
         </p>
         <div className="mt-6">
           <SignInForm allowPublicRegistration={allowPublicRegistration} />
