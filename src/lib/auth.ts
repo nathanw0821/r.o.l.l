@@ -15,7 +15,8 @@ import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
 const credentialsSchema = z.object({
   username: z.string().min(1),
-  password: z.string().min(1)
+  password: z.string().min(1),
+  email: z.string().email().optional()
 });
 
 async function applyProfile(userId: string) {
@@ -72,6 +73,7 @@ export const authOptions: NextAuthOptions = {
         const publicRegistrationEnabled = isPublicRegistrationEnabled();
         const username = normalizeUsername(parsed.data.username);
         const password = parsed.data.password.trim();
+        const email = parsed.data.email?.trim().toLowerCase();
         if (!username || !password) return null;
 
         const existing = await prisma.user.findUnique({
@@ -81,6 +83,9 @@ export const authOptions: NextAuthOptions = {
         if (existing?.passwordHash) {
           const valid = await bcrypt.compare(password, existing.passwordHash);
           if (!valid) return null;
+          if (!existing.email && email) {
+            await prisma.user.update({ where: { id: existing.id }, data: { email } });
+          }
           await applyProfile(existing.id);
           return existing;
         }
@@ -124,12 +129,24 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        if (!email) {
+          return null;
+        }
+
+        const existingEmail = await prisma.user.findUnique({
+          where: { email }
+        });
+        if (existingEmail) {
+          return null;
+        }
+
         try {
           const passwordHash = await bcrypt.hash(password, 12);
           const created = await prisma.user.create({
             data: {
               username,
               passwordHash,
+              email,
               settings: {
                 create: {}
               }

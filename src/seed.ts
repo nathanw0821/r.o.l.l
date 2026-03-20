@@ -2,10 +2,19 @@
 import path from "path";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { isTsvLike, readTsvFile } from "./tsv";
+import { normalizeDatabaseUrl } from "./lib/database-url";
 import { normalizeNoteValue } from "./lib/import-normalize";
 
-const prisma = new PrismaClient();
+const pool = new Pool({
+  connectionString: normalizeDatabaseUrl(process.env.DATABASE_URL)
+});
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg(pool)
+});
 
 const canonicalFileName = "Fallout76 Tracker Personal - All Tiers.txt";
 
@@ -328,6 +337,7 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });
 
 
