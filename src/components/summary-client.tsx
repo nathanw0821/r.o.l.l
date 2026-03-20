@@ -31,6 +31,7 @@ export type SummaryRow = {
 
 const tierOrder = ["1 Star", "2 Star", "3 Star", "4 Star"] as const;
 const SUMMARY_LOCK_KEY = "roll.summary.locked";
+const MOBILE_SIDEBAR_SUPPRESS_KEY = "roll.mobile.sidebar.suppress";
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -226,6 +227,9 @@ export default function SummaryClient({
   }
 
   function navigateToAllEffects(row: SummaryRow) {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(MOBILE_SIDEBAR_SUPPRESS_KEY, "1");
+    }
     router.push(`/all-effects?focus=${encodeURIComponent(row.id)}#effect-${encodeURIComponent(row.id)}`);
   }
 

@@ -38,6 +38,7 @@ type TierProgressSummary = {
 };
 
 const SIDEBAR_COLLAPSE_KEY = "roll-sidebar-collapsed";
+const MOBILE_SIDEBAR_SUPPRESS_KEY = "roll.mobile.sidebar.suppress";
 
 export default function AppShell({
   children
@@ -103,6 +104,11 @@ export default function AppShell({
 
     let lastY = window.scrollY;
     const handleScroll = () => {
+      const suppress = window.sessionStorage.getItem(MOBILE_SIDEBAR_SUPPRESS_KEY) === "1";
+      if (suppress) {
+        setMobileSidebarHidden(true);
+        return;
+      }
       const y = window.scrollY;
       if (y <= 24) {
         setMobileSidebarHidden(false);
@@ -118,8 +124,21 @@ export default function AppShell({
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMobile]);
+
+  React.useEffect(() => {
+    if (!isMobile) return;
+    const suppress = window.sessionStorage.getItem(MOBILE_SIDEBAR_SUPPRESS_KEY) === "1";
+    if (!suppress) return;
+    setMobileSidebarHidden(true);
+    const timeout = window.setTimeout(() => {
+      window.sessionStorage.removeItem(MOBILE_SIDEBAR_SUPPRESS_KEY);
+      setMobileSidebarHidden(false);
+    }, 2500);
+    return () => window.clearTimeout(timeout);
+  }, [isMobile, pathname]);
 
   React.useEffect(() => {
     if (!isSignedIn) {
