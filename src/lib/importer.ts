@@ -25,6 +25,21 @@ type ParsedSheet = {
   rows: (string | number | boolean | null)[][];
 };
 
+type ImportedSourceRow = {
+  datasetId: string;
+  rowIndex: number;
+  rawColumns: (string | number | boolean | null)[];
+  tierLabel: string | undefined;
+  effectName: string | undefined;
+  categories: string | undefined;
+  description: string | undefined;
+  extraComponent: string | undefined;
+  legendaryModules: number | undefined;
+  unlockedRaw: string | undefined;
+  notes: string | undefined;
+  effectTierId: string | undefined;
+};
+
 function toArrayBuffer(buffer: Uint8Array) {
   return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
 }
@@ -67,6 +82,33 @@ function readExpectedSheetsFromTsv(): ExpectedSheet[] {
 
 function normalizeHeader(raw: unknown[]): string[] {
   return raw.map((value) => (value === null || value === undefined ? "" : String(value)));
+}
+
+function isBlankCell(value: string | number | boolean | null) {
+  if (value === null) return true;
+  if (typeof value === "string") return value.trim().length === 0;
+  return false;
+}
+
+function hasSourceRowContent(row: ImportedSourceRow) {
+  if (
+    row.tierLabel ||
+    row.effectName ||
+    row.categories ||
+    row.description ||
+    row.extraComponent ||
+    row.legendaryModules !== undefined ||
+    row.unlockedRaw ||
+    row.notes
+  ) {
+    return true;
+  }
+
+  return row.rawColumns.some((value) => !isBlankCell(value));
+}
+
+function isImportedSourceRow(row: ImportedSourceRow | null): row is ImportedSourceRow {
+  return row !== null;
 }
 
 function normalizeSheetName(name: string) {
@@ -289,7 +331,9 @@ async function parseWorkbook(buffer: Uint8Array): Promise<ParsedSheet[]> {
 
     worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
       const values = Array.isArray(row.values) ? row.values.slice(1) : [];
-      const normalized = values.map((value) => normalizeCellValue(value as ExcelJS.CellValue));
+      const normalized = Array.from({ length: values.length }, (_, index) =>
+        normalizeCellValue(values[index] as ExcelJS.CellValue)
+      );
       if (rowNumber === 1) {
         header = normalizeHeader(normalized);
       } else {
@@ -431,27 +475,30 @@ export async function importWorkbook(buffer: Uint8Array, filename: string, userI
 
       const headerIndex = buildHeaderIndex(parsed.header);
 
-      const rowsToInsert = parsed.rows.map((row, rowIndex) => {
-        const rawColumns = row.map((value) => (value === undefined ? null : value));
-        if (rawColumns.length < parsed.header.length) {
-          rawColumns.length = parsed.header.length;
-          rawColumns.fill(null, row.length);
-        }
-        return {
-          datasetId: sourceDataset.id,
-          rowIndex,
-          rawColumns,
-          tierLabel: getColumnValue(rawColumns, headerIndex, "Tier") ?? undefined,
-          effectName: getColumnValue(rawColumns, headerIndex, "Effect Name") ?? undefined,
-          categories: getColumnValue(rawColumns, headerIndex, "Categories") ?? undefined,
-          description: getColumnValue(rawColumns, headerIndex, "Description") ?? undefined,
-          extraComponent: getColumnValue(rawColumns, headerIndex, "Extra Component") ?? undefined,
-          legendaryModules: toIntOrNull(getColumnValue(rawColumns, headerIndex, "Legendary Modules")),
-          unlockedRaw: getColumnValue(rawColumns, headerIndex, "Unlocked") ?? undefined,
-          notes: normalizeNoteValue(getColumnValue(rawColumns, headerIndex, "Notes")) ?? undefined,
-          effectTierId: undefined as string | undefined
-        };
-      });
+      const rowsToInsert = parsed.rows
+        .map((row, rowIndex): ImportedSourceRow | null => {
+          const rawColumns = Array.from(
+            { length: Math.max(row.length, parsed.header.length) },
+            (_, index) => row[index] ?? null
+          );
+          const sourceRow: ImportedSourceRow = {
+            datasetId: sourceDataset.id,
+            rowIndex,
+            rawColumns,
+            tierLabel: getColumnValue(rawColumns, headerIndex, "Tier") ?? undefined,
+            effectName: getColumnValue(rawColumns, headerIndex, "Effect Name") ?? undefined,
+            categories: getColumnValue(rawColumns, headerIndex, "Categories") ?? undefined,
+            description: getColumnValue(rawColumns, headerIndex, "Description") ?? undefined,
+            extraComponent: getColumnValue(rawColumns, headerIndex, "Extra Component") ?? undefined,
+            legendaryModules: toIntOrNull(getColumnValue(rawColumns, headerIndex, "Legendary Modules")),
+            unlockedRaw: getColumnValue(rawColumns, headerIndex, "Unlocked") ?? undefined,
+            notes: normalizeNoteValue(getColumnValue(rawColumns, headerIndex, "Notes")) ?? undefined,
+            effectTierId: undefined
+          };
+
+          return hasSourceRowContent(sourceRow) ? sourceRow : null;
+        })
+        .filter(isImportedSourceRow);
 
       if (expected.canonical && expected.name === canonicalSheet) {
         for (const row of rowsToInsert) {

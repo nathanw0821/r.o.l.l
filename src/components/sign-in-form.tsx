@@ -9,6 +9,7 @@ export default function SignInForm({
 }: {
   allowPublicRegistration?: boolean;
 }) {
+  const [email, setEmail] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
@@ -35,12 +36,14 @@ export default function SignInForm({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!username.trim() || !password.trim()) return;
+
     setPending(true);
     setError(null);
 
     const result = await signIn("credentials", {
       username,
       password,
+      email: email.trim() || undefined,
       callbackUrl: "/",
       redirect: false
     });
@@ -83,6 +86,20 @@ export default function SignInForm({
             ))}
           <div className="text-center text-xs text-foreground/50">or sign in with a local username</div>
         </div>
+      ) : null}
+      {allowPublicRegistration ? (
+        <label className="flex flex-col gap-2 text-sm">
+          <span>Email</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            autoComplete="email"
+            placeholder="user@example.com"
+            className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
+          />
+          <span className="text-xs text-foreground/50">Required for new account creation</span>
+        </label>
       ) : null}
       <label className="flex flex-col gap-2 text-sm">
         <span>Username</span>
