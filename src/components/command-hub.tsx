@@ -9,13 +9,11 @@ import { useFilters } from "@/components/filter-context";
 import RewardsPanel from "@/components/rewards-panel";
 import SupportLink from "@/components/support-link";
 import { useRewards } from "@/components/rewards-provider";
-import { useSessionAssist } from "@/components/session-assist-provider";
 import { cn } from "@/lib/utils";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { formatTierStars } from "@/lib/tier-format";
-import { ASSIST_PRESETS, assistPresetContent } from "@/lib/session-assist-presets";
 
 type CommandHubProps = {
   summary: { total: number; unlocked: number; percent: number };
@@ -70,14 +68,12 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
   const { status: rewardsStatus } = useRewards();
-  const {
-    open: assistOpen,
-    pinned: assistPinned,
-    preset: assistPreset,
-    toggleOpen,
-    togglePinned,
-    setPreset: setAssistPreset
-  } = useSessionAssist();
+  const [interactionSections, setInteractionSections] = React.useState({
+    source: true,
+    status: true,
+    origins: true,
+    categories: true
+  });
   const isSignedIn = hydrated && Boolean(session);
   const hasActiveFilters =
     query.trim().length > 0 ||
@@ -156,6 +152,10 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
         | "high-contrast"
         | undefined
     });
+  }
+
+  function toggleInteractionSection(key: keyof typeof interactionSections) {
+    setInteractionSections((current) => ({ ...current, [key]: !current[key] }));
   }
 
   return (
@@ -243,72 +243,112 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             Interaction
           </div>
           <div className="hub-group">
-            <div className="text-xs text-foreground/60">Source</div>
-            <div className="hub-options">
-              {(["default", "imported", "edited"] as const).map((source) => (
-                <label key={source} className="hub-option">
-                  <input
-                    type="checkbox"
-                    checked={sourceFilters.includes(source)}
-                    onChange={() => toggleSource(source)}
-                    className="h-4 w-4 accent-[var(--accent)]"
-                  />
-                  <span>{source}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">Status</div>
-            <div className="hub-options">
-              {(["unlocked", "locked"] as const).map((status) => (
-                <label key={status} className="hub-option">
-                  <input
-                    type="checkbox"
-                    checked={statusFilters.includes(status)}
-                    onChange={() => toggleStatus(status)}
-                    className="h-4 w-4 accent-[var(--accent)]"
-                  />
-                  <span>{status}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">Origins</div>
-            <div className="hub-options hub-options--scroll">
-              {originOptions.length === 0 ? (
-                <div className="text-xs text-foreground/40">No origins detected.</div>
-              ) : (
-                originOptions.map((origin) => (
-                  <label key={origin} className="hub-option">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              onClick={() => toggleInteractionSection("source")}
+              aria-expanded={interactionSections.source}
+            >
+              <span>Source</span>
+              {interactionSections.source ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+            {interactionSections.source ? (
+              <div className="hub-options mt-2">
+                {(["default", "imported", "edited"] as const).map((source) => (
+                  <label key={source} className="hub-option">
                     <input
                       type="checkbox"
-                      checked={originFilters.includes(origin)}
-                      onChange={() => toggleOrigin(origin)}
+                      checked={sourceFilters.includes(source)}
+                      onChange={() => toggleSource(source)}
                       className="h-4 w-4 accent-[var(--accent)]"
                     />
-                    <span>{origin}</span>
+                    <span>{source}</span>
                   </label>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="hub-group">
-            <div className="text-xs text-foreground/60">Categories</div>
-            <div className="hub-options">
-              {categoryOptions.map((category) => (
-                <label key={category} className="hub-option">
-                  <input
-                    type="checkbox"
-                    checked={categoryFilters.includes(category)}
-                    onChange={() => toggleCategory(category)}
-                    className="h-4 w-4 accent-[var(--accent)]"
-                  />
-                  <span>{category}</span>
-                </label>
-              ))}
-            </div>
+            <button
+              type="button"
+              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              onClick={() => toggleInteractionSection("status")}
+              aria-expanded={interactionSections.status}
+            >
+              <span>Status</span>
+              {interactionSections.status ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+            {interactionSections.status ? (
+              <div className="hub-options mt-2">
+                {(["unlocked", "locked"] as const).map((status) => (
+                  <label key={status} className="hub-option">
+                    <input
+                      type="checkbox"
+                      checked={statusFilters.includes(status)}
+                      onChange={() => toggleStatus(status)}
+                      className="h-4 w-4 accent-[var(--accent)]"
+                    />
+                    <span>{status}</span>
+                  </label>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <div className="hub-group">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              onClick={() => toggleInteractionSection("origins")}
+              aria-expanded={interactionSections.origins}
+            >
+              <span>Origins</span>
+              {interactionSections.origins ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+            {interactionSections.origins ? (
+              <div className="hub-options hub-options--scroll mt-2">
+                {originOptions.length === 0 ? (
+                  <div className="text-xs text-foreground/40">No origins detected.</div>
+                ) : (
+                  originOptions.map((origin) => (
+                    <label key={origin} className="hub-option">
+                      <input
+                        type="checkbox"
+                        checked={originFilters.includes(origin)}
+                        onChange={() => toggleOrigin(origin)}
+                        className="h-4 w-4 accent-[var(--accent)]"
+                      />
+                      <span>{origin}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+            ) : null}
+          </div>
+          <div className="hub-group">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              onClick={() => toggleInteractionSection("categories")}
+              aria-expanded={interactionSections.categories}
+            >
+              <span>Categories</span>
+              {interactionSections.categories ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+            {interactionSections.categories ? (
+              <div className="hub-options mt-2">
+                {categoryOptions.map((category) => (
+                  <label key={category} className="hub-option">
+                    <input
+                      type="checkbox"
+                      checked={categoryFilters.includes(category)}
+                      onChange={() => toggleCategory(category)}
+                      className="h-4 w-4 accent-[var(--accent)]"
+                    />
+                    <span>{category}</span>
+                  </label>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" size="sm" onClick={clearFilters}>
@@ -411,37 +451,6 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="hub-section">
             <div className="hub-section__title">Earn Points</div>
             <RewardsPanel mode="hub" />
-          </div>
-          <div className="hub-section">
-            <div className="hub-section__title">Assist Float Box</div>
-            <div className="hub-section__copy">
-              Keep Session Assist open while you browse, or pin it into the sidebar.
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={toggleOpen}>
-                {assistOpen ? "Hide Float Box" : "Show Float Box"}
-              </Button>
-              <Button type="button" variant="outline" size="sm" onClick={togglePinned}>
-                {assistPinned ? "Unpin Tab" : "Pin Tab"}
-              </Button>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {ASSIST_PRESETS.map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setAssistPreset(value)}
-                  className={cn(
-                    "rounded-full border px-2 py-1 text-xs",
-                    assistPreset === value
-                      ? "border-accent text-foreground"
-                      : "border-border text-foreground/60 hover:border-accent"
-                  )}
-                >
-                  {assistPresetContent[value].shortLabel}
-                </button>
-              ))}
-            </div>
           </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Theme</div>

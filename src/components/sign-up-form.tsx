@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { getProviders, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
 type SignUpResponse =
@@ -35,11 +36,18 @@ export default function SignUpForm() {
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }> | null>(null);
   const [success, setSuccess] = React.useState<{
     email: string;
     delivered: boolean;
     verificationUrl: string | null;
   } | null>(null);
+
+  React.useEffect(() => {
+    getProviders()
+      .then((result) => setProviders(result ?? {}))
+      .catch(() => setProviders({}));
+  }, []);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -106,6 +114,30 @@ export default function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {providers ? (
+        <div className="space-y-2">
+          {[
+            { id: "google", label: "Continue with Google / YouTube" },
+            { id: "twitch", label: "Continue with Twitch" },
+            { id: "discord", label: "Continue with Discord" },
+            { id: "reddit", label: "Continue with Reddit" },
+            { id: "azure-ad", label: "Continue with Microsoft / Xbox" }
+          ]
+            .filter((provider) => providers[provider.id])
+            .map((provider) => (
+              <Button
+                key={provider.id}
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+              >
+                {provider.label}
+              </Button>
+            ))}
+          <div className="text-center text-xs text-foreground/50">or create a local account</div>
+        </div>
+      ) : null}
       <label className="flex flex-col gap-2 text-sm">
         <span>Email</span>
         <input

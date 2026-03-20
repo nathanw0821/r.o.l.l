@@ -130,6 +130,9 @@ model User {
   importBaseline          UserImportBaseline[]
   settings                UserSettings?
   storeUnlocks            UserStoreUnlock[]
+  passwordResetTokens     PasswordResetToken[]
+  feedbackSubmitted       Feedback[]            @relation("FeedbackSubmittedBy")
+  feedbackReviewed        Feedback[]            @relation("FeedbackReviewedBy")
 }
 
 model Account {
@@ -290,4 +293,34 @@ model SyncRun {
   datasetVersionId String?
   sourceId         String?
   source           SyncSource? @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model Feedback {
+  id           String   @id @default(cuid())
+  userId       String?
+  subject      String
+  message      String
+  replyEmail   String?
+  status       String   @default("new")
+  adminNotes   String?
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  submittedBy  User?    @relation("FeedbackSubmittedBy", fields: [userId], references: [id], onDelete: SetNull)
+  reviewedBy   User?    @relation("FeedbackReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
 }

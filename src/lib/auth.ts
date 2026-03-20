@@ -44,6 +44,12 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt"
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider !== "credentials" && !user.email) {
+        return false;
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -154,8 +160,7 @@ export const authOptions: NextAuthOptions = {
             clientSecret: process.env.TWITCH_CLIENT_SECRET
           })
         ]
-      : [])
-    ,
+      : []),
     ...(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET
       ? [
           DiscordProvider({
