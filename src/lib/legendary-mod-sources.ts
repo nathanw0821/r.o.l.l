@@ -70,14 +70,14 @@ export function appendLegendaryModSourceNotes(
   effectName: string,
   tierLabel?: string | null
 ) {
-  if (!tierLabel) return existingNotes ?? undefined;
+  const safeExisting = sanitizeNoteText(existingNotes);
+  if (!tierLabel) return safeExisting || undefined;
   const matches = sourceNotes.get(createMapKey(tierLabel, effectName));
-  if (!matches || matches.length === 0) return existingNotes ?? undefined;
+  if (!matches || matches.length === 0) return safeExisting || undefined;
 
   const deduped = Array.from(new Set(matches)).sort((left, right) => left.localeCompare(right));
   const addition = `Scrap source: ${deduped.join(" | ")}`;
 
-  const safeExisting = sanitizeNoteText(existingNotes);
   if (!safeExisting) return addition;
   if (safeExisting.toLowerCase().includes(addition.toLowerCase())) return safeExisting;
   return `${safeExisting} | ${addition}`;

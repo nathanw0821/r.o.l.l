@@ -11,6 +11,7 @@ function normalizeRaw(value: ImportCellValue) {
 function stripObjectArtifacts(value: string) {
   return value
     .replace(/\[object Object\]/gi, " ")
+    .replace(/\bobject\s+object\b/gi, " ")
     .replace(/\s{2,}/g, " ")
     .trim();
 }
@@ -182,6 +183,7 @@ export function extractOriginsFromNotes(value: ImportCellValue): string[] {
 
     const normalizedCandidate = candidate.replace(/\s+/g, " ").trim();
     if (!normalizedCandidate) continue;
+    if (/^\[?object\s+object\]?$/i.test(normalizedCandidate)) continue;
 
     origins.add(normalizedCandidate);
   }

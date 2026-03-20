@@ -4,7 +4,7 @@ import { parseJson } from "@/lib/api/validation";
 import { badRequest, ok } from "@/lib/api/responses";
 import { authOptions } from "@/lib/auth";
 import { getRewardsStatus, setAdsOptIn } from "@/lib/monetization";
-import { requireUser } from "@/lib/api/auth";
+import { requireAdmin } from "@/lib/api/auth";
 
 const rewardsSettingsSchema = z.object({
   adsEnabled: z.boolean()
@@ -17,7 +17,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const auth = await requireUser();
+  const auth = await requireAdmin();
   if ("response" in auth) return auth.response;
 
   const parsed = await parseJson(request, rewardsSettingsSchema);

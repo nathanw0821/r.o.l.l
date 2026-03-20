@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requireUser } from "@/lib/api/auth";
+import { requireAdmin } from "@/lib/api/auth";
 import { parseJson } from "@/lib/api/validation";
 import { badRequest, ok } from "@/lib/api/responses";
 import { finishRewardedAdSession, getRewardsStatus } from "@/lib/monetization";
@@ -10,7 +10,7 @@ const finishSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const auth = await requireUser();
+  const auth = await requireAdmin();
   if ("response" in auth) return auth.response;
 
   const parsed = await parseJson(request, finishSchema);
