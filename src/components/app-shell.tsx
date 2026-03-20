@@ -72,7 +72,9 @@ export default function AppShell({
   React.useEffect(() => {
     let active = true;
     const authKey = session?.user?.id ?? "guest";
-    fetch(`/api/tier-progress?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, { cache: "no-store" })
+    fetch(`/api/tier-progress?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, {
+      cache: isSignedIn ? "no-store" : "force-cache"
+    })
       .then((response) => response.json())
       .then((payload) => {
         if (!active || !payload?.success || !Array.isArray(payload.data?.tierProgress)) return;

@@ -36,15 +36,20 @@ export default function CommandHubShell() {
     if (status === "loading") return;
     let active = true;
     const authKey = session?.user?.id ?? "guest";
-    fetch(`/api/command-hub?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, { cache: "no-store" })
-      .then((response) => response.json())
-      .then((body) => {
-        if (!active || !body?.success || !body?.data) return;
-        setPayload(body.data as HubPayload);
+    const timeout = window.setTimeout(() => {
+      fetch(`/api/command-hub?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, {
+        cache: session?.user?.id ? "no-store" : "force-cache"
       })
-      .catch(() => undefined);
+        .then((response) => response.json())
+        .then((body) => {
+          if (!active || !body?.success || !body?.data) return;
+          setPayload(body.data as HubPayload);
+        })
+        .catch(() => undefined);
+    }, 220);
     return () => {
       active = false;
+      window.clearTimeout(timeout);
     };
   }, [status, session?.user?.id]);
 
