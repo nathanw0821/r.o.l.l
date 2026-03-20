@@ -197,6 +197,7 @@ export default function AppShell({
   const SummaryIcon = summaryLink?.icon;
   const primaryLinks = visibleLinks.filter((link) => link.href !== "/");
   const visibleSummarySubmenuLinks = summarySubmenuLinks.filter((link) => !link.requiresAuth || session?.user);
+  const summaryActive = pathname === "/" || pathname === "/summary";
 
   return (
     <div className="min-h-screen bg-background text-foreground pip-shell">
@@ -243,23 +244,25 @@ export default function AppShell({
                   <SummaryIcon className="h-4 w-4" />
                   <span>{summaryLink.label}</span>
                 </Link>
-                <div className="app-nav__sublinks">
-                  {visibleSummarySubmenuLinks.map((link) => {
-                    const Icon = link.icon;
-                    const active = pathname === link.href;
-                    return (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        aria-label={link.ariaLabel ?? link.label}
-                        className={cn("app-nav__link app-nav__link--sub", active && "app-nav__link--active")}
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span>{link.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
+                {summaryActive ? (
+                  <div className="app-nav__sublinks">
+                    {visibleSummarySubmenuLinks.map((link) => {
+                      const Icon = link.icon;
+                      const active = pathname === link.href;
+                      return (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          aria-label={link.ariaLabel ?? link.label}
+                          className={cn("app-nav__link app-nav__link--sub", active && "app-nav__link--active")}
+                        >
+                          <Icon className="h-4 w-4" />
+                          <span>{link.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : null}
               </div>
             ) : null}
             {primaryLinks.map((link) => {
