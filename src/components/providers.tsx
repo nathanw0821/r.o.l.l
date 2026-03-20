@@ -4,7 +4,6 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FilterProvider } from "@/components/filter-context";
 import { ProgressHistoryProvider } from "@/components/progress-history-provider";
-import { RewardsProvider } from "@/components/rewards-provider";
 import { SessionAssistProvider } from "@/components/session-assist-provider";
 
 export default function Providers({
@@ -32,11 +31,9 @@ export default function Providers({
           defaultDensity={initialDensity}
           preferDefaults={preferDefaults}
         >
-          <RewardsProvider>
-            <FilterProvider>
-              <ProgressHistoryProvider>{children}</ProgressHistoryProvider>
-            </FilterProvider>
-          </RewardsProvider>
+          <FilterProvider>
+            <ProgressHistoryProvider>{children}</ProgressHistoryProvider>
+          </FilterProvider>
         </ThemeProvider>
       </SessionAssistProvider>
     </SessionProvider>

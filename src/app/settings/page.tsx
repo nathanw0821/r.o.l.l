@@ -6,8 +6,6 @@ import AdminImportForm from "@/components/admin-import-form";
 import ThemeSettings from "@/components/theme-settings";
 import ProgressControls from "@/components/progress-controls";
 import AccountLinks from "@/components/account-links";
-import RewardsPanel from "@/components/rewards-panel";
-import SupportLink from "@/components/support-link";
 import UsernameSettingsForm from "@/components/username-settings-form";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -137,21 +135,6 @@ export default async function SettingsPage() {
             <Link href="/admin-feedback" className="text-sm text-accent hover:underline">
               Open feedback inbox
             </Link>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Rewards (Admin)</CardTitle>
-            <CardDescription>Hidden from public UI while passive points run in the background.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <RewardsPanel mode="settings" />
-            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-xs text-foreground/60">
-              Help keep the tool alive without changing core tracking features.
-              <div className="mt-2">
-                <SupportLink href={process.env.SUPPORT_URL ?? null} label="Support this App" />
-              </div>
-            </div>
           </CardContent>
         </Card>
         <Card>

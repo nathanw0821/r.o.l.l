@@ -12,7 +12,6 @@ import CommandHubShell from "@/components/command-hub-shell";
 import LocalProgressSync from "@/components/local-progress-sync";
 import SupportLink from "@/components/support-link";
 import { useLocalProgress } from "@/components/use-local-progress";
-import { useRewards } from "@/components/rewards-provider";
 import UsernameCompletion from "@/components/username-completion";
 import FeedbackWidget from "@/components/feedback-widget";
 import { formatTierStars } from "@/lib/tier-format";
@@ -44,8 +43,8 @@ export default function AppShell({
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { status: rewardsStatus } = useRewards();
   const isSignedIn = Boolean(session?.user);
+  const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL ?? null;
   const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }>>({});
   const [linkedProviders, setLinkedProviders] = React.useState<string[]>([]);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
@@ -189,7 +188,7 @@ export default function AppShell({
             )}
           </div>
           <div className="app-sidebar__support">
-            <SupportLink href={rewardsStatus?.supportUrl} label="Help keep this tool alive" />
+            <SupportLink href={supportUrl} label="Help keep this tool alive" />
           </div>
         </aside>
         <div className="app-main">

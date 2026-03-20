@@ -1,32 +1,23 @@
 "use client";
 
 import { useThemeSettings } from "@/components/theme-provider";
-import { useRewards } from "@/components/rewards-provider";
 import { updateUserSettings } from "@/actions/settings";
 import { Button } from "@/components/ui/button";
 
-const baseAccents = [
+const accents = [
   { value: "ember", label: "Ember" },
   { value: "vault", label: "Vault" },
   { value: "radburst", label: "Radburst" },
   { value: "glow", label: "Glow" },
   { value: "brass", label: "Brass" },
-  { value: "frost", label: "Frost" }
-] as const;
-
-const premiumAccents = [
-  { value: "sunset", label: "Sunset", unlockId: "accent-sunset" },
-  { value: "mint", label: "Mint", unlockId: "accent-mint" },
-  { value: "nightfall", label: "Nightfall", unlockId: "accent-nightfall" }
+  { value: "frost", label: "Frost" },
+  { value: "sunset", label: "Sunset" },
+  { value: "mint", label: "Mint" },
+  { value: "nightfall", label: "Nightfall" }
 ] as const;
 
 export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
   const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
-  const { status } = useRewards();
-  const accents = [
-    ...baseAccents,
-    ...premiumAccents.filter((option) => status?.unlockedItemIds?.includes(option.unlockId))
-  ];
 
   async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
     if (!canPersist) return;
