@@ -7,7 +7,6 @@ import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
 import SupportLink from "@/components/support-link";
-import { useRewards } from "@/components/rewards-provider";
 import { cn } from "@/lib/utils";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
@@ -66,7 +65,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     setUiTone
   } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
-  const { status: rewardsStatus } = useRewards();
+  const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL ?? null;
   const [interactionSections, setInteractionSections] = React.useState({
     source: true,
     status: true,
@@ -515,9 +514,9 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 "glow",
                 "brass",
                 "frost",
-                ...(["sunset", "mint", "nightfall"] as const).filter((value) =>
-                  rewardsStatus?.unlockedItemIds?.includes(`accent-${value}`)
-                )
+                "sunset",
+                "mint",
+                "nightfall"
               ] as const).map((value) => (
                 <button
                   key={value}
@@ -622,7 +621,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="hub-section">
             <div className="hub-section__title">Support</div>
             <div className="mt-3">
-              <SupportLink href={rewardsStatus?.supportUrl} label="Support this App ❤️" />
+              <SupportLink href={supportUrl} label="Support this App ❤️" />
             </div>
           </div>
             </>
