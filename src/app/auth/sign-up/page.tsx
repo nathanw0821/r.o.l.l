@@ -13,7 +13,7 @@ export default function SignUpPage() {
       <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
         <BrandStack align="center" className="mb-4" />
         <p className="text-center text-sm text-foreground/70">
-          Create a local account with your email, username, and password. Email verification is ready now and can be wired to automatic delivery later.
+          Create your account with email, username, and password.
         </p>
         <div className="mt-6">
           <SignUpForm />

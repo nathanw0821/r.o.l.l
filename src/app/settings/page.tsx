@@ -157,7 +157,7 @@ export default async function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Session Assist (Admin)</CardTitle>
-            <CardDescription>Hidden from the main app for now. Use this page for later reimplementation testing.</CardDescription>
+            <CardDescription>Access Session Assist from here for controlled testing and updates.</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/screenshot-assist" className="text-sm text-accent hover:underline">

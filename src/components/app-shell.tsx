@@ -4,7 +4,7 @@ import * as React from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import { Award, BookOpen, ClipboardList, ListChecks, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
@@ -46,6 +46,8 @@ export default function AppShell({
   const { data: session } = useSession();
   const { status: rewardsStatus } = useRewards();
   const isSignedIn = Boolean(session?.user);
+  const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }>>({});
+  const [linkedProviders, setLinkedProviders] = React.useState<string[]>([]);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
   const visibleLinks = links.filter((link) => !link.requiresAuth || session?.user);
@@ -63,6 +65,27 @@ export default function AppShell({
       active = false;
     };
   }, []);
+
+  React.useEffect(() => {
+    getProviders()
+      .then((result) => setProviders(result ?? {}))
+      .catch(() => setProviders({}));
+  }, []);
+
+  React.useEffect(() => {
+    if (!isSignedIn) {
+      setLinkedProviders([]);
+      return;
+    }
+    fetch("/api/account-links")
+      .then((response) => response.json())
+      .then((payload) => {
+        if (payload?.success) {
+          setLinkedProviders(payload.data.providers ?? []);
+        }
+      })
+      .catch(() => setLinkedProviders([]));
+  }, [isSignedIn]);
 
   const displayTierProgress = React.useMemo(
     () =>
@@ -85,6 +108,8 @@ export default function AppShell({
     () => new Map(displayTierProgress.map((tier) => [tier.tierLabel, tier])),
     [displayTierProgress]
   );
+  const hasGoogleProvider = Boolean(providers.google);
+  const googleLinked = linkedProviders.includes("google");
 
   return (
     <div className="min-h-screen bg-background text-foreground pip-shell">
@@ -118,6 +143,50 @@ export default function AppShell({
               );
             })}
           </nav>
+          <div className="app-sidebar__auth">
+            {isSignedIn ? (
+              <>
+                {hasGoogleProvider ? (
+                  googleLinked ? (
+                    <div className="app-sidebar__auth-status">Google linked</div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="app-sidebar__auth-button app-sidebar__auth-button--google"
+                      onClick={() => signIn("google", { callbackUrl: "/settings" })}
+                    >
+                      Link Google
+                    </button>
+                  )
+                ) : null}
+                <button
+                  type="button"
+                  className="app-sidebar__auth-button"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/sign-in" className="app-sidebar__auth-button">
+                  Sign in
+                </Link>
+                <Link href="/auth/sign-up" className="app-sidebar__auth-button app-sidebar__auth-button--primary">
+                  Sign up
+                </Link>
+                {hasGoogleProvider ? (
+                  <button
+                    type="button"
+                    className="app-sidebar__auth-button app-sidebar__auth-button--google"
+                    onClick={() => signIn("google", { callbackUrl: "/" })}
+                  >
+                    Continue with Google
+                  </button>
+                ) : null}
+              </>
+            )}
+          </div>
           <div className="app-sidebar__support">
             <SupportLink href={rewardsStatus?.supportUrl} label="Help keep this tool alive" />
           </div>

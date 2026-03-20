@@ -95,7 +95,7 @@ export default function SignUpForm() {
           <p className="text-sm text-foreground/70">
             {success.delivered
               ? "A verification link has been queued for email delivery."
-              : "Automatic email delivery is not attached yet, so use the manual verification link below for now."}
+              : "Use the verification link below to finish activating your account."}
           </p>
         </div>
         {success.verificationUrl ? (
@@ -135,7 +135,7 @@ export default function SignUpForm() {
                 {provider.label}
               </Button>
             ))}
-          <div className="text-center text-xs text-foreground/50">or create a local account</div>
+          <div className="text-center text-xs text-foreground/50">or continue with email and password</div>
         </div>
       ) : null}
       <label className="flex flex-col gap-2 text-sm">
