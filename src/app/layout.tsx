@@ -9,6 +9,8 @@ import { authOptions } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/app-config";
 import { getTierProgressSummary } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const siteUrl = getSiteUrl();
 
@@ -72,6 +74,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             {children}
           </AppShell>
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
