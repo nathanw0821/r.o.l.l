@@ -5,6 +5,9 @@ import { getActiveDatasetVersion, getProgressSummary, getTierProgressSummary } f
 import { prisma } from "@/lib/prisma";
 import { ok } from "@/lib/api/responses";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -33,9 +36,6 @@ export async function GET() {
     }
   });
 
-  response.headers.set(
-    "Cache-Control",
-    userId ? "private, no-store" : "public, s-maxage=60, stale-while-revalidate=300"
-  );
+  response.headers.set("Cache-Control", "private, no-store, max-age=0, must-revalidate");
   return response;
 }

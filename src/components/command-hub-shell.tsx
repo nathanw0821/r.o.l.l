@@ -35,7 +35,8 @@ export default function CommandHubShell() {
   React.useEffect(() => {
     if (status === "loading") return;
     let active = true;
-    fetch("/api/command-hub", { cache: "no-store" })
+    const authKey = session?.user?.id ?? "guest";
+    fetch(`/api/command-hub?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, { cache: "no-store" })
       .then((response) => response.json())
       .then((body) => {
         if (!active || !body?.success || !body?.data) return;
