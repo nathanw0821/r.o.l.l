@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSession } from "next-auth/react";
 import CommandHub from "@/components/command-hub";
 
 type HubPayload = {
@@ -28,9 +29,11 @@ const EMPTY_HUB: HubPayload = {
 };
 
 export default function CommandHubShell() {
+  const { data: session, status } = useSession();
   const [payload, setPayload] = React.useState<HubPayload>(EMPTY_HUB);
 
   React.useEffect(() => {
+    if (status === "loading") return;
     let active = true;
     fetch("/api/command-hub", { cache: "no-store" })
       .then((response) => response.json())
@@ -42,7 +45,7 @@ export default function CommandHubShell() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [status, session?.user?.id]);
 
   return (
     <CommandHub

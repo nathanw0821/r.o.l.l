@@ -73,6 +73,10 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     origins: true,
     categories: true
   });
+  const [hubZonesOpen, setHubZonesOpen] = React.useState({
+    interaction: true,
+    system: true
+  });
   const isSignedIn = hydrated && Boolean(session);
   const hasActiveFilters =
     query.trim().length > 0 ||
@@ -157,6 +161,10 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     setInteractionSections((current) => ({ ...current, [key]: !current[key] }));
   }
 
+  function toggleHubZone(key: keyof typeof hubZonesOpen) {
+    setHubZonesOpen((current) => ({ ...current, [key]: !current[key] }));
+  }
+
   return (
     <div ref={hubRef} className={cn("command-hub", expanded && "command-hub--open")}>
       <div className="command-hub__bar">
@@ -237,10 +245,20 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
         </section>
 
         <section className="hub-zone">
-          <div className="hub-zone__title">
-            <SlidersHorizontal className="h-4 w-4" />
-            Interaction
-          </div>
+          <button
+            type="button"
+            className="hub-zone__title hub-zone__title--toggle"
+            onClick={() => toggleHubZone("interaction")}
+            aria-expanded={hubZonesOpen.interaction}
+          >
+            <span className="inline-flex items-center gap-2">
+              <SlidersHorizontal className="h-4 w-4" />
+              Interaction
+            </span>
+            {hubZonesOpen.interaction ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          {hubZonesOpen.interaction ? (
+            <>
           <div className="hub-group">
             <button
               type="button"
@@ -407,10 +425,22 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               ))}
             </div>
           ) : null}
+            </>
+          ) : null}
         </section>
 
         <section className="hub-zone">
-          <div className="hub-zone__title">System</div>
+          <button
+            type="button"
+            className="hub-zone__title hub-zone__title--toggle"
+            onClick={() => toggleHubZone("system")}
+            aria-expanded={hubZonesOpen.system}
+          >
+            <span>System</span>
+            {hubZonesOpen.system ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          {hubZonesOpen.system ? (
+            <>
           <div className="hub-section">
             <div className="hub-section__title">View Density</div>
             <div className="hub-section__copy">
@@ -591,13 +621,12 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           </div>
           <div className="hub-section">
             <div className="hub-section__title">Support</div>
-            <div className="hub-section__copy">
-              Donations stay optional and never gate tracking features.
-            </div>
             <div className="mt-3">
               <SupportLink href={rewardsStatus?.supportUrl} label="Support this App ❤️" />
             </div>
           </div>
+            </>
+          ) : null}
         </section>
       </div>
     </div>

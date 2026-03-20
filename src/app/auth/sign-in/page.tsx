@@ -7,11 +7,11 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
+      <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6">
         <BrandStack
           align="center"
           variant="auth"
-          className="mb-4"
+          className="mb-5"
           subtitleSlot={
             <span className="brand-stack__subtitle-acronym" aria-label="Record Of Legendary Loadouts">
               <span className="brand-stack__subtitle-word">

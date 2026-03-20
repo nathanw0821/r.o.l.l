@@ -64,7 +64,7 @@ export default function AppShell({
     return () => {
       active = false;
     };
-  }, []);
+  }, [isSignedIn, session?.user?.id]);
 
   React.useEffect(() => {
     getProviders()

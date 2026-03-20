@@ -415,6 +415,20 @@ html[data-scanlines="strong"] .pip-shell::before {
   margin-bottom: 0.75rem;
 }
 
+.hub-zone__title--toggle {
+  width: 100%;
+  justify-content: space-between;
+  text-align: left;
+  border-radius: 10px;
+  padding: 0.1rem 0.1rem;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.hub-zone__title--toggle:hover {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+}
+
 .hub-metric {
   margin-bottom: 0.75rem;
 }
@@ -677,18 +691,19 @@ a {
 }
 
 .brand-stack--auth .brand-stack__title {
-  font-size: 1.68rem;
+  font-size: 1.95rem;
   letter-spacing: 0.2em;
+  text-shadow: 0 0 0.01px currentColor;
 }
 
 .brand-stack--auth .brand-stack__subtitle {
-  font-size: 0.92rem;
-  letter-spacing: 0.03em;
+  font-size: 1.02rem;
+  letter-spacing: 0.04em;
   text-transform: none;
 }
 
 .brand-stack--auth .brand-stack__support {
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   letter-spacing: 0.08em;
 }
 
@@ -696,7 +711,8 @@ a {
   display: inline-flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 0.14rem;
+  justify-content: center;
+  gap: 0.3rem;
 }
 
 .brand-stack__subtitle-word {
@@ -712,6 +728,7 @@ a {
 
 .brand-stack__subtitle-rest {
   font-size: 0.92em;
+  letter-spacing: 0.01em;
 }
 
 .app-nav {
@@ -1029,14 +1046,14 @@ a {
     letter-spacing: 0.14em;
   }
   .brand-stack--auth .brand-stack__title {
-    font-size: 1.2rem;
+    font-size: 1.44rem;
     letter-spacing: 0.14em;
   }
   .brand-stack--auth .brand-stack__subtitle {
-    font-size: 0.78rem;
+    font-size: 0.88rem;
   }
   .brand-stack--auth .brand-stack__support {
-    font-size: 0.66rem;
+    font-size: 0.72rem;
   }
   .session-assist-window-wrap {
     width: min(680px, calc(100vw - 8rem));
@@ -1085,20 +1102,20 @@ a {
     letter-spacing: 0.14em;
   }
   .brand-stack--auth .brand-stack__title {
-    font-size: 1.36rem;
+    font-size: 1.58rem;
     letter-spacing: 0.14em;
   }
   .brand-stack__subtitle {
     font-size: 0.72rem;
   }
   .brand-stack--auth .brand-stack__subtitle {
-    font-size: 0.84rem;
+    font-size: 0.92rem;
   }
   .brand-stack__support {
     font-size: 0.64rem;
   }
   .brand-stack--auth .brand-stack__support {
-    font-size: 0.7rem;
+    font-size: 0.76rem;
   }
   .session-assist-window-wrap {
     top: 6.5rem;
