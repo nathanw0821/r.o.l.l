@@ -118,6 +118,7 @@ model User {
   emailVerified           DateTime?
   image                   String?
   points                  Int                  @default(0)
+  passivePointsAt         DateTime?
   lastAdWatchAt           DateTime?
   dailyPoints             Int                  @default(0)
   dailyPointsDate         DateTime?
@@ -176,7 +177,7 @@ model UserSettings {
   accent     String @default("ember")
   density    String @default("comfortable")
   colorBlind String @default("none")
-  adsEnabled Boolean @default(false)
+  adsEnabled Boolean @default(true)
   user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

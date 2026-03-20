@@ -34,9 +34,20 @@ function createMapKey(tierLabel: string, effectName: string) {
   return `${tierLabel}|${normalizeValue(effectName)}`;
 }
 
+function sanitizeNoteText(value: unknown) {
+  if (typeof value !== "string") return "";
+  return value
+    .replace(/\[object Object\]/gi, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function formatSourceNote(entry: SourceEntry, starKey: StarKey) {
   const suffix = starKey === "star_4" ? ", 4-star learn" : "";
-  return `${entry.item_name} (${entry.source_detail}${suffix})`;
+  const itemName = sanitizeNoteText(entry.item_name);
+  const sourceDetail = sanitizeNoteText(entry.source_detail);
+  if (!itemName || !sourceDetail) return "";
+  return `${itemName} (${sourceDetail}${suffix})`;
 }
 
 for (const entry of dataset.legendary_mod_sources) {
@@ -44,7 +55,9 @@ for (const entry of dataset.legendary_mod_sources) {
     if (!effectName) return;
     const key = createMapKey(tierByStarKey[starKey], effectName);
     const current = sourceNotes.get(key) ?? [];
-    current.push(formatSourceNote(entry, starKey));
+    const note = formatSourceNote(entry, starKey);
+    if (!note) return;
+    current.push(note);
     sourceNotes.set(key, current);
   });
 }
@@ -64,9 +77,10 @@ export function appendLegendaryModSourceNotes(
   const deduped = Array.from(new Set(matches)).sort((left, right) => left.localeCompare(right));
   const addition = `Scrap source: ${deduped.join(" | ")}`;
 
-  if (!existingNotes) return addition;
-  if (existingNotes.toLowerCase().includes(addition.toLowerCase())) return existingNotes;
-  return `${existingNotes} | ${addition}`;
+  const safeExisting = sanitizeNoteText(existingNotes);
+  if (!safeExisting) return addition;
+  if (safeExisting.toLowerCase().includes(addition.toLowerCase())) return safeExisting;
+  return `${safeExisting} | ${addition}`;
 }
 
 export function getCraftComponentKind(value?: string | null): CraftComponentKind {

@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { parseJson } from "@/lib/api/validation";
-import { badRequest, ok } from "@/lib/api/responses";
+import { badRequest, internalError, ok } from "@/lib/api/responses";
 import { prisma } from "@/lib/prisma";
 
 const feedbackSchema = z.object({
@@ -28,14 +28,18 @@ export async function POST(request: Request) {
     return badRequest("Reply email is required when not signed in.");
   }
 
-  await prisma.feedback.create({
-    data: {
-      userId,
-      subject: parsed.data.subject.trim(),
-      message: parsed.data.message.trim(),
-      replyEmail
-    }
-  });
+  try {
+    await prisma.feedback.create({
+      data: {
+        userId,
+        subject: parsed.data.subject.trim(),
+        message: parsed.data.message.trim(),
+        replyEmail
+      }
+    });
+  } catch {
+    return internalError("Feedback storage is unavailable right now. Please try again shortly.");
+  }
 
   return ok({ submitted: true }, 201);
 }

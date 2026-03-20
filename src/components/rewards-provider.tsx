@@ -95,6 +95,15 @@ export function RewardsProvider({ children }: { children: React.ReactNode }) {
   }, [refresh, sessionStatus]);
 
   React.useEffect(() => {
+    if (sessionStatus !== "authenticated") return;
+    const timer = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      void refresh();
+    }, 30 * 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, [refresh, sessionStatus]);
+
+  React.useEffect(() => {
     if (!status?.cooldownRemainingSeconds) return;
     const timer = window.setInterval(() => {
       setStatus((current) =>
