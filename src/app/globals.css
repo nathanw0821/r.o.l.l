@@ -696,6 +696,7 @@ a {
 .app-sidebar--rail .brand-stack__subtitle,
 .app-sidebar--rail .brand-stack__support,
 .app-sidebar--rail .app-nav__link span,
+.app-sidebar--rail .app-nav__sublinks,
 .app-sidebar--rail .app-sidebar__auth,
 .app-sidebar--rail .app-sidebar__support {
   display: none;
@@ -795,6 +796,19 @@ a {
   gap: 0.4rem;
 }
 
+.app-nav__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.app-nav__sublinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 0.8rem;
+}
+
 .app-sidebar__support {
   margin-top: auto;
 }
@@ -866,6 +880,13 @@ a {
   color: var(--color-fg);
   border-color: var(--sidebar-active-border);
   background: var(--sidebar-active-bg);
+}
+
+.app-nav__link--sub {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--sidebar-muted-text) 90%, transparent);
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
 }
 
 .app-nav__button {
@@ -1085,13 +1106,9 @@ a {
     height: auto;
     z-index: 40;
     backdrop-filter: blur(12px);
-    transform: translateY(0);
+    transform: translateY(calc((var(--mobile-sidebar-reveal, 1) - 1) * (100% + 2px)));
     opacity: 1;
-  }
-  .app-sidebar--mobile-hidden {
-    transform: translateY(calc(-100% - 2px));
-    opacity: 0;
-    pointer-events: none;
+    pointer-events: auto;
   }
   .app-sidebar__top {
     align-items: center;

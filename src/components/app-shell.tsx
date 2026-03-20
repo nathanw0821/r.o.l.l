@@ -16,15 +16,26 @@ import UsernameCompletion from "@/components/username-completion";
 import FeedbackWidget from "@/components/feedback-widget";
 import { formatTierStars } from "@/lib/tier-format";
 
-const links = [
+type AppNavLink = {
+  href: string;
+  label: string;
+  icon: typeof Sparkles;
+  ariaLabel?: string;
+  tierLabel?: string;
+  requiresAuth?: boolean;
+};
+
+const links: AppNavLink[] = [
   { href: "/", label: "Summary", icon: Sparkles },
-  { href: "/profile", label: "Profile", icon: UserCircle2, requiresAuth: true },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
   { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
   { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
-  { href: "/still-need", label: "Still Need", icon: ClipboardList },
+  { href: "/still-need", label: "Still Need", icon: ClipboardList }
+];
+const summarySubmenuLinks: AppNavLink[] = [
+  { href: "/profile", label: "Profile", icon: UserCircle2, requiresAuth: true },
   { href: "/achievements", label: "Achievements", icon: Award, requiresAuth: true },
   { href: "/readme", label: "Readme", icon: BookOpen }
 ];
@@ -53,7 +64,7 @@ export default function AppShell({
   const [linkedProviders, setLinkedProviders] = React.useState<string[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
-  const [mobileSidebarHidden, setMobileSidebarHidden] = React.useState(false);
+  const [mobileSidebarReveal, setMobileSidebarReveal] = React.useState(1);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
   const visibleLinks = links.filter((link) => !link.requiresAuth || session?.user);
@@ -98,7 +109,7 @@ export default function AppShell({
 
   React.useEffect(() => {
     if (!isMobile) {
-      setMobileSidebarHidden(false);
+      setMobileSidebarReveal(1);
       return;
     }
 
@@ -106,19 +117,21 @@ export default function AppShell({
     const handleScroll = () => {
       const suppress = window.sessionStorage.getItem(MOBILE_SIDEBAR_SUPPRESS_KEY) === "1";
       if (suppress) {
-        setMobileSidebarHidden(true);
+        setMobileSidebarReveal(0);
+        lastY = window.scrollY;
         return;
       }
       const y = window.scrollY;
       if (y <= 24) {
-        setMobileSidebarHidden(false);
+        setMobileSidebarReveal(1);
         lastY = y;
         return;
       }
-      if (y > lastY + 8) {
-        setMobileSidebarHidden(true);
-      } else if (y < lastY - 8) {
-        setMobileSidebarHidden(false);
+      const delta = y - lastY;
+      if (delta > 0.5) {
+        setMobileSidebarReveal((prev) => Math.max(0, prev - delta / 120));
+      } else if (delta < -0.5) {
+        setMobileSidebarReveal((prev) => Math.min(1, prev + (-delta) / 120));
       }
       lastY = y;
     };
@@ -132,10 +145,9 @@ export default function AppShell({
     if (!isMobile) return;
     const suppress = window.sessionStorage.getItem(MOBILE_SIDEBAR_SUPPRESS_KEY) === "1";
     if (!suppress) return;
-    setMobileSidebarHidden(true);
+    setMobileSidebarReveal(0);
     const timeout = window.setTimeout(() => {
       window.sessionStorage.removeItem(MOBILE_SIDEBAR_SUPPRESS_KEY);
-      setMobileSidebarHidden(false);
     }, 2500);
     return () => window.clearTimeout(timeout);
   }, [isMobile, pathname]);
@@ -179,6 +191,10 @@ export default function AppShell({
   const hasGoogleProvider = Boolean(providers.google);
   const googleLinked = linkedProviders.includes("google");
   const sidebarRail = sidebarCollapsed && !isMobile;
+  const summaryLink = visibleLinks.find((link) => link.href === "/");
+  const SummaryIcon = summaryLink?.icon;
+  const primaryLinks = visibleLinks.filter((link) => link.href !== "/");
+  const visibleSummarySubmenuLinks = summarySubmenuLinks.filter((link) => !link.requiresAuth || session?.user);
 
   return (
     <div className="min-h-screen bg-background text-foreground pip-shell">
@@ -187,11 +203,17 @@ export default function AppShell({
       </a>
       <div className={cn("app-layout", sidebarRail && "app-layout--sidebar-rail")}>
         <aside
+          style={
+            isMobile
+              ? ({
+                  "--mobile-sidebar-reveal": String(mobileSidebarReveal)
+                } as React.CSSProperties)
+              : undefined
+          }
           className={cn(
             "app-sidebar",
             sidebarRail && "app-sidebar--rail",
-            isMobile && sidebarCollapsed && "app-sidebar--mobile-collapsed",
-            isMobile && mobileSidebarHidden && "app-sidebar--mobile-hidden"
+            isMobile && sidebarCollapsed && "app-sidebar--mobile-collapsed"
           )}
         >
           <div className="app-sidebar__top">
@@ -209,7 +231,36 @@ export default function AppShell({
             </button>
           </div>
           <nav className="app-nav">
-            {visibleLinks.map((link) => {
+            {summaryLink && SummaryIcon ? (
+              <div className="app-nav__group">
+                <Link
+                  href={summaryLink.href}
+                  aria-label={summaryLink.ariaLabel ?? summaryLink.label}
+                  className={cn("app-nav__link", pathname === summaryLink.href && "app-nav__link--active")}
+                >
+                  <SummaryIcon className="h-4 w-4" />
+                  <span>{summaryLink.label}</span>
+                </Link>
+                <div className="app-nav__sublinks">
+                  {visibleSummarySubmenuLinks.map((link) => {
+                    const Icon = link.icon;
+                    const active = pathname === link.href;
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        aria-label={link.ariaLabel ?? link.label}
+                        className={cn("app-nav__link app-nav__link--sub", active && "app-nav__link--active")}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{link.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+            {primaryLinks.map((link) => {
               const active = pathname === link.href;
               const Icon = link.icon;
               const tier = link.tierLabel ? tierLookup.get(link.tierLabel) : null;
