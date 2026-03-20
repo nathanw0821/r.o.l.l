@@ -9,8 +9,7 @@ export default function SignInForm({
 }: {
   allowPublicRegistration?: boolean;
 }) {
-  const [email, setEmail] = React.useState("");
-  const [username, setUsername] = React.useState("");
+  const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [isAutofilled, setIsAutofilled] = React.useState(false);
@@ -35,15 +34,14 @@ export default function SignInForm({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!username.trim() || !password.trim()) return;
+    if (!identifier.trim() || !password.trim()) return;
 
     setPending(true);
     setError(null);
 
     const result = await signIn("credentials", {
-      username,
+      identifier,
       password,
-      email: email.trim() || undefined,
       callbackUrl: "/",
       redirect: false
     });
@@ -84,30 +82,16 @@ export default function SignInForm({
                 {provider.label}
               </Button>
             ))}
-          <div className="text-center text-xs text-foreground/50">or sign in with a local username</div>
+          <div className="text-center text-xs text-foreground/50">or sign in with local credentials</div>
         </div>
       ) : null}
-      {allowPublicRegistration ? (
-        <label className="flex flex-col gap-2 text-sm">
-          <span>Email</span>
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            autoComplete="email"
-            placeholder="user@example.com"
-            className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
-          />
-          <span className="text-xs text-foreground/50">Required for new account creation</span>
-        </label>
-      ) : null}
       <label className="flex flex-col gap-2 text-sm">
-        <span>Username</span>
+        <span>Username or Email</span>
         <input
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
+          value={identifier}
+          onChange={(event) => setIdentifier(event.target.value)}
           autoComplete="username"
-          placeholder="Enter your username"
+          placeholder="Enter your username or email"
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
       </label>
@@ -141,8 +125,16 @@ export default function SignInForm({
         ) : null}
       </label>
       <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Signing in..." : allowPublicRegistration ? "Sign In / Create Account" : "Sign In"}
+        {pending ? "Signing in..." : "Sign In"}
       </Button>
+      {allowPublicRegistration ? (
+        <div className="text-center text-xs text-foreground/60">
+          Need an account?{" "}
+          <a href="/auth/sign-up" className="text-accent hover:underline">
+            Sign up
+          </a>
+        </div>
+      ) : null}
       {error ? <div className="text-xs text-[color:var(--color-warning)]">{error}</div> : null}
     </form>
   );
