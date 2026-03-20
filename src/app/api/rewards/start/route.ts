@@ -1,9 +1,9 @@
-import { requireUser } from "@/lib/api/auth";
+import { requireAdmin } from "@/lib/api/auth";
 import { badRequest, ok } from "@/lib/api/responses";
 import { startRewardedAdSession } from "@/lib/monetization";
 
 export async function POST() {
-  const auth = await requireUser();
+  const auth = await requireAdmin();
   if ("response" in auth) return auth.response;
 
   try {
