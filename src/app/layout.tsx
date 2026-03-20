@@ -17,9 +17,9 @@ export const metadata: Metadata = {
   title: "R.O.L.L | Record Of Legendary Loadouts",
   description: "Record of legendary effects, components, and acquisition paths for Fallout 76.",
   icons: {
-    icon: [{ url: "/icon.png", type: "image/png" }],
-    shortcut: ["/icon.png"],
-    apple: ["/icon.png"]
+    icon: [{ url: "/favicon-v3.png?v=3", type: "image/png" }],
+    shortcut: ["/favicon-v3.png?v=3"],
+    apple: ["/favicon-v3.png?v=3"]
   }
 };
 
