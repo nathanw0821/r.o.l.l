@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { Award, BookOpen, ClipboardList, ListChecks, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
+import CommandHubShell from "@/components/command-hub-shell";
 import LocalProgressSync from "@/components/local-progress-sync";
 import SupportLink from "@/components/support-link";
 import { useLocalProgress } from "@/components/use-local-progress";
@@ -37,20 +38,31 @@ type TierProgressSummary = {
 };
 
 export default function AppShell({
-  children,
-  hub,
-  tierProgress
+  children
 }: {
   children: ReactNode;
-  hub?: ReactNode;
-  tierProgress: TierProgressSummary[];
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { status: rewardsStatus } = useRewards();
   const isSignedIn = Boolean(session?.user);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
+  const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
   const visibleLinks = links.filter((link) => !link.requiresAuth || session?.user);
+
+  React.useEffect(() => {
+    let active = true;
+    fetch("/api/tier-progress", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((payload) => {
+        if (!active || !payload?.success || !Array.isArray(payload.data?.tierProgress)) return;
+        setTierProgress(payload.data.tierProgress);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const displayTierProgress = React.useMemo(
     () =>
@@ -114,7 +126,7 @@ export default function AppShell({
           <div className="content-canvas">
             <LocalProgressSync />
             <UsernameCompletion />
-            {hub}
+            <CommandHubShell />
             <FeedbackWidget />
             <main id="main-content" className="content-panel">
               {children}

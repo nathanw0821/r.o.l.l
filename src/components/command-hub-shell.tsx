@@ -1,31 +1,55 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { isAdminUser } from "@/lib/app-config";
-import { type TierProgressSummary, getProgressSummary, getActiveDatasetVersion } from "@/lib/data";
-import { prisma } from "@/lib/prisma";
+"use client";
+
+import * as React from "react";
 import CommandHub from "@/components/command-hub";
 
-export default async function CommandHubShell({ tierProgress }: { tierProgress: TierProgressSummary[] }) {
-  const session = await getServerSession(authOptions);
-  const summary = await getProgressSummary(session?.user?.id);
-  const dataset = await getActiveDatasetVersion();
-  const user = session?.user?.id
-    ? await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { email: true, username: true }
+type HubPayload = {
+  summary: { total: number; unlocked: number; percent: number };
+  tierProgress: {
+    tierLabel: string;
+    total: number;
+    unlocked: number;
+    percent: number;
+    effectTierIds: string[];
+  }[];
+  isAdmin?: boolean;
+  dataset?: {
+    importedAt?: string | null;
+    sourceType?: string | null;
+    sourceName?: string | null;
+  } | null;
+};
+
+const EMPTY_HUB: HubPayload = {
+  summary: { total: 0, unlocked: 0, percent: 0 },
+  tierProgress: [],
+  isAdmin: false,
+  dataset: null
+};
+
+export default function CommandHubShell() {
+  const [payload, setPayload] = React.useState<HubPayload>(EMPTY_HUB);
+
+  React.useEffect(() => {
+    let active = true;
+    fetch("/api/command-hub", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((body) => {
+        if (!active || !body?.success || !body?.data) return;
+        setPayload(body.data as HubPayload);
       })
-    : null;
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <CommandHub
-      summary={summary}
-      tierProgress={tierProgress}
-      isAdmin={isAdminUser(user)}
-      dataset={{
-        importedAt: dataset?.importedAt ? dataset.importedAt.toISOString() : null,
-        sourceType: dataset?.sourceType ?? null,
-        sourceName: dataset?.sourceName ?? null
-      }}
+      summary={payload.summary}
+      tierProgress={payload.tierProgress}
+      isAdmin={payload.isAdmin}
+      dataset={payload.dataset}
     />
   );
 }
