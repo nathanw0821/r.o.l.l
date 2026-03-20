@@ -60,6 +60,51 @@ async function sendPasswordResetWebhook(params: {
   }
 }
 
+async function sendPasswordResetEmailViaResend(params: {
+  email: string;
+  username?: string | null;
+  resetUrl: string | null;
+}) {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.EMAIL_FROM?.trim();
+  if (!apiKey || !from || !params.resetUrl) {
+    return { delivered: false } as const;
+  }
+
+  const appName = "R.O.L.L";
+  const displayName = params.username?.trim() || params.email;
+  const replyTo = process.env.EMAIL_REPLY_TO?.trim();
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        from,
+        to: [params.email],
+        ...(replyTo ? { reply_to: replyTo } : {}),
+        subject: `${appName}: Reset your password`,
+        html: `
+          <div style="font-family:Arial,sans-serif;line-height:1.45;color:#111;">
+            <p>Hi ${displayName},</p>
+            <p>We received a request to reset your password.</p>
+            <p><a href="${params.resetUrl}">Reset password</a></p>
+            <p>If you did not request this, you can safely ignore this email.</p>
+          </div>
+        `
+      }),
+      signal: AbortSignal.timeout(10000)
+    });
+
+    return { delivered: response.ok } as const;
+  } catch {
+    return { delivered: false } as const;
+  }
+}
+
 export async function requestPasswordReset(emailInput: string) {
   const email = normalizeEmail(emailInput);
   const user = await prisma.user.findUnique({
@@ -89,11 +134,18 @@ export async function requestPasswordReset(emailInput: string) {
   });
 
   const resetUrl = buildPasswordResetUrl(rawToken);
-  const delivery = await sendPasswordResetWebhook({
+  const resendDelivery = await sendPasswordResetEmailViaResend({
     email: user.email,
     username: user.username,
     resetUrl
   });
+  const delivery = resendDelivery.delivered
+    ? resendDelivery
+    : await sendPasswordResetWebhook({
+        email: user.email,
+        username: user.username,
+        resetUrl
+      });
 
   return {
     accepted: true as const,

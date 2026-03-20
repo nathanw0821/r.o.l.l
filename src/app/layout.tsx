@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
   title: "R.O.L.L | Record Of Legendary Loadouts",
   description: "Record of legendary effects, components, and acquisition paths for Fallout 76.",
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    shortcut: ["/icon.png"],
+    apple: ["/icon.png"]
+  }
 };
 
 const THEME_MODES = ["light", "dark", "system"] as const;
