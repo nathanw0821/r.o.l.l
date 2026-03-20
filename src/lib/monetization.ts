@@ -80,6 +80,11 @@ export function getRewardConfig() {
   const rewardedVideoUrl = process.env.REWARDED_VIDEO_URL?.trim() || null;
   const googleRewardedAdUnit = process.env.GOOGLE_REWARDED_AD_UNIT?.trim() || null;
   const minimumViewSeconds = Math.max(readInt(process.env.REWARDED_AD_MIN_SECONDS, 15), 5);
+  const passiveEnabled = process.env.PASSIVE_POINTS_ENABLED
+    ? isEnabled(process.env.PASSIVE_POINTS_ENABLED)
+    : true;
+  const passivePointsPerMinute = Math.max(readInt(process.env.PASSIVE_POINTS_PER_MINUTE, 5), 1);
+  const passiveApplyMinutes = Math.max(readInt(process.env.PASSIVE_POINTS_APPLY_MINUTES, 30), 1);
 
   const providerConfigured =
     rewardedEnabled &&
@@ -97,6 +102,9 @@ export function getRewardConfig() {
     googleRewardedAdUnit,
     providerConfigured,
     minimumViewSeconds,
+    passiveEnabled,
+    passivePointsPerMinute,
+    passiveApplyMinutes,
     supportUrl: getSupportUrl()
   };
 }
@@ -146,7 +154,9 @@ export async function getRewardsStatus(userId?: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
+      id: true,
       points: true,
+      passivePointsAt: true,
       lastAdWatchAt: true,
       dailyPoints: true,
       dailyPointsDate: true,
@@ -176,6 +186,45 @@ export async function getRewardsStatus(userId?: string) {
     };
   }
 
+  let adsEnabled = user.settings?.adsEnabled;
+  if (adsEnabled !== true) {
+    await prisma.userSettings.upsert({
+      where: { userId },
+      update: { adsEnabled: true },
+      create: { userId, adsEnabled: true }
+    });
+    adsEnabled = true;
+  }
+
+  let points = user.points;
+  if (config.passiveEnabled && adsEnabled) {
+    const now = new Date();
+    const applyMs = config.passiveApplyMinutes * 60_000;
+    const pointsPerApply = config.passivePointsPerMinute * config.passiveApplyMinutes;
+
+    if (!user.passivePointsAt) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { passivePointsAt: now }
+      });
+    } else {
+      const elapsedMs = now.getTime() - user.passivePointsAt.getTime();
+      const intervals = Math.floor(elapsedMs / applyMs);
+      if (intervals > 0) {
+        const granted = intervals * pointsPerApply;
+        const nextPassiveAt = new Date(user.passivePointsAt.getTime() + intervals * applyMs);
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            points: { increment: granted },
+            passivePointsAt: nextPassiveAt
+          }
+        });
+        points += granted;
+      }
+    }
+  }
+
   const dailyPoints = getDailyPointsUsed(user.dailyPoints, user.dailyPointsDate);
   const cooldownAt = nextCooldownAt(user.lastAdWatchAt, config.cooldownMinutes);
   const cooldownRemainingSeconds = cooldownAt
@@ -193,9 +242,9 @@ export async function getRewardsStatus(userId?: string) {
     cooldownMinutes: config.cooldownMinutes,
     dailyCap: config.dailyCap,
     minimumViewSeconds: config.minimumViewSeconds,
-    points: user.points,
+    points,
     dailyPoints,
-    adsEnabled: user.settings?.adsEnabled ?? false,
+    adsEnabled: adsEnabled ?? false,
     supportThanks: false,
     cooldownRemainingSeconds,
     availableNow:

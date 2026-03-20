@@ -6,7 +6,6 @@ import { useSession, signOut } from "next-auth/react";
 import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
-import RewardsPanel from "@/components/rewards-panel";
 import SupportLink from "@/components/support-link";
 import { useRewards } from "@/components/rewards-provider";
 import { cn } from "@/lib/utils";
@@ -447,10 +446,6 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 </button>
               ))}
             </div>
-          </div>
-          <div className="hub-section">
-            <div className="hub-section__title">Earn Points</div>
-            <RewardsPanel mode="hub" />
           </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Theme</div>

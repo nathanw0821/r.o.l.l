@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useSession } from "next-auth/react";
 import { useProgressHistory } from "@/components/progress-history-provider";
-import RewardsPanel from "@/components/rewards-panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSessionAssist } from "@/components/session-assist-provider";
@@ -405,16 +404,6 @@ export default function ScreenshotAssistClient({
                 </Button>
               );
             })}
-          </div>
-        </div>
-
-        <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-          <div className="text-sm font-semibold">Watch an ad to earn points?</div>
-          <div className="mt-1 text-xs text-foreground/60">
-            Rewarded ads are optional, user-triggered, and never block Session Assist.
-          </div>
-          <div className="mt-3">
-            <RewardsPanel mode="assist" />
           </div>
         </div>
 
