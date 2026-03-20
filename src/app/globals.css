@@ -655,24 +655,63 @@ a {
 }
 
 .brand-stack__title {
-  font-size: 1.1rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
+  line-height: 1.05;
 }
 
 .brand-stack__subtitle {
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--sidebar-muted-text);
 }
 
 .brand-stack__support {
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
+  font-size: 0.69rem;
+  letter-spacing: 0.06em;
   color: var(--sidebar-soft-text);
+}
+
+.brand-stack--auth .brand-stack__title {
+  font-size: 1.68rem;
+  letter-spacing: 0.2em;
+}
+
+.brand-stack--auth .brand-stack__subtitle {
+  font-size: 0.92rem;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.brand-stack--auth .brand-stack__support {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+}
+
+.brand-stack__subtitle-acronym {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.14rem;
+}
+
+.brand-stack__subtitle-word {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.brand-stack__subtitle-initial {
+  font-size: 1.24em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.brand-stack__subtitle-rest {
+  font-size: 0.92em;
 }
 
 .app-nav {
@@ -683,6 +722,51 @@ a {
 
 .app-sidebar__support {
   margin-top: auto;
+}
+
+.app-sidebar__auth {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.app-sidebar__auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--sidebar-hover-border);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--color-fg);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.45rem 0.65rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.app-sidebar__auth-button:hover {
+  border-color: var(--color-accent);
+  background: var(--control-hover);
+}
+
+.app-sidebar__auth-button--primary {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--sidebar-hover-border));
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--surface));
+}
+
+.app-sidebar__auth-button--google {
+  border-color: color-mix(in srgb, #4285f4 45%, var(--sidebar-hover-border));
+}
+
+.app-sidebar__auth-status {
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-success) 55%, var(--sidebar-hover-border));
+  background: color-mix(in srgb, var(--color-success) 12%, var(--surface));
+  color: var(--color-success);
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.42rem 0.65rem;
 }
 
 .app-nav__link {
@@ -941,8 +1025,18 @@ a {
     display: none;
   }
   .brand-stack__title {
-    font-size: 0.95rem;
-    letter-spacing: 0.18em;
+    font-size: 1.06rem;
+    letter-spacing: 0.14em;
+  }
+  .brand-stack--auth .brand-stack__title {
+    font-size: 1.2rem;
+    letter-spacing: 0.14em;
+  }
+  .brand-stack--auth .brand-stack__subtitle {
+    font-size: 0.78rem;
+  }
+  .brand-stack--auth .brand-stack__support {
+    font-size: 0.66rem;
   }
   .session-assist-window-wrap {
     width: min(680px, calc(100vw - 8rem));
@@ -965,6 +1059,10 @@ a {
     z-index: 40;
     backdrop-filter: blur(12px);
   }
+  .app-sidebar__auth {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
   .app-nav {
     flex-direction: row;
     flex-wrap: wrap;
@@ -983,14 +1081,24 @@ a {
     display: block;
   }
   .brand-stack__title {
-    font-size: 1rem;
-    letter-spacing: 0.2em;
+    font-size: 1.2rem;
+    letter-spacing: 0.14em;
+  }
+  .brand-stack--auth .brand-stack__title {
+    font-size: 1.36rem;
+    letter-spacing: 0.14em;
   }
   .brand-stack__subtitle {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
+  }
+  .brand-stack--auth .brand-stack__subtitle {
+    font-size: 0.84rem;
   }
   .brand-stack__support {
-    font-size: 0.6rem;
+    font-size: 0.64rem;
+  }
+  .brand-stack--auth .brand-stack__support {
+    font-size: 0.7rem;
   }
   .session-assist-window-wrap {
     top: 6.5rem;

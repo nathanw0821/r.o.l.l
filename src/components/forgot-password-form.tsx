@@ -64,7 +64,7 @@ export default function ForgotPasswordForm() {
           <p>If the account exists, a reset link has been sent.</p>
           {!result.delivered && result.resetUrl ? (
             <p>
-              Email sender is not attached yet. Use this manual link for now:{" "}
+              Direct reset link:{" "}
               <a href={result.resetUrl} className="text-accent hover:underline">
                 reset password
               </a>

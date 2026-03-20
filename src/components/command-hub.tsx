@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
@@ -597,24 +597,6 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             <div className="mt-3">
               <SupportLink href={rewardsStatus?.supportUrl} label="Support this App ❤️" />
             </div>
-          </div>
-          <div className="hub-group">
-            {hydrated ? (
-              isSignedIn ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                >
-                  Sign out
-                </Button>
-              ) : (
-                <Button type="button" variant="outline" size="sm" asChild>
-                  <Link href="/auth/sign-in">Sign in</Link>
-                </Button>
-              )
-            ) : null}
           </div>
         </section>
       </div>

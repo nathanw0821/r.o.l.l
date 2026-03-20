@@ -50,14 +50,14 @@ export default async function ReadmePage() {
                 <div className="text-xs uppercase text-foreground/60">Session Assist</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
                   <li>Upload a screenshot for local reference and confirm unlocks manually.</li>
-                  <li>Currently hidden from main navigation while we prepare a cleaner relaunch.</li>
+                  <li>Available from Admin Tools for controlled testing and review.</li>
                   <li>Modes: Manual Review, New Unlock Sweep, or AI Suggestions.</li>
                   <li>Optional OpenAI review uses your own key and stays suggestion-only.</li>
                 </ul>
                 <div className="mt-4 rounded-[var(--radius)] border border-border bg-background/40 p-3">
                   <div className="text-xs uppercase text-foreground/60">Status</div>
                   <div className="mt-2 text-sm text-foreground/75">
-                    Nothing auto-detects or auto-saves. You review and save the changes you want. Session Assist is available in Admin Tools while hidden from the main app.
+                    Nothing auto-detects or auto-saves. You review and save only the changes you want.
                   </div>
                 </div>
               </div>
