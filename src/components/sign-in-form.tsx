@@ -127,6 +127,11 @@ export default function SignInForm({
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Signing in..." : "Sign In"}
       </Button>
+      <div className="text-center text-xs text-foreground/60">
+        <a href="/auth/forgot-password" className="text-accent hover:underline">
+          Forgot password?
+        </a>
+      </div>
       {allowPublicRegistration ? (
         <div className="text-center text-xs text-foreground/60">
           Need an account?{" "}

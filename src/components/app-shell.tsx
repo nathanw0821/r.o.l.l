@@ -5,15 +5,15 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Award, BookOpen, Camera, ClipboardList, ListChecks, Sparkles, Star } from "lucide-react";
+import { Award, BookOpen, ClipboardList, ListChecks, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import LocalProgressSync from "@/components/local-progress-sync";
 import SupportLink from "@/components/support-link";
-import SessionAssistWindow from "@/components/session-assist-window";
-import { useSessionAssist } from "@/components/session-assist-provider";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { useRewards } from "@/components/rewards-provider";
+import UsernameCompletion from "@/components/username-completion";
+import FeedbackWidget from "@/components/feedback-widget";
 import { formatTierStars } from "@/lib/tier-format";
 
 const links = [
@@ -47,7 +47,6 @@ export default function AppShell({
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { open, pinned, toggleOpen } = useSessionAssist();
   const { status: rewardsStatus } = useRewards();
   const isSignedIn = Boolean(session?.user);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
@@ -106,17 +105,6 @@ export default function AppShell({
                 </Link>
               );
             })}
-            {pinned ? (
-              <button
-                type="button"
-                onClick={toggleOpen}
-                className={cn("app-nav__link app-nav__button", open && "app-nav__link--active")}
-                aria-pressed={open}
-              >
-                <Camera className="h-4 w-4" />
-                <span>Session Assist</span>
-              </button>
-            ) : null}
           </nav>
           <div className="app-sidebar__support">
             <SupportLink href={rewardsStatus?.supportUrl} label="Help keep this tool alive" />
@@ -125,8 +113,9 @@ export default function AppShell({
         <div className="app-main">
           <div className="content-canvas">
             <LocalProgressSync />
+            <UsernameCompletion />
             {hub}
-            <SessionAssistWindow />
+            <FeedbackWidget />
             <main id="main-content" className="content-panel">
               {children}
             </main>

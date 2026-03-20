@@ -8,6 +8,8 @@ import ProgressControls from "@/components/progress-controls";
 import AccountLinks from "@/components/account-links";
 import RewardsPanel from "@/components/rewards-panel";
 import SupportLink from "@/components/support-link";
+import UsernameSettingsForm from "@/components/username-settings-form";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function SettingsPage() {
@@ -25,9 +27,27 @@ export default async function SettingsPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
+          <CardTitle>Profile</CardTitle>
+          <CardDescription>
+            Update your username at any time. This is used for local credentials and profile display.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {session?.user?.id ? (
+            <UsernameSettingsForm initialUsername={user?.username ?? null} />
+          ) : (
+            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-xs text-foreground/60">
+              Sign in to manage your profile username.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Settings & Accessibility</CardTitle>
           <CardDescription>
-            Tune contrast, accent color, and color assistance for your companion-tracker setup. Density and Session Assist controls live in the Command Hub.
+            Tune contrast, accent color, and color assistance for your companion-tracker setup. Density controls live in the Command Hub.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -114,6 +134,7 @@ export default async function SettingsPage() {
       </Card>
 
       {canManageWorkbookImport ? (
+        <>
         <Card>
           <CardHeader>
             <CardTitle>Workbook Import</CardTitle>
@@ -125,6 +146,29 @@ export default async function SettingsPage() {
             <AdminImportForm />
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Feedback Review</CardTitle>
+            <CardDescription>Review submitted feedback directly in-app.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/admin-feedback" className="text-sm text-accent hover:underline">
+              Open feedback inbox
+            </Link>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Session Assist (Admin)</CardTitle>
+            <CardDescription>Hidden from the main app for now. Use this page for later reimplementation testing.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/screenshot-assist" className="text-sm text-accent hover:underline">
+              Open Session Assist
+            </Link>
+          </CardContent>
+        </Card>
+        </>
       ) : null}
 
       <Card>

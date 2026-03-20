@@ -1,4 +1,3 @@
-import SessionAssistReadmeActions from "@/components/session-assist-readme-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function HomePage() {
@@ -51,16 +50,15 @@ export default async function HomePage() {
                 <div className="text-xs uppercase text-foreground/60">Session Assist</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
                   <li>Upload a screenshot for local reference and confirm unlocks manually.</li>
-                  <li>Use it as a floating box, a pinned tab, or a full page.</li>
+                  <li>Currently hidden from main navigation while we prepare a cleaner relaunch.</li>
                   <li>Modes: Manual Review, New Unlock Sweep, or AI Suggestions.</li>
                   <li>Optional OpenAI review uses your own key and stays suggestion-only.</li>
                 </ul>
                 <div className="mt-4 rounded-[var(--radius)] border border-border bg-background/40 p-3">
-                  <div className="text-xs uppercase text-foreground/60">Quick Actions</div>
+                  <div className="text-xs uppercase text-foreground/60">Status</div>
                   <div className="mt-2 text-sm text-foreground/75">
-                    Nothing auto-detects or auto-saves. You review and save the changes you want.
+                    Nothing auto-detects or auto-saves. You review and save the changes you want. Session Assist is available in Admin Tools while hidden from the main app.
                   </div>
-                  <SessionAssistReadmeActions />
                 </div>
               </div>
 
