@@ -5,7 +5,14 @@ function normalizeRaw(value: ImportCellValue) {
   if (typeof value === "string") return value.trim();
   if (typeof value === "number") return Number.isFinite(value) ? String(value) : "";
   if (typeof value === "boolean") return value ? "true" : "false";
-  return String(value).trim();
+  return "";
+}
+
+function stripObjectArtifacts(value: string) {
+  return value
+    .replace(/\[object Object\]/gi, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 export function parseUnlockedValue(value: ImportCellValue): boolean | null {
@@ -56,7 +63,7 @@ export function normalizeNoteValue(value: ImportCellValue): string | null {
   const raw = normalizeRaw(value);
   if (!raw) return null;
 
-  const trimmed = raw.trim();
+  const trimmed = stripObjectArtifacts(raw.trim());
   if (!trimmed) return null;
 
   const zeroLike = /^0+(\.0+)?$/;

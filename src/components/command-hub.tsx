@@ -245,7 +245,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="hub-group">
             <button
               type="button"
-              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              className="hub-group__toggle"
               onClick={() => toggleInteractionSection("source")}
               aria-expanded={interactionSections.source}
             >
@@ -271,7 +271,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="hub-group">
             <button
               type="button"
-              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              className="hub-group__toggle"
               onClick={() => toggleInteractionSection("status")}
               aria-expanded={interactionSections.status}
             >
@@ -297,7 +297,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="hub-group">
             <button
               type="button"
-              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              className="hub-group__toggle"
               onClick={() => toggleInteractionSection("origins")}
               aria-expanded={interactionSections.origins}
             >
@@ -327,7 +327,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="hub-group">
             <button
               type="button"
-              className="flex w-full items-center justify-between text-left text-xs text-foreground/60 hover:text-foreground"
+              className="hub-group__toggle"
               onClick={() => toggleInteractionSection("categories")}
               aria-expanded={interactionSections.categories}
             >
