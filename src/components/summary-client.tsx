@@ -3,6 +3,8 @@
 import * as React from "react";
 import ExcelJS from "exceljs";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Lock, Unlock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -28,6 +30,7 @@ export type SummaryRow = {
 };
 
 const tierOrder = ["1 Star", "2 Star", "3 Star", "4 Star"] as const;
+const SUMMARY_LOCK_KEY = "roll.summary.locked";
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -92,6 +95,7 @@ export default function SummaryClient({
   rows: SummaryRow[];
   summary: { total: number; unlocked: number; percent: number };
 }) {
+  const router = useRouter();
   const { data: session } = useSession();
   const {
     query,
@@ -107,6 +111,18 @@ export default function SummaryClient({
   const { map: localProgress } = useLocalProgress(!session);
   const { commitEntries } = useProgressHistory();
   const [exportMode, setExportMode] = React.useState<"filtered" | "all">("filtered");
+  const [summaryLocked, setSummaryLocked] = React.useState(false);
+  const longPressTimeoutRef = React.useRef<number | null>(null);
+  const longPressTriggeredRef = React.useRef(false);
+
+  React.useEffect(() => {
+    const stored = window.localStorage.getItem(SUMMARY_LOCK_KEY);
+    setSummaryLocked(stored === "1");
+  }, []);
+
+  React.useEffect(() => {
+    window.localStorage.setItem(SUMMARY_LOCK_KEY, summaryLocked ? "1" : "0");
+  }, [summaryLocked]);
 
   React.useEffect(() => {
     const merged = rows.map((row) => {
@@ -209,6 +225,46 @@ export default function SummaryClient({
     if (kind === "json") exportJson(exportRows, `roll-export-${stamp}.json`);
   }
 
+  function navigateToAllEffects(row: SummaryRow) {
+    router.push(`/all-effects?focus=${encodeURIComponent(row.id)}#effect-${encodeURIComponent(row.id)}`);
+  }
+
+  function clearLongPressTimer() {
+    if (longPressTimeoutRef.current !== null) {
+      window.clearTimeout(longPressTimeoutRef.current);
+      longPressTimeoutRef.current = null;
+    }
+  }
+
+  function handlePointerDown(row: SummaryRow) {
+    longPressTriggeredRef.current = false;
+    clearLongPressTimer();
+    longPressTimeoutRef.current = window.setTimeout(() => {
+      longPressTriggeredRef.current = true;
+      navigateToAllEffects(row);
+    }, 420);
+  }
+
+  function handlePointerUp() {
+    clearLongPressTimer();
+  }
+
+  function handlePointerCancel() {
+    clearLongPressTimer();
+  }
+
+  async function handleSummaryRowClick(row: SummaryRow) {
+    if (longPressTriggeredRef.current) {
+      longPressTriggeredRef.current = false;
+      return;
+    }
+    if (summaryLocked) {
+      navigateToAllEffects(row);
+      return;
+    }
+    await toggleRow(row);
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -241,6 +297,21 @@ export default function SummaryClient({
           <div className="space-y-1">
             <div className="text-sm font-semibold">Export Data</div>
             <div className="text-xs text-foreground/60">Includes tier, effect, status, source, notes, and origins.</div>
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={() => setSummaryLocked((value) => !value)}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs",
+                  summaryLocked
+                    ? "border-[color:var(--color-warning)] text-[color:var(--color-warning)]"
+                    : "border-border text-foreground/70 hover:border-accent"
+                )}
+              >
+                {summaryLocked ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
+                {summaryLocked ? "Summary Locked: Click opens All Effects" : "Summary Unlocked: Click toggles status"}
+              </button>
+            </div>
           </div>
           <div className="flex gap-2">
             <button
@@ -313,7 +384,11 @@ export default function SummaryClient({
                   <button
                     key={row.id}
                     type="button"
-                    onClick={() => toggleRow(row)}
+                    onClick={() => handleSummaryRowClick(row)}
+                    onPointerDown={() => handlePointerDown(row)}
+                    onPointerUp={handlePointerUp}
+                    onPointerLeave={handlePointerCancel}
+                    onPointerCancel={handlePointerCancel}
                     disabled={pendingId === row.id}
                     aria-pressed={row.unlocked}
                     data-status={row.unlocked ? "unlocked" : "locked"}
@@ -326,7 +401,13 @@ export default function SummaryClient({
                     <div>
                       <div className="text-sm font-semibold">{row.effect.name}</div>
                       <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
-                        {pendingId === row.id ? "Saving..." : row.unlocked ? "Unlocked" : "Locked"}
+                        {pendingId === row.id
+                          ? "Saving..."
+                          : summaryLocked
+                            ? "Open in All Effects"
+                            : row.unlocked
+                              ? "Unlocked"
+                              : "Locked"}
                       </div>
                     </div>
                   </button>

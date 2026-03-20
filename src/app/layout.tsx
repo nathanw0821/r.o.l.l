@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const initialTheme: ThemeMode = "system";
   const initialAccent = "ember";
   const initialColorBlind: ColorBlindMode = "none";
-  const initialDensity = "comfortable";
+  const initialDensity = "compact";
   const resolvedTheme: "light" | "dark" | undefined = undefined;
 
   return (

@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
-import { Award, BookOpen, ClipboardList, ListChecks, Sparkles, Star } from "lucide-react";
+import { Award, BookOpen, ClipboardList, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkles, Star, UserCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import CommandHubShell from "@/components/command-hub-shell";
@@ -18,6 +18,7 @@ import { formatTierStars } from "@/lib/tier-format";
 
 const links = [
   { href: "/", label: "Summary", icon: Sparkles },
+  { href: "/profile", label: "Profile", icon: UserCircle2, requiresAuth: true },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
@@ -36,6 +37,8 @@ type TierProgressSummary = {
   effectTierIds: string[];
 };
 
+const SIDEBAR_COLLAPSE_KEY = "roll-sidebar-collapsed";
+
 export default function AppShell({
   children
 }: {
@@ -47,6 +50,9 @@ export default function AppShell({
   const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL ?? null;
   const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }>>({});
   const [linkedProviders, setLinkedProviders] = React.useState<string[]>([]);
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [mobileSidebarHidden, setMobileSidebarHidden] = React.useState(false);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
   const visibleLinks = links.filter((link) => !link.requiresAuth || session?.user);
@@ -71,6 +77,49 @@ export default function AppShell({
       .then((result) => setProviders(result ?? {}))
       .catch(() => setProviders({}));
   }, []);
+
+  React.useEffect(() => {
+    const stored = window.localStorage.getItem(SIDEBAR_COLLAPSE_KEY);
+    setSidebarCollapsed(stored === "1");
+  }, []);
+
+  React.useEffect(() => {
+    window.localStorage.setItem(SIDEBAR_COLLAPSE_KEY, sidebarCollapsed ? "1" : "0");
+  }, [sidebarCollapsed]);
+
+  React.useEffect(() => {
+    const media = window.matchMedia("(max-width: 860px)");
+    const apply = () => setIsMobile(media.matches);
+    apply();
+    media.addEventListener("change", apply);
+    return () => media.removeEventListener("change", apply);
+  }, []);
+
+  React.useEffect(() => {
+    if (!isMobile) {
+      setMobileSidebarHidden(false);
+      return;
+    }
+
+    let lastY = window.scrollY;
+    const handleScroll = () => {
+      const y = window.scrollY;
+      if (y <= 24) {
+        setMobileSidebarHidden(false);
+        lastY = y;
+        return;
+      }
+      if (y > lastY + 8) {
+        setMobileSidebarHidden(true);
+      } else if (y < lastY - 8) {
+        setMobileSidebarHidden(false);
+      }
+      lastY = y;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobile]);
 
   React.useEffect(() => {
     if (!isSignedIn) {
@@ -110,16 +159,35 @@ export default function AppShell({
   );
   const hasGoogleProvider = Boolean(providers.google);
   const googleLinked = linkedProviders.includes("google");
+  const sidebarRail = sidebarCollapsed && !isMobile;
 
   return (
     <div className="min-h-screen bg-background text-foreground pip-shell">
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
-      <div className="app-layout">
-        <aside className="app-sidebar">
-          <div className="app-brand">
+      <div className={cn("app-layout", sidebarRail && "app-layout--sidebar-rail")}>
+        <aside
+          className={cn(
+            "app-sidebar",
+            sidebarRail && "app-sidebar--rail",
+            isMobile && sidebarCollapsed && "app-sidebar--mobile-collapsed",
+            isMobile && mobileSidebarHidden && "app-sidebar--mobile-hidden"
+          )}
+        >
+          <div className="app-sidebar__top">
+            <div className="app-brand">
             <BrandStack href="/" />
+            </div>
+            <button
+              type="button"
+              className="app-sidebar__collapse-button"
+              onClick={() => setSidebarCollapsed((value) => !value)}
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-pressed={sidebarCollapsed}
+            >
+              {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+            </button>
           </div>
           <nav className="app-nav">
             {visibleLinks.map((link) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/components/filter-context";
 import { useProgressHistory } from "@/components/progress-history-provider";
@@ -34,7 +35,9 @@ export default function EffectTable({
 }) {
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
-  const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions } = useFilters();
+  const handledFocusRef = React.useRef<string | null>(null);
+  const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters } = useFilters();
+  const searchParams = useSearchParams();
   const { map: localProgress } = useLocalProgress(!canEdit);
   const { commitEntries } = useProgressHistory();
 
@@ -84,6 +87,32 @@ export default function EffectTable({
       }),
     [localRows, query, sourceFilters, statusFilters, originFilters, categoryFilters]
   );
+
+  React.useEffect(() => {
+    const focusId = searchParams.get("focus");
+    if (!focusId) return;
+    if (handledFocusRef.current === focusId) return;
+
+    const existsInDataset = localRows.some((row) => row.id === focusId);
+    if (!existsInDataset) return;
+
+    const inFiltered = filteredRows.some((row) => row.id === focusId);
+    if (!inFiltered) {
+      clearFilters();
+    }
+
+    const raf = window.requestAnimationFrame(() => {
+      const safeId = typeof CSS !== "undefined" && "escape" in CSS ? CSS.escape(focusId) : focusId;
+      const target = document.querySelector<HTMLElement>(`[data-effect-id="${safeId}"]`);
+      if (!target) return;
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      target.classList.add("effect-target-pulse");
+      window.setTimeout(() => target.classList.remove("effect-target-pulse"), 1400);
+      handledFocusRef.current = focusId;
+    });
+
+    return () => window.cancelAnimationFrame(raf);
+  }, [searchParams, localRows, filteredRows, clearFilters]);
 
   async function toggleRow(row: EffectTierRow) {
     const nextUnlocked = !row.unlocked;
@@ -147,7 +176,7 @@ export default function EffectTable({
           Changes are saved locally in this browser. Sign in to sync them to your account.
         </div>
       ) : null}
-      <div className="hidden text-xs font-semibold uppercase text-foreground/60 md:grid table-grid">
+      <div className="effect-table-header hidden text-xs font-semibold uppercase text-foreground/60 md:grid table-grid">
         <div>Effect</div>
         <div>Categories</div>
         <div>Description</div>
@@ -175,6 +204,8 @@ export default function EffectTable({
           return (
             <div
               key={row.id}
+              id={`effect-${row.id}`}
+              data-effect-id={row.id}
               data-status={row.unlocked ? "unlocked" : "locked"}
               className={cn(
                 "effect-table-row summary-status-card rounded-[var(--radius)] border",
@@ -242,6 +273,8 @@ export default function EffectTable({
           return (
             <button
               key={`tile-${row.id}`}
+              id={`effect-${row.id}-tile`}
+              data-effect-id={row.id}
               type="button"
               onClick={() => toggleRow(row)}
               disabled={isPending}

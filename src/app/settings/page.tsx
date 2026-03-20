@@ -5,8 +5,6 @@ import { prisma } from "@/lib/prisma";
 import AdminImportForm from "@/components/admin-import-form";
 import ThemeSettings from "@/components/theme-settings";
 import ProgressControls from "@/components/progress-controls";
-import AccountLinks from "@/components/account-links";
-import UsernameSettingsForm from "@/components/username-settings-form";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -23,24 +21,6 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>
-            Update your username at any time. This is used for local credentials and profile display.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {session?.user?.id ? (
-            <UsernameSettingsForm initialUsername={user?.username ?? null} />
-          ) : (
-            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-xs text-foreground/60">
-              Sign in to manage your profile username.
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Settings & Accessibility</CardTitle>
@@ -151,21 +131,6 @@ export default async function SettingsPage() {
         </>
       ) : null}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Connected Accounts</CardTitle>
-          <CardDescription>
-            Manage external sign-in methods for account sync. Keep at least one method linked to avoid lockout.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {session?.user?.id ? <AccountLinks /> : (
-            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-xs text-foreground/60">
-              Sign in to manage linked accounts.
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }

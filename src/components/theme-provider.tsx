@@ -42,7 +42,7 @@ export function ThemeProvider({
   defaultTheme = "system",
   defaultAccent = "ember",
   defaultColorBlind = "none",
-  defaultDensity = "comfortable",
+  defaultDensity = "compact",
   preferDefaults = false
 }: {
   children: React.ReactNode;

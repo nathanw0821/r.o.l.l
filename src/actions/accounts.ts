@@ -36,5 +36,6 @@ export async function unlinkAccount(input: { provider: string }) {
   });
 
   revalidatePath("/settings");
+  revalidatePath("/profile");
   return { ok: true };
 }
