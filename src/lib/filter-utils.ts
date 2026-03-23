@@ -27,6 +27,16 @@ export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterSt
   const originSet = new Set(state.origins.map((origin) => origin.toLowerCase()));
   const categorySet = new Set((state.categories ?? []).map((category) => normalizeCategory(category)));
 
+  if (
+    query.length === 0 &&
+    sourceSet.size === 0 &&
+    statusSet.size === 0 &&
+    originSet.size === 0 &&
+    categorySet.size === 0
+  ) {
+    return rows;
+  }
+
   return rows.filter((row) => {
     if (categorySet.size > 0) {
       const rowCategories = row.categories.map((c) => normalizeCategory(c.category.name));

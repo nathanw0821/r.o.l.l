@@ -31,6 +31,68 @@ const DENSITY_KEY = "roll-density";
 const SCANLINE_KEY = "roll-scanline-mode";
 const UI_TONE_KEY = "roll-ui-tone";
 
+function readStoredValue(key: string) {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(key);
+}
+
+function readRootAttribute(name: string) {
+  if (typeof document === "undefined") return null;
+  return document.documentElement.getAttribute(name);
+}
+
+function readStoredTheme(defaultTheme: ThemeMode) {
+  const storedTheme = readStoredValue(THEME_KEY);
+  if (storedTheme === "light" || storedTheme === "dark" || storedTheme === "system") {
+    return storedTheme;
+  }
+  return defaultTheme;
+}
+
+function readStoredColorBlind(defaultColorBlind: ColorBlindMode) {
+  const storedColorBlind = readStoredValue(COLORBLIND_KEY);
+  if (
+    storedColorBlind === "none" ||
+    storedColorBlind === "deuteranopia" ||
+    storedColorBlind === "protanopia" ||
+    storedColorBlind === "tritanopia" ||
+    storedColorBlind === "high-contrast"
+  ) {
+    return storedColorBlind;
+  }
+  return defaultColorBlind;
+}
+
+function readStoredDensity(defaultDensity: "comfortable" | "compact") {
+  const storedDensity = readStoredValue(DENSITY_KEY);
+  if (storedDensity === "compact" || storedDensity === "comfortable") {
+    return storedDensity;
+  }
+  return defaultDensity;
+}
+
+function readStoredScanline() {
+  const storedScanline = readStoredValue(SCANLINE_KEY) ?? readRootAttribute("data-scanlines");
+  if (storedScanline === "off" || storedScanline === "soft" || storedScanline === "balanced" || storedScanline === "strong") {
+    return storedScanline;
+  }
+  return "balanced";
+}
+
+function readStoredUiTone() {
+  const storedUiTone = readStoredValue(UI_TONE_KEY) ?? readRootAttribute("data-ui-tone");
+  if (
+    storedUiTone === "neutral" ||
+    storedUiTone === "vault" ||
+    storedUiTone === "copper" ||
+    storedUiTone === "olive" ||
+    storedUiTone === "rose"
+  ) {
+    return storedUiTone;
+  }
+  return "neutral";
+}
+
 function resolveTheme(theme: ThemeMode): "light" | "dark" {
   if (theme !== "system") return theme;
   if (typeof window === "undefined") return "light";
@@ -52,56 +114,28 @@ export function ThemeProvider({
   defaultDensity?: "comfortable" | "compact";
   preferDefaults?: boolean;
 }) {
-  const [theme, setThemeState] = React.useState<ThemeMode>(defaultTheme);
-  const [accent, setAccentState] = React.useState<string>(defaultAccent);
-  const [colorBlind, setColorBlindState] = React.useState<ColorBlindMode>(defaultColorBlind);
-  const [density, setDensityState] = React.useState<"comfortable" | "compact">(defaultDensity);
-  const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>("balanced");
-  const [uiTone, setUiToneState] = React.useState<UiTone>("neutral");
-  const hydrated = React.useRef(false);
+  const [theme, setThemeState] = React.useState<ThemeMode>(() => readStoredTheme(defaultTheme));
+  const [accent, setAccentState] = React.useState<string>(() => readStoredValue(ACCENT_KEY) ?? readRootAttribute("data-accent") ?? defaultAccent);
+  const [colorBlind, setColorBlindState] = React.useState<ColorBlindMode>(() => readStoredColorBlind(defaultColorBlind));
+  const [density, setDensityState] = React.useState<"comfortable" | "compact">(() => readStoredDensity(defaultDensity));
+  const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>(() => readStoredScanline());
+  const [uiTone, setUiToneState] = React.useState<UiTone>(() => readStoredUiTone());
 
   React.useEffect(() => {
-    if (hydrated.current) return;
-    hydrated.current = true;
-    const storedTheme = window.localStorage.getItem(THEME_KEY) as ThemeMode | null;
-    const storedAccent = window.localStorage.getItem(ACCENT_KEY);
-    const storedColorBlind = window.localStorage.getItem(COLORBLIND_KEY) as ColorBlindMode | null;
-    const storedDensity = window.localStorage.getItem(DENSITY_KEY) as "comfortable" | "compact" | null;
-    const storedScanline = window.localStorage.getItem(SCANLINE_KEY) as ScanlineMode | null;
-    const storedUiTone = window.localStorage.getItem(UI_TONE_KEY) as UiTone | null;
-    if (preferDefaults) {
-      setThemeState(defaultTheme);
-      setAccentState(defaultAccent);
-      setColorBlindState(defaultColorBlind);
-      setDensityState(defaultDensity);
-      setScanlineModeState("balanced");
-      setUiToneState("neutral");
-      window.localStorage.setItem(THEME_KEY, defaultTheme);
-      window.localStorage.setItem(ACCENT_KEY, defaultAccent);
-      window.localStorage.setItem(COLORBLIND_KEY, defaultColorBlind);
-      window.localStorage.setItem(DENSITY_KEY, defaultDensity);
-      window.localStorage.setItem(SCANLINE_KEY, "balanced");
-      window.localStorage.setItem(UI_TONE_KEY, "neutral");
-      return;
-    }
-    if (storedTheme) {
-      setThemeState(storedTheme);
-    }
-    if (storedAccent) {
-      setAccentState(storedAccent);
-    }
-    if (storedColorBlind) {
-      setColorBlindState(storedColorBlind);
-    }
-    if (storedDensity === "compact" || storedDensity === "comfortable") {
-      setDensityState(storedDensity);
-    }
-    if (storedScanline === "off" || storedScanline === "soft" || storedScanline === "balanced" || storedScanline === "strong") {
-      setScanlineModeState(storedScanline);
-    }
-    if (storedUiTone === "neutral" || storedUiTone === "vault" || storedUiTone === "copper" || storedUiTone === "olive" || storedUiTone === "rose") {
-      setUiToneState(storedUiTone);
-    }
+    if (!preferDefaults) return;
+
+    setThemeState(defaultTheme);
+    setAccentState(defaultAccent);
+    setColorBlindState(defaultColorBlind);
+    setDensityState(defaultDensity);
+    setScanlineModeState("balanced");
+    setUiToneState("neutral");
+    window.localStorage.setItem(THEME_KEY, defaultTheme);
+    window.localStorage.setItem(ACCENT_KEY, defaultAccent);
+    window.localStorage.setItem(COLORBLIND_KEY, defaultColorBlind);
+    window.localStorage.setItem(DENSITY_KEY, defaultDensity);
+    window.localStorage.setItem(SCANLINE_KEY, "balanced");
+    window.localStorage.setItem(UI_TONE_KEY, "neutral");
   }, [defaultAccent, defaultColorBlind, defaultDensity, defaultTheme, preferDefaults]);
 
   React.useEffect(() => {

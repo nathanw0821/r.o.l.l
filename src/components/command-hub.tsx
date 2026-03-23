@@ -190,7 +190,8 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
         </button>
       </div>
 
-      <div className="command-hub__body">
+      {expanded ? (
+        <div className="command-hub__body">
         <section className="hub-zone">
           <div className="hub-zone__title">
             <Zap className="h-4 w-4" />
@@ -627,7 +628,8 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             </>
           ) : null}
         </section>
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }

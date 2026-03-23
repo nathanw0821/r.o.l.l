@@ -2,18 +2,15 @@
 
 import * as React from "react";
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import { Award, BookOpen, ClipboardList, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkles, Star, UserCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
-import CommandHubShell from "@/components/command-hub-shell";
-import LocalProgressSync from "@/components/local-progress-sync";
 import SupportLink from "@/components/support-link";
 import { useLocalProgress } from "@/components/use-local-progress";
-import UsernameCompletion from "@/components/username-completion";
-import FeedbackWidget from "@/components/feedback-widget";
 import { formatTierStars } from "@/lib/tier-format";
 
 type AppNavLink = {
@@ -50,6 +47,25 @@ type TierProgressSummary = {
 
 const SIDEBAR_COLLAPSE_KEY = "roll-sidebar-collapsed";
 const MOBILE_SIDEBAR_SUPPRESS_KEY = "roll.mobile.sidebar.suppress";
+function CommandHubShellFallback() {
+  return (
+    <div aria-hidden="true" className="command-hub">
+      <div className="command-hub__bar">
+        <div className="h-10 rounded-full bg-foreground/10" />
+        <div className="h-10 w-20 rounded-full bg-foreground/10" />
+        <div className="h-10 w-10 rounded-full bg-foreground/10" />
+      </div>
+    </div>
+  );
+}
+
+const DeferredCommandHubShell = dynamic(() => import("@/components/command-hub-shell"), {
+  ssr: false,
+  loading: CommandHubShellFallback
+});
+const DeferredLocalProgressSync = dynamic(() => import("@/components/local-progress-sync"), { ssr: false });
+const DeferredUsernameCompletion = dynamic(() => import("@/components/username-completion"), { ssr: false });
+const DeferredFeedbackWidget = dynamic(() => import("@/components/feedback-widget"), { ssr: false });
 
 export default function AppShell({
   children
@@ -59,6 +75,7 @@ export default function AppShell({
   const pathname = usePathname();
   const { data: session } = useSession();
   const isSignedIn = Boolean(session?.user);
+  const authKey = session?.user?.id ?? "guest";
   const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL ?? null;
   const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }>>({});
   const [linkedProviders, setLinkedProviders] = React.useState<string[]>([]);
@@ -71,7 +88,6 @@ export default function AppShell({
 
   React.useEffect(() => {
     let active = true;
-    const authKey = session?.user?.id ?? "guest";
     fetch(`/api/tier-progress?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, {
       cache: isSignedIn ? "no-store" : "force-cache"
     })
@@ -84,7 +100,7 @@ export default function AppShell({
     return () => {
       active = false;
     };
-  }, [isSignedIn, session?.user?.id]);
+  }, [authKey, isSignedIn]);
 
   React.useEffect(() => {
     getProviders()
@@ -93,12 +109,15 @@ export default function AppShell({
   }, []);
 
   React.useEffect(() => {
-    const stored = window.localStorage.getItem(SIDEBAR_COLLAPSE_KEY);
+    const stored =
+      document.documentElement.getAttribute("data-sidebar-collapsed") ?? window.localStorage.getItem(SIDEBAR_COLLAPSE_KEY);
     setSidebarCollapsed(stored === "1");
   }, []);
 
   React.useEffect(() => {
-    window.localStorage.setItem(SIDEBAR_COLLAPSE_KEY, sidebarCollapsed ? "1" : "0");
+    const value = sidebarCollapsed ? "1" : "0";
+    document.documentElement.setAttribute("data-sidebar-collapsed", value);
+    window.localStorage.setItem(SIDEBAR_COLLAPSE_KEY, value);
   }, [sidebarCollapsed]);
 
   React.useEffect(() => {
@@ -289,19 +308,21 @@ export default function AppShell({
           <div className="app-sidebar__auth">
             {isSignedIn ? (
               <>
-                {hasGoogleProvider ? (
-                  googleLinked ? (
-                    <div className="app-sidebar__auth-status">Google linked</div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="app-sidebar__auth-button app-sidebar__auth-button--google"
-                      onClick={() => signIn("google", { callbackUrl: "/settings" })}
-                    >
-                      Link Google
-                    </button>
-                  )
-                ) : null}
+                <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
+                  {hasGoogleProvider ? (
+                    googleLinked ? (
+                      <div className="app-sidebar__auth-status">Google linked</div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="app-sidebar__auth-button app-sidebar__auth-button--google"
+                        onClick={() => signIn("google", { callbackUrl: "/settings" })}
+                      >
+                        Link Google
+                      </button>
+                    )
+                  ) : null}
+                </div>
                 <button
                   type="button"
                   className="app-sidebar__auth-button"
@@ -318,15 +339,17 @@ export default function AppShell({
                 <Link href="/auth/sign-up" className="app-sidebar__auth-button app-sidebar__auth-button--primary">
                   Sign up
                 </Link>
-                {hasGoogleProvider ? (
-                  <button
-                    type="button"
-                    className="app-sidebar__auth-button app-sidebar__auth-button--google"
-                    onClick={() => signIn("google", { callbackUrl: "/" })}
-                  >
-                    Continue with Google
-                  </button>
-                ) : null}
+                <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
+                  {hasGoogleProvider ? (
+                    <button
+                      type="button"
+                      className="app-sidebar__auth-button app-sidebar__auth-button--google"
+                      onClick={() => signIn("google", { callbackUrl: "/" })}
+                    >
+                      Continue with Google
+                    </button>
+                  ) : null}
+                </div>
               </>
             )}
           </div>
@@ -336,13 +359,13 @@ export default function AppShell({
         </aside>
         <div className="app-main">
           <div className="content-canvas">
-            <LocalProgressSync />
-            <UsernameCompletion />
-            <CommandHubShell />
-            <FeedbackWidget />
+            <DeferredLocalProgressSync />
+            <DeferredCommandHubShell authKey={authKey} isSignedIn={isSignedIn} />
+            <DeferredFeedbackWidget />
             <main id="main-content" className="content-panel">
               {children}
             </main>
+            <DeferredUsernameCompletion />
           </div>
         </div>
       </div>

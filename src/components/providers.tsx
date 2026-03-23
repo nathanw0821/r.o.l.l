@@ -1,5 +1,6 @@
 "use client";
 
+import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FilterProvider } from "@/components/filter-context";
@@ -8,6 +9,7 @@ import { SessionAssistProvider } from "@/components/session-assist-provider";
 
 export default function Providers({
   children,
+  session,
   initialTheme,
   initialAccent,
   initialColorBlind,
@@ -15,6 +17,7 @@ export default function Providers({
   preferDefaults
 }: {
   children: React.ReactNode;
+  session?: Session | null;
   initialTheme?: "light" | "dark" | "system";
   initialAccent?: string;
   initialColorBlind?: "none" | "deuteranopia" | "protanopia" | "tritanopia" | "high-contrast";
@@ -22,7 +25,7 @@ export default function Providers({
   preferDefaults?: boolean;
 }) {
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       <SessionAssistProvider>
         <ThemeProvider
           defaultTheme={initialTheme}

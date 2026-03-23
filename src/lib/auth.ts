@@ -1,11 +1,12 @@
 ﻿import { PrismaAdapter } from "@auth/prisma-adapter";
-import { type NextAuthOptions } from "next-auth";
+import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import TwitchProvider from "next-auth/providers/twitch";
 import DiscordProvider from "next-auth/providers/discord";
 import RedditProvider from "next-auth/providers/reddit";
 import AzureADProvider from "next-auth/providers/azure-ad";
+import { cache } from "react";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements";
@@ -193,3 +194,5 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/sign-in"
   }
 };
+
+export const getAppSession = cache(() => getServerSession(authOptions));

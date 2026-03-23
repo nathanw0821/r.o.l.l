@@ -1,11 +1,8 @@
 ﻿"use client";
 
 import * as React from "react";
-import ExcelJS from "exceljs";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Lock, Unlock } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/components/filter-context";
@@ -45,6 +42,7 @@ function downloadBlob(blob: Blob, filename: string) {
 }
 
 async function exportXlsx(rows: SummaryRow[], filename: string) {
+  const ExcelJS = (await import("exceljs")).default;
   const data = shapeExportRows(rows);
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Effects");
@@ -91,13 +89,12 @@ function exportJson(rows: SummaryRow[], filename: string) {
 
 export default function SummaryClient({
   rows,
-  summary
+  isSignedIn
 }: {
   rows: SummaryRow[];
-  summary: { total: number; unlocked: number; percent: number };
+  isSignedIn: boolean;
 }) {
   const router = useRouter();
-  const { data: session } = useSession();
   const {
     query,
     sourceFilters,
@@ -109,7 +106,7 @@ export default function SummaryClient({
   } = useFilters();
   const [localRows, setLocalRows] = React.useState(rows);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
-  const { map: localProgress } = useLocalProgress(!session);
+  const { map: localProgress } = useLocalProgress(!isSignedIn);
   const { commitEntries } = useProgressHistory();
   const [exportMode, setExportMode] = React.useState<"filtered" | "all">("filtered");
   const [summaryLocked, setSummaryLocked] = React.useState(false);
@@ -156,13 +153,13 @@ export default function SummaryClient({
     });
   }, []);
 
-  const displayRows = React.useMemo<SummaryRow[]>(() => {
-    if (session) return localRows;
-    return localRows;
-  }, [localRows, session]);
+  const displayRows = localRows;
 
   React.useEffect(() => {
-    setOriginOptions(collectOriginOptions(displayRows));
+    const timeout = window.setTimeout(() => {
+      setOriginOptions(collectOriginOptions(displayRows));
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [displayRows, setOriginOptions]);
 
   const filteredRows = React.useMemo<SummaryRow[]>(
@@ -176,13 +173,6 @@ export default function SummaryClient({
       }),
     [displayRows, query, sourceFilters, statusFilters, originFilters, categoryFilters]
   );
-
-  const displaySummary = React.useMemo(() => {
-    const total = displayRows.length;
-    const unlocked = displayRows.filter((row) => row.unlocked).length;
-    const percent = total === 0 ? summary.percent : Math.round((unlocked / total) * 100);
-    return { total, unlocked, percent };
-  }, [displayRows, summary.percent]);
 
   async function toggleRow(row: SummaryRow) {
     const nextUnlocked = !row.unlocked;
@@ -271,31 +261,6 @@ export default function SummaryClient({
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Summary</CardTitle>
-          <CardDescription>
-            Track legendary crafting unlocks across tiers with a compact, high-signal view.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="text-xs text-foreground/60">Total Effects</div>
-              <div className="text-2xl font-semibold">{displaySummary.total}</div>
-            </div>
-            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="text-xs text-foreground/60">Unlocked</div>
-              <div className="text-2xl font-semibold">{displaySummary.unlocked}</div>
-            </div>
-            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="text-xs text-foreground/60">Completion</div>
-              <div className="text-2xl font-semibold">{displaySummary.percent}%</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:text-left text-center">
           <div className="space-y-1">

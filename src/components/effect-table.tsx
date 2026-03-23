@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/components/filter-context";
 import { useProgressHistory } from "@/components/progress-history-provider";
@@ -28,16 +27,19 @@ export type EffectTierRow = {
 
 export default function EffectTable({
   rows,
-  canEdit
+  canEdit,
+  focusId = null,
+  showChrome = true
 }: {
   rows: EffectTierRow[];
   canEdit: boolean;
+  focusId?: string | null;
+  showChrome?: boolean;
 }) {
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
   const handledFocusRef = React.useRef<string | null>(null);
   const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters } = useFilters();
-  const searchParams = useSearchParams();
   const { map: localProgress } = useLocalProgress(!canEdit);
   const { commitEntries } = useProgressHistory();
 
@@ -73,7 +75,10 @@ export default function EffectTable({
   }, []);
 
   React.useEffect(() => {
-    setOriginOptions(collectOriginOptions(localRows));
+    const timeout = window.setTimeout(() => {
+      setOriginOptions(collectOriginOptions(localRows));
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [localRows, setOriginOptions]);
 
   const filteredRows = React.useMemo(
@@ -89,7 +94,6 @@ export default function EffectTable({
   );
 
   React.useEffect(() => {
-    const focusId = searchParams.get("focus");
     if (!focusId) return;
     if (handledFocusRef.current === focusId) return;
 
@@ -112,7 +116,7 @@ export default function EffectTable({
     });
 
     return () => window.cancelAnimationFrame(raf);
-  }, [searchParams, localRows, filteredRows, clearFilters]);
+  }, [focusId, localRows, filteredRows, clearFilters]);
 
   async function toggleRow(row: EffectTierRow) {
     const nextUnlocked = !row.unlocked;
@@ -168,23 +172,27 @@ export default function EffectTable({
 
   return (
     <div className="space-y-2">
-      <div className="text-xs text-foreground/60">
-        Use the Command Hub to search and filter results.
-      </div>
-      {!canEdit ? (
-        <div className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-xs text-foreground/70">
-          Changes are saved locally in this browser. Sign in to sync them to your account.
-        </div>
+      {showChrome ? (
+        <>
+          <div className="text-xs text-foreground/60">
+            Use the Command Hub to search and filter results.
+          </div>
+          {!canEdit ? (
+            <div className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-xs text-foreground/70">
+              Changes are saved locally in this browser. Sign in to sync them to your account.
+            </div>
+          ) : null}
+          <div className="effect-table-header hidden text-xs font-semibold uppercase text-foreground/60 md:grid table-grid">
+            <div>Effect</div>
+            <div>Categories</div>
+            <div>Description</div>
+            <div>Extra Component</div>
+            <div>Modules</div>
+            <div>Status</div>
+            <div>Notes</div>
+          </div>
+        </>
       ) : null}
-      <div className="effect-table-header hidden text-xs font-semibold uppercase text-foreground/60 md:grid table-grid">
-        <div>Effect</div>
-        <div>Categories</div>
-        <div>Description</div>
-        <div>Extra Component</div>
-        <div>Modules</div>
-        <div>Status</div>
-        <div>Notes</div>
-      </div>
       <div className="effect-table-list">
         {filteredRows.length === 0 ? (
           <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
