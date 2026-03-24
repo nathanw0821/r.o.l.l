@@ -19,15 +19,16 @@ const bulkToggleSchema = z.object({
 
 function revalidateTrackerPaths() {
   revalidatePath("/");
-  revalidatePath("/achievements");
   revalidatePath("/all-effects");
   revalidatePath("/1-star");
   revalidatePath("/2-star");
   revalidatePath("/3-star");
   revalidatePath("/4-star");
+  revalidatePath("/overview/achievements");
   revalidatePath("/screenshot-assist");
   revalidatePath("/still-need");
   revalidatePath("/summary");
+  revalidatePath("/achievements");
 }
 
 export async function updateProgress(input: { effectTierId: string; unlocked: boolean | null }) {

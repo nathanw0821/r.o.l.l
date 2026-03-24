@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
-import { Award, BookOpen, ClipboardList, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkles, Star, UserCircle2 } from "lucide-react";
+import { ClipboardList, LayoutDashboard, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import SupportLink from "@/components/support-link";
@@ -20,21 +20,19 @@ type AppNavLink = {
   ariaLabel?: string;
   tierLabel?: string;
   requiresAuth?: boolean;
+  activePaths?: string[];
+  activePrefixes?: string[];
 };
 
 const links: AppNavLink[] = [
-  { href: "/", label: "Summary", icon: Sparkles },
+  { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
+  { href: "/overview", label: "Overview", icon: LayoutDashboard, activePrefixes: ["/overview"] },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
   { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
   { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
   { href: "/still-need", label: "Still Need", icon: ClipboardList }
-];
-const summarySubmenuLinks: AppNavLink[] = [
-  { href: "/profile", label: "Profile", icon: UserCircle2, requiresAuth: true },
-  { href: "/achievements", label: "Achievements", icon: Award, requiresAuth: true },
-  { href: "/readme", label: "Readme", icon: BookOpen }
 ];
 
 type TierProgressSummary = {
@@ -66,6 +64,18 @@ const DeferredCommandHubShell = dynamic(() => import("@/components/command-hub-s
 const DeferredLocalProgressSync = dynamic(() => import("@/components/local-progress-sync"), { ssr: false });
 const DeferredUsernameCompletion = dynamic(() => import("@/components/username-completion"), { ssr: false });
 const DeferredFeedbackWidget = dynamic(() => import("@/components/feedback-widget"), { ssr: false });
+
+function isNavLinkActive(pathname: string, link: AppNavLink) {
+  if (link.activePaths?.includes(pathname)) {
+    return true;
+  }
+
+  if (link.activePrefixes?.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) {
+    return true;
+  }
+
+  return pathname === link.href;
+}
 
 export default function AppShell({
   children
@@ -212,11 +222,6 @@ export default function AppShell({
   const hasGoogleProvider = Boolean(providers.google);
   const googleLinked = linkedProviders.includes("google");
   const sidebarRail = sidebarCollapsed && !isMobile;
-  const summaryLink = visibleLinks.find((link) => link.href === "/");
-  const SummaryIcon = summaryLink?.icon;
-  const primaryLinks = visibleLinks.filter((link) => link.href !== "/");
-  const visibleSummarySubmenuLinks = summarySubmenuLinks.filter((link) => !link.requiresAuth || session?.user);
-  const summaryActive = pathname === "/" || pathname === "/summary";
 
   return (
     <div className="min-h-screen bg-background text-foreground pip-shell">
@@ -253,39 +258,8 @@ export default function AppShell({
             </button>
           </div>
           <nav className="app-nav">
-            {summaryLink && SummaryIcon ? (
-              <div className="app-nav__group">
-                <Link
-                  href={summaryLink.href}
-                  aria-label={summaryLink.ariaLabel ?? summaryLink.label}
-                  className={cn("app-nav__link", pathname === summaryLink.href && "app-nav__link--active")}
-                >
-                  <SummaryIcon className="h-4 w-4" />
-                  <span>{summaryLink.label}</span>
-                </Link>
-                {summaryActive ? (
-                  <div className="app-nav__sublinks">
-                    {visibleSummarySubmenuLinks.map((link) => {
-                      const Icon = link.icon;
-                      const active = pathname === link.href;
-                      return (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          aria-label={link.ariaLabel ?? link.label}
-                          className={cn("app-nav__link app-nav__link--sub", active && "app-nav__link--active")}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span>{link.label}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
-            {primaryLinks.map((link) => {
-              const active = pathname === link.href;
+            {visibleLinks.map((link) => {
+              const active = isNavLinkActive(pathname, link);
               const Icon = link.icon;
               const tier = link.tierLabel ? tierLookup.get(link.tierLabel) : null;
               const linkLabel = tier ? `${formatTierStars(link.tierLabel)} ${tier.percent}%` : link.label;
