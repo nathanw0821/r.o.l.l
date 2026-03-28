@@ -14,12 +14,7 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
   title: "R.O.L.L | Record Of Legendary Loadouts",
-  description: "Record of legendary effects, components, and acquisition paths for Fallout 76.",
-  icons: {
-    icon: [{ url: "/favicon-v3.png?v=3", type: "image/png" }],
-    shortcut: ["/favicon-v3.png?v=3"],
-    apple: ["/favicon-v3.png?v=3"]
-  }
+  description: "Record of legendary effects, components, and acquisition paths for Fallout 76."
 };
 
 type ThemeMode = "light" | "dark" | "system";

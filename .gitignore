@@ -2,10 +2,8 @@ node_modules
 .next
 .vercel
 
-# Saved browser pages (e.g. “Webpage, Complete”) often embed third-party API keys in HTML/JS.
-# Never commit offline copies of sites under public/.
-public/Google Gemini.htm
-public/Google Gemini_files/
+# Local-only static files (Next serves from public/ when present). Favicon is src/app/icon.png.
+public/
 
 .env
 .env.local

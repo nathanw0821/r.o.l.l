@@ -5,11 +5,7 @@ const config = [
   ...nextVitals,
   ...nextTypescript,
   {
-    ignores: [
-      "coverage/**",
-      "public/Google Gemini.htm",
-      "public/Google Gemini_files/**"
-    ]
+    ignores: ["coverage/**"]
   }
 ];
 
