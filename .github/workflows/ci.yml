@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-check:
+    runs-on: ubuntu-latest
+    env:
+      # Placeholders only — Next/Prisma need something defined; no real DB or secrets in CI.
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/roll?schema=public
+      NEXTAUTH_SECRET: ci-build-placeholder-not-for-production
+      NEXTAUTH_URL: http://localhost:3000
+      APP_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run release:check
