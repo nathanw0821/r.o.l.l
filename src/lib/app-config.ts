@@ -1,5 +1,7 @@
 import { isIP } from "node:net";
 
+export { getSiteUrl } from "./site-url";
+
 type AdminLikeUser = {
   email?: string | null;
   username?: string | null;
@@ -80,26 +82,6 @@ export function isAdminUser(user: AdminLikeUser | null | undefined) {
   const email = user.email?.trim().toLowerCase();
 
   return Boolean((username && usernames.has(username)) || (email && emails.has(email)));
-}
-
-export function getSiteUrl() {
-  const candidates = [
-    process.env.NEXTAUTH_URL,
-    process.env.APP_URL,
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
-  ];
-
-  for (const candidate of candidates) {
-    if (!candidate) continue;
-
-    try {
-      return new URL(candidate);
-    } catch {
-      continue;
-    }
-  }
-
-  return null;
 }
 
 export function getSyncUrlError(rawUrl?: string | null) {
