@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getSiteUrl } from "@/lib/app-config";
+import { getSiteUrl } from "@/lib/site-url";
 
 const publicRoutes = ["/", "/summary", "/all-effects", "/1-star", "/2-star", "/3-star", "/4-star", "/still-need", "/settings"];
 
