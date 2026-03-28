@@ -10,3 +10,4 @@ node_modules
 *.backup
 tsconfig.tsbuildinfo
 .continue/
+.env.mcp.local

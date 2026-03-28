@@ -92,23 +92,28 @@ export default function AppShell({
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
   const [mobileSidebarReveal, setMobileSidebarReveal] = React.useState(1);
+  const mobileSidebarRevealRef = React.useRef(1);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
-  const visibleLinks = links.filter((link) => !link.requiresAuth || session?.user);
+  const visibleLinks = React.useMemo(
+    () => links.filter((link) => !link.requiresAuth || isSignedIn),
+    [isSignedIn]
+  );
 
   React.useEffect(() => {
-    let active = true;
-    fetch(`/api/tier-progress?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, {
+    const controller = new AbortController();
+    fetch(`/api/tier-progress?auth=${encodeURIComponent(authKey)}`, {
+      signal: controller.signal,
       cache: isSignedIn ? "no-store" : "force-cache"
     })
       .then((response) => response.json())
       .then((payload) => {
-        if (!active || !payload?.success || !Array.isArray(payload.data?.tierProgress)) return;
+        if (!payload?.success || !Array.isArray(payload.data?.tierProgress)) return;
         setTierProgress(payload.data.tierProgress);
       })
       .catch(() => undefined);
     return () => {
-      active = false;
+      controller.abort();
     };
   }, [authKey, isSignedIn]);
 
@@ -139,37 +144,59 @@ export default function AppShell({
   }, []);
 
   React.useEffect(() => {
+    mobileSidebarRevealRef.current = mobileSidebarReveal;
+  }, [mobileSidebarReveal]);
+
+  React.useEffect(() => {
     if (!isMobile) {
       setMobileSidebarReveal(1);
       return;
     }
 
     let lastY = window.scrollY;
-    const handleScroll = () => {
+    let frame = 0;
+    let pendingY = lastY;
+    let revealRef = mobileSidebarRevealRef.current;
+    const applyReveal = (next: number) => {
+      const clamped = Math.max(0, Math.min(1, next));
+      if (Math.abs(clamped - revealRef) < 0.02) return;
+      revealRef = clamped;
+      setMobileSidebarReveal(clamped);
+    };
+    const onFrame = () => {
+      frame = 0;
       const suppress = window.sessionStorage.getItem(MOBILE_SIDEBAR_SUPPRESS_KEY) === "1";
       if (suppress) {
-        setMobileSidebarReveal(0);
-        lastY = window.scrollY;
+        applyReveal(0);
+        lastY = pendingY;
         return;
       }
-      const y = window.scrollY;
+      const y = pendingY;
       if (y <= 24) {
-        setMobileSidebarReveal(1);
+        applyReveal(1);
         lastY = y;
         return;
       }
       const delta = y - lastY;
       if (delta > 0.5) {
-        setMobileSidebarReveal((prev) => Math.max(0, prev - delta / 120));
+        applyReveal(revealRef - delta / 120);
       } else if (delta < -0.5) {
-        setMobileSidebarReveal((prev) => Math.min(1, prev + (-delta) / 120));
+        applyReveal(revealRef + (-delta) / 120);
       }
       lastY = y;
+    };
+    const handleScroll = () => {
+      pendingY = window.scrollY;
+      if (frame) return;
+      frame = window.requestAnimationFrame(onFrame);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, [isMobile]);
 
   React.useEffect(() => {
@@ -222,6 +249,18 @@ export default function AppShell({
   const hasGoogleProvider = Boolean(providers.google);
   const googleLinked = linkedProviders.includes("google");
   const sidebarRail = sidebarCollapsed && !isMobile;
+  const onToggleSidebar = React.useCallback(() => {
+    setSidebarCollapsed((value) => !value);
+  }, []);
+  const onSignOut = React.useCallback(() => {
+    signOut({ callbackUrl: "/" });
+  }, []);
+  const onLinkGoogleSettings = React.useCallback(() => {
+    signIn("google", { callbackUrl: "/settings" });
+  }, []);
+  const onSignInGoogleHome = React.useCallback(() => {
+    signIn("google", { callbackUrl: "/" });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground pip-shell">
@@ -250,7 +289,7 @@ export default function AppShell({
             <button
               type="button"
               className="app-sidebar__collapse-button"
-              onClick={() => setSidebarCollapsed((value) => !value)}
+              onClick={onToggleSidebar}
               aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               aria-pressed={sidebarCollapsed}
             >
@@ -290,7 +329,7 @@ export default function AppShell({
                       <button
                         type="button"
                         className="app-sidebar__auth-button app-sidebar__auth-button--google"
-                        onClick={() => signIn("google", { callbackUrl: "/settings" })}
+                        onClick={onLinkGoogleSettings}
                       >
                         Link Google
                       </button>
@@ -300,7 +339,7 @@ export default function AppShell({
                 <button
                   type="button"
                   className="app-sidebar__auth-button"
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={onSignOut}
                 >
                   Sign out
                 </button>
@@ -318,7 +357,7 @@ export default function AppShell({
                     <button
                       type="button"
                       className="app-sidebar__auth-button app-sidebar__auth-button--google"
-                      onClick={() => signIn("google", { callbackUrl: "/" })}
+                      onClick={onSignInGoogleHome}
                     >
                       Continue with Google
                     </button>

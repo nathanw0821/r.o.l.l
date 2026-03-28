@@ -1,3 +1,5 @@
+import { unstable_cache } from "next/cache";
+
 import { prisma } from "@/lib/prisma";
 import { extractOriginsFromNotes, normalizeDisplayNotes } from "@/lib/import-normalize";
 import { appendLegendaryModSourceNotes } from "@/lib/legendary-mod-sources";
@@ -166,6 +168,17 @@ export async function getTierProgressSummary(userId?: string) {
     });
 }
 
+const getGuestProgressSummaryCached = unstable_cache(
+  async (datasetVersionId: string) => {
+    const total = await prisma.effectTier.count({
+      where: { datasetVersionId }
+    });
+    return { total, unlocked: 0, percent: 0 };
+  },
+  ["guest-progress-summary"],
+  { revalidate: 300, tags: ["guest-progress-summary"] }
+);
+
 export async function getProgressSummary(userId?: string) {
   await ensureProfileApplied(userId);
   const dataset = await getActiveDatasetVersion();
@@ -177,13 +190,13 @@ export async function getProgressSummary(userId?: string) {
     };
   }
 
+  if (!userId) {
+    return getGuestProgressSummaryCached(dataset.id);
+  }
+
   const total = await prisma.effectTier.count({
     where: { datasetVersionId: dataset.id }
   });
-
-  if (!userId) {
-    return { total, unlocked: 0, percent: 0 };
-  }
 
   const baselineMap = await getImportedBaselineMap(dataset.id, userId);
   const progressRows = await prisma.userProgress.findMany({

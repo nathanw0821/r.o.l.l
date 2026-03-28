@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "roll-neon": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/mcp/neon-mcp.mjs"],
+      "env": {
+        "NEON_API_KEY": "napi_ck5repj1q46yqq8ncsj4k5778hmpvw8ksc48qdgf5bccau9y6hj6qfo5mlv46les",
+        "MCP_MODE": "${env:MCP_MODE}"
+      },
+      "envFile": "${workspaceFolder}/.env.mcp.local"
+    },
+    "roll-vercel": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/mcp/vercel-mcp.mjs"],
+      "env": {
+        "VERCEL_TOKEN": "${env:VERCEL_TOKEN}",
+        "VERCEL_TEAM_ID": "${env:VERCEL_TEAM_ID}",
+        "MCP_MODE": "${env:MCP_MODE}"
+      },
+      "envFile": "${workspaceFolder}/.env.mcp.local"
+    }
+  }
+}

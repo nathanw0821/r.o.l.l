@@ -38,6 +38,7 @@ export default function EffectTable({
 }) {
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
+  const [isCompactDensity, setIsCompactDensity] = React.useState(false);
   const handledFocusRef = React.useRef<string | null>(null);
   const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters } = useFilters();
   const { map: localProgress } = useLocalProgress(!canEdit);
@@ -80,6 +81,17 @@ export default function EffectTable({
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [localRows, setOriginOptions]);
+
+  React.useEffect(() => {
+    const root = document.documentElement;
+    const apply = () => {
+      setIsCompactDensity(root.getAttribute("data-density") === "compact");
+    };
+    apply();
+    const observer = new MutationObserver(apply);
+    observer.observe(root, { attributes: true, attributeFilter: ["data-density"] });
+    return () => observer.disconnect();
+  }, []);
 
   const filteredRows = React.useMemo(
     () =>
@@ -193,6 +205,7 @@ export default function EffectTable({
           </div>
         </>
       ) : null}
+      {!isCompactDensity ? (
       <div className="effect-table-list">
         {filteredRows.length === 0 ? (
           <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
@@ -262,6 +275,8 @@ export default function EffectTable({
           );
         })}
       </div>
+      ) : null}
+      {isCompactDensity ? (
       <div className="effect-table-tiles">
         {filteredRows.length === 0 ? (
           <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
@@ -330,6 +345,7 @@ export default function EffectTable({
           );
         })}
       </div>
+      ) : null}
     </div>
   );
 }

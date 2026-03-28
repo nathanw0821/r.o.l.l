@@ -36,6 +36,35 @@ async function HomeSummaryOverview() {
   );
 }
 
+function HomeSummaryOverviewFallback() {
+  return (
+    <Card aria-hidden="true">
+      <CardHeader>
+        <CardTitle>Summary</CardTitle>
+        <CardDescription>
+          Track legendary crafting unlocks across tiers with a compact, high-signal view.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+            <div className="h-3 w-24 rounded bg-foreground/10" />
+            <div className="mt-2 h-8 w-16 rounded bg-foreground/10" />
+          </div>
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+            <div className="h-3 w-20 rounded bg-foreground/10" />
+            <div className="mt-2 h-8 w-14 rounded bg-foreground/10" />
+          </div>
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+            <div className="h-3 w-24 rounded bg-foreground/10" />
+            <div className="mt-2 h-8 w-12 rounded bg-foreground/10" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 async function HomeSummaryTracker() {
   const session = await getAppSession();
   const rows = await getAllEffectTiers(session?.user?.id);
@@ -68,7 +97,9 @@ function HomeSummaryTrackerFallback() {
 export default function HomePage() {
   return (
     <div className="space-y-6">
-      <HomeSummaryOverview />
+      <Suspense fallback={<HomeSummaryOverviewFallback />}>
+        <HomeSummaryOverview />
+      </Suspense>
       <Suspense fallback={<HomeSummaryTrackerFallback />}>
         <HomeSummaryTracker />
       </Suspense>
