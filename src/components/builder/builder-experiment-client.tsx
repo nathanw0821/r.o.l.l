@@ -7,6 +7,7 @@ import { Boxes } from "lucide-react";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import ProgressToggle from "@/components/progress-toggle";
 import { ARMOR_SET_SLOT_LABELS, getArmorSetRow } from "@/lib/builder/armor-sets";
 import {
@@ -67,6 +68,7 @@ import {
   importNukesDragonsFo76CharacterUrl,
   type NdImportResult
 } from "@/lib/builder/nukes-dragons-import";
+import { SANDBOX_MUTATIONS, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import {
   findUnderarmorOption,
   UNDERARMOR_LININGS,
@@ -102,7 +104,9 @@ function defaultPayload(): BuilderPayload {
     powerArmorHelmetId: null,
     powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
     ghoul: false,
-    underarmor: { shellId: UNDERARMOR_SHELLS[0]!.id, liningId: "none", styleId: "none" }
+    underarmor: { shellId: UNDERARMOR_SHELLS[0]!.id, liningId: "none", styleId: "none" },
+    mutationIds: [],
+    ignoreMutationPenalties: false
   };
 }
 
@@ -471,6 +475,11 @@ export default function BuilderExperimentClient({
     return ndImport.layer;
   }, [ndImport]);
 
+  const mutationLayer = React.useMemo(
+    () => sandboxMutationMathLayer(payload.mutationIds, payload.ignoreMutationPenalties),
+    [payload.mutationIds, payload.ignoreMutationPenalties]
+  );
+
   const totals = React.useMemo(
     () =>
       aggregateEffectMath(equippedModsOrdered, {
@@ -481,6 +490,7 @@ export default function BuilderExperimentClient({
           ...powerArmorTorsoCraftingLayers,
           ...powerArmorHelmetCraftingLayers,
           ...powerArmorHelmetOnlyCraftingLayers,
+          ...(mutationLayer ? [mutationLayer] : []),
           ...(ndPerkLayer ? [ndPerkLayer] : [])
         ],
         baseArmorStats
@@ -494,6 +504,7 @@ export default function BuilderExperimentClient({
       powerArmorHelmetCraftingLayers,
       powerArmorHelmetOnlyCraftingLayers,
       baseArmorStats,
+      mutationLayer,
       ndPerkLayer
     ]
   );
@@ -676,8 +687,17 @@ export default function BuilderExperimentClient({
             rel="noreferrer"
           >
             Nuka Knights (Backwoods) resist tables
+          </a>
+          ; optional perk overlay from{" "}
+          <a
+            className="text-accent underline"
+            href="https://nukesdragons.com/fallout-76/character"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Nukes &amp; Dragons
           </a>{" "}
-          plus your R.O.L.L. legendary catalog for effect math.
+          share URLs, plus your R.O.L.L. legendary catalog for effect math.
         </span>
       </div>
 
@@ -817,39 +837,6 @@ export default function BuilderExperimentClient({
                 misc per slot; fifth-star legendaries are not in this sandbox yet.
               </p>
             ) : null}
-            <div className="mt-3 space-y-2 rounded-[var(--radius)] border border-border bg-background/35 px-3 py-2">
-              <label className="flex cursor-pointer items-start gap-2 text-xs text-foreground/75">
-                <input
-                  type="checkbox"
-                  checked={payload.ghoul}
-                  onChange={(e) => {
-                    const next = e.target.checked;
-                    setPayload((p) => {
-                      const base = { ...p, ghoul: next };
-                      if (next && mods.length > 0) return stripGhoulBlockedLegendarySelections(base, mods);
-                      return base;
-                    });
-                  }}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]"
-                />
-                <span>
-                  <span className="font-medium text-foreground/85">Ghoul build</span>
-                  <span className="block text-[11px] text-foreground/60">
-                    Modeled after playable Ghoul (Ghoul Within): Feral replaces hunger/thirst, so hunger/thirst
-                    legendaries and bench rows are dropped from math; RR on gear still stacks into totals; CHA includes a
-                    −10 effective penalty; Unyielding-style caps still apply; Bloodied / Unyielding stay pickable with a
-                    warning.
-                  </span>
-                </span>
-              </label>
-              {ghoulLegendarySandboxNotes ? (
-                <ul className="list-disc space-y-1 pl-5 text-[11px] text-foreground/65">
-                  {ghoulLegendarySandboxNotes.map((line, i) => (
-                    <li key={i}>{line}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
           </div>
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
@@ -1346,6 +1333,90 @@ export default function BuilderExperimentClient({
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-5.5rem)] lg:self-start lg:overflow-y-auto">
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+            <div className="text-sm font-semibold">Character state</div>
+            <p className="mt-1 border-l-2 border-accent/35 pl-2 text-xs leading-snug text-foreground/60">
+              Same <span className="font-medium text-foreground/75">idea</span> as the Nukes &amp; Dragons planner
+              switchboard — here it only drives R.O.L.L. Live totals (species, sandbox mutations, serum-style penalty
+              toggle). Addictions, Glow, lunches, and other planner knobs are out of scope.
+            </p>
+            <div className="mt-4 space-y-2 border-t border-border pt-3">
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Species / rules</div>
+              <label className="flex cursor-pointer items-start gap-2 text-xs text-foreground/75">
+                <input
+                  type="checkbox"
+                  checked={payload.ghoul}
+                  onChange={(e) => {
+                    const next = e.target.checked;
+                    setPayload((p) => {
+                      const base = { ...p, ghoul: next };
+                      if (next && mods.length > 0) return stripGhoulBlockedLegendarySelections(base, mods);
+                      return base;
+                    });
+                  }}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]"
+                />
+                <span>
+                  <span className="font-medium text-foreground/85">Ghoul build</span>
+                  <span className="block text-[11px] text-foreground/60">
+                    Playable Ghoul (Ghoul Within): hunger/thirst legendaries dropped from math; RR on gear still
+                    stacks; CHA includes −10 vs human; Bloodied / Unyielding stay pickable with warnings.
+                  </span>
+                </span>
+              </label>
+              {ghoulLegendarySandboxNotes ? (
+                <ul className="list-disc space-y-1 pl-5 text-[11px] text-foreground/65">
+                  {ghoulLegendarySandboxNotes.map((line, i) => (
+                    <li key={i}>{line}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+            <div className="mt-4 space-y-2 border-t border-border pt-3">
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Mutations</div>
+              <p className="text-[11px] leading-snug text-foreground/60">
+                R.O.L.L. sandbox list — not auto-imported from share URLs. Approximate stat splits; serum toggle drops
+                modeled downsides only (no Class Freak / team scaling).
+              </p>
+              <div className="max-h-44 space-y-1 overflow-y-auto pr-1 sm:columns-2 sm:gap-x-3">
+                {SANDBOX_MUTATIONS.map((m) => {
+                  const on = payload.mutationIds.includes(m.id);
+                  return (
+                    <label
+                      key={m.id}
+                      className="mb-1 flex cursor-pointer items-start gap-2 break-inside-avoid rounded-[var(--radius)] px-0.5 py-0.5 text-[11px] text-foreground/75 hover:bg-background/50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={on}
+                        onChange={() => {
+                          setPayload((p) => {
+                            const next = on ? p.mutationIds.filter((x) => x !== m.id) : [...p.mutationIds, m.id];
+                            return { ...p, mutationIds: next };
+                          });
+                        }}
+                        className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[var(--accent)]"
+                      />
+                      <span>{m.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between gap-3 border-t border-border pt-2">
+                <div className="min-w-0">
+                  <div className="text-[11px] font-medium text-foreground/85">Ignore mutation penalties</div>
+                  <p className="text-[10px] leading-snug text-foreground/55">
+                    Serum-style: bonuses only; drop modeled downsides.
+                  </p>
+                </div>
+                <Switch
+                  checked={payload.ignoreMutationPenalties}
+                  onCheckedChange={(checked) => setPayload((p) => ({ ...p, ignoreMutationPenalties: checked }))}
+                  aria-label="Ignore mutation penalties"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Nukes &amp; Dragons import</div>
             <p className="mt-1 text-xs text-foreground/60">
               Paste a share URL from the{" "}
@@ -1429,8 +1500,8 @@ export default function BuilderExperimentClient({
                 </p>
                 <p className="mt-1 text-xs text-foreground/50">
                   {ndPerkLayer
-                    ? "Star-only row is legendaries on this base. “All layers” also includes underarmor, crafting rows, and any Nukes & Dragons perk import you applied above."
-                    : "These rows are catalog math only unless you apply a Nukes & Dragons import — that overlay is merged into “All layers” only."}
+                    ? "Star-only row is legendaries on this base. “All layers” also includes underarmor, crafting rows, Character state (mutations), and any Nukes & Dragons perk import."
+                    : "These rows are catalog math only unless you use Character state (mutations / N&D URL) — overlays merge into “All layers” only."}
                 </p>
                 <BuilderTotalsStatKey className="mt-2" />
                 <div className="mt-3 text-xs font-semibold text-foreground/65">From legendary stars (this base)</div>
@@ -1471,8 +1542,8 @@ export default function BuilderExperimentClient({
                 )}
                 <p className="mt-1 text-xs text-foreground/50">
                   {ndPerkLayer
-                    ? "Totals include your legendary picks, underarmor, crafting rows, and the Nukes & Dragons perk import (approximate sandbox math)."
-                    : "These numbers are catalog math only unless you apply a Nukes & Dragons import for approximate perk bonuses."}
+                    ? "Totals include your legendary picks, underarmor, crafting rows, Character state mutations, and any Nukes & Dragons perk import (approximate sandbox math)."
+                    : "These numbers are catalog math only unless you add Character state layers (mutations and/or a Nukes & Dragons import) for approximate bonuses."}
                 </p>
                 <BuilderTotalsStatKey className="mt-2" />
                 <BuilderTotalsGrid totals={totals} />

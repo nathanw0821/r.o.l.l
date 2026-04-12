@@ -37,6 +37,7 @@ import {
   UNDERARMOR_SHELLS,
   UNDERARMOR_STYLES
 } from "@/lib/builder/underarmor";
+import { SANDBOX_MUTATIONS, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
 import BuilderTotalsStatKey from "@/components/builder/builder-totals-stat-key";
 import { prisma } from "@/lib/prisma";
@@ -161,12 +162,21 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   }
 
   const baseArmorStats = baseArmorFromPayload(payload);
+  const mutationLayer = sandboxMutationMathLayer(payload.mutationIds, payload.ignoreMutationPenalties);
+  if (mutationLayer) layers.push(mutationLayer);
   const totals = aggregateEffectMath(equippedOrdered, {
     ghoul: payload.ghoul,
     extraLayers: layers,
     baseArmorStats
   });
   const shopping = buildShoppingList(equippedOrdered);
+
+  const mutationSummary =
+    payload.mutationIds.length > 0
+      ? payload.mutationIds
+          .map((id) => SANDBOX_MUTATIONS.find((m) => m.id === id)?.label ?? id)
+          .join(" · ")
+      : null;
 
   const SLOT_LABELS = ["1st star", "2nd star", "3rd star", "4th star"];
 
@@ -177,6 +187,12 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
         <p className="mt-1 text-sm text-foreground/65">
           {piece?.label ?? payload.basePieceId} · {payload.ghoul ? "Ghoul" : "Human"} · shared from R.O.L.L.
         </p>
+        {mutationSummary ? (
+          <p className="mt-1 text-xs text-foreground/55">
+            Sandbox mutations: {mutationSummary}
+            {payload.ignoreMutationPenalties ? " (penalties ignored)" : ""}
+          </p>
+        ) : null}
       </div>
 
       <div className="rounded-[var(--radius)] border border-border bg-panel p-4">

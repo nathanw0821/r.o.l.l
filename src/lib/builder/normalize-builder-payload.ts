@@ -2,6 +2,7 @@ import { basePieceIdForArmorSet } from "@/lib/builder/armor-sets";
 import { defaultArmorPieceCrafting, sanitizeArmorPieceCraftingJetpack } from "@/lib/builder/armor-piece-mods";
 import { getBaseGearPiece, isPowerArmorHelmetBasePiece } from "@/lib/builder/base-gear";
 import { isKnownPowerArmorHelmetPieceId } from "@/lib/builder/power-armor-stats";
+import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
 import type {
   BuilderArmorPieceCrafting,
   BuilderPayload,
@@ -138,6 +139,8 @@ function buildPayloadV4(fields: {
   powerArmorHelmetCrafting: BuilderPowerArmorHelmetCrafting;
   ghoul: boolean;
   underarmor: BuilderUnderarmor;
+  mutationIds: string[];
+  ignoreMutationPenalties: boolean;
 }): BuilderPayload {
   return {
     version: 4,
@@ -150,7 +153,9 @@ function buildPayloadV4(fields: {
     powerArmorHelmetId: sanitizePowerArmorHelmetId(fields.basePieceId, fields.powerArmorHelmetId),
     powerArmorHelmetCrafting: fields.powerArmorHelmetCrafting,
     ghoul: fields.ghoul,
-    underarmor: fields.underarmor
+    underarmor: fields.underarmor,
+    mutationIds: fields.mutationIds,
+    ignoreMutationPenalties: fields.ignoreMutationPenalties
   };
 }
 
@@ -191,7 +196,9 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
       ghoul: Boolean(v.ghoul),
-      underarmor: readUnderarmor(v)
+      underarmor: readUnderarmor(v),
+      mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
+      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
     });
   }
 
@@ -227,7 +234,9 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
       ghoul: Boolean(v.ghoul),
-      underarmor: readUnderarmor(v)
+      underarmor: readUnderarmor(v),
+      mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
+      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
     });
   }
 
@@ -260,7 +269,9 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
         powerArmorHelmetId: null,
         powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
         ghoul: Boolean(v.ghoul),
-        underarmor: readUnderarmor(v)
+        underarmor: readUnderarmor(v),
+        mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
+        ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
       });
     }
 
@@ -274,7 +285,9 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       powerArmorHelmetId: null,
       powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
       ghoul: Boolean(v.ghoul),
-      underarmor: readUnderarmor(v)
+      underarmor: readUnderarmor(v),
+      mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
+      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
     });
   }
 

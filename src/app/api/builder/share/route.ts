@@ -7,6 +7,7 @@ import { sharedBuildTagForSlug } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { badRequest, ok, validationError } from "@/lib/api/responses";
 import type { BuilderPayload } from "@/lib/builder/types";
+import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
 
 export const dynamic = "force-dynamic";
 
@@ -33,12 +34,16 @@ const payloadSchema = z
     ghoul: z.boolean(),
     underarmor: underarmorSchema,
     powerArmorHelmetId: z.string().nullable().optional(),
-    powerArmorHelmetCrafting: armorCraftingRowSchema.optional()
+    powerArmorHelmetCrafting: armorCraftingRowSchema.optional(),
+    mutationIds: z.array(z.string()).max(40).optional(),
+    ignoreMutationPenalties: z.boolean().optional()
   })
   .transform((p) => ({
     ...p,
     powerArmorHelmetId: p.powerArmorHelmetId ?? null,
-    powerArmorHelmetCrafting: p.powerArmorHelmetCrafting ?? { materialModId: "none", miscModId: "none" }
+    powerArmorHelmetCrafting: p.powerArmorHelmetCrafting ?? { materialModId: "none", miscModId: "none" },
+    mutationIds: sanitizeSandboxMutationIds(p.mutationIds ?? []),
+    ignoreMutationPenalties: p.ignoreMutationPenalties ?? false
   }));
 
 const bodySchema = z.object({

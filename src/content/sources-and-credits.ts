@@ -16,6 +16,16 @@ export const PRIMARY_REFERENCE_SITES: {
     }
   },
   {
+    title: "Nukes & Dragons",
+    href: "https://nukesdragons.com/fallout-76/character",
+    description:
+      "Fallout 76 character planner share URLs — optional builder overlay for approximate perk `p=` / `s=` parsing (partial sandbox roll-up, not a full planner port).",
+    secondary: {
+      label: "Fallout 76 planner hub",
+      href: "https://nukesdragons.com/fallout-76"
+    }
+  },
+  {
     title: "The Duchess Flame",
     href: "https://www.theduchessflame.com/",
     description: "Build and legendary reference material aligned with community research workflows."
@@ -33,6 +43,6 @@ export const PRIMARY_REFERENCE_SITES: {
 ];
 
 export const CREDIT_PARAGRAPHS = [
-  "Express credit for data retrieval, research, verification, and compilation belongs to the people behind Nuka Knights, The Duchess Flame, the many contributors to the Fallout Wiki (Fandom), and Bethesda’s own Fallout 76 publishing—that work is what makes community tools trustworthy.",
+  "Express credit for data retrieval, research, verification, and compilation belongs to the people behind Nuka Knights, Nukes & Dragons, The Duchess Flame, the many contributors to the Fallout Wiki (Fandom), and Bethesda’s own Fallout 76 publishing—that work is what makes community tools trustworthy.",
   "R.O.L.L. does not claim authorship of that catalog. This project re-sorts and presents that knowledge in an intuitive interface so you get a clearer picture of what your build provides inside the models and totals shipped here—including the experimental loadout builder."
 ] as const;

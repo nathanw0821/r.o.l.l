@@ -13,7 +13,7 @@ Database setup uses Prisma; production builds run `prisma migrate deploy` before
 
 ## Credits & sources
 
-Full reference links and credit copy live in the app under **Overview → Readme**. Primary references include [Nuka Knights](https://nukaknights.com/en/), [The Duchess Flame](https://www.theduchessflame.com/), the [Fallout 76 portal on Fandom](https://fallout.fandom.com/wiki/Category:Fallout_76_portal), and [Bethesda’s Fallout 76 site](https://fallout.bethesda.net/en). R.O.L.L. re-presents community and official material in its own UI; it does not claim authorship of the underlying data.
+Full reference links and credit copy live in the app under **Overview → Readme**. Primary references include [Nuka Knights](https://nukaknights.com/en/), [Nukes & Dragons](https://nukesdragons.com/fallout-76/character) (Fallout 76 character planner), [The Duchess Flame](https://www.theduchessflame.com/), the [Fallout 76 portal on Fandom](https://fallout.fandom.com/wiki/Category:Fallout_76_portal), and [Bethesda’s Fallout 76 site](https://fallout.bethesda.net/en). R.O.L.L. re-presents community and official material in its own UI; it does not claim authorship of the underlying data.
 
 ## Builder: Ghoul mode
 
