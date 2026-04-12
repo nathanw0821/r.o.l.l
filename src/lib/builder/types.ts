@@ -21,6 +21,25 @@ export type BuilderPowerArmorHelmetCrafting = {
   miscModId: string;
 };
 
+/** Helmet, torso, left arm, right arm, left leg, right leg — toggles flat resists + PA % DR/RR scaling. */
+export type PowerArmorPiecesEquipped = readonly [
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean
+];
+
+export const DEFAULT_POWER_ARMOR_PIECES_EQUIPPED: PowerArmorPiecesEquipped = [
+  true,
+  true,
+  true,
+  true,
+  true,
+  true
+];
+
 export type BuilderPayload = {
   version: 4;
   basePieceId: string;
@@ -44,6 +63,8 @@ export type BuilderPayload = {
    */
   powerArmorHelmetId: string | null;
   powerArmorHelmetCrafting: BuilderPowerArmorHelmetCrafting;
+  /** Six attach points on the frame; all `true` = fully suited for resists + max PA % DR/RR. */
+  powerArmorPiecesEquipped: PowerArmorPiecesEquipped;
   ghoul: boolean;
   underarmor: BuilderUnderarmor;
   /**

@@ -26,9 +26,10 @@ import {
 import { getCachedPublishedSharedBuild } from "@/lib/builder/get-shared-build";
 import { normalizeBuilderPayload } from "@/lib/builder/normalize-builder-payload";
 import {
-  getPowerArmorCombinedBaseStats,
+  getPowerArmorEquippedFlatStats,
   getPowerArmorSlotBaseStats,
-  isKnownPowerArmorHelmetPieceId
+  isKnownPowerArmorHelmetPieceId,
+  powerArmorFrameIntrinsicEffectMath
 } from "@/lib/builder/power-armor-stats";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 import {
@@ -90,7 +91,7 @@ function baseArmorFromPayload(payload: BuilderPayload) {
     return getPowerArmorSlotBaseStats(piece.id, "helmet");
   }
   if (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
-    return getPowerArmorCombinedBaseStats(piece.id, payload.powerArmorHelmetId);
+    return getPowerArmorEquippedFlatStats(piece.id, payload.powerArmorHelmetId, payload.powerArmorPiecesEquipped);
   }
   return null;
 }
@@ -162,6 +163,9 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   }
 
   const baseArmorStats = baseArmorFromPayload(payload);
+  if (piece?.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
+    layers.push(powerArmorFrameIntrinsicEffectMath());
+  }
   const mutationLayer = sandboxMutationMathLayer(payload.mutationIds, payload.ignoreMutationPenalties);
   if (mutationLayer) layers.push(mutationLayer);
   const totals = aggregateEffectMath(equippedOrdered, {

@@ -55,8 +55,12 @@ describe("importNukesDragonsFo76CharacterUrl", () => {
     expect(r.special?.int).toBe(7);
     expect(r.special?.agi).toBe(10);
     expect(r.special?.lck).toBe(10);
-    expect(r.warnings.length).toBeGreaterThanOrEqual(2);
+    expect(r.warnings.length).toBeGreaterThanOrEqual(5);
+    expect(r.warnings.some((w) => w.includes("lp="))).toBe(true);
+    expect(r.warnings.some((w) => w.includes("ef="))).toBe(true);
+    expect(r.warnings.some((w) => w.includes("cd="))).toBe(true);
     expect(r.warnings.some((w) => w.includes("uppercase"))).toBe(true);
+    expect(r.warnings.some((w) => w.includes("p= perk slot keys"))).toBe(true);
     expect(Array.isArray(r.unknownCodes)).toBe(true);
   });
 

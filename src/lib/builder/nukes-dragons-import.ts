@@ -232,13 +232,33 @@ export function importNukesDragonsFo76CharacterUrl(raw: string): NdImportResult 
 
   const special = parseSpecialFromParam(u.searchParams.get("s"));
   const warnings: string[] = [];
+  const lp = u.searchParams.get("lp")?.trim();
+  const ef = u.searchParams.get("ef")?.trim();
+  const cd = u.searchParams.get("cd")?.trim();
+
+  if (lp) {
+    warnings.push(
+      "This URL includes lp= (legendary perk row on N&D, e.g. x94…). R.O.L.L. does not parse lp= yet — those +SPECIAL / perk-point bonuses are not merged into Live totals."
+    );
+  }
+  if (ef) {
+    warnings.push(
+      "This URL includes ef= (mutations, Ghoul / Glow / team switchboard state on N&D). R.O.L.L. does not decode ef= — use Character state in the builder to model mutations separately."
+    );
+  }
+  if (cd) {
+    warnings.push(
+      "This URL includes cd= (extra planner / character-state packing on N&D). R.O.L.L. does not read cd= yet."
+    );
+  }
+
   if (/[A-Z]/.test(p)) {
     warnings.push(
-      "Removed uppercase+digit blocks from p= (N&D legendary perk URL markers) before parsing; legendary perks are not merged into Live totals yet."
+      "Removed uppercase+digit blocks from p= (in-URL markers next to card codes, often legendary-related) before parsing; those markers are not expanded into Live totals."
     );
   }
   warnings.push(
-    "Mutations are not read from this URL — Class Freak / serum-style suppression is not modeled; only the perk string is partially rolled up."
+    "Planner mutations and Class Freak / serum rules are not applied from the URL — only the compact p= card string is partially rolled up; mirror mutations in Character state if you need them in totals."
   );
   if (!special) {
     warnings.push("No valid s= SPECIAL block (seven hex digits) — scaled perks use placeholder S.P.E.C.I.A.L. (all 10).");
@@ -267,6 +287,11 @@ export function importNukesDragonsFo76CharacterUrl(raw: string): NdImportResult 
   warnings.push(
     "N&D import uses a partial, approximate perk table in R.O.L.L. — verify important breakpoints on the planner site."
   );
+  if (unknownCodes.length > 0) {
+    warnings.push(
+      `Codes listed as “not in R.O.L.L. table yet” are regular p= perk slot keys only — they are not lp= legendary perks or ef= mutations (those live in other query params).`
+    );
+  }
 
   return { layer, special, unknownCodes, warnings };
 }

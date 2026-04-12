@@ -20,12 +20,16 @@ import {
   BASE_GEAR_GROUP_LABEL,
   BASE_GEAR_GROUP_ORDER,
   BASE_GEAR_PIECES,
+  countLearnedTrackableBases,
   getBaseGearPiece,
   isPowerArmorHelmetBasePiece,
   isPowerArmorTorsoBasePiece,
+  isPowerArmorTorsoRowLearned,
   isTrackableBasePieceId,
   listTrackableBaseGearByGroup,
+  pairedPowerArmorHelmetId,
   POWER_ARMOR_HELMET_PIECES,
+  trackableBaseRowCount,
   type BaseGearPiece
 } from "@/lib/builder/base-gear";
 import {
@@ -48,11 +52,16 @@ import {
 } from "@/lib/builder/normalize-builder-payload";
 import {
   defaultHelmetIdForTorsoPieceId,
-  getPowerArmorCombinedBaseStats,
+  getPowerArmorEquippedFlatStats,
   getPowerArmorSlotBaseStats,
-  isKnownPowerArmorHelmetPieceId
+  isKnownPowerArmorHelmetPieceId,
+  POWER_ARMOR_PIECE_SLOT_LABELS,
+  powerArmorFrameIntrinsicEffectMath,
+  powerArmorInherentDamageReductionPercent,
+  powerArmorInherentRadReductionPercent,
+  sanitizePowerArmorPiecesEquipped
 } from "@/lib/builder/power-armor-stats";
-import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
+import { DEFAULT_POWER_ARMOR_PIECES_EQUIPPED, type BuilderModDTO, type BuilderPayload } from "@/lib/builder/types";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
 import { cn } from "@/lib/utils";
@@ -63,7 +72,9 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import BuilderTotalsStatKey from "@/components/builder/builder-totals-stat-key";
+import BuilderTotalsStatKey, {
+  type BuilderTotalsStatKeyMode
+} from "@/components/builder/builder-totals-stat-key";
 import {
   importNukesDragonsFo76CharacterUrl,
   type NdImportResult
@@ -87,6 +98,7 @@ function formatBaseOptionLabel(g: BaseGearPiece) {
   if (g.kind === "underarmor") return `${g.label} (underarmor)`;
   if (g.kind === "weapon" && g.weaponSub) return `${g.label} (weapon · ${g.weaponSub})`;
   if (g.kind === "armor" && g.armorSetKey) return g.label;
+  if (g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)) return g.label;
   if (g.kind === "powerArmor" && g.powerArmorSlot === "helmet") return `${g.label} (power armor · helmet)`;
   return `${g.label} (${g.kind})`;
 }
@@ -103,6 +115,7 @@ function defaultPayload(): BuilderPayload {
     armorPieceCrafting: defaultArmorPieceCrafting(),
     powerArmorHelmetId: null,
     powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
+    powerArmorPiecesEquipped: DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
     ghoul: false,
     underarmor: { shellId: UNDERARMOR_SHELLS[0]!.id, liningId: "none", styleId: "none" },
     mutationIds: [],
@@ -121,37 +134,160 @@ function activePickLabel(active: ActivePick, baseLabel: string): string {
   return `${star} · ${slot} · ${baseLabel}`;
 }
 
-function BuilderTotalsGrid({ totals }: { totals: BuilderEffectTotals }) {
+type TotalsPresentation = "weapon" | "powerArmor" | "balanced";
+
+/** One cell: equipped gear value, optional overlay delta in parentheses, then combined total. */
+function liveTotalsValueRowInt(base: number, total: number): React.ReactNode {
+  const b = Math.round(base);
+  const t = Math.round(total);
+  const d = t - b;
+  if (d === 0) {
+    return <span className="tabular-nums">{t}</span>;
+  }
+  const sign = d > 0 ? "+" : "";
+  return (
+    <span className="tabular-nums">
+      {b}{" "}
+      <span className="text-foreground/55">
+        ({sign}
+        {d})
+      </span>{" "}
+      = {t}
+    </span>
+  );
+}
+
+function liveTotalsValueRowPct(base: number, total: number): React.ReactNode {
+  const br = Math.round(base * 100);
+  const tr = Math.round(total * 100);
+  const d = tr - br;
+  if (d === 0) {
+    return <span className="tabular-nums">{tr}%</span>;
+  }
+  const sign = d > 0 ? "+" : "";
+  return (
+    <span className="tabular-nums">
+      {br}%{" "}
+      <span className="text-foreground/55">
+        ({sign}
+        {d}%)
+      </span>{" "}
+      = {tr}%
+    </span>
+  );
+}
+
+function BuilderTotalsGrid({
+  baseTotals,
+  totals,
+  powerArmorSandbox,
+  presentation = "balanced"
+}: {
+  baseTotals: BuilderEffectTotals;
+  totals: BuilderEffectTotals;
+  powerArmorSandbox?: { inherentDrPct: number; inherentRadReductionPct: number } | null;
+  presentation?: TotalsPresentation;
+}) {
+  const resistRows = (
+    <>
+      <dt className="text-foreground/60">DR</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.dr, totals.dr)}</dd>
+      <dt className="text-foreground/60">ER</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.er, totals.er)}</dd>
+      <dt className="text-foreground/60">FR</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.fr, totals.fr)}</dd>
+      <dt className="text-foreground/60">CR</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.cr, totals.cr)}</dd>
+      <dt className="text-foreground/60">PR</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.pr, totals.pr)}</dd>
+      <dt className="text-foreground/60">RR</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.rr, totals.rr)}</dd>
+    </>
+  );
+
+  const specialRows = BUILDER_SPECIAL_KEYS.flatMap((k) => [
+    <dt key={`${k}-l`} className="text-foreground/60">
+      {BUILDER_SPECIAL_LABELS[k]}
+    </dt>,
+    <dd key={`${k}-r`} className="text-right">
+      {liveTotalsValueRowInt(baseTotals[k], totals[k])}
+    </dd>
+  ]);
+
+  const paRows =
+    powerArmorSandbox != null ? (
+      <>
+        <dt className="text-foreground/60">PA inherent DR %</dt>
+        <dd className="text-right tabular-nums">{powerArmorSandbox.inherentDrPct}%</dd>
+        <dt className="text-foreground/60">PA inherent rad red. %</dt>
+        <dd className="text-right tabular-nums">{powerArmorSandbox.inherentRadReductionPct}%</dd>
+      </>
+    ) : null;
+
+  /** Default row order after resists (armor / underarmor / PA helmet). */
+  const balancedCoreRows = (
+    <>
+      <dt className="text-foreground/60">HP bump</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.hp, totals.hp)}</dd>
+      <dt className="text-foreground/60">Damage %</dt>
+      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}</dd>
+      {specialRows}
+      <dt className="text-foreground/60">SPECIAL (other)</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}</dd>
+      <dt className="text-foreground/60">AP regen</dt>
+      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}</dd>
+      <dt className="text-foreground/60">Carry wt</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.carryWeight, totals.carryWeight)}</dd>
+    </>
+  );
+
+  /** Weapon bases: emphasize damage and mobility; resists are usually from other layers. */
+  const weaponCoreRows = (
+    <>
+      <dt className="text-foreground/60">Damage %</dt>
+      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}</dd>
+      <dt className="text-foreground/60">HP bump</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.hp, totals.hp)}</dd>
+      <dt className="text-foreground/60">AP regen</dt>
+      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}</dd>
+      <dt className="text-foreground/60">Carry wt</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.carryWeight, totals.carryWeight)}</dd>
+      {specialRows}
+      <dt className="text-foreground/60">SPECIAL (other)</dt>
+      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}</dd>
+    </>
+  );
+
+  if (presentation === "weapon") {
+    return (
+      <dl className="mt-2 grid grid-cols-2 gap-2 text-sm">
+        {weaponCoreRows}
+        <dt className="col-span-2 mt-1 border-t border-border/60 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-foreground/50">
+          Resists (underarmor · mutations · imports)
+        </dt>
+        {resistRows}
+      </dl>
+    );
+  }
+
+  if (presentation === "powerArmor") {
+    return (
+      <dl className="mt-2 grid grid-cols-2 gap-2 text-sm">
+        {resistRows}
+        {paRows}
+        <dt className="col-span-2 mt-1 border-t border-border/60 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-foreground/50">
+          Other modeled bonuses
+        </dt>
+        {balancedCoreRows}
+      </dl>
+    );
+  }
+
   return (
     <dl className="mt-2 grid grid-cols-2 gap-2 text-sm">
-      <dt className="text-foreground/60">DR</dt>
-      <dd>{totals.dr}</dd>
-      <dt className="text-foreground/60">ER</dt>
-      <dd>{totals.er}</dd>
-      <dt className="text-foreground/60">FR</dt>
-      <dd>{totals.fr}</dd>
-      <dt className="text-foreground/60">CR</dt>
-      <dd>{totals.cr}</dd>
-      <dt className="text-foreground/60">PR</dt>
-      <dd>{totals.pr}</dd>
-      <dt className="text-foreground/60">RR</dt>
-      <dd>{totals.rr}</dd>
-      <dt className="text-foreground/60">HP bump</dt>
-      <dd>{totals.hp}</dd>
-      <dt className="text-foreground/60">Damage %</dt>
-      <dd>{Math.round(totals.damagePct * 100)}%</dd>
-      {BUILDER_SPECIAL_KEYS.flatMap((k) => [
-        <dt key={`${k}-l`} className="text-foreground/60">
-          {BUILDER_SPECIAL_LABELS[k]}
-        </dt>,
-        <dd key={`${k}-r`}>{totals[k]}</dd>
-      ])}
-      <dt className="text-foreground/60">SPECIAL (other)</dt>
-      <dd>{totals.specialBonus}</dd>
-      <dt className="text-foreground/60">AP regen</dt>
-      <dd>{Math.round(totals.apRegen * 100)}%</dd>
-      <dt className="text-foreground/60">Carry wt</dt>
-      <dd>{totals.carryWeight}</dd>
+      {resistRows}
+      {balancedCoreRows}
+      {paRows}
     </dl>
   );
 }
@@ -374,31 +510,50 @@ export default function BuilderExperimentClient({
     return formatBaseOptionLabel(piece);
   }, [piece]);
   const showSplitTotalsPanel =
-    piece.kind === "weapon" || (piece.kind === "powerArmor" && !isPowerArmorHelmetBasePiece(piece));
-  const currentBaseLearned = isTrackableBasePieceId(piece.id) && learnedBasePieceIds.has(piece.id);
+    fullArmorSet ||
+    piece.kind === "weapon" ||
+    (piece.kind === "powerArmor" && !isPowerArmorHelmetBasePiece(piece));
+
+  const totalsPresentation: TotalsPresentation =
+    piece.kind === "weapon"
+      ? "weapon"
+      : piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
+        ? "powerArmor"
+        : "balanced";
+
+  const statKeyMode: BuilderTotalsStatKeyMode =
+    totalsPresentation === "weapon" ? "weapon" : totalsPresentation === "powerArmor" ? "powerArmor" : "default";
+  const currentBaseLearned =
+    isTrackableBasePieceId(piece.id) &&
+    (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
+      ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, piece.id)
+      : learnedBasePieceIds.has(piece.id));
   const trackableGroups = React.useMemo(() => listTrackableBaseGearByGroup(), []);
-  const learnedTrackableCount = React.useMemo(() => {
-    let n = 0;
-    for (const id of learnedBasePieceIds) {
-      if (isTrackableBasePieceId(id)) n += 1;
-    }
-    return n;
-  }, [learnedBasePieceIds]);
-  const trackableTotal = React.useMemo(
-    () => trackableGroups.reduce((acc, g) => acc + g.pieces.length, 0),
-    [trackableGroups]
+  const learnedTrackableCount = React.useMemo(
+    () => countLearnedTrackableBases(learnedBasePieceIds),
+    [learnedBasePieceIds]
   );
+  const trackableTotal = trackableBaseRowCount();
 
   async function toggleLearnedBasePiece(pieceId: string, learned: boolean) {
     setLearnedToggleError(null);
     if (!isSignedIn) return;
+    const row = getBaseGearPiece(pieceId);
+    const ids =
+      row && isPowerArmorTorsoBasePiece(row)
+        ? [pieceId, pairedPowerArmorHelmetId(pieceId)].filter((x): x is string => Boolean(x))
+        : [pieceId];
     setPendingLearnedPieceId(pieceId);
     try {
-      await updateLearnedBasePiece({ basePieceId: pieceId, learned });
+      for (const id of ids) {
+        await updateLearnedBasePiece({ basePieceId: id, learned });
+      }
       setLearnedBasePieceIds((prev) => {
         const next = new Set(prev);
-        if (learned) next.add(pieceId);
-        else next.delete(pieceId);
+        for (const id of ids) {
+          if (learned) next.add(id);
+          else next.delete(id);
+        }
         return next;
       });
     } catch {
@@ -445,10 +600,23 @@ export default function BuilderExperimentClient({
       return getPowerArmorSlotBaseStats(piece.id, "helmet");
     }
     if (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
-      return getPowerArmorCombinedBaseStats(piece.id, payload.powerArmorHelmetId);
+      return getPowerArmorEquippedFlatStats(piece.id, payload.powerArmorHelmetId, payload.powerArmorPiecesEquipped);
     }
     return null;
-  }, [piece, payload.powerArmorHelmetId]);
+  }, [piece, payload.powerArmorHelmetId, payload.powerArmorPiecesEquipped]);
+
+  const powerArmorFrameIntrinsicLayer = React.useMemo(() => {
+    if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece)) return null;
+    return powerArmorFrameIntrinsicEffectMath();
+  }, [piece]);
+
+  const powerArmorSandboxMeta = React.useMemo(() => {
+    if (!isPowerArmorTorsoBasePiece(piece)) return null;
+    return {
+      inherentDrPct: powerArmorInherentDamageReductionPercent(payload.powerArmorPiecesEquipped),
+      inherentRadReductionPct: powerArmorInherentRadReductionPercent(payload.powerArmorPiecesEquipped)
+    };
+  }, [piece, payload.powerArmorPiecesEquipped]);
 
   const powerArmorHelmetCraftingLayers = React.useMemo(() => {
     if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece)) return [];
@@ -480,6 +648,31 @@ export default function BuilderExperimentClient({
     [payload.mutationIds, payload.ignoreMutationPenalties]
   );
 
+  const baseEquipTotals = React.useMemo(
+    () =>
+      aggregateEffectMath(equippedModsOrdered, {
+        ghoul: payload.ghoul,
+        extraLayers: [
+          ...armorCraftingLayers,
+          ...powerArmorTorsoCraftingLayers,
+          ...powerArmorHelmetCraftingLayers,
+          ...powerArmorHelmetOnlyCraftingLayers,
+          ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : [])
+        ],
+        baseArmorStats
+      }),
+    [
+      equippedModsOrdered,
+      payload.ghoul,
+      armorCraftingLayers,
+      powerArmorTorsoCraftingLayers,
+      powerArmorHelmetCraftingLayers,
+      powerArmorHelmetOnlyCraftingLayers,
+      powerArmorFrameIntrinsicLayer,
+      baseArmorStats
+    ]
+  );
+
   const totals = React.useMemo(
     () =>
       aggregateEffectMath(equippedModsOrdered, {
@@ -490,6 +683,7 @@ export default function BuilderExperimentClient({
           ...powerArmorTorsoCraftingLayers,
           ...powerArmorHelmetCraftingLayers,
           ...powerArmorHelmetOnlyCraftingLayers,
+          ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : []),
           ...(mutationLayer ? [mutationLayer] : []),
           ...(ndPerkLayer ? [ndPerkLayer] : [])
         ],
@@ -503,15 +697,11 @@ export default function BuilderExperimentClient({
       powerArmorTorsoCraftingLayers,
       powerArmorHelmetCraftingLayers,
       powerArmorHelmetOnlyCraftingLayers,
+      powerArmorFrameIntrinsicLayer,
       baseArmorStats,
       mutationLayer,
       ndPerkLayer
     ]
-  );
-
-  const starModTotals = React.useMemo(
-    () => aggregateEffectMath(equippedModsOrdered, { ghoul: payload.ghoul, extraLayers: [] }),
-    [equippedModsOrdered, payload.ghoul]
   );
 
   /** How Ghoul mode changes sandbox totals vs human (legendary slice + global rules). @see https://fallout.fandom.com/wiki/Fallout_76_playable_ghoul */
@@ -603,6 +793,10 @@ export default function BuilderExperimentClient({
           ? defaultHelmetIdForTorsoPieceId(next.id)
           : null,
       powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
+      powerArmorPiecesEquipped:
+        next.kind === "powerArmor" && isPowerArmorTorsoBasePiece(next)
+          ? DEFAULT_POWER_ARMOR_PIECES_EQUIPPED
+          : p.powerArmorPiecesEquipped,
       underarmor:
         next.kind === "underarmor" && next.defaultUnderarmorShellId
           ? { ...p.underarmor, shellId: next.defaultUnderarmorShellId }
@@ -712,51 +906,25 @@ export default function BuilderExperimentClient({
               value={payload.basePieceId}
               onChange={(e) => setBase(e.target.value)}
             >
-              {BASE_GEAR_GROUP_ORDER.map((kind) =>
-                kind === "powerArmor" ? (
-                  <React.Fragment key="power-armor-split">
-                    <optgroup label="Power armor (torso)">
-                      {BASE_GEAR_PIECES.filter((g) => g.kind === "powerArmor" && g.powerArmorSlot !== "helmet").map(
-                        (g) => {
-                          const learnedHint =
-                            isTrackableBasePieceId(g.id) && learnedBasePieceIds.has(g.id) ? " · learned" : "";
-                          return (
-                            <option key={g.id} value={g.id}>
-                              {formatBaseOptionLabel(g)}
-                              {learnedHint}
-                            </option>
-                          );
-                        }
-                      )}
-                    </optgroup>
-                    <optgroup label="Power armor (helmet)">
-                      {POWER_ARMOR_HELMET_PIECES.map((g) => {
-                        const learnedHint =
-                          isTrackableBasePieceId(g.id) && learnedBasePieceIds.has(g.id) ? " · learned" : "";
-                        return (
-                          <option key={g.id} value={g.id}>
-                            {formatBaseOptionLabel(g)}
-                            {learnedHint}
-                          </option>
-                        );
-                      })}
-                    </optgroup>
-                  </React.Fragment>
-                ) : (
-                  <optgroup key={kind} label={BASE_GEAR_GROUP_LABEL[kind]}>
-                    {BASE_GEAR_PIECES.filter((g) => g.kind === kind).map((g) => {
-                      const learnedHint =
-                        isTrackableBasePieceId(g.id) && learnedBasePieceIds.has(g.id) ? " · learned" : "";
-                      return (
-                        <option key={g.id} value={g.id}>
-                          {formatBaseOptionLabel(g)}
-                          {learnedHint}
-                        </option>
-                      );
-                    })}
-                  </optgroup>
-                )
-              )}
+              {BASE_GEAR_GROUP_ORDER.map((kind) => (
+                <optgroup key={kind} label={BASE_GEAR_GROUP_LABEL[kind]}>
+                  {BASE_GEAR_PIECES.filter((g) => g.kind === kind).map((g) => {
+                    const learnedHint =
+                      isTrackableBasePieceId(g.id) &&
+                      (g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)
+                        ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, g.id)
+                        : learnedBasePieceIds.has(g.id))
+                        ? " · learned"
+                        : "";
+                    return (
+                      <option key={g.id} value={g.id}>
+                        {formatBaseOptionLabel(g)}
+                        {learnedHint}
+                      </option>
+                    );
+                  })}
+                </optgroup>
+              ))}
             </select>
             {isTrackableBasePieceId(piece.id) ? (
               <div
@@ -805,7 +973,10 @@ export default function BuilderExperimentClient({
                     </div>
                     <ul className="mt-1.5 space-y-1.5">
                       {group.pieces.map((g) => {
-                        const learned = learnedBasePieceIds.has(g.id);
+                        const learned =
+                          g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)
+                            ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, g.id)
+                            : learnedBasePieceIds.has(g.id);
                         const pending = pendingLearnedPieceId === g.id;
                         return (
                           <li
@@ -1057,6 +1228,38 @@ export default function BuilderExperimentClient({
                 </div>
               ) : null}
             </div>
+              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+                <div className="text-sm font-semibold">Pieces on frame</div>
+                <p className="mt-1 text-xs text-foreground/55">
+                  Flat DR/ER/RR from the chassis (always) plus toggled parts — piece values follow Fallout Wiki max-tier
+                  tables (ballistic / energy / radiation; fire/cryo/poison not listed in those sources). Separate from
+                  those numbers, power armor grants inherent % damage reduction and rad reduction that
+                  scale about 7% / 15% per attached piece (see totals). Entering a frame always adds +10 STR / +50
+                  carry in “All layers” even with every piece off — fall immunity, underwater breathing with a fusion
+                  core, and higher unarmed damage apply in-frame but are not numeric rows here.
+                </p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {POWER_ARMOR_PIECE_SLOT_LABELS.map((label, i) => (
+                    <div
+                      key={label}
+                      className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-background/30 px-2 py-1.5"
+                    >
+                      <span className="text-xs text-foreground/80">{label}</span>
+                      <Switch
+                        checked={payload.powerArmorPiecesEquipped[i]!}
+                        onCheckedChange={(on) =>
+                          setPayload((p) => ({
+                            ...p,
+                            powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(
+                              p.powerArmorPiecesEquipped.map((v, j) => (j === i ? on : v))
+                            )
+                          }))
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </>
           ) : null}
 
@@ -1488,67 +1691,71 @@ export default function BuilderExperimentClient({
             ) : null}
           </div>
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            {showSplitTotalsPanel ? (
-              <>
-                <div className="text-sm font-semibold">Live totals · {formatBaseOptionLabel(piece)}</div>
-                <p className="mt-1 text-xs text-foreground/60">
-                  {piece.kind === "weapon"
-                    ? "Weapon star picks roll up separately from your underarmor (and any other layers). Damage % is usually what moves on guns."
-                    : isPowerArmorTorsoBasePiece(piece)
-                      ? "Torso star picks stack separately from underarmor. When a helmet is selected, its base resists and helmet crafting are included in “All layers” — helmets never roll into the star-only row."
-                      : "Power armor star picks stack separately from underarmor; resists still include shell/lining/style."}
-                </p>
-                <p className="mt-1 text-xs text-foreground/50">
-                  {ndPerkLayer
-                    ? "Star-only row is legendaries on this base. “All layers” also includes underarmor, crafting rows, Character state (mutations), and any Nukes & Dragons perk import."
-                    : "These rows are catalog math only unless you use Character state (mutations / N&D URL) — overlays merge into “All layers” only."}
-                </p>
-                <BuilderTotalsStatKey className="mt-2" />
-                <div className="mt-3 text-xs font-semibold text-foreground/65">From legendary stars (this base)</div>
-                <BuilderTotalsGrid totals={starModTotals} />
-                <div className="mt-4 text-xs font-semibold text-foreground/65">All layers (stars + underarmor)</div>
-                <BuilderTotalsGrid totals={totals} />
-              </>
-            ) : (
-              <>
-                <div className="text-sm font-semibold">
+            <div className="text-sm font-semibold">
+              {showSplitTotalsPanel ? (
+                <>Live totals · {formatBaseOptionLabel(piece)}</>
+              ) : (
+                <>
                   Live totals
                   {piece.kind === "underarmor" ? " · Underarmor" : null}
-                </div>
-                {fullArmorSet ? (
-                  <p className="mt-1 text-xs text-foreground/60">
-                    <span className="font-medium text-foreground/75">{baseStarsContextLabel}</span> full set: Backwoods
-                    resist table, each slot&apos;s material and misc craft, all twenty star picks, plus underarmor effect
-                    math.
-                  </p>
-                ) : piece.kind === "underarmor" ? (
-                  <p className="mt-1 text-xs text-foreground/60">
-                    Shell, lining, and style only — switch to armor, power armor, or a weapon to model legendary stars.
-                  </p>
-                ) : piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece) ? (
-                  <p className="mt-1 text-xs text-foreground/60">
-                    Torso base resists, torso material / misc (jet pack when chosen), optional helmet base and helmet
-                    bench rows, torso star picks, and underarmor layers.
-                  </p>
-                ) : piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
-                  <p className="mt-1 text-xs text-foreground/60">
-                    Helmet base resists and helmet material / misc only — legendary stars are not available on power
-                    armor helmets.
-                  </p>
-                ) : (
-                  <p className="mt-1 text-xs text-foreground/60">
-                    Totals from your R.O.L.L. legendary catalog and underarmor layers.
-                  </p>
-                )}
-                <p className="mt-1 text-xs text-foreground/50">
-                  {ndPerkLayer
-                    ? "Totals include your legendary picks, underarmor, crafting rows, Character state mutations, and any Nukes & Dragons perk import (approximate sandbox math)."
-                    : "These numbers are catalog math only unless you add Character state layers (mutations and/or a Nukes & Dragons import) for approximate bonuses."}
-                </p>
-                <BuilderTotalsStatKey className="mt-2" />
-                <BuilderTotalsGrid totals={totals} />
-              </>
-            )}
+                </>
+              )}
+            </div>
+            <p className="mt-1 text-xs text-foreground/60">
+              {fullArmorSet ? (
+                <>
+                  <span className="font-medium text-foreground/75">{baseStarsContextLabel}</span> full set: Backwoods
+                  resists, every slot&apos;s material and misc craft, and all twenty legendary stars count as equipped
+                  gear; underarmor, mutations, and N&amp;D import add the parenthetical overlay.
+                </>
+              ) : piece.kind === "weapon" ? (
+                <>
+                  Equipped gear is this weapon&apos;s four star rows (catalog effectMath). Underarmor, mutations, and
+                  N&amp;D perks usually supply the overlay — resists often move only in the{" "}
+                  <span className="font-medium text-foreground/75">(+…)</span> part.
+                </>
+              ) : isPowerArmorTorsoBasePiece(piece) ? (
+                <>
+                  Equipped gear includes chassis + attached piece flat resists (per toggles), frame STR/carry, optional
+                  helmet base + crafting, torso crafting and stars, and PA % DR/RR; underarmor, mutations, and N&amp;D
+                  stack in the overlay.
+                </>
+              ) : piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
+                <>
+                  Helmet base resists and helmet material / misc — legendary stars are not available on power armor
+                  helmets.
+                </>
+              ) : piece.kind === "powerArmor" ? (
+                <>
+                  Bench uses torso context for stars; equipped gear is still frame, piece resists, and crafting you have
+                  toggled on this base.
+                </>
+              ) : piece.kind === "underarmor" ? (
+                <>
+                  Shell, lining, and style — switch to armor, power armor, or a weapon to model legendary stars on
+                  outer gear.
+                </>
+              ) : (
+                <>Totals from your R.O.L.L. legendary catalog, on-piece crafting when it applies, and underarmor.</>
+              )}
+            </p>
+            <p className="mt-1 text-xs text-foreground/50">
+              Each row shows <span className="font-medium text-foreground/70">equipped</span> first, then{" "}
+              <span className="font-medium text-foreground/70">(+delta)</span> from underarmor / mutations / N&amp;D
+              when that layer adds something, then <span className="font-medium text-foreground/70">= total</span>. If
+              there is no overlay, only the total is shown.
+              {payload.ghoul
+                ? " Ghoul caps some legendaries and applies −10 effective CHA in this sandbox."
+                : null}{" "}
+              {ndPerkLayer ? "Imported N&D perk codes are folded into the overlay where we model them." : null}
+            </p>
+            <BuilderTotalsStatKey className="mt-2" mode={statKeyMode} />
+            <BuilderTotalsGrid
+              baseTotals={baseEquipTotals}
+              totals={totals}
+              powerArmorSandbox={powerArmorSandboxMeta}
+              presentation={totalsPresentation}
+            />
           </div>
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Shopping list</div>
