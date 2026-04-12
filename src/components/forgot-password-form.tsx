@@ -57,16 +57,16 @@ export default function ForgotPasswordForm() {
         />
       </label>
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Sending..." : "Send Reset Link"}
+        {pending ? "Sending..." : "Send secure link"}
       </Button>
       {result ? (
         <div className="space-y-2 rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-xs text-foreground/70">
-          <p>If the account exists, a reset link has been sent.</p>
+          <p>If an account exists for that email, we sent a link to set or reset the password.</p>
           {!result.delivered && result.resetUrl ? (
             <p>
-              Direct reset link:{" "}
+              Email was not sent from this environment; open the link directly:{" "}
               <a href={result.resetUrl} className="text-accent hover:underline">
-                reset password
+                set password
               </a>
             </p>
           ) : null}

@@ -1,13 +1,18 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { getProviders, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
 export default function SignInForm({
-  allowPublicRegistration = false
+  allowPublicRegistration = false,
+  googleOAuthConfigured,
+  oauthCallbackBase = null
 }: {
   allowPublicRegistration?: boolean;
+  googleOAuthConfigured: boolean;
+  oauthCallbackBase?: string | null;
 }) {
   const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -47,10 +52,12 @@ export default function SignInForm({
     });
 
     if (result?.error) {
+      const hint =
+        " Use the email link below to create or reset a password for the address on your account, then try again with email + password.";
       setError(
-        allowPublicRegistration
+        (allowPublicRegistration
           ? "Unable to sign in with that username and password."
-          : "Unable to sign in. Check your credentials or ask an admin to provision local access."
+          : "Unable to sign in. Check your credentials or ask an admin to provision local access.") + hint
       );
       setPending(false);
       return;
@@ -59,8 +66,65 @@ export default function SignInForm({
     window.location.assign(result?.url ?? "/");
   }
 
+  const googleCallbackExample = oauthCallbackBase
+    ? `${oauthCallbackBase}/api/auth/callback/google`
+    : "https://your-site.example/api/auth/callback/google";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div
+        role="region"
+        aria-label="Sign-in without Google"
+        className="rounded-[var(--radius)] border border-border bg-panel/80 p-3 text-xs leading-relaxed text-foreground/70"
+      >
+        <p className="font-medium text-foreground/85">Primary account (username or email + password)</p>
+        <p className="mt-2">
+          If you already chose a password, sign in below. This path does not depend on Google or other OAuth servers.
+        </p>
+        <p className="mt-2">
+          <span className="font-medium text-foreground/85">No password yet</span> (for example you only used Google):{" "}
+          <Link href="/auth/forgot-password" className="text-accent underline-offset-2 hover:underline">
+            Set password via email
+          </Link>
+          . Enter the <span className="font-medium text-foreground/80">email on your R.O.L.L account</span>. You will get
+          a secure link (same as password reset) to create a password in the browser, then return here and sign in with{" "}
+          <span className="font-medium text-foreground/80">email + password</span>.
+        </p>
+      </div>
+      {!googleOAuthConfigured ? (
+        <details className="rounded-[var(--radius)] border border-dashed border-border/80 bg-panel/40 p-3 text-xs leading-relaxed text-foreground/55">
+          <summary className="cursor-pointer font-medium text-foreground/70">Hosting: enable Google sign-in</summary>
+          <p className="mt-2">
+            Add <code className="text-foreground/75">GOOGLE_CLIENT_ID</code> and{" "}
+            <code className="text-foreground/75">GOOGLE_CLIENT_SECRET</code> to the deployment environment (for
+            example Vercel → Project → Settings → Environment Variables). In{" "}
+            <a
+              href="https://console.cloud.google.com/apis/credentials"
+              className="text-accent underline-offset-2 hover:underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Google Cloud Console
+            </a>
+            , create an OAuth 2.0 Client ID (Web application) and set the authorized redirect URI to:
+          </p>
+          <p className="mt-2 break-all font-mono text-[11px] text-foreground/75">{googleCallbackExample}</p>
+          {!oauthCallbackBase ? (
+            <p className="mt-2">
+              Replace the host with your real <code className="text-foreground/65">NEXTAUTH_URL</code> / production
+              domain. Preview deploys need that preview URL listed as an additional redirect URI.
+            </p>
+          ) : null}
+        </details>
+      ) : (
+        <p className="text-xs text-foreground/55">
+          If Google or another provider is slow or unavailable, use the password fields below or{" "}
+          <Link href="/auth/forgot-password" className="text-accent underline-offset-2 hover:underline">
+            set password via email
+          </Link>
+          .
+        </p>
+      )}
       {providers ? (
         <div className="space-y-2">
           {[
@@ -128,9 +192,9 @@ export default function SignInForm({
         {pending ? "Signing in..." : "Sign In"}
       </Button>
       <div className="text-center text-xs text-foreground/60">
-        <a href="/auth/forgot-password" className="text-accent hover:underline">
-          Forgot password?
-        </a>
+        <Link href="/auth/forgot-password" className="text-accent hover:underline">
+          Forgot password, or email a secure link to set one
+        </Link>
       </div>
       {allowPublicRegistration ? (
         <div className="text-center text-xs text-foreground/60">

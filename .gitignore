@@ -15,3 +15,5 @@ public/
 tsconfig.tsbuildinfo
 .continue/
 .env.mcp.local
+
+.vercel

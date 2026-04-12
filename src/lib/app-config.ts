@@ -67,6 +67,11 @@ export function isPublicRegistrationEnabled() {
   return truthyValues.has((process.env.ALLOW_PUBLIC_REGISTRATION ?? "").trim().toLowerCase());
 }
 
+/** NextAuth registers `GoogleProvider` only when both vars are non-empty. */
+export function isGoogleOAuthConfigured() {
+  return Boolean(process.env.GOOGLE_CLIENT_ID?.trim() && process.env.GOOGLE_CLIENT_SECRET?.trim());
+}
+
 export function isAdminUser(user: AdminLikeUser | null | undefined) {
   if (!user) return false;
 

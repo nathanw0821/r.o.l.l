@@ -6,6 +6,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { isTsvLike, readTsvFile } from "./tsv";
 import { normalizeDatabaseUrl } from "./lib/database-url";
+import { seedBuilderCatalog } from "./lib/builder/seed-builder-catalog";
 import { normalizeNoteValue } from "./lib/import-normalize";
 
 const pool = new Pool({
@@ -328,6 +329,8 @@ async function main() {
   for (const filePath of filePaths) {
     await ingestDataset(datasetVersion.id, filePath);
   }
+
+  await seedBuilderCatalog(prisma);
 }
 
 main()

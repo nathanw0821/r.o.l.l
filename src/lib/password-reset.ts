@@ -86,12 +86,12 @@ async function sendPasswordResetEmailViaResend(params: {
         from,
         to: [params.email],
         ...(replyTo ? { reply_to: replyTo } : {}),
-        subject: `${appName}: Reset your password`,
+        subject: `${appName}: Set or reset your password`,
         html: `
           <div style="font-family:Arial,sans-serif;line-height:1.45;color:#111;">
             <p>Hi ${displayName},</p>
-            <p>We received a request to reset your password.</p>
-            <p><a href="${params.resetUrl}">Reset password</a></p>
+            <p>We received a request to set or reset the password for this email address.</p>
+            <p><a href="${params.resetUrl}">Set or reset password</a></p>
             <p>If you did not request this, you can safely ignore this email.</p>
           </div>
         `
