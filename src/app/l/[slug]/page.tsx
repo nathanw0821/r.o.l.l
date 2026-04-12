@@ -20,6 +20,7 @@ import {
   collectEquippedLegendaryModIds,
   formatEffectMathDeltas,
   isFullArmorSetPayload,
+  listEquippedLegendariesWithBenchLabels,
   listEquippedModsInBenchOrder,
   listExtraEffectMathEntries
 } from "@/lib/builder/compatibility";
@@ -133,6 +134,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   }));
 
   const equippedOrdered = listEquippedModsInBenchOrder(payload, dtoList);
+  const equippedLegendaryBenchLines = listEquippedLegendariesWithBenchLabels(payload, dtoList);
 
   const layers: Record<string, number>[] = [];
   const shell = findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId);
@@ -361,6 +363,26 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
             <dt className="text-foreground/60">Carry wt</dt>
             <dd>{totals.carryWeight}</dd>
           </dl>
+          <div className="mt-4 border-t border-border/60 pt-3">
+            <div className="text-xs font-semibold uppercase tracking-wide text-foreground/65">Effects</div>
+            {equippedLegendaryBenchLines.length === 0 ? (
+              <p className="mt-2 text-xs text-foreground/55">No legendary stars on this loadout.</p>
+            ) : (
+              <ul className="mt-2 space-y-2.5">
+                {equippedLegendaryBenchLines.map(({ mod, benchLabel }) => {
+                  const descRaw = mod.description?.trim() ?? "";
+                  const desc = sandboxLegendaryDescription(descRaw, piece ?? undefined) || descRaw;
+                  return (
+                    <li key={`${benchLabel}-${mod.id}`} className="text-xs leading-snug">
+                      <div className="font-medium text-foreground/85">{mod.name}</div>
+                      <div className="text-[11px] text-foreground/50">{benchLabel}</div>
+                      {desc ? <p className="mt-0.5 text-foreground/60 line-clamp-3">{desc}</p> : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
           <div className="text-sm font-semibold">Shopping list</div>

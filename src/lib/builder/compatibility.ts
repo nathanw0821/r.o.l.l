@@ -1,4 +1,8 @@
-import { armorSetKeyFromBasePieceId, type ArmorSetStats } from "@/lib/builder/armor-sets";
+import {
+  ARMOR_SET_SLOT_LABELS,
+  armorSetKeyFromBasePieceId,
+  type ArmorSetStats
+} from "@/lib/builder/armor-sets";
 import type { BaseGearPiece } from "@/lib/builder/base-gear";
 import { isGhoulBlockedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
@@ -384,6 +388,47 @@ export function listEquippedModsInBenchOrder(
     const m = map.get(id);
     if (m) out.push(m);
   }
+  return out;
+}
+
+const BENCH_STAR_LABELS = ["1st star", "2nd star", "3rd star", "4th star"] as const;
+
+/** One equipped legendary with a short bench location label for UI lists. */
+export type EquippedLegendaryBenchLine = {
+  mod: BuilderModDTO;
+  /** e.g. `Chest · 2nd star` for sets, or `3rd star` for single weapon / PA torso. */
+  benchLabel: string;
+};
+
+/** Row-major order matches `listEquippedModsInBenchOrder` (full set: five slots × four stars). */
+export function listEquippedLegendariesWithBenchLabels(
+  payload: BuilderPayload,
+  mods: BuilderModDTO[]
+): EquippedLegendaryBenchLine[] {
+  const byId = new Map(mods.map((m) => [m.id, m]));
+  const out: EquippedLegendaryBenchLine[] = [];
+
+  if (isFullArmorSetPayload(payload)) {
+    payload.armorLegendaryModIds.forEach((row, pieceIndex) => {
+      const slot = ARMOR_SET_SLOT_LABELS[pieceIndex] ?? `Slot ${pieceIndex + 1}`;
+      row.forEach((id, starIndex) => {
+        if (!id) return;
+        const mod = byId.get(id);
+        if (!mod) return;
+        const star = BENCH_STAR_LABELS[starIndex] ?? `Star ${starIndex + 1}`;
+        out.push({ mod, benchLabel: `${slot} · ${star}` });
+      });
+    });
+    return out;
+  }
+
+  payload.legendaryModIds.forEach((id, starIndex) => {
+    if (!id) return;
+    const mod = byId.get(id);
+    if (!mod) return;
+    const star = BENCH_STAR_LABELS[starIndex] ?? `Star ${starIndex + 1}`;
+    out.push({ mod, benchLabel: star });
+  });
   return out;
 }
 

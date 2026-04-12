@@ -1,5 +1,6 @@
 import { BUILDER_SPECIAL_KEYS, BUILDER_SPECIAL_LABELS } from "@/lib/builder/compatibility";
 import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
 export type BuilderTotalsStatKeyMode = "default" | "weapon" | "powerArmor";
 
@@ -22,7 +23,7 @@ const SPECIAL_EXPAND: Record<string, string> = {
   lck: "Luck"
 };
 
-/** Legend for Live totals / shared loadout stat abbreviations. */
+/** Legend for Live totals / shared loadout stat abbreviations (collapsed by default). */
 export default function BuilderTotalsStatKey({
   className,
   mode = "default"
@@ -31,27 +32,34 @@ export default function BuilderTotalsStatKey({
   mode?: BuilderTotalsStatKeyMode;
 }) {
   return (
-    <div
+    <details
       className={cn(
-        "rounded-[var(--radius)] border border-border/70 bg-background/40 px-2.5 py-2 text-[11px] leading-snug text-foreground/68",
+        "group rounded-[var(--radius)] border border-border/70 bg-background/40 text-[11px] leading-snug text-foreground/68 open:border-border",
         className
       )}
     >
-      <div className="font-semibold text-foreground/80">Stat key</div>
-      <p className="mt-1 text-foreground/58">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-2.5 py-2 font-semibold text-foreground/80 [&::-webkit-details-marker]:hidden">
+        <span>Stat key</span>
+        <ChevronDown
+          className="size-3.5 shrink-0 text-foreground/45 transition-transform duration-200 group-open:rotate-180"
+          aria-hidden
+        />
+      </summary>
+      <div className="space-y-1.5 border-t border-border/50 px-2.5 pb-2.5 pt-1.5">
+      <p className="text-foreground/58">
         Live totals rows read <span className="font-medium text-foreground/72">piece + crafting (+ PA frame)</span>,
         then <span className="font-medium text-foreground/72">(+delta)</span> for legendary stars plus underarmor /
         mutations / N&amp;D, then <span className="font-medium text-foreground/72">= total</span>. One number means no
         (+…) contribution for that stat.
       </p>
       {mode === "weapon" ? (
-        <p className="mt-1 text-foreground/58">
+        <p className="text-foreground/58">
           Weapon view: damage and utility first; the left column is usually 0 — star picks sit in{" "}
           <span className="font-medium text-foreground/70">(+…)</span> with underarmor, mutations, and N&amp;D.
         </p>
       ) : null}
       {mode === "powerArmor" ? (
-        <p className="mt-1 text-foreground/58">
+        <p className="text-foreground/58">
           Power armor view: chassis + piece flat resists and crafting first (no stars), then PA-only % DR/RR, then other
           bonuses — star picks show inside <span className="font-medium text-foreground/70">(+…)</span> with underarmor,
           mutations, and N&amp;D.
@@ -114,6 +122,7 @@ export default function BuilderTotalsStatKey({
           </>
         ) : null}
       </ul>
-    </div>
+      </div>
+    </details>
   );
 }
