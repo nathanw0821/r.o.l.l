@@ -68,7 +68,9 @@ function weapon(
 
 /** 1★ armor — common primary bench effects (names match in-game conventions). */
 const ARMOR_1: BuilderLegendarySeedRow[] = [
-  armor("aristocrats", "Aristocrat's", 1, "Damage resist increases with caps on hand."),
+  armor("aristocrats", "Aristocrat's", 1, "+20 DR and +20 ER (maximum armor bonus from caps; sandbox ceiling).", {
+    effectMath: { dr: 20, er: 20 }
+  }),
   armor("assassins-armor", "Assassin's", 1, "Damage reduction vs humans."),
   armor("auto-stim", "Auto Stim", 1, "Chance to use a stimpak when health drops."),
   armor("exterminators-armor", "Exterminator's", 1, "Damage reduction vs Mirelurks and bugs."),
@@ -127,6 +129,14 @@ const ARMOR_4: BuilderLegendarySeedRow[] = [
 
 /** 1★ weapons */
 const WEAPON_1: BuilderLegendarySeedRow[] = [
+  weapon(
+    "aristocrats-weapon",
+    "Aristocrat's",
+    1,
+    null,
+    "+50% damage (maximum weapon bonus from caps; sandbox ceiling).",
+    { damagePct: 0.5 }
+  ),
   weapon("assassins-weapon", "Assassin's", 1, null, "Damage vs humans."),
   weapon("berserkers", "Berserker's", 1, null, "More damage with lower damage resist."),
   weapon("executioners", "Executioner's", 1, null, "More damage vs targets below 40% HP."),

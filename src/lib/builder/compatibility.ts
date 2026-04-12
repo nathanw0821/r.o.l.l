@@ -1,5 +1,6 @@
 import { armorSetKeyFromBasePieceId, type ArmorSetStats } from "@/lib/builder/armor-sets";
 import type { BaseGearPiece } from "@/lib/builder/base-gear";
+import { isGhoulBlockedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 
 /** Normalize catalog subCategory for comparison (matches site-style labels). */
@@ -56,9 +57,21 @@ function baseAllowsMod(pieceId: string, mod: BuilderModDTO): boolean {
   return true;
 }
 
-export function filterModsForSlot(mods: BuilderModDTO[], piece: BaseGearPiece, slotIndex: number): BuilderModDTO[] {
+export type FilterModsForSlotContext = {
+  /** When true, hunger/thirst–gated legendaries are omitted from the picker. */
+  ghoul?: boolean;
+};
+
+export function filterModsForSlot(
+  mods: BuilderModDTO[],
+  piece: BaseGearPiece,
+  slotIndex: number,
+  ctx?: FilterModsForSlotContext
+): BuilderModDTO[] {
   if (piece.kind === "underarmor") return [];
+  if (piece.kind === "powerArmor" && piece.powerArmorSlot === "helmet") return [];
   return mods.filter((mod) => {
+    if (ctx?.ghoul && isGhoulBlockedLegendarySlug(mod.slug)) return false;
     if (!baseAllowsMod(piece.id, mod)) return false;
     if (!equipmentAllowsMod(mod, piece)) return false;
     if (!weaponSubMatches(mod, piece)) return false;
@@ -199,6 +212,7 @@ export function aggregateEffectMath(
   }
 
   for (const mod of mods) {
+    if (opts.ghoul && isGhoulBlockedLegendarySlug(mod.slug)) continue;
     addLayerFromRecord(mod.effectMath, acc, opts.ghoul, mod.ghoulSpecialCap);
   }
 
@@ -301,6 +315,25 @@ export function isFullArmorSetPayload(payload: BuilderPayload): boolean {
 }
 
 /** Distinct legendary mod ids (for DB `where: { id: { in } }`). */
+/** Clear star slots whose mods are incompatible with Ghoul mode (catalog slugs). */
+export function stripGhoulBlockedLegendarySelections(
+  payload: BuilderPayload,
+  mods: Pick<BuilderModDTO, "id" | "slug">[]
+): BuilderPayload {
+  const slugById = new Map(mods.map((m) => [m.id, m.slug]));
+  const clear = (id: string | null): string | null => {
+    if (!id) return null;
+    const slug = slugById.get(id);
+    if (slug && isGhoulBlockedLegendarySlug(slug)) return null;
+    return id;
+  };
+  return {
+    ...payload,
+    legendaryModIds: payload.legendaryModIds.map((id) => clear(id)),
+    armorLegendaryModIds: payload.armorLegendaryModIds.map((row) => row.map((id) => clear(id)))
+  };
+}
+
 export function collectEquippedLegendaryModIds(payload: BuilderPayload): string[] {
   const seen = new Set<string>();
   const out: string[] = [];

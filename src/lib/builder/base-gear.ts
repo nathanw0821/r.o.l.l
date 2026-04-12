@@ -11,6 +11,11 @@ export type BaseGearPiece = {
   defaultUnderarmorShellId?: string;
   /** When set, builder uses five body slots × five stars (Backwoods full-set resist table). */
   armorSetKey?: string;
+  /**
+   * Power armor only: torso/chest rows use legendary stars + optional paired helmet; helmet bases are misc-only.
+   * Omit for non–power-armor; omit or `torso` for PA torso/chest entries.
+   */
+  powerArmorSlot?: "torso" | "helmet";
 };
 
 const ARMOR_SET_PIECES: BaseGearPiece[] = ARMOR_SET_ROWS.map((row) => ({
@@ -21,24 +26,50 @@ const ARMOR_SET_PIECES: BaseGearPiece[] = ARMOR_SET_ROWS.map((row) => ({
 }));
 
 /**
- * One representative piece per craftable power armor model in Fallout 76 (wiki “by type” list),
- * including Gleaming Depths Vulcan and Hellfire prototype. IDs are stable builder keys, not form IDs.
+ * Torso/chest representatives per frame + matching helmets (FO76: PA helmets have no legendary stars; misc + material still apply).
+ * IDs are stable builder keys, not form IDs.
  */
-export const POWER_ARMOR_BASE_PIECES: BaseGearPiece[] = [
-  { id: "raider-pa-torso", label: "Raider power armor torso", kind: "powerArmor" },
-  { id: "t45-torso", label: "T-45 torso", kind: "powerArmor" },
-  { id: "t51-torso", label: "T-51b torso", kind: "powerArmor" },
-  { id: "t60-torso", label: "T-60 torso", kind: "powerArmor" },
-  { id: "t65-helm", label: "T-65 Helmet", kind: "powerArmor" },
-  { id: "excavator-torso", label: "Excavator Torso", kind: "powerArmor" },
-  { id: "x01-torso", label: "X-01 Torso", kind: "powerArmor" },
-  { id: "ultracite-torso", label: "Ultracite torso", kind: "powerArmor" },
-  { id: "strangler-heart-chest", label: "Strangler Heart Chest", kind: "powerArmor" },
-  { id: "hellcat-torso", label: "Hellcat torso", kind: "powerArmor" },
-  { id: "union-pa-torso", label: "Union Power Armor Torso", kind: "powerArmor" },
-  { id: "hellfire-prototype-torso", label: "Hellfire prototype torso", kind: "powerArmor" },
-  { id: "vulcan-torso", label: "Vulcan torso (Gleaming Depths raid)", kind: "powerArmor" }
+export const POWER_ARMOR_TORSO_PIECES: BaseGearPiece[] = [
+  { id: "raider-pa-torso", label: "Raider power armor torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t45-torso", label: "T-45 torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t51-torso", label: "T-51b torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t60-torso", label: "T-60 torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t65-torso", label: "T-65 torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "excavator-torso", label: "Excavator Torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "x01-torso", label: "X-01 Torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "ultracite-torso", label: "Ultracite torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "strangler-heart-chest", label: "Strangler Heart Chest", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "hellcat-torso", label: "Hellcat torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "union-pa-torso", label: "Union Power Armor Torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "hellfire-prototype-torso", label: "Hellfire prototype torso", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "vulcan-torso", label: "Vulcan torso (Gleaming Depths raid)", kind: "powerArmor", powerArmorSlot: "torso" }
 ];
+
+export const POWER_ARMOR_HELMET_PIECES: BaseGearPiece[] = [
+  { id: "raider-pa-helm", label: "Raider power armor helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "t45-helm", label: "T-45 helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "t51-helm", label: "T-51b helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "t60-helm", label: "T-60 helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "t65-helm", label: "T-65 helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "excavator-helm", label: "Excavator helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "x01-helm", label: "X-01 helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "ultracite-helm", label: "Ultracite helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "strangler-heart-helm", label: "Strangler Heart helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "hellcat-helm", label: "Hellcat helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "union-pa-helm", label: "Union Power Armor helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "hellfire-prototype-helm", label: "Hellfire prototype helmet", kind: "powerArmor", powerArmorSlot: "helmet" },
+  { id: "vulcan-helm", label: "Vulcan helmet (Gleaming Depths raid)", kind: "powerArmor", powerArmorSlot: "helmet" }
+];
+
+export const POWER_ARMOR_BASE_PIECES: BaseGearPiece[] = [...POWER_ARMOR_TORSO_PIECES, ...POWER_ARMOR_HELMET_PIECES];
+
+export function isPowerArmorTorsoBasePiece(piece: BaseGearPiece): boolean {
+  return piece.kind === "powerArmor" && piece.powerArmorSlot !== "helmet";
+}
+
+export function isPowerArmorHelmetBasePiece(piece: BaseGearPiece): boolean {
+  return piece.kind === "powerArmor" && piece.powerArmorSlot === "helmet";
+}
 
 /** Preset bases for the builder (full armor sets, power armor, weapons, underarmor). */
 export const BASE_GEAR_PIECES: BaseGearPiece[] = [
@@ -132,11 +163,29 @@ export const TRACKABLE_BASE_PIECE_IDS: ReadonlySet<string> = new Set(
 );
 
 export function listTrackableBaseGearByGroup(): { kind: BuilderEquipmentKind; label: string; pieces: BaseGearPiece[] }[] {
-  return BASE_GEAR_GROUP_ORDER.filter((kind) => TRACKABLE_BASE_GEAR_KINDS.includes(kind)).map((kind) => ({
-    kind,
-    label: BASE_GEAR_GROUP_LABEL[kind],
-    pieces: BASE_GEAR_PIECES.filter((p) => p.kind === kind)
-  }));
+  const out: { kind: BuilderEquipmentKind; label: string; pieces: BaseGearPiece[] }[] = [];
+  for (const kind of BASE_GEAR_GROUP_ORDER) {
+    if (!TRACKABLE_BASE_GEAR_KINDS.includes(kind)) continue;
+    if (kind === "powerArmor") {
+      out.push({
+        kind: "powerArmor",
+        label: "Power armor (torso)",
+        pieces: POWER_ARMOR_TORSO_PIECES
+      });
+      out.push({
+        kind: "powerArmor",
+        label: "Power armor (helmet)",
+        pieces: POWER_ARMOR_HELMET_PIECES
+      });
+      continue;
+    }
+    out.push({
+      kind,
+      label: BASE_GEAR_GROUP_LABEL[kind],
+      pieces: BASE_GEAR_PIECES.filter((p) => p.kind === kind)
+    });
+  }
+  return out;
 }
 
 export function isTrackableBasePieceId(id: string): boolean {
