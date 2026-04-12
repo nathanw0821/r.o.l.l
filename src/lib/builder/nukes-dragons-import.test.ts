@@ -62,6 +62,18 @@ describe("importNukesDragonsFo76CharacterUrl", () => {
     expect(r.warnings.some((w) => w.includes("uppercase"))).toBe(true);
     expect(r.warnings.some((w) => w.includes("p= perk slot keys"))).toBe(true);
     expect(Array.isArray(r.unknownCodes)).toBe(true);
+    expect(r.hasStrangeInNumbers).toBe(true);
+    expect(r.warnings.some((w) => w.includes("Strange in Numbers"))).toBe(true);
+    expect(r.unknownCodes).not.toContain("ce");
+  });
+
+  it("detects Strange in Numbers from minimal p= ce token", () => {
+    const r = importNukesDragonsFo76CharacterUrl(
+      "https://nukesdragons.com/fallout-76/character?n=t&p=ce1&s=1111111&v=2"
+    );
+    expect("error" in r).toBe(false);
+    if ("error" in r) return;
+    expect(r.hasStrangeInNumbers).toBe(true);
   });
 
   it("rejects invalid host", () => {

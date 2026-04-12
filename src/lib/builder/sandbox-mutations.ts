@@ -1,7 +1,11 @@
 /**
  * Curated Fallout 76 mutations for the builder sandbox: each row splits stat-like
  * `effectMath` into positives vs negatives so “Ignore mutation penalties” can
- * approximate serum (removes downsides only — not Class Freak / team scaling).
+ * approximate serum (removes downsides only — not Class Freak).
+ *
+ * **Strange in Numbers** (from N&D `p=` when token `ce` is present): optional
+ * `strangeInNumbersMutatedTeammates` (0–4) scales **positive** benefit numbers by
+ * `1 + 0.25 × teammates` (in-game cap at four mutated teammates = ×2.0).
  */
 export type SandboxMutationDef = {
   id: string;
@@ -147,20 +151,51 @@ export const SANDBOX_MUTATIONS: readonly SandboxMutationDef[] = [
 
 const MUTATION_BY_ID = new Map(SANDBOX_MUTATIONS.map((m) => [m.id, m]));
 
+/** In-game SiN: +25% positive mutation effects per mutated teammate, max four (+100%). */
+export function strangeInNumbersBenefitMultiplier(mutatedTeammateCount: number): number {
+  const n = Math.max(0, Math.min(4, Math.floor(mutatedTeammateCount)));
+  return 1 + 0.25 * n;
+}
+
+export type SandboxMutationLayerOpts = {
+  /**
+   * Count of **other** mutated teammates (0–4) for Strange in Numbers.
+   * When omitted or 0, no SiN scaling is applied.
+   */
+  strangeInNumbersMutatedTeammates?: number;
+};
+
 /** Merge selected sandbox mutations into one `effectMath`-shaped layer. */
 export function sandboxMutationMathLayer(
   mutationIds: readonly string[] | undefined,
-  ignorePenalties: boolean | undefined
+  ignorePenalties: boolean | undefined,
+  opts?: SandboxMutationLayerOpts
 ): Record<string, number> | null {
   const ids = mutationIds ?? [];
-  const out: Record<string, number> = {};
   const dropPenalties = Boolean(ignorePenalties);
+  const sinTeammates = Math.max(0, Math.min(4, Math.floor(opts?.strangeInNumbersMutatedTeammates ?? 0)));
+  const sinMult = strangeInNumbersBenefitMultiplier(sinTeammates);
+
+  const benefits: Record<string, number> = {};
+  const penalties: Record<string, number> = {};
   for (const id of ids) {
     const def = MUTATION_BY_ID.get(id);
     if (!def) continue;
-    mergeNumericLayers(out, def.benefit);
-    if (!dropPenalties) mergeNumericLayers(out, def.penalty);
+    mergeNumericLayers(benefits, def.benefit);
+    if (!dropPenalties) mergeNumericLayers(penalties, def.penalty);
   }
+
+  if (sinTeammates > 0 && sinMult > 1) {
+    for (const k of Object.keys(benefits)) {
+      const v = benefits[k];
+      if (typeof v !== "number" || !Number.isFinite(v) || v === 0) continue;
+      if (v > 0) benefits[k] = v * sinMult;
+    }
+  }
+
+  const out: Record<string, number> = {};
+  mergeNumericLayers(out, benefits);
+  mergeNumericLayers(out, penalties);
   const hasNonZero = Object.values(out).some((n) => Number.isFinite(n) && n !== 0);
   return hasNonZero ? out : null;
 }

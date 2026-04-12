@@ -33,6 +33,7 @@ Examples:
 | `sd3` | `s` (Strength) | `d` | `3` | `sd` |
 | `sp10` | `s` | `p` | `10` | `sp` |
 | `ee1` | `e` | `e` | `1` | `ee` |
+| `ce1` | `c` (Charisma) | `e` | `1` | `ce` — **Strange in Numbers** (v2 planner); no direct N&D `layer` math, but import sets `hasStrangeInNumbers` so the builder scales sandbox mutation **benefits** (see `sandboxMutationMathLayer`). |
 
 **Uppercase + digits** (e.g. `B1`, `H3`) are stripped before parse — they act as **in-URL markers** (legendary-perk related in share links), not standard perk tokens.
 

@@ -41,6 +41,11 @@ export type NdImportResult = {
   unknownCodes: string[];
   /** Human-readable notes (scaling caveats, parse quirks). */
   warnings: string[];
+  /**
+   * True when `p=` includes Charisma slot `ce` — Nukes & Dragons v2 encoding for **Strange in Numbers**.
+   * Builder uses this to scale sandbox mutation *benefits* (see `sandboxMutationMathLayer`).
+   */
+  hasStrangeInNumbers: boolean;
 };
 
 type NdPerkCtx = { rank: number; s: NdSpecialSpread };
@@ -86,6 +91,8 @@ const ND_PERK_TABLE: Record<string, NdPerkDef> = {
     const apRegen = 0.008 * cha * r;
     return { dr, er, apRegen };
   },
+  /** Strange in Numbers — no direct `effectMath` here; perk is handled via mutation benefit scaling when imported. */
+  ce: () => ({}),
   cf: () => ({}),
   c9: () => ({}),
   cq: () => ({}),
@@ -260,6 +267,12 @@ export function importNukesDragonsFo76CharacterUrl(raw: string): NdImportResult 
   warnings.push(
     "Planner mutations and Class Freak / serum rules are not applied from the URL — only the compact p= card string is partially rolled up; mirror mutations in Character state if you need them in totals."
   );
+  const hasStrangeInNumbers = parsed.some((row) => row.key === "ce");
+  if (hasStrangeInNumbers) {
+    warnings.push(
+      "Strange in Numbers detected (N&D `p=` token `ce`). R.O.L.L. scales sandbox mutation benefit numbers as if four mutated teammates are on your team (+100% to modeled positives vs no SiN)."
+    );
+  }
   if (!special) {
     warnings.push("No valid s= SPECIAL block (seven hex digits) — scaled perks use placeholder S.P.E.C.I.A.L. (all 10).");
   }
@@ -293,5 +306,5 @@ export function importNukesDragonsFo76CharacterUrl(raw: string): NdImportResult 
     );
   }
 
-  return { layer, special, unknownCodes, warnings };
+  return { layer, special, unknownCodes, warnings, hasStrangeInNumbers };
 }
