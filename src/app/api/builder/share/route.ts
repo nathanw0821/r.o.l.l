@@ -21,17 +21,25 @@ const armorCraftingRowSchema = z.object({
   miscModId: z.string().min(1)
 });
 
-const payloadSchema = z.object({
-  version: z.literal(4),
-  basePieceId: z.string().min(1),
-  equipmentKind: z.enum(["armor", "powerArmor", "weapon", "underarmor"]),
-  weaponSub: z.enum(["melee", "ranged", "energy"]).nullable(),
-  legendaryModIds: z.array(z.string().nullable()).length(4),
-  armorLegendaryModIds: z.array(z.array(z.string().nullable()).length(4)).length(5),
-  armorPieceCrafting: z.array(armorCraftingRowSchema).length(5),
-  ghoul: z.boolean(),
-  underarmor: underarmorSchema
-});
+const payloadSchema = z
+  .object({
+    version: z.literal(4),
+    basePieceId: z.string().min(1),
+    equipmentKind: z.enum(["armor", "powerArmor", "weapon", "underarmor"]),
+    weaponSub: z.enum(["melee", "ranged", "energy"]).nullable(),
+    legendaryModIds: z.array(z.string().nullable()).length(4),
+    armorLegendaryModIds: z.array(z.array(z.string().nullable()).length(4)).length(5),
+    armorPieceCrafting: z.array(armorCraftingRowSchema).length(5),
+    ghoul: z.boolean(),
+    underarmor: underarmorSchema,
+    powerArmorHelmetId: z.string().nullable().optional(),
+    powerArmorHelmetCrafting: armorCraftingRowSchema.optional()
+  })
+  .transform((p) => ({
+    ...p,
+    powerArmorHelmetId: p.powerArmorHelmetId ?? null,
+    powerArmorHelmetCrafting: p.powerArmorHelmetCrafting ?? { materialModId: "none", miscModId: "none" }
+  }));
 
 const bodySchema = z.object({
   title: z.string().min(2).max(120),

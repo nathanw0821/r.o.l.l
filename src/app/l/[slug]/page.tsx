@@ -7,7 +7,11 @@ import {
   findArmorMaterialMod,
   findArmorMiscMod
 } from "@/lib/builder/armor-piece-mods";
-import { getBaseGearPiece } from "@/lib/builder/base-gear";
+import {
+  getBaseGearPiece,
+  isPowerArmorHelmetBasePiece,
+  isPowerArmorTorsoBasePiece
+} from "@/lib/builder/base-gear";
 import {
   aggregateEffectMath,
   BUILDER_SPECIAL_KEYS,
@@ -21,6 +25,11 @@ import {
 } from "@/lib/builder/compatibility";
 import { getCachedPublishedSharedBuild } from "@/lib/builder/get-shared-build";
 import { normalizeBuilderPayload } from "@/lib/builder/normalize-builder-payload";
+import {
+  getPowerArmorCombinedBaseStats,
+  getPowerArmorSlotBaseStats,
+  isKnownPowerArmorHelmetPieceId
+} from "@/lib/builder/power-armor-stats";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 import {
   findUnderarmorOption,
@@ -28,6 +37,8 @@ import {
   UNDERARMOR_SHELLS,
   UNDERARMOR_STYLES
 } from "@/lib/builder/underarmor";
+import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
+import BuilderTotalsStatKey from "@/components/builder/builder-totals-stat-key";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -70,8 +81,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 function baseArmorFromPayload(payload: BuilderPayload) {
   const piece = getBaseGearPiece(payload.basePieceId);
-  if (piece?.kind === "armor" && piece.armorSetKey) {
+  if (!piece) return null;
+  if (piece.kind === "armor" && piece.armorSetKey) {
     return getArmorSetRow(piece.armorSetKey)?.stats ?? null;
+  }
+  if (piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece)) {
+    return getPowerArmorSlotBaseStats(piece.id, "helmet");
+  }
+  if (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
+    return getPowerArmorCombinedBaseStats(piece.id, payload.powerArmorHelmetId);
   }
   return null;
 }
@@ -123,6 +141,21 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   if (style?.effectMath) layers.push(style.effectMath);
   if (isFullArmorSetPayload(payload)) {
     for (const layer of armorCraftingEffectLayers(payload.armorPieceCrafting)) {
+      layers.push(layer);
+    }
+  } else if (piece?.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
+    const torsoRow = payload.armorPieceCrafting[0];
+    for (const layer of armorCraftingEffectLayers([torsoRow ?? { materialModId: "none", miscModId: "none" }])) {
+      layers.push(layer);
+    }
+    if (payload.powerArmorHelmetId && isKnownPowerArmorHelmetPieceId(payload.powerArmorHelmetId)) {
+      for (const layer of armorCraftingEffectLayers([payload.powerArmorHelmetCrafting])) {
+        layers.push(layer);
+      }
+    }
+  } else if (piece?.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece)) {
+    const row = payload.armorPieceCrafting[0];
+    for (const layer of armorCraftingEffectLayers([row ?? { materialModId: "none", miscModId: "none" }])) {
       layers.push(layer);
     }
   }
@@ -184,7 +217,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                         {mod?.description ? (
                           <p className="pl-4 text-xs text-foreground/65">
                             <span className="font-semibold text-foreground/50">Also: </span>
-                            {mod.description}
+                            {sandboxLegendaryDescription(mod.description, piece ?? undefined)}
                           </p>
                         ) : null}
                         {extras.length > 0 ? (
@@ -226,7 +259,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                   {mod?.description ? (
                     <p className="pl-4 text-xs text-foreground/65">
                       <span className="font-semibold text-foreground/50">Also: </span>
-                      {mod.description}
+                      {sandboxLegendaryDescription(mod.description, piece ?? undefined)}
                     </p>
                   ) : null}
                   {extras.length > 0 ? (
@@ -250,12 +283,34 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
           <div className="text-sm font-semibold">Totals</div>
           {baseArmorStats ? (
             <p className="mt-1 text-xs text-foreground/60">
-              Includes full-set base resistances (Backwoods table) plus legendary and underarmor effect math.
+              {isFullArmorSetPayload(payload) ? (
+                <>
+                  Includes full-set base resistances (Backwoods table) plus legendary and underarmor effect math.
+                </>
+              ) : piece?.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece) ? (
+                <>
+                  Includes torso base resists, torso material / misc (jet pack when chosen)
+                  {payload.powerArmorHelmetId
+                    ? ", paired helmet base, helmet material/misc, "
+                    : ", "}
+                  torso legendaries, and underarmor effect math.
+                </>
+              ) : piece?.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
+                <>
+                  Includes helmet base resists, helmet material/misc, and underarmor effect math (no PA legendary
+                  stars).
+                </>
+              ) : (
+                <>
+                  Includes base resist hints where modeled, legendary stars, and underarmor effect math.
+                </>
+              )}
             </p>
           ) : null}
           <p className="mt-1 text-xs text-foreground/50">
             These numbers are base math only — they do not include any perk card bonuses.
           </p>
+          <BuilderTotalsStatKey className="mt-2" />
           <dl className="mt-2 grid grid-cols-2 gap-1 text-sm">
             <dt className="text-foreground/60">DR</dt>
             <dd>{totals.dr}</dd>

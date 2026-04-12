@@ -15,6 +15,12 @@ export type BuilderArmorPieceCrafting = {
   miscModId: string;
 };
 
+/** Material + misc for paired power armor helmet (torso bases only). */
+export type BuilderPowerArmorHelmetCrafting = {
+  materialModId: string;
+  miscModId: string;
+};
+
 export type BuilderPayload = {
   version: 4;
   basePieceId: string;
@@ -32,6 +38,12 @@ export type BuilderPayload = {
    * Ignored for non–armor-set bases; still stored as five `none` rows.
    */
   armorPieceCrafting: BuilderArmorPieceCrafting[];
+  /**
+   * When base is a PA torso/chest, optional helmet row for sandbox resists + helmet crafting.
+   * Null when no helmet selected or when base is not a PA torso.
+   */
+  powerArmorHelmetId: string | null;
+  powerArmorHelmetCrafting: BuilderPowerArmorHelmetCrafting;
   ghoul: boolean;
   underarmor: BuilderUnderarmor;
 };

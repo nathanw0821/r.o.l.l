@@ -221,10 +221,12 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               />
             </div>
           </div>
-          <div className="mt-3 rounded-[var(--radius)] border border-border bg-panel/80 px-3 py-2 text-xs text-foreground/60">
-            Data source: {dataset?.sourceName ?? dataset?.sourceType ?? "Unknown"}
-            <div>Last synced: {displayLastSynced}</div>
-          </div>
+          {dataset ? (
+            <div className="mt-3 rounded-[var(--radius)] border border-border bg-panel/80 px-3 py-2 text-xs text-foreground/60">
+              Data source: {dataset.sourceName ?? dataset.sourceType ?? "Unknown"}
+              <div>Last synced: {displayLastSynced}</div>
+            </div>
+          ) : null}
           <div className="mt-4 space-y-2">
             <div className="text-xs uppercase tracking-[0.08em] text-foreground/50">Per Tier</div>
             {displayTierProgress.map((tier) => (
