@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils";
 const tierOptions = ["all", "1 Star", "2 Star", "3 Star", "4 Star"] as const;
 const STORAGE_KEY = "roll.screenshot-assist.v1";
 const OPENAI_KEY_STORAGE_KEY = "roll.session-assist.openai-key.v1";
+/** Matches `/api/session-assist/analyze` candidate cap per request. */
+const AI_CANDIDATE_CHUNK = 120;
 
 type DraftState = {
   query: string;
@@ -101,6 +103,7 @@ export default function ScreenshotAssistClient({
   const [aiPending, setAiPending] = React.useState(false);
   const [aiMessage, setAiMessage] = React.useState<string | null>(null);
   const [aiSuggestedIds, setAiSuggestedIds] = React.useState<string[]>([]);
+  const [aiReasonById, setAiReasonById] = React.useState<Record<string, string>>({});
   const [pending, setPending] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
   const hasLoadedDraft = React.useRef(false);
@@ -173,6 +176,7 @@ export default function ScreenshotAssistClient({
   React.useEffect(() => {
     setAiSuggestedIds([]);
     setAiMessage(null);
+    setAiReasonById({});
   }, [query, tier, category, lockedOnly]);
 
   React.useEffect(() => {
@@ -233,6 +237,7 @@ export default function ScreenshotAssistClient({
     setMessage(null);
     setAiMessage(null);
     setAiSuggestedIds([]);
+    setAiReasonById({});
     setSelectedIds([]);
     try {
       const nextImageDataUrl = await readFileAsDataUrl(file);
@@ -268,6 +273,7 @@ export default function ScreenshotAssistClient({
     setMessage(null);
     setAiMessage(null);
     setAiSuggestedIds([]);
+    setAiReasonById({});
     setImageDataUrl(null);
     setPreviewUrl((current) => {
       if (current) URL.revokeObjectURL(current);
@@ -286,65 +292,81 @@ export default function ScreenshotAssistClient({
 
   async function requestAiSuggestions() {
     if (!imageDataUrl) {
-      setAiMessage("Add a screenshot before requesting AI suggestions.");
+      setAiMessage("Add a screenshot first.");
       return;
     }
     if (!openAiKey.trim()) {
-      setAiMessage("Add your OpenAI API key first.");
+      setAiMessage("Add your OpenAI API key.");
       return;
     }
     if (filteredRows.length === 0) {
-      setAiMessage("No shortlist is available to analyze yet.");
-      return;
-    }
-    if (filteredRows.length > 120) {
-      setAiMessage("Narrow the shortlist to 120 effects or fewer before AI review.");
+      setAiMessage("No rows match the current filters.");
       return;
     }
 
     setAiPending(true);
     setAiMessage(null);
     setAiSuggestedIds([]);
+    setAiReasonById({});
+
+    const key = openAiKey.trim();
+    const reasons = new Map<string, string>();
+    const orderedIds: string[] = [];
+    const cautions: string[] = [];
+    const chunks: (typeof filteredRows)[] = [];
+    for (let i = 0; i < filteredRows.length; i += AI_CANDIDATE_CHUNK) {
+      chunks.push(filteredRows.slice(i, i + AI_CANDIDATE_CHUNK));
+    }
 
     try {
-      const response = await fetch("/api/session-assist/analyze", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          apiKey: openAiKey.trim(),
-          imageDataUrl,
-          assistPreset: preset,
-          candidates: filteredRows.map((row) => ({
-            effectTierId: row.id,
-            effectName: row.effect.name,
-            tierLabel: row.tier?.label ?? "Unknown tier",
-            categories: row.categories.map((categoryRow) => categoryRow.category.name)
-          }))
-        })
-      });
+      for (const chunk of chunks) {
+        const response = await fetch("/api/session-assist/analyze", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            apiKey: key,
+            imageDataUrl,
+            assistPreset: preset,
+            candidates: chunk.map((row) => ({
+              effectTierId: row.id,
+              effectName: row.effect.name,
+              tierLabel: row.tier?.label ?? "Unknown tier",
+              categories: row.categories.map((categoryRow) => categoryRow.category.name)
+            }))
+          })
+        });
 
-      const payload = (await response.json()) as {
-        success?: boolean;
-        matches?: { effectTierId: string; reason: string }[];
-        caution?: string;
-        error?: { message?: string };
-      };
+        const payload = (await response.json()) as {
+          success?: boolean;
+          matches?: { effectTierId: string; reason: string }[];
+          caution?: string;
+          error?: { message?: string };
+        };
 
-      if (!response.ok || !payload.success) {
-        throw new Error(payload.error?.message ?? "AI review could not complete.");
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error?.message ?? "AI review could not complete.");
+        }
+
+        if (payload.caution?.trim()) cautions.push(payload.caution.trim());
+
+        for (const match of payload.matches ?? []) {
+          if (!reasons.has(match.effectTierId)) {
+            reasons.set(match.effectTierId, match.reason);
+            orderedIds.push(match.effectTierId);
+          }
+        }
       }
 
-      const nextSuggestions = Array.isArray(payload.matches)
-        ? Array.from(new Set(payload.matches.map((match) => match.effectTierId)))
-        : [];
+      setAiSuggestedIds(orderedIds);
+      setAiReasonById(Object.fromEntries(reasons));
 
-      setAiSuggestedIds(nextSuggestions);
-      if (nextSuggestions.length === 0) {
-        setAiMessage(payload.caution || "No clear matches were suggested. Try a tighter shortlist or a cleaner screenshot.");
-      } else {
+      if (orderedIds.length === 0) {
         setAiMessage(
-          `${nextSuggestions.length} suggestion${nextSuggestions.length === 1 ? "" : "s"} returned. Review them before adding anything to your checklist.`
+          cautions[cautions.length - 1] ?? "No clear matches. Narrow filters or try a clearer screenshot."
         );
+      } else {
+        const batchNote = chunks.length > 1 ? ` · ${chunks.length} requests` : "";
+        setAiMessage(`${orderedIds.length} suggested${batchNote}. Review before "Use suggestions".`);
       }
     } catch (error) {
       setAiMessage(error instanceof Error ? error.message : "AI review could not complete.");
@@ -408,15 +430,13 @@ export default function ScreenshotAssistClient({
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-          <div className="text-sm font-semibold">1. Add a screenshot</div>
-          <div className="mt-1 text-xs text-foreground/60">
-            Your screenshot stays in this browser unless you explicitly request optional AI suggestions. Nothing is detected or saved automatically.
-          </div>
+          <div className="text-sm font-semibold">1. Screenshot</div>
+          <div className="mt-1 text-xs text-foreground/60">Local only until you run AI or save.</div>
           <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleFileChange} className="mt-3" />
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-          <div className="text-sm font-semibold">2. Narrow the checklist</div>
+          <div className="text-sm font-semibold">2. Shortlist</div>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <label className="text-xs text-foreground/60">
               Search
@@ -471,12 +491,10 @@ export default function ScreenshotAssistClient({
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="text-sm font-semibold">3. {presetContent.aiTitle}</div>
-              <div className="mt-1 text-xs text-foreground/60">
-                This is suggestion-only. R.O.L.L. never auto-detects or auto-saves unlocks from screenshots.
-              </div>
+              <div className="mt-1 text-xs text-foreground/60">Suggestions only; large lists use multiple requests.</div>
             </div>
             <div className="rounded-full border border-border px-2 py-1 text-[11px] text-foreground/60">
-              Current shortlist: {filteredRows.length}
+              Shortlist: {filteredRows.length}
             </div>
           </div>
           <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
@@ -507,23 +525,16 @@ export default function ScreenshotAssistClient({
             </div>
           </div>
           <div className="mt-3 text-xs text-foreground/60">
-            The key is stored only in this browser session, not in your account. The screenshot and current shortlist are sent to OpenAI only when you click the analyze button.
+            Key stays in this tab session. Image + shortlist go to OpenAI only when you run analyze.
           </div>
-          {filteredRows.length > 120 ? (
-            <div className="mt-2 text-xs text-[color:var(--color-warning)]">
-              Narrow your shortlist before AI review. Keep it at 120 effects or fewer for cleaner suggestions.
-            </div>
-          ) : null}
           {aiMessage ? <div className="mt-2 text-xs text-foreground/70">{aiMessage}</div> : null}
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <div className="text-sm font-semibold">4. Confirm visible unlocks</div>
-              <div className="mt-1 text-xs text-foreground/60">
-                Select only the effects you can clearly verify. AI suggestions still require your review before saving.
-              </div>
+              <div className="text-sm font-semibold">4. Confirm & save</div>
+              <div className="mt-1 text-xs text-foreground/60">Tick what you verify, then save.</div>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" size="sm" onClick={selectVisible}>
@@ -576,8 +587,13 @@ export default function ScreenshotAssistClient({
                       {categories ? ` | ${categories}` : ""}
                     </div>
                     {aiSuggested ? (
-                      <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-accent)]">
-                        AI Suggested
+                      <div className="mt-1 space-y-0.5">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-accent)]">
+                          AI suggested
+                        </div>
+                        {aiReasonById[row.id] ? (
+                          <div className="text-[11px] leading-snug text-foreground/70">{aiReasonById[row.id]}</div>
+                        ) : null}
                       </div>
                     ) : null}
                   </div>
@@ -588,28 +604,20 @@ export default function ScreenshotAssistClient({
 
           {message ? <div className="mt-3 text-xs text-foreground/70">{message}</div> : null}
           <div className="mt-3 text-xs text-foreground/60">
-            Storage: screenshot preview stays local to this browser tab, assist filters and checklist draft stay in local browser storage, the optional OpenAI key stays in this browser session, and confirmed unlocks save to {session ? "your account on the server" : "the existing guest progress cookie"}.
+            Draft + key: this browser. Saves go to {session ? "your account" : "guest storage here"}.
           </div>
-          {!session ? (
-            <div className="mt-2 text-xs text-foreground/60">
-              Guest mode saves locally in this browser. Sign in to sync confirmed unlocks to your account.
-            </div>
-          ) : null}
         </div>
       </div>
 
       <div className={cn("rounded-[var(--radius)] border border-border bg-panel p-4", !isWindow && "lg:sticky lg:top-24 lg:self-start")}>
-        <div className="text-sm font-semibold">Screenshot Reference</div>
-        <div className="mt-1 text-xs text-foreground/60">
-          Keep the screenshot open here while you confirm unlocks on the left.
-        </div>
+        <div className="text-sm font-semibold">Preview</div>
         <div className="mt-4 overflow-hidden rounded-[var(--radius)] border border-border bg-background/40">
           {previewUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={previewUrl} alt="Uploaded game screenshot for manual review" className="h-auto w-full object-contain" />
+            <img src={previewUrl} alt="Screenshot reference" className="h-auto w-full object-contain" />
           ) : (
             <div className={cn("flex items-center justify-center px-4 text-center text-sm text-foreground/50", isWindow ? "min-h-[220px]" : "min-h-[320px]")}>
-              Add a screenshot to preview it here. Manual review is the default. Optional AI suggestions only run when you ask for them.
+              No image yet.
             </div>
           )}
         </div>

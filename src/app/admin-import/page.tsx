@@ -24,31 +24,22 @@ export default async function AdminImportPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Admin Sources</CardTitle>
-          <CardDescription>
-            Refresh source-backed reference data for the tracker. Workbook import now lives in Settings.
-          </CardDescription>
+          <CardTitle>Source sync</CardTitle>
+          <CardDescription>Remote feeds and change checks. Workbook upload is under Settings.</CardDescription>
         </CardHeader>
         <CardContent>
           <AdminSyncPanel />
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Validation Rules</CardTitle>
-          <CardDescription>
-            The importer validates required sheets and headers against the TSV structure in this workspace.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc pl-5 text-sm text-foreground/70">
-            <li>Required sheets include the canonical all-tiers sheet and each star tier sheet.</li>
-            <li>Headers must match the TSV columns; extra trailing columns are allowed.</li>
-            <li>Progress is migrated by matching tier + effect name between versions.</li>
-          </ul>
-        </CardContent>
-      </Card>
+      <details className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-sm">
+        <summary className="cursor-pointer font-medium text-foreground/90">Importer validation (reference)</summary>
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-foreground/70">
+          <li>Required sheets: canonical all-tiers plus each star tier sheet.</li>
+          <li>Headers match workspace TSVs; trailing columns may be ignored.</li>
+          <li>Progress migrates by tier + effect name across dataset versions.</li>
+        </ul>
+      </details>
     </div>
   );
 }

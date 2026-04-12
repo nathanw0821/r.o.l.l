@@ -31,10 +31,8 @@ export default async function AdminFeedbackPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-xl font-semibold">Feedback Review</h1>
-        <p className="text-sm text-foreground/70">
-          Review user feedback, add notes, and track resolution status.
-        </p>
+        <h1 className="text-xl font-semibold">Feedback</h1>
+        <p className="text-sm text-foreground/60">Inbox and notes.</p>
       </header>
       <AdminFeedbackList
         initialFeedback={feedback.map((item) => ({

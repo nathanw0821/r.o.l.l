@@ -94,41 +94,29 @@ export default async function SettingsPage() {
       </Card>
 
       {canManageWorkbookImport ? (
-        <>
         <Card>
           <CardHeader>
-            <CardTitle>Workbook Import</CardTitle>
-            <CardDescription>
-              Upload a workbook to publish a new tracker dataset version and migrate matchable progress when possible.
-            </CardDescription>
+            <CardTitle>Admin</CardTitle>
+            <CardDescription>Import, feedback, session assist.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <AdminImportForm />
+          <CardContent className="space-y-6">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-wide text-foreground/50">Workbook</div>
+              <AdminImportForm />
+            </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-border pt-4 text-sm">
+              <Link href="/admin-feedback" className="text-accent hover:underline">
+                Feedback inbox
+              </Link>
+              <Link href="/admin-import" className="text-accent hover:underline">
+                Source sync
+              </Link>
+              <Link href="/screenshot-assist" className="text-accent hover:underline">
+                Session assist
+              </Link>
+            </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Feedback Review</CardTitle>
-            <CardDescription>Review submitted feedback directly in-app.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/admin-feedback" className="text-sm text-accent hover:underline">
-              Open feedback inbox
-            </Link>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Session Assist (Admin)</CardTitle>
-            <CardDescription>Access Session Assist from here for controlled testing and updates.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/screenshot-assist" className="text-sm text-accent hover:underline">
-              Open Session Assist
-            </Link>
-          </CardContent>
-        </Card>
-        </>
       ) : null}
 
     </div>

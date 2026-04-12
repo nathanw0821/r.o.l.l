@@ -110,12 +110,9 @@ export default function AdminSyncPanel() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="text-sm font-semibold">Websheet Sync</div>
+          <div className="text-sm font-semibold">Sync</div>
           <div className="text-xs text-foreground/60">
-            Track source pages here and maintain the companion tracker’s reference dataset.
-          </div>
-          <div className="mt-1 text-xs text-foreground/50">
-            “Check for Changes” monitors saved source pages. “Run Sync” only uses enabled CSV/TSV/JSON feed URLs and never reads live game data.
+            Check watches reference pages. Run Sync uses enabled feed URLs only.
           </div>
         </div>
         <div className="flex flex-wrap gap-2">

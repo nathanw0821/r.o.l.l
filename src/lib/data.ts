@@ -1,6 +1,9 @@
 import { unstable_cache } from "next/cache";
+import { cache } from "react";
+import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
 import { extractOriginsFromNotes, normalizeDisplayNotes } from "@/lib/import-normalize";
 import { appendLegendaryModSourceNotes } from "@/lib/legendary-mod-sources";
 import { applyImportedProfileIfNeeded, getImportedBaselineMap } from "@/lib/profile";
@@ -28,6 +31,110 @@ function resolveSelectionSource(params: {
   return params.progress === params.baseline ? "imported" : "edited";
 }
 
+const effectTierCatalogSelect = {
+  id: true,
+  description: true,
+  extraComponent: true,
+  legendaryModules: true,
+  notes: true,
+  effect: { select: { name: true } },
+  tier: { select: { label: true } },
+  categories: { select: { category: { select: { name: true } } } }
+} satisfies Prisma.EffectTierSelect;
+
+export type EffectTierCatalogRow = Prisma.EffectTierGetPayload<{ select: typeof effectTierCatalogSelect }>;
+
+export type MergedEffectTierRow = Omit<EffectTierCatalogRow, "notes"> & {
+  notes: string | null;
+  origins: string[];
+  unlocked: boolean;
+  selectionSource: SelectionSource;
+};
+
+function getCatalogEffectTiersCached(datasetVersionId: string) {
+  const loader = unstable_cache(
+    async () =>
+      prisma.effectTier.findMany({
+        where: { datasetVersionId },
+        select: effectTierCatalogSelect,
+        orderBy: [{ tierId: "asc" }, { effect: { name: "asc" } }]
+      }),
+    ["roll-catalog-effect-tiers", datasetVersionId],
+    { tags: [ROLL_CATALOG_CACHE_TAG] }
+  );
+  return loader();
+}
+
+async function fetchUserProgressMap(userId: string, datasetVersionId: string) {
+  const rows = await prisma.userProgress.findMany({
+    where: { userId, effectTier: { datasetVersionId } },
+    select: { effectTierId: true, unlocked: true }
+  });
+  return new Map(rows.map((row) => [row.effectTierId, row.unlocked]));
+}
+
+function mergeCatalogWithUserState(
+  catalog: EffectTierCatalogRow[],
+  userId: string | undefined,
+  baselineMap: Map<string, boolean>,
+  progressMap: Map<string, boolean>
+): MergedEffectTierRow[] {
+  return catalog.map((item) => {
+    const baseline = userId ? baselineMap.get(item.id) : undefined;
+    const hasProgress = userId ? progressMap.has(item.id) : false;
+    const progressUnlocked = hasProgress ? progressMap.get(item.id)! : undefined;
+    const unlocked = userId ? (hasProgress ? progressUnlocked! : baseline ?? false) : false;
+    const origins = extractOriginsFromNotes(item.notes);
+    const displayNotes = normalizeDisplayNotes(item.notes, origins);
+    const displayWithSources =
+      appendLegendaryModSourceNotes(displayNotes, item.effect.name, item.tier?.label) ?? null;
+    return {
+      ...item,
+      notes: displayWithSources,
+      origins,
+      unlocked,
+      selectionSource: resolveSelectionSource({
+        userId,
+        baseline,
+        progress: hasProgress ? progressUnlocked : undefined
+      })
+    };
+  });
+}
+
+async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string): Promise<MergedEffectTierRow[]> {
+  await ensureProfileApplied(userId);
+  const dataset = await getActiveDatasetVersion();
+  if (!dataset) return [];
+
+  const tier =
+    tierLabel === undefined
+      ? null
+      : await prisma.tier.findUnique({ where: { label: tierLabel }, select: { id: true, label: true } });
+
+  if (tierLabel !== undefined && !tier) return [];
+
+  const [baselineMap, catalog] = await Promise.all([
+    userId ? getImportedBaselineMap(dataset.id, userId) : Promise.resolve(new Map<string, boolean>()),
+    getCatalogEffectTiersCached(dataset.id)
+  ]);
+
+  const scoped =
+    tierLabel === undefined || !tier
+      ? catalog
+      : catalog.filter((row) => row.tier?.label === tier.label);
+
+  const progressMap =
+    userId && scoped.length > 0
+      ? await fetchUserProgressMap(userId, dataset.id)
+      : new Map<string, boolean>();
+
+  return mergeCatalogWithUserState(scoped, userId, baselineMap, progressMap);
+}
+
+/** One merged catalog load per request per `(userId, tierLabel)` — dedupes e.g. `getStillNeed` + `getTierProgressSummary`. */
+const loadMergedEffectTiers = cache(loadMergedEffectTiersUncached);
+
 export async function getActiveDatasetVersion() {
   return prisma.datasetVersion.findFirst({
     where: { isActive: true },
@@ -36,89 +143,16 @@ export async function getActiveDatasetVersion() {
 }
 
 export async function getEffectTiersByTierLabel(tierLabel: string, userId?: string) {
-  await ensureProfileApplied(userId);
-  const dataset = await getActiveDatasetVersion();
-  if (!dataset) return [];
-
-  const baselineMap = userId ? await getImportedBaselineMap(dataset.id, userId) : new Map<string, boolean>();
-  const tier = await prisma.tier.findUnique({ where: { label: tierLabel } });
-  if (!tier) return [];
-
-  const effectTiers = await prisma.effectTier.findMany({
-    where: {
-      datasetVersionId: dataset.id,
-      tierId: tier.id
-    },
-    include: {
-      effect: true,
-      tier: true,
-      categories: { include: { category: true } },
-      progress: userId ? { where: { userId } } : false
-    },
-    orderBy: { effect: { name: "asc" } }
-  });
-
-  return effectTiers.map((item) => {
-    const progress = Array.isArray(item.progress) ? item.progress[0] : undefined;
-    const baseline = baselineMap.get(item.id);
-    const unlocked = userId ? progress?.unlocked ?? baseline ?? false : false;
-    const origins = extractOriginsFromNotes(item.notes);
-    const displayNotes = normalizeDisplayNotes(item.notes, origins);
-    return {
-      ...item,
-      notes: appendLegendaryModSourceNotes(displayNotes, item.effect.name, item.tier?.label) ?? undefined,
-      origins,
-      unlocked,
-      selectionSource: resolveSelectionSource({
-        userId,
-        baseline,
-        progress: progress?.unlocked
-      })
-    };
-  });
+  return loadMergedEffectTiers(userId, tierLabel);
 }
 
 export async function getAllEffectTiers(userId?: string) {
-  await ensureProfileApplied(userId);
-  const dataset = await getActiveDatasetVersion();
-  if (!dataset) return [];
-
-  const baselineMap = userId ? await getImportedBaselineMap(dataset.id, userId) : new Map<string, boolean>();
-  const effectTiers = await prisma.effectTier.findMany({
-    where: { datasetVersionId: dataset.id },
-    include: {
-      effect: true,
-      tier: true,
-      categories: { include: { category: true } },
-      progress: userId ? { where: { userId } } : false
-    },
-    orderBy: [{ tierId: "asc" }, { effect: { name: "asc" } }]
-  });
-
-  return effectTiers.map((item) => {
-    const progress = Array.isArray(item.progress) ? item.progress[0] : undefined;
-    const baseline = baselineMap.get(item.id);
-    const unlocked = userId ? progress?.unlocked ?? baseline ?? false : false;
-    const origins = extractOriginsFromNotes(item.notes);
-    const displayNotes = normalizeDisplayNotes(item.notes, origins);
-    return {
-      ...item,
-      notes: appendLegendaryModSourceNotes(displayNotes, item.effect.name, item.tier?.label) ?? undefined,
-      origins,
-      unlocked,
-      selectionSource: resolveSelectionSource({
-        userId,
-        baseline,
-        progress: progress?.unlocked
-      })
-    };
-  });
+  return loadMergedEffectTiers(userId);
 }
 
 export async function getStillNeed(userId?: string) {
-  await ensureProfileApplied(userId);
-  const all = await getAllEffectTiers(userId);
-  return all.filter((row) => !row.unlocked);
+  const rows = await loadMergedEffectTiers(userId);
+  return rows.filter((row) => !row.unlocked);
 }
 
 export type TierProgressSummary = {
@@ -130,7 +164,7 @@ export type TierProgressSummary = {
 };
 
 export async function getTierProgressSummary(userId?: string) {
-  const all = await getAllEffectTiers(userId);
+  const all = await loadMergedEffectTiers(userId);
   const tierMap = new Map<string, TierProgressSummary>();
 
   for (const row of all) {
@@ -176,7 +210,7 @@ const getGuestProgressSummaryCached = unstable_cache(
     return { total, unlocked: 0, percent: 0 };
   },
   ["guest-progress-summary"],
-  { revalidate: 300, tags: ["guest-progress-summary"] }
+  { revalidate: 300, tags: [GUEST_PROGRESS_SUMMARY_TAG] }
 );
 
 export async function getProgressSummary(userId?: string) {
