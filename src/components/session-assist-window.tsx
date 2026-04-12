@@ -57,10 +57,7 @@ export default function SessionAssistWindow() {
               <Camera className="h-4 w-4" />
               Session Assist
             </div>
-            <div className="session-assist-window__subtitle">
-              {presetContent.windowSubtitle}
-            </div>
-            <div className="session-assist-window__preset">{presetContent.label}</div>
+            <div className="session-assist-window__subtitle">{presetContent.windowSubtitle}</div>
           </div>
           <div className="session-assist-window__actions">
             <Button type="button" variant="outline" size="sm" onClick={togglePinned}>

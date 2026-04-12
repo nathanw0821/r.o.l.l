@@ -9,10 +9,7 @@ export default function OverviewLayout({
 }) {
   return (
     <div className="overview-shell">
-      <PageHeader
-        title="Overview"
-        description="Profile controls, achievements, and project reference pages grouped into one stable route."
-      />
+      <PageHeader title="Overview" description="Profile, achievements, and readme." />
       <OverviewTabs />
       {children}
     </div>

@@ -1,7 +1,9 @@
 import fs from "fs";
 import path from "path";
 import ExcelJS from "exceljs";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
+import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { normalizeNoteValue, parseUnlockedValue } from "@/lib/import-normalize";
 import { convertXlsToXlsx } from "@/lib/convert-xls";
@@ -606,5 +608,7 @@ export async function importWorkbook(buffer: Uint8Array, filename: string, userI
       completedAt: new Date()
     }
   });
+  revalidateTag(ROLL_CATALOG_CACHE_TAG, { expire: 0 });
+  revalidateTag(GUEST_PROGRESS_SUMMARY_TAG, { expire: 0 });
   return { ok: true, datasetVersionId: datasetVersion.id, baseline: baselineCounts } as const;
 }
