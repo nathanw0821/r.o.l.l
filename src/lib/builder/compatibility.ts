@@ -2,13 +2,36 @@ import { armorSetKeyFromBasePieceId, type ArmorSetStats } from "@/lib/builder/ar
 import type { BaseGearPiece } from "@/lib/builder/base-gear";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 
+/** Normalize catalog subCategory for comparison (matches site-style labels). */
+function normalizeWeaponSubLabel(raw: string | null | undefined): string {
+  return (raw ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
+/**
+ * Align with site filters: ballistic + energy guns share the ranged-style legendary pool;
+ * melee stays separate. Unknown / null subCategory matches all weapon bases.
+ */
 function weaponSubMatches(mod: BuilderModDTO, piece: BaseGearPiece): boolean {
   if (piece.kind !== "weapon") return true;
   const sub = piece.weaponSub;
-  if (!mod.subCategory) return true;
+  const modSub = normalizeWeaponSubLabel(mod.subCategory);
+  if (!modSub) return true;
   if (!sub) return true;
-  if (mod.subCategory === "Energy") return sub === "energy" || sub === "ranged";
-  return mod.subCategory.toLowerCase() === sub;
+
+  const pieceIsRangedStyle = sub === "ranged" || sub === "energy";
+  if (modSub === "ranged" || modSub === "guns" || modSub === "gun" || modSub === "ballistic" || modSub === "heavy") {
+    return pieceIsRangedStyle;
+  }
+  if (modSub === "melee") {
+    return sub === "melee";
+  }
+  if (modSub === "energy") {
+    return sub === "energy" || sub === "ranged";
+  }
+  return modSub === sub;
 }
 
 function equipmentAllowsMod(mod: BuilderModDTO, piece: BaseGearPiece): boolean {

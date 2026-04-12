@@ -1,32 +1,37 @@
-import type { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { BUILDER_MODS_CACHE_TAG } from "@/lib/cache-tags";
+import { BUILDER_MODS_CACHE_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
+import { getActiveDatasetVersion, effectTierCatalogSelect } from "@/lib/data";
+import {
+  mergeLegendaryModsWithEffectTiers,
+  modCatalogSelect,
+  type BuilderLegendaryCatalogRow
+} from "@/lib/builder/merge-legendary-effect-catalog";
 
-const modCatalogSelect = {
-  id: true,
-  slug: true,
-  name: true,
-  starRank: true,
-  category: true,
-  subCategory: true,
-  description: true,
-  effectMath: true,
-  craftingCost: true,
-  allowedOnPowerArmor: true,
-  allowedOnArmor: true,
-  allowedOnWeapon: true,
-  infestationOnly: true,
-  fifthStarEligible: true,
-  ghoulSpecialCap: true
-} satisfies Prisma.LegendaryModSelect;
+export type BuilderModCatalogRow = BuilderLegendaryCatalogRow;
 
 async function loadBuilderModCatalogUncached() {
   try {
-    return await prisma.legendaryMod.findMany({
-      select: modCatalogSelect,
-      orderBy: [{ starRank: "asc" }, { name: "asc" }]
+    const [dataset, legendary] = await Promise.all([
+      getActiveDatasetVersion(),
+      prisma.legendaryMod.findMany({
+        select: modCatalogSelect,
+        orderBy: [{ starRank: "asc" }, { name: "asc" }]
+      })
+    ]);
+
+    if (!dataset?.id) {
+      return legendary;
+    }
+
+    const effectTiers = await prisma.effectTier.findMany({
+      where: { datasetVersionId: dataset.id },
+      select: effectTierCatalogSelect
     });
+
+    const merged = mergeLegendaryModsWithEffectTiers(legendary, effectTiers);
+    merged.sort((a, b) => a.starRank - b.starRank || a.name.localeCompare(b.name));
+    return merged;
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
       console.error("[loadBuilderModCatalogUncached]", error);
@@ -35,13 +40,11 @@ async function loadBuilderModCatalogUncached() {
   }
 }
 
-export type BuilderModCatalogRow = Prisma.LegendaryModGetPayload<{ select: typeof modCatalogSelect }>;
-
-/** Keeps `/api/builder/mods` off Neon except on cold cache (same idea as `roll-catalog`). */
+/** Keeps `/api/builder/mods` off Neon except on cold cache; merges live effect tiers like site category filters. */
 export function getCachedBuilderModCatalog() {
-  const loader = unstable_cache(loadBuilderModCatalogUncached, ["builder-mod-catalog", "v3-extended-legendaries"], {
+  const loader = unstable_cache(loadBuilderModCatalogUncached, ["builder-mod-catalog", "v4-effect-tier-merge"], {
     revalidate: 3600,
-    tags: [BUILDER_MODS_CACHE_TAG]
+    tags: [BUILDER_MODS_CACHE_TAG, ROLL_CATALOG_CACHE_TAG]
   });
   return loader();
 }
