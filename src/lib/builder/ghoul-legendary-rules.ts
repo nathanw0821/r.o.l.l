@@ -1,14 +1,25 @@
 /**
  * Sandbox rules for Ghoul builds in the loadout builder.
- * FO76: Ghouls do not use hunger/thirst the same way — some legendaries have no real benefit.
+ *
+ * Playable ghouls replace hunger/thirst with the Feral meter, ignore hunger/thirst-based buffs, and
+ * interact differently with radiation (immunity to rad damage; healing / Glow instead). See:
+ * https://fallout.fandom.com/wiki/Fallout_76_playable_ghoul
  */
 
-/** Hidden from the star picker when Ghoul is on (no meaningful benefit in-game for this sandbox). */
-export const GHOUL_BLOCKED_LEGENDARY_SLUGS = new Set(["overeaters"]);
+/**
+ * Hidden from the star picker when Ghoul is on — no meaningful benefit vs human hunger/thirst math
+ * (Overeater’s / Gourmand’s), or bench rows that only model hunger/thirst decay.
+ */
+export const GHOUL_BLOCKED_LEGENDARY_SLUGS = new Set([
+  "overeaters",
+  "gourmands",
+  "nutrition",
+  "hydration"
+]);
 
 /**
- * Still selectable, but sorted last and labeled — low health / low-health SPECIAL lines are awkward
- * on radiation-heavy Ghoul play even if the game still allows the mod.
+ * Still selectable, but sorted last and labeled — low-health / Unyielding lines are a poor match for
+ * rad-healing Ghoul play even though the game may still allow the gear.
  */
 export const GHOUL_DISCOURAGED_LEGENDARY_SLUGS = new Set(["bloodied", "unyielding"]);
 

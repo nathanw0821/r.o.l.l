@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import PageHeader from "@/components/page-header";
-import OverviewSources from "@/components/overview-sources";
 import OverviewTabs from "@/components/overview-tabs";
 
 export default function OverviewLayout({
@@ -10,9 +9,8 @@ export default function OverviewLayout({
 }) {
   return (
     <div className="overview-shell">
-      <PageHeader title="Overview" description="Profile, achievements, and readme." />
+      <PageHeader title="Overview" description="Account profile, achievements, and in-app readme." />
       <OverviewTabs />
-      <OverviewSources />
       {children}
     </div>
   );

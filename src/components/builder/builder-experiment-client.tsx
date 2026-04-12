@@ -51,7 +51,6 @@ import {
   getPowerArmorSlotBaseStats,
   isKnownPowerArmorHelmetPieceId
 } from "@/lib/builder/power-armor-stats";
-import { trackerUnlockSortOrder } from "@/lib/builder/legendary-tracker-unlock";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
@@ -64,6 +63,10 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import BuilderTotalsStatKey from "@/components/builder/builder-totals-stat-key";
+import {
+  importNukesDragonsFo76CharacterUrl,
+  type NdImportResult
+} from "@/lib/builder/nukes-dragons-import";
 import {
   findUnderarmorOption,
   UNDERARMOR_LININGS,
@@ -323,6 +326,9 @@ export default function BuilderExperimentClient({
   );
   const [learnedToggleError, setLearnedToggleError] = React.useState<string | null>(null);
   const [pendingLearnedPieceId, setPendingLearnedPieceId] = React.useState<string | null>(null);
+  const [ndUrlInput, setNdUrlInput] = React.useState("");
+  const [ndImport, setNdImport] = React.useState<(NdImportResult & { appliedAt: number }) | null>(null);
+  const [ndImportError, setNdImportError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
@@ -458,6 +464,13 @@ export default function BuilderExperimentClient({
     return armorCraftingEffectLayers([row ?? { materialModId: "none", miscModId: "none" }]);
   }, [piece, payload.armorPieceCrafting]);
 
+  const ndPerkLayer = React.useMemo(() => {
+    if (!ndImport?.layer) return null;
+    const keys = Object.keys(ndImport.layer).filter((k) => ndImport!.layer[k] !== 0);
+    if (keys.length === 0) return null;
+    return ndImport.layer;
+  }, [ndImport]);
+
   const totals = React.useMemo(
     () =>
       aggregateEffectMath(equippedModsOrdered, {
@@ -467,7 +480,8 @@ export default function BuilderExperimentClient({
           ...armorCraftingLayers,
           ...powerArmorTorsoCraftingLayers,
           ...powerArmorHelmetCraftingLayers,
-          ...powerArmorHelmetOnlyCraftingLayers
+          ...powerArmorHelmetOnlyCraftingLayers,
+          ...(ndPerkLayer ? [ndPerkLayer] : [])
         ],
         baseArmorStats
       }),
@@ -479,7 +493,8 @@ export default function BuilderExperimentClient({
       powerArmorTorsoCraftingLayers,
       powerArmorHelmetCraftingLayers,
       powerArmorHelmetOnlyCraftingLayers,
-      baseArmorStats
+      baseArmorStats,
+      ndPerkLayer
     ]
   );
 
@@ -488,23 +503,29 @@ export default function BuilderExperimentClient({
     [equippedModsOrdered, payload.ghoul]
   );
 
-  /** Legendary-only sandbox deltas from toggling Ghoul math (caps + stripped mods), for the help panel. */
+  /** How Ghoul mode changes sandbox totals vs human (legendary slice + global rules). @see https://fallout.fandom.com/wiki/Fallout_76_playable_ghoul */
   const ghoulLegendarySandboxNotes = React.useMemo(() => {
-    if (!payload.ghoul || equippedModsOrdered.length === 0) return null;
-    const human = aggregateEffectMath(equippedModsOrdered, { ghoul: false, extraLayers: [] });
-    const ghoul = aggregateEffectMath(equippedModsOrdered, { ghoul: true, extraLayers: [] });
-    const lines: string[] = [];
-    if (human.specialBonus !== ghoul.specialBonus) {
-      lines.push(
-        `SPECIAL bonus roll-up from legendaries alone: ${human.specialBonus} (uncapped) → ${ghoul.specialBonus} with Ghoul caps on flagged catalog rows.`
-      );
+    if (!payload.ghoul) return null;
+    const lines: string[] = [
+      "RR: still summed from gear and layers here — resist can change how radiation interacts with your character even though ghouls do not take rads like humans (full rad/Glow sim is out of scope for this sandbox).",
+      "CHA: Live totals apply −10 effective Charisma vs human for playable Ghoul (perk-card equip limits are unchanged in-game).",
+      "Star picker: Overeater’s, Gourmand’s, Nutrition, and Hydration bench rows are hidden; Bloodied / Unyielding stay available with an off-meta note."
+    ];
+    if (equippedModsOrdered.length > 0) {
+      const human = aggregateEffectMath(equippedModsOrdered, { ghoul: false, extraLayers: [] });
+      const ghoul = aggregateEffectMath(equippedModsOrdered, { ghoul: true, extraLayers: [] });
+      if (human.specialBonus !== ghoul.specialBonus) {
+        lines.push(
+          `SPECIAL bonus roll-up (legendaries only): ${human.specialBonus} → ${ghoul.specialBonus} after Ghoul caps on flagged catalog rows.`
+        );
+      }
+      if (human.dr !== ghoul.dr || human.er !== ghoul.er || human.cha !== ghoul.cha) {
+        lines.push(
+          `Legendary-only row — DR ${human.dr}→${ghoul.dr}, ER ${human.er}→${ghoul.er}, CHA ${human.cha}→${ghoul.cha} (CHA includes −10 only when Ghoul is on).`
+        );
+      }
     }
-    if (human.dr !== ghoul.dr || human.er !== ghoul.er) {
-      lines.push(
-        `Legendary DR/ER slice: DR ${human.dr}→${ghoul.dr}, ER ${human.er}→${ghoul.er} (hunger/thirst–based rows are dropped for Ghoul).`
-      );
-    }
-    return lines.length > 0 ? lines : null;
+    return lines;
   }, [payload.ghoul, equippedModsOrdered]);
 
   const shopping = React.useMemo(() => buildShoppingList(equippedModsOrdered), [equippedModsOrdered]);
@@ -551,10 +572,6 @@ export default function BuilderExperimentClient({
         const discB = isGhoulDiscouragedLegendarySlug(b.slug) ? 1 : 0;
         if (discA !== discB) return discA - discB;
       }
-      const d =
-        trackerUnlockSortOrder(a.trackerUnlock ?? "unknown") -
-        trackerUnlockSortOrder(b.trackerUnlock ?? "unknown");
-      if (d !== 0) return d;
       return a.name.localeCompare(b.name);
     });
   }, [mods, piece, activePick, deferredSlotQuery, payload.ghoul]);
@@ -818,17 +835,17 @@ export default function BuilderExperimentClient({
                 <span>
                   <span className="font-medium text-foreground/85">Ghoul build</span>
                   <span className="block text-[11px] text-foreground/60">
-                    Totals use Ghoul rules: catalog rows with a Ghoul cap clamp SPECIAL-style sandbox numbers (e.g.
-                    Unyielding&apos;s roll-up), hunger/thirst legendaries such as Overeater&apos;s are ignored in math
-                    and hidden from the star picker, and a few low-health / low-HP SPECIAL lines are flagged as off-meta
-                    but still allowed.
+                    Modeled after playable Ghoul (Ghoul Within): Feral replaces hunger/thirst, so hunger/thirst
+                    legendaries and bench rows are dropped from math; RR on gear still stacks into totals; CHA includes a
+                    −10 effective penalty; Unyielding-style caps still apply; Bloodied / Unyielding stay pickable with a
+                    warning.
                   </span>
                 </span>
               </label>
               {ghoulLegendarySandboxNotes ? (
                 <ul className="list-disc space-y-1 pl-5 text-[11px] text-foreground/65">
-                  {ghoulLegendarySandboxNotes.map((line) => (
-                    <li key={line}>{line}</li>
+                  {ghoulLegendarySandboxNotes.map((line, i) => (
+                    <li key={i}>{line}</li>
                   ))}
                 </ul>
               ) : null}
@@ -1254,8 +1271,8 @@ export default function BuilderExperimentClient({
                     : "Search your catalog; rows use the same unlock colors as All Effects when this mod maps to a tracker tier. Mods with no modeled resists or SPECIAL still work here — details appear under each row."}
                   {payload.ghoul ? (
                     <span className="mt-1 block text-[11px] text-[color:color-mix(in_srgb,var(--color-warning)_80%,var(--foreground))]">
-                      Ghoul build: hunger/thirst legendaries are omitted here; Bloodied / Unyielding stay pickable with
-                      an off-meta note.
+                      Ghoul build: hunger/thirst rows follow playable Ghoul rules; Bloodied / Unyielding stay pickable
+                      with an off-meta note.
                     </span>
                   ) : null}
                 </DialogDescription>
@@ -1329,6 +1346,77 @@ export default function BuilderExperimentClient({
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-5.5rem)] lg:self-start lg:overflow-y-auto">
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+            <div className="text-sm font-semibold">Nukes &amp; Dragons import</div>
+            <p className="mt-1 text-xs text-foreground/60">
+              Paste a share URL from the{" "}
+              <a
+                className="text-accent underline"
+                href="https://nukesdragons.com/fallout-76/character"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Fallout 76 character planner
+              </a>
+              . R.O.L.L. merges a <span className="font-medium text-foreground/75">partial</span> perk table into Live
+              totals (carry, resists, a few damage/AP/HP hints). Expand the table in code for full coverage.
+            </p>
+            <Input
+              className="mt-2 font-mono text-[11px] leading-snug"
+              placeholder="https://nukesdragons.com/fallout-76/character?p=…&s=…&v=2"
+              value={ndUrlInput}
+              onChange={(e) => {
+                setNdUrlInput(e.target.value);
+                setNdImportError(null);
+              }}
+            />
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  setNdImportError(null);
+                  const r = importNukesDragonsFo76CharacterUrl(ndUrlInput);
+                  if ("error" in r) {
+                    setNdImportError(r.error);
+                    setNdImport(null);
+                    return;
+                  }
+                  setNdImport({ ...r, appliedAt: Date.now() });
+                }}
+              >
+                Apply to Live totals
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setNdImport(null);
+                  setNdImportError(null);
+                }}
+              >
+                Clear import
+              </Button>
+            </div>
+            {ndImportError ? (
+              <p className="mt-2 text-xs text-[color:var(--color-warning)]">{ndImportError}</p>
+            ) : null}
+            {ndImport ? (
+              <div className="mt-2 space-y-1.5 text-[11px] leading-snug text-foreground/65">
+                {ndImport.warnings.map((w) => (
+                  <p key={w}>{w}</p>
+                ))}
+                {ndImport.unknownCodes.length > 0 ? (
+                  <p>
+                    <span className="font-medium text-foreground/75">Codes not in R.O.L.L. table yet:</span>{" "}
+                    {ndImport.unknownCodes.join(", ")}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             {showSplitTotalsPanel ? (
               <>
                 <div className="text-sm font-semibold">Live totals · {formatBaseOptionLabel(piece)}</div>
@@ -1340,7 +1428,9 @@ export default function BuilderExperimentClient({
                       : "Power armor star picks stack separately from underarmor; resists still include shell/lining/style."}
                 </p>
                 <p className="mt-1 text-xs text-foreground/50">
-                  These numbers are base math only — they do not include any perk card bonuses.
+                  {ndPerkLayer
+                    ? "Star-only row is legendaries on this base. “All layers” also includes underarmor, crafting rows, and any Nukes & Dragons perk import you applied above."
+                    : "These rows are catalog math only unless you apply a Nukes & Dragons import — that overlay is merged into “All layers” only."}
                 </p>
                 <BuilderTotalsStatKey className="mt-2" />
                 <div className="mt-3 text-xs font-semibold text-foreground/65">From legendary stars (this base)</div>
@@ -1380,7 +1470,9 @@ export default function BuilderExperimentClient({
                   </p>
                 )}
                 <p className="mt-1 text-xs text-foreground/50">
-                  These numbers are base math only — they do not include any perk card bonuses.
+                  {ndPerkLayer
+                    ? "Totals include your legendary picks, underarmor, crafting rows, and the Nukes & Dragons perk import (approximate sandbox math)."
+                    : "These numbers are catalog math only unless you apply a Nukes & Dragons import for approximate perk bonuses."}
                 </p>
                 <BuilderTotalsStatKey className="mt-2" />
                 <BuilderTotalsGrid totals={totals} />
