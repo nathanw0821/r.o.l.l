@@ -31,7 +31,7 @@ function resolveSelectionSource(params: {
   return params.progress === params.baseline ? "imported" : "edited";
 }
 
-const effectTierCatalogSelect = {
+export const effectTierCatalogSelect = {
   id: true,
   description: true,
   extraComponent: true,

@@ -78,7 +78,7 @@ export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterSt
   });
 }
 
-function normalizeCategory(value: string) {
+export function normalizeCategory(value: string) {
   return value
     .toLowerCase()
     .replace(/[:/]/g, " ")
