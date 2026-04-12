@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { sharedBuildTagForSlug } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { badRequest, ok, validationError } from "@/lib/api/responses";
+import { sanitizePowerArmorPiecesEquipped } from "@/lib/builder/power-armor-stats";
 import type { BuilderPayload } from "@/lib/builder/types";
 import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
 
@@ -35,6 +36,7 @@ const payloadSchema = z
     underarmor: underarmorSchema,
     powerArmorHelmetId: z.string().nullable().optional(),
     powerArmorHelmetCrafting: armorCraftingRowSchema.optional(),
+    powerArmorPiecesEquipped: z.array(z.boolean()).length(6).optional(),
     mutationIds: z.array(z.string()).max(40).optional(),
     ignoreMutationPenalties: z.boolean().optional()
   })
@@ -42,6 +44,7 @@ const payloadSchema = z
     ...p,
     powerArmorHelmetId: p.powerArmorHelmetId ?? null,
     powerArmorHelmetCrafting: p.powerArmorHelmetCrafting ?? { materialModId: "none", miscModId: "none" },
+    powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(p.powerArmorPiecesEquipped),
     mutationIds: sanitizeSandboxMutationIds(p.mutationIds ?? []),
     ignoreMutationPenalties: p.ignoreMutationPenalties ?? false
   }));

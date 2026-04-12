@@ -6,6 +6,22 @@ This document describes what **R.O.L.L. actually implements** today versus what 
 
 ---
 
+## One Share URL, several parallel payloads
+
+N&D packs **different UI surfaces** into separate query keys. They are **not** the same as the two-letter keys inside `p=`:
+
+| Query | Planner UI (roughly) | R.O.L.L. today |
+|-------|----------------------|----------------|
+| `p=` | Normal perk cards (SPECIAL columns × slots × rank) | Parsed; partial `ND_PERK_TABLE` → **unknownCodes** = slot keys we have no math for yet |
+| `s=` | Allocated SPECIAL | Parsed hex → scaling for mapped perks |
+| `lp=` | **Legendary perks** row (e.g. `x94`… = card + rank) | **Not** parsed; importer warns if present |
+| `ef=` | **Mutations**, Ghoul / Glow / team **switchboard** toggles, etc. | **Not** parsed; use builder **Character state** for sandbox mutations |
+| `cd=` | Extra packed planner / character state | **Not** parsed; importer warns if present |
+
+So a long list like `sd`, `su`, `sp`, … under “not in table” refers only to **`p=` regular perk slots**, not to legendary cards or mutation cards (those ride in **`lp=`** / **`ef=`**, not as entries in `unknownCodes`).
+
+---
+
 ## `p=` — standard perk string (implemented)
 
 **Not** a generic `[TwoLetterPerkId][Rank]` stream. N&D encodes one letter per **SPECIAL tree** (`s|p|e|c|i|a|l`), then one **slot id** character (`[a-z0-9]`), then **rank digits** (`1`–`999` in the parser; sandbox math clamps card effects to ranks `1`–`3`).

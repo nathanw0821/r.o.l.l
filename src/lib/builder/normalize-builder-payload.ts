@@ -1,7 +1,10 @@
 import { basePieceIdForArmorSet } from "@/lib/builder/armor-sets";
 import { defaultArmorPieceCrafting, sanitizeArmorPieceCraftingJetpack } from "@/lib/builder/armor-piece-mods";
-import { getBaseGearPiece, isPowerArmorHelmetBasePiece } from "@/lib/builder/base-gear";
-import { isKnownPowerArmorHelmetPieceId } from "@/lib/builder/power-armor-stats";
+import { canonicalBasePieceId, getBaseGearPiece, isPowerArmorHelmetBasePiece } from "@/lib/builder/base-gear";
+import {
+  isKnownPowerArmorHelmetPieceId,
+  sanitizePowerArmorPiecesEquipped
+} from "@/lib/builder/power-armor-stats";
 import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
 import type {
   BuilderArmorPieceCrafting,
@@ -137,6 +140,7 @@ function buildPayloadV4(fields: {
   armorPieceCrafting: BuilderArmorPieceCrafting[];
   powerArmorHelmetId: string | null;
   powerArmorHelmetCrafting: BuilderPowerArmorHelmetCrafting;
+  powerArmorPiecesEquipped: BuilderPayload["powerArmorPiecesEquipped"];
   ghoul: boolean;
   underarmor: BuilderUnderarmor;
   mutationIds: string[];
@@ -152,6 +156,7 @@ function buildPayloadV4(fields: {
     armorPieceCrafting: fields.armorPieceCrafting,
     powerArmorHelmetId: sanitizePowerArmorHelmetId(fields.basePieceId, fields.powerArmorHelmetId),
     powerArmorHelmetCrafting: fields.powerArmorHelmetCrafting,
+    powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(fields.powerArmorPiecesEquipped),
     ghoul: fields.ghoul,
     underarmor: fields.underarmor,
     mutationIds: fields.mutationIds,
@@ -167,6 +172,8 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
 
   if (version === 4) {
     if (typeof v.basePieceId !== "string") return null;
+    const basePieceId = canonicalBasePieceId(v.basePieceId);
+    if (!basePieceId) return null;
     if (!isEquipmentKind(v.equipmentKind)) return null;
     const weaponSub =
       v.weaponSub === null || v.weaponSub === undefined
@@ -177,7 +184,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
     if (!Array.isArray(v.legendaryModIds)) return null;
     const grid = padArmorGrid(v.armorLegendaryModIds);
     const crafting = sanitizeArmorPieceCraftingJetpack(
-      v.basePieceId,
+      basePieceId,
       readArmorPieceCrafting(v.armorPieceCrafting)
     );
     const helmetRaw =
@@ -187,7 +194,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
           ? v.powerArmorHelmetId
           : null;
     return buildPayloadV4({
-      basePieceId: v.basePieceId,
+      basePieceId,
       equipmentKind: v.equipmentKind,
       weaponSub,
       legendaryModIds: padLegendaryRow(v.legendaryModIds),
@@ -195,6 +202,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       armorPieceCrafting: crafting,
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
+      powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(v.powerArmorPiecesEquipped),
       ghoul: Boolean(v.ghoul),
       underarmor: readUnderarmor(v),
       mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
@@ -204,6 +212,8 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
 
   if (version === 2 || version === 3) {
     if (typeof v.basePieceId !== "string") return null;
+    const basePieceId = canonicalBasePieceId(v.basePieceId);
+    if (!basePieceId) return null;
     if (!isEquipmentKind(v.equipmentKind)) return null;
     const weaponSub =
       v.weaponSub === null || v.weaponSub === undefined
@@ -214,7 +224,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
     if (!Array.isArray(v.legendaryModIds)) return null;
     const grid = padArmorGrid(v.armorLegendaryModIds);
     const crafting = sanitizeArmorPieceCraftingJetpack(
-      v.basePieceId,
+      basePieceId,
       readArmorPieceCrafting(v.armorPieceCrafting)
     );
     const remapped = remapArmorSlotsFromLegacyLegsFirst(grid, crafting);
@@ -225,7 +235,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
           ? v.powerArmorHelmetId
           : null;
     return buildPayloadV4({
-      basePieceId: v.basePieceId,
+      basePieceId,
       equipmentKind: v.equipmentKind,
       weaponSub,
       legendaryModIds: padLegendaryRow(v.legendaryModIds),
@@ -233,6 +243,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       armorPieceCrafting: remapped.armorPieceCrafting,
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
+      powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(v.powerArmorPiecesEquipped),
       ghoul: Boolean(v.ghoul),
       underarmor: readUnderarmor(v),
       mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
@@ -268,6 +279,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
         armorPieceCrafting: sanitizeArmorPieceCraftingJetpack(basePieceId, remapped.armorPieceCrafting),
         powerArmorHelmetId: null,
         powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
+        powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(v.powerArmorPiecesEquipped),
         ghoul: Boolean(v.ghoul),
         underarmor: readUnderarmor(v),
         mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
@@ -275,15 +287,18 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       });
     }
 
+    const coercedBase = canonicalBasePieceId(basePieceId) ?? basePieceId;
+    if (!getBaseGearPiece(coercedBase)) return null;
     return buildPayloadV4({
-      basePieceId,
+      basePieceId: coercedBase,
       equipmentKind: v.equipmentKind,
       weaponSub,
       legendaryModIds,
       armorLegendaryModIds,
-      armorPieceCrafting: sanitizeArmorPieceCraftingJetpack(basePieceId, defaultArmorPieceCrafting()),
+      armorPieceCrafting: sanitizeArmorPieceCraftingJetpack(coercedBase, defaultArmorPieceCrafting()),
       powerArmorHelmetId: null,
       powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
+      powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(v.powerArmorPiecesEquipped),
       ghoul: Boolean(v.ghoul),
       underarmor: readUnderarmor(v),
       mutationIds: sanitizeSandboxMutationIds(v.mutationIds),

@@ -1,4 +1,5 @@
 import { ARMOR_SET_ROWS, basePieceIdForArmorSet } from "@/lib/builder/armor-sets";
+import { defaultHelmetIdForTorsoPieceId } from "@/lib/builder/power-armor-stats";
 import type { BuilderEquipmentKind, BuilderWeaponSub } from "@/lib/builder/types";
 
 export type BaseGearPiece = {
@@ -30,19 +31,19 @@ const ARMOR_SET_PIECES: BaseGearPiece[] = ARMOR_SET_ROWS.map((row) => ({
  * IDs are stable builder keys, not form IDs.
  */
 export const POWER_ARMOR_TORSO_PIECES: BaseGearPiece[] = [
-  { id: "raider-pa-torso", label: "Raider power armor torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "t45-torso", label: "T-45 torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "t51-torso", label: "T-51b torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "t60-torso", label: "T-60 torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "t65-torso", label: "T-65 torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "excavator-torso", label: "Excavator Torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "x01-torso", label: "X-01 Torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "ultracite-torso", label: "Ultracite torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "strangler-heart-chest", label: "Strangler Heart Chest", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "hellcat-torso", label: "Hellcat torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "union-pa-torso", label: "Union Power Armor Torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "hellfire-prototype-torso", label: "Hellfire prototype torso", kind: "powerArmor", powerArmorSlot: "torso" },
-  { id: "vulcan-torso", label: "Vulcan torso (Gleaming Depths raid)", kind: "powerArmor", powerArmorSlot: "torso" }
+  { id: "raider-pa-torso", label: "Raider power armor (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t45-torso", label: "T-45 (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t51-torso", label: "T-51b (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t60-torso", label: "T-60 (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "t65-torso", label: "T-65 (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "excavator-torso", label: "Excavator (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "x01-torso", label: "X-01 (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "ultracite-torso", label: "Ultracite (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "strangler-heart-chest", label: "Strangler Heart (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "hellcat-torso", label: "Hellcat (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "union-pa-torso", label: "Union Power Armor (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "hellfire-prototype-torso", label: "Hellfire prototype (full set)", kind: "powerArmor", powerArmorSlot: "torso" },
+  { id: "vulcan-torso", label: "Vulcan (full set) · Gleaming Depths", kind: "powerArmor", powerArmorSlot: "torso" }
 ];
 
 export const POWER_ARMOR_HELMET_PIECES: BaseGearPiece[] = [
@@ -61,7 +62,8 @@ export const POWER_ARMOR_HELMET_PIECES: BaseGearPiece[] = [
   { id: "vulcan-helm", label: "Vulcan helmet (Gleaming Depths raid)", kind: "powerArmor", powerArmorSlot: "helmet" }
 ];
 
-export const POWER_ARMOR_BASE_PIECES: BaseGearPiece[] = [...POWER_ARMOR_TORSO_PIECES, ...POWER_ARMOR_HELMET_PIECES];
+/** @deprecated Use `POWER_ARMOR_TORSO_PIECES` — helmets are paired, not separate base rows. */
+export const POWER_ARMOR_BASE_PIECES: BaseGearPiece[] = [...POWER_ARMOR_TORSO_PIECES];
 
 export function isPowerArmorTorsoBasePiece(piece: BaseGearPiece): boolean {
   return piece.kind === "powerArmor" && piece.powerArmorSlot !== "helmet";
@@ -75,7 +77,7 @@ export function isPowerArmorHelmetBasePiece(piece: BaseGearPiece): boolean {
 export const BASE_GEAR_PIECES: BaseGearPiece[] = [
   ...ARMOR_SET_PIECES,
 
-  ...POWER_ARMOR_BASE_PIECES,
+  ...POWER_ARMOR_TORSO_PIECES,
 
   { id: "fixer", label: "The Fixer", kind: "weapon", weaponSub: "ranged" },
   { id: "handmade", label: "Handmade", kind: "weapon", weaponSub: "ranged" },
@@ -150,7 +152,7 @@ export const BASE_GEAR_GROUP_ORDER: BuilderEquipmentKind[] = ["armor", "powerArm
 
 export const BASE_GEAR_GROUP_LABEL: Record<BuilderEquipmentKind, string> = {
   armor: "Armor (full set)",
-  powerArmor: "Power armor",
+  powerArmor: "Power armor (full set)",
   weapon: "Weapons",
   underarmor: "Underarmor"
 };
@@ -158,8 +160,12 @@ export const BASE_GEAR_GROUP_LABEL: Record<BuilderEquipmentKind, string> = {
 /** Bases that can be marked “learned” in the tracker (excludes weapons). */
 export const TRACKABLE_BASE_GEAR_KINDS: BuilderEquipmentKind[] = ["armor", "powerArmor", "underarmor"];
 
+/** Torso + helmet ids: server may persist learned on either row for a frame. */
 export const TRACKABLE_BASE_PIECE_IDS: ReadonlySet<string> = new Set(
-  BASE_GEAR_PIECES.filter((p) => TRACKABLE_BASE_GEAR_KINDS.includes(p.kind)).map((p) => p.id)
+  [
+    ...BASE_GEAR_PIECES.filter((p) => TRACKABLE_BASE_GEAR_KINDS.includes(p.kind)).map((p) => p.id),
+    ...POWER_ARMOR_HELMET_PIECES.map((p) => p.id)
+  ]
 );
 
 export function listTrackableBaseGearByGroup(): { kind: BuilderEquipmentKind; label: string; pieces: BaseGearPiece[] }[] {
@@ -169,13 +175,8 @@ export function listTrackableBaseGearByGroup(): { kind: BuilderEquipmentKind; la
     if (kind === "powerArmor") {
       out.push({
         kind: "powerArmor",
-        label: "Power armor (torso)",
+        label: BASE_GEAR_GROUP_LABEL.powerArmor,
         pieces: POWER_ARMOR_TORSO_PIECES
-      });
-      out.push({
-        kind: "powerArmor",
-        label: "Power armor (helmet)",
-        pieces: POWER_ARMOR_HELMET_PIECES
       });
       continue;
     }
@@ -194,4 +195,44 @@ export function isTrackableBasePieceId(id: string): boolean {
 
 export function getBaseGearPiece(id: string): BaseGearPiece | undefined {
   return BASE_GEAR_PIECES.find((piece) => piece.id === id);
+}
+
+/** Legacy shares used `*-helm` as `basePieceId`; map to the paired torso row. */
+export function torsoPieceIdForHelmetPieceId(helmetId: string): string | null {
+  const i = POWER_ARMOR_HELMET_PIECES.findIndex((h) => h.id === helmetId);
+  if (i < 0) return null;
+  return POWER_ARMOR_TORSO_PIECES[i]?.id ?? null;
+}
+
+export function canonicalBasePieceId(id: string): string | null {
+  if (getBaseGearPiece(id)) return id;
+  const torso = torsoPieceIdForHelmetPieceId(id);
+  return torso && getBaseGearPiece(torso) ? torso : null;
+}
+
+export function pairedPowerArmorHelmetId(torsoId: string): string | null {
+  return defaultHelmetIdForTorsoPieceId(torsoId);
+}
+
+export function isPowerArmorTorsoRowLearned(learnedIds: ReadonlySet<string>, torsoId: string): boolean {
+  if (learnedIds.has(torsoId)) return true;
+  const helm = pairedPowerArmorHelmetId(torsoId);
+  return Boolean(helm && learnedIds.has(helm));
+}
+
+export function trackableBaseRowCount(): number {
+  return listTrackableBaseGearByGroup().reduce((acc, g) => acc + g.pieces.length, 0);
+}
+
+export function countLearnedTrackableBases(learnedIds: ReadonlySet<string>): number {
+  let n = 0;
+  for (const p of BASE_GEAR_PIECES) {
+    if (!TRACKABLE_BASE_GEAR_KINDS.includes(p.kind)) continue;
+    if (p.kind === "powerArmor" && isPowerArmorTorsoBasePiece(p)) {
+      if (isPowerArmorTorsoRowLearned(learnedIds, p.id)) n += 1;
+    } else if (p.kind !== "powerArmor") {
+      if (learnedIds.has(p.id)) n += 1;
+    }
+  }
+  return n;
 }
