@@ -46,6 +46,13 @@ export type BuilderPayload = {
   powerArmorHelmetCrafting: BuilderPowerArmorHelmetCrafting;
   ghoul: boolean;
   underarmor: BuilderUnderarmor;
+  /**
+   * Sandbox-only mutation picks (`src/lib/builder/sandbox-mutations.ts`).
+   * Not imported from Nukes & Dragons — orthogonal to N&D URL import.
+   */
+  mutationIds: string[];
+  /** When true, only mutation “benefit” numbers apply (serum-style: no downsides). */
+  ignoreMutationPenalties: boolean;
 };
 
 /** Matched against active tracker rows (`Effect` name + tier star); `unknown` if not found in dataset. */

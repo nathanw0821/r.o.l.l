@@ -9,6 +9,7 @@
  *
  * Effects are approximations for the R.O.L.L. sandbox (not a full FO76 sim).
  * @see https://nukesdragons.com/fallout-76/character
+ * @see docs/nukes-dragons-url.md — URL param notes and golden tests (`npm run test`).
  */
 
 const ND_HOSTS = new Set(["nukesdragons.com", "www.nukesdragons.com"]);
@@ -122,32 +123,68 @@ function parseSpecialFromParam(s: string | null): NdSpecialSpread | null {
   };
 }
 
-/** Tokenize N&D `p` param: `[spe][slotId][rank]` */
+/**
+ * Tokenize N&D `p` param: repeated `[SPECIAL][slotId][rankDigits]`.
+ * - `slotId` is one `[a-z0-9]` character per column slot.
+ * - `rankDigits` are planner-internal (often 1–3 card ranks, but URLs can carry larger markers such as `10`);
+ *   we accept 1–999 and clamp when applying sandbox math.
+ * - When the slot id is a digit and the next character is another SPECIAL letter (or end), N&D sometimes omits
+ *   an explicit `1` rank (e.g. `l3ee1` → Luck slot `3` at rank 1, then `ee1`).
+ * - Uppercase `X` + digits (e.g. `B1`, `H3`) are legendary-perk URL segments — stripped before parse.
+ * - Trailing chunks that are not SPECIAL-led (e.g. mutation encodings) are skipped without failing the import.
+ */
 export function parseNukesDragonsPerkParam(p: string): NdParsedPerk[] {
+  const raw = p.trim();
+  /** Legendary perk markers in share URLs: uppercase letter + digits. */
+  const stripped = raw.replace(/[A-Z]\d*/g, "");
+  const str = stripped.toLowerCase();
   const out: NdParsedPerk[] = [];
   let i = 0;
-  const str = p.trim().toLowerCase();
+  const RANK_MIN = 1;
+  const RANK_MAX = 999;
+  const RANK_DIGIT_CAP = 4;
+
   while (i < str.length) {
-    const tree = str[i++]!;
+    const tree = str[i]!;
     if (!SPECIAL_FIRST.has(tree)) {
-      throw new Error(`Invalid perk string near "${str.slice(Math.max(0, i - 4), i + 4)}" (expected S.P.E.C.I.A.L. letter).`);
+      i += 1;
+      continue;
     }
+    i += 1;
     const slot = str[i++];
     if (!slot || !/[a-z0-9]/.test(slot)) {
       throw new Error(`Invalid perk string: missing slot id after "${tree}".`);
     }
-    let rank = 0;
-    let digits = 0;
-    while (i < str.length && /\d/.test(str[i]!)) {
-      rank = rank * 10 + (str.charCodeAt(i) - 48);
-      i += 1;
-      digits += 1;
+    const rankStart = i;
+    let bestLen = 0;
+    let bestRank = 0;
+    for (let len = 1; len <= RANK_DIGIT_CAP && rankStart + len <= str.length; len++) {
+      const slice = str.slice(rankStart, rankStart + len);
+      if (!/^\d+$/.test(slice)) break;
+      const r = Number.parseInt(slice, 10);
+      if (r < RANK_MIN || r > RANK_MAX) break;
+      const j = rankStart + len;
+      const next = j < str.length ? str[j]! : "";
+      const atEnd = j === str.length;
+      const nextIsTree = SPECIAL_FIRST.has(next);
+      const nextIsNonDigit = next !== "" && !/\d/.test(next);
+      if (atEnd || nextIsTree || nextIsNonDigit) {
+        bestLen = len;
+        bestRank = r;
+      }
     }
-    if (digits === 0 || rank < 1 || rank > 6) {
+    if (bestLen === 0) {
+      const next = rankStart < str.length ? str[rankStart]! : "";
+      const omitRankOne =
+        /[0-9]/.test(slot) && (next === "" || SPECIAL_FIRST.has(next));
+      if (omitRankOne) {
+        out.push({ key: `${tree}${slot}`, tree, slot, rank: 1 });
+        continue;
+      }
       throw new Error(`Invalid rank for "${tree}${slot}" in perk string.`);
     }
-    const key = `${tree}${slot}`;
-    out.push({ key, tree, slot, rank });
+    i = rankStart + bestLen;
+    out.push({ key: `${tree}${slot}`, tree, slot, rank: bestRank });
   }
   return out;
 }
@@ -195,6 +232,14 @@ export function importNukesDragonsFo76CharacterUrl(raw: string): NdImportResult 
 
   const special = parseSpecialFromParam(u.searchParams.get("s"));
   const warnings: string[] = [];
+  if (/[A-Z]/.test(p)) {
+    warnings.push(
+      "Removed uppercase+digit blocks from p= (N&D legendary perk URL markers) before parsing; legendary perks are not merged into Live totals yet."
+    );
+  }
+  warnings.push(
+    "Mutations are not read from this URL — Class Freak / serum-style suppression is not modeled; only the perk string is partially rolled up."
+  );
   if (!special) {
     warnings.push("No valid s= SPECIAL block (seven hex digits) — scaled perks use placeholder S.P.E.C.I.A.L. (all 10).");
   }
