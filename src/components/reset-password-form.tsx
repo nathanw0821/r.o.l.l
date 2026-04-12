@@ -55,7 +55,9 @@ export default function ResetPasswordForm({ token }: { token: string }) {
   if (done) {
     return (
       <div className="space-y-3 rounded-[var(--radius)] border border-border bg-panel px-4 py-3">
-        <p className="text-sm text-foreground/70">Password reset complete. You can sign in now.</p>
+        <p className="text-sm text-foreground/70">
+          Password saved. Sign in with your account email and this password (or your username if you use one).
+        </p>
         <Link href="/auth/sign-in" className="text-sm text-accent hover:underline">
           Go to sign in
         </Link>
@@ -66,7 +68,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <label className="flex flex-col gap-2 text-sm">
-        <span>New Password</span>
+        <span>Password</span>
         <input
           type="password"
           value={password}
@@ -88,7 +90,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
         />
       </label>
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Resetting..." : "Reset Password"}
+        {pending ? "Saving..." : "Save password"}
       </Button>
       {error ? <p className="text-xs text-[color:var(--color-warning)]">{error}</p> : null}
     </form>

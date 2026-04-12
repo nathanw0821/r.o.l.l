@@ -13,6 +13,14 @@ import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements"
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
+// Vercel Preview / branch deploys: `VERCEL_URL` is set per deployment; NextAuth needs a stable URL.
+if (!process.env.NEXTAUTH_URL?.trim() && process.env.VERCEL_URL) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+}
+if (!process.env.APP_URL?.trim() && process.env.VERCEL_URL) {
+  process.env.APP_URL = `https://${process.env.VERCEL_URL}`;
+}
+
 const credentialsSchema = z.object({
   identifier: z.string().min(1),
   password: z.string().min(1)

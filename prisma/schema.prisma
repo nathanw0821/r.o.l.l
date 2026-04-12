@@ -128,12 +128,60 @@ model User {
   importAudits            ImportAudit[]
   sessions                Session[]
   progress                UserProgress[]
+  learnedBasePieces       UserLearnedBasePiece[]
   importBaseline          UserImportBaseline[]
   settings                UserSettings?
   storeUnlocks            UserStoreUnlock[]
   passwordResetTokens     PasswordResetToken[]
   feedbackSubmitted       Feedback[]            @relation("FeedbackSubmittedBy")
   feedbackReviewed        Feedback[]            @relation("FeedbackReviewedBy")
+  sharedBuilds            SharedBuild[]
+}
+
+/// Curated legendary mod catalog for the loadout builder (separate from import `Effect` rows).
+model LegendaryMod {
+  id                   String   @id @default(cuid())
+  slug                 String   @unique
+  name                 String
+  /// 1–5 matching bench slots (5 = post–2026 fifth-star style entries in this seed).
+  starRank             Int
+  /// Weapon | Armor | Universal
+  category             String
+  /// Melee | Ranged | Energy when category is Weapon; null otherwise.
+  subCategory          String?
+  description          String   @default("")
+  effectMath           Json     @default("{}")
+  craftingCost         Json     @default("{}")
+  allowedOnPowerArmor  Boolean  @default(true)
+  allowedOnArmor       Boolean  @default(true)
+  allowedOnWeapon      Boolean  @default(true)
+  /// Legacy flag; builder filters ignore infestation-only rows (column retained for old rows).
+  infestationOnly    Boolean  @default(false)
+  fifthStarEligible    Boolean  @default(false)
+  /// When set, SPECIAL-style bonuses from effectMath are capped for Ghoul builds (e.g. Unyielding +2).
+  ghoulSpecialCap      Int?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([starRank, category])
+}
+
+/// Saved sandbox builds for share links (`/l/[slug]`).
+model SharedBuild {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  seoTitle    String?
+  description String?
+  payload     Json
+  published   Boolean  @default(true)
+  userId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([createdAt])
 }
 
 model Account {
@@ -192,6 +240,17 @@ model UserProgress {
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, effectTierId])
+}
+
+/// Builder catalog bases the user has learned in-game (armor sets, power armor, underarmor shells).
+model UserLearnedBasePiece {
+  userId      String
+  basePieceId String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, basePieceId])
+  @@index([userId])
 }
 
 model UserImportBaseline {

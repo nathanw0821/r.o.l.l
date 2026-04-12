@@ -18,7 +18,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:seed:builder": "tsx src/scripts/seed-builder-only.ts"
   },
   "prisma": {
     "seed": "tsx src/seed.ts"

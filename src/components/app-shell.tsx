@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
-import { ClipboardList, LayoutDashboard, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkles, Star } from "lucide-react";
+import { Boxes, ClipboardList, LayoutDashboard, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import SupportLink from "@/components/support-link";
@@ -22,11 +22,14 @@ type AppNavLink = {
   requiresAuth?: boolean;
   activePaths?: string[];
   activePrefixes?: string[];
+  /** When false, avoids prefetching the route (keeps tracker sessions free of extra RSC work). */
+  prefetch?: boolean;
 };
 
 const links: AppNavLink[] = [
   { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
   { href: "/overview", label: "Overview", icon: LayoutDashboard, activePrefixes: ["/overview"] },
+  { href: "/build", label: "Builder", icon: Boxes, activePrefixes: ["/build"], prefetch: false },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
@@ -307,6 +310,7 @@ export default function AppShell({
                 <Link
                   key={link.href}
                   href={link.href}
+                  prefetch={link.prefetch === false ? false : undefined}
                   aria-label={
                     tier ? `${link.ariaLabel ?? link.label} ${tier.percent}% complete` : link.ariaLabel ?? link.label
                   }
