@@ -22,10 +22,17 @@ const modCatalogSelect = {
 } satisfies Prisma.LegendaryModSelect;
 
 async function loadBuilderModCatalogUncached() {
-  return prisma.legendaryMod.findMany({
-    select: modCatalogSelect,
-    orderBy: [{ starRank: "asc" }, { name: "asc" }]
-  });
+  try {
+    return await prisma.legendaryMod.findMany({
+      select: modCatalogSelect,
+      orderBy: [{ starRank: "asc" }, { name: "asc" }]
+    });
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[loadBuilderModCatalogUncached]", error);
+    }
+    return [];
+  }
 }
 
 export type BuilderModCatalogRow = Prisma.LegendaryModGetPayload<{ select: typeof modCatalogSelect }>;

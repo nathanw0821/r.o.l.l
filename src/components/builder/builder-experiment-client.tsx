@@ -214,7 +214,11 @@ export default function BuilderExperimentClient({
         setMods(body.data.mods as BuilderModDTO[]);
         setLoadError(null);
       })
-      .catch(() => setLoadError("Builder catalog failed to load. Run `npm run db:seed` after migrate."));
+      .catch(() =>
+        setLoadError(
+          "Builder catalog failed to load. On the server, run database migrations (`prisma migrate deploy`) and seed builder mods (`npm run db:seed:builder` or full `npm run db:seed`) if tables are empty."
+        )
+      );
   }, []);
 
   React.useEffect(() => {
