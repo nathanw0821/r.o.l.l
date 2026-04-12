@@ -220,6 +220,11 @@ export function aggregateEffectMath(
     addLayerFromRecord(layer, acc, opts.ghoul, null);
   }
 
+  /** Playable ghouls: permanent effective CHA penalty vs human (approximation; perk-card slots unchanged in-game). */
+  if (opts.ghoul) {
+    acc.cha -= 10;
+  }
+
   return acc;
 }
 

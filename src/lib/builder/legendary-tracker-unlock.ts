@@ -47,9 +47,3 @@ export function computeLegendaryTrackerUnlockByModId(
   }
   return out;
 }
-
-export function trackerUnlockSortOrder(u: TrackerUnlock | undefined): number {
-  if (u === "unlocked") return 0;
-  if (u === "unknown") return 1;
-  return 2;
-}

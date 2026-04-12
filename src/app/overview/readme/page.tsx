@@ -1,19 +1,57 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CREDIT_PARAGRAPHS, PRIMARY_REFERENCE_SITES } from "@/content/sources-and-credits";
 
 export default async function OverviewReadmePage() {
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>R.O.L.L Readme</CardTitle>
+          <CardTitle>R.O.L.L. readme</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4 text-sm text-foreground/80">
-            <div>
-              Record Of Legendary Loadouts is a Fallout 76 companion tracker for recording legendary unlocks, checking progress, and syncing account data without touching the live game process.
-            </div>
-            <div>
-              It is manual-first, patch-safe, and designed for reliable public hosting.
+            <p>
+              Record Of Legendary Loadouts is a Fallout 76 companion for tracking legendary unlocks, browsing effects,
+              and syncing progress. It is manual-first and built for reliable public hosting.
+            </p>
+
+            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground/60">Sources &amp; credit</h2>
+              <div className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/78">
+                {CREDIT_PARAGRAPHS.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+              <p className="mt-3 text-xs text-foreground/60">
+                Reference links are for attribution and further reading. R.O.L.L. is not affiliated with these sites.
+              </p>
+              <ul className="mt-3 list-none space-y-3 border-t border-border/70 pt-3 text-sm text-foreground/80">
+                {PRIMARY_REFERENCE_SITES.map((s) => (
+                  <li key={s.href}>
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent"
+                    >
+                      {s.title}
+                    </a>
+                    <span className="text-foreground/65"> — {s.description}</span>
+                    {s.secondary ? (
+                      <div className="mt-1.5 text-xs text-foreground/60">
+                        <a
+                          href={s.secondary.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent"
+                        >
+                          {s.secondary.label}
+                        </a>
+                      </div>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -28,7 +66,7 @@ export default async function OverviewReadmePage() {
               </div>
 
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Summary Mode</div>
+                <div className="text-xs uppercase text-foreground/60">Summary mode</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
                   <li>Summary can be locked to prevent accidental toggles.</li>
                   <li>When locked, selecting an effect opens its location in All Effects.</li>
@@ -37,9 +75,9 @@ export default async function OverviewReadmePage() {
               </div>
 
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Overview Tabs</div>
+                <div className="text-xs uppercase text-foreground/60">Overview tabs</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Profile, Achievements, and Readme live under the Overview section.</li>
+                  <li>Profile, Achievements, and Readme live under Overview.</li>
                   <li>Sign in with username/email or linked providers like Google.</li>
                   <li>Link or unlink providers from your account panel.</li>
                   <li>Password reset is supported by email.</li>
@@ -47,7 +85,7 @@ export default async function OverviewReadmePage() {
               </div>
 
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Sync and Backup</div>
+                <div className="text-xs uppercase text-foreground/60">Sync and backup</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
                   <li>Guest progress saves locally in this browser.</li>
                   <li>Signed-in progress syncs to your account.</li>
@@ -57,19 +95,13 @@ export default async function OverviewReadmePage() {
               </div>
 
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Command Hub and Layout</div>
+                <div className="text-xs uppercase text-foreground/60">Command Hub and layout</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
                   <li>Search and filter by status, source, origins, and categories.</li>
                   <li>Theme, accent, density, scanlines, and color assistance controls.</li>
                   <li>Sidebar can be collapsed; mobile top bar auto-hides on downward scroll.</li>
                   <li>Compact is the default density for faster scanning.</li>
                 </ul>
-                <div className="mt-4 rounded-[var(--radius)] border border-border bg-background/40 p-3">
-                  <div className="text-xs uppercase text-foreground/60">Status</div>
-                  <div className="mt-2 text-sm text-foreground/75">
-                    Nothing auto-detects or auto-saves. You review and save only the changes you choose.
-                  </div>
-                </div>
               </div>
 
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
@@ -82,8 +114,8 @@ export default async function OverviewReadmePage() {
                 </ul>
               </div>
 
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Admin and Hosting</div>
+              <div className="rounded-[var(--radius)] border border-border bg-panel p-4 md:col-span-2">
+                <div className="text-xs uppercase text-foreground/60">Admin and hosting</div>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
                   <li>Admin Import and source monitoring maintain the public dataset.</li>
                   <li>Saved sync sources support manual checks and controlled update runs.</li>
