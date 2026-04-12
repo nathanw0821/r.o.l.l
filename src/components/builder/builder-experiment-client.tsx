@@ -650,8 +650,12 @@ export default function BuilderExperimentClient({
   }, [ndImport]);
 
   const mutationLayer = React.useMemo(
-    () => sandboxMutationMathLayer(payload.mutationIds, payload.ignoreMutationPenalties),
-    [payload.mutationIds, payload.ignoreMutationPenalties]
+    () =>
+      sandboxMutationMathLayer(payload.mutationIds, payload.ignoreMutationPenalties, {
+        strangeInNumbersMutatedTeammates:
+          ndImport?.hasStrangeInNumbers && payload.mutationIds.length > 0 ? 4 : 0
+      }),
+    [payload.mutationIds, payload.ignoreMutationPenalties, ndImport?.hasStrangeInNumbers]
   );
 
   /**
@@ -1587,7 +1591,10 @@ export default function BuilderExperimentClient({
               <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Mutations</div>
               <p className="text-[11px] leading-snug text-foreground/60">
                 R.O.L.L. sandbox list — not auto-imported from share URLs. Approximate stat splits; serum toggle drops
-                modeled downsides only (no Class Freak / team scaling).
+                modeled downsides only (no Class Freak). When your applied N&amp;D URL includes{" "}
+                <span className="font-medium text-foreground/75">Strange in Numbers</span> (<code className="text-[10px]">p=</code>{" "}
+                token <code className="text-[10px]">ce</code>), mutation <span className="font-medium">benefits</span>{" "}
+                are scaled as if four mutated teammates are on your team (+100%).
               </p>
               <div className="max-h-44 space-y-1 overflow-y-auto pr-1 sm:columns-2 sm:gap-x-3">
                 {SANDBOX_MUTATIONS.map((m) => {
