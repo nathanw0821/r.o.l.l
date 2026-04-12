@@ -39,20 +39,22 @@ export default function BuilderTotalsStatKey({
     >
       <div className="font-semibold text-foreground/80">Stat key</div>
       <p className="mt-1 text-foreground/58">
-        Live totals rows read <span className="font-medium text-foreground/72">equipped</span>, then optional{" "}
-        <span className="font-medium text-foreground/72">(+delta)</span> from underarmor / mutations / N&amp;D, then{" "}
-        <span className="font-medium text-foreground/72">= total</span> (single number when there is no overlay).
+        Live totals rows read <span className="font-medium text-foreground/72">piece + crafting (+ PA frame)</span>,
+        then <span className="font-medium text-foreground/72">(+delta)</span> for legendary stars plus underarmor /
+        mutations / N&amp;D, then <span className="font-medium text-foreground/72">= total</span>. One number means no
+        (+…) contribution for that stat.
       </p>
       {mode === "weapon" ? (
         <p className="mt-1 text-foreground/58">
-          Weapon view: damage and utility first; DR/ER/… usually come from underarmor, mutations, or N&amp;D import — not
-          the gun&apos;s star row.
+          Weapon view: damage and utility first; the left column is usually 0 — star picks sit in{" "}
+          <span className="font-medium text-foreground/70">(+…)</span> with underarmor, mutations, and N&amp;D.
         </p>
       ) : null}
       {mode === "powerArmor" ? (
         <p className="mt-1 text-foreground/58">
-          Power armor view: chassis + piece flat resists first, then PA-only % DR/RR, then shared layers (underarmor,
-          mutations, perks).
+          Power armor view: chassis + piece flat resists and crafting first (no stars), then PA-only % DR/RR, then other
+          bonuses — star picks show inside <span className="font-medium text-foreground/70">(+…)</span> with underarmor,
+          mutations, and N&amp;D.
         </p>
       ) : null}
       <ul className="mt-1.5 grid grid-cols-1 gap-x-4 gap-y-0.5 sm:grid-cols-2">
