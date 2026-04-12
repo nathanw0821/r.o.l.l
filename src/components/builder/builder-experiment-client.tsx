@@ -648,9 +648,13 @@ export default function BuilderExperimentClient({
     [payload.mutationIds, payload.ignoreMutationPenalties]
   );
 
-  const baseEquipTotals = React.useMemo(
+  /**
+   * Same layers as full totals minus legendary stars and Character overlays (underarmor / mutations / N&D).
+   * Live totals rows use `totals - intrinsicBenchTotals` so the (+…) block updates when star picks change.
+   */
+  const intrinsicBenchTotals = React.useMemo(
     () =>
-      aggregateEffectMath(equippedModsOrdered, {
+      aggregateEffectMath([], {
         ghoul: payload.ghoul,
         extraLayers: [
           ...armorCraftingLayers,
@@ -662,7 +666,6 @@ export default function BuilderExperimentClient({
         baseArmorStats
       }),
     [
-      equippedModsOrdered,
       payload.ghoul,
       armorCraftingLayers,
       powerArmorTorsoCraftingLayers,
@@ -1704,21 +1707,23 @@ export default function BuilderExperimentClient({
             <p className="mt-1 text-xs text-foreground/60">
               {fullArmorSet ? (
                 <>
-                  <span className="font-medium text-foreground/75">{baseStarsContextLabel}</span> full set: Backwoods
-                  resists, every slot&apos;s material and misc craft, and all twenty legendary stars count as equipped
-                  gear; underarmor, mutations, and N&amp;D import add the parenthetical overlay.
+                  <span className="font-medium text-foreground/75">{baseStarsContextLabel}</span> full set: the first
+                  number is Backwoods table resists plus each slot&apos;s material and misc craft (no star rolls). The{" "}
+                  <span className="font-medium text-foreground/75">(+…)</span> block adds all twenty legendaries,
+                  underarmor, mutations, and N&amp;D import.
                 </>
               ) : piece.kind === "weapon" ? (
                 <>
-                  Equipped gear is this weapon&apos;s four star rows (catalog effectMath). Underarmor, mutations, and
-                  N&amp;D perks usually supply the overlay — resists often move only in the{" "}
-                  <span className="font-medium text-foreground/75">(+…)</span> part.
+                  The first column is usually 0 for weapons (no modeled shell). Star picks, underarmor, mutations, and
+                  N&amp;D modeled perks all land in the <span className="font-medium text-foreground/75">(+…)</span>{" "}
+                  portion before the total.
                 </>
               ) : isPowerArmorTorsoBasePiece(piece) ? (
                 <>
-                  Equipped gear includes chassis + attached piece flat resists (per toggles), frame STR/carry, optional
-                  helmet base + crafting, torso crafting and stars, and PA % DR/RR; underarmor, mutations, and N&amp;D
-                  stack in the overlay.
+                  The first number is chassis + attached piece flat resists (per toggles), frame STR/carry, optional
+                  helmet base + crafting, and torso crafting — no legendary stars. Stars, underarmor, mutations, and
+                  N&amp;D add the <span className="font-medium text-foreground/75">(+…)</span> before the total; PA % DR
+                  / RR rows stay single values.
                 </>
               ) : piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
                 <>
@@ -1736,22 +1741,25 @@ export default function BuilderExperimentClient({
                   outer gear.
                 </>
               ) : (
-                <>Totals from your R.O.L.L. legendary catalog, on-piece crafting when it applies, and underarmor.</>
+                <>
+                  First number is on-piece crafting and any modeled shell stats without star rolls; legendaries,
+                  underarmor, mutations, and N&amp;D roll into <span className="font-medium text-foreground/75">(+…)</span>.
+                </>
               )}
             </p>
             <p className="mt-1 text-xs text-foreground/50">
-              Each row shows <span className="font-medium text-foreground/70">equipped</span> first, then{" "}
-              <span className="font-medium text-foreground/70">(+delta)</span> from underarmor / mutations / N&amp;D
-              when that layer adds something, then <span className="font-medium text-foreground/70">= total</span>. If
-              there is no overlay, only the total is shown.
+              Each row is <span className="font-medium text-foreground/70">piece + crafting (+ frame on PA)</span>, then{" "}
+              <span className="font-medium text-foreground/70">(+delta)</span> for legendary stars plus underarmor /
+              mutations / N&amp;D, then <span className="font-medium text-foreground/70">= total</span>. A single number
+              means there is nothing in that (+…) bucket for that stat.
               {payload.ghoul
                 ? " Ghoul caps some legendaries and applies −10 effective CHA in this sandbox."
                 : null}{" "}
-              {ndPerkLayer ? "Imported N&D perk codes are folded into the overlay where we model them." : null}
+              {ndPerkLayer ? "Imported N&D perk codes are folded into the (+…) portion where we model them." : null}
             </p>
             <BuilderTotalsStatKey className="mt-2" mode={statKeyMode} />
             <BuilderTotalsGrid
-              baseTotals={baseEquipTotals}
+              baseTotals={intrinsicBenchTotals}
               totals={totals}
               powerArmorSandbox={powerArmorSandboxMeta}
               presentation={totalsPresentation}
