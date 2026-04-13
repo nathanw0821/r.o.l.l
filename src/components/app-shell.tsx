@@ -6,12 +6,23 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
-import { Boxes, ClipboardList, LayoutDashboard, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkles, Star } from "lucide-react";
+import {
+  ArrowLeft,
+  Boxes,
+  ClipboardList,
+  LayoutDashboard,
+  ListChecks,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Sparkles,
+  Star
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
 import SupportLink from "@/components/support-link";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { formatTierStars } from "@/lib/tier-format";
+import { usePersistedAppNavigation } from "@/components/use-persisted-app-navigation";
 
 type AppNavLink = {
   href: string;
@@ -86,6 +97,7 @@ export default function AppShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
+  const { canGoBack, goBack } = usePersistedAppNavigation();
   const { data: session } = useSession();
   const isSignedIn = Boolean(session?.user);
   const authKey = session?.user?.id ?? "guest";
@@ -300,6 +312,17 @@ export default function AppShell({
             </button>
           </div>
           <nav className="app-nav">
+            <button
+              type="button"
+              className={cn("app-nav__link app-nav__button", !canGoBack && "pointer-events-none opacity-40")}
+              disabled={!canGoBack}
+              aria-disabled={!canGoBack}
+              aria-label={canGoBack ? "Go back to previous page" : "No previous page in history"}
+              onClick={goBack}
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+              <span>Back</span>
+            </button>
             {visibleLinks.map((link) => {
               const active = isNavLinkActive(pathname, link);
               const Icon = link.icon;
