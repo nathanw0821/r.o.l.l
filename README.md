@@ -18,3 +18,8 @@ Full reference links and credit copy live in the app under **Overview → Readme
 ## Builder: Ghoul mode
 
 When **Ghoul** is enabled on the experimental loadout builder, Live totals follow a simplified reading of **playable ghoul** rules (Ghoul Within): hunger/thirst–linked bench rows are adjusted, **RR from gear still stacks** (resist can matter even though rad *damage* works differently for ghouls), and an effective **CHA −10** is applied. See the [Fallout Wiki — playable ghoul](https://fallout.fandom.com/wiki/Fallout_76_playable_ghoul) article for in-game details; the sandbox is approximate, not a full character sim.
+
+## Workflow Transition
+
+As of April 2026, the development workflow for R.O.L.L. has transitioned from using Cursor to **Antigravity** for AI-assisted coding and agentic operations. This shift ensures continued integration with Vercel, Neon, and Git while leveraging Antigravity's advanced capabilities.
+
