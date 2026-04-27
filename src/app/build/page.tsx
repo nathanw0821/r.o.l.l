@@ -13,6 +13,7 @@ const BuilderExperimentClient = dynamic(
 );
 
 import { redirect } from "next/navigation";
+import { isAdminUser } from "@/lib/app-config";
 
 export const metadata: Metadata = {
   title: "B.U.I.L.D | R.O.L.L",
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 export default async function BuildPage() {
   const session = await getServerSession(authOptions);
   
-  if (session?.user?.role !== "ADMIN") {
+  if (!isAdminUser(session?.user)) {
     redirect("/");
   }
 
