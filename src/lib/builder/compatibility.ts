@@ -175,6 +175,16 @@ export type BuilderEffectTotals = {
   carryWeight: number;
 };
 
+export const LEGENDARY_PERK_CARDS: Record<string, { label: string; specialBonus: Partial<Record<BuilderSpecialKey, number>> }> = {
+  "legendary-strength": { label: "Legendary Strength (+5)", specialBonus: { str: 5 } },
+  "legendary-perception": { label: "Legendary Perception (+5)", specialBonus: { per: 5 } },
+  "legendary-endurance": { label: "Legendary Endurance (+5)", specialBonus: { end: 5 } },
+  "legendary-charisma": { label: "Legendary Charisma (+5)", specialBonus: { cha: 5 } },
+  "legendary-intelligence": { label: "Legendary Intelligence (+5)", specialBonus: { int: 5 } },
+  "legendary-agility": { label: "Legendary Agility (+5)", specialBonus: { agi: 5 } },
+  "legendary-luck": { label: "Legendary Luck (+5)", specialBonus: { lck: 5 } },
+};
+
 /** Roll up resist / HP hints from `effectMath` blobs (MVP, not full game sim). */
 export function aggregateEffectMath(
   mods: BuilderModDTO[],
@@ -183,6 +193,8 @@ export function aggregateEffectMath(
     extraLayers: Record<string, number>[];
     /** Full-set armor table (Nuka Knights Backwoods article). */
     baseArmorStats?: ArmorSetStats | null;
+    baseSpecial?: Record<string, number>;
+    legendaryPerkIds?: string[];
   }
 ): BuilderEffectTotals {
   const acc: BuilderEffectTotals = {
@@ -213,6 +225,31 @@ export function aggregateEffectMath(
     acc.cr += opts.baseArmorStats.cr;
     acc.pr += opts.baseArmorStats.pr;
     acc.rr += opts.baseArmorStats.rr;
+  }
+
+  if (opts.baseSpecial) {
+    acc.str += opts.baseSpecial.str || 0;
+    acc.per += opts.baseSpecial.per || 0;
+    acc.end += opts.baseSpecial.end || 0;
+    acc.cha += opts.baseSpecial.cha || 0;
+    acc.int += opts.baseSpecial.int || 0;
+    acc.agi += opts.baseSpecial.agi || 0;
+    acc.lck += opts.baseSpecial.lck || 0;
+  }
+
+  if (opts.legendaryPerkIds) {
+    for (const id of opts.legendaryPerkIds) {
+      const perk = LEGENDARY_PERK_CARDS[id];
+      if (perk) {
+        acc.str += perk.specialBonus.str || 0;
+        acc.per += perk.specialBonus.per || 0;
+        acc.end += perk.specialBonus.end || 0;
+        acc.cha += perk.specialBonus.cha || 0;
+        acc.int += perk.specialBonus.int || 0;
+        acc.agi += perk.specialBonus.agi || 0;
+        acc.lck += perk.specialBonus.lck || 0;
+      }
+    }
   }
 
   for (const mod of mods) {

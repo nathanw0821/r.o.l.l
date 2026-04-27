@@ -45,10 +45,11 @@ export const effectTierCatalogSelect = {
 
 export type EffectTierCatalogRow = Prisma.EffectTierGetPayload<{ select: typeof effectTierCatalogSelect }>;
 
-export type MergedEffectTierRow = Omit<EffectTierCatalogRow, "notes"> & {
+export type MergedEffectTierRow = Omit<EffectTierCatalogRow, \"notes\"> & {
   notes: string | null;
   origins: string[];
   unlocked: boolean;
+  unlockedBy: string[];
   selectionSource: SelectionSource;
 };
 
@@ -74,17 +75,36 @@ async function fetchUserProgressMap(characterId: string, datasetVersionId: strin
   return new Map(rows.map((row) => [row.effectTierId, row.unlocked]));
 }
 
+async function fetchGlobalProgressMap(userId: string, datasetVersionId: string) {
+  const rows = await prisma.userProgress.findMany({
+    where: { userId, effectTier: { datasetVersionId }, unlocked: true },
+    select: { effectTierId: true, character: { select: { name: true } } }
+  });
+  
+  const map = new Map<string, string[]>();
+  for (const row of rows) {
+    if (!row.character) continue;
+    const list = map.get(row.effectTierId) || [];
+    list.push(row.character.name);
+    map.set(row.effectTierId, list);
+  }
+  return map;
+}
+
 function mergeCatalogWithUserState(
   catalog: EffectTierCatalogRow[],
   characterId: string | undefined,
   baselineMap: Map<string, boolean>,
-  progressMap: Map<string, boolean>
+  progressMap: Map<string, boolean>,
+  globalProgressMap: Map<string, string[]>
 ): MergedEffectTierRow[] {
   return catalog.map((item) => {
     const baseline = characterId ? baselineMap.get(item.id) : undefined;
     const hasProgress = characterId ? progressMap.has(item.id) : false;
     const progressUnlocked = hasProgress ? progressMap.get(item.id)! : undefined;
     const unlocked = characterId ? (hasProgress ? progressUnlocked! : baseline ?? false) : false;
+    const unlockedBy = globalProgressMap.get(item.id) || [];
+    
     const origins = extractOriginsFromNotes(item.notes);
     const displayNotes = normalizeDisplayNotes(item.notes, origins);
     const displayWithSources =
@@ -94,6 +114,7 @@ function mergeCatalogWithUserState(
       notes: displayWithSources,
       origins,
       unlocked,
+      unlockedBy,
       selectionSource: resolveSelectionSource({
         characterId,
         baseline,
@@ -127,16 +148,41 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
       ? catalog
       : catalog.filter((row) => row.tier?.label === tier.label);
 
-  const progressMap =
+  const [progressMap, globalProgressMap] = await Promise.all([
     characterId && scoped.length > 0
       ? await fetchUserProgressMap(characterId, dataset.id)
-      : new Map<string, boolean>();
+      : Promise.resolve(new Map<string, boolean>()),
+    userId
+      ? await fetchGlobalProgressMap(userId, dataset.id)
+      : Promise.resolve(new Map<string, string[]>())
+  ]);
 
-  return mergeCatalogWithUserState(scoped, characterId, baselineMap, progressMap);
+  return mergeCatalogWithUserState(scoped, characterId, baselineMap, progressMap, globalProgressMap);
 }
 
 /** One merged catalog load per request per `(userId, tierLabel)` — dedupes e.g. `getStillNeed` + `getTierProgressSummary`. */
 const loadMergedEffectTiers = cache(loadMergedEffectTiersUncached);
+
+export async function getGlobalProgressSummary(userId: string) {
+  const dataset = await getActiveDatasetVersion();
+  if (!dataset) return { total: 0, unlocked: 0, percent: 0 };
+
+  const total = await prisma.effectTier.count({
+    where: { datasetVersionId: dataset.id }
+  });
+
+  // Unique effect tiers unlocked by ANY character of the user
+  const unlockedRows = await prisma.userProgress.findMany({
+    where: { userId, effectTier: { datasetVersionId: dataset.id }, unlocked: true },
+    distinct: ['effectTierId'],
+    select: { effectTierId: true }
+  });
+
+  const unlocked = unlockedRows.length;
+  const percent = total === 0 ? 0 : Math.round((unlocked / total) * 100);
+
+  return { total, unlocked, percent };
+}
 
 export async function getActiveDatasetVersion() {
   return prisma.datasetVersion.findFirst({

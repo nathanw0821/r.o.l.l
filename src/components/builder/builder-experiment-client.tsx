@@ -49,7 +49,8 @@ import {
 import { isGhoulDiscouragedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import {
   defaultPowerArmorHelmetCrafting,
-  emptyArmorLegendaryGrid
+  emptyArmorLegendaryGrid,
+  normalizeBuilderPayload
 } from "@/lib/builder/normalize-builder-payload";
 import {
   defaultHelmetIdForTorsoPieceId,
@@ -87,6 +88,8 @@ import {
   UNDERARMOR_SHELLS,
   UNDERARMOR_STYLES
 } from "@/lib/builder/underarmor";
+import { triggerBuilderAchievement } from "@/actions/builder-achievements";
+import { LEGENDARY_PERK_CARDS } from "@/lib/builder/compatibility";
 
 const SLOT_LABELS = ["1st star", "2nd star", "3rd star", "4th star"];
 
@@ -107,7 +110,7 @@ function formatBaseOptionLabel(g: BaseGearPiece) {
 function defaultPayload(): BuilderPayload {
   const first = BASE_GEAR_PIECES.find((p) => p.kind === "armor") ?? BASE_GEAR_PIECES[0]!;
   return {
-    version: 4,
+    version: 5,
     basePieceId: first.id,
     equipmentKind: first.kind,
     weaponSub: first.weaponSub ?? null,
@@ -120,7 +123,9 @@ function defaultPayload(): BuilderPayload {
     ghoul: false,
     underarmor: { shellId: UNDERARMOR_SHELLS[0]!.id, liningId: "none", styleId: "none" },
     mutationIds: [],
-    ignoreMutationPenalties: false
+    ignoreMutationPenalties: false,
+    baseSpecial: { str: 1, per: 1, end: 1, cha: 1, int: 1, agi: 1, lck: 1 },
+    legendaryPerkIds: []
   };
 }
 
@@ -462,12 +467,25 @@ export default function BuilderExperimentClient({
 
   const [mods, setMods] = React.useState<BuilderModDTO[]>([]);
   const [loadError, setLoadError] = React.useState<string | null>(null);
-  const [payload, setPayload] = React.useState<BuilderPayload>(() => defaultPayload());
+  
+  // Persistence state
+  const [isMounted, setIsMounted] = React.useState(false);
+  const [payload, setPayload] = React.useState<BuilderPayload>(defaultPayload());
+  const [undoPayload, setUndoPayload] = React.useState<BuilderPayload | null>(null);
+
+  React.useEffect(() => {
+    if (isMounted) {
+      triggerBuilderAchievement("diagnostic_access");
+    }
+  }, [isMounted]);
+
+  const [savedLoadouts, setSavedLoadouts] = React.useState<{ id: string; name: string; payload: BuilderPayload }[]>([]);
+
   const [activePick, setActivePick] = React.useState<ActivePick>(null);
   const [slotQuery, setSlotQuery] = React.useState("");
   const deferredSlotQuery = React.useDeferredValue(slotQuery);
   const isCompactDensity = useDensityCompact();
-  const [shareTitle, setShareTitle] = React.useState("My R.O.L.L. loadout");
+  const [shareTitle, setShareTitle] = React.useState("My B.U.I.L.D loadout");
   const [shareBusy, setShareBusy] = React.useState(false);
   const [shareResult, setShareResult] = React.useState<string | null>(null);
   const [learnedBasePieceIds, setLearnedBasePieceIds] = React.useState(
@@ -478,6 +496,88 @@ export default function BuilderExperimentClient({
   const [ndUrlInput, setNdUrlInput] = React.useState("");
   const [ndImport, setNdImport] = React.useState<(NdImportResult & { appliedAt: number }) | null>(null);
   const [ndImportError, setNdImportError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("roll-builder-payload");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const norm = normalizeBuilderPayload(parsed) || parsed;
+        if (norm?.basePieceId) setPayload(norm as BuilderPayload);
+      }
+      
+      const savedSlots = localStorage.getItem("roll-builder-saves");
+      if (savedSlots) {
+        setSavedLoadouts(JSON.parse(savedSlots));
+      }
+    } catch {
+      // ignore
+    }
+    setIsMounted(true);
+  }, []);
+
+  const clearAllSelections = React.useCallback(() => {
+    setUndoPayload(payload);
+    setPayload((p) => ({
+      ...p,
+      legendaryModIds: [null, null, null, null],
+      armorLegendaryModIds: emptyArmorLegendaryGrid(),
+      mutationIds: [],
+      legendaryPerkIds: [],
+      baseSpecial: {}
+    }));
+  }, [payload]);
+
+  const undoClear = React.useCallback(() => {
+    if (undoPayload) {
+      setPayload(undoPayload);
+      setUndoPayload(null);
+    }
+  }, [undoPayload]);
+
+  const clearPiece = React.useCallback((pieceIndex: number) => {
+    setPayload((p) => {
+      const grid = p.armorLegendaryModIds.map((row) => [...row]);
+      grid[pieceIndex] = [null, null, null, null];
+      return { ...p, armorLegendaryModIds: grid };
+    });
+  }, []);
+
+  const saveLoadout = React.useCallback((slotIndex: number) => {
+    const name = prompt("Enter a name for this loadout slot:", savedLoadouts[slotIndex]?.name || `Loadout ${slotIndex + 1}`);
+    if (name === null) return;
+    setSavedLoadouts((prev) => {
+      const next = [...prev];
+      next[slotIndex] = { id: String(slotIndex), name: name || `Loadout ${slotIndex + 1}`, payload };
+      
+      const filledCount = next.filter(x => x !== null && x !== undefined).length;
+      triggerBuilderAchievement("build_save");
+      if (filledCount >= 10) triggerBuilderAchievement("build_full");
+      
+      return next;
+    });
+  }, [payload, savedLoadouts]);
+
+  const loadLoadout = React.useCallback((slotIndex: number) => {
+    const saved = savedLoadouts[slotIndex];
+    if (saved) {
+      setPayload(saved.payload);
+      triggerBuilderAchievement("build_stats");
+      triggerBuilderAchievement("build_perks");
+    }
+  }, [savedLoadouts]);
+
+  React.useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("roll-builder-payload", JSON.stringify(payload));
+    }
+  }, [payload, isMounted]);
+
+  React.useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("roll-builder-saves", JSON.stringify(savedLoadouts));
+    }
+  }, [savedLoadouts, isMounted]);
 
   React.useEffect(() => {
     setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
@@ -681,7 +781,8 @@ export default function BuilderExperimentClient({
           ...powerArmorHelmetOnlyCraftingLayers,
           ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : [])
         ],
-        baseArmorStats
+        baseArmorStats,
+        baseSpecial: payload.baseSpecial
       }),
     [
       payload.ghoul,
@@ -690,7 +791,8 @@ export default function BuilderExperimentClient({
       powerArmorHelmetCraftingLayers,
       powerArmorHelmetOnlyCraftingLayers,
       powerArmorFrameIntrinsicLayer,
-      baseArmorStats
+      baseArmorStats,
+      payload.baseSpecial
     ]
   );
 
@@ -708,7 +810,9 @@ export default function BuilderExperimentClient({
           ...(mutationLayer ? [mutationLayer] : []),
           ...(ndPerkLayer ? [ndPerkLayer] : [])
         ],
-        baseArmorStats
+        baseArmorStats,
+        baseSpecial: payload.baseSpecial,
+        legendaryPerkIds: payload.legendaryPerkIds
       }),
     [
       equippedModsOrdered,
@@ -719,9 +823,11 @@ export default function BuilderExperimentClient({
       powerArmorHelmetCraftingLayers,
       powerArmorHelmetOnlyCraftingLayers,
       powerArmorFrameIntrinsicLayer,
-      baseArmorStats,
+      ndPerkLayer,
       mutationLayer,
-      ndPerkLayer
+      baseArmorStats,
+      payload.baseSpecial,
+      payload.legendaryPerkIds
     ]
   );
 
@@ -1025,6 +1131,110 @@ export default function BuilderExperimentClient({
             {learnedToggleError ? (
               <p className="mt-2 text-xs text-[color:var(--color-warning)]">{learnedToggleError}</p>
             ) : null}
+          </div>
+
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+            <div className="text-sm font-semibold">Global Actions</div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button variant="destructive" size="sm" onClick={clearAllSelections}>
+                Clear All Selections
+              </Button>
+              {undoPayload ? (
+                <Button variant="secondary" size="sm" onClick={undoClear}>
+                  Undo Clear All
+                </Button>
+              ) : null}
+            </div>
+
+            <div className="mt-4 border-t border-border/60 pt-3">
+              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50 mb-2">Saved Loadouts (Client-side)</div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                {Array.from({ length: 10 }).map((_, i) => {
+                  const saved = savedLoadouts[i];
+                  return (
+                    <div key={i} className="flex flex-col gap-1">
+                      <Button
+                        variant={saved ? "secondary" : "outline"}
+                        size="xs"
+                        className="text-[10px] h-7 px-1 truncate"
+                        onClick={() => loadLoadout(i)}
+                        disabled={!saved}
+                        title={saved ? `Load ${saved.name}` : "Empty slot"}
+                      >
+                        {saved ? saved.name : `Slot ${i + 1}`}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="text-[9px] h-5 opacity-50 hover:opacity-100"
+                        onClick={() => saveLoadout(i)}
+                      >
+                        {saved ? "Overwrite" : "Save"}
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+            <div className="text-sm font-semibold">Character Stats (Sandbox)</div>
+            <p className="mt-1 text-xs text-foreground/60">
+              Input your base SPECIAL (1-15) and select legendary perks to see their impact on Live totals.
+            </p>
+            
+            <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7">
+              {BUILDER_SPECIAL_KEYS.map((key) => (
+                <div key={key} className="flex flex-col gap-1 text-center">
+                  <label className="text-[10px] font-bold uppercase tracking-tight text-foreground/50">{BUILDER_SPECIAL_LABELS[key]}</label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="15"
+                    className="h-8 px-1 text-center text-xs"
+                    value={payload.baseSpecial[key] || 1}
+                    onChange={(e) => {
+                      const val = Math.max(1, Math.min(15, parseInt(e.target.value) || 1));
+                      setPayload((p) => ({
+                        ...p,
+                        baseSpecial: { ...p.baseSpecial, [key]: val }
+                      }));
+                      triggerBuilderAchievement("build_stats");
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 border-t border-border/60 pt-3">
+              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50 mb-2">Legendary Perk Cards</div>
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                {Object.entries(LEGENDARY_PERK_CARDS).map(([id, perk]) => {
+                  const on = payload.legendaryPerkIds.includes(id);
+                  return (
+                    <label key={id} className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 hover:bg-background/40">
+                      <input
+                        type="checkbox"
+                        checked={on}
+                        onChange={() => {
+                          setPayload((p) => {
+                            const next = on
+                              ? p.legendaryPerkIds.filter((x) => x !== id)
+                              : [...p.legendaryPerkIds, id];
+                            return { ...p, legendaryPerkIds: next };
+                          });
+                          triggerBuilderAchievement("build_perks");
+                        }}
+                        className="h-3.5 w-3.5 accent-accent"
+                      />
+                      <span className="text-[11px] text-foreground/80">{perk.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
             {sessionStatus === "unauthenticated" ? (
               <p className="mt-2 text-xs text-foreground/60">
                 <Link href="/auth/sign-in?callbackUrl=/build" className="text-accent underline">
@@ -1371,11 +1581,21 @@ export default function BuilderExperimentClient({
                     key={slotLabel}
                     className="rounded-[var(--radius)] border border-border bg-background/40 p-3"
                   >
-                    <div className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
-                      {slotLabel}
-                      <span className="mt-0.5 block text-[10px] font-normal normal-case text-foreground/50">
-                        {baseStarsContextLabel} · material &amp; misc for this piece only
-                      </span>
+                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-foreground/70">
+                      <div>
+                        {slotLabel}
+                        <span className="mt-0.5 block text-[10px] font-normal normal-case text-foreground/50">
+                          {baseStarsContextLabel} · material &amp; misc for this piece only
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="h-7 text-[10px] font-normal text-foreground/40 hover:text-destructive"
+                        onClick={() => clearPiece(pieceIndex)}
+                      >
+                        Clear This Piece
+                      </Button>
                     </div>
                     <div className="mt-2 grid gap-2 sm:grid-cols-2">
                       <label className="text-xs text-foreground/60">
