@@ -883,29 +883,63 @@ export default function BuilderExperimentClient({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-foreground/70">
-        <Boxes className="h-4 w-4 text-accent" />
-        <span>
-          Experimental loadout sandbox — armor sets use{" "}
-          <a
-            className="text-accent underline"
-            href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Nuka Knights (Backwoods) resist tables
-          </a>
-          ; optional perk overlay from{" "}
-          <a
-            className="text-accent underline"
-            href="https://nukesdragons.com/fallout-76/character"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Nukes &amp; Dragons
-          </a>{" "}
-          share URLs, plus your R.O.L.L. legendary catalog for effect math.
-        </span>
+      <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+        <h1 className="text-xl font-bold tracking-tight">B.U.I.L.D.</h1>
+        <h2 className="text-sm font-semibold text-foreground/80 mt-1">
+          Battle Utility &amp; Inventory Logistics Diagnostic
+        </h2>
+        <div className="mt-3 flex flex-col gap-2 text-sm text-foreground/70">
+          <div className="flex items-center gap-2">
+            <Boxes className="h-4 w-4 text-accent shrink-0" />
+            <span>
+              Experimental loadout sandbox — armor sets use{" "}
+              <a
+                className="text-accent underline"
+                href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Nuka Knights (Backwoods) resist tables
+              </a>
+              ; optional perk overlay from{" "}
+              <a
+                className="text-accent underline"
+                href="https://nukesdragons.com/fallout-76/character"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Nukes &amp; Dragons
+              </a>{" "}
+              share URLs, plus your R.O.L.L. legendary catalog for effect math.
+            </span>
+          </div>
+          
+          <div className="mt-4 border-t border-border/60 pt-3">
+            <p className="text-xs font-semibold text-foreground/80 uppercase tracking-wide mb-2">
+              Credits &amp; Inspiration
+            </p>
+            <p className="text-xs leading-relaxed">
+              This diagnostic tool draws heavy inspiration from the following rich loadout planners and character builders:
+            </p>
+            <ul className="mt-2 list-disc pl-5 space-y-1 text-xs">
+              <li>
+                <a href="https://www.falloutbuilds.com/fo76/planner/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Character Planner</a>
+              </li>
+              <li>
+                <a href="https://www.falloutbuilds.com/fo76/mutations/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Mutations Database</a>
+              </li>
+              <li>
+                <a href="https://www.falloutbuilds.com/fo76/perk-matrix/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Perk Matrix</a>
+              </li>
+              <li>
+                <a href="https://www.falloutbuilds.com/fo76/perks/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Perk Cards List</a>
+              </li>
+              <li>
+                <a href="https://nukesdragons.com/fallout-76/character" target="_blank" rel="noreferrer" className="text-accent hover:underline">Nukes &amp; Dragons Character Builder</a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       {loadError ? <div className="text-sm text-[color:var(--color-warning)]">{loadError}</div> : null}

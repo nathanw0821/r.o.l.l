@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { ARMOR_SET_SLOT_LABELS, getArmorSetRow } from "@/lib/builder/armor-sets";
 import {
   armorCraftingEffectLayers,
@@ -98,6 +100,12 @@ function baseArmorFromPayload(payload: BuilderPayload) {
 }
 
 export default async function SharedLoadoutPage({ params }: PageProps) {
+  const session = await getServerSession(authOptions);
+  
+  if (session?.user?.role !== "ADMIN") {
+    redirect("/");
+  }
+
   const { slug } = await params;
   const row = await getCachedPublishedSharedBuild(slug);
   const payload = normalizeBuilderPayload(row?.payload);
@@ -191,7 +199,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
       <div>
         <h1 className="text-2xl font-semibold">{row.title}</h1>
         <p className="mt-1 text-sm text-foreground/65">
-          {piece?.label ?? payload.basePieceId} · {payload.ghoul ? "Ghoul" : "Human"} · shared from R.O.L.L.
+          {piece?.label ?? payload.basePieceId} · {payload.ghoul ? "Ghoul" : "Human"} · shared from B.U.I.L.D.
         </p>
         {mutationSummary ? (
           <p className="mt-1 text-xs text-foreground/55">
@@ -396,12 +404,8 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
           </ul>
         </div>
       </div>
-
-      <p className="text-sm text-foreground/60">
-        <Link href="/build" className="text-accent underline" prefetch={false}>
-          Open the builder
-        </Link>{" "}
-        to fork this idea.
+      <p className="text-sm text-foreground/60 mt-2">
+        Shared loadout pages are read-only views of the B.U.I.L.D loadout configurations.
       </p>
     </div>
   );
