@@ -125,12 +125,19 @@ export function CharacterManager({
                     </Button>
                   </div>
                 ) : (
-                  <div 
-                    className="flex-1 cursor-pointer truncate font-medium flex items-center gap-2"
-                    onClick={() => handleSelect(char.id)}
-                  >
-                    {char.name}
-                    {char.id === activeCharacterId && <Badge variant="default" className="text-[10px] px-1.5 py-0">Active</Badge>}
+                  <div className="flex-1 flex items-center justify-between mr-4">
+                    <div className="truncate font-medium flex items-center gap-2">
+                      {char.name}
+                    </div>
+                    <Button
+                      variant={char.id === activeCharacterId ? "default" : "secondary"}
+                      size="sm"
+                      className="h-7 text-xs px-2"
+                      onClick={() => handleSelect(char.id)}
+                      disabled={char.id === activeCharacterId || isPending}
+                    >
+                      {char.id === activeCharacterId ? "Active" : "Select"}
+                    </Button>
                   </div>
                 )}
 

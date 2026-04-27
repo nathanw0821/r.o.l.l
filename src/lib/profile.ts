@@ -11,45 +11,7 @@ export async function getImportedBaselineMap(datasetVersionId: string, character
     select: { effectTierId: true, unlocked: true }
   });
 
-  if (rows.length > 0) {
-    return new Map(rows.map((row) => [row.effectTierId, row.unlocked]));
-  }
-
-  const audit = await prisma.importAudit.findFirst({
-    where: { userId: character.userId, datasetVersionId, status: "success" }
-  });
-  if (!audit) return new Map<string, boolean>();
-
-  const sourceRows = await prisma.sourceEffectRow.findMany({
-    where: {
-      dataset: { datasetVersionId },
-      effectTierId: { not: null }
-    },
-    select: { effectTierId: true, unlockedRaw: true }
-  });
-
-  const legacyMap = new Map<string, boolean>();
-  for (const row of sourceRows) {
-    const effectTierId = row.effectTierId;
-    if (!effectTierId) continue;
-    const parsed = parseUnlockedValue(row.unlockedRaw ?? undefined);
-    if (parsed === null) continue;
-    legacyMap.set(effectTierId, parsed);
-  }
-
-  if (legacyMap.size > 0) {
-    await prisma.userImportBaseline.createMany({
-      data: Array.from(legacyMap.entries()).map(([effectTierId, unlocked]) => ({
-        userId: character.userId,
-        characterId,
-        datasetVersionId,
-        effectTierId,
-        unlocked
-      }))
-    });
-  }
-
-  return legacyMap;
+  return new Map(rows.map((row) => [row.effectTierId, row.unlocked]));
 }
 
 export async function applyImportedProfile(userId: string, options?: { force?: boolean }) {
