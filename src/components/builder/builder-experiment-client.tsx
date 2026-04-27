@@ -226,32 +226,32 @@ function BuilderTotalsGrid({
 }) {
   const resistRows = (
     <>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Damage resist">
         <Shield className="h-3 w-3 text-blue-400/70" />
         <span>DR</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.dr, totals.dr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Energy resist">
         <Zap className="h-3 w-3 text-yellow-400/70" />
         <span>ER</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.er, totals.er)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Fire resist">
         <Flame className="h-3 w-3 text-orange-500/70" />
         <span>FR</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.fr, totals.fr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Cryo resist">
         <Snowflake className="h-3 w-3 text-cyan-300/70" />
         <span>CR</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.cr, totals.cr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Poison resist">
         <Droplets className="h-3 w-3 text-green-400/70" />
         <span>PR</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.pr, totals.pr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Radiation resist">
         <Radiation className="h-3 w-3 text-lime-400/70" />
         <span>RR</span>
       </dt>
@@ -259,8 +259,18 @@ function BuilderTotalsGrid({
     </>
   );
 
+  const SPECIAL_NAMES: Record<string, string> = {
+    str: "Strength",
+    per: "Perception",
+    end: "Endurance",
+    cha: "Charisma",
+    int: "Intelligence",
+    agi: "Agility",
+    lck: "Luck"
+  };
+
   const specialRows = BUILDER_SPECIAL_KEYS.flatMap((k) => [
-    <dt key={`${k}-l`} className="text-foreground/60">
+    <dt key={`${k}-l`} className="text-foreground/60 cursor-help underline underline-offset-2 decoration-dotted decoration-foreground/20" title={SPECIAL_NAMES[k]}>
       {BUILDER_SPECIAL_LABELS[k]}
     </dt>,
     <dd key={`${k}-r`} className="text-right">
@@ -281,28 +291,28 @@ function BuilderTotalsGrid({
   /** Default row order after resists (armor / underarmor / PA helmet). */
   const balancedCoreRows = (
     <>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Hit points (modeled bonus)">
         <Heart className="h-3 w-3 text-red-400/70" />
         <span>HP bump</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.hp, totals.hp)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title={presentation === "weapon" ? "Weapon damage bonus from this base’s star picks" : "Weapon damage bonus"}>
         <Swords className="h-3 w-3 text-amber-400/70" />
         <span>Damage %</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}</dd>
       {specialRows}
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="SPECIAL bonus not mapped to S.P.E.C.I.A.L. letters">
         <SparklesIcon className="h-3 w-3 text-purple-400/70" />
         <span>SPECIAL (other)</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Action Point regeneration">
         <Activity className="h-3 w-3 text-emerald-400/70" />
         <span>AP regen</span>
       </dt>
       <dd className="text-right">{liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60">
+      <dt className="flex items-center gap-1.5 text-foreground/60" title="Carry weight bonus">
         <Backpack className="h-3 w-3 text-orange-400/70" />
         <span>Carry wt</span>
       </dt>
@@ -2114,7 +2124,7 @@ export default function BuilderExperimentClient({
                 : null}{" "}
               {ndPerkLayer ? "Imported N&D perk codes are folded into the (+…) portion where we model them." : null}
             </p>
-            <BuilderTotalsStatKey className="mt-2" mode={statKeyMode} />
+
             <BuilderTotalsGrid
               baseTotals={intrinsicBenchTotals}
               totals={totals}
