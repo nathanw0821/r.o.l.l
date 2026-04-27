@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getTierProgressSummary } from "@/lib/data";
 import { ok } from "@/lib/api/responses";
 
-export const dynamic = "force-dynamic";
+
 export const revalidate = 0;
 
 export async function GET(request: Request) {

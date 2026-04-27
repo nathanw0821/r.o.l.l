@@ -6,7 +6,7 @@ import { computeLegendaryTrackerUnlockByModId } from "@/lib/builder/legendary-tr
 import type { BuilderModDTO } from "@/lib/builder/types";
 import { getCachedBuilderModCatalog } from "@/lib/builder/get-builder-mod-catalog";
 
-export const dynamic = "force-dynamic";
+
 export const revalidate = 0;
 
 function toDto(

@@ -10,7 +10,7 @@ import { sanitizePowerArmorPiecesEquipped } from "@/lib/builder/power-armor-stat
 import type { BuilderPayload } from "@/lib/builder/types";
 import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
 
-export const dynamic = "force-dynamic";
+
 
 const underarmorSchema = z.object({
   shellId: z.string().min(1),
