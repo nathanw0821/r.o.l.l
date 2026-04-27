@@ -130,6 +130,54 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
     name: "Glow Up",
     description: "Crank the terminal into full radioactive mode.",
     group: "easterEgg"
+  },
+  {
+    key: "second_life",
+    name: "Second Life",
+    description: "Create your second character.",
+    group: "visible"
+  },
+  {
+    key: "full_roster",
+    name: "Full Roster",
+    description: "Max out your character slots (5 characters).",
+    group: "visible"
+  },
+  {
+    key: "a_new_name",
+    name: "A New Name",
+    description: "Rename a character.",
+    group: "visible"
+  },
+  {
+    key: "changing_gears",
+    name: "Changing Gears",
+    description: "Switch your active character.",
+    group: "visible"
+  },
+  {
+    key: "spring_cleaning",
+    name: "Spring Cleaning",
+    description: "Delete a character.",
+    group: "visible"
+  },
+  {
+    key: "gary",
+    name: "Gaaaaary...",
+    description: "Rename a character to Gary.",
+    group: "easterEgg"
+  },
+  {
+    key: "the_one",
+    name: "There Can Be Only One",
+    description: "Delete characters until only one remains.",
+    group: "hidden"
+  },
+  {
+    key: "identity_theft",
+    name: "Identity Theft",
+    description: "Rename a character to 'Main Character'.",
+    group: "hidden"
   }
 ];
 
@@ -146,7 +194,7 @@ export type UserAchievementView = AchievementDefinition & {
 
 const achievementKeys = new Set(ACHIEVEMENTS.map((achievement) => achievement.key));
 
-async function awardAchievements(userId: string, keys: string[]) {
+export async function awardAchievements(userId: string, keys: string[]) {
   const validKeys = Array.from(new Set(keys.filter((key) => achievementKeys.has(key))));
   if (validKeys.length === 0) return;
 
