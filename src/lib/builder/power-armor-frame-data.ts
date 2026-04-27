@@ -15,19 +15,31 @@ import type { ArmorSetStats } from "@/lib/builder/armor-sets";
  * @see https://fallout.fandom.com/wiki/Power_armor_(Fallout_76)
  */
 
-/** Chassis resists applied whenever the builder uses a power-armor frame (wiki: adds 60/60/60 to armor-only totals). */
+/** Chassis resists (squashed in Backwoods update to provide headroom). */
 export const POWER_ARMOR_CHASSIS_STATS: ArmorSetStats = {
-  dr: 60,
-  er: 60,
+  dr: 6,
+  er: 6,
   fr: 0,
   cr: 0,
   pr: 0,
-  rr: 60
+  rr: 6
 };
 
-/** Ballistic DR, energy resist, radiation resist (FO76 convention). */
-export function paResist(dr: number, er: number, rr: number): ArmorSetStats {
-  return { dr, er, fr: 0, cr: 0, pr: 0, rr };
+/** Ballistic DR, energy resist, radiation resist + optional elements (Season 24 Backwoods overhaul). */
+export function paResist(
+  dr: number,
+  er: number,
+  rr: number,
+  extras: Partial<Omit<ArmorSetStats, "dr" | "er" | "rr">> = {}
+): ArmorSetStats {
+  return {
+    dr,
+    er,
+    rr,
+    fr: extras.fr ?? 0,
+    cr: extras.cr ?? 0,
+    pr: extras.pr ?? 0
+  };
 }
 
 export type PowerArmorFramePieces = {
@@ -39,85 +51,90 @@ export type PowerArmorFramePieces = {
   leg: ArmorSetStats;
 };
 
-/** Max-tier piece stats keyed by `powerArmorFrameFromPieceId` frame id. */
+/** 
+ * Max-tier piece stats (Post-Backwoods March 2026 overhaul).
+ * Base resists were reduced by ~90% for headroom; Rad reduction was replaced by raw stats.
+ */
 export const POWER_ARMOR_FRAME_PIECES: Record<string, PowerArmorFramePieces> = {
   "raider-pa": {
-    helmet: paResist(51, 51, 51),
-    torso: paResist(86, 86, 86),
-    arm: paResist(51, 51, 51),
-    leg: paResist(51, 51, 51)
+    helmet: paResist(5, 5, 100),
+    torso: paResist(9, 9, 150),
+    arm: paResist(5, 5, 100),
+    leg: paResist(5, 5, 100)
   },
   t45: {
-    helmet: paResist(54, 54, 54),
-    torso: paResist(90, 90, 90),
-    arm: paResist(54, 54, 54),
-    leg: paResist(54, 54, 54)
+    helmet: paResist(5, 5, 120),
+    torso: paResist(9, 9, 180),
+    arm: paResist(5, 5, 120),
+    leg: paResist(5, 5, 120)
   },
   t51: {
-    helmet: paResist(68, 68, 49),
-    torso: paResist(114, 114, 65),
-    arm: paResist(68, 68, 49),
-    leg: paResist(68, 68, 49)
+    // T-51b: Leans into Cryo Resistance
+    helmet: paResist(7, 7, 100, { cr: 40 }),
+    torso: paResist(11, 11, 150, { cr: 70 }),
+    arm: paResist(7, 7, 100, { cr: 40 }),
+    leg: paResist(7, 7, 100, { cr: 40 })
   },
   t60: {
-    helmet: paResist(60, 55, 60),
-    torso: paResist(100, 95, 115),
-    arm: paResist(60, 55, 60),
-    leg: paResist(60, 55, 60)
+    helmet: paResist(6, 6, 150),
+    torso: paResist(10, 10, 250),
+    arm: paResist(6, 6, 150),
+    leg: paResist(6, 6, 150)
   },
   t65: {
-    helmet: paResist(438, 313, 399),
-    torso: paResist(732, 504, 667),
-    arm: paResist(438, 313, 399),
-    leg: paResist(438, 313, 399)
+    // T-65: Top-tier for Radiation and Energy
+    helmet: paResist(44, 45, 500),
+    torso: paResist(73, 75, 850),
+    arm: paResist(44, 45, 500),
+    leg: paResist(44, 45, 500)
   },
   excavator: {
-    helmet: paResist(36, 36, 55),
-    torso: paResist(60, 60, 91),
-    arm: paResist(36, 36, 55),
-    leg: paResist(36, 36, 55)
+    helmet: paResist(4, 4, 300),
+    torso: paResist(6, 6, 500),
+    arm: paResist(4, 4, 300),
+    leg: paResist(4, 4, 300)
   },
   x01: {
-    helmet: paResist(313, 362, 362),
-    torso: paResist(504, 607, 607),
-    arm: paResist(313, 362, 362),
-    leg: paResist(313, 362, 362)
+    helmet: paResist(31, 40, 450),
+    torso: paResist(50, 65, 750),
+    arm: paResist(31, 40, 450),
+    leg: paResist(31, 40, 450)
   },
   ultracite: {
-    helmet: paResist(68, 59, 59),
-    torso: paResist(113, 98, 98),
-    arm: paResist(68, 59, 59),
-    leg: paResist(68, 59, 59)
+    helmet: paResist(7, 6, 150),
+    torso: paResist(11, 10, 250),
+    arm: paResist(7, 6, 150),
+    leg: paResist(7, 6, 150)
   },
   "strangler-heart": {
-    helmet: paResist(58, 69, 75),
-    torso: paResist(115, 96, 125),
-    arm: paResist(70, 57, 75),
-    leg: paResist(70, 57, 75)
+    // Strangler Heart: Top-tier Radiation
+    helmet: paResist(6, 7, 600),
+    torso: paResist(12, 10, 1000),
+    arm: paResist(7, 6, 600),
+    leg: paResist(7, 6, 600)
   },
   hellcat: {
-    helmet: paResist(68, 48, 48),
-    torso: paResist(96, 80, 80),
-    arm: paResist(68, 48, 48),
-    leg: paResist(68, 48, 48)
+    helmet: paResist(7, 5, 120),
+    torso: paResist(10, 8, 180),
+    arm: paResist(7, 5, 120),
+    leg: paResist(7, 5, 120)
   },
   "union-pa": {
-    helmet: paResist(74, 44, 40),
-    torso: paResist(115, 75, 65),
-    arm: paResist(74, 44, 40),
-    leg: paResist(74, 44, 40)
+    helmet: paResist(7, 4, 100, { pr: 50 }),
+    torso: paResist(12, 8, 150, { pr: 150 }),
+    arm: paResist(7, 4, 100, { pr: 50 }),
+    leg: paResist(7, 4, 100, { pr: 50 })
   },
-  /** Stand-in: Nukapedia has no sourced piece table; matches T-60 level 50 until replaced. */
   "hellfire-prototype": {
-    helmet: paResist(60, 55, 60),
-    torso: paResist(100, 95, 115),
-    arm: paResist(60, 55, 60),
-    leg: paResist(60, 55, 60)
+    helmet: paResist(6, 6, 150),
+    torso: paResist(10, 10, 250),
+    arm: paResist(6, 6, 150),
+    leg: paResist(6, 6, 150)
   },
   vulcan: {
-    helmet: paResist(85, 90, 30),
-    torso: paResist(136, 150, 50),
-    arm: paResist(85, 90, 30),
-    leg: paResist(85, 90, 30)
+    helmet: paResist(9, 9, 100),
+    torso: paResist(14, 15, 150),
+    arm: paResist(9, 9, 100),
+    leg: paResist(9, 9, 100)
   }
 };
