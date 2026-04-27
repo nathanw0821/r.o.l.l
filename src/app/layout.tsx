@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import Script from "next/script";
 import "./globals.css";
 import Providers from "@/components/providers";
@@ -54,12 +55,28 @@ function buildUiBootstrapScript() {
   })();`;
 }
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
+async function DynamicShell({ children }: { children: ReactNode }) {
   const session = await getAppSession();
   const initialTheme: ThemeMode = "system";
   const initialAccent = "ember";
   const initialColorBlind: ColorBlindMode = "none";
   const initialDensity = "compact";
+
+  return (
+    <Providers
+      session={session}
+      initialTheme={initialTheme}
+      initialAccent={initialAccent}
+      initialColorBlind={initialColorBlind}
+      initialDensity={initialDensity}
+      preferDefaults={false}
+    >
+      <AppShell>{children}</AppShell>
+    </Providers>
+  );
+}
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   const resolvedTheme: "light" | "dark" | undefined = undefined;
 
   return (
@@ -67,9 +84,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       lang="en"
       suppressHydrationWarning
       data-theme={resolvedTheme}
-      data-accent={initialAccent}
-      data-colorblind={initialColorBlind}
-      data-density={initialDensity}
+      data-accent="ember"
+      data-colorblind="none"
+      data-density="compact"
       data-scanlines="balanced"
       data-ui-tone="neutral"
       data-sidebar-collapsed="0"
@@ -86,18 +103,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
       <body>
-        <Providers
-          session={session}
-          initialTheme={initialTheme}
-          initialAccent={initialAccent}
-          initialColorBlind={initialColorBlind}
-          initialDensity={initialDensity}
-          preferDefaults={false}
-        >
-          <AppShell>
-            {children}
-          </AppShell>
-        </Providers>
+        <Suspense>
+          <DynamicShell>{children}</DynamicShell>
+        </Suspense>
         <Analytics />
         <SpeedInsights />
       </body>
