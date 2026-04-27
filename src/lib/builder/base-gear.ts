@@ -79,6 +79,7 @@ export const BASE_GEAR_PIECES: BaseGearPiece[] = [
 
   ...POWER_ARMOR_TORSO_PIECES,
 
+  /*
   { id: "fixer", label: "The Fixer", kind: "weapon", weaponSub: "ranged" },
   { id: "handmade", label: "Handmade", kind: "weapon", weaponSub: "ranged" },
   { id: "railway", label: "Railway Rifle", kind: "weapon", weaponSub: "ranged" },
@@ -91,6 +92,7 @@ export const BASE_GEAR_PIECES: BaseGearPiece[] = [
   { id: "tesla", label: "Tesla Rifle", kind: "weapon", weaponSub: "energy" },
   { id: "enclave-plasma", label: "Enclave Plasma Gun", kind: "weapon", weaponSub: "energy" },
   { id: "gamma-gun", label: "Gamma Gun", kind: "weapon", weaponSub: "energy" },
+  */
 
   {
     id: "ua-casual",
@@ -148,7 +150,7 @@ export const BASE_GEAR_PIECES: BaseGearPiece[] = [
   }
 ];
 
-export const BASE_GEAR_GROUP_ORDER: BuilderEquipmentKind[] = ["armor", "powerArmor", "weapon", "underarmor"];
+export const BASE_GEAR_GROUP_ORDER: BuilderEquipmentKind[] = ["armor", "powerArmor", /* "weapon", */ "underarmor"];
 
 export const BASE_GEAR_GROUP_LABEL: Record<BuilderEquipmentKind, string> = {
   armor: "Armor (full set)",
