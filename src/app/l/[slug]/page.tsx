@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/app-config";
 import { ARMOR_SET_SLOT_LABELS, getArmorSetRow } from "@/lib/builder/armor-sets";
 import {
   armorCraftingEffectLayers,
@@ -102,7 +103,7 @@ function baseArmorFromPayload(payload: BuilderPayload) {
 export default async function SharedLoadoutPage({ params }: PageProps) {
   const session = await getServerSession(authOptions);
   
-  if (session?.user?.role !== "ADMIN") {
+  if (!isAdminUser(session?.user)) {
     redirect("/");
   }
 
