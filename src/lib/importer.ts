@@ -571,8 +571,12 @@ export async function importWorkbook(buffer: Uint8Array, filename: string, userI
     }
 
     if (userId && userBaselineMap.size > 0) {
+      const userSettings = await prisma.userSettings.findUnique({ where: { userId } });
+      const activeCharacterId = userSettings?.activeCharacterId ?? undefined;
+
       const baselineRows = Array.from(userBaselineMap.entries()).map(([effectTierId, unlocked]) => ({
         userId,
+        characterId: activeCharacterId,
         datasetVersionId: datasetVersion.id,
         effectTierId,
         unlocked
