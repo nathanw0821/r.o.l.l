@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { syncUserAchievements } from "@/lib/achievements";
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfile } from "@/lib/profile";
+import { getActiveCharacterId } from "@/lib/character";
 import { z } from "zod";
 
 const toggleSchema = z.object({
@@ -42,30 +43,41 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
     throw new Error("Invalid input");
   }
 
+  const characterId = await getActiveCharacterId(session.user.id);
+  if (!characterId) {
+    throw new Error("No active character found");
+  }
+
   const { effectTierId, unlocked } = parsed.data;
 
   if (unlocked === null) {
     await prisma.userProgress.deleteMany({
       where: {
-        userId: session.user.id,
+        characterId,
         effectTierId
       }
     });
   } else {
-    await prisma.userProgress.upsert({
-      where: {
-        userId_effectTierId: {
-          userId: session.user.id,
-          effectTierId
-        }
-      },
-      update: { unlocked },
-      create: {
-        userId: session.user.id,
-        effectTierId,
-        unlocked
-      }
+    // Wait, the unique constraint is currently on userId_effectTierId. We need to use characterId_effectTierId if it was renamed, or we can use findFirst and update, but upsert needs a unique index. Let's check what the unique index is. It is @@unique([userId, effectTierId]) in the schema.prisma. So we can still upsert by userId_effectTierId for now, but also pass characterId.
+    // Wait, in schema.prisma, we changed it to: @@unique([userId, effectTierId]). So upsert still needs userId_effectTierId.
+    const existing = await prisma.userProgress.findFirst({
+      where: { userId: session.user.id, characterId, effectTierId }
     });
+    if (existing) {
+      await prisma.userProgress.update({
+        where: { id: existing.id },
+        data: { unlocked }
+      });
+    } else {
+      await prisma.userProgress.create({
+        data: {
+          userId: session.user.id,
+          characterId,
+          effectTierId,
+          unlocked
+        }
+      });
+    }
   }
 
   await syncUserAchievements(session.user.id);
@@ -83,30 +95,37 @@ export async function bulkUpdateProgress(input: { entries: { effectTierId: strin
     throw new Error("Invalid input");
   }
 
+  const characterId = await getActiveCharacterId(session.user.id);
+  if (!characterId) {
+    throw new Error("No active character found");
+  }
+
   await prisma.$transaction(
-    parsed.data.entries.map((entry) =>
-      entry.unlocked === null
-        ? prisma.userProgress.deleteMany({
-            where: {
-              userId: session.user.id,
-              effectTierId: entry.effectTierId
-            }
-          })
-        : prisma.userProgress.upsert({
-            where: {
-              userId_effectTierId: {
-                userId: session.user.id,
-                effectTierId: entry.effectTierId
-              }
-            },
-            update: { unlocked: entry.unlocked },
-            create: {
-              userId: session.user.id,
-              effectTierId: entry.effectTierId,
-              unlocked: entry.unlocked
-            }
-          })
-    )
+    parsed.data.entries.map((entry) => {
+      if (entry.unlocked === null) {
+        return prisma.userProgress.deleteMany({
+          where: {
+            characterId,
+            effectTierId: entry.effectTierId
+          }
+        });
+      }
+      return prisma.userProgress.upsert({
+        where: {
+          userId_effectTierId: {
+            userId: session.user.id,
+            effectTierId: entry.effectTierId
+          }
+        },
+        update: { unlocked: entry.unlocked, characterId },
+        create: {
+          userId: session.user.id,
+          characterId,
+          effectTierId: entry.effectTierId,
+          unlocked: entry.unlocked
+        }
+      });
+    })
   );
 
   await syncUserAchievements(session.user.id);
@@ -136,9 +155,14 @@ export async function resetToPublicDefaults() {
     orderBy: { importedAt: "desc" }
   });
 
+  const characterId = await getActiveCharacterId(session.user.id);
+  if (!characterId) {
+    throw new Error("No active character found");
+  }
+
   if (dataset) {
     await prisma.userProgress.deleteMany({
-      where: { userId: session.user.id, effectTier: { datasetVersionId: dataset.id } }
+      where: { characterId, effectTier: { datasetVersionId: dataset.id } }
     });
     await prisma.user.update({
       where: { id: session.user.id },
@@ -146,7 +170,7 @@ export async function resetToPublicDefaults() {
     });
   } else {
     await prisma.userProgress.deleteMany({
-      where: { userId: session.user.id }
+      where: { characterId }
     });
     await prisma.user.update({
       where: { id: session.user.id },

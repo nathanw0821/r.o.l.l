@@ -7,6 +7,7 @@ import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-
 import { extractOriginsFromNotes, normalizeDisplayNotes } from "@/lib/import-normalize";
 import { appendLegendaryModSourceNotes } from "@/lib/legendary-mod-sources";
 import { applyImportedProfileIfNeeded, getImportedBaselineMap } from "@/lib/profile";
+import { getActiveCharacterId } from "@/lib/character";
 
 async function ensureProfileApplied(userId?: string) {
   if (!userId) return;
@@ -20,11 +21,11 @@ async function ensureProfileApplied(userId?: string) {
 type SelectionSource = "default" | "imported" | "edited";
 
 function resolveSelectionSource(params: {
-  userId?: string;
+  characterId?: string;
   baseline?: boolean;
   progress?: boolean;
 }): SelectionSource {
-  if (!params.userId) return "default";
+  if (!params.characterId) return "default";
   if (params.progress === undefined && params.baseline === undefined) return "default";
   if (params.progress === undefined && params.baseline !== undefined) return "imported";
   if (params.baseline === undefined) return "edited";
@@ -65,9 +66,9 @@ function getCatalogEffectTiersCached(datasetVersionId: string) {
   return loader();
 }
 
-async function fetchUserProgressMap(userId: string, datasetVersionId: string) {
+async function fetchUserProgressMap(characterId: string, datasetVersionId: string) {
   const rows = await prisma.userProgress.findMany({
-    where: { userId, effectTier: { datasetVersionId } },
+    where: { characterId, effectTier: { datasetVersionId } },
     select: { effectTierId: true, unlocked: true }
   });
   return new Map(rows.map((row) => [row.effectTierId, row.unlocked]));
@@ -75,15 +76,15 @@ async function fetchUserProgressMap(userId: string, datasetVersionId: string) {
 
 function mergeCatalogWithUserState(
   catalog: EffectTierCatalogRow[],
-  userId: string | undefined,
+  characterId: string | undefined,
   baselineMap: Map<string, boolean>,
   progressMap: Map<string, boolean>
 ): MergedEffectTierRow[] {
   return catalog.map((item) => {
-    const baseline = userId ? baselineMap.get(item.id) : undefined;
-    const hasProgress = userId ? progressMap.has(item.id) : false;
+    const baseline = characterId ? baselineMap.get(item.id) : undefined;
+    const hasProgress = characterId ? progressMap.has(item.id) : false;
     const progressUnlocked = hasProgress ? progressMap.get(item.id)! : undefined;
-    const unlocked = userId ? (hasProgress ? progressUnlocked! : baseline ?? false) : false;
+    const unlocked = characterId ? (hasProgress ? progressUnlocked! : baseline ?? false) : false;
     const origins = extractOriginsFromNotes(item.notes);
     const displayNotes = normalizeDisplayNotes(item.notes, origins);
     const displayWithSources =
@@ -94,7 +95,7 @@ function mergeCatalogWithUserState(
       origins,
       unlocked,
       selectionSource: resolveSelectionSource({
-        userId,
+        characterId,
         baseline,
         progress: hasProgress ? progressUnlocked : undefined
       })
@@ -114,8 +115,10 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
 
   if (tierLabel !== undefined && !tier) return [];
 
+  const characterId = await getActiveCharacterId(userId);
+
   const [baselineMap, catalog] = await Promise.all([
-    userId ? getImportedBaselineMap(dataset.id, userId) : Promise.resolve(new Map<string, boolean>()),
+    characterId ? getImportedBaselineMap(dataset.id, characterId) : Promise.resolve(new Map<string, boolean>()),
     getCatalogEffectTiersCached(dataset.id)
   ]);
 
@@ -125,11 +128,11 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
       : catalog.filter((row) => row.tier?.label === tier.label);
 
   const progressMap =
-    userId && scoped.length > 0
-      ? await fetchUserProgressMap(userId, dataset.id)
+    characterId && scoped.length > 0
+      ? await fetchUserProgressMap(characterId, dataset.id)
       : new Map<string, boolean>();
 
-  return mergeCatalogWithUserState(scoped, userId, baselineMap, progressMap);
+  return mergeCatalogWithUserState(scoped, characterId, baselineMap, progressMap);
 }
 
 /** One merged catalog load per request per `(userId, tierLabel)` — dedupes e.g. `getStillNeed` + `getTierProgressSummary`. */
@@ -228,13 +231,18 @@ export async function getProgressSummary(userId?: string) {
     return getGuestProgressSummaryCached(dataset.id);
   }
 
+  const characterId = await getActiveCharacterId(userId);
+  if (!characterId) {
+    return { total: 0, unlocked: 0, percent: 0 };
+  }
+
   const total = await prisma.effectTier.count({
     where: { datasetVersionId: dataset.id }
   });
 
-  const baselineMap = await getImportedBaselineMap(dataset.id, userId);
+  const baselineMap = await getImportedBaselineMap(dataset.id, characterId);
   const progressRows = await prisma.userProgress.findMany({
-    where: { userId, effectTier: { datasetVersionId: dataset.id } },
+    where: { characterId, effectTier: { datasetVersionId: dataset.id } },
     select: { effectTierId: true, unlocked: true }
   });
 
