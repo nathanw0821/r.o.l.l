@@ -39,12 +39,11 @@ export const POWER_ARMOR_PIECE_SLOT_LABELS = [
   "Right leg"
 ] as const;
 
-/** Backwoods-era rule of thumb: ~7% inherent flat DR per attached piece toward ~42% in a full suit. */
-export const PA_INHERENT_DR_PCT_PER_PIECE = 7;
-export const PA_INHERENT_DR_PCT_CAP = 42;
-/** ~15% inherent rad reduction per piece toward ~90% when fully suited. */
-export const PA_INHERENT_RAD_REDUCTION_PCT_PER_PIECE = 15;
-export const PA_INHERENT_RAD_REDUCTION_PCT_CAP = 90;
+/** March 2026 (Season 24) update: Hidden innate reductions were removed in favor of raw stats. */
+export const PA_INHERENT_DR_PCT_PER_PIECE = 0;
+export const PA_INHERENT_DR_PCT_CAP = 0;
+export const PA_INHERENT_RAD_REDUCTION_PCT_PER_PIECE = 0;
+export const PA_INHERENT_RAD_REDUCTION_PCT_CAP = 0;
 
 export function mergeArmorSetStats(a: ArmorSetStats, b: ArmorSetStats): ArmorSetStats {
   return {

@@ -614,10 +614,26 @@ export default function BuilderExperimentClient({
   }, [undoPayload]);
 
   const clearPiece = React.useCallback((pieceIndex: number) => {
-    setPayload((p) => {
-      const grid = p.armorLegendaryModIds.map((row) => [...row]);
-      grid[pieceIndex] = [null, null, null, null];
-      return { ...p, armorLegendaryModIds: grid };
+    setPayload((prev) => {
+      const nextCrafting = [...prev.armorPieceCrafting];
+      nextCrafting[pieceIndex] = { materialModId: "none", miscModId: "none" };
+      
+      const nextStars = [...prev.armorLegendaryModIds];
+      nextStars[pieceIndex] = [null, null, null, null];
+
+      let nextEquipped = prev.powerArmorPiecesEquipped;
+      if (prev.equipmentKind === "powerArmor") {
+        const mask = [...prev.powerArmorPiecesEquipped] as unknown as [boolean, boolean, boolean, boolean, boolean, boolean];
+        mask[pieceIndex] = false;
+        nextEquipped = mask;
+      }
+
+      return {
+        ...prev,
+        powerArmorPiecesEquipped: nextEquipped,
+        armorPieceCrafting: nextCrafting,
+        armorLegendaryModIds: nextStars
+      };
     });
   }, []);
 
@@ -808,22 +824,30 @@ export default function BuilderExperimentClient({
   }, [payload.underarmor]);
 
   const armorCraftingLayers = React.useMemo(() => {
-    if (!fullArmorSet) return [];
-    return armorCraftingEffectLayers(payload.armorPieceCrafting);
-  }, [fullArmorSet, payload.armorPieceCrafting]);
+    if (!isMultiPiece) return [];
+    return armorCraftingEffectLayers(payload.armorPieceCrafting, piece.kind === "powerArmor");
+  }, [isMultiPiece, piece.kind, payload.armorPieceCrafting]);
 
   const baseArmorStats = React.useMemo(() => {
     if (piece.kind === "armor" && piece.armorSetKey) {
       return getArmorSetRow(piece.armorSetKey)?.stats ?? null;
     }
-    if (piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece)) {
-      return getPowerArmorSlotBaseStats(piece.id, "helmet");
-    }
-    if (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
-      return getPowerArmorEquippedFlatStats(piece.id, payload.powerArmorHelmetId, payload.powerArmorPiecesEquipped);
+    if (piece.kind === "powerArmor") {
+      // In multi-piece mode, stats are based on the frame pieces + chassis
+      if (isMultiPiece) {
+        return getPowerArmorEquippedFlatStats(
+          piece.id,
+          payload.powerArmorHelmetId, // redundant but kept for type safety in getter
+          payload.powerArmorPiecesEquipped
+        );
+      }
+      // Single helmet base
+      if (isPowerArmorHelmetBasePiece(piece)) {
+        return getPowerArmorSlotBaseStats(piece.id, "helmet");
+      }
     }
     return null;
-  }, [piece, payload.powerArmorHelmetId, payload.powerArmorPiecesEquipped]);
+  }, [isMultiPiece, piece, payload.powerArmorHelmetId, payload.powerArmorPiecesEquipped]);
 
   const powerArmorFrameIntrinsicLayer = React.useMemo(() => {
     if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece)) return null;
@@ -838,23 +862,7 @@ export default function BuilderExperimentClient({
     };
   }, [piece, payload.powerArmorPiecesEquipped]);
 
-  const powerArmorHelmetCraftingLayers = React.useMemo(() => {
-    if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece)) return [];
-    if (!payload.powerArmorHelmetId || !isKnownPowerArmorHelmetPieceId(payload.powerArmorHelmetId)) return [];
-    return armorCraftingEffectLayers([payload.powerArmorHelmetCrafting]);
-  }, [piece, payload.powerArmorHelmetId, payload.powerArmorHelmetCrafting]);
 
-  const powerArmorHelmetOnlyCraftingLayers = React.useMemo(() => {
-    if (piece.kind !== "powerArmor" || !isPowerArmorHelmetBasePiece(piece)) return [];
-    const row = payload.armorPieceCrafting[0];
-    return armorCraftingEffectLayers([row ?? { materialModId: "none", miscModId: "none" }]);
-  }, [piece, payload.armorPieceCrafting]);
-
-  const powerArmorTorsoCraftingLayers = React.useMemo(() => {
-    if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece)) return [];
-    const row = payload.armorPieceCrafting[0];
-    return armorCraftingEffectLayers([row ?? { materialModId: "none", miscModId: "none" }]);
-  }, [piece, payload.armorPieceCrafting]);
 
   const ndPerkLayer = React.useMemo(() => {
     if (!ndImport?.layer) return null;
@@ -882,9 +890,6 @@ export default function BuilderExperimentClient({
         ghoul: payload.ghoul,
         extraLayers: [
           ...armorCraftingLayers,
-          ...powerArmorTorsoCraftingLayers,
-          ...powerArmorHelmetCraftingLayers,
-          ...powerArmorHelmetOnlyCraftingLayers,
           ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : [])
         ],
         baseArmorStats,
@@ -893,9 +898,6 @@ export default function BuilderExperimentClient({
     [
       payload.ghoul,
       armorCraftingLayers,
-      powerArmorTorsoCraftingLayers,
-      powerArmorHelmetCraftingLayers,
-      powerArmorHelmetOnlyCraftingLayers,
       powerArmorFrameIntrinsicLayer,
       baseArmorStats,
       payload.baseSpecial
@@ -909,9 +911,6 @@ export default function BuilderExperimentClient({
         extraLayers: [
           ...underLayers,
           ...armorCraftingLayers,
-          ...powerArmorTorsoCraftingLayers,
-          ...powerArmorHelmetCraftingLayers,
-          ...powerArmorHelmetOnlyCraftingLayers,
           ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : []),
           ...(mutationLayer ? [mutationLayer] : []),
           ...(ndPerkLayer ? [ndPerkLayer] : [])
@@ -925,9 +924,6 @@ export default function BuilderExperimentClient({
       payload.ghoul,
       underLayers,
       armorCraftingLayers,
-      powerArmorTorsoCraftingLayers,
-      powerArmorHelmetCraftingLayers,
-      powerArmorHelmetOnlyCraftingLayers,
       powerArmorFrameIntrinsicLayer,
       ndPerkLayer,
       mutationLayer,
@@ -1516,100 +1512,128 @@ export default function BuilderExperimentClient({
             {isMultiPiece ? (
               <div className="mt-3 space-y-4">
                 {multiPieceSlotLabels.map((slotLabel, pieceIndex) => {
+                  const isEquipped = piece.kind === "powerArmor" ? payload.powerArmorPiecesEquipped[pieceIndex] : true;
                   const isPAHelmet = piece.kind === "powerArmor" && pieceIndex === 0;
+
                   return (
                     <div
                       key={slotLabel}
-                      className="rounded-[var(--radius)] border border-border bg-background/40 p-3"
+                      className={cn(
+                        "rounded-[var(--radius)] border border-border bg-background/40 p-3 transition-opacity",
+                        !isEquipped && "opacity-50"
+                      )}
                     >
                       <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-foreground/70">
                         <div>
                           {slotLabel}
                           <span className="mt-0.5 block text-[10px] font-normal normal-case text-foreground/50">
-                            {formatBaseOptionLabel(piece)} · material &amp; misc
+                            {formatBaseOptionLabel(piece)} · {isEquipped ? "material & misc" : "NOT EQUIPPED"}
                           </span>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 text-[10px] font-normal text-foreground/40 hover:text-destructive"
-                          onClick={() => clearPiece(pieceIndex)}
-                        >
-                          Clear This Piece
-                        </Button>
-                      </div>
-                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                        <label className="text-xs text-foreground/60">
-                          Material
-                          <select
-                            className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                            value={payload.armorPieceCrafting[pieceIndex]?.materialModId ?? "none"}
-                            onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
-                          >
-                            {(piece.kind === "powerArmor" ? PA_MATERIAL_MODS : ARMOR_MATERIAL_MODS).map((o) => (
-                              <option key={o.id} value={o.id}>
-                                {o.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="text-xs text-foreground/60">
-                          Misc
-                          <select
-                            className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                            value={payload.armorPieceCrafting[pieceIndex]?.miscModId ?? "none"}
-                            onChange={(e) => setArmorCraftingField(pieceIndex, "miscModId", e.target.value)}
-                          >
-                            {listArmorMiscModOptions(piece.armorSetKey ?? null, pieceIndex, { powerArmor: piece.kind === "powerArmor" }).map((o) => (
-                              <option key={o.id} value={o.id}>
-                                {o.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
+                        <div className="flex items-center gap-2">
+                          {!isEquipped && piece.kind === "powerArmor" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-[10px] font-normal text-accent hover:text-accent/80"
+                              onClick={() => {
+                                const next = [...payload.powerArmorPiecesEquipped] as unknown as [boolean, boolean, boolean, boolean, boolean, boolean];
+                                next[pieceIndex] = true;
+                                setPayload(p => ({ ...p, powerArmorPiecesEquipped: next }));
+                              }}
+                            >
+                              Equip
+                            </Button>
+                          )}
+                          {isEquipped && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-[10px] font-normal text-foreground/40 hover:text-destructive"
+                              onClick={() => clearPiece(pieceIndex)}
+                            >
+                              {piece.kind === "powerArmor" ? "Unequip" : "Clear This Piece"}
+                            </Button>
+                          )}
+                        </div>
                       </div>
 
-                      {isPAHelmet ? (
-                        <p className="mt-3 text-[10px] text-foreground/40 italic">
-                          Power armor helmets cannot take legendary stars.
-                        </p>
-                      ) : (
-                        <div className="mt-3 grid gap-2">
-                          {SLOT_LABELS.map((label, starIndex) => {
-                            const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
-                            const mod = id ? mods.find((m) => m.id === id) : null;
-                            return (
-                              <div
-                                key={`${pieceIndex}-${starIndex}`}
-                                className="flex flex-col gap-2 rounded-[var(--radius)] border border-border bg-background/50 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
+                      {isEquipped && (
+                        <>
+                          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                            <label className="text-xs text-foreground/60">
+                              Material
+                              <select
+                                className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
+                                value={payload.armorPieceCrafting[pieceIndex]?.materialModId ?? "none"}
+                                onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
                               >
-                                <div className="min-w-0 flex-1">
-                                  <div className="text-xs font-medium text-foreground/60">{label}</div>
-                                  <div className="mt-0.5 text-sm font-medium leading-snug">{mod?.name ?? "—"}</div>
-                                  {mod ? <LegendaryModDetailFootprint mod={mod} piece={piece} /> : null}
-                                </div>
-                                <div className="flex shrink-0 gap-2 sm:pt-1">
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => setActivePick({ scope: "armorSet", pieceIndex, starIndex })}
+                                {(piece.kind === "powerArmor" ? PA_MATERIAL_MODS : ARMOR_MATERIAL_MODS).map((o) => (
+                                  <option key={o.id} value={o.id}>
+                                    {o.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                            <label className="text-xs text-foreground/60">
+                              Misc
+                              <select
+                                className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
+                                value={payload.armorPieceCrafting[pieceIndex]?.miscModId ?? "none"}
+                                onChange={(e) => setArmorCraftingField(pieceIndex, "miscModId", e.target.value)}
+                              >
+                                {listArmorMiscModOptions(piece.armorSetKey ?? null, pieceIndex, { powerArmor: piece.kind === "powerArmor" }).map((o) => (
+                                  <option key={o.id} value={o.id}>
+                                    {o.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          </div>
+
+                          {isPAHelmet ? (
+                            <p className="mt-3 text-[10px] text-foreground/40 italic">
+                              Power armor helmets cannot take legendary stars.
+                            </p>
+                          ) : (
+                            <div className="mt-3 grid gap-2">
+                              {SLOT_LABELS.map((label, starIndex) => {
+                                const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
+                                const mod = id ? mods.find((m) => m.id === id) : null;
+                                return (
+                                  <div
+                                    key={`${pieceIndex}-${starIndex}`}
+                                    className="flex flex-col gap-2 rounded-[var(--radius)] border border-border bg-background/50 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
                                   >
-                                    Pick
-                                  </Button>
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => clearStarSlot("armorSet", pieceIndex, starIndex)}
-                                  >
-                                    Clear
-                                  </Button>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="text-xs font-medium text-foreground/60">{label}</div>
+                                      <div className="mt-0.5 text-sm font-medium leading-snug">{mod?.name ?? "—"}</div>
+                                      {mod ? <LegendaryModDetailFootprint mod={mod} piece={piece} /> : null}
+                                    </div>
+                                    <div className="flex shrink-0 gap-2 sm:pt-1">
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => setActivePick({ scope: "armorSet", pieceIndex, starIndex })}
+                                      >
+                                        Pick
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => clearStarSlot("armorSet", pieceIndex, starIndex)}
+                                      >
+                                        Clear
+                                      </Button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   );
