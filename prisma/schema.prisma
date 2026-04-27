@@ -251,46 +251,46 @@ model Character {
 model UserProgress {
   id           String     @id @default(cuid())
   userId       String
-  characterId  String?
+  characterId  String
   effectTierId String
   unlocked     Boolean    @default(false)
   notes        String?
   updatedAt    DateTime   @updatedAt
   effectTier   EffectTier @relation(fields: [effectTierId], references: [id])
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  character    Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  character    Character  @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, effectTierId])
-  @@index([characterId])
+  @@unique([characterId, effectTierId])
+  @@index([userId])
 }
 
 /// Builder catalog bases the user has learned in-game (armor sets, power armor, underarmor shells).
 model UserLearnedBasePiece {
   userId      String
-  characterId String?
+  characterId String
   basePieceId String
   createdAt   DateTime  @default(now())
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  character   Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
-  @@id([userId, basePieceId])
-  @@index([characterId])
+  @@id([characterId, basePieceId])
+  @@index([userId])
 }
 
 model UserImportBaseline {
   id               String     @id @default(cuid())
   userId           String
-  characterId      String?
+  characterId      String
   datasetVersionId String
   effectTierId     String
   unlocked         Boolean
   createdAt        DateTime   @default(now())
   user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  character        Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  character        Character  @relation(fields: [characterId], references: [id], onDelete: Cascade)
   effectTier       EffectTier @relation(fields: [effectTierId], references: [id])
 
-  @@unique([userId, effectTierId])
-  @@index([characterId, datasetVersionId])
+  @@unique([characterId, effectTierId])
+  @@index([userId, datasetVersionId])
 }
 
 model UserAchievement {

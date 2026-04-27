@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ export type SummaryRow = {
   effect: { name: string };
   tier?: { label?: string } | null;
   unlocked: boolean;
+  unlockedBy: string[];
   selectionSource?: SelectionSource;
   notes?: string | null;
   origins?: string[];
@@ -378,6 +379,11 @@ export default function SummaryClient({
                               ? "Unlocked"
                               : "Locked"}
                       </div>
+                      {row.unlockedBy.length > 0 && (
+                        <div className="mt-1 text-[9px] text-foreground/40 leading-tight">
+                          Unlocked by: {row.unlockedBy.join(", ")}
+                        </div>
+                      )}
                     </div>
                   </button>
                 ))}

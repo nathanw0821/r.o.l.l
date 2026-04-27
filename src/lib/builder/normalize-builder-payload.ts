@@ -131,7 +131,29 @@ function sanitizePowerArmorHelmetId(basePieceId: string, helmetId: string | null
   return helmetId;
 }
 
-function buildPayloadV4(fields: {
+function readBaseSpecial(raw: unknown): Record<string, number> {
+  if (!raw || typeof raw !== "object") return {};
+  const o = raw as Record<string, unknown>;
+  const res: Record<string, number> = {};
+  if (o.baseSpecial && typeof o.baseSpecial === "object") {
+    const bs = o.baseSpecial as Record<string, unknown>;
+    for (const [k, v] of Object.entries(bs)) {
+      if (typeof v === "number") res[k] = v;
+    }
+  }
+  return res;
+}
+
+function readLegendaryPerkIds(raw: unknown): string[] {
+  if (!raw || typeof raw !== "object") return [];
+  const o = raw as Record<string, unknown>;
+  if (Array.isArray(o.legendaryPerkIds)) {
+    return o.legendaryPerkIds.filter((x): x is string => typeof x === "string");
+  }
+  return [];
+}
+
+function buildPayloadV5(fields: {
   basePieceId: string;
   equipmentKind: BuilderPayload["equipmentKind"];
   weaponSub: BuilderPayload["weaponSub"];
@@ -145,9 +167,11 @@ function buildPayloadV4(fields: {
   underarmor: BuilderUnderarmor;
   mutationIds: string[];
   ignoreMutationPenalties: boolean;
+  baseSpecial?: Record<string, number>;
+  legendaryPerkIds?: string[];
 }): BuilderPayload {
   return {
-    version: 4,
+    version: 5,
     basePieceId: fields.basePieceId,
     equipmentKind: fields.equipmentKind,
     weaponSub: fields.weaponSub,
@@ -160,17 +184,19 @@ function buildPayloadV4(fields: {
     ghoul: fields.ghoul,
     underarmor: fields.underarmor,
     mutationIds: fields.mutationIds,
-    ignoreMutationPenalties: fields.ignoreMutationPenalties
+    ignoreMutationPenalties: fields.ignoreMutationPenalties,
+    baseSpecial: fields.baseSpecial ?? {},
+    legendaryPerkIds: fields.legendaryPerkIds ?? []
   };
 }
 
-/** Accept v1–v4 JSON and return canonical v4, or null if invalid. */
+/** Accept v1–v5 JSON and return canonical v5, or null if invalid. */
 export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
   if (!raw || typeof raw !== "object") return null;
   const v = raw as Record<string, unknown>;
   const version = v.version;
 
-  if (version === 4) {
+  if (version === 4 || version === 5) {
     if (typeof v.basePieceId !== "string") return null;
     const basePieceId = canonicalBasePieceId(v.basePieceId);
     if (!basePieceId) return null;
@@ -193,7 +219,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
         : typeof v.powerArmorHelmetId === "string"
           ? v.powerArmorHelmetId
           : null;
-    return buildPayloadV4({
+    return buildPayloadV5({
       basePieceId,
       equipmentKind: v.equipmentKind,
       weaponSub,
@@ -206,7 +232,9 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       ghoul: Boolean(v.ghoul),
       underarmor: readUnderarmor(v),
       mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
-      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
+      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties),
+      baseSpecial: readBaseSpecial(v),
+      legendaryPerkIds: readLegendaryPerkIds(v)
     });
   }
 
@@ -234,7 +262,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
         : typeof v.powerArmorHelmetId === "string"
           ? v.powerArmorHelmetId
           : null;
-    return buildPayloadV4({
+    return buildPayloadV5({
       basePieceId,
       equipmentKind: v.equipmentKind,
       weaponSub,
@@ -270,7 +298,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       armorLegendaryModIds[4] = padLegendaryRow(legendaryModIds);
       const crafting = defaultArmorPieceCrafting();
       const remapped = remapArmorSlotsFromLegacyLegsFirst(armorLegendaryModIds, crafting);
-      return buildPayloadV4({
+      return buildPayloadV5({
         basePieceId,
         equipmentKind: "armor",
         weaponSub: null,
@@ -289,7 +317,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
 
     const coercedBase = canonicalBasePieceId(basePieceId) ?? basePieceId;
     if (!getBaseGearPiece(coercedBase)) return null;
-    return buildPayloadV4({
+    return buildPayloadV5({
       basePieceId: coercedBase,
       equipmentKind: v.equipmentKind,
       weaponSub,

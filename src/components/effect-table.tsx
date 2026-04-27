@@ -21,6 +21,7 @@ export type EffectTierRow = {
   legendaryModules?: number | null;
   notes?: string | null;
   unlocked: boolean;
+  unlockedBy: string[];
   selectionSource?: SelectionSource;
   origins?: string[];
 };
@@ -264,10 +265,15 @@ export default function EffectTable({
               </div>
               <div className="min-w-0">
                 <ProgressToggle unlocked={row.unlocked} onToggle={() => toggleRow(row)} disabled={isPending} className="w-full justify-center" />
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <div className="source-pill" data-source={row.selectionSource ?? "default"}>
+                <div className="mt-2 flex flex-col gap-1.5">
+                  <div className="source-pill w-fit" data-source={row.selectionSource ?? "default"}>
                     {sourceLabel}
                   </div>
+                  {row.unlockedBy.length > 0 && (
+                    <div className="text-[10px] text-foreground/50 leading-tight">
+                      <span className="font-semibold text-foreground/40 uppercase">By:</span> {row.unlockedBy.join(", ")}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="min-w-0 text-sm text-foreground/80 break-words">{row.notes || "-"}</div>
@@ -338,6 +344,12 @@ export default function EffectTable({
                 <span>Source</span>
                 <span>{sourceLabel}</span>
               </div>
+              {row.unlockedBy.length > 0 && (
+                <div className="effect-tile__row">
+                  <span>Unlocked By</span>
+                  <span className="truncate">{row.unlockedBy.join(", ")}</span>
+                </div>
+              )}
               <div className="effect-tile__notes">
                 {row.notes || "No notes"}
               </div>

@@ -74,6 +74,10 @@ export type BuilderPayload = {
   mutationIds: string[];
   /** When true, only mutation “benefit” numbers apply (serum-style: no downsides). */
   ignoreMutationPenalties: boolean;
+  /** Sandbox SPECIAL stats entered by user (1-15 each). */
+  baseSpecial: Record<string, number>;
+  /** Selected legendary perk card IDs. */
+  legendaryPerkIds: string[];
 };
 
 /** Matched against active tracker rows (`Effect` name + tier star); `unknown` if not found in dataset. */

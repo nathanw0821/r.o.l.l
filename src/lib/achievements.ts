@@ -178,6 +178,54 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
     name: "Identity Theft",
     description: "Rename a character to 'Main Character'.",
     group: "hidden"
+  },
+  {
+    key: "build_save",
+    name: "B.U.I.L.D. It!",
+    description: "Save your first custom loadout in the diagnostic builder.",
+    group: "visible"
+  },
+  {
+    key: "build_full",
+    name: "Full Archive",
+    description: "Fill all 10 saved loadout slots in the builder.",
+    group: "visible"
+  },
+  {
+    key: "build_stats",
+    name: "S.P.E.C.I.A.L.ist",
+    description: "Customize your base stats in the character sandbox.",
+    group: "visible"
+  },
+  {
+    key: "build_perks",
+    name: "Legendary Focus",
+    description: "Select your first legendary perk card in the builder.",
+    group: "visible"
+  },
+  {
+    key: "account_25",
+    name: "Account Veteran",
+    description: "Reach 25% account-wide completion.",
+    group: "visible"
+  },
+  {
+    key: "diagnostic_access",
+    name: "Diagnostic Mind",
+    description: "Access the experimental B.U.I.L.D. feature.",
+    group: "hidden"
+  },
+  {
+    key: "undo_clear",
+    name: "Second Chance",
+    description: "Use the 'Undo Clear All' button after a mistake.",
+    group: "hidden"
+  },
+  {
+    key: "account_100",
+    name: "Completionist Dynasty",
+    description: "Reach 100% account-wide completion across all characters.",
+    group: "hidden"
   }
 ];
 
@@ -223,9 +271,10 @@ function hasFullTier(rows: Awaited<ReturnType<typeof getAllEffectTiers>>, tierLa
 }
 
 export async function syncUserAchievements(userId: string) {
-  const [rows, importedBaselineCount] = await Promise.all([
+  const [rows, importedBaselineCount, globalSummary] = await Promise.all([
     getAllEffectTiers(userId),
-    prisma.userImportBaseline.count({ where: { userId } })
+    prisma.userImportBaseline.count({ where: { userId } }),
+    getGlobalProgressSummary(userId)
   ]);
 
   const unlockedCount = rows.filter((row) => row.unlocked).length;
@@ -248,6 +297,9 @@ export async function syncUserAchievements(userId: string) {
   if (hasFullTier(rows, "2 Star")) earned.push("tier_2_complete");
   if (hasFullTier(rows, "3 Star")) earned.push("tier_3_complete");
   if (hasFullTier(rows, "4 Star")) earned.push("tier_4_complete");
+
+  if (globalSummary.percent >= 25) earned.push("account_25");
+  if (globalSummary.percent >= 100 && globalSummary.total > 0) earned.push("account_100");
 
   await awardAchievements(userId, earned);
 }
