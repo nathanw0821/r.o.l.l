@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { ok } from "@/lib/api/responses";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
-export const dynamic = "force-dynamic";
+
 export const revalidate = 0;
 
 export async function GET(request: Request) {

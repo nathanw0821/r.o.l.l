@@ -2,7 +2,7 @@ import Link from "next/link";
 import BrandStack from "@/components/brand-stack";
 import { consumeEmailVerificationToken } from "@/lib/email-verification";
 
-export const dynamic = "force-dynamic";
+
 
 type SearchParams = Promise<{
   token?: string;
