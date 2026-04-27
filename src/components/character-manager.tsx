@@ -117,10 +117,10 @@ export function CharacterManager({
                       className="h-8"
                       disabled={isPending}
                     />
-                    <Button size="icon" variant="ghost" className="h-8 w-8 text-green-500" onClick={() => handleRename(char.id)} disabled={isPending}>
+                    <Button variant="ghost" className="h-8 w-8 text-green-500 p-0" onClick={() => handleRename(char.id)} disabled={isPending}>
                       <Check className="h-4 w-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditingId(null)} disabled={isPending}>
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditingId(null)} disabled={isPending}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -137,9 +137,8 @@ export function CharacterManager({
                 {editingId !== char.id && (
                   <div className="flex items-center gap-1">
                     <Button
-                      size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground p-0"
                       onClick={() => {
                         setEditName(char.name);
                         setEditingId(char.id);
@@ -149,9 +148,8 @@ export function CharacterManager({
                       <Edit2 className="h-4 w-4" />
                     </Button>
                     <Button
-                      size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive p-0"
                       onClick={() => handleDelete(char.id)}
                       disabled={isPending || characters.length <= 1}
                     >
@@ -189,10 +187,10 @@ export function CharacterManager({
                 className="h-8 bg-background"
                 disabled={isPending}
               />
-              <Button size="icon" variant="ghost" className="h-8 w-8 text-green-500" onClick={handleCreate} disabled={isPending}>
+              <Button variant="ghost" className="h-8 w-8 text-green-500 p-0" onClick={handleCreate} disabled={isPending}>
                 <Check className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsCreating(false)} disabled={isPending}>
+              <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => setIsCreating(false)} disabled={isPending}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
