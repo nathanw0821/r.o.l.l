@@ -9,6 +9,8 @@ import { getSiteUrl } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { prisma } from "@/lib/prisma";
+import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 
 const vt323 = "https://fonts.googleapis.com/css2?family=VT323&display=swap";
 const shareTechMono = "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap";
@@ -52,7 +54,6 @@ function buildUiBootstrapScript() {
     } catch {
       // Keep server defaults if storage is unavailable.
     }
-  })();`;
 }
 
 async function DynamicShell({ children }: { children: ReactNode }) {
@@ -61,6 +62,16 @@ async function DynamicShell({ children }: { children: ReactNode }) {
   const initialAccent = "ember";
   const initialColorBlind: ColorBlindMode = "none";
   const initialDensity = "compact";
+
+  let mainCharacterId: string | null = null;
+  if (session?.user?.id) {
+    const mainChar = await prisma.character.findFirst({
+      where: { userId: session.user.id, name: "Main Character" }
+    });
+    if (mainChar) {
+      mainCharacterId = mainChar.id;
+    }
+  }
 
   return (
     <Providers
@@ -71,7 +82,10 @@ async function DynamicShell({ children }: { children: ReactNode }) {
       initialDensity={initialDensity}
       preferDefaults={false}
     >
-      <AppShell>{children}</AppShell>
+      <AppShell>
+        {children}
+        {mainCharacterId && <RenameMainCharacterPrompt characterId={mainCharacterId} />}
+      </AppShell>
     </Providers>
   );
 }
