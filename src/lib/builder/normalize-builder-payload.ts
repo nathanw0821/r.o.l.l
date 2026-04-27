@@ -169,6 +169,7 @@ function buildPayloadV5(fields: {
   ignoreMutationPenalties: boolean;
   baseSpecial?: Record<string, number>;
   legendaryPerkIds?: string[];
+  ndUrl?: string;
 }): BuilderPayload {
   return {
     version: 5,
@@ -186,7 +187,8 @@ function buildPayloadV5(fields: {
     mutationIds: fields.mutationIds,
     ignoreMutationPenalties: fields.ignoreMutationPenalties,
     baseSpecial: fields.baseSpecial ?? {},
-    legendaryPerkIds: fields.legendaryPerkIds ?? []
+    legendaryPerkIds: fields.legendaryPerkIds ?? [],
+    ndUrl: fields.ndUrl
   };
 }
 
@@ -234,7 +236,8 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
       ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties),
       baseSpecial: readBaseSpecial(v),
-      legendaryPerkIds: readLegendaryPerkIds(v)
+      legendaryPerkIds: readLegendaryPerkIds(v),
+      ndUrl: typeof v.ndUrl === "string" ? v.ndUrl : undefined
     });
   }
 
