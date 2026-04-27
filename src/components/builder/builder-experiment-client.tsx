@@ -386,12 +386,14 @@ const ModPickerOption = React.memo(function ModPickerOption({
   piece,
   compact,
   ghoulMode,
+  isRecommended,
   onPick
 }: {
   mod: BuilderModDTO;
   piece: BaseGearPiece;
   compact: boolean;
   ghoulMode: boolean;
+  isRecommended?: boolean;
   onPick: (id: string) => void;
 }) {
   const unlock = mod.trackerUnlock ?? "unknown";
@@ -410,16 +412,22 @@ const ModPickerOption = React.memo(function ModPickerOption({
       title={title}
       style={{ contentVisibility: "auto", containIntrinsicSize: compact ? "auto 48px" : "auto 96px" }}
       className={cn(
-        "summary-status-card mod-picker-option flex w-full flex-col rounded-[var(--radius)] border text-left",
+        "summary-status-card mod-picker-option flex w-full flex-col rounded-[var(--radius)] border text-left relative",
         "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
         unlock === "unknown" && "opacity-95",
-        compact ? "gap-0 px-2 py-1.5" : "gap-0.5 py-2.5"
+        compact ? "gap-0 px-2 py-1.5" : "gap-0.5 py-2.5",
+        isRecommended && "border-accent/40 bg-accent/5"
       )}
       onClick={() => onPick(mod.id)}
     >
       <div className={cn("flex items-start justify-between gap-2", compact ? "px-0" : "px-0.5")}>
-        <span className={cn("min-w-0 font-semibold leading-snug", compact ? "text-[13px]" : "text-sm")}>
+        <span className={cn("min-w-0 font-semibold leading-snug flex items-center gap-2", compact ? "text-[13px]" : "text-sm")}>
           {mod.name}
+          {isRecommended && (
+            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-accent font-bold">
+              Used on other piece
+            </span>
+          )}
         </span>
         <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground/70">
           {statusLabel}
@@ -768,6 +776,19 @@ export default function BuilderExperimentClient({
     [activePick]
   );
 
+  const recommendedIds = React.useMemo(() => {
+    const ids = new Set<string>();
+    if (!activePick) return ids;
+    if (activePick.scope === "armorSet") {
+      for (let i = 0; i < payload.armorLegendaryModIds.length; i++) {
+        if (i === activePick.pieceIndex) continue;
+        const id = payload.armorLegendaryModIds[i]?.[activePick.starIndex];
+        if (id) ids.add(id);
+      }
+    }
+    return ids;
+  }, [activePick, payload.armorLegendaryModIds]);
+
   const optionsForActivePick = React.useMemo(() => {
     if (!activePick) return [];
     const slotIndex = activePick.scope === "single" ? activePick.starIndex : activePick.starIndex;
@@ -781,6 +802,10 @@ export default function BuilderExperimentClient({
       );
     });
     return [...filtered].sort((a, b) => {
+      const recA = recommendedIds.has(a.id) ? 1 : 0;
+      const recB = recommendedIds.has(b.id) ? 1 : 0;
+      if (recA !== recB) return recB - recA;
+
       if (payload.ghoul) {
         const discA = isGhoulDiscouragedLegendarySlug(a.slug) ? 1 : 0;
         const discB = isGhoulDiscouragedLegendarySlug(b.slug) ? 1 : 0;
@@ -788,7 +813,7 @@ export default function BuilderExperimentClient({
       }
       return a.name.localeCompare(b.name);
     });
-  }, [mods, piece, activePick, deferredSlotQuery, payload.ghoul]);
+  }, [mods, piece, activePick, deferredSlotQuery, payload.ghoul, recommendedIds]);
 
   function setBase(id: string) {
     const next = getBaseGearPiece(id);
@@ -1543,6 +1568,7 @@ export default function BuilderExperimentClient({
                       piece={piece}
                       compact={isCompactDensity}
                       ghoulMode={payload.ghoul}
+                      isRecommended={recommendedIds.has(m.id)}
                       onPick={assignSlot}
                     />
                   ))
