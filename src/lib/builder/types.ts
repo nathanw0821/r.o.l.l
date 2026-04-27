@@ -41,7 +41,7 @@ export const DEFAULT_POWER_ARMOR_PIECES_EQUIPPED: PowerArmorPiecesEquipped = [
 ];
 
 export type BuilderPayload = {
-  version: 4;
+  version: 5;
   basePieceId: string;
   equipmentKind: BuilderEquipmentKind;
   weaponSub: BuilderWeaponSub | null;

@@ -45,7 +45,7 @@ export const effectTierCatalogSelect = {
 
 export type EffectTierCatalogRow = Prisma.EffectTierGetPayload<{ select: typeof effectTierCatalogSelect }>;
 
-export type MergedEffectTierRow = Omit<EffectTierCatalogRow, \"notes\"> & {
+export type MergedEffectTierRow = Omit<EffectTierCatalogRow, "notes"> & {
   notes: string | null;
   origins: string[];
   unlocked: boolean;

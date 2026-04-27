@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { syncUserAchievements } from "@/lib/achievements";
+import { getActiveCharacterId } from "@/lib/character";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -35,19 +36,25 @@ export async function POST(req: Request) {
     );
   }
 
+  const activeCharacterId = await getActiveCharacterId(session.user.id);
+  if (!activeCharacterId) {
+    return NextResponse.json({ success: false, error: { code: "NO_CHARACTER", message: "No active character." } }, { status: 400 });
+  }
+
   const { entries } = parsed.data;
   await prisma.$transaction(
     entries.map((entry) =>
       prisma.userProgress.upsert({
         where: {
-          userId_effectTierId: {
-            userId: session.user.id,
+          characterId_effectTierId: {
+            characterId: activeCharacterId,
             effectTierId: entry.effectTierId
           }
         },
         update: { unlocked: entry.unlocked },
         create: {
           userId: session.user.id,
+          characterId: activeCharacterId,
           effectTierId: entry.effectTierId,
           unlocked: entry.unlocked
         }

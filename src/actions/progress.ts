@@ -58,26 +58,21 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
       }
     });
   } else {
-    // Wait, the unique constraint is currently on userId_effectTierId. We need to use characterId_effectTierId if it was renamed, or we can use findFirst and update, but upsert needs a unique index. Let's check what the unique index is. It is @@unique([userId, effectTierId]) in the schema.prisma. So we can still upsert by userId_effectTierId for now, but also pass characterId.
-    // Wait, in schema.prisma, we changed it to: @@unique([userId, effectTierId]). So upsert still needs userId_effectTierId.
-    const existing = await prisma.userProgress.findUnique({
-      where: { characterId_effectTierId: { characterId, effectTierId } }
-    });
-    if (existing) {
-      await prisma.userProgress.update({
-        where: { id: existing.id },
-        data: { unlocked }
-      });
-    } else {
-      await prisma.userProgress.create({
-        data: {
-          userId: session.user.id,
+    await prisma.userProgress.upsert({
+      where: {
+        characterId_effectTierId: {
           characterId,
-          effectTierId,
-          unlocked
+          effectTierId
         }
-      });
-    }
+      },
+      update: { unlocked },
+      create: {
+        userId: session.user.id,
+        characterId,
+        effectTierId,
+        unlocked
+      }
+    });
   }
 
   await syncUserAchievements(session.user.id);
@@ -113,14 +108,14 @@ export async function bulkUpdateProgress(input: { entries: { effectTierId: strin
       return prisma.userProgress.upsert({
         where: {
           characterId_effectTierId: {
-            characterId,
+            characterId: characterId as string,
             effectTierId: entry.effectTierId
           }
         },
         update: { unlocked: entry.unlocked },
         create: {
           userId: session.user.id,
-          characterId,
+          characterId: characterId as string,
           effectTierId: entry.effectTierId,
           unlocked: entry.unlocked
         }

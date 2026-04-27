@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { isTrackableBasePieceId } from "@/lib/builder/base-gear";
+import { getActiveCharacterId } from "@/lib/character";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -28,19 +29,33 @@ export async function updateLearnedBasePiece(input: { basePieceId: string; learn
     throw new Error("Unknown base piece");
   }
 
+  const characterId = await getActiveCharacterId(session.user.id);
+  if (!characterId) {
+    throw new Error("No active character found");
+  }
+
   if (!learned) {
-    await prisma.userLearnedBasePiece.deleteMany({
-      where: { userId: session.user.id, basePieceId }
-    });
+    await prisma.userLearnedBasePiece.delete({
+      where: {
+        characterId_basePieceId: {
+          characterId,
+          basePieceId
+        }
+      }
+    }).catch(() => {}); // Ignore if not found
   } else {
     await prisma.userLearnedBasePiece.upsert({
       where: {
-        userId_basePieceId: {
-          userId: session.user.id,
+        characterId_basePieceId: {
+          characterId,
           basePieceId
         }
       },
-      create: { userId: session.user.id, basePieceId },
+      create: {
+        userId: session.user.id,
+        characterId,
+        basePieceId
+      },
       update: {}
     });
   }
