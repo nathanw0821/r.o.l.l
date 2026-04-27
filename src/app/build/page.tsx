@@ -12,14 +12,21 @@ const BuilderExperimentClient = dynamic(
   }
 );
 
+import { redirect } from "next/navigation";
+
 export const metadata: Metadata = {
-  title: "Loadout Builder | R.O.L.L",
+  title: "B.U.I.L.D | R.O.L.L",
   description:
-    "Sandbox legendary loadout builder for Fallout 76: slot rules, armor vs weapon, power armor exclusions, shareable links."
+    "Battle Utility & Inventory Logistics Diagnostic (Experimental)"
 };
 
 export default async function BuildPage() {
   const session = await getServerSession(authOptions);
+  
+  if (session?.user?.role !== "ADMIN") {
+    redirect("/");
+  }
+
   const initialLearnedBasePieceIds = await getLearnedBasePieceIdsForUser(session?.user?.id);
 
   return <BuilderExperimentClient initialLearnedBasePieceIds={initialLearnedBasePieceIds} />;
