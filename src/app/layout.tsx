@@ -9,6 +9,9 @@ import { getAppSession } from "@/lib/auth";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+const vt323 = "https://fonts.googleapis.com/css2?family=VT323&display=swap";
+const shareTechMono = "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap";
+
 const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
@@ -72,6 +75,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       data-sidebar-collapsed="0"
     >
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href={vt323} rel="stylesheet" />
+        <link href={shareTechMono} rel="stylesheet" />
         <Script
           id="ui-bootstrap"
           strategy="beforeInteractive"
