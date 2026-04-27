@@ -570,6 +570,9 @@ export default function BuilderExperimentClient({
   const [ndImport, setNdImport] = React.useState<(NdImportResult & { appliedAt: number }) | null>(null);
   const [ndImportError, setNdImportError] = React.useState<string | null>(null);
 
+  const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<number | null>(null);
+  const internalUpdateRef = React.useRef(false);
+
   React.useEffect(() => {
     try {
       const saved = localStorage.getItem("roll-builder-payload");
@@ -629,12 +632,15 @@ export default function BuilderExperimentClient({
       
       return next;
     });
+    setActiveLoadoutIndex(slotIndex);
   }, [payload, savedLoadouts]);
 
   const loadLoadout = React.useCallback((slotIndex: number) => {
     const saved = savedLoadouts[slotIndex];
     if (saved) {
+      internalUpdateRef.current = true;
       setPayload(saved.payload);
+      setActiveLoadoutIndex(slotIndex);
       triggerBuilderAchievement("build_stats");
       triggerBuilderAchievement("build_perks");
     }
@@ -651,6 +657,15 @@ export default function BuilderExperimentClient({
       localStorage.setItem("roll-builder-saves", JSON.stringify(savedLoadouts));
     }
   }, [savedLoadouts, isMounted]);
+
+  React.useEffect(() => {
+    if (!isMounted) return;
+    if (internalUpdateRef.current) {
+      internalUpdateRef.current = false;
+      return;
+    }
+    setActiveLoadoutIndex(null);
+  }, [payload, isMounted]);
 
   React.useEffect(() => {
     setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
@@ -1222,7 +1237,18 @@ export default function BuilderExperimentClient({
             </div>
 
             <div className="mt-4 border-t border-border/60 pt-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50 mb-2">Saved Loadouts</div>
+              <div className="mb-2 flex items-center justify-between">
+                <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50">Saved Loadouts</div>
+                <div className={cn(
+                  "flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold border",
+                  activeLoadoutIndex === null 
+                    ? "bg-amber-400/10 border-amber-400/20 text-amber-500/90" 
+                    : "bg-emerald-400/10 border-emerald-400/20 text-emerald-500/90"
+                )}>
+                  <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", activeLoadoutIndex === null ? "bg-amber-500" : "bg-emerald-500")} />
+                  <span>{activeLoadoutIndex === null ? "Custom Build" : `Active: ${savedLoadouts[activeLoadoutIndex]?.name || "Loaded"}`}</span>
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
                 {Array.from({ length: 10 }).map((_, i) => {
                   const saved = savedLoadouts[i];
