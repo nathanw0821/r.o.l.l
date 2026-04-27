@@ -4,7 +4,7 @@ import { getTierProgressSummary } from "@/lib/data";
 import { ok } from "@/lib/api/responses";
 
 
-export const revalidate = 0;
+
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

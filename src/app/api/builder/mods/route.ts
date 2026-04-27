@@ -7,7 +7,7 @@ import type { BuilderModDTO } from "@/lib/builder/types";
 import { getCachedBuilderModCatalog } from "@/lib/builder/get-builder-mod-catalog";
 
 
-export const revalidate = 0;
+
 
 function toDto(
   row: {

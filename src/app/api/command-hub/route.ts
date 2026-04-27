@@ -7,7 +7,7 @@ import { ok } from "@/lib/api/responses";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
 
-export const revalidate = 0;
+
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
