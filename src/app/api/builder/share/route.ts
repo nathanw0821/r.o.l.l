@@ -25,7 +25,7 @@ const armorCraftingRowSchema = z.object({
 
 const payloadSchema = z
   .object({
-    version: z.literal(4),
+    version: z.literal(5),
     basePieceId: z.string().min(1),
     equipmentKind: z.enum(["armor", "powerArmor", "weapon", "underarmor"]),
     weaponSub: z.enum(["melee", "ranged", "energy"]).nullable(),
@@ -38,15 +38,19 @@ const payloadSchema = z
     powerArmorHelmetCrafting: armorCraftingRowSchema.optional(),
     powerArmorPiecesEquipped: z.array(z.boolean()).length(6).optional(),
     mutationIds: z.array(z.string()).max(40).optional(),
-    ignoreMutationPenalties: z.boolean().optional()
+    ignoreMutationPenalties: z.boolean().optional(),
+    baseSpecial: z.record(z.number()).optional(),
+    legendaryPerkIds: z.array(z.string()).optional()
   })
   .transform((p) => ({
     ...p,
     powerArmorHelmetId: p.powerArmorHelmetId ?? null,
     powerArmorHelmetCrafting: p.powerArmorHelmetCrafting ?? { materialModId: "none", miscModId: "none" },
-    powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(p.powerArmorPiecesEquipped),
+    powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(p.powerArmorPiecesEquipped as any),
     mutationIds: sanitizeSandboxMutationIds(p.mutationIds ?? []),
-    ignoreMutationPenalties: p.ignoreMutationPenalties ?? false
+    ignoreMutationPenalties: p.ignoreMutationPenalties ?? false,
+    baseSpecial: p.baseSpecial ?? {},
+    legendaryPerkIds: p.legendaryPerkIds ?? []
   }));
 
 const bodySchema = z.object({

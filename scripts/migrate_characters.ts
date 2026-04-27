@@ -27,13 +27,13 @@ async function main() {
 
     // Update progress rows
     await prisma.userProgress.updateMany({
-      where: { userId: user.id, characterId: null },
+      where: { userId: user.id },
       data: { characterId: mainCharacter.id }
     });
 
     // Update imported baselines
     await prisma.userImportBaseline.updateMany({
-      where: { userId: user.id, characterId: null },
+      where: { userId: user.id },
       data: { characterId: mainCharacter.id }
     });
 
@@ -42,9 +42,19 @@ async function main() {
       where: { userId: user.id }
     });
     for (const piece of basePieces) {
-      await prisma.userLearnedBasePiece.update({
-        where: { userId_basePieceId: { userId: user.id, basePieceId: piece.basePieceId } },
-        data: { characterId: mainCharacter.id }
+      await prisma.userLearnedBasePiece.upsert({
+        where: {
+          characterId_basePieceId: {
+            characterId: mainCharacter.id,
+            basePieceId: piece.basePieceId
+          }
+        },
+        create: {
+          userId: user.id,
+          characterId: mainCharacter.id,
+          basePieceId: piece.basePieceId
+        },
+        update: {}
       });
     }
   }

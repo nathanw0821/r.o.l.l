@@ -32,8 +32,8 @@ const allowedOrigins = Array.from(
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  cacheComponents: true,
   experimental: {
-    cacheComponents: true,
     serverActions: {
       allowedOrigins
     }

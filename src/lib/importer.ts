@@ -5,6 +5,7 @@ import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
+import { getActiveCharacterId } from "@/lib/character";
 import { normalizeNoteValue, parseUnlockedValue } from "@/lib/import-normalize";
 import { convertXlsToXlsx } from "@/lib/convert-xls";
 
@@ -260,13 +261,14 @@ async function migrateProgress(previousVersionId: string, newVersionId: string) 
       if (!newEffectTierId) return null;
       return {
         userId: progress.userId,
+        characterId: progress.characterId,
         effectTierId: newEffectTierId,
         unlocked: progress.unlocked,
         notes: progress.notes ?? undefined
       };
     })
     .filter(
-      (row): row is { userId: string; effectTierId: string; unlocked: boolean; notes: string | undefined } =>
+      (row): row is { userId: string; characterId: string; effectTierId: string; unlocked: boolean; notes: string | undefined } =>
         Boolean(row)
     );
 
@@ -571,20 +573,20 @@ export async function importWorkbook(buffer: Uint8Array, filename: string, userI
     }
 
     if (userId && userBaselineMap.size > 0) {
-      const userSettings = await prisma.userSettings.findUnique({ where: { userId } });
-      const activeCharacterId = userSettings?.activeCharacterId ?? undefined;
-
-      const baselineRows = Array.from(userBaselineMap.entries()).map(([effectTierId, unlocked]) => ({
-        userId,
-        characterId: activeCharacterId,
-        datasetVersionId: datasetVersion.id,
-        effectTierId,
-        unlocked
-      }));
-      await prisma.userImportBaseline.deleteMany({
-        where: { userId, datasetVersionId: datasetVersion.id }
-      });
-      await prisma.userImportBaseline.createMany({ data: baselineRows });
+      const activeCharacterId = await getActiveCharacterId(userId);
+      if (activeCharacterId) {
+        const baselineRows = Array.from(userBaselineMap.entries()).map(([effectTierId, unlocked]) => ({
+          userId,
+          characterId: activeCharacterId,
+          datasetVersionId: datasetVersion.id,
+          effectTierId,
+          unlocked
+        }));
+        await prisma.userImportBaseline.deleteMany({
+          where: { characterId: activeCharacterId, datasetVersionId: datasetVersion.id }
+        });
+        await prisma.userImportBaseline.createMany({ data: baselineRows });
+      }
     }
   } catch (error) {
     errors.push({

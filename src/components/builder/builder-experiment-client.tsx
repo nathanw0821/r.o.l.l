@@ -1136,7 +1136,7 @@ export default function BuilderExperimentClient({
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Global Actions</div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button variant="destructive" size="sm" onClick={clearAllSelections}>
+              <Button variant="secondary" size="sm" onClick={clearAllSelections}>
                 Clear All Selections
               </Button>
               {undoPayload ? (
@@ -1155,7 +1155,7 @@ export default function BuilderExperimentClient({
                     <div key={i} className="flex flex-col gap-1">
                       <Button
                         variant={saved ? "secondary" : "outline"}
-                        size="xs"
+                        size="sm"
                         className="text-[10px] h-7 px-1 truncate"
                         onClick={() => loadLoadout(i)}
                         disabled={!saved}
@@ -1165,7 +1165,7 @@ export default function BuilderExperimentClient({
                       </Button>
                       <Button
                         variant="ghost"
-                        size="xs"
+                        size="sm"
                         className="text-[9px] h-5 opacity-50 hover:opacity-100"
                         onClick={() => saveLoadout(i)}
                       >
@@ -1245,7 +1245,7 @@ export default function BuilderExperimentClient({
             ) : null}
             <details className="mt-3 rounded-[var(--radius)] border border-border bg-background/40">
               <summary className="cursor-pointer select-none px-3 py-2 text-xs font-semibold text-foreground/75">
-                All armor, power armor &amp; underarmor bases ({learnedTrackableCount}/{trackableTotal} learned)
+                All armor, power armor &amp; underarmor bases ({learnedTrackableCount}{" / "}{trackableTotal} learned)
               </summary>
               <div className="max-h-72 space-y-3 overflow-y-auto border-t border-border px-3 py-3">
                 {trackableGroups.map((group) => (
@@ -1290,7 +1290,7 @@ export default function BuilderExperimentClient({
                 misc per slot; fifth-star legendaries are not in this sandbox yet.
               </p>
             ) : null}
-          </div>
+
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Underarmor</div>
@@ -1439,7 +1439,7 @@ export default function BuilderExperimentClient({
               <div className="text-sm font-semibold">Paired helmet</div>
               <p className="mt-1 text-xs text-foreground/55">
                 In Fallout 76, power armor helmets do not accept legendary effects. Choose a helmet to add its base
-                resists and material / misc bench math on top of your torso plan (torso still uses the four-star bench
+                resists and material{" / "}misc bench math on top of your torso plan (torso still uses the four-star bench
                 below).
               </p>
               <label className="mt-3 block text-xs text-foreground/60">
@@ -1513,10 +1513,10 @@ export default function BuilderExperimentClient({
               <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
                 <div className="text-sm font-semibold">Pieces on frame</div>
                 <p className="mt-1 text-xs text-foreground/55">
-                  Flat DR/ER/RR from the chassis (always) plus toggled parts — piece values follow Fallout Wiki max-tier
-                  tables (ballistic / energy / radiation; fire/cryo/poison not listed in those sources). Separate from
+                  Flat DR{"/"}ER{"/"}RR from the chassis (always) plus toggled parts — piece values follow Fallout Wiki max-tier
+                  tables (ballistic{" / "}energy{" / "}radiation; fire{"/"}cryo{"/"}poison not listed in those sources). Separate from
                   those numbers, power armor grants inherent % damage reduction and rad reduction that
-                  scale about 7% / 15% per attached piece (see totals). Entering a frame always adds +10 STR / +50
+                  scale about 7%{" / "}15% per attached piece (see totals). Entering a frame always adds +10 STR{" / "}+50
                   carry in “All layers” even with every piece off — fall immunity, underwater breathing with a fusion
                   core, and higher unarmed damage apply in-frame but are not numeric rows here.
                 </p>
@@ -1590,7 +1590,7 @@ export default function BuilderExperimentClient({
                       </div>
                       <Button
                         variant="ghost"
-                        size="xs"
+                        size="sm"
                         className="h-7 text-[10px] font-normal text-foreground/40 hover:text-destructive"
                         onClick={() => clearPiece(pieceIndex)}
                       >
@@ -1728,6 +1728,7 @@ export default function BuilderExperimentClient({
             ) : null}
           </div>
 
+
           <Dialog
             open={activePick !== null}
             onOpenChange={(open) => {
@@ -1753,7 +1754,7 @@ export default function BuilderExperimentClient({
                     : "Search your catalog; rows use the same unlock colors as All Effects when this mod maps to a tracker tier. Mods with no modeled resists or SPECIAL still work here — details appear under each row."}
                   {payload.ghoul ? (
                     <span className="mt-1 block text-[11px] text-[color:color-mix(in_srgb,var(--color-warning)_80%,var(--foreground))]">
-                      Ghoul build: hunger/thirst rows follow playable Ghoul rules; Bloodied / Unyielding stay pickable
+                      Ghoul build: hunger{"/"}thirst rows follow playable Ghoul rules; Bloodied{" / "}Unyielding stay pickable
                       with an off-meta note.
                     </span>
                   ) : null}
@@ -1815,7 +1816,7 @@ export default function BuilderExperimentClient({
             <Button type="button" className="mt-3" size="sm" onClick={shareBuild} disabled={shareBusy}>
               {shareBusy ? "Saving…" : "Publish share link"}
             </Button>
-            {shareResult?.startsWith("/") ? (
+            {shareResult?.startsWith(String.fromCharCode(47)) ? (
               <div className="mt-2 text-sm">
                 <Link className="text-accent underline" href={shareResult}>
                   Open {shareResult}
@@ -1836,7 +1837,7 @@ export default function BuilderExperimentClient({
               toggle). Addictions, Glow, lunches, and other planner knobs are out of scope.
             </p>
             <div className="mt-4 space-y-2 border-t border-border pt-3">
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Species / rules</div>
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Species{" / "}rules</div>
               <label className="flex cursor-pointer items-start gap-2 text-xs text-foreground/75">
                 <input
                   type="checkbox"
@@ -1854,8 +1855,8 @@ export default function BuilderExperimentClient({
                 <span>
                   <span className="font-medium text-foreground/85">Ghoul build</span>
                   <span className="block text-[11px] text-foreground/60">
-                    Playable Ghoul (Ghoul Within): hunger/thirst legendaries dropped from math; RR on gear still
-                    stacks; CHA includes −10 vs human; Bloodied / Unyielding stay pickable with warnings.
+                    Playable Ghoul (Ghoul Within): hunger{"/"}thirst legendaries dropped from math; RR on gear still
+                    stacks; CHA includes −10 vs human; Bloodied{" / "}Unyielding stay pickable with warnings.
                   </span>
                 </span>
               </label>
@@ -1928,7 +1929,7 @@ export default function BuilderExperimentClient({
                 Fallout 76 character planner
               </a>
               . R.O.L.L. merges a <span className="font-medium text-foreground/75">partial</span> perk table into Live
-              totals (carry, resists, a few damage/AP/HP hints). Expand the table in code for full coverage.
+              totals (carry, resists, a few damage{"/"}AP{"/"}HP hints). Expand the table in code for full coverage.
             </p>
             <Input
               className="mt-2 font-mono text-[11px] leading-snug"
@@ -2013,14 +2014,13 @@ export default function BuilderExperimentClient({
                 </>
               ) : isPowerArmorTorsoBasePiece(piece) ? (
                 <>
-                  The first number is chassis + attached piece flat resists (per toggles), frame STR/carry, optional
+                  The first number is chassis + attached piece flat resists (per toggles), frame STR{"/"}carry, optional
                   helmet base + crafting, and torso crafting — no legendary stars. Stars, underarmor, mutations, and
-                  N&amp;D add the <span className="font-medium text-foreground/75">(+…)</span> before the total; PA % DR
-                  / RR rows stay single values.
+                  N&amp;D add the <span className="font-medium text-foreground/75">(+…)</span> before the total; PA % DR{" / "}RR rows stay single values.
                 </>
               ) : piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
                 <>
-                  Helmet base resists and helmet material / misc — legendary stars are not available on power armor
+                  Helmet base resists and helmet material{" / "}misc — legendary stars are not available on power armor
                   helmets.
                 </>
               ) : piece.kind === "powerArmor" ? (
@@ -2042,8 +2042,8 @@ export default function BuilderExperimentClient({
             </p>
             <p className="mt-1 text-xs text-foreground/50">
               Each row is <span className="font-medium text-foreground/70">piece + crafting (+ frame on PA)</span>, then{" "}
-              <span className="font-medium text-foreground/70">(+delta)</span> for legendary stars plus underarmor /
-              mutations / N&amp;D, then <span className="font-medium text-foreground/70">= total</span>. A single number
+              <span className="font-medium text-foreground/70">(+delta)</span> for legendary stars plus underarmor{" / "}
+              mutations{" / "}N&amp;D, then <span className="font-medium text-foreground/70">= total</span>. A single number
               means there is nothing in that (+…) bucket for that stat.
               {payload.ghoul
                 ? " Ghoul caps some legendaries and applies −10 effective CHA in this sandbox."

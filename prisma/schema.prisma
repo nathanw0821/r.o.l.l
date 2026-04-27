@@ -260,7 +260,7 @@ model UserProgress {
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   character    Character  @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
-  @@unique([characterId, effectTierId])
+  @@unique([characterId, effectTierId], name: "characterId_effectTierId")
   @@index([userId])
 }
 

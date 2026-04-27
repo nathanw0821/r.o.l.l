@@ -1,7 +1,7 @@
 import SummaryClient from "@/components/summary-client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth";
-import { getAllEffectTiers } from "@/lib/data";
+import { getAllEffectTiers, getGlobalProgressSummary } from "@/lib/data";
 
 export default async function SummaryPage() {
   const session = await getAppSession();

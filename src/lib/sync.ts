@@ -315,13 +315,14 @@ async function migrateProgress(previousVersionId: string, newVersionId: string) 
       if (!newEffectTierId) return null;
       return {
         userId: progress.userId,
+        characterId: progress.characterId,
         effectTierId: newEffectTierId,
         unlocked: progress.unlocked,
         notes: progress.notes ?? undefined
       };
     })
     .filter(
-      (row): row is { userId: string; effectTierId: string; unlocked: boolean; notes: string | undefined } =>
+      (row): row is { userId: string; characterId: string; effectTierId: string; unlocked: boolean; notes: string | undefined } =>
         Boolean(row)
     );
 

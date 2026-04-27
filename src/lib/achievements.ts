@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getAllEffectTiers } from "@/lib/data";
+import { getAllEffectTiers, getGlobalProgressSummary, type MergedEffectTierRow } from "@/lib/data";
 
 export type AchievementGroup = "visible" | "hidden" | "easterEgg";
 
@@ -259,7 +259,7 @@ function hasFullCategory(
   rows: Awaited<ReturnType<typeof getAllEffectTiers>>,
   categoryName: string
 ) {
-  const matching = rows.filter((row) =>
+  const matching = (rows as MergedEffectTierRow[]).filter((row) =>
     row.categories.some((category) => category.category.name === categoryName)
   );
   return matching.length > 0 && matching.every((row) => row.unlocked);
