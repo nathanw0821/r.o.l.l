@@ -16,14 +16,9 @@ import type {
 const STAR_SLOTS = 4;
 const EMPTY_STAR_ROW: (string | null)[] = Array.from({ length: STAR_SLOTS }, () => null);
 
-export function emptyArmorLegendaryGrid(): (string | null)[][] {
-  return [
-    [...EMPTY_STAR_ROW],
-    [...EMPTY_STAR_ROW],
-    [...EMPTY_STAR_ROW],
-    [...EMPTY_STAR_ROW],
-    [...EMPTY_STAR_ROW]
-  ];
+export function emptyArmorLegendaryGrid(isPA?: boolean): (string | null)[][] {
+  const count = isPA ? 6 : 5;
+  return Array.from({ length: count }, () => [...EMPTY_STAR_ROW]);
 }
 
 function padLegendaryRow(row: unknown): (string | null)[] {
@@ -36,10 +31,11 @@ function padLegendaryRow(row: unknown): (string | null)[] {
   return out;
 }
 
-function padArmorGrid(raw: unknown): (string | null)[][] {
-  const grid = emptyArmorLegendaryGrid();
+function padArmorGrid(raw: unknown, isPA?: boolean): (string | null)[][] {
+  const grid = emptyArmorLegendaryGrid(isPA);
   if (!Array.isArray(raw)) return grid;
-  for (let p = 0; p < 5; p++) {
+  const count = isPA ? 6 : 5;
+  for (let p = 0; p < count; p++) {
     grid[p] = padLegendaryRow(raw[p]);
   }
   return grid;
@@ -95,10 +91,11 @@ function readUnderarmor(raw: Record<string, unknown>): BuilderUnderarmor {
   };
 }
 
-function readArmorPieceCrafting(raw: unknown): BuilderArmorPieceCrafting[] {
-  const base = defaultArmorPieceCrafting();
+function readArmorPieceCrafting(raw: unknown, isPA?: boolean): BuilderArmorPieceCrafting[] {
+  const count = isPA ? 6 : 5;
+  const base = defaultArmorPieceCrafting(isPA);
   if (!Array.isArray(raw)) return base;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < count; i++) {
     const row = raw[i];
     if (!row || typeof row !== "object") continue;
     const o = row as Record<string, unknown>;
@@ -210,10 +207,11 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
           ? v.weaponSub
           : null;
     if (!Array.isArray(v.legendaryModIds)) return null;
-    const grid = padArmorGrid(v.armorLegendaryModIds);
+    const isPA = v.equipmentKind === "powerArmor";
+    const grid = padArmorGrid(v.armorLegendaryModIds, isPA);
     const crafting = sanitizeArmorPieceCraftingJetpack(
       basePieceId,
-      readArmorPieceCrafting(v.armorPieceCrafting)
+      readArmorPieceCrafting(v.armorPieceCrafting, isPA)
     );
     const helmetRaw =
       v.powerArmorHelmetId === null || v.powerArmorHelmetId === undefined

@@ -32,6 +32,7 @@ import ProgressToggle from "@/components/progress-toggle";
 import { ARMOR_SET_SLOT_LABELS, getArmorSetRow } from "@/lib/builder/armor-sets";
 import {
   ARMOR_MATERIAL_MODS,
+  PA_MATERIAL_MODS,
   listArmorMiscModOptions,
   armorCraftingEffectLayers,
   defaultArmorPieceCrafting
@@ -60,6 +61,7 @@ import {
   filterModsForSlot,
   formatEffectMathDeltas,
   isFullArmorSetPayload,
+  isMultiPiecePayload,
   listEquippedLegendariesWithBenchLabels,
   listEquippedModsInBenchOrder,
   listExtraEffectMathEntries,
@@ -712,7 +714,8 @@ export default function BuilderExperimentClient({
   }, [loadMods]);
 
   const piece = getBaseGearPiece(payload.basePieceId) ?? BASE_GEAR_PIECES[0]!;
-  const fullArmorSet = piece.kind === "armor" && Boolean(piece.armorSetKey) && isFullArmorSetPayload(payload);
+  const isMultiPiece = isMultiPiecePayload(payload);
+  const fullArmorSet = piece.kind === "armor" && Boolean(piece.armorSetKey) && isMultiPiece;
   const baseStarsContextLabel = React.useMemo(() => {
     if (piece.kind === "armor" && piece.armorSetKey) {
       return getArmorSetRow(piece.armorSetKey)?.label ?? piece.label;
@@ -720,16 +723,18 @@ export default function BuilderExperimentClient({
     return formatBaseOptionLabel(piece);
   }, [piece]);
   const showSplitTotalsPanel =
-    fullArmorSet ||
+    isMultiPiece ||
     piece.kind === "weapon" ||
     (piece.kind === "powerArmor" && !isPowerArmorHelmetBasePiece(piece));
 
   const totalsPresentation: TotalsPresentation =
     piece.kind === "weapon"
       ? "weapon"
-      : piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
+      : piece.kind === "powerArmor"
         ? "powerArmor"
         : "balanced";
+  
+  const multiPieceSlotLabels = piece.kind === "powerArmor" ? POWER_ARMOR_PIECE_SLOT_LABELS : ARMOR_SET_SLOT_LABELS;
 
   const statKeyMode: BuilderTotalsStatKeyMode =
     totalsPresentation === "weapon" ? "weapon" : totalsPresentation === "powerArmor" ? "powerArmor" : "default";
@@ -1025,23 +1030,18 @@ export default function BuilderExperimentClient({
   function setBase(id: string) {
     const next = getBaseGearPiece(id);
     if (!next) return;
+    const isPA = next.kind === "powerArmor";
     setPayload((p) => ({
       ...p,
       basePieceId: id,
       equipmentKind: next.kind,
       weaponSub: next.kind === "weapon" ? next.weaponSub ?? null : null,
       legendaryModIds: [null, null, null, null],
-      armorLegendaryModIds: emptyArmorLegendaryGrid(),
-      armorPieceCrafting: defaultArmorPieceCrafting(),
-      powerArmorHelmetId:
-        next.kind === "powerArmor" && isPowerArmorTorsoBasePiece(next)
-          ? defaultHelmetIdForTorsoPieceId(next.id)
-          : null,
+      armorLegendaryModIds: emptyArmorLegendaryGrid(isPA),
+      armorPieceCrafting: defaultArmorPieceCrafting(isPA),
+      powerArmorHelmetId: null,
       powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
-      powerArmorPiecesEquipped:
-        next.kind === "powerArmor" && isPowerArmorTorsoBasePiece(next)
-          ? DEFAULT_POWER_ARMOR_PIECES_EQUIPPED
-          : p.powerArmorPiecesEquipped,
+      powerArmorPiecesEquipped: DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
       underarmor:
         next.kind === "underarmor" && next.defaultUnderarmorShellId
           ? { ...p.underarmor, shellId: next.defaultUnderarmorShellId }
@@ -1108,10 +1108,8 @@ export default function BuilderExperimentClient({
     }
   }
 
-  const starsDisabled =
-    piece.kind === "underarmor" || (piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece));
-  const showSingleStars =
-    !fullArmorSet && !starsDisabled && !(piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece));
+  const starsDisabled = piece.kind === "underarmor";
+  const showSingleStars = !isMultiPiece && !starsDisabled && piece.kind !== "powerArmor";
 
   return (
     <div className="space-y-6">
@@ -1484,194 +1482,7 @@ export default function BuilderExperimentClient({
             </div>
           </div>
 
-          {piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
-            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="text-sm font-semibold">Helmet crafting</div>
-              <p className="mt-1 text-xs text-foreground/55">
-                Power armor helmets never take legendary stars — only material upgrades and misc mods (stacked into
-                totals here).
-              </p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <label className="text-xs text-foreground/60">
-                  Material
-                  <select
-                    className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                    value={payload.armorPieceCrafting[0]?.materialModId ?? "none"}
-                    onChange={(e) => setArmorCraftingField(0, "materialModId", e.target.value)}
-                  >
-                    {ARMOR_MATERIAL_MODS.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="text-xs text-foreground/60">
-                  Misc
-                  <select
-                    className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                    value={payload.armorPieceCrafting[0]?.miscModId ?? "none"}
-                    onChange={(e) => setArmorCraftingField(0, "miscModId", e.target.value)}
-                  >
-                    {listArmorMiscModOptions(null, 0).map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            </div>
-          ) : null}
 
-          {piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece) ? (
-            <>
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-sm font-semibold">Torso crafting</div>
-                <p className="mt-1 text-xs text-foreground/55">
-                  Bench-style material and misc for this chassis (same sandbox hints as armor pieces). Jet pack is
-                  available on the torso, matching in-game power armor behavior.
-                </p>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  <label className="text-xs text-foreground/60">
-                    Material
-                    <select
-                      className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                      value={payload.armorPieceCrafting[0]?.materialModId ?? "none"}
-                      onChange={(e) => setArmorCraftingField(0, "materialModId", e.target.value)}
-                    >
-                      {ARMOR_MATERIAL_MODS.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="text-xs text-foreground/60">
-                    Misc
-                    <select
-                      className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                      value={payload.armorPieceCrafting[0]?.miscModId ?? "none"}
-                      onChange={(e) => setArmorCraftingField(0, "miscModId", e.target.value)}
-                    >
-                      {listArmorMiscModOptions(null, 0, { powerArmorTorso: true }).map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-              </div>
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="text-sm font-semibold">Paired helmet</div>
-              <p className="mt-1 text-xs text-foreground/55">
-                In Fallout 76, power armor helmets do not accept legendary effects. Choose a helmet to add its base
-                resists and material{" / "}misc bench math on top of your torso plan (torso still uses the four-star bench
-                below).
-              </p>
-              <label className="mt-3 block text-xs text-foreground/60">
-                Helmet
-                <select
-                  className="mt-1 h-10 w-full rounded-[var(--radius)] border border-border bg-background px-3 text-sm"
-                  value={payload.powerArmorHelmetId ?? ""}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setPayload((p) => ({
-                      ...p,
-                      powerArmorHelmetId: v === "" ? null : v,
-                      powerArmorHelmetCrafting: v === "" ? defaultPowerArmorHelmetCrafting() : p.powerArmorHelmetCrafting
-                    }));
-                  }}
-                >
-                  <option value="">No helmet</option>
-                  {POWER_ARMOR_HELMET_PIECES.map((h) => (
-                    <option key={h.id} value={h.id}>
-                      {h.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {payload.powerArmorHelmetId ? (
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  <label className="text-xs text-foreground/60">
-                    Helmet material
-                    <select
-                      className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                      value={payload.powerArmorHelmetCrafting.materialModId}
-                      onChange={(e) =>
-                        setPayload((p) => ({
-                          ...p,
-                          powerArmorHelmetCrafting: {
-                            ...p.powerArmorHelmetCrafting,
-                            materialModId: e.target.value
-                          }
-                        }))
-                      }
-                    >
-                      {ARMOR_MATERIAL_MODS.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="text-xs text-foreground/60">
-                    Helmet misc
-                    <select
-                      className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                      value={payload.powerArmorHelmetCrafting.miscModId}
-                      onChange={(e) =>
-                        setPayload((p) => ({
-                          ...p,
-                          powerArmorHelmetCrafting: { ...p.powerArmorHelmetCrafting, miscModId: e.target.value }
-                        }))
-                      }
-                    >
-                      {listArmorMiscModOptions(null, 0).map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-              ) : null}
-            </div>
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-sm font-semibold">Pieces on frame</div>
-                <p className="mt-1 text-xs text-foreground/55">
-                  Flat DR{"/"}ER{"/"}RR from the chassis (always) plus toggled parts — piece values follow Fallout Wiki max-tier
-                  tables (ballistic{" / "}energy{" / "}radiation; fire{"/"}cryo{"/"}poison not listed in those sources). Separate from
-                  those numbers, power armor grants inherent % damage reduction and rad reduction that
-                  scale about 7%{" / "}15% per attached piece (see totals). Entering a frame always adds +10 STR{" / "}+50
-                  carry in “All layers” even with every piece off — fall immunity, underwater breathing with a fusion
-                  core, and higher unarmed damage apply in-frame but are not numeric rows here.
-                </p>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {POWER_ARMOR_PIECE_SLOT_LABELS.map((label, i) => (
-                    <div
-                      key={label}
-                      className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-background/30 px-2 py-1.5"
-                    >
-                      <span className="text-xs text-foreground/80">{label}</span>
-                      <Switch
-                        checked={payload.powerArmorPiecesEquipped[i]!}
-                        onCheckedChange={(on) =>
-                          setPayload((p) => ({
-                            ...p,
-                            powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(
-                              p.powerArmorPiecesEquipped.map((v, j) => (j === i ? on : v))
-                            )
-                          }))
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          ) : null}
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Stars</div>
@@ -1702,102 +1513,107 @@ export default function BuilderExperimentClient({
               </p>
             )}
 
-            {fullArmorSet ? (
+            {isMultiPiece ? (
               <div className="mt-3 space-y-4">
-                {ARMOR_SET_SLOT_LABELS.map((slotLabel, pieceIndex) => (
-                  <div
-                    key={slotLabel}
-                    className="rounded-[var(--radius)] border border-border bg-background/40 p-3"
-                  >
-                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-foreground/70">
-                      <div>
-                        {slotLabel}
-                        <span className="mt-0.5 block text-[10px] font-normal normal-case text-foreground/50">
-                          {baseStarsContextLabel} · material &amp; misc for this piece only
-                        </span>
+                {multiPieceSlotLabels.map((slotLabel, pieceIndex) => {
+                  const isPAHelmet = piece.kind === "powerArmor" && pieceIndex === 0;
+                  return (
+                    <div
+                      key={slotLabel}
+                      className="rounded-[var(--radius)] border border-border bg-background/40 p-3"
+                    >
+                      <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-foreground/70">
+                        <div>
+                          {slotLabel}
+                          <span className="mt-0.5 block text-[10px] font-normal normal-case text-foreground/50">
+                            {formatBaseOptionLabel(piece)} · material &amp; misc
+                          </span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-[10px] font-normal text-foreground/40 hover:text-destructive"
+                          onClick={() => clearPiece(pieceIndex)}
+                        >
+                          Clear This Piece
+                        </Button>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 text-[10px] font-normal text-foreground/40 hover:text-destructive"
-                        onClick={() => clearPiece(pieceIndex)}
-                      >
-                        Clear This Piece
-                      </Button>
-                    </div>
-                    <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                      <label className="text-xs text-foreground/60">
-                        Material
-                        <select
-                          className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                          value={payload.armorPieceCrafting[pieceIndex]?.materialModId ?? "none"}
-                          onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
-                        >
-                          {ARMOR_MATERIAL_MODS.map((o) => (
-                            <option key={o.id} value={o.id}>
-                              {o.label}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className="text-xs text-foreground/60">
-                        Misc
-                        <select
-                          className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                          value={payload.armorPieceCrafting[pieceIndex]?.miscModId ?? "none"}
-                          onChange={(e) => setArmorCraftingField(pieceIndex, "miscModId", e.target.value)}
-                        >
-                          {listArmorMiscModOptions(piece.armorSetKey ?? null, pieceIndex).map((o) => (
-                            <option key={o.id} value={o.id}>
-                              {o.label}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    </div>
-                    <div className="mt-3 grid gap-2">
-                      {SLOT_LABELS.map((label, starIndex) => {
-                        const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
-                        const mod = id ? mods.find((m) => m.id === id) : null;
-                        return (
-                          <div
-                            key={`${pieceIndex}-${starIndex}`}
-                            className="flex flex-col gap-2 rounded-[var(--radius)] border border-border bg-background/50 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
+                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                        <label className="text-xs text-foreground/60">
+                          Material
+                          <select
+                            className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
+                            value={payload.armorPieceCrafting[pieceIndex]?.materialModId ?? "none"}
+                            onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
                           >
-                            <div className="min-w-0 flex-1">
-                              <div className="text-xs font-medium text-foreground/60">{label}</div>
-                              <div className="mt-0.5 text-sm font-medium leading-snug">{mod?.name ?? "—"}</div>
-                              {mod ? <LegendaryModDetailFootprint mod={mod} piece={piece} /> : null}
-                              {payload.ghoul && mod && isGhoulDiscouragedLegendarySlug(mod.slug) ? (
-                                <p className="mt-1 text-[10px] leading-snug text-[color:color-mix(in_srgb,var(--color-warning)_75%,var(--foreground))]">
-                                  Off-meta for typical Ghoul builds — kept so you can compare numbers anyway.
-                                </p>
-                              ) : null}
-                            </div>
-                            <div className="flex shrink-0 gap-2 sm:pt-1">
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setActivePick({ scope: "armorSet", pieceIndex, starIndex })}
+                            {(piece.kind === "powerArmor" ? PA_MATERIAL_MODS : ARMOR_MATERIAL_MODS).map((o) => (
+                              <option key={o.id} value={o.id}>
+                                {o.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="text-xs text-foreground/60">
+                          Misc
+                          <select
+                            className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
+                            value={payload.armorPieceCrafting[pieceIndex]?.miscModId ?? "none"}
+                            onChange={(e) => setArmorCraftingField(pieceIndex, "miscModId", e.target.value)}
+                          >
+                            {listArmorMiscModOptions(piece.armorSetKey ?? null, pieceIndex, { powerArmor: piece.kind === "powerArmor" }).map((o) => (
+                              <option key={o.id} value={o.id}>
+                                {o.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      {isPAHelmet ? (
+                        <p className="mt-3 text-[10px] text-foreground/40 italic">
+                          Power armor helmets cannot take legendary stars.
+                        </p>
+                      ) : (
+                        <div className="mt-3 grid gap-2">
+                          {SLOT_LABELS.map((label, starIndex) => {
+                            const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
+                            const mod = id ? mods.find((m) => m.id === id) : null;
+                            return (
+                              <div
+                                key={`${pieceIndex}-${starIndex}`}
+                                className="flex flex-col gap-2 rounded-[var(--radius)] border border-border bg-background/50 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
                               >
-                                Pick
-                              </Button>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => clearStarSlot("armorSet", pieceIndex, starIndex)}
-                              >
-                                Clear
-                              </Button>
-                            </div>
-                          </div>
-                        );
-                      })}
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-xs font-medium text-foreground/60">{label}</div>
+                                  <div className="mt-0.5 text-sm font-medium leading-snug">{mod?.name ?? "—"}</div>
+                                  {mod ? <LegendaryModDetailFootprint mod={mod} piece={piece} /> : null}
+                                </div>
+                                <div className="flex shrink-0 gap-2 sm:pt-1">
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setActivePick({ scope: "armorSet", pieceIndex, starIndex })}
+                                  >
+                                    Pick
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => clearStarSlot("armorSet", pieceIndex, starIndex)}
+                                  >
+                                    Clear
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : null}
 
