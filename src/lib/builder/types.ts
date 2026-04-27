@@ -50,11 +50,11 @@ export type BuilderPayload = {
    * For a full armor set base, keep empty and use `armorLegendaryModIds`.
    */
   legendaryModIds: (string | null)[];
-  /** Five body slots × four stars — full armor set only (20 legendary picks). */
+  /** Five (armor) or six (power armor) body slots × four stars — full set only. */
   armorLegendaryModIds: (string | null)[][];
   /**
-   * Material + misc craft choice per body slot (full armor set).
-   * Ignored for non–armor-set bases; still stored as five `none` rows.
+   * Material + misc craft choice per body slot (full set).
+   * 5 slots for armor sets, 6 slots for power armor (including helmet).
    */
   armorPieceCrafting: BuilderArmorPieceCrafting[];
   /**

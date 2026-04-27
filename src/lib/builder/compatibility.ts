@@ -3,7 +3,7 @@ import {
   armorSetKeyFromBasePieceId,
   type ArmorSetStats
 } from "@/lib/builder/armor-sets";
-import type { BaseGearPiece } from "@/lib/builder/base-gear";
+import { type BaseGearPiece, getBaseGearPiece } from "@/lib/builder/base-gear";
 import { isGhoulBlockedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 
@@ -41,7 +41,10 @@ function weaponSubMatches(mod: BuilderModDTO, piece: BaseGearPiece): boolean {
 
 function equipmentAllowsMod(mod: BuilderModDTO, piece: BaseGearPiece): boolean {
   if (piece.kind === "underarmor") return false;
-  if (piece.kind === "powerArmor") return mod.allowedOnPowerArmor;
+  if (piece.kind === "powerArmor") {
+    if (mod.slug === "unyielding") return true;
+    return mod.allowedOnPowerArmor;
+  }
   if (piece.kind === "armor") return mod.allowedOnArmor;
   return mod.allowedOnWeapon;
 }
@@ -73,7 +76,8 @@ export function filterModsForSlot(
   ctx?: FilterModsForSlotContext
 ): BuilderModDTO[] {
   if (piece.kind === "underarmor") return [];
-  if (piece.kind === "powerArmor" && piece.powerArmorSlot === "helmet") return [];
+  // Helmets in PA/Armor are handled by the grid UI disabling stars, 
+  // but we keep the equipment check for safety.
   return mods.filter((mod) => {
     if (ctx?.ghoul && isGhoulBlockedLegendarySlug(mod.slug)) return false;
     if (!baseAllowsMod(piece.id, mod)) return false;
@@ -356,9 +360,17 @@ export function listExtraEffectMathEntries(
   return out;
 }
 
-export function isFullArmorSetPayload(payload: BuilderPayload): boolean {
-  return payload.equipmentKind === "armor" && Boolean(armorSetKeyFromBasePieceId(payload.basePieceId));
+export function isMultiPiecePayload(payload: BuilderPayload): boolean {
+  if (payload.equipmentKind === "armor" && Boolean(armorSetKeyFromBasePieceId(payload.basePieceId))) return true;
+  if (payload.equipmentKind === "powerArmor") {
+    const piece = getBaseGearPiece(payload.basePieceId);
+    return Boolean(piece && piece.powerArmorSlot !== "helmet");
+  }
+  return false;
 }
+
+/** @deprecated Use isMultiPiecePayload */
+export const isFullArmorSetPayload = isMultiPiecePayload;
 
 /** Distinct legendary mod ids (for DB `where: { id: { in } }`). */
 /** Clear star slots whose mods are incompatible with Ghoul mode (catalog slugs). */
@@ -388,7 +400,7 @@ export function collectEquippedLegendaryModIds(payload: BuilderPayload): string[
     seen.add(id);
     out.push(id);
   };
-  if (isFullArmorSetPayload(payload)) {
+  if (isMultiPiecePayload(payload)) {
     for (const row of payload.armorLegendaryModIds) {
       for (const id of row) {
         if (id) push(id);
@@ -409,7 +421,7 @@ export function listEquippedModsInBenchOrder(
 ): BuilderModDTO[] {
   const map = new Map(mods.map((m) => [m.id, m]));
   const ids: string[] = [];
-  if (isFullArmorSetPayload(payload)) {
+  if (isMultiPiecePayload(payload)) {
     for (const row of payload.armorLegendaryModIds) {
       for (const id of row) {
         if (id) ids.push(id);
@@ -445,7 +457,7 @@ export function listEquippedLegendariesWithBenchLabels(
   const byId = new Map(mods.map((m) => [m.id, m]));
   const out: EquippedLegendaryBenchLine[] = [];
 
-  if (isFullArmorSetPayload(payload)) {
+  if (isMultiPiecePayload(payload)) {
     payload.armorLegendaryModIds.forEach((row, pieceIndex) => {
       const slot = ARMOR_SET_SLOT_LABELS[pieceIndex] ?? `Slot ${pieceIndex + 1}`;
       row.forEach((id, starIndex) => {

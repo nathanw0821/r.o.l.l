@@ -35,6 +35,42 @@ export const ARMOR_MISC_MODS: ArmorPieceModOption[] = [
   { id: "custom-fitted", label: "Custom fitted", effectMath: { hp: 5 } }
 ];
 
+/** Power armor material options (wiki: mostly standard / legacy painted resists). */
+export const PA_MATERIAL_MODS: ArmorPieceModOption[] = [
+  { id: "none", label: "None", effectMath: {} },
+  { id: "standard", label: "Standard", effectMath: {} }
+];
+
+export const PA_MISC_MODS_HELMET: ArmorPieceModOption[] = [
+  { id: "none", label: "None", effectMath: {} },
+  { id: "internal-database", label: "Internal database", effectMath: { int: 2 } },
+  { id: "sensor-array", label: "Sensor array", effectMath: { per: 2 } },
+  { id: "targeting-hud", label: "Targeting HUD", effectMath: {} }
+];
+
+export const PA_MISC_MODS_TORSO: ArmorPieceModOption[] = [
+  { id: "none", label: "None", effectMath: {} },
+  { id: "jetpack", label: "Jet pack", effectMath: {} },
+  { id: "emergency-protocols", label: "Emergency protocols", effectMath: { dr: 15 } },
+  { id: "core-assembly", label: "Core assembly", effectMath: { apRegen: 0.15 } },
+  { id: "kinetic-dynamo", label: "Kinetic dynamo", effectMath: { apRegen: 0.05 } },
+  { id: "blood-cleanser", label: "Blood cleanser", effectMath: {} }
+];
+
+export const PA_MISC_MODS_ARMS: ArmorPieceModOption[] = [
+  { id: "none", label: "None", effectMath: {} },
+  { id: "optimized-bracers", label: "Optimized bracers", effectMath: {} },
+  { id: "rusty-knuckles", label: "Rusty knuckles", effectMath: {} },
+  { id: "hydraulic-bracers", label: "Hydraulic bracers", effectMath: {} }
+];
+
+export const PA_MISC_MODS_LEGS: ArmorPieceModOption[] = [
+  { id: "none", label: "None", effectMath: {} },
+  { id: "calibrated-shocks", label: "Calibrated shocks", effectMath: { carryWeight: 50 } },
+  { id: "kinetic-servos", label: "Kinetic servos", effectMath: { apRegen: 0.1 } },
+  { id: "optimized-servos", label: "Optimized servos", effectMath: {} }
+];
+
 /**
  * Armor sets whose **chest** can take a jet pack misc mod in FO76 (Secret Service, Recon, Civil Engineer, scout lines).
  * Power armor torsos use the same jet pack row via `listArmorMiscModOptions(..., { powerArmorTorso: true })`.
@@ -60,23 +96,32 @@ export function chestSlotSupportsJetpack(
   armorSetKey: string | null | undefined,
   pieceIndex: number
 ): boolean {
+  // 0 is chest for armor, 1 is torso for PA (Helmet is 0).
+  // But wait, the set logic for armor uses 0=chest.
+  // We'll handle PA torso specifically in listArmorMiscModOptions.
   return pieceIndex === 0 && Boolean(armorSetKey && ARMOR_SET_KEYS_WITH_CHEST_JETPACK.has(armorSetKey));
 }
 
 export type ListArmorMiscModOptionsContext = {
-  /** Chest row of a power armor torso base — jet pack is a torso misc in FO76. */
-  powerArmorTorso?: boolean;
+  /** Power armor frame selected — uses PA specific mods for each slot. */
+  powerArmor?: boolean;
 };
 
-/** Misc dropdown options for one body row of a full armor set (or PA torso row). */
+/** Misc dropdown options for one body row of a full armor set (or PA row). */
 export function listArmorMiscModOptions(
   armorSetKey: string | null | undefined,
   pieceIndex: number,
   ctx?: ListArmorMiscModOptionsContext
 ): ArmorPieceModOption[] {
-  const jetpackHere =
-    chestSlotSupportsJetpack(armorSetKey, pieceIndex) ||
-    (Boolean(ctx?.powerArmorTorso) && pieceIndex === 0);
+  if (ctx?.powerArmor) {
+    if (pieceIndex === 0) return [...PA_MISC_MODS_HELMET];
+    if (pieceIndex === 1) return [...PA_MISC_MODS_TORSO];
+    if (pieceIndex === 2 || pieceIndex === 3) return [...PA_MISC_MODS_ARMS];
+    if (pieceIndex === 4 || pieceIndex === 5) return [...PA_MISC_MODS_LEGS];
+    return [{ id: "none", label: "None", effectMath: {} }];
+  }
+
+  const jetpackHere = chestSlotSupportsJetpack(armorSetKey, pieceIndex);
   if (!jetpackHere) {
     return [...ARMOR_MISC_MODS];
   }
@@ -92,37 +137,45 @@ export function sanitizeArmorPieceCraftingJetpack(
 ): BuilderArmorPieceCrafting[] {
   const key = armorSetKeyFromBasePieceId(basePieceId);
   const piece = getBaseGearPiece(basePieceId);
-  const paTorsoJetpackOk =
-    piece?.kind === "powerArmor" && piece.powerArmorSlot !== "helmet";
+  const isPA = piece?.kind === "powerArmor";
+
   return rows.map((row, pieceIndex) => {
     if (row.miscModId !== ARMOR_MISC_MOD_JETPACK.id) return row;
     if (chestSlotSupportsJetpack(key, pieceIndex)) return row;
-    if (paTorsoJetpackOk && pieceIndex === 0) return row;
+    if (isPA && pieceIndex === 1) return row; // Torso is index 1 in PA
     return { ...row, miscModId: "none" };
   });
 }
 
-export function findArmorMaterialMod(id: string): ArmorPieceModOption | undefined {
+export function findArmorMaterialMod(id: string, isPA?: boolean): ArmorPieceModOption | undefined {
+  if (isPA) return PA_MATERIAL_MODS.find((o) => o.id === id);
   return ARMOR_MATERIAL_MODS.find((o) => o.id === id);
 }
 
-export function findArmorMiscMod(id: string): ArmorPieceModOption | undefined {
+export function findArmorMiscMod(id: string, isPA?: boolean, pieceIndex?: number): ArmorPieceModOption | undefined {
   if (id === ARMOR_MISC_MOD_JETPACK.id) return ARMOR_MISC_MOD_JETPACK;
+  if (isPA) {
+    const list = listArmorMiscModOptions(undefined, pieceIndex ?? 1, { powerArmor: true });
+    return list.find((o) => o.id === id);
+  }
   return ARMOR_MISC_MODS.find((o) => o.id === id);
 }
 
-export function defaultArmorPieceCrafting(): BuilderArmorPieceCrafting[] {
-  return Array.from({ length: 5 }, () => ({ materialModId: "none", miscModId: "none" }));
+export function defaultArmorPieceCrafting(isPA?: boolean): BuilderArmorPieceCrafting[] {
+  return Array.from({ length: isPA ? 6 : 5 }, () => ({ materialModId: "none", miscModId: "none" }));
 }
 
 /** Flatten each piece's material + misc into effect layers for `aggregateEffectMath`. */
-export function armorCraftingEffectLayers(rows: BuilderArmorPieceCrafting[]): Record<string, number>[] {
+export function armorCraftingEffectLayers(
+  rows: BuilderArmorPieceCrafting[],
+  isPA?: boolean
+): Record<string, number>[] {
   const layers: Record<string, number>[] = [];
-  for (const row of rows) {
-    const mat = findArmorMaterialMod(row.materialModId);
-    const misc = findArmorMiscMod(row.miscModId);
+  rows.forEach((row, pieceIndex) => {
+    const mat = findArmorMaterialMod(row.materialModId, isPA);
+    const misc = findArmorMiscMod(row.miscModId, isPA, pieceIndex);
     if (mat?.effectMath && Object.keys(mat.effectMath).length) layers.push(mat.effectMath);
     if (misc?.effectMath && Object.keys(misc.effectMath).length) layers.push(misc.effectMath);
-  }
+  });
   return layers;
 }
