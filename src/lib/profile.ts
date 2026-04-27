@@ -1,9 +1,13 @@
-﻿import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { parseUnlockedValue } from "@/lib/import-normalize";
-export async function getImportedBaselineMap(datasetVersionId: string, userId?: string) {
-  if (!userId) return new Map<string, boolean>();
+export async function getImportedBaselineMap(datasetVersionId: string, characterId?: string) {
+  if (!characterId) return new Map<string, boolean>();
+  
+  const character = await prisma.character.findUnique({ where: { id: characterId } });
+  if (!character) return new Map<string, boolean>();
+
   const rows = await prisma.userImportBaseline.findMany({
-    where: { userId, datasetVersionId },
+    where: { characterId, datasetVersionId },
     select: { effectTierId: true, unlocked: true }
   });
 
@@ -12,7 +16,7 @@ export async function getImportedBaselineMap(datasetVersionId: string, userId?: 
   }
 
   const audit = await prisma.importAudit.findFirst({
-    where: { userId, datasetVersionId, status: "success" }
+    where: { userId: character.userId, datasetVersionId, status: "success" }
   });
   if (!audit) return new Map<string, boolean>();
 
@@ -36,7 +40,8 @@ export async function getImportedBaselineMap(datasetVersionId: string, userId?: 
   if (legacyMap.size > 0) {
     await prisma.userImportBaseline.createMany({
       data: Array.from(legacyMap.entries()).map(([effectTierId, unlocked]) => ({
-        userId,
+        userId: character.userId,
+        characterId,
         datasetVersionId,
         effectTierId,
         unlocked
@@ -49,20 +54,23 @@ export async function getImportedBaselineMap(datasetVersionId: string, userId?: 
 
 export async function applyImportedProfile(userId: string, options?: { force?: boolean }) {
   const [user, dataset] = await prisma.$transaction([
-    prisma.user.findUnique({ where: { id: userId }, select: { profileDatasetVersionId: true } }),
+    prisma.user.findUnique({ where: { id: userId }, include: { settings: true } }),
     prisma.datasetVersion.findFirst({ where: { isActive: true }, orderBy: { importedAt: "desc" } })
   ]);
 
   if (!user || !dataset) return;
 
-  const baselineMap = await getImportedBaselineMap(dataset.id, userId);
+  const characterId = user.settings?.activeCharacterId;
+  if (!characterId) return;
+
+  const baselineMap = await getImportedBaselineMap(dataset.id, characterId);
   const hasBaseline = baselineMap.size > 0;
   if (!hasBaseline && !options?.force) {
     return;
   }
 
   const progressCount = await prisma.userProgress.count({
-    where: { userId, effectTier: { datasetVersionId: dataset.id } }
+    where: { characterId, effectTier: { datasetVersionId: dataset.id } }
   });
 
   if (!options?.force) {
@@ -75,12 +83,13 @@ export async function applyImportedProfile(userId: string, options?: { force?: b
 
   if (options?.force) {
     await prisma.userProgress.deleteMany({
-      where: { userId, effectTier: { datasetVersionId: dataset.id } }
+      where: { characterId, effectTier: { datasetVersionId: dataset.id } }
     });
   }
 
   const createRows = Array.from(baselineMap.entries()).map(([effectTierId, unlocked]) => ({
     userId,
+    characterId,
     effectTierId,
     unlocked
   }));
