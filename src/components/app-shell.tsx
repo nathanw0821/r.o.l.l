@@ -40,7 +40,7 @@ type AppNavLink = {
 const links: AppNavLink[] = [
   { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
   { href: "/overview", label: "Overview", icon: LayoutDashboard, activePrefixes: ["/overview"] },
-  { href: "/build", label: "Builder", icon: Boxes, activePrefixes: ["/build"], prefetch: false },
+  { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
