@@ -54,6 +54,7 @@ function buildUiBootstrapScript() {
     } catch {
       // Keep server defaults if storage is unavailable.
     }
+  })();`;
 }
 
 async function DynamicShell({ children }: { children: ReactNode }) {
