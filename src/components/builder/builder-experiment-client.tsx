@@ -3,7 +3,27 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Boxes } from "lucide-react";
+import {
+  Boxes,
+  Shield,
+  Zap,
+  Flame,
+  Snowflake,
+  Droplets,
+  Radiation,
+  Info,
+  Heart,
+  Swords,
+  Activity,
+  Backpack,
+  Dumbbell,
+  Sparkles as SparklesIcon,
+  Search,
+  RotateCcw,
+  Trash2,
+  Save,
+  Download
+} from "lucide-react";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -147,19 +167,24 @@ function liveTotalsValueRowInt(base: number, total: number): React.ReactNode {
   const b = Math.round(base);
   const t = Math.round(total);
   const d = t - b;
-  if (d === 0) {
-    return <span className="tabular-nums">{t}</span>;
-  }
-  const sign = d > 0 ? "+" : "";
+  
   return (
-    <span className="tabular-nums">
-      {b}{" "}
-      <span className="text-foreground/55">
-        ({sign}
-        {d})
-      </span>{" "}
-      = {t}
-    </span>
+    <div className="flex items-center justify-end gap-1.5">
+      <div className={cn(
+        "flex h-6 items-center rounded-full bg-background/50 px-2.5 text-[11px] font-bold tabular-nums border border-border/40",
+        d !== 0 ? "text-foreground/90" : "text-foreground/70"
+      )}>
+        {t}
+      </div>
+      {d !== 0 && (
+        <div className={cn(
+          "flex h-5 items-center rounded-full px-1.5 text-[9px] font-bold tabular-nums border",
+          d > 0 ? "bg-accent/10 border-accent/20 text-accent" : "bg-destructive/10 border-destructive/20 text-destructive"
+        )}>
+          {d > 0 ? "+" : ""}{d}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -167,19 +192,24 @@ function liveTotalsValueRowPct(base: number, total: number): React.ReactNode {
   const br = Math.round(base * 100);
   const tr = Math.round(total * 100);
   const d = tr - br;
-  if (d === 0) {
-    return <span className="tabular-nums">{tr}%</span>;
-  }
-  const sign = d > 0 ? "+" : "";
+  
   return (
-    <span className="tabular-nums">
-      {br}%{" "}
-      <span className="text-foreground/55">
-        ({sign}
-        {d}%)
-      </span>{" "}
-      = {tr}%
-    </span>
+    <div className="flex items-center justify-end gap-1.5">
+      <div className={cn(
+        "flex h-6 items-center rounded-full bg-background/50 px-2.5 text-[11px] font-bold tabular-nums border border-border/40",
+        d !== 0 ? "text-foreground/90" : "text-foreground/70"
+      )}>
+        {tr}%
+      </div>
+      {d !== 0 && (
+        <div className={cn(
+          "flex h-5 items-center rounded-full px-1.5 text-[9px] font-bold tabular-nums border",
+          d > 0 ? "bg-accent/10 border-accent/20 text-accent" : "bg-destructive/10 border-destructive/20 text-destructive"
+        )}>
+          {d > 0 ? "+" : ""}{d}%
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -196,17 +226,35 @@ function BuilderTotalsGrid({
 }) {
   const resistRows = (
     <>
-      <dt className="text-foreground/60">DR</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Shield className="h-3 w-3 text-blue-400/70" />
+        <span>DR</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.dr, totals.dr)}</dd>
-      <dt className="text-foreground/60">ER</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Zap className="h-3 w-3 text-yellow-400/70" />
+        <span>ER</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.er, totals.er)}</dd>
-      <dt className="text-foreground/60">FR</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Flame className="h-3 w-3 text-orange-500/70" />
+        <span>FR</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.fr, totals.fr)}</dd>
-      <dt className="text-foreground/60">CR</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Snowflake className="h-3 w-3 text-cyan-300/70" />
+        <span>CR</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.cr, totals.cr)}</dd>
-      <dt className="text-foreground/60">PR</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Droplets className="h-3 w-3 text-green-400/70" />
+        <span>PR</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.pr, totals.pr)}</dd>
-      <dt className="text-foreground/60">RR</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Radiation className="h-3 w-3 text-lime-400/70" />
+        <span>RR</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.rr, totals.rr)}</dd>
     </>
   );
@@ -233,16 +281,31 @@ function BuilderTotalsGrid({
   /** Default row order after resists (armor / underarmor / PA helmet). */
   const balancedCoreRows = (
     <>
-      <dt className="text-foreground/60">HP bump</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Heart className="h-3 w-3 text-red-400/70" />
+        <span>HP bump</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.hp, totals.hp)}</dd>
-      <dt className="text-foreground/60">Damage %</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Swords className="h-3 w-3 text-amber-400/70" />
+        <span>Damage %</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}</dd>
       {specialRows}
-      <dt className="text-foreground/60">SPECIAL (other)</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <SparklesIcon className="h-3 w-3 text-purple-400/70" />
+        <span>SPECIAL (other)</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}</dd>
-      <dt className="text-foreground/60">AP regen</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Activity className="h-3 w-3 text-emerald-400/70" />
+        <span>AP regen</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}</dd>
-      <dt className="text-foreground/60">Carry wt</dt>
+      <dt className="flex items-center gap-1.5 text-foreground/60">
+        <Backpack className="h-3 w-3 text-orange-400/70" />
+        <span>Carry wt</span>
+      </dt>
       <dd className="text-right">{liveTotalsValueRowInt(baseTotals.carryWeight, totals.carryWeight)}</dd>
     </>
   );
@@ -485,7 +548,7 @@ export default function BuilderExperimentClient({
   const [slotQuery, setSlotQuery] = React.useState("");
   const deferredSlotQuery = React.useDeferredValue(slotQuery);
   const isCompactDensity = useDensityCompact();
-  const [shareTitle, setShareTitle] = React.useState("My B.U.I.L.D loadout");
+  const [shareTitle, setShareTitle] = React.useState("B.U.I.L.D. Loadout");
   const [shareBusy, setShareBusy] = React.useState(false);
   const [shareResult, setShareResult] = React.useState<string | null>(null);
   const [learnedBasePieceIds, setLearnedBasePieceIds] = React.useState(
@@ -1136,41 +1199,57 @@ export default function BuilderExperimentClient({
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Global Actions</div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button variant="secondary" size="sm" onClick={clearAllSelections}>
-                Clear All Selections
+              <Button variant="secondary" size="sm" onClick={clearAllSelections} className="gap-2">
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Clear All</span>
               </Button>
               {undoPayload ? (
-                <Button variant="secondary" size="sm" onClick={undoClear}>
-                  Undo Clear All
+                <Button variant="outline" size="sm" onClick={undoClear} className="gap-2">
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  <span>Undo Clear</span>
                 </Button>
               ) : null}
             </div>
 
             <div className="mt-4 border-t border-border/60 pt-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50 mb-2">Saved Loadouts (Client-side)</div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50 mb-2">Saved Loadouts</div>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
                 {Array.from({ length: 10 }).map((_, i) => {
                   const saved = savedLoadouts[i];
                   return (
-                    <div key={i} className="flex flex-col gap-1">
+                    <div key={i} className="group flex flex-col gap-1">
                       <Button
                         variant={saved ? "secondary" : "outline"}
                         size="sm"
-                        className="text-[10px] h-7 px-1 truncate"
+                        className={cn(
+                          "h-8 px-2 text-[10px] font-medium transition-all",
+                          saved ? "bg-accent/10 border-accent/30 text-accent hover:bg-accent/20" : "opacity-40 hover:opacity-100"
+                        )}
                         onClick={() => loadLoadout(i)}
                         disabled={!saved}
                         title={saved ? `Load ${saved.name}` : "Empty slot"}
                       >
-                        {saved ? saved.name : `Slot ${i + 1}`}
+                        <div className="truncate w-full text-center">
+                          {saved ? saved.name : `Slot ${i + 1}`}
+                        </div>
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-[9px] h-5 opacity-50 hover:opacity-100"
+                      <button
+                        type="button"
+                        className="flex items-center justify-center gap-1 text-[9px] text-foreground/40 hover:text-accent transition-colors"
                         onClick={() => saveLoadout(i)}
                       >
-                        {saved ? "Overwrite" : "Save"}
-                      </Button>
+                        {saved ? (
+                          <>
+                            <Save className="h-2.5 w-2.5" />
+                            <span>Overwrite</span>
+                          </>
+                        ) : (
+                          <>
+                            <Download className="h-2.5 w-2.5" />
+                            <span>Save Current</span>
+                          </>
+                        )}
+                      </button>
                     </div>
                   );
                 })}
@@ -1186,13 +1265,13 @@ export default function BuilderExperimentClient({
             
             <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7">
               {BUILDER_SPECIAL_KEYS.map((key) => (
-                <div key={key} className="flex flex-col gap-1 text-center">
-                  <label className="text-[10px] font-bold uppercase tracking-tight text-foreground/50">{BUILDER_SPECIAL_LABELS[key]}</label>
-                  <Input
+                <div key={key} className="flex flex-col items-center gap-1 rounded-lg border border-border/40 bg-background/30 p-1.5 transition-colors hover:border-accent/30 hover:bg-background/50">
+                  <div className="text-[10px] font-bold uppercase tracking-tighter text-foreground/40">{key}</div>
+                  <input
                     type="number"
                     min="1"
                     max="15"
-                    className="h-8 px-1 text-center text-xs"
+                    className="h-7 w-full border-none bg-transparent p-0 text-center text-sm font-bold focus:ring-0"
                     value={payload.baseSpecial[key] || 1}
                     onChange={(e) => {
                       const val = Math.max(1, Math.min(15, parseInt(e.target.value) || 1));
@@ -1760,12 +1839,15 @@ export default function BuilderExperimentClient({
                   ) : null}
                 </DialogDescription>
               </DialogHeader>
-              <Input
-                className={cn("mt-2 shrink-0", isCompactDensity && "h-8 text-sm")}
-                placeholder="Search compatible mods…"
-                value={slotQuery}
-                onChange={(e) => setSlotQuery(e.target.value)}
-              />
+              <div className="relative mt-2 shrink-0">
+                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/40" />
+                <Input
+                  className={cn("pl-8", isCompactDensity && "h-8 text-sm")}
+                  placeholder="Search compatible mods…"
+                  value={slotQuery}
+                  onChange={(e) => setSlotQuery(e.target.value)}
+                />
+              </div>
               {slotQuery.trim() !== deferredSlotQuery.trim() ? (
                 <p className="mt-1 text-[11px] text-foreground/45">Updating results…</p>
               ) : null}
@@ -1999,46 +2081,28 @@ export default function BuilderExperimentClient({
               )}
             </div>
             <p className="mt-1 text-xs text-foreground/60">
-              {fullArmorSet ? (
-                <>
-                  <span className="font-medium text-foreground/75">{baseStarsContextLabel}</span> full set: the first
-                  number is Backwoods table resists plus each slot&apos;s material and misc craft (no star rolls). The{" "}
-                  <span className="font-medium text-foreground/75">(+…)</span> block adds all twenty legendaries,
-                  underarmor, mutations, and N&amp;D import.
-                </>
-              ) : piece.kind === "weapon" ? (
-                <>
-                  The first column is usually 0 for weapons (no modeled shell). Star picks, underarmor, mutations, and
-                  N&amp;D modeled perks all land in the <span className="font-medium text-foreground/75">(+…)</span>{" "}
-                  portion before the total.
-                </>
-              ) : isPowerArmorTorsoBasePiece(piece) ? (
-                <>
-                  The first number is chassis + attached piece flat resists (per toggles), frame STR{"/"}carry, optional
-                  helmet base + crafting, and torso crafting — no legendary stars. Stars, underarmor, mutations, and
-                  N&amp;D add the <span className="font-medium text-foreground/75">(+…)</span> before the total; PA % DR{" / "}RR rows stay single values.
-                </>
-              ) : piece.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
-                <>
-                  Helmet base resists and helmet material{" / "}misc — legendary stars are not available on power armor
-                  helmets.
-                </>
-              ) : piece.kind === "powerArmor" ? (
-                <>
-                  Bench uses torso context for stars; equipped gear is still frame, piece resists, and crafting you have
-                  toggled on this base.
-                </>
-              ) : piece.kind === "underarmor" ? (
-                <>
-                  Shell, lining, and style — switch to armor, power armor, or a weapon to model legendary stars on
-                  outer gear.
-                </>
-              ) : (
-                <>
-                  First number is on-piece crafting and any modeled shell stats without star rolls; legendaries,
-                  underarmor, mutations, and N&amp;D roll into <span className="font-medium text-foreground/75">(+…)</span>.
-                </>
-              )}
+              <div className="mt-1 flex items-start gap-2 rounded-md bg-accent/5 p-2 text-xs text-foreground/70 border border-accent/10">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent/70" />
+              <p className="leading-relaxed">
+                {fullArmorSet ? (
+                  <>
+                    <span className="font-semibold text-foreground/90">{baseStarsContextLabel}</span> full set logic: First value is base resists + material + misc. The <span className="font-semibold text-accent/80">(+…)</span> adds stars, underarmor, mutations, and imports.
+                  </>
+                ) : piece.kind === "weapon" ? (
+                  <>
+                    Base resists are 0 for weapons. All bonuses from stars, perks, and mutations land in the <span className="font-semibold text-accent/80">(+…)</span> delta.
+                  </>
+                ) : isPowerArmorTorsoBasePiece(piece) ? (
+                  <>
+                    First value includes chassis, toggled parts, frame stats, and crafting. Stars and other layers add to the <span className="font-semibold text-accent/80">(+…)</span> delta.
+                  </>
+                ) : (
+                  <>
+                    First value is base piece + crafting. All other bonuses (stars, underarmor, etc.) roll into the <span className="font-semibold text-accent/80">(+…)</span> delta.
+                  </>
+                )}
+              </p>
+            </div>
             </p>
             <p className="mt-1 text-xs text-foreground/50">
               Each row is <span className="font-medium text-foreground/70">piece + crafting (+ frame on PA)</span>, then{" "}
@@ -2082,14 +2146,18 @@ export default function BuilderExperimentClient({
           </div>
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Shopping list</div>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-foreground/80">
-              {shopping.lines.length === 0 ? <li>No legendary modules picked yet.</li> : null}
-              {shopping.lines.map((line) => (
-                <li key={line.label}>
-                  {line.count}× {line.label}
-                </li>
-              ))}
-            </ul>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {shopping.lines.length === 0 ? (
+                <p className="text-xs text-foreground/50 italic">No legendary modules picked yet.</p>
+              ) : (
+                shopping.lines.map((line) => (
+                  <div key={line.label} className="flex items-center gap-1.5 rounded-full border border-border/60 bg-background/40 px-2.5 py-1 text-xs font-medium text-foreground/85">
+                    <span className="text-accent font-bold">{line.count}×</span>
+                    <span>{line.label}</span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </aside>
       </div>
