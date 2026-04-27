@@ -78,6 +78,8 @@ export type BuilderPayload = {
   baseSpecial: Record<string, number>;
   /** Selected legendary perk card IDs. */
   legendaryPerkIds: string[];
+  /** Optional Nukes & Dragons URL for perk layer import. */
+  ndUrl?: string;
 };
 
 /** Matched against active tracker rows (`Effect` name + tier star); `unknown` if not found in dataset. */

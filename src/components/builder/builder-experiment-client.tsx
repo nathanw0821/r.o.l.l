@@ -667,6 +667,19 @@ export default function BuilderExperimentClient({
     setActiveLoadoutIndex(null);
   }, [payload, isMounted]);
 
+  // Sync ndImport when payload.ndUrl changes (e.g. on load)
+  React.useEffect(() => {
+    if (payload.ndUrl) {
+      const r = importNukesDragonsFo76CharacterUrl(payload.ndUrl);
+      if (!("error" in r)) {
+        setNdImport({ ...r, appliedAt: Date.now() });
+        setNdUrlInput(payload.ndUrl);
+      }
+    } else {
+      setNdImport(null);
+    }
+  }, [payload.ndUrl]);
+
   React.useEffect(() => {
     setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
   }, [initialLearnedBasePieceIds]);
@@ -2072,6 +2085,13 @@ export default function BuilderExperimentClient({
                     return;
                   }
                   setNdImport({ ...r, appliedAt: Date.now() });
+                  setPayload((p) => {
+                    const next: BuilderPayload = { ...p, ndUrl: ndUrlInput };
+                    if (r.special) {
+                      next.baseSpecial = { ...p.baseSpecial, ...r.special };
+                    }
+                    return next;
+                  });
                 }}
               >
                 Apply to Live totals
@@ -2083,6 +2103,8 @@ export default function BuilderExperimentClient({
                 onClick={() => {
                   setNdImport(null);
                   setNdImportError(null);
+                  setNdUrlInput("");
+                  setPayload((p) => ({ ...p, ndUrl: undefined }));
                 }}
               >
                 Clear import
