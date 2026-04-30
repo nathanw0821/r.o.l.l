@@ -23,12 +23,14 @@ export const metadata: Metadata = {
 
 export default async function BuildPage() {
   const session = await getServerSession(authOptions);
-  
-  if (!isAdminUser(session?.user)) {
-    redirect("/");
-  }
+  const isAdmin = isAdminUser(session?.user);
 
   const initialLearnedBasePieceIds = await getLearnedBasePieceIdsForUser(session?.user?.id);
 
-  return <BuilderExperimentClient initialLearnedBasePieceIds={initialLearnedBasePieceIds} />;
+  return (
+    <BuilderExperimentClient 
+      initialLearnedBasePieceIds={initialLearnedBasePieceIds} 
+      isAdmin={isAdmin}
+    />
+  );
 }
