@@ -1491,7 +1491,7 @@ export default function BuilderExperimentClient({
                   </>
                 ) : (
                   <>
-                    Power armor helmets never use the outer legendary star bench — plan material and misc under{" "}
+                    Power armor helmets never use the outer legendary star bench — plan modifications under{" "}
                     <span className="font-medium text-foreground/80">Helmet crafting</span> above. Switch to a torso or
                     weapon base to pick star mods.
                   </>
@@ -1527,7 +1527,7 @@ export default function BuilderExperimentClient({
                         <div>
                           {slotLabel}
                           <span className="mt-0.5 block text-[10px] font-normal normal-case text-foreground/50">
-                            {formatBaseOptionLabel(piece)} · {isEquipped ? "material & misc" : "NOT EQUIPPED"}
+                            {formatBaseOptionLabel(piece)} · {isEquipped ? (piece.kind === "powerArmor" ? "modifications" : "material & misc") : "NOT EQUIPPED"}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1560,21 +1560,23 @@ export default function BuilderExperimentClient({
 
                       {isEquipped && (
                         <>
-                          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                            <label className="text-xs text-foreground/60">
-                              Material
-                              <select
-                                className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                                value={payload.armorPieceCrafting[pieceIndex]?.materialModId ?? "none"}
-                                onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
-                              >
-                                {(piece.kind === "powerArmor" ? PA_MATERIAL_MODS : ARMOR_MATERIAL_MODS).map((o) => (
-                                  <option key={o.id} value={o.id}>
-                                    {o.label}
-                                  </option>
-                                ))}
-                              </select>
-                            </label>
+                          <div className={cn("mt-2 grid gap-2", piece.kind === "powerArmor" ? "grid-cols-1" : "sm:grid-cols-2")}>
+                            {piece.kind !== "powerArmor" && (
+                              <label className="text-xs text-foreground/60">
+                                Material
+                                <select
+                                  className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
+                                  value={payload.armorPieceCrafting[pieceIndex]?.materialModId ?? "none"}
+                                  onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
+                                >
+                                  {ARMOR_MATERIAL_MODS.map((o) => (
+                                    <option key={o.id} value={o.id}>
+                                      {o.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </label>
+                            )}
                             <label className="text-xs text-foreground/60">
                               Misc
                               <select
