@@ -37,15 +37,15 @@ export const ARMOR_MISC_MODS: ArmorPieceModOption[] = [
 
 /** Power armor material options (wiki: mostly standard / legacy painted resists). */
 export const PA_MATERIAL_MODS: ArmorPieceModOption[] = [
-  { id: "none", label: "None", effectMath: {} },
-  { id: "standard", label: "Standard", effectMath: {} }
+  { id: "none", label: "None (PA material not needed)", effectMath: {} }
 ];
 
 export const PA_MISC_MODS_HELMET: ArmorPieceModOption[] = [
   { id: "none", label: "None", effectMath: {} },
   { id: "internal-database", label: "Internal database", effectMath: { int: 2 } },
   { id: "sensor-array", label: "Sensor array", effectMath: { per: 2 } },
-  { id: "targeting-hud", label: "Targeting HUD", effectMath: {} }
+  { id: "targeting-hud", label: "Targeting HUD", effectMath: {} },
+  { id: "rad-scrubbers", label: "Rad scrubbers", effectMath: {} }
 ];
 
 export const PA_MISC_MODS_TORSO: ArmorPieceModOption[] = [
@@ -54,7 +54,12 @@ export const PA_MISC_MODS_TORSO: ArmorPieceModOption[] = [
   { id: "emergency-protocols", label: "Emergency protocols", effectMath: { dr: 15 } },
   { id: "core-assembly", label: "Core assembly", effectMath: { apRegen: 0.15 } },
   { id: "kinetic-dynamo", label: "Kinetic dynamo", effectMath: { apRegen: 0.05 } },
-  { id: "blood-cleanser", label: "Blood cleanser", effectMath: {} }
+  { id: "blood-cleanser", label: "Blood cleanser", effectMath: {} },
+  { id: "medic-pump", label: "Medic pump", effectMath: {} },
+  { id: "motion-assist-servos", label: "Motion-assist servos", effectMath: { str: 2 } },
+  { id: "reactive-plates", label: "Reactive plates", effectMath: {} },
+  { id: "tesla-coils", label: "Tesla coils", effectMath: {} },
+  { id: "welded-rebar", label: "Welded rebar", effectMath: {} }
 ];
 
 export const PA_MISC_MODS_ARMS: ArmorPieceModOption[] = [
@@ -68,7 +73,9 @@ export const PA_MISC_MODS_LEGS: ArmorPieceModOption[] = [
   { id: "none", label: "None", effectMath: {} },
   { id: "calibrated-shocks", label: "Calibrated shocks", effectMath: { carryWeight: 50 } },
   { id: "kinetic-servos", label: "Kinetic servos", effectMath: { apRegen: 0.1 } },
-  { id: "optimized-servos", label: "Optimized servos", effectMath: {} }
+  { id: "optimized-servos", label: "Optimized servos", effectMath: {} },
+  { id: "cooling-vent", label: "Cooling vent", effectMath: {} },
+  { id: "overdrive-servos", label: "Overdrive servos", effectMath: {} }
 ];
 
 /**
