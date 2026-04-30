@@ -61,8 +61,8 @@ export default function BuilderTotalsStatKey({
       {mode === "powerArmor" ? (
         <p className="text-foreground/58">
           Power armor view: chassis + piece flat resists and crafting first (no stars), then PA-only % DR/RR, then other
-          bonuses — star picks show inside <span className="font-medium text-foreground/70">(+…)</span> with underarmor,
-          mutations, and N&amp;D.
+          bonuses — star picks show inside <span className="font-medium text-foreground/70">(+…)</span> with
+          mutations and N&amp;D (underarmor is unequipped).
         </p>
       ) : null}
       <ul className="mt-1.5 grid grid-cols-1 gap-x-4 gap-y-0.5 sm:grid-cols-2">
