@@ -146,12 +146,14 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   const equippedLegendaryBenchLines = listEquippedLegendariesWithBenchLabels(payload, dtoList);
 
   const layers: Record<string, number>[] = [];
-  const shell = findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId);
-  const lining = findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId);
-  const style = findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId);
-  if (shell?.effectMath) layers.push(shell.effectMath);
-  if (lining?.effectMath) layers.push(lining.effectMath);
-  if (style?.effectMath) layers.push(style.effectMath);
+  if (piece?.kind !== "powerArmor") {
+    const shell = findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId);
+    const lining = findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId);
+    const style = findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId);
+    if (shell?.effectMath) layers.push(shell.effectMath);
+    if (lining?.effectMath) layers.push(lining.effectMath);
+    if (style?.effectMath) layers.push(style.effectMath);
+  }
   if (isFullArmorSetPayload(payload)) {
     for (const layer of armorCraftingEffectLayers(payload.armorPieceCrafting)) {
       layers.push(layer);
@@ -324,11 +326,11 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                   {payload.powerArmorHelmetId
                     ? ", paired helmet base, helmet material/misc, "
                     : ", "}
-                  torso legendaries, and underarmor effect math.
+                  torso legendaries, and sandbox mutations (underarmor is unequipped).
                 </>
               ) : piece?.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece) ? (
                 <>
-                  Includes helmet base resists, helmet material/misc, and underarmor effect math (no PA legendary
+                  Includes helmet base resists, helmet material/misc, and sandbox mutations (underarmor is unequipped; no PA legendary
                   stars).
                 </>
               ) : (

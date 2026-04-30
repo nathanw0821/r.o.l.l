@@ -909,7 +909,7 @@ export default function BuilderExperimentClient({
       aggregateEffectMath(equippedModsOrdered, {
         ghoul: payload.ghoul,
         extraLayers: [
-          ...underLayers,
+          ...(piece.kind !== "powerArmor" ? underLayers : []),
           ...armorCraftingLayers,
           ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : []),
           ...(mutationLayer ? [mutationLayer] : []),
@@ -1420,6 +1420,11 @@ export default function BuilderExperimentClient({
               Shell, lining, and style stack into totals. Mark shells as learned in the list above — underarmor never
               uses the outer legendary star bench.
             </p>
+            {piece.kind === "powerArmor" && (
+              <p className="mt-2 rounded-[var(--radius)] bg-accent/5 px-2 py-1.5 text-[10px] font-medium leading-snug text-accent/90 border border-accent/15">
+                Note: Underarmor stats are ignored while Power Armor is selected (it is automatically unequipped in-game).
+              </p>
+            )}
             <div className="mt-3 grid gap-3 md:grid-cols-3">
               <label className="text-xs text-foreground/60">
                 Shell
