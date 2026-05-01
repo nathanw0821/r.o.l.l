@@ -462,19 +462,16 @@ export default function SummaryClient({
               </div>
               <div className="flex flex-wrap gap-2">
                 {items.map((row) => (
-                  <button
+                  <div
                     key={row.id}
-                    type="button"
                     onClick={() => handleSummaryRowClick(row)}
                     onPointerDown={() => handlePointerDown(row)}
                     onPointerUp={handlePointerUp}
                     onPointerLeave={handlePointerCancel}
                     onPointerCancel={handlePointerCancel}
-                    disabled={pendingId === row.id}
-                    aria-pressed={row.unlocked}
                     data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
                     className={cn(
-                      "summary-status-card summary-status-card--grid rounded-[var(--radius)] border text-left transition",
+                      "summary-status-card summary-status-card--grid rounded-[var(--radius)] border text-left transition cursor-pointer select-none",
                       "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                       pendingId === row.id && "opacity-60"
                     )}
@@ -523,7 +520,7 @@ export default function SummaryClient({
                         </button>
                       </div>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
