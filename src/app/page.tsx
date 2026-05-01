@@ -102,9 +102,6 @@ export default function HomePage() {
       <Suspense fallback={<HomeSummaryOverviewFallback />}>
         <HomeSummaryOverview />
       </Suspense>
-      <Suspense fallback={<HomeSummaryTrackerFallback />}>
-        <HomeSummaryTracker />
-      </Suspense>
     </div>
   );
 }
