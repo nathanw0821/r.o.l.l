@@ -125,7 +125,9 @@ export async function bulkUpdateProgress(input: {
         return prisma.userProgress.deleteMany({
           where: {
             characterId,
-            effectTierId: entry.effectTierId
+            effectTierId: entry.effectTierId,
+            isSeeking: false,
+            modCount: 0
           }
         });
       }

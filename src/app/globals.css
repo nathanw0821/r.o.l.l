@@ -1601,13 +1601,23 @@ a {
   box-shadow: var(--shadow-panel);
 }
 
+.summary-status-card[data-status="unlocked"] {
+  border-color: color-mix(in srgb, var(--color-success) 60%, var(--color-border));
+  background: color-mix(in srgb, var(--color-success) 14%, var(--color-panel));
+}
+
+.summary-status-card[data-status="locked"] {
+  border-color: color-mix(in srgb, var(--color-warning) 60%, var(--color-border));
+  background: color-mix(in srgb, var(--color-warning) 14%, var(--color-panel));
+}
+
 .summary-status-card[data-status="seeking"] {
   border-color: color-mix(in srgb, var(--color-accent) 60%, var(--color-border));
   background: color-mix(in srgb, var(--color-accent) 14%, var(--color-panel));
 }
 
-.summary-status-card {
-  display: grid !important;
+.summary-status-card--grid {
+  display: grid;
   grid-template-columns: 1fr auto;
   align-items: start;
   gap: 0.5rem;
@@ -1618,6 +1628,18 @@ a {
   flex-direction: column;
   gap: 0.4rem;
   align-items: flex-end;
+}
+
+.summary-status-card__controls--inline {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.summary-status-card__controls--tile {
+  margin-top: -0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .summary-status-card__count {

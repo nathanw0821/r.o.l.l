@@ -463,7 +463,7 @@ export default function SummaryClient({
                     aria-pressed={row.unlocked}
                     data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
                     className={cn(
-                      "summary-status-card rounded-[var(--radius)] border text-left transition",
+                      "summary-status-card summary-status-card--grid rounded-[var(--radius)] border text-left transition",
                       "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                       pendingId === row.id && "opacity-60"
                     )}
