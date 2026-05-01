@@ -139,6 +139,18 @@ export default function EffectTable({
     return () => window.cancelAnimationFrame(raf);
   }, [focusId, localRows, filteredRows, clearFilters]);
 
+  React.useEffect(() => {
+    const updateDensity = () => {
+      const isCompact = document.documentElement.getAttribute("data-density") === "compact";
+      setIsCompactDensity(isCompact);
+    };
+
+    updateDensity();
+    const observer = new MutationObserver(updateDensity);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-density"] });
+    return () => observer.disconnect();
+  }, []);
+
   async function toggleRow(row: EffectTierRow) {
     const nextUnlocked = !row.unlocked;
     const previousUnlocked = row.selectionSource === "edited" ? row.unlocked : null;
@@ -265,8 +277,8 @@ export default function EffectTable({
               data-effect-id={row.id}
               data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
               className={cn(
-                "effect-table-row summary-status-card rounded-[var(--radius)] border",
-                "md:grid md:items-start md:gap-3 table-grid"
+                "effect-table-row rounded-[var(--radius)] border",
+                "grid items-start gap-3 table-grid"
               )}
             >
               <div className="min-w-0">
