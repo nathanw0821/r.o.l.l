@@ -15,7 +15,9 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Sparkles,
-  Star
+  Star,
+  Target,
+  Package
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
@@ -47,7 +49,9 @@ const links: AppNavLink[] = [
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
   { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
   { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
-  { href: "/still-need", label: "Still Need", icon: ClipboardList }
+  { href: "/still-need", label: "Still Need", icon: ClipboardList },
+  { href: "/seeking", label: "Seeking", icon: Target },
+  { href: "/owned-mods", label: "Owned Mods", icon: Package }
 ];
 
 type TierProgressSummary = {

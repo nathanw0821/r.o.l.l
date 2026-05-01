@@ -7,6 +7,8 @@ export const PROGRESS_CHANGE_EVENT = "roll:progress-change";
 export type ProgressEventEntry = {
   effectTierId: string;
   unlocked: boolean;
+  isSeeking?: boolean;
+  modCount?: number;
   selectionSource?: SelectionSource;
 };
 

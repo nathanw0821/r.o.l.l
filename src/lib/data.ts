@@ -49,6 +49,8 @@ export type MergedEffectTierRow = Omit<EffectTierCatalogRow, "notes"> & {
   notes: string | null;
   origins: string[];
   unlocked: boolean;
+  isSeeking: boolean;
+  modCount: number;
   unlockedBy: string[];
   selectionSource: SelectionSource;
 };
@@ -70,9 +72,18 @@ function getCatalogEffectTiersCached(datasetVersionId: string) {
 async function fetchUserProgressMap(characterId: string, datasetVersionId: string) {
   const rows = await prisma.userProgress.findMany({
     where: { characterId, effectTier: { datasetVersionId } },
-    select: { effectTierId: true, unlocked: true }
+    select: { 
+      effectTierId: true, 
+      unlocked: true,
+      isSeeking: true,
+      modCount: true
+    }
   });
-  return new Map(rows.map((row) => [row.effectTierId, row.unlocked]));
+  return new Map(rows.map((row) => [row.effectTierId, { 
+    unlocked: row.unlocked, 
+    isSeeking: row.isSeeking, 
+    modCount: row.modCount 
+  }]));
 }
 
 async function fetchGlobalProgressMap(userId: string, datasetVersionId: string) {
@@ -95,14 +106,15 @@ function mergeCatalogWithUserState(
   catalog: EffectTierCatalogRow[],
   characterId: string | undefined,
   baselineMap: Map<string, boolean>,
-  progressMap: Map<string, boolean>,
+  progressMap: Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>,
   globalProgressMap: Map<string, string[]>
 ): MergedEffectTierRow[] {
   return catalog.map((item) => {
     const baseline = characterId ? baselineMap.get(item.id) : undefined;
-    const hasProgress = characterId ? progressMap.has(item.id) : false;
-    const progressUnlocked = hasProgress ? progressMap.get(item.id)! : undefined;
-    const unlocked = characterId ? (hasProgress ? progressUnlocked! : baseline ?? false) : false;
+    const progress = characterId ? progressMap.get(item.id) : undefined;
+    const unlocked = characterId ? (progress ? progress.unlocked : baseline ?? false) : false;
+    const isSeeking = progress?.isSeeking ?? false;
+    const modCount = progress?.modCount ?? 0;
     const unlockedBy = globalProgressMap.get(item.id) || [];
     
     const origins = extractOriginsFromNotes(item.notes);
@@ -114,11 +126,13 @@ function mergeCatalogWithUserState(
       notes: displayWithSources,
       origins,
       unlocked,
+      isSeeking,
+      modCount,
       unlockedBy,
       selectionSource: resolveSelectionSource({
         characterId,
         baseline,
-        progress: hasProgress ? progressUnlocked : undefined
+        progress: progress?.unlocked
       })
     };
   });
@@ -151,7 +165,7 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
   const [progressMap, globalProgressMap] = await Promise.all([
     characterId && scoped.length > 0
       ? await fetchUserProgressMap(characterId, dataset.id)
-      : Promise.resolve(new Map<string, boolean>()),
+      : Promise.resolve(new Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>()),
     userId
       ? await fetchGlobalProgressMap(userId, dataset.id)
       : Promise.resolve(new Map<string, string[]>())
@@ -202,6 +216,11 @@ export async function getAllEffectTiers(userId?: string) {
 export async function getStillNeed(userId?: string) {
   const rows = await loadMergedEffectTiers(userId);
   return rows.filter((row) => !row.unlocked);
+}
+
+export async function getSeeking(userId?: string) {
+  const rows = await loadMergedEffectTiers(userId);
+  return rows.filter((row) => row.isSeeking);
 }
 
 export type TierProgressSummary = {

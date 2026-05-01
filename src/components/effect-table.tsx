@@ -2,14 +2,16 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Target, Plus, Minus } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
 import { useProgressHistory } from "@/components/progress-history-provider";
 import ProgressToggle from "@/components/progress-toggle";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
 import { getCraftComponentKind } from "@/lib/legendary-mod-sources";
-import { subscribeProgressChange } from "@/lib/progress-events";
+import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
+import { updateProgress } from "@/actions/progress";
 
 export type EffectTierRow = {
   id: string;
@@ -21,6 +23,8 @@ export type EffectTierRow = {
   legendaryModules?: number | null;
   notes?: string | null;
   unlocked: boolean;
+  isSeeking: boolean;
+  modCount: number;
   unlockedBy: string[];
   selectionSource?: SelectionSource;
   origins?: string[];
@@ -52,6 +56,8 @@ export default function EffectTable({
       return {
         ...row,
         unlocked: localValue,
+        isSeeking: row.isSeeking,
+        modCount: row.modCount,
         selectionSource: "edited" as const
       };
     });
@@ -69,6 +75,8 @@ export default function EffectTable({
           return {
             ...row,
             unlocked: entry.unlocked,
+            isSeeking: entry.isSeeking ?? row.isSeeking,
+            modCount: entry.modCount ?? row.modCount,
             selectionSource: entry.selectionSource ?? row.selectionSource
           };
         })
@@ -153,7 +161,9 @@ export default function EffectTable({
         nextSelectionSource: "edited"
       }
     ]);
-    if (!saved) {
+    if (saved) {
+      emitProgressChange([{ effectTierId: row.id, unlocked: nextUnlocked, selectionSource: "edited" }]);
+    } else {
       setLocalRows((prev) =>
         prev.map((item) =>
           item.id === row.id
@@ -163,6 +173,31 @@ export default function EffectTable({
       );
     }
     setPendingId(null);
+  }
+
+  async function updateSeeking(row: EffectTierRow, nextSeeking: boolean) {
+    setLocalRows((prev) =>
+      prev.map((item) =>
+        item.id === row.id
+          ? { ...item, isSeeking: nextSeeking }
+          : item
+      )
+    );
+    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
+    emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }]);
+  }
+
+  async function updateCount(row: EffectTierRow, nextCount: number) {
+    const clamped = Math.max(0, nextCount);
+    setLocalRows((prev) =>
+      prev.map((item) =>
+        item.id === row.id
+          ? { ...item, modCount: clamped }
+          : item
+      )
+    );
+    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
+    emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }]);
   }
 
   function renderModules(value?: number | null) {
@@ -228,7 +263,7 @@ export default function EffectTable({
               key={row.id}
               id={`effect-${row.id}`}
               data-effect-id={row.id}
-              data-status={row.unlocked ? "unlocked" : "locked"}
+              data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
               className={cn(
                 "effect-table-row summary-status-card rounded-[var(--radius)] border",
                 "md:grid md:items-start md:gap-3 table-grid"
@@ -266,14 +301,46 @@ export default function EffectTable({
               <div className="min-w-0">
                 <ProgressToggle unlocked={row.unlocked} onToggle={() => toggleRow(row)} disabled={isPending} className="w-full justify-center" />
                 <div className="mt-2 flex flex-col gap-1.5">
-                  <div className="source-pill w-fit" data-source={row.selectionSource ?? "default"}>
-                    {sourceLabel}
+                  <div className="flex items-center gap-2">
+                    <div className="source-pill w-fit" data-source={row.selectionSource ?? "default"}>
+                      {sourceLabel}
+                    </div>
+                    {row.isSeeking && !row.unlocked && (
+                      <span className="text-[10px] font-bold text-accent uppercase tracking-wider">Seeking</span>
+                    )}
                   </div>
                   {row.unlockedBy.length > 0 && (
                     <div className="text-[10px] text-foreground/50 leading-tight">
                       <span className="font-semibold text-foreground/40 uppercase">By:</span> {row.unlockedBy.join(", ")}
                     </div>
                   )}
+                  <div className="summary-status-card__controls">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+                        onClick={() => updateSeeking(row, !row.isSeeking)}
+                        data-active={row.isSeeking}
+                        className="summary-status-card__seeking-btn h-7 w-7"
+                      >
+                        <Target className="h-3.5 w-3.5" />
+                      </button>
+                      <div className="summary-status-card__count h-7 px-1.5">
+                        <button
+                          onClick={() => updateCount(row, row.modCount - 1)}
+                          className="summary-status-card__count-btn h-5 w-5"
+                        >
+                          <Minus className="h-2 w-2" />
+                        </button>
+                        <span className="min-w-[1rem] text-center text-xs font-bold">{row.modCount}</span>
+                        <button
+                          onClick={() => updateCount(row, row.modCount + 1)}
+                          className="summary-status-card__count-btn h-5 w-5"
+                        >
+                          <Plus className="h-2 w-2" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="min-w-0 text-sm text-foreground/80 break-words">{row.notes || "-"}</div>
@@ -308,7 +375,7 @@ export default function EffectTable({
               onClick={() => toggleRow(row)}
               disabled={isPending}
               aria-pressed={row.unlocked}
-              data-status={row.unlocked ? "unlocked" : "locked"}
+              data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
               className={cn("effect-tile effect-tile--button summary-status-card", isPending && "opacity-60")}
             >
               <div className="effect-tile__header">
@@ -321,8 +388,33 @@ export default function EffectTable({
                   ) : null}
                 </div>
                 <div className="effect-tile__status">
-                  {isPending ? "Saving..." : row.unlocked ? "Unlocked" : "Locked"}
+                  {isPending ? "Saving..." : row.isSeeking && !row.unlocked ? "Seeking" : row.unlocked ? "Unlocked" : "Locked"}
                 </div>
+              </div>
+              <div className="summary-status-card__controls -mt-2 mb-2 flex-row justify-between items-center" onClick={(e) => e.stopPropagation()}>
+                <div className="summary-status-card__count">
+                  <button
+                    onClick={() => updateCount(row, row.modCount - 1)}
+                    className="summary-status-card__count-btn"
+                  >
+                    <Minus className="h-2.5 w-2.5" />
+                  </button>
+                  <span className="min-w-[1.2rem] text-center font-bold">{row.modCount}</span>
+                  <button
+                    onClick={() => updateCount(row, row.modCount + 1)}
+                    className="summary-status-card__count-btn"
+                  >
+                    <Plus className="h-2.5 w-2.5" />
+                  </button>
+                </div>
+                <button
+                  title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+                  onClick={() => updateSeeking(row, !row.isSeeking)}
+                  data-active={row.isSeeking}
+                  className="summary-status-card__seeking-btn"
+                >
+                  <Target className="h-4 w-4" />
+                </button>
               </div>
               {categoryList.length > 0 ? (
                 <div className="effect-tile__chips">
