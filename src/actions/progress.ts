@@ -36,7 +36,12 @@ function revalidateTrackerPaths() {
   revalidatePath("/owned-mods");
 }
 
-export async function updateProgress(input: { effectTierId: string; unlocked: boolean | null }) {
+export async function updateProgress(input: { 
+  effectTierId: string; 
+  unlocked?: boolean | null; 
+  isSeeking?: boolean; 
+  modCount?: number; 
+}) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     throw new Error("Not authenticated");
@@ -91,7 +96,14 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
   revalidateTrackerPaths();
 }
 
-export async function bulkUpdateProgress(input: { entries: { effectTierId: string; unlocked: boolean | null }[] }) {
+export async function bulkUpdateProgress(input: { 
+  entries: { 
+    effectTierId: string; 
+    unlocked?: boolean | null; 
+    isSeeking?: boolean; 
+    modCount?: number; 
+  }[] 
+}) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     throw new Error("Not authenticated");
