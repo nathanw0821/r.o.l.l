@@ -27,13 +27,11 @@ function revalidateTrackerPaths() {
   revalidatePath("/2-star");
   revalidatePath("/3-star");
   revalidatePath("/4-star");
+  revalidatePath("/");
+  revalidatePath("/summary");
   revalidatePath("/overview/achievements");
   revalidatePath("/screenshot-assist");
-  revalidatePath("/still-need");
-  revalidatePath("/summary");
   revalidatePath("/achievements");
-  revalidatePath("/seeking");
-  revalidatePath("/owned-mods");
 }
 
 export async function updateProgress(input: { 
