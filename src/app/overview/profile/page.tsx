@@ -4,6 +4,7 @@ import AccountLinks from "@/components/account-links";
 import UsernameSettingsForm from "@/components/username-settings-form";
 import ProfileEmailSettingsForm from "@/components/profile-email-settings-form";
 import ProfilePasswordSettingsForm from "@/components/profile-password-settings-form";
+import ThemeSettings from "@/components/theme-settings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function OverviewProfilePage() {
@@ -33,52 +34,76 @@ export default async function OverviewProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Username</CardTitle>
-          <CardDescription>This is used for local credential sign-in and display name.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <UsernameSettingsForm initialUsername={user?.username ?? null} />
-        </CardContent>
-      </Card>
+    <div className="grid gap-6 xl:grid-cols-2">
+      <div className="space-y-6">
+        <div>
+          <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground/90">General</h2>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Username</CardTitle>
+                <CardDescription>This is used for local credential sign-in and display name.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <UsernameSettingsForm initialUsername={user?.username ?? null} />
+              </CardContent>
+            </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Email</CardTitle>
-          <CardDescription>Update the email tied to this account profile.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ProfileEmailSettingsForm initialEmail={user?.email ?? null} />
-        </CardContent>
-      </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Email</CardTitle>
+                <CardDescription>Update the email tied to this account profile.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ProfileEmailSettingsForm initialEmail={user?.email ?? null} />
+              </CardContent>
+            </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Password</CardTitle>
-          <CardDescription>
-            {user?.passwordHash
-              ? "Change your local account password."
-              : "You signed in with a provider account. Set a local password if you want username/password login too."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ProfilePasswordSettingsForm hasPassword={Boolean(user?.passwordHash)} />
-        </CardContent>
-      </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Theme & Appearance</CardTitle>
+                <CardDescription>Customize colors, density, and interface contrast.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ThemeSettings canPersist={true} />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Linked Sign-In Methods</CardTitle>
-          <CardDescription>
-            Link or unlink Google and other providers. Keep at least one method active to avoid lockout.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AccountLinks />
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <div>
+          <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground/90">Password and Security</h2>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Password</CardTitle>
+                <CardDescription>
+                  {user?.passwordHash
+                    ? "Change your local account password."
+                    : "You signed in with a provider account. Set a local password if you want username/password login too."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ProfilePasswordSettingsForm hasPassword={Boolean(user?.passwordHash)} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Linked Sign-In Methods</CardTitle>
+                <CardDescription>
+                  Link or unlink Google and other providers. Keep at least one method active to avoid lockout.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AccountLinks />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
