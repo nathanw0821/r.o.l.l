@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Unlock } from "lucide-react";
+import { Lock, Unlock, Boxes, Target, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/components/filter-context";
@@ -14,7 +14,6 @@ import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-even
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
 import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
-import { Boxes, Target, Plus, Minus } from "lucide-react";
 
 export type SummaryRow = {
   id: string;
@@ -450,7 +449,7 @@ export default function SummaryClient({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className={cn("grid gap-6 lg:grid-cols-2", activeTab !== "summary" && "hidden")}>
         {tierOrder.map((tierLabel) => {
           const items = filteredRows.filter((row) => row.tier?.label === tierLabel);
           if (items.length === 0) return null;
@@ -480,7 +479,7 @@ export default function SummaryClient({
                     )}
                   >
                     <div>
-                      <div className="text-sm font-semibold">{row.effect.name}</div>
+                      <div className="text-sm font-semibold truncate pr-6">{row.effect.name}</div>
                       <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
                         {pendingId === row.id
                           ? "Saving..."
@@ -530,6 +529,88 @@ export default function SummaryClient({
           );
         })}
       </div>
+
+      {activeTab !== "summary" && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-accent">
+              {activeTab === "seeking" ? "Seeking Wishlist" : 
+               activeTab === "still-need" ? "Missing Unlocks" : 
+               "Owned Mod Inventory"}
+            </h3>
+            <div className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">
+              {filteredRows.length} Items found
+            </div>
+          </div>
+          
+          <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {filteredRows.map((row) => (
+              <button
+                key={row.id}
+                type="button"
+                onClick={() => handleSummaryRowClick(row)}
+                onPointerDown={() => handlePointerDown(row)}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerCancel}
+                onPointerCancel={handlePointerCancel}
+                disabled={pendingId === row.id}
+                aria-pressed={row.unlocked}
+                data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
+                className={cn(
+                  "summary-status-card summary-status-card--grid rounded-[var(--radius)] border text-left transition",
+                  "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                  pendingId === row.id && "opacity-60"
+                )}
+              >
+                <div>
+                  <div className="text-sm font-semibold truncate pr-6">{row.effect.name}</div>
+                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
+                    {pendingId === row.id
+                      ? "Saving..."
+                      : row.isSeeking && !row.unlocked
+                        ? "Seeking"
+                        : row.unlocked
+                          ? "Unlocked"
+                          : "Locked"}
+                  </div>
+                </div>
+                <div className="summary-status-card__controls" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+                    onClick={() => updateSeeking(row, !row.isSeeking)}
+                    data-active={row.isSeeking}
+                    className="summary-status-card__seeking-btn"
+                  >
+                    <Target className="h-4 w-4" />
+                  </button>
+                  <div className="summary-status-card__count">
+                    <button
+                      onClick={() => updateCount(row, row.modCount - 1)}
+                      className="summary-status-card__count-btn"
+                    >
+                      <Minus className="h-2.5 w-2.5" />
+                    </button>
+                    <span className="min-w-[1.2rem] text-center font-bold">{row.modCount}</span>
+                    <button
+                      onClick={() => updateCount(row, row.modCount + 1)}
+                      className="summary-status-card__count-btn"
+                    >
+                      <Plus className="h-2.5 w-2.5" />
+                    </button>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+          
+          {filteredRows.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 text-center rounded-[var(--radius)] border border-dashed border-border bg-panel/30">
+              <div className="text-lg font-semibold text-foreground/40">No items in this category</div>
+              <p className="mt-1 text-sm text-foreground/30">Try clearing your filters or adding items to your wishlist.</p>
+            </div>
+          )}
+        </div>
+      )}
 
       <BuilderBetaGate 
         open={showBetaGate} 
