@@ -1628,6 +1628,7 @@ a {
   grid-template-columns: 1fr;
   gap: 0.35rem;
   padding: 0.5rem;
+  padding-right: 2.2rem; /* Added padding to prevent text overlap with absolute seeking button */
 }
 
 .summary-status-card__controls {
@@ -1647,10 +1648,10 @@ a {
 
 [data-density="compact"] .summary-status-card__seeking-btn {
   position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  width: 1.75rem;
-  height: 1.75rem;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .summary-status-card__controls--inline {
