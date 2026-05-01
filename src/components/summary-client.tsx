@@ -10,16 +10,19 @@ import { useProgressHistory } from "@/components/progress-history-provider";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
 import { shapeExportRows } from "@/lib/export-utils";
-import { subscribeProgressChange } from "@/lib/progress-events";
+import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
+import { updateProgress } from "@/actions/progress";
 import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
-import { Boxes } from "lucide-react";
+import { Boxes, Target, Plus, Minus } from "lucide-react";
 
 export type SummaryRow = {
   id: string;
   effect: { name: string };
   tier?: { label?: string } | null;
   unlocked: boolean;
+  isSeeking: boolean;
+  modCount: number;
   unlockedBy: string[];
   selectionSource?: SelectionSource;
   notes?: string | null;
@@ -93,11 +96,13 @@ function exportJson(rows: SummaryRow[], filename: string) {
 export default function SummaryClient({
   rows,
   isSignedIn,
-  isAdmin = false
+  isAdmin = false,
+  initialTab = "summary"
 }: {
   rows: SummaryRow[];
   isSignedIn: boolean;
   isAdmin?: boolean;
+  initialTab?: "summary" | "seeking" | "owned";
 }) {
   const router = useRouter();
   const {
@@ -119,6 +124,7 @@ export default function SummaryClient({
   const longPressTriggeredRef = React.useRef(false);
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } = useBuilderBetaAccess(isAdmin);
   const [showBetaGate, setShowBetaGate] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<"summary" | "seeking" | "owned">(initialTab);
 
   React.useEffect(() => {
     const stored = window.localStorage.getItem(SUMMARY_LOCK_KEY);
@@ -153,6 +159,8 @@ export default function SummaryClient({
           return {
             ...row,
             unlocked: entry.unlocked,
+            isSeeking: entry.isSeeking ?? row.isSeeking,
+            modCount: entry.modCount ?? row.modCount,
             selectionSource: entry.selectionSource ?? row.selectionSource
           };
         })
@@ -170,16 +178,49 @@ export default function SummaryClient({
   }, [displayRows, setOriginOptions]);
 
   const filteredRows = React.useMemo<SummaryRow[]>(
-    () =>
-      applyFilters(displayRows, {
+    () => {
+      let base = displayRows;
+      if (activeTab === "seeking") {
+        base = base.filter((row) => row.isSeeking);
+      } else if (activeTab === "owned") {
+        base = base.filter((row) => row.modCount > 0);
+      }
+      
+      return applyFilters(base, {
         query,
         sources: sourceFilters,
         status: statusFilters,
         origins: originFilters,
         categories: categoryFilters
-      }),
-    [displayRows, query, sourceFilters, statusFilters, originFilters, categoryFilters]
+      });
+    },
+    [displayRows, query, sourceFilters, statusFilters, originFilters, categoryFilters, activeTab]
   );
+
+  async function updateSeeking(row: SummaryRow, nextSeeking: boolean) {
+    setLocalRows((prev) =>
+      prev.map((item) =>
+        item.id === row.id
+          ? { ...item, isSeeking: nextSeeking }
+          : item
+      )
+    );
+    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
+    emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }]);
+  }
+
+  async function updateCount(row: SummaryRow, nextCount: number) {
+    const clamped = Math.max(0, nextCount);
+    setLocalRows((prev) =>
+      prev.map((item) =>
+        item.id === row.id
+          ? { ...item, modCount: clamped }
+          : item
+      )
+    );
+    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
+    emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }]);
+  }
 
   async function toggleRow(row: SummaryRow) {
     const nextUnlocked = !row.unlocked;
@@ -203,7 +244,9 @@ export default function SummaryClient({
         nextSelectionSource: "edited"
       }
     ]);
-    if (!saved) {
+    if (saved) {
+      emitProgressChange([{ effectTierId: row.id, unlocked: nextUnlocked, selectionSource: "edited" }]);
+    } else {
       setLocalRows((prev) =>
         prev.map((item) =>
           item.id === row.id
@@ -288,6 +331,36 @@ export default function SummaryClient({
           </Button>
         </div>
       )}
+
+      <div className="flex gap-2 rounded-[var(--radius)] border border-border bg-panel p-1">
+        <button
+          onClick={() => setActiveTab("summary")}
+          className={cn(
+            "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
+            activeTab === "summary" ? "bg-accent text-white" : "hover:bg-accent/10"
+          )}
+        >
+          Summary
+        </button>
+        <button
+          onClick={() => setActiveTab("seeking")}
+          className={cn(
+            "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
+            activeTab === "seeking" ? "bg-accent text-white" : "hover:bg-accent/10"
+          )}
+        >
+          Seeking
+        </button>
+        <button
+          onClick={() => setActiveTab("owned")}
+          className={cn(
+            "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
+            activeTab === "owned" ? "bg-accent text-white" : "hover:bg-accent/10"
+          )}
+        >
+          Owned Mods
+        </button>
+      </div>
 
       <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:text-left text-center">
@@ -388,7 +461,7 @@ export default function SummaryClient({
                     onPointerCancel={handlePointerCancel}
                     disabled={pendingId === row.id}
                     aria-pressed={row.unlocked}
-                    data-status={row.unlocked ? "unlocked" : "locked"}
+                    data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
                     className={cn(
                       "summary-status-card rounded-[var(--radius)] border text-left transition",
                       "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
@@ -402,15 +475,42 @@ export default function SummaryClient({
                           ? "Saving..."
                           : summaryLocked
                             ? "Open in All Effects"
-                            : row.unlocked
-                              ? "Unlocked"
-                              : "Locked"}
+                            : row.isSeeking && !row.unlocked
+                              ? "Seeking"
+                              : row.unlocked
+                                ? "Unlocked"
+                                : "Locked"}
                       </div>
                       {row.unlockedBy.length > 0 && (
                         <div className="mt-1 text-[9px] text-foreground/40 leading-tight">
                           Unlocked by: {row.unlockedBy.join(", ")}
                         </div>
                       )}
+                    </div>
+                    <div className="summary-status-card__controls" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+                        onClick={() => updateSeeking(row, !row.isSeeking)}
+                        data-active={row.isSeeking}
+                        className="summary-status-card__seeking-btn"
+                      >
+                        <Target className="h-4 w-4" />
+                      </button>
+                      <div className="summary-status-card__count">
+                        <button
+                          onClick={() => updateCount(row, row.modCount - 1)}
+                          className="summary-status-card__count-btn"
+                        >
+                          <Minus className="h-2.5 w-2.5" />
+                        </button>
+                        <span className="min-w-[1.2rem] text-center font-bold">{row.modCount}</span>
+                        <button
+                          onClick={() => updateCount(row, row.modCount + 1)}
+                          className="summary-status-card__count-btn"
+                        >
+                          <Plus className="h-2.5 w-2.5" />
+                        </button>
+                      </div>
                     </div>
                   </button>
                 ))}

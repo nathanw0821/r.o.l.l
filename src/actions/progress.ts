@@ -11,7 +11,9 @@ import { z } from "zod";
 
 const toggleSchema = z.object({
   effectTierId: z.string().min(1),
-  unlocked: z.boolean().nullable()
+  unlocked: z.boolean().nullable().optional(),
+  isSeeking: z.boolean().optional(),
+  modCount: z.number().int().min(0).optional()
 });
 
 const bulkToggleSchema = z.object({
@@ -30,6 +32,8 @@ function revalidateTrackerPaths() {
   revalidatePath("/still-need");
   revalidatePath("/summary");
   revalidatePath("/achievements");
+  revalidatePath("/seeking");
+  revalidatePath("/owned-mods");
 }
 
 export async function updateProgress(input: { effectTierId: string; unlocked: boolean | null }) {
@@ -48,13 +52,15 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
     throw new Error("No active character found");
   }
 
-  const { effectTierId, unlocked } = parsed.data;
+  const { effectTierId, unlocked, isSeeking, modCount } = parsed.data;
 
   if (unlocked === null) {
     await prisma.userProgress.deleteMany({
       where: {
         characterId,
-        effectTierId
+        effectTierId,
+        isSeeking: false,
+        modCount: 0
       }
     });
   } else {
@@ -65,12 +71,18 @@ export async function updateProgress(input: { effectTierId: string; unlocked: bo
           effectTierId
         }
       },
-      update: { unlocked },
+      update: { 
+        unlocked: unlocked ?? undefined,
+        isSeeking,
+        modCount
+      },
       create: {
         userId: session.user.id,
         characterId,
         effectTierId,
-        unlocked
+        unlocked: unlocked ?? false,
+        isSeeking: isSeeking ?? false,
+        modCount: modCount ?? 0
       }
     });
   }
@@ -112,12 +124,18 @@ export async function bulkUpdateProgress(input: { entries: { effectTierId: strin
             effectTierId: entry.effectTierId
           }
         },
-        update: { unlocked: entry.unlocked },
+        update: { 
+          unlocked: entry.unlocked ?? undefined,
+          isSeeking: entry.isSeeking,
+          modCount: entry.modCount
+        },
         create: {
           userId: session.user.id,
           characterId: characterId as string,
           effectTierId: entry.effectTierId,
-          unlocked: entry.unlocked
+          unlocked: entry.unlocked ?? false,
+          isSeeking: entry.isSeeking ?? false,
+          modCount: entry.modCount ?? 0
         }
       });
     })

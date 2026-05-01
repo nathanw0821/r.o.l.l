@@ -1,9 +1,9 @@
-﻿export type SelectionSource = "default" | "imported" | "edited";
+export type SelectionSource = "default" | "imported" | "edited";
 
 export type FilterState = {
   query: string;
   sources: SelectionSource[];
-  status: ("locked" | "unlocked")[];
+  status: ("locked" | "unlocked" | "seeking")[];
   origins: string[];
   categories?: string[];
 };
@@ -16,6 +16,8 @@ export type FilterableRow = {
   extraComponent?: string | null;
   notes?: string | null;
   unlocked: boolean;
+  isSeeking: boolean;
+  modCount: number;
   selectionSource?: SelectionSource;
   origins?: string[];
 };
@@ -65,8 +67,10 @@ export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterSt
     }
 
     if (statusSet.size > 0) {
-      const statusValue = row.unlocked ? "unlocked" : "locked";
-      if (!statusSet.has(statusValue)) return false;
+      if (statusSet.has("unlocked") && row.unlocked) { /* ok */ }
+      else if (statusSet.has("locked") && !row.unlocked) { /* ok */ }
+      else if (statusSet.has("seeking") && row.isSeeking) { /* ok */ }
+      else return false;
     }
 
     if (originSet.size > 0) {

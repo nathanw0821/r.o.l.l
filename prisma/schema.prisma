@@ -254,6 +254,8 @@ model UserProgress {
   characterId  String
   effectTierId String
   unlocked     Boolean    @default(false)
+  isSeeking    Boolean    @default(false)
+  modCount     Int        @default(0)
   notes        String?
   updatedAt    DateTime   @updatedAt
   effectTier   EffectTier @relation(fields: [effectTierId], references: [id])
