@@ -339,14 +339,21 @@ export default function EffectTable({
                       <div className="summary-status-card__count h-7 px-1.5">
                         <button
                           onClick={() => updateCount(row, row.modCount - 1)}
-                          className="summary-status-card__count-btn h-5 w-5"
+                          className="summary-status-card__count-btn h-5 w-5 shrink-0"
                         >
                           <Minus className="h-2 w-2" />
                         </button>
-                        <span className="min-w-[1rem] text-center text-xs font-bold">{row.modCount}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={row.modCount === 0 ? "" : row.modCount}
+                          onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
+                          placeholder="0"
+                          className="min-w-[1.5rem] w-6 text-center text-xs font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
                         <button
                           onClick={() => updateCount(row, row.modCount + 1)}
-                          className="summary-status-card__count-btn h-5 w-5"
+                          className="summary-status-card__count-btn h-5 w-5 shrink-0"
                         >
                           <Plus className="h-2 w-2" />
                         </button>
@@ -407,14 +414,21 @@ export default function EffectTable({
                 <div className="summary-status-card__count">
                   <button
                     onClick={() => updateCount(row, row.modCount - 1)}
-                    className="summary-status-card__count-btn"
+                    className="summary-status-card__count-btn shrink-0"
                   >
                     <Minus className="h-2.5 w-2.5" />
                   </button>
-                  <span className="min-w-[1.2rem] text-center font-bold">{row.modCount}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={row.modCount === 0 ? "" : row.modCount}
+                    onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
+                    placeholder="0"
+                    className="min-w-[1.8rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
                   <button
                     onClick={() => updateCount(row, row.modCount + 1)}
-                    className="summary-status-card__count-btn"
+                    className="summary-status-card__count-btn shrink-0"
                   >
                     <Plus className="h-2.5 w-2.5" />
                   </button>

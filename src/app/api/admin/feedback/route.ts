@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 const updateFeedbackSchema = z.object({
   id: z.string().min(1),
-  status: z.enum(["new", "reviewed", "resolved"]).optional(),
+  status: z.enum(["new", "reviewed", "resolved", "archived"]).optional(),
   adminNotes: z.string().max(2000).optional()
 });
 
@@ -56,4 +56,16 @@ export async function PATCH(request: Request) {
   });
 
   return ok({ feedback: updated });
+}
+
+export async function DELETE(request: Request) {
+  const auth = await requireAdmin();
+  if ("response" in auth) return auth.response;
+
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id");
+  if (!id) return badRequest("Feedback ID is required.");
+
+  await prisma.feedback.delete({ where: { id } });
+  return ok({ deleted: true });
 }
