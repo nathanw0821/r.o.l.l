@@ -9,15 +9,12 @@ import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import {
   ArrowLeft,
   Boxes,
-  ClipboardList,
   LayoutDashboard,
   ListChecks,
   PanelLeftClose,
   PanelLeftOpen,
   Sparkles,
-  Star,
-  Target,
-  Package
+  Star
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
@@ -48,10 +45,7 @@ const links: AppNavLink[] = [
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
   { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
-  { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
-  { href: "/still-need", label: "Still Need", icon: ClipboardList },
-  { href: "/seeking", label: "Seeking", icon: Target },
-  { href: "/owned-mods", label: "Owned Mods", icon: Package }
+  { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" }
 ];
 
 type TierProgressSummary = {

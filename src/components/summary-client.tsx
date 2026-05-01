@@ -102,7 +102,7 @@ export default function SummaryClient({
   rows: SummaryRow[];
   isSignedIn: boolean;
   isAdmin?: boolean;
-  initialTab?: "summary" | "seeking" | "owned";
+  initialTab?: "summary" | "seeking" | "owned" | "still-need";
 }) {
   const router = useRouter();
   const {
@@ -124,7 +124,7 @@ export default function SummaryClient({
   const longPressTriggeredRef = React.useRef(false);
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } = useBuilderBetaAccess(isAdmin);
   const [showBetaGate, setShowBetaGate] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState<"summary" | "seeking" | "owned">(initialTab);
+  const [activeTab, setActiveTab] = React.useState<"summary" | "seeking" | "owned" | "still-need">(initialTab);
 
   React.useEffect(() => {
     const stored = window.localStorage.getItem(SUMMARY_LOCK_KEY);
@@ -184,6 +184,8 @@ export default function SummaryClient({
         base = base.filter((row) => row.isSeeking);
       } else if (activeTab === "owned") {
         base = base.filter((row) => row.modCount > 0);
+      } else if (activeTab === "still-need") {
+        base = base.filter((row) => !row.unlocked);
       }
       
       return applyFilters(base, {
@@ -350,6 +352,15 @@ export default function SummaryClient({
           )}
         >
           Seeking
+        </button>
+        <button
+          onClick={() => setActiveTab("still-need")}
+          className={cn(
+            "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
+            activeTab === "still-need" ? "bg-accent text-white" : "hover:bg-accent/10"
+          )}
+        >
+          Still Need
         </button>
         <button
           onClick={() => setActiveTab("owned")}
