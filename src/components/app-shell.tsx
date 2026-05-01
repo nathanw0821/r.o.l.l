@@ -117,10 +117,9 @@ export default function AppShell({
   const visibleLinks = React.useMemo(
     () => links.filter((link) => {
       if (link.requiresAuth && !isSignedIn) return false;
-      if (link.href === "/build" && !hasBuilderAccess) return false;
       return true;
     }),
-    [isSignedIn, hasBuilderAccess]
+    [isSignedIn]
   );
 
   React.useEffect(() => {
@@ -349,6 +348,11 @@ export default function AppShell({
                 >
                   <Icon className="h-4 w-4" />
                   <span>{linkLabel}</span>
+                  {link.href === "/build" && (
+                    <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[8px] font-bold tracking-wider text-accent">
+                      BETA
+                    </span>
+                  )}
                 </Link>
               );
             })}
