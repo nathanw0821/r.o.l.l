@@ -67,9 +67,10 @@ function HomeSummaryOverviewFallback() {
 
 async function HomeSummaryTracker() {
   const session = await getAppSession();
+  const isAdmin = isAdminUser(session?.user);
   const rows = await getAllEffectTiers(session?.user?.id);
 
-  return <SummaryClient rows={rows} isSignedIn={Boolean(session?.user?.id)} />;
+  return <SummaryClient rows={rows} isSignedIn={Boolean(session?.user?.id)} isAdmin={isAdmin} />;
 }
 
 function HomeSummaryTrackerFallback() {

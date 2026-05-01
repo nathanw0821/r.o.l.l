@@ -99,6 +99,7 @@ import {
 import BuilderTotalsStatKey, {
   type BuilderTotalsStatKeyMode
 } from "@/components/builder/builder-totals-stat-key";
+import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 import {
   importNukesDragonsFo76CharacterUrl,
   type NdImportResult
@@ -577,6 +578,7 @@ export default function BuilderExperimentClient({
   const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<number | null>(null);
   const internalUpdateRef = React.useRef(false);
 
+  const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } = useBuilderBetaAccess(isAdmin);
   const [showBetaPrompt, setShowBetaPrompt] = React.useState(false);
 
   React.useEffect(() => {
@@ -593,11 +595,8 @@ export default function BuilderExperimentClient({
         setSavedLoadouts(JSON.parse(savedSlots));
       }
 
-      if (!isAdmin) {
-        const accepted = localStorage.getItem("roll-builder-beta-accepted");
-        if (!accepted) {
-          setShowBetaPrompt(true);
-        }
+      if (!isAdmin && !hasBuilderAccess) {
+        setShowBetaPrompt(true);
       }
     } catch {
       // ignore
@@ -2077,37 +2076,16 @@ export default function BuilderExperimentClient({
           </div>
         </aside>
       </div>
-      <Dialog open={showBetaPrompt} onOpenChange={() => {}}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Access this feature</DialogTitle>
-            <DialogDescription className="space-y-4 pt-4">
-              <p className="text-foreground/90">
-                This feature is experimental and uses ideas and inspiration from multiple other tools. 
-                This should be taken with a grain of salt.
-              </p>
-              <div className="flex justify-end gap-3 pt-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    window.location.href = "/";
-                  }}
-                >
-                  No
-                </Button>
-                <Button 
-                  onClick={() => {
-                    localStorage.setItem("roll-builder-beta-accepted", "true");
-                    setShowBetaPrompt(false);
-                  }}
-                >
-                  Yes
-                </Button>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <BuilderBetaGate 
+        open={showBetaPrompt} 
+        onAccept={() => {
+          acceptBuilderBeta();
+          setShowBetaPrompt(false);
+        }}
+        onCancel={() => {
+          window.location.href = "/";
+        }}
+      />
     </div>
   );
 }
