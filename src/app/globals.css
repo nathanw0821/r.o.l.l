@@ -1648,7 +1648,7 @@ a {
 
 [data-density="compact"] .summary-status-card__seeking-btn {
   position: absolute;
-  top: 0.35rem;
+  bottom: 0.35rem;
   right: 0.35rem;
   width: 1.5rem;
   height: 1.5rem;
