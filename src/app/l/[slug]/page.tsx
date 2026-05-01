@@ -103,9 +103,10 @@ function baseArmorFromPayload(payload: BuilderPayload) {
 export default async function SharedLoadoutPage({ params }: PageProps) {
   const session = await getServerSession(authOptions);
   
-  if (!isAdminUser(session?.user)) {
-    redirect("/");
-  }
+  // Removed admin-only gate for shared B.U.I.L.D. links to allow beta testers to view and share builds.
+  // if (!isAdminUser(session?.user)) {
+  //   redirect("/");
+  // }
 
   const { slug } = await params;
   const row = await getCachedPublishedSharedBuild(slug);
