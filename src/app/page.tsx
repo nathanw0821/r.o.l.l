@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import SummaryClient from "@/components/summary-client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
 import { getAllEffectTiers, getProgressSummary } from "@/lib/data";
 
