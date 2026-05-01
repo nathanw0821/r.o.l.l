@@ -314,7 +314,7 @@ export default function EffectTable({
                       <span className="font-semibold text-foreground/40 uppercase">By:</span> {row.unlockedBy.join(", ")}
                     </div>
                   )}
-                  <div className="summary-status-card__controls">
+                  <div className="summary-status-card__controls summary-status-card__controls--inline mt-2">
                     <div className="flex items-center gap-1.5">
                       <button
                         title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
@@ -391,7 +391,7 @@ export default function EffectTable({
                   {isPending ? "Saving..." : row.isSeeking && !row.unlocked ? "Seeking" : row.unlocked ? "Unlocked" : "Locked"}
                 </div>
               </div>
-              <div className="summary-status-card__controls -mt-2 mb-2 flex-row justify-between items-center" onClick={(e) => e.stopPropagation()}>
+              <div className="summary-status-card__controls summary-status-card__controls--inline summary-status-card__controls--tile" onClick={(e) => e.stopPropagation()}>
                 <div className="summary-status-card__count">
                   <button
                     onClick={() => updateCount(row, row.modCount - 1)}
