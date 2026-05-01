@@ -6,6 +6,7 @@ import "./globals.css";
 import Providers from "@/components/providers";
 import AppShell from "@/components/app-shell";
 import { getSiteUrl } from "@/lib/app-config";
+import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -59,6 +60,7 @@ function buildUiBootstrapScript() {
 
 async function DynamicShell({ children }: { children: ReactNode }) {
   const session = await getAppSession();
+  const isAdmin = isAdminUser(session?.user);
   const initialTheme: ThemeMode = "system";
   const initialAccent = "ember";
   const initialColorBlind: ColorBlindMode = "none";
@@ -83,7 +85,7 @@ async function DynamicShell({ children }: { children: ReactNode }) {
       initialDensity={initialDensity}
       preferDefaults={false}
     >
-      <AppShell>
+      <AppShell isAdmin={isAdmin}>
         {children}
         {mainCharacterId && <RenameMainCharacterPrompt characterId={mainCharacterId} />}
       </AppShell>

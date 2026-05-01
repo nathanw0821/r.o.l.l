@@ -23,6 +23,7 @@ import SupportLink from "@/components/support-link";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { formatTierStars } from "@/lib/tier-format";
 import { usePersistedAppNavigation } from "@/components/use-persisted-app-navigation";
+import { useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 
 type AppNavLink = {
   href: string;
@@ -92,9 +93,11 @@ function isNavLinkActive(pathname: string, link: AppNavLink) {
 }
 
 export default function AppShell({
-  children
+  children,
+  isAdmin = false
 }: {
   children: ReactNode;
+  isAdmin?: boolean;
 }) {
   const pathname = usePathname();
   const { canGoBack, goBack } = usePersistedAppNavigation();
@@ -109,10 +112,15 @@ export default function AppShell({
   const [mobileSidebarReveal, setMobileSidebarReveal] = React.useState(1);
   const mobileSidebarRevealRef = React.useRef(1);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
+  const { hasAccess: hasBuilderAccess } = useBuilderBetaAccess(isAdmin);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
   const visibleLinks = React.useMemo(
-    () => links.filter((link) => !link.requiresAuth || isSignedIn),
-    [isSignedIn]
+    () => links.filter((link) => {
+      if (link.requiresAuth && !isSignedIn) return false;
+      if (link.href === "/build" && !hasBuilderAccess) return false;
+      return true;
+    }),
+    [isSignedIn, hasBuilderAccess]
   );
 
   React.useEffect(() => {

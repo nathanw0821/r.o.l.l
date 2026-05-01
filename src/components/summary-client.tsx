@@ -12,6 +12,8 @@ import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/
 import { shapeExportRows } from "@/lib/export-utils";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
+import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
+import { Boxes } from "lucide-react";
 
 export type SummaryRow = {
   id: string;
@@ -90,10 +92,12 @@ function exportJson(rows: SummaryRow[], filename: string) {
 
 export default function SummaryClient({
   rows,
-  isSignedIn
+  isSignedIn,
+  isAdmin = false
 }: {
   rows: SummaryRow[];
   isSignedIn: boolean;
+  isAdmin?: boolean;
 }) {
   const router = useRouter();
   const {
@@ -113,6 +117,8 @@ export default function SummaryClient({
   const [summaryLocked, setSummaryLocked] = React.useState(false);
   const longPressTimeoutRef = React.useRef<number | null>(null);
   const longPressTriggeredRef = React.useRef(false);
+  const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } = useBuilderBetaAccess(isAdmin);
+  const [showBetaGate, setShowBetaGate] = React.useState(false);
 
   React.useEffect(() => {
     const stored = window.localStorage.getItem(SUMMARY_LOCK_KEY);
@@ -262,6 +268,27 @@ export default function SummaryClient({
 
   return (
     <div className="space-y-6">
+      {!hasBuilderAccess && (
+        <div className="flex flex-col items-center justify-between gap-4 rounded-[var(--radius)] border border-accent/30 bg-accent/5 p-6 text-center md:flex-row md:text-left">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-center gap-2 text-lg font-semibold text-accent md:justify-start">
+              <Boxes className="h-5 w-5" />
+              <span>B.U.I.L.D. Beta Access</span>
+            </div>
+            <p className="max-w-xl text-sm text-foreground/70">
+              Join the beta for our new Battle Utility & Inventory Logistics Diagnostic tool. 
+              Create, simulate, and share custom legendary loadouts.
+            </p>
+          </div>
+          <Button 
+            className="shrink-0" 
+            onClick={() => setShowBetaGate(true)}
+          >
+            Join the Beta
+          </Button>
+        </div>
+      )}
+
       <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:text-left text-center">
           <div className="space-y-1">
@@ -392,6 +419,15 @@ export default function SummaryClient({
           );
         })}
       </div>
+
+      <BuilderBetaGate 
+        open={showBetaGate} 
+        onAccept={() => {
+          acceptBuilderBeta();
+          setShowBetaGate(false);
+        }}
+        onCancel={() => setShowBetaGate(false)}
+      />
     </div>
   );
 }
