@@ -326,6 +326,69 @@ input.autofill-detect:not(:-webkit-autofill) {
   }
 }
 
+@keyframes achievement-in {
+  0% {
+    transform: translateX(120%) scale(0.9);
+    opacity: 0;
+    filter: brightness(3);
+  }
+  60% {
+    transform: translateX(-10%) scale(1.02);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes achievement-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.animate-achievement-in {
+  animation: achievement-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-achievement-progress {
+  animation: achievement-progress 6s linear forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-in-from-top {
+  from { transform: translateY(-0.5rem); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.slide-in-from-top-2 {
+  animation-name: slide-in-from-top;
+}
+
+.zoom-in {
+  animation-name: scale-in;
+}
+
 .pip-header {
   position: relative;
   box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--border) 55%, transparent), var(--shadow-raised);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { User, Plus, Edit2, Trash2, Check, X, Users, Monitor, Smartphone, Layout, Globe, Server } from "lucide-react";
+import { User, Plus, Edit2, Trash2, Check, X, Users, Monitor, Smartphone, Layout, Globe, Server, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -189,12 +189,12 @@ export function CharacterManager({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 bg-panel/50 border-border/50 hover:bg-panel hover:border-accent/30 transition-all">
-          <User className="h-4 w-4 text-accent" />
-          <div className="flex flex-col items-start leading-tight">
-            <span className="text-[10px] uppercase tracking-wider text-foreground/40 font-bold">Character</span>
-            <span className="max-w-[120px] truncate text-xs font-medium">{activeCharacter?.name ?? "Select Character"}</span>
-          </div>
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start gap-2 h-9 text-[10px] uppercase font-bold text-foreground/40 hover:text-accent hover:bg-accent/5 px-3"
+        >
+          <Settings2 className="h-3.5 w-3.5" />
+          <span>Manage Registry</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[450px] bg-panel border-border shadow-2xl p-0 overflow-hidden">

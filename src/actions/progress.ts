@@ -90,8 +90,9 @@ export async function updateProgress(input: {
     });
   }
 
-  await syncUserAchievements(session.user.id);
+  const achievements = await syncUserAchievements(session.user.id);
   revalidateTrackerPaths();
+  return { achievements };
 }
 
 export async function bulkUpdateProgress(input: { 
@@ -153,8 +154,9 @@ export async function bulkUpdateProgress(input: {
     })
   );
 
-  await syncUserAchievements(session.user.id);
+  const achievements = await syncUserAchievements(session.user.id);
   revalidateTrackerPaths();
+  return { achievements };
 }
 
 export async function resetToImportedProfile() {
@@ -165,8 +167,9 @@ export async function resetToImportedProfile() {
 
   await applyImportedProfile(session.user.id, { force: true });
 
-  await syncUserAchievements(session.user.id);
+  const achievements = await syncUserAchievements(session.user.id);
   revalidateTrackerPaths();
+  return { achievements };
 }
 
 export async function resetToPublicDefaults() {
@@ -203,6 +206,7 @@ export async function resetToPublicDefaults() {
     });
   }
 
-  await syncUserAchievements(session.user.id);
+  const achievements = await syncUserAchievements(session.user.id);
   revalidateTrackerPaths();
+  return { achievements };
 }
