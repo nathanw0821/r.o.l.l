@@ -44,7 +44,7 @@ export function RenameMainCharacterPrompt({
             New Feature: Multiple Characters!
           </DialogTitle>
           <DialogDescription>
-            You can now make up to 5 multiple characters! To get started, please name your original saved character containing all your prior tracked data.
+            You can now make up to 5 characters per game account! To get started, please name your original saved character containing all your prior tracked data.
           </DialogDescription>
         </DialogHeader>
         
