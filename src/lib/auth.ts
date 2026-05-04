@@ -205,7 +205,19 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/sign-in"
   },
-  debug: process.env.NODE_ENV !== "production" || true // Force debug on for now to catch this production error
+  cookies: process.env.NODE_ENV === "production" ? {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+        domain: ".fallout76.wiki" // Sharing cookies between www and root
+      }
+    }
+  } : undefined,
+  debug: process.env.NODE_ENV !== "production" || true
 };
 
 export const getAppSession = cache(() => getServerSession(authOptions));
