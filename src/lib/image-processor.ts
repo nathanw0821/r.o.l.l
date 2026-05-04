@@ -61,80 +61,68 @@ export class ImageProcessor {
     return matches;
   }
 
-  /**
-   * Applies Otsu's Thresholding to the canvas.
-   * Automatically calculates the optimal threshold for bimodal images.
-   */
   applyFilters(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     const len = data.length;
-
-    // 1. Grayscale conversion
-    const grayData = new Uint8Array(len / 4);
-    for (let i = 0, j = 0; i < len; i += 4, j++) {
-      grayData[j] = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
-    }
-
-    // 2. Block-Based Adaptive Contrast Normalization with Dynamic Polarity
     const width = canvas.width;
     const height = canvas.height;
-    const blockSize = 24; // Large enough to include background, small enough for local contrast
-    const normalizedData = new Uint8Array(width * height);
 
-    for (let by = 0; by < height; by += blockSize) {
-      for (let bx = 0; bx < width; bx += blockSize) {
-        // Find min, max, and avg in this block
-        let min = 255, max = 0, sum = 0, count = 0;
-        for (let y = by; y < Math.min(by + blockSize, height); y++) {
-          for (let x = bx; x < Math.min(bx + blockSize, width); x++) {
-            const val = grayData[y * width + x];
-            if (val < min) min = val;
-            if (val > max) max = val;
-            sum += val;
-            count++;
-          }
-        }
+    // 1. Grayscale + Integral Image for fast local averaging
+    const integral = new Float64Array((width + 1) * (height + 1));
+    const grayData = new Uint8Array(len / 4);
 
-        const avg = sum / count;
-        // If average is bright, this block is part of the yellow selection bar.
-        // If average is dark, this block is part of the standard list.
-        const isBrightBackground = avg > 128; 
-
-        // Normalize pixels in this block
-        const range = max - min;
-        for (let y = by; y < Math.min(by + blockSize, height); y++) {
-          for (let x = bx; x < Math.min(bx + blockSize, width); x++) {
-            const idx = y * width + x;
-            if (range < 15) {
-              // Flat area (pure background), output as pure white to keep Tesseract clean
-              normalizedData[idx] = 255; 
-            } else {
-              // Scale to full 0-255 range
-              let scaled = ((grayData[idx] - min) / range) * 255;
-              
-              // Standard list (Dark Bg): scaled text is 255. We want it 0 (Black). -> INVERT
-              // Yellow bar (Bright Bg): scaled text is 0. We want it 0 (Black). -> DO NOT INVERT
-              if (!isBrightBackground) {
-                scaled = 255 - scaled;
-              }
-              
-              // Apply hard threshold for crisp edges (Text is now 0, background is 255)
-              normalizedData[idx] = scaled < 128 ? 0 : 255;
-            }
-          }
-        }
+    for (let y = 0; y < height; y++) {
+      let rowSum = 0;
+      for (let x = 0; x < width; x++) {
+        const i = (y * width + x) * 4;
+        const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+        grayData[y * width + x] = gray;
+        rowSum += gray;
+        integral[(y + 1) * (width + 1) + (x + 1)] = integral[y * (width + 1) + (x + 1)] + rowSum;
       }
     }
 
-    // 3. Write final binary image to canvas
-    for (let i = 0; i < len; i += 4) {
-      const idx = i / 4;
-      const val = normalizedData[idx];
-      data[i] = val;
-      data[i + 1] = val;
-      data[i + 2] = val;
-      data[i + 3] = 255;
+    // 2. Dynamic Polarity Integral Thresholding
+    // We use a moving window (radius 15) to calculate the exact background brightness for EVERY pixel.
+    // This eliminates "grid boundaries" that cut letters in half.
+    const radius = 15; 
+    
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const x1 = Math.max(0, x - radius);
+        const y1 = Math.max(0, y - radius);
+        const x2 = Math.min(width, x + radius);
+        const y2 = Math.min(height, y + radius);
+        const count = (x2 - x1) * (y2 - y1);
+        
+        const sum = integral[y2 * (width + 1) + x2] 
+                  - integral[y1 * (width + 1) + x2] 
+                  - integral[y2 * (width + 1) + x1] 
+                  + integral[y1 * (width + 1) + x1];
+        
+        const avg = sum / count;
+        const pixel = grayData[y * width + x];
+        let val;
+
+        // Determine polarity based on local neighborhood average
+        if (avg > 110) {
+          // Bright Background (Yellow Selection Bar)
+          // Text is dark. If pixel is significantly darker than average, it's text.
+          val = pixel < avg - 15 ? 0 : 255;
+        } else {
+          // Dark Background (Standard List)
+          // Text is bright. If pixel is significantly brighter than average, it's text.
+          // Faint gray text requires a slightly tighter threshold here.
+          val = pixel > avg + 10 ? 0 : 255;
+        }
+
+        const idx = (y * width + x) * 4;
+        data[idx] = val;
+        data[idx + 1] = val;
+        data[idx + 2] = val;
+        data[idx + 3] = 255;
+      }
     }
 
     ctx.putImageData(imageData, 0, 0);
