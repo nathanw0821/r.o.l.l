@@ -123,6 +123,7 @@ model User {
   dailyPointsDate         DateTime?
   passivePointsAt         DateTime?
   accounts                Account[]
+  gameAccounts            GameAccount[]
   adRewardLogs            AdRewardLog[]
   characters              Character[]
   feedbackReviewed        Feedback[]             @relation("FeedbackReviewedBy")
@@ -232,13 +233,34 @@ model UserSettings {
   user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model GameAccount {
+  id         String      @id @default(cuid())
+  userId     String
+  name       String      // e.g. "Account 1", "Account 2"
+  platform   String      @default("PC") // "PC", "XBOX", "PS"
+  isActive   Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  characters Character[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
 model Character {
   id                 String                 @id @default(cuid())
   userId             String
+  gameAccountId      String?
   name               String
+  slotIndex          Int                    @default(0) // 0-4 for 5 characters per account
+  legendaryModules   Int                    @default(0)
+  scrip              Int                    @default(0)
+  isMule             Boolean                @default(false)
   createdAt          DateTime               @default(now())
   updatedAt          DateTime               @updatedAt
   user               User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameAccount        GameAccount?           @relation(fields: [gameAccountId], references: [id], onDelete: SetNull)
   importBaseline     UserImportBaseline[]
   learnedBasePieces  UserLearnedBasePiece[]
   progress           UserProgress[]
@@ -246,6 +268,7 @@ model Character {
 
   @@unique([userId, name])
   @@index([userId])
+  @@index([gameAccountId])
 }
 
 model UserProgress {

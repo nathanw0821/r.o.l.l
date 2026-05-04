@@ -2,6 +2,9 @@ import SummaryClient from "@/components/summary-client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth";
 import { getAllEffectTiers, getGlobalProgressSummary } from "@/lib/data";
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 export default async function SummaryPage() {
   const session = await getAppSession();
@@ -17,8 +20,24 @@ export default async function SummaryPage() {
     ? await getGlobalProgressSummary(session.user.id)
     : null;
 
+  const user = session?.user?.id 
+    ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { username: true } })
+    : null;
+
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Summary</h1>
+        {user?.username && (
+          <Link 
+            href={`/u/${user.username}`} 
+            className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent/90 transition"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Share Crafting Resume
+          </Link>
+        )}
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>Progress Diagnostic</CardTitle>

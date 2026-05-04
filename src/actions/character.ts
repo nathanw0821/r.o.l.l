@@ -9,6 +9,7 @@ import { awardAchievements } from "@/lib/achievements";
 
 const createCharacterSchema = z.object({
   name: z.string().min(1).max(30),
+  gameAccountId: z.string().optional(),
 });
 
 const renameCharacterSchema = z.object({
@@ -16,7 +17,7 @@ const renameCharacterSchema = z.object({
   name: z.string().min(1).max(30),
 });
 
-export async function createCharacter(input: { name: string }) {
+export async function createCharacter(input: { name: string, gameAccountId?: string }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     throw new Error("Not authenticated");
@@ -31,14 +32,25 @@ export async function createCharacter(input: { name: string }) {
     where: { userId: session.user.id }
   });
 
-  if (characterCount >= 5) {
-    throw new Error("Maximum of 5 characters allowed.");
+  if (characterCount >= 15) {
+    throw new Error("Maximum of 15 characters allowed across all accounts.");
+  }
+
+  // If gameAccountId provided, check limit for that account
+  if (parsed.data.gameAccountId) {
+    const accountCharCount = await prisma.character.count({
+      where: { gameAccountId: parsed.data.gameAccountId }
+    });
+    if (accountCharCount >= 5) {
+      throw new Error("Maximum of 5 characters allowed per Game Account.");
+    }
   }
 
   const character = await prisma.character.create({
     data: {
       userId: session.user.id,
       name: parsed.data.name,
+      gameAccountId: parsed.data.gameAccountId || null,
     }
   });
 
