@@ -64,9 +64,10 @@ export async function createCharacter(input: { name: string, gameAccountId?: str
   const earned: string[] = [];
   if (characterCount === 1) earned.push("second_life");
   if (characterCount === 4) earned.push("full_roster"); // 4 prior + 1 new = 5
-  await awardAchievements(session.user.id, earned);
+  const achievements = await awardAchievements(session.user.id, earned);
 
   revalidatePath("/", "layout");
+  return { achievements };
 }
 
 export async function renameCharacter(input: { id: string, name: string }) {
@@ -97,9 +98,10 @@ export async function renameCharacter(input: { id: string, name: string }) {
   const earned: string[] = ["a_new_name"];
   if (parsed.data.name.toLowerCase() === "gary") earned.push("gary");
   if (parsed.data.name.toLowerCase() === "main character") earned.push("identity_theft");
-  await awardAchievements(session.user.id, earned);
+  const achievements = await awardAchievements(session.user.id, earned);
 
   revalidatePath("/", "layout");
+  return { achievements };
 }
 
 export async function setActiveCharacter(characterId: string) {
@@ -123,9 +125,10 @@ export async function setActiveCharacter(characterId: string) {
   });
 
   // Achievements
-  await awardAchievements(session.user.id, ["changing_gears"]);
+  const achievements = await awardAchievements(session.user.id, ["changing_gears"]);
 
   revalidatePath("/", "layout");
+  return { achievements };
 }
 
 export async function deleteCharacter(characterId: string) {
@@ -169,9 +172,10 @@ export async function deleteCharacter(characterId: string) {
   // Achievements
   const earned: string[] = ["spring_cleaning"];
   if (characterCount === 2) earned.push("the_one"); // Deleted from 2 to 1
-  await awardAchievements(session.user.id, earned);
+  const achievements = await awardAchievements(session.user.id, earned);
 
   revalidatePath("/", "layout");
+  return { achievements };
 }
 
 export async function linkCharacterToAccount(characterId: string, gameAccountId: string) {

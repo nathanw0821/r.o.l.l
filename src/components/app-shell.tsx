@@ -23,6 +23,7 @@ import { useLocalProgress } from "@/components/use-local-progress";
 import { formatTierStars } from "@/lib/tier-format";
 import { usePersistedAppNavigation } from "@/components/use-persisted-app-navigation";
 import { useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
+import { CharacterSelector } from "@/components/character-selector";
 
 type AppNavLink = {
   href: string;
@@ -305,8 +306,13 @@ export default function AppShell({
         >
           <div className="app-sidebar__top">
             <div className="app-brand">
-            <BrandStack href="/" />
+              <BrandStack href="/" />
             </div>
+            {isSignedIn && (
+              <div className="mt-2 w-full">
+                <CharacterSelector collapsed={sidebarRail} />
+              </div>
+            )}
             <button
               type="button"
               className="app-sidebar__collapse-button"

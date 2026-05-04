@@ -244,15 +244,26 @@ const achievementKeys = new Set(ACHIEVEMENTS.map((achievement) => achievement.ke
 
 export async function awardAchievements(userId: string, keys: string[]) {
   const validKeys = Array.from(new Set(keys.filter((key) => achievementKeys.has(key))));
-  if (validKeys.length === 0) return;
+  if (validKeys.length === 0) return [];
 
-  await prisma.userAchievement.createMany({
-    data: validKeys.map((key) => ({
-      userId,
-      key
-    })),
-    skipDuplicates: true
+  const existing = await prisma.userAchievement.findMany({
+    where: { userId, key: { in: validKeys } },
+    select: { key: true }
   });
+  const existingKeys = new Set(existing.map(e => e.key));
+  const newKeys = validKeys.filter(k => !existingKeys.has(k));
+
+  if (newKeys.length > 0) {
+    await prisma.userAchievement.createMany({
+      data: newKeys.map((key) => ({
+        userId,
+        key
+      })),
+      skipDuplicates: true
+    });
+  }
+
+  return ACHIEVEMENTS.filter(a => newKeys.includes(a.key));
 }
 
 function hasFullCategory(
@@ -301,15 +312,15 @@ export async function syncUserAchievements(userId: string) {
   if (globalSummary.percent >= 25) earned.push("account_25");
   if (globalSummary.percent >= 100 && globalSummary.total > 0) earned.push("account_100");
 
-  await awardAchievements(userId, earned);
+  return await awardAchievements(userId, earned);
 }
 
 export async function awardLoginAchievement(userId: string) {
-  await awardAchievements(userId, ["logging_in"]);
+  return await awardAchievements(userId, ["logging_in"]);
 }
 
 export async function awardAchievementsView(userId: string) {
-  await awardAchievements(userId, ["curious"]);
+  return await awardAchievements(userId, ["curious"]);
 }
 
 export async function awardSettingsAchievements(userId: string, input: {
@@ -320,7 +331,7 @@ export async function awardSettingsAchievements(userId: string, input: {
   if (input.theme === "dark") earned.push("midnight_oil");
   if (input.accent === "vault") earned.push("vault_chic");
   if (input.accent === "glow") earned.push("glow_up");
-  await awardAchievements(userId, earned);
+  return await awardAchievements(userId, earned);
 }
 
 export async function getUserAchievements(userId: string) {

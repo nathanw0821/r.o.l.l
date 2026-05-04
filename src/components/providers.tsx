@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { FilterProvider } from "@/components/filter-context";
 import { ProgressHistoryProvider } from "@/components/progress-history-provider";
 import { SessionAssistProvider } from "@/components/session-assist-provider";
+import { AchievementProvider } from "@/components/achievement-provider";
 
 export default function Providers({
   children,
@@ -35,7 +36,11 @@ export default function Providers({
           preferDefaults={preferDefaults}
         >
           <FilterProvider>
-            <ProgressHistoryProvider>{children}</ProgressHistoryProvider>
+            <ProgressHistoryProvider>
+              <AchievementProvider>
+                {children}
+              </AchievementProvider>
+            </ProgressHistoryProvider>
           </FilterProvider>
         </ThemeProvider>
       </SessionAssistProvider>
