@@ -12,6 +12,7 @@ import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
 import { ImageProcessor } from "@/lib/image-processor";
+import { Sparkles } from "lucide-react";
 import { useBuilderBetaAccess, BuilderBetaGate } from "@/components/builder/builder-beta-gate";
 
 const langOptions = [
@@ -103,6 +104,7 @@ export default function ScreenshotAssistClient({
 }) {
   const { preset, setPreset } = useSessionAssist();
   const { data: session } = useSession();
+  const isAdmin = Boolean(session?.user?.id === process.env.NEXT_PUBLIC_ADMIN_ID);
   const { map: localProgress } = useLocalProgress(!session);
   const { commitEntries } = useProgressHistory();
   const [localRows, setLocalRows] = React.useState(rows);
