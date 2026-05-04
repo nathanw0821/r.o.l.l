@@ -1,4 +1,4 @@
-export const ASSIST_PRESETS = ["manual", "session", "ai"] as const;
+export const ASSIST_PRESETS = ["manual", "session", "ai", "build"] as const;
 
 export type AssistPreset = (typeof ASSIST_PRESETS)[number];
 
@@ -44,5 +44,16 @@ export const assistPresetContent: Record<
     aiTitle: "Multi-language scan",
     aiButton: "Recognize Matches",
     analysisGuidance: "Extract mod names from the screenshot using the selected OCR language."
+  },
+  build: {
+    label: "B.U.I.L.D. Scan",
+    shortLabel: "Build Scan",
+    description: "Scan armor, SPECIAL, and perks to sync with builder.",
+    windowSubtitle: "Import your character state to the sandbox.",
+    checklistHint: "Detected build elements will appear here.",
+    aiTitle: "Build detected",
+    aiButton: "Full Build Analysis",
+    analysisGuidance: "Recognize armor types, SPECIAL stats, and perk cards."
   }
 };
+

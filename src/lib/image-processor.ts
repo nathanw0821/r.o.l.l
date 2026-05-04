@@ -1,9 +1,22 @@
 import { createWorker, Worker } from 'tesseract.js';
 import { validateLegendaryMod } from './legendary-dictionary';
+import { 
+  normalizeArmorName, 
+  ARMOR_TYPE_MAP, 
+  SPECIAL_KEYWORDS, 
+  LEGENDARY_PERK_MAP 
+} from './scan-dictionary';
 
 export interface ProcessedResult {
   text: string;
   confidence: number;
+}
+
+export interface BuildScanResult {
+  armorType: string | null;
+  special: Record<string, number>;
+  legendaryMods: string[];
+  legendaryPerks: string[];
 }
 
 /**
@@ -89,6 +102,69 @@ export class ImageProcessor {
     }
 
     return Array.from(matches);
+  }
+
+  /**
+   * Broader scan for builder elements: armor type, SPECIAL, legendary perks, etc.
+   */
+  async extractBuildData(canvas: HTMLCanvasElement, lang: string = 'eng'): Promise<BuildScanResult> {
+    if (!this.worker) {
+      await this.init(lang);
+    }
+
+    const result: BuildScanResult = {
+      armorType: null,
+      special: {},
+      legendaryMods: [],
+      legendaryPerks: []
+    };
+
+    const { data: { text } } = await this.worker.recognize(canvas);
+    const lines = text.split('\n');
+
+    for (const line of lines) {
+      const cleanLine = line.trim();
+      if (!cleanLine) continue;
+
+      // 1. Armor Type Detection
+      if (!result.armorType) {
+        const armorName = normalizeArmorName(cleanLine);
+        if (armorName) {
+          result.armorType = ARMOR_TYPE_MAP[armorName] || null;
+        }
+      }
+
+      // 2. SPECIAL Detection (e.g. "STRENGTH 15")
+      for (const keyword of SPECIAL_KEYWORDS) {
+        if (cleanLine.toUpperCase().includes(keyword)) {
+          const match = cleanLine.match(/(\d+)/);
+          if (match) {
+            const val = parseInt(match[1]);
+            if (!isNaN(val)) {
+              const key = keyword.substring(0, 3).toLowerCase();
+              result.special[key] = val;
+            }
+          }
+        }
+      }
+
+      // 3. Legendary Perk Detection
+      for (const [name, id] of Object.entries(LEGENDARY_PERK_MAP)) {
+        if (cleanLine.toLowerCase().includes(name.toLowerCase())) {
+          if (!result.legendaryPerks.includes(id)) {
+            result.legendaryPerks.push(id);
+          }
+        }
+      }
+
+      // 4. Legendary Mod fallback (standard check)
+      const validatedMod = validateLegendaryMod(cleanLine);
+      if (validatedMod && !result.legendaryMods.includes(validatedMod)) {
+        result.legendaryMods.push(validatedMod);
+      }
+    }
+
+    return result;
   }
 
   private applyFilterPass(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, mode: 'dark' | 'yellow', customThreshold: number) {
@@ -203,3 +279,4 @@ export class ImageProcessor {
     return null;
   }
 }
+
