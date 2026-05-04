@@ -62,31 +62,66 @@ export class ImageProcessor {
   }
 
   /**
-   * Applies hardware-accelerated filters to the canvas.
-   * Optimized for Fallout 76 UI (varying polarities, high contrast).
+   * Applies Otsu's Thresholding to the canvas.
+   * Automatically calculates the optimal threshold for bimodal images.
    */
   applyFilters(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-    // Save state
-    ctx.save();
-    
-    // Create a temporary canvas to hold the filtered result
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    const tempCtx = tempCanvas.getContext('2d');
-    if (!tempCtx) return;
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const len = data.length;
 
-    // Apply high-contrast grayscale filter
-    // 300% contrast + 150% brightness helps lift grayed-out items 
-    // while keeping Tesseract's internal adaptive thresholding functional for the selected bar.
-    tempCtx.filter = 'grayscale(100%) contrast(300%) brightness(150%)';
-    tempCtx.drawImage(canvas, 0, 0);
+    // 1. Grayscale + Histogram
+    const histogram = new Int32Array(256);
+    const grayData = new Uint8Array(len / 4);
 
-    // Clear original and draw filtered
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(tempCanvas, 0, 0);
-    
-    ctx.restore();
+    for (let i = 0, j = 0; i < len; i += 4, j++) {
+      // Standard grayscale weights
+      const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+      grayData[j] = gray;
+      histogram[gray]++;
+    }
+
+    // 2. Otsu's Method to find optimal threshold
+    let total = len / 4;
+    let sum = 0;
+    for (let t = 0; t < 256; t++) sum += t * histogram[t];
+
+    let sumB = 0;
+    let wB = 0;
+    let wF = 0;
+    let varMax = 0;
+    let threshold = 0;
+
+    for (let t = 0; t < 256; t++) {
+      wB += histogram[t];
+      if (wB === 0) continue;
+      wF = total - wB;
+      if (wF === 0) break;
+
+      sumB += t * histogram[t];
+      const mB = sumB / wB;
+      const mF = (sum - sumB) / wF;
+
+      const varBetween = wB * wF * (mB - mF) * (mB - mF);
+      if (varBetween > varMax) {
+        varMax = varBetween;
+        threshold = t;
+      }
+    }
+
+    // 3. Apply threshold and invert (Tesseract prefers black text on white)
+    // We adjust the threshold slightly lower to be more inclusive of gray text 
+    // if the background is very dark.
+    const finalThreshold = Math.max(40, threshold - 10); 
+
+    for (let i = 0, j = 0; i < len; i += 4, j++) {
+      const value = grayData[j] > finalThreshold ? 0 : 255;
+      data[i] = value;
+      data[i + 1] = value;
+      data[i + 2] = value;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
   }
 
   /**
