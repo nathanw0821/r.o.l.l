@@ -13,19 +13,14 @@ import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements"
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
-// In production, we want NextAuth to use the actual domain being visited.
-// We prioritize NEXTAUTH_URL from the environment if set explicitly.
-if (!process.env.NEXTAUTH_URL?.trim() && process.env.APP_URL) {
-  process.env.NEXTAUTH_URL = process.env.APP_URL;
-}
-
-// Fallback for Vercel preview deployments
-if (!process.env.NEXTAUTH_URL?.trim() && process.env.VERCEL_URL) {
+// NUCLEAR OVERRIDE: Prioritize the vanity domain for all production auth callbacks.
+// This prevents stale NEXTAUTH_URL variables in Vercel from breaking the handshake.
+if (process.env.NODE_ENV === "production") {
+  const preferredUrl = process.env.APP_URL || "https://www.fallout76.wiki";
+  process.env.NEXTAUTH_URL = preferredUrl;
+  process.env.APP_URL = preferredUrl;
+} else if (!process.env.NEXTAUTH_URL?.trim() && process.env.VERCEL_URL) {
   process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
-}
-
-if (!process.env.APP_URL?.trim() && process.env.NEXTAUTH_URL) {
-  process.env.APP_URL = process.env.NEXTAUTH_URL;
 }
 
 const credentialsSchema = z.object({
