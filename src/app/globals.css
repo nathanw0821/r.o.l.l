@@ -380,7 +380,7 @@ html[data-scanlines="strong"] .pip-shell::before {
   position: sticky;
   top: 1.5rem;
   z-index: 30;
-  max-width: 520px;
+  max-width: 32.5rem;
   margin-left: auto;
   border-radius: 16px;
   border: 1px solid var(--hub-shell-border);
@@ -411,7 +411,7 @@ html[data-scanlines="strong"] .pip-shell::before {
 
 .command-hub__stat {
   text-align: right;
-  min-width: 80px;
+  min-width: 5rem;
 }
 
 .command-hub__expand {
@@ -710,18 +710,18 @@ a {
 
 .app-layout {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 13.75rem minmax(0, 1fr);
   min-height: 100vh;
   align-items: start;
 }
 
 .app-layout--sidebar-rail {
-  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-columns: 5.5rem minmax(0, 1fr);
 }
 
 @media (min-width: 861px) {
   html[data-sidebar-collapsed="1"] .app-layout {
-    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-columns: 5.5rem minmax(0, 1fr);
   }
 }
 
@@ -1061,7 +1061,7 @@ a {
 }
 
 .content-canvas {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -1204,7 +1204,7 @@ a {
 
 @media (max-width: 1100px) {
   .app-layout {
-    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-columns: 5.5rem minmax(0, 1fr);
   }
   .app-nav__link span {
     display: none;
@@ -1348,7 +1348,7 @@ a {
 
 .table-grid {
   display: grid;
-  grid-template-columns: 2.2fr 1.4fr 2.4fr 1.4fr 0.6fr 0.8fr 2fr;
+  grid-template-columns: minmax(10rem, 2.2fr) minmax(7rem, 1.4fr) minmax(12rem, 2.4fr) minmax(8rem, 1.4fr) minmax(5rem, 0.6fr) minmax(6rem, 0.8fr) minmax(10rem, 2fr);
   column-gap: 0.75rem;
   row-gap: 0.5rem;
   align-items: start;
