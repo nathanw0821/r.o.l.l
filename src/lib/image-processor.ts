@@ -11,21 +11,28 @@ export interface ProcessedResult {
  * Optimizes images using HTML5 Canvas for better Tesseract.js accuracy.
  */
 export class ImageProcessor {
+  private currentLanguage: string = 'eng';
   private worker: Worker | null = null;
 
   /**
-   * Initializes the Tesseract.js worker with English language support.
+   * Initializes the Tesseract.js worker with the specified language.
    */
-  async init() {
-    if (this.worker) return;
-    this.worker = await createWorker('eng');
+  async init(lang: string = 'eng') {
+    if (this.worker && this.currentLanguage === lang) return;
+    
+    if (this.worker) {
+      await this.worker.terminate();
+    }
+    
+    this.currentLanguage = lang;
+    this.worker = await createWorker(lang);
   }
 
   /**
    * Processes a canvas element and returns recognized text and confidence level.
    */
-  async processImage(canvas: HTMLCanvasElement): Promise<ProcessedResult> {
-    if (!this.worker) await this.init();
+  async processImage(canvas: HTMLCanvasElement, lang: string = 'eng'): Promise<ProcessedResult> {
+    await this.init(lang);
     
     // Tesseract.js 5.x API
     const { data: { text, confidence } } = await this.worker!.recognize(canvas);
@@ -39,8 +46,8 @@ export class ImageProcessor {
   /**
    * Processes a canvas and attempts to extract and validate legendary mod names.
    */
-  async extractLegendaryMods(canvas: HTMLCanvasElement): Promise<string[]> {
-    const { text } = await this.processImage(canvas);
+  async extractLegendaryMods(canvas: HTMLCanvasElement, lang: string = 'eng'): Promise<string[]> {
+    const { text } = await this.processImage(canvas, lang);
     const lines = text.split('\n');
     const matches: string[] = [];
 
