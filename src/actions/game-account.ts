@@ -60,3 +60,48 @@ export async function deleteGameAccount(accountId: string) {
 
   revalidatePath("/", "layout");
 }
+
+export async function createGameAccountAndLinkCharacter(input: { 
+  name: string; 
+  platform: "PC" | "XBOX" | "PS";
+  characterId: string;
+}) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const parsed = createAccountSchema.safeParse({ name: input.name, platform: input.platform });
+  if (!parsed.success) throw new Error("Invalid input");
+
+  const accountCount = await prisma.gameAccount.count({
+    where: { userId: session.user.id }
+  });
+
+  if (accountCount >= 10) {
+    throw new Error("Maximum of 10 game accounts allowed.");
+  }
+
+  // Transaction to create account and update character
+  await prisma.$transaction(async (tx) => {
+    const account = await tx.gameAccount.create({
+      data: {
+        userId: session.user.id,
+        name: parsed.data.name,
+        platform: parsed.data.platform,
+      }
+    });
+
+    await tx.character.update({
+      where: { id: input.characterId },
+      data: { gameAccountId: account.id }
+    });
+
+    // Also set as active
+    await tx.userSettings.upsert({
+      where: { userId: session.user.id },
+      update: { activeCharacterId: input.characterId },
+      create: { userId: session.user.id, activeCharacterId: input.characterId }
+    });
+  });
+
+  revalidatePath("/", "layout");
+}

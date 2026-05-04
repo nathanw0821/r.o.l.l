@@ -173,3 +173,48 @@ export async function deleteCharacter(characterId: string) {
 
   revalidatePath("/", "layout");
 }
+
+export async function linkCharacterToAccount(characterId: string, gameAccountId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  const character = await prisma.character.findUnique({
+    where: { id: characterId }
+  });
+
+  if (!character || character.userId !== session.user.id) {
+    throw new Error("Character not found");
+  }
+
+  const gameAccount = await prisma.gameAccount.findUnique({
+    where: { id: gameAccountId }
+  });
+
+  if (!gameAccount || gameAccount.userId !== session.user.id) {
+    throw new Error("Game account not found");
+  }
+
+  // Check character limit for target account
+  const accountCharCount = await prisma.character.count({
+    where: { gameAccountId: gameAccountId }
+  });
+  if (accountCharCount >= 5) {
+    throw new Error("Maximum of 5 characters allowed per Game Account.");
+  }
+
+  await prisma.character.update({
+    where: { id: characterId },
+    data: { gameAccountId }
+  });
+
+  // Also set as active
+  await prisma.userSettings.upsert({
+    where: { userId: session.user.id },
+    update: { activeCharacterId: characterId },
+    create: { userId: session.user.id, activeCharacterId: characterId }
+  });
+
+  revalidatePath("/", "layout");
+}
