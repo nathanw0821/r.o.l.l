@@ -108,8 +108,7 @@ export default function ScreenshotAssistClient({
   const { map: localProgress } = useLocalProgress(!session);
   const { commitEntries } = useProgressHistory();
   const [localRows, setLocalRows] = React.useState(rows);
-  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
-  const [imageDataUrl, setImageDataUrl] = React.useState<string | null>(null);
+  const [imageQueue, setImageQueue] = React.useState<string[]>([]);
   const [query, setQuery] = React.useState(defaultDraft.query);
   const [tier, setTier] = React.useState<(typeof tierOptions)[number]>(defaultDraft.tier);
   const [category, setCategory] = React.useState(defaultDraft.category);
@@ -144,9 +143,9 @@ export default function ScreenshotAssistClient({
     const handlePaste = async (e: ClipboardEvent) => {
       const canvas = await ImageProcessor.getImageFromClipboard(e);
       if (canvas) {
-        setImageDataUrl(canvas.toDataURL());
-        setPreviewUrl(canvas.toDataURL()); // Use data URL for preview too
-        setMessage("Image pasted from clipboard.");
+        const dataUrl = canvas.toDataURL();
+        setImageQueue(prev => [...prev, dataUrl]);
+        setMessage("Image added to queue from clipboard.");
       }
     };
     window.addEventListener("paste", handlePaste);
@@ -154,8 +153,8 @@ export default function ScreenshotAssistClient({
   }, []);
 
   async function requestTesseractAnalysis() {
-    if (!imageDataUrl || !processorRef.current) {
-      setAiMessage("Add a screenshot first.");
+    if (imageQueue.length === 0 || !processorRef.current) {
+      setAiMessage("Add at least one screenshot first.");
       return;
     }
 
@@ -163,43 +162,48 @@ export default function ScreenshotAssistClient({
     setAiMessage(null);
 
     try {
-      const img = new Image();
-      img.src = imageDataUrl;
-      await new Promise((resolve) => (img.onload = resolve));
+      const allSuggestedIds = new Set<string>();
+      const allReasons: Record<string, string> = {};
+      let totalMatches = 0;
 
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Could not get canvas context");
+      for (const imageDataUrl of imageQueue) {
+        const img = new Image();
+        img.src = imageDataUrl;
+        await new Promise((resolve) => (img.onload = resolve));
 
-      ctx.drawImage(img, 0, 0);
-      processorRef.current.applyFilters(canvas, ctx);
-      
-      const matches = await processorRef.current.extractLegendaryMods(canvas, ocrLang);
-      
-      if (matches.length === 0) {
-        setAiMessage("No legendary mods recognized by Tesseract OCR. Try a clearer image.");
-      } else {
-        // Map names back to IDs in filteredRows
-        const suggestedIds: string[] = [];
-        const reasons: Record<string, string> = {};
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) continue;
+
+        ctx.drawImage(img, 0, 0);
+        processorRef.current.applyFilters(canvas, ctx);
+        
+        const matches = await processorRef.current.extractLegendaryMods(canvas, ocrLang);
         
         for (const match of matches) {
           const row = localRows.find(r => r.effect.name === match);
           if (row) {
-            suggestedIds.push(row.id);
-            reasons[row.id] = "Matched by Tesseract OCR";
+            allSuggestedIds.add(row.id);
+            allReasons[row.id] = "Matched by S.C.A.N. OCR";
+            totalMatches++;
           }
         }
-        
-        setAiSuggestedIds(suggestedIds);
-        setAiReasonById(reasons);
-        if (autoSelectAiRef.current) {
-          setSelectedIds((current) => Array.from(new Set([...current, ...suggestedIds])));
-        }
-        setAiMessage(`${suggestedIds.length} mods recognized by Tesseract. Review and "${autoSelectAiRef.current ? "Save Confirmed" : "Use matches"}".`);
       }
+      
+      const suggestedIdsArray = Array.from(allSuggestedIds);
+      setAiSuggestedIds(suggestedIdsArray);
+      setAiReasonById(allReasons);
+      
+      if (autoSelectAiRef.current) {
+        setSelectedIds((current) => Array.from(new Set([...current, ...suggestedIdsArray])));
+      }
+      
+      setAiMessage(totalMatches > 0 
+        ? `${totalMatches} matches found across ${imageQueue.length} screenshots.` 
+        : "No legendary mods recognized. Try clearer images.");
+        
     } catch (err) {
       setAiMessage(err instanceof Error ? err.message : "OCR failed.");
     } finally {
@@ -253,9 +257,10 @@ export default function ScreenshotAssistClient({
 
   React.useEffect(() => {
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      // Cleanup happens automatically for dataURLs when state clears or window unloads, 
+      // but for completeness we'll leave this hook if we use ObjectURLs later.
     };
-  }, [previewUrl]);
+  }, []);
 
   React.useEffect(() => {
     if (!categoryOptions.includes(category)) {
@@ -322,24 +327,21 @@ export default function ScreenshotAssistClient({
   }, [localRows, lockedOnly, tier, category, query]);
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setMessage(null);
-    setAiMessage(null);
-    setAiSuggestedIds([]);
-    setAiReasonById({});
-    setSelectedIds([]);
-    try {
-      const nextImageDataUrl = await readFileAsDataUrl(file);
-      setImageDataUrl(nextImageDataUrl);
-    } catch {
-      setImageDataUrl(null);
-      setAiMessage("Could not read that screenshot file.");
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    const newImages: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      try {
+        const dataUrl = await readFileAsDataUrl(files[i]);
+        newImages.push(dataUrl);
+      } catch (err) {
+        console.error(err);
+      }
     }
-    setPreviewUrl((current) => {
-      if (current) URL.revokeObjectURL(current);
-      return URL.createObjectURL(file);
-    });
+    setImageQueue(prev => [...prev, ...newImages]);
+    setMessage(`${newImages.length} images added to queue.`);
+    event.target.value = ""; // Reset input
   }
 
   function toggleSelection(effectTierId: string) {
@@ -459,9 +461,44 @@ export default function ScreenshotAssistClient({
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-          <div className="text-sm font-semibold">1. Screenshot</div>
-          <div className="mt-1 text-xs text-foreground/60">Paste (Ctrl+V) or upload a screenshot of your Crafting Bench list.</div>
-          <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleFileChange} className="mt-3" />
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold">1. Screenshots ({imageQueue.length})</div>
+            {imageQueue.length > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setImageQueue([])}
+                className="h-7 text-[10px] uppercase tracking-wider text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
+                Clear All
+              </Button>
+            )}
+          </div>
+          <div className="mt-1 text-xs text-foreground/60">Paste (Ctrl+V) multiple or upload a batch of screenshots.</div>
+          
+          {imageQueue.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {imageQueue.map((url, idx) => (
+                <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded border border-border bg-background/50">
+                  <img src={url} alt={`Queue ${idx}`} className="h-full w-full object-cover" />
+                  <button 
+                    onClick={() => setImageQueue(prev => prev.filter((_, i) => i !== idx))}
+                    className="absolute inset-0 flex items-center justify-center bg-background/60 opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <span className="text-[10px] font-bold text-destructive">Remove</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <Input 
+            type="file" 
+            multiple 
+            accept="image/png,image/jpeg,image/webp" 
+            onChange={handleFileChange} 
+            className="mt-4" 
+          />
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
@@ -647,14 +684,20 @@ export default function ScreenshotAssistClient({
       </div>
 
       <div className={cn("rounded-[var(--radius)] border border-border bg-panel p-4", !isWindow && "lg:sticky lg:top-24 lg:self-start")}>
-        <div className="text-sm font-semibold">Preview</div>
+        <div className="text-sm font-semibold">Queue Preview</div>
         <div className="mt-4 overflow-hidden rounded-[var(--radius)] border border-border bg-background/40">
-          {previewUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={previewUrl} alt="Screenshot reference" className="h-auto w-full object-contain" />
+          {imageQueue.length > 0 ? (
+            <div className="flex flex-col gap-4 p-2">
+              {imageQueue.map((url, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="text-[10px] text-foreground/40 uppercase font-medium">Screenshot #{idx + 1}</div>
+                  <img src={url} alt={`Screenshot ${idx + 1}`} className="h-auto w-full rounded border border-border/50 object-contain" />
+                </div>
+              ))}
+            </div>
           ) : (
             <div className={cn("flex items-center justify-center px-4 text-center text-sm text-foreground/50", isWindow ? "min-h-[220px]" : "min-h-[320px]")}>
-              No image yet.
+              Queue is empty. Paste screenshots to begin.
             </div>
           )}
         </div>
