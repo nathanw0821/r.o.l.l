@@ -12,7 +12,7 @@ import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
 import { ImageProcessor } from "@/lib/image-processor";
-import { Sparkles, Info } from "lucide-react";
+import { Sparkles, Info, RefreshCw, Camera } from "lucide-react";
 import { useBuilderBetaAccess, BuilderBetaGate } from "@/components/builder/builder-beta-gate";
 import { InfoTooltip } from "@/components/ui/tooltip";
 
@@ -127,6 +127,12 @@ export default function ScreenshotAssistClient({
   const [aiMessage, setAiMessage] = React.useState<string | null>(null);
   const [aiSuggestedIds, setAiSuggestedIds] = React.useState<string[]>([]);
   const [aiReasonById, setAiReasonById] = React.useState<Record<string, string>>({});
+  const [buildScanResult, setBuildScanResult] = React.useState<{
+    armorType: string | null;
+    special: Record<string, number>;
+    legendaryMods: string[];
+    legendaryPerks: string[];
+  } | null>(null);
   const [pending, setPending] = React.useState(false);
   const [ocrPending, setOcrPending] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
@@ -161,33 +167,74 @@ export default function ScreenshotAssistClient({
 
     setOcrPending(true);
     setAiMessage(null);
+    setBuildScanResult(null);
 
     try {
       const allSuggestedIds = new Set<string>();
       const allReasons: Record<string, string> = {};
       let totalMatches = 0;
 
-      for (const imageDataUrl of imageQueue) {
-        const img = new Image();
-        img.src = imageDataUrl;
-        await new Promise((resolve) => (img.onload = resolve));
+      if (preset === "build") {
+        const buildAcc = {
+          armorType: null as string | null,
+          special: {} as Record<string, number>,
+          legendaryMods: [] as string[],
+          legendaryPerks: [] as string[]
+        };
 
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) continue;
+        for (const imageDataUrl of imageQueue) {
+          const img = new Image();
+          img.src = imageDataUrl;
+          await new Promise((resolve) => (img.onload = resolve));
 
-        ctx.drawImage(img, 0, 0);
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) continue;
+          ctx.drawImage(img, 0, 0);
+
+          const res = await processorRef.current.extractBuildData(canvas, ocrLang);
+          if (res.armorType) buildAcc.armorType = res.armorType;
+          Object.assign(buildAcc.special, res.special);
+          res.legendaryMods.forEach(m => { if (!buildAcc.legendaryMods.includes(m)) buildAcc.legendaryMods.push(m); });
+          res.legendaryPerks.forEach(p => { if (!buildAcc.legendaryPerks.includes(p)) buildAcc.legendaryPerks.push(p); });
+        }
         
-        const matches = await processorRef.current.extractLegendaryMods(canvas, ocrLang);
+        setBuildScanResult(buildAcc);
         
-        for (const match of matches) {
-          const matchingRows = localRows.filter(r => r.effect.name === match);
+        // Also map mods to registry IDs if possible for the checklist below
+        for (const modName of buildAcc.legendaryMods) {
+          const matchingRows = localRows.filter(r => r.effect.name === modName);
           for (const row of matchingRows) {
             allSuggestedIds.add(row.id);
-            allReasons[row.id] = "Matched by S.C.A.N. OCR";
+            allReasons[row.id] = "Detected in build scan";
             totalMatches++;
+          }
+        }
+      } else {
+        for (const imageDataUrl of imageQueue) {
+          const img = new Image();
+          img.src = imageDataUrl;
+          await new Promise((resolve) => (img.onload = resolve));
+
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) continue;
+
+          ctx.drawImage(img, 0, 0);
+          
+          const matches = await processorRef.current.extractLegendaryMods(canvas, ocrLang);
+          
+          for (const match of matches) {
+            const matchingRows = localRows.filter(r => r.effect.name === match);
+            for (const row of matchingRows) {
+              allSuggestedIds.add(row.id);
+              allReasons[row.id] = "Matched by S.C.A.N. OCR";
+              totalMatches++;
+            }
           }
         }
       }
@@ -406,6 +453,49 @@ export default function ScreenshotAssistClient({
     setPending(false);
   }
 
+  function syncToBuilder() {
+    if (!buildScanResult) return;
+    
+    const saved = typeof window !== "undefined" ? localStorage.getItem("roll-builder-payload") : null;
+    let payload = saved ? JSON.parse(saved) : {
+      version: 5,
+      basePieceId: "armor-set-secret-service",
+      equipmentKind: "armor",
+      weaponSub: null,
+      legendaryModIds: [null, null, null, null],
+      armorLegendaryModIds: Array(5).fill(Array(4).fill(null)),
+      armorPieceCrafting: [],
+      powerArmorHelmetId: null,
+      powerArmorHelmetCrafting: {},
+      powerArmorPiecesEquipped: [true, true, true, true, true, true],
+      ghoul: false,
+      underarmor: { shellId: "casual", liningId: "none", styleId: "none" },
+      mutationIds: [],
+      ignoreMutationPenalties: false,
+      baseSpecial: {},
+      legendaryPerkIds: [],
+    };
+    
+    if (buildScanResult.armorType) {
+      payload.basePieceId = buildScanResult.armorType;
+      payload.equipmentKind = "armor"; // Assume armor set for now if type detected
+    }
+    
+    if (Object.keys(buildScanResult.special).length > 0) {
+      payload.baseSpecial = { ...payload.baseSpecial, ...buildScanResult.special };
+    }
+    
+    if (buildScanResult.legendaryPerks.length > 0) {
+      payload.legendaryPerkIds = Array.from(new Set([...(payload.legendaryPerkIds || []), ...buildScanResult.legendaryPerks]));
+    }
+    
+    if (typeof window !== "undefined") {
+      localStorage.setItem("roll-builder-payload", JSON.stringify(payload));
+      setMessage("Build data synced! head to B.U.I.L.D. to view.");
+    }
+  }
+
+
   const isWindow = mode === "window";
   const aiSuggestionSet = React.useMemo(() => new Set(aiSuggestedIds), [aiSuggestedIds]);
   const presetContent = assistPresetContent[preset];
@@ -551,14 +641,14 @@ export default function ScreenshotAssistClient({
             </label>
           </div>
         </div>
-        <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+        <div className={cn("rounded-[var(--radius)] border p-4", preset === "build" ? "border-accent/40 bg-accent/5" : "border-border bg-panel")}>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <div className="text-sm font-semibold">3. Scan & recognize</div>
-                <InfoTooltip content="Uses Tesseract.js (runs locally in your browser) to extract text from your screenshots and match them against the game's legendary mods." />
+                <div className="text-sm font-semibold">3. {preset === "build" ? "Build Analysis" : "Scan & recognize"}</div>
+                <InfoTooltip content={preset === "build" ? "Scans for armor sets, SPECIAL stats, and legendary perks to import into the sandbox." : "Uses Tesseract.js (runs locally in your browser) to extract text from your screenshots and match them against the game's legendary mods."} />
               </div>
-              <div className="mt-1 text-xs text-foreground/60">Local-first OCR analysis.</div>
+              <div className="mt-1 text-xs text-foreground/60">{preset === "build" ? "Character-state OCR discovery." : "Local-first OCR analysis."}</div>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
@@ -580,30 +670,87 @@ export default function ScreenshotAssistClient({
           </div>
           <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={requestTesseractAnalysis} disabled={ocrPending}>
-                {ocrPending ? "Scanning..." : "Run Tesseract Scan"}
+              <Button type="button" variant={preset === "build" ? "default" : "outline"} size="sm" onClick={requestTesseractAnalysis} disabled={ocrPending || imageQueue.length === 0}>
+                {ocrPending ? "Scanning..." : (preset === "build" ? "Full Build Analysis" : "Run Tesseract Scan")}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={applyAiSuggestions}
-                disabled={aiSuggestedIds.length === 0}
-              >
-                Use Matches ({aiSuggestedIds.length})
-              </Button>
+              {preset !== "build" && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={applyAiSuggestions}
+                  disabled={aiSuggestedIds.length === 0}
+                >
+                  Use Matches ({aiSuggestedIds.length})
+                </Button>
+              )}
             </div>
-            <label className="flex cursor-pointer items-center gap-2 text-xs text-foreground/80 hover:text-foreground">
-              <input
-                type="checkbox"
-                checked={autoSelectAi}
-                onChange={(event) => setAutoSelectAi(event.target.checked)}
-                className="h-3.5 w-3.5 accent-[var(--accent)]"
-              />
-              Auto-select OCR matches
-            </label>
+            {preset !== "build" && (
+              <label className="flex cursor-pointer items-center gap-2 text-xs text-foreground/80 hover:text-foreground">
+                <input
+                  type="checkbox"
+                  checked={autoSelectAi}
+                  onChange={(event) => setAutoSelectAi(event.target.checked)}
+                  className="h-3.5 w-3.5 accent-[var(--accent)]"
+                />
+                Auto-select OCR matches
+              </label>
+            )}
           </div>
           {aiMessage ? <div className="mt-3 text-xs text-foreground/70">{aiMessage}</div> : null}
+
+          {preset === "build" && buildScanResult && (
+            <div className="mt-4 space-y-4 rounded-lg border border-border/40 bg-background/40 p-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Armor Type</div>
+                  <div className="mt-1 text-sm font-bold text-accent">
+                    {buildScanResult.armorType ? buildScanResult.armorType.replace("armor-set-", "").replace("-", " ").toUpperCase() : "Not detected"}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">SPECIAL Allocation</div>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {Object.entries(buildScanResult.special).map(([k, v]) => (
+                      <span key={k} className="inline-flex items-center rounded-md bg-accent/20 px-2 py-0.5 text-[10px] font-black text-accent">
+                        {k.toUpperCase()} {v}
+                      </span>
+                    ))}
+                    {Object.keys(buildScanResult.special).length === 0 && <span className="text-xs text-foreground/40 italic">No SPECIAL found</span>}
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Legendary Perks Detected</div>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {buildScanResult.legendaryPerks.map(p => (
+                      <span key={p} className="inline-flex items-center rounded-md bg-blue-500/20 px-2 py-0.5 text-[10px] font-bold text-blue-300">
+                        {p.replace("legendary-", "").replace("-", " ")}
+                      </span>
+                    ))}
+                    {buildScanResult.legendaryPerks.length === 0 && <span className="text-xs text-foreground/40 italic">No legendary perks found</span>}
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Legendary Mods (Scanned)</div>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {buildScanResult.legendaryMods.map(m => (
+                      <span key={m} className="inline-flex items-center rounded-md bg-foreground/5 px-2 py-0.5 text-[10px] font-medium text-foreground/70">
+                        {m}
+                      </span>
+                    ))}
+                    {buildScanResult.legendaryMods.length === 0 && <span className="text-xs text-foreground/40 italic">No mods found</span>}
+                  </div>
+                </div>
+              </div>
+              <Button 
+                onClick={syncToBuilder}
+                className="w-full gap-2 bg-accent font-bold text-accent-foreground hover:bg-accent/90"
+              >
+                <Sparkles className="h-4 w-4" />
+                Sync Detected Elements to Builder
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
