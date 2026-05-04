@@ -62,6 +62,7 @@ export class ImageProcessor {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
+    for (let i = 0; i < data.length; i += 4) {
       // Boost brightness to help with grayed-out text
       const r = Math.min(255, data[i] * 1.2);
       const g = Math.min(255, data[i + 1] * 1.2);
