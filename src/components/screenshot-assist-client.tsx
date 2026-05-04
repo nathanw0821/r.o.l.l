@@ -11,6 +11,7 @@ import { ASSIST_PRESETS, assistPresetContent } from "@/lib/session-assist-preset
 import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
+import { ImageProcessor } from "@/lib/image-processor";
 
 const tierOptions = ["all", "1 Star", "2 Star", "3 Star", "4 Star"] as const;
 const STORAGE_KEY = "roll.screenshot-assist.v1";
@@ -105,8 +106,81 @@ export default function ScreenshotAssistClient({
   const [aiSuggestedIds, setAiSuggestedIds] = React.useState<string[]>([]);
   const [aiReasonById, setAiReasonById] = React.useState<Record<string, string>>({});
   const [pending, setPending] = React.useState(false);
+  const [ocrPending, setOcrPending] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
+  const processorRef = React.useRef<ImageProcessor | null>(null);
   const hasLoadedDraft = React.useRef(false);
+
+  React.useEffect(() => {
+    processorRef.current = new ImageProcessor();
+    return () => {
+      processorRef.current?.terminate();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const handlePaste = async (e: ClipboardEvent) => {
+      const canvas = await ImageProcessor.getImageFromClipboard(e);
+      if (canvas) {
+        setImageDataUrl(canvas.toDataURL());
+        setPreviewUrl(canvas.toDataURL()); // Use data URL for preview too
+        setMessage("Image pasted from clipboard.");
+      }
+    };
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, []);
+
+  async function requestTesseractAnalysis() {
+    if (!imageDataUrl || !processorRef.current) {
+      setAiMessage("Add a screenshot first.");
+      return;
+    }
+
+    setOcrPending(true);
+    setAiMessage(null);
+
+    try {
+      const img = new Image();
+      img.src = imageDataUrl;
+      await new Promise((resolve) => (img.onload = resolve));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not get canvas context");
+
+      ctx.drawImage(img, 0, 0);
+      processorRef.current.applyFilters(canvas, ctx);
+      
+      const matches = await processorRef.current.extractLegendaryMods(canvas);
+      
+      if (matches.length === 0) {
+        setAiMessage("No legendary mods recognized by Tesseract OCR. Try a clearer image.");
+      } else {
+        // Map names back to IDs in filteredRows
+        const suggestedIds: string[] = [];
+        const reasons: Record<string, string> = {};
+        
+        for (const match of matches) {
+          const row = localRows.find(r => r.effect.name === match);
+          if (row) {
+            suggestedIds.push(row.id);
+            reasons[row.id] = "Matched by Tesseract OCR";
+          }
+        }
+        
+        setAiSuggestedIds(suggestedIds);
+        setAiReasonById(reasons);
+        setAiMessage(`${suggestedIds.length} mods recognized by Tesseract. Review and "Use suggestions".`);
+      }
+    } catch (err) {
+      setAiMessage(err instanceof Error ? err.message : "OCR failed.");
+    } finally {
+      setOcrPending(false);
+    }
+  }
 
   const categoryOptions = React.useMemo(() => {
     const names = new Set<string>();
@@ -431,7 +505,7 @@ export default function ScreenshotAssistClient({
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
           <div className="text-sm font-semibold">1. Screenshot</div>
-          <div className="mt-1 text-xs text-foreground/60">Local only until you run AI or save.</div>
+          <div className="mt-1 text-xs text-foreground/60">Paste (Ctrl+V) or upload a screenshot of your Crafting Bench list.</div>
           <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleFileChange} className="mt-3" />
         </div>
 
@@ -510,7 +584,10 @@ export default function ScreenshotAssistClient({
               />
             </label>
             <div className="flex flex-wrap items-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={requestAiSuggestions} disabled={aiPending}>
+              <Button type="button" variant="outline" size="sm" onClick={requestTesseractAnalysis} disabled={ocrPending || aiPending}>
+                {ocrPending ? "OCR Scanning..." : "Tesseract Scan (Free)"}
+              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={requestAiSuggestions} disabled={aiPending || ocrPending}>
                 {aiPending ? "Analyzing..." : presetContent.aiButton}
               </Button>
               <Button

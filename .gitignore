@@ -17,3 +17,4 @@ tsconfig.tsbuildinfo
 .env.mcp.local
 
 .vercel
+.env*.local
