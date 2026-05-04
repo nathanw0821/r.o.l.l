@@ -13,13 +13,15 @@ import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements"
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
-// Prioritize NEXTAUTH_URL and APP_URL for production domains.
-if (!process.env.NEXTAUTH_URL?.trim()) {
-  if (process.env.APP_URL) {
-    process.env.NEXTAUTH_URL = process.env.APP_URL;
-  } else if (process.env.VERCEL_URL) {
-    process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
-  }
+// In production, we want NextAuth to use the actual domain being visited.
+// We prioritize NEXTAUTH_URL from the environment if set explicitly.
+if (!process.env.NEXTAUTH_URL?.trim() && process.env.APP_URL) {
+  process.env.NEXTAUTH_URL = process.env.APP_URL;
+}
+
+// Fallback for Vercel preview deployments
+if (!process.env.NEXTAUTH_URL?.trim() && process.env.VERCEL_URL) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
 }
 
 if (!process.env.APP_URL?.trim() && process.env.NEXTAUTH_URL) {
