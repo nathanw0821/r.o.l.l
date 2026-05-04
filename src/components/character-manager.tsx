@@ -173,7 +173,7 @@ export function CharacterManager({
                   </div>
                   <Button 
                     variant="ghost" 
-                    size="icon" 
+                    size="sm" 
                     onClick={() => handleDeleteAccount(account.id)}
                     className="h-6 w-6 opacity-0 group-hover:opacity-100 text-destructive/40 hover:text-destructive transition-all"
                   >
