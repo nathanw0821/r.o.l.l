@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { getProviders, signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function SignInForm({
@@ -14,12 +15,22 @@ export default function SignInForm({
   googleOAuthConfigured: boolean;
   oauthCallbackBase?: string | null;
 }) {
+  const searchParams = useSearchParams();
   const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [isAutofilled, setIsAutofilled] = React.useState(false);
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      if (errorParam === "OAuthCallback") setError("Google was unable to verify your account. Check your redirect URIs or try again.");
+      else if (errorParam === "OAuthAccountNotLinked") setError("This email is already linked to another sign-in method. Try using your password.");
+      else setError(`Authentication Error: ${errorParam}`);
+    }
+  }, [searchParams]);
   const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }> | null>(null);
 
   React.useEffect(() => {
