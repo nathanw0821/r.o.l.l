@@ -137,6 +137,7 @@ model User {
   learnedBasePieces       UserLearnedBasePiece[]
   progress                UserProgress[]
   settings                UserSettings?
+  createdAt               DateTime               @default(now())
   storeUnlocks            UserStoreUnlock[]
 }
 
