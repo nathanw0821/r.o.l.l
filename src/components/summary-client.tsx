@@ -511,7 +511,14 @@ export default function SummaryClient({
                         >
                           <Minus className="h-2.5 w-2.5" />
                         </button>
-                        <span className="min-w-[1.2rem] text-center font-bold">{row.modCount}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={row.modCount === 0 ? "" : row.modCount}
+                          onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
+                          placeholder="0"
+                          className="min-w-[1.2rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
                         <button
                           onClick={() => updateCount(row, row.modCount + 1)}
                           className="summary-status-card__count-btn"
