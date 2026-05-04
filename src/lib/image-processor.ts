@@ -70,83 +70,56 @@ export class ImageProcessor {
     const data = imageData.data;
     const len = data.length;
 
-    // 1. Grayscale + Histogram
-    const histogram = new Int32Array(256);
+    // 1. Grayscale + Integral Image for fast local averaging
+    const integral = new Float64Array((canvas.width + 1) * (canvas.height + 1));
     const grayData = new Uint8Array(len / 4);
 
-    for (let i = 0, j = 0; i < len; i += 4, j++) {
-      // Standard grayscale weights
-      const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
-      grayData[j] = gray;
-      histogram[gray]++;
-    }
-
-    // 2. Triangle Thresholding (Better for skewed histograms with large background peaks)
-    // Find the min and max gray levels
-    let min = 255, max = 0;
-    for (let t = 0; t < 256; t++) {
-      if (histogram[t] > 0) {
-        if (t < min) min = t;
-        if (t > max) max = t;
+    for (let y = 0; y < canvas.height; y++) {
+      let rowSum = 0;
+      for (let x = 0; x < canvas.width; x++) {
+        const i = (y * canvas.width + x) * 4;
+        const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+        grayData[y * canvas.width + x] = gray;
+        rowSum += gray;
+        integral[(y + 1) * (canvas.width + 1) + (x + 1)] = integral[y * (canvas.width + 1) + (x + 1)] + rowSum;
       }
     }
 
-    // Find the peak of the histogram
-    let peak = 0;
-    let peakCount = 0;
-    for (let t = min; t <= max; t++) {
-      if (histogram[t] > peakCount) {
-        peakCount = histogram[t];
-        peak = t;
-      }
-    }
+    // 2. High-Pass Filter (Local Mean Subtraction)
+    // This removes the background (dark OR yellow) and makes text stand out.
+    const radius = 15; // Local window radius
+    const sensitivity = 25; // Minimum difference to consider as text
 
-    let threshold = 0;
-    // Triangle method calculation
-    if (peak - min > max - peak) {
-      // Peak is closer to max
-      let dMax = 0;
-      for (let t = min; t < peak; t++) {
-        const d = Math.abs((peak - min) * (histogram[t] - histogram[min]) - (t - min) * (peakCount - histogram[min]));
-        if (d > dMax) {
-          dMax = d;
-          threshold = t;
-        }
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++) {
+        const x1 = Math.max(0, x - radius);
+        const y1 = Math.max(0, y - radius);
+        const x2 = Math.min(canvas.width, x + radius);
+        const y2 = Math.min(canvas.height, y + radius);
+        const count = (x2 - x1) * (y2 - y1);
+        
+        const sum = integral[y2 * (canvas.width + 1) + x2] 
+                  - integral[y1 * (canvas.width + 1) + x2] 
+                  - integral[y2 * (canvas.width + 1) + x1] 
+                  + integral[y1 * (canvas.width + 1) + x1];
+        
+        const avg = sum / count;
+        const pixel = grayData[y * canvas.width + x];
+        
+        // Polarity Invariant: |pixel - avg| 
+        // Bright text on dark avg -> High Diff
+        // Dark text on bright avg -> High Diff
+        // Flat background -> Low Diff
+        const diff = Math.abs(pixel - avg);
+        
+        // Output black text (0) on white background (255)
+        const val = diff > sensitivity ? 0 : 255;
+        
+        const idx = (y * canvas.width + x) * 4;
+        data[idx] = val;
+        data[idx + 1] = val;
+        data[idx + 2] = val;
       }
-    } else {
-      // Peak is closer to min (typical for dark FO76 UI)
-      let dMax = 0;
-      for (let t = peak + 1; t <= max; t++) {
-        const d = Math.abs((max - peak) * (histogram[t] - histogram[max]) - (t - peak) * (peakCount - histogram[max]));
-        if (d > dMax) {
-          dMax = d;
-          threshold = t;
-        }
-      }
-    }
-
-    // 3. Apply threshold and invert (Tesseract prefers black text on white)
-    // For the yellow bar (high gray), we want it to be white (255) and its black text to be black (0).
-    // For standard text (high gray), we want it to be black (0) and background white (255).
-    // This is the "Mixed Polarity" problem. 
-    // SOLUTION: Use a very sensitive threshold and then a Sharpening effect.
-    const finalThreshold = Math.max(30, threshold - 5); 
-
-    for (let i = 0, j = 0; i < len; i += 4, j++) {
-      // Standard items (High Gray > Threshold) -> Black (0)
-      // Background (Low Gray < Threshold) -> White (255)
-      // Selected Bar (High Gray > Threshold) -> Black (0)
-      // Selected Text (Low Gray < Threshold) -> White (255)
-      // This results in mixed polarity. Tesseract 5.x handles this via its internal adaptive thresholder.
-      // So we will provide a CLEAN grayscale contrast-stretched image instead of a binary one.
-      const val = grayData[j];
-      const stretched = Math.min(255, Math.max(0, (val - min) * (255 / (max - min))));
-      
-      // Binary fallback for now, but with better sensitivity
-      const binary = stretched > finalThreshold ? 0 : 255;
-      data[i] = binary;
-      data[i + 1] = binary;
-      data[i + 2] = binary;
     }
 
     ctx.putImageData(imageData, 0, 0);
