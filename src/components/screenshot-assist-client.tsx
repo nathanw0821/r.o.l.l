@@ -465,7 +465,18 @@ export default function ScreenshotAssistClient({
             </label>
           </div>
         </div>
-
+        <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div className="text-sm font-semibold">3. Scan & recognize</div>
+              <div className="mt-1 text-xs text-foreground/60">Tesseract OCR scans your screenshot for matching legendary mods.</div>
+            </div>
+            <div className="rounded-full border border-border px-2 py-1 text-[11px] text-foreground/60">
+              Shortlist: {filteredRows.length}
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" size="sm" onClick={requestTesseractAnalysis} disabled={ocrPending}>
                 {ocrPending ? "Scanning..." : "Run Tesseract Scan"}
               </Button>
