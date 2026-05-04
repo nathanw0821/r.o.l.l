@@ -6,23 +6,25 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-const gameAccountSchema = z.object({
-  name: z.string().min(1).max(30),
+const createAccountSchema = z.object({
+  name: z.string().min(1).max(50),
   platform: z.enum(["PC", "XBOX", "PS"]),
 });
 
-export async function createGameAccount(input: { name: string; platform: string }) {
+export async function createGameAccount(input: { name: string; platform: "PC" | "XBOX" | "PS" }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("Not authenticated");
 
-  const parsed = gameAccountSchema.safeParse(input);
+  const parsed = createAccountSchema.safeParse(input);
   if (!parsed.success) throw new Error("Invalid input");
 
-  const count = await prisma.gameAccount.count({
+  const accountCount = await prisma.gameAccount.count({
     where: { userId: session.user.id }
   });
 
-  if (count >= 3) throw new Error("Maximum of 3 Game Accounts allowed.");
+  if (accountCount >= 10) {
+    throw new Error("Maximum of 10 game accounts allowed.");
+  }
 
   await prisma.gameAccount.create({
     data: {
@@ -35,17 +37,26 @@ export async function createGameAccount(input: { name: string; platform: string 
   revalidatePath("/", "layout");
 }
 
-export async function deleteGameAccount(id: string) {
+export async function deleteGameAccount(accountId: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("Not authenticated");
 
   const account = await prisma.gameAccount.findUnique({
-    where: { id, userId: session.user.id }
+    where: { id: accountId }
   });
 
-  if (!account) throw new Error("Account not found");
+  if (!account || account.userId !== session.user.id) {
+    throw new Error("Account not found");
+  }
 
-  await prisma.gameAccount.delete({ where: { id } });
+  // Delete all characters in this account
+  await prisma.character.deleteMany({
+    where: { gameAccountId: accountId }
+  });
+
+  await prisma.gameAccount.delete({
+    where: { id: accountId }
+  });
 
   revalidatePath("/", "layout");
 }
