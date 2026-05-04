@@ -70,18 +70,21 @@ export class ImageProcessor {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      // Boost brightness to help with grayed-out text
-      const r = Math.min(255, data[i] * 1.2);
-      const g = Math.min(255, data[i + 1] * 1.2);
-      const b = Math.min(255, data[i + 2] * 1.2);
+      // More aggressive brightness boost to help with grayed-out text
+      // (RGB values for gray text in FO76 are typically ~100,100,100)
+      const r = Math.min(255, data[i] * 1.5);
+      const g = Math.min(255, data[i + 1] * 1.5);
+      const b = Math.min(255, data[i + 2] * 1.5);
 
       // Standard grayscale conversion
       const gray = 0.299 * r + 0.587 * g + 0.114 * b;
       
       // High Contrast + Thresholding
-      // Lowered threshold from 180 to 120 to capture grayed-out "unlocked but missing materials" text
-      const threshold = 120; 
-      const value = gray > threshold ? 255 : 0;
+      // Lowered threshold to 90 to capture grayed-out "unlocked but missing materials" text
+      const threshold = 90; 
+      
+      // Invert the result for Tesseract (Black text on White background)
+      const value = gray > threshold ? 0 : 255;
 
       data[i] = value;     // Red
       data[i + 1] = value; // Green
