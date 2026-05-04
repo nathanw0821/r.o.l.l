@@ -178,7 +178,6 @@ export default function ScreenshotAssistClient({
         if (!ctx) continue;
 
         ctx.drawImage(img, 0, 0);
-        processorRef.current.applyFilters(canvas, ctx);
         
         const matches = await processorRef.current.extractLegendaryMods(canvas, ocrLang);
         

@@ -47,28 +47,52 @@ export class ImageProcessor {
    * Processes a canvas and attempts to extract and validate legendary mod names.
    */
   async extractLegendaryMods(canvas: HTMLCanvasElement, lang: string = 'eng'): Promise<string[]> {
-    const { text } = await this.processImage(canvas, lang);
-    const lines = text.split('\n');
-    const matches: string[] = [];
-
-    for (const line of lines) {
-      const validated = validateLegendaryMod(line);
-      if (validated && !matches.includes(validated)) {
-        matches.push(validated);
-      }
+    if (!this.worker) {
+      await this.init(lang);
     }
 
-    return matches;
+    const cloneCanvas = () => {
+      const c = document.createElement('canvas');
+      c.width = canvas.width;
+      c.height = canvas.height;
+      const ctx = c.getContext('2d');
+      if (ctx) ctx.drawImage(canvas, 0, 0);
+      return { c, ctx };
+    };
+
+    const pass1 = cloneCanvas();
+    if (pass1.ctx) this.applyFilterPass(pass1.c, pass1.ctx, 'dark');
+    
+    const pass2 = cloneCanvas();
+    if (pass2.ctx) this.applyFilterPass(pass2.c, pass2.ctx, 'yellow');
+
+    const matches = new Set<string>();
+
+    const analyze = async (c: HTMLCanvasElement) => {
+      const { text } = await this.processImage(c, lang);
+      const lines = text.split('\n');
+
+      for (const line of lines) {
+        const validated = validateLegendaryMod(line);
+        if (validated && !matches.has(validated)) {
+          matches.add(validated);
+        }
+      }
+    };
+
+    await analyze(pass1.c);
+    await analyze(pass2.c);
+
+    return Array.from(matches);
   }
 
-  applyFilters(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+  private applyFilterPass(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, mode: 'dark' | 'yellow') {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     const len = data.length;
     const width = canvas.width;
     const height = canvas.height;
 
-    // 1. Grayscale + Integral Image for fast local averaging
     const integral = new Float64Array((width + 1) * (height + 1));
     const grayData = new Uint8Array(len / 4);
 
@@ -83,9 +107,6 @@ export class ImageProcessor {
       }
     }
 
-    // 2. Dynamic Polarity Integral Thresholding
-    // We use a moving window (radius 15) to calculate the exact background brightness for EVERY pixel.
-    // This eliminates "grid boundaries" that cut letters in half.
     const radius = 15; 
     
     for (let y = 0; y < height; y++) {
@@ -105,16 +126,12 @@ export class ImageProcessor {
         const pixel = grayData[y * width + x];
         let val;
 
-        // Determine polarity based on local neighborhood average
-        if (avg > 110) {
-          // Bright Background (Yellow Selection Bar)
-          // Text is dark. If pixel is significantly darker than average, it's text.
-          val = pixel < avg - 15 ? 0 : 255;
+        if (mode === 'dark') {
+          // Pass 1: Target the dark list & faint gray text.
+          val = pixel > avg + 8 ? 0 : 255;
         } else {
-          // Dark Background (Standard List)
-          // Text is bright. If pixel is significantly brighter than average, it's text.
-          // Faint gray text requires a slightly tighter threshold here.
-          val = pixel > avg + 10 ? 0 : 255;
+          // Pass 2: Target the yellow selection bar.
+          val = pixel < avg - 12 ? 0 : 255;
         }
 
         const idx = (y * width + x) * 4;
