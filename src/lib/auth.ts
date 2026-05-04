@@ -13,9 +13,11 @@ import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements"
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
-// Use APP_URL as the primary NEXTAUTH_URL if available.
 if (!process.env.NEXTAUTH_URL && process.env.APP_URL) {
   process.env.NEXTAUTH_URL = process.env.APP_URL;
+}
+if (!process.env.APP_URL && process.env.NEXTAUTH_URL) {
+  process.env.APP_URL = process.env.NEXTAUTH_URL;
 }
 
 const credentialsSchema = z.object({
@@ -213,11 +215,11 @@ export const authOptions: NextAuthOptions = {
         sameSite: "lax",
         path: "/",
         secure: true,
-        domain: ".fallout76.wiki" // Sharing cookies between www and root
+        domain: ".fallout76.wiki"
       }
     }
   } : undefined,
-  debug: process.env.NODE_ENV !== "production" || true
+  debug: false
 };
 
 export const getAppSession = cache(() => getServerSession(authOptions));

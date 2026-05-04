@@ -5,8 +5,8 @@ import { User, Plus, Edit2, Trash2, Check, X, Users, Monitor, Smartphone, Layout
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { createCharacter, renameCharacter, setActiveCharacter, deleteCharacter } from "@/actions/character";
-import { createGameAccount, deleteGameAccount } from "@/actions/game-account";
+import { createCharacter, renameCharacter, setActiveCharacter, deleteCharacter, linkCharacterToAccount } from "@/actions/character";
+import { createGameAccount, deleteGameAccount, createGameAccountAndLinkCharacter } from "@/actions/game-account";
 import { cn } from "@/lib/utils";
 
 type GameAccount = {
@@ -45,6 +45,10 @@ export function CharacterManager({
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [newAccountName, setNewAccountName] = useState("");
   const [newAccountPlatform, setNewAccountPlatform] = useState<"PC" | "XBOX" | "PS">("PC");
+  
+  // Linking Logic
+  const [linkingCharId, setLinkingCharId] = useState<string | null>(null);
+  const [linkingStep, setLinkingStep] = useState<"options" | "create" | "existing" | null>(null);
 
   const activeCharacter = characters.find(c => c.id === activeCharacterId);
 
@@ -85,14 +89,55 @@ export function CharacterManager({
     });
   };
 
-  const handleSelect = async (id: string) => {
-    if (id === activeCharacterId) return;
+  const handleSelect = async (char: Character) => {
+    if (char.id === activeCharacterId) return;
+    
+    // If character is unlinked, trigger linking flow
+    if (!char.gameAccountId) {
+      setLinkingCharId(char.id);
+      setLinkingStep("options");
+      return;
+    }
+
     startTransition(async () => {
       try {
-        await setActiveCharacter(id);
+        await setActiveCharacter(char.id);
         window.location.reload();
       } catch (err) {
         alert(err instanceof Error ? err.message : "Failed to select character");
+      }
+    });
+  };
+
+  const handleLinkToExisting = async (gameAccountId: string) => {
+    if (!linkingCharId) return;
+    startTransition(async () => {
+      try {
+        await linkCharacterToAccount(linkingCharId, gameAccountId);
+        setLinkingCharId(null);
+        setLinkingStep(null);
+        window.location.reload();
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Failed to link character");
+      }
+    });
+  };
+
+  const handleCreateAndLink = async () => {
+    if (!linkingCharId || !newAccountName.trim()) return;
+    startTransition(async () => {
+      try {
+        await createGameAccountAndLinkCharacter({ 
+          name: newAccountName.trim(), 
+          platform: newAccountPlatform,
+          characterId: linkingCharId
+        });
+        setLinkingCharId(null);
+        setLinkingStep(null);
+        setNewAccountName("");
+        window.location.reload();
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Failed to create account and link character");
       }
     });
   };
@@ -187,7 +232,7 @@ export function CharacterManager({
                   {account.characters.map(char => (
                     <button
                       key={char.id}
-                      onClick={() => handleSelect(char.id)}
+                      onClick={() => handleSelect(char)}
                       className={cn(
                         "flex items-center justify-between p-3 rounded-lg border transition-all text-left",
                         char.id === activeCharacterId 
@@ -237,13 +282,15 @@ export function CharacterManager({
                   {characters.filter(c => !c.gameAccountId).map(char => (
                     <button
                       key={char.id}
-                      onClick={() => handleSelect(char.id)}
+                      onClick={() => handleSelect(char)}
                       className={cn(
-                        "flex items-center justify-between p-3 rounded-lg border transition-all text-left",
-                        char.id === activeCharacterId ? "border-accent bg-accent/10" : "border-border/40 bg-panel/30"
+                        "flex items-center justify-between p-3 rounded-lg border transition-all text-left border-border/40 bg-panel/30 hover:border-accent/40"
                       )}
                     >
-                      <span className="text-sm font-medium">{char.name}</span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">{char.name}</span>
+                        <span className="text-[10px] text-foreground/40 italic">Legacy / Unlinked</span>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -251,6 +298,108 @@ export function CharacterManager({
             )}
           </div>
         </div>
+
+        {/* Linking Modal Overlay (Simplified for MVP) */}
+        {linkingCharId && (
+          <div className="absolute inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-6">
+            <div className="w-full max-w-sm space-y-4 animate-in fade-in zoom-in duration-200">
+              <div className="text-center space-y-1">
+                <h3 className="text-lg font-bold tracking-tight">Link Character</h3>
+                <p className="text-xs text-foreground/60">
+                  "{characters.find(c => c.id === linkingCharId)?.name}" needs to be linked to a game account.
+                </p>
+              </div>
+
+              {linkingStep === "options" && (
+                <div className="grid gap-2">
+                  {gameAccounts.length > 0 && (
+                    <Button onClick={() => setLinkingStep("existing")} variant="outline" className="h-12 justify-start gap-3">
+                      <Users className="h-4 w-4 text-accent" />
+                      <div className="flex flex-col items-start">
+                        <span className="text-sm">Use Existing Account</span>
+                        <span className="text-[10px] opacity-50">Select one of your {gameAccounts.length} accounts</span>
+                      </div>
+                    </Button>
+                  )}
+                  <Button onClick={() => setLinkingStep("create")} variant="outline" className="h-12 justify-start gap-3">
+                    <Plus className="h-4 w-4 text-accent" />
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm">Create New Account</span>
+                      <span className="text-[10px] opacity-50">Start a fresh account for this character</span>
+                    </div>
+                  </Button>
+                  <Button variant="ghost" onClick={() => { setLinkingCharId(null); setLinkingStep(null); }} className="mt-2 text-xs">
+                    Cancel
+                  </Button>
+                </div>
+              )}
+
+              {linkingStep === "existing" && (
+                <div className="space-y-4">
+                  <div className="grid gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    {gameAccounts.map(acc => (
+                      <button 
+                        key={acc.id}
+                        onClick={() => handleLinkToExisting(acc.id)}
+                        disabled={acc.characters.length >= 5}
+                        className={cn(
+                          "flex items-center justify-between p-3 rounded-lg border text-left transition-all",
+                          acc.characters.length >= 5 ? "opacity-50 cursor-not-allowed grayscale" : "hover:border-accent/40 hover:bg-accent/5"
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="p-1.5 rounded bg-panel">{getPlatformIcon(acc.platform)}</div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">{acc.name}</span>
+                            <span className="text-[10px] opacity-50">{acc.characters.length}/5 Characters</span>
+                          </div>
+                        </div>
+                        {acc.characters.length >= 5 && <span className="text-[10px] font-bold text-destructive">FULL</span>}
+                      </button>
+                    ))}
+                  </div>
+                  <Button variant="ghost" onClick={() => setLinkingStep("options")} className="w-full text-xs">Back</Button>
+                </div>
+              )}
+
+              {linkingStep === "create" && (
+                <div className="space-y-4 p-4 border border-accent/20 bg-accent/5 rounded-xl">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-foreground/40">Account Name</label>
+                      <Input 
+                        placeholder="e.g. Steam Main" 
+                        value={newAccountName}
+                        onChange={(e) => setNewAccountName(e.target.value)}
+                        className="h-9 bg-panel/50"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-foreground/40">Platform</label>
+                      <select 
+                        value={newAccountPlatform}
+                        onChange={(e) => setNewAccountPlatform(e.target.value as any)}
+                        className="w-full h-9 bg-panel/50 border border-input rounded-md px-2 text-xs outline-none"
+                      >
+                        <option value="PC">PC</option>
+                        <option value="XBOX">XBOX</option>
+                        <option value="PS">PS</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 pt-2">
+                    <Button onClick={handleCreateAndLink} disabled={!newAccountName.trim() || isPending}>
+                      Create & Link
+                    </Button>
+                    <Button variant="ghost" onClick={() => setLinkingStep("options")} className="text-xs">
+                      Back
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <div className="p-4 bg-accent/5 border-t border-border/40 text-[10px] text-center text-foreground/40 font-medium">
           Multi-Platform characters share account achievements but maintain separate loadouts.
         </div>
