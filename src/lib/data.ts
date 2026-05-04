@@ -285,12 +285,12 @@ export async function getProgressSummary(userId?: string) {
   await ensureProfileApplied(userId);
   const dataset = await getActiveDatasetVersion();
   if (!dataset) {
-    return {
-      total: 0,
-      unlocked: 0,
-      percent: 0
-    };
+    return { total: 0, unlocked: 0, percent: 0 };
   }
+
+  const total = await prisma.effectTier.count({
+    where: { datasetVersionId: dataset.id }
+  });
 
   if (!userId) {
     return getGuestProgressSummaryCached(dataset.id);
@@ -298,12 +298,8 @@ export async function getProgressSummary(userId?: string) {
 
   const characterId = await getActiveCharacterId(userId);
   if (!characterId) {
-    return { total: 0, unlocked: 0, percent: 0 };
+    return { total, unlocked: 0, percent: 0 };
   }
-
-  const total = await prisma.effectTier.count({
-    where: { datasetVersionId: dataset.id }
-  });
 
   const baselineMap = await getImportedBaselineMap(dataset.id, characterId);
   const progressRows = await prisma.userProgress.findMany({
