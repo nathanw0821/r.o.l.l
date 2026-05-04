@@ -308,11 +308,6 @@ export default function AppShell({
             <div className="app-brand">
               <BrandStack href="/" />
             </div>
-            {isSignedIn && (
-              <div className="mt-2 w-full">
-                <CharacterSelector collapsed={sidebarRail} />
-              </div>
-            )}
             <button
               type="button"
               className="app-sidebar__collapse-button"
@@ -377,56 +372,63 @@ export default function AppShell({
               <span>Discord</span>
             </a>
           </nav>
-          <div className="app-sidebar__auth">
-            {isSignedIn ? (
-              <>
-                <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
-                  {hasGoogleProvider ? (
-                    googleLinked ? (
-                      <div className="app-sidebar__auth-status">Google linked</div>
-                    ) : (
+          <div className="mt-auto flex flex-col gap-2">
+            <div className="app-sidebar__auth">
+              {isSignedIn ? (
+                <>
+                  <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
+                    {hasGoogleProvider ? (
+                      googleLinked ? (
+                        <div className="app-sidebar__auth-status">Google linked</div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="app-sidebar__auth-button app-sidebar__auth-button--google"
+                          onClick={onLinkGoogleSettings}
+                        >
+                          Link Google
+                        </button>
+                      )
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    className="app-sidebar__auth-button"
+                    onClick={onSignOut}
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/sign-in" className="app-sidebar__auth-button">
+                    Sign in
+                  </Link>
+                  <Link href="/auth/sign-up" className="app-sidebar__auth-button app-sidebar__auth-button--primary">
+                    Sign up
+                  </Link>
+                  <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
+                    {hasGoogleProvider ? (
                       <button
                         type="button"
                         className="app-sidebar__auth-button app-sidebar__auth-button--google"
-                        onClick={onLinkGoogleSettings}
+                        onClick={onSignInGoogleHome}
                       >
-                        Link Google
+                        Continue with Google
                       </button>
-                    )
-                  ) : null}
-                </div>
-                <button
-                  type="button"
-                  className="app-sidebar__auth-button"
-                  onClick={onSignOut}
-                >
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/auth/sign-in" className="app-sidebar__auth-button">
-                  Sign in
-                </Link>
-                <Link href="/auth/sign-up" className="app-sidebar__auth-button app-sidebar__auth-button--primary">
-                  Sign up
-                </Link>
-                <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
-                  {hasGoogleProvider ? (
-                    <button
-                      type="button"
-                      className="app-sidebar__auth-button app-sidebar__auth-button--google"
-                      onClick={onSignInGoogleHome}
-                    >
-                      Continue with Google
-                    </button>
-                  ) : null}
-                </div>
-              </>
+                    ) : null}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="app-sidebar__support">
+              <SupportLink href={supportUrl} label="Help keep this tool alive" />
+            </div>
+            {isSignedIn && (
+              <div className="w-full">
+                <CharacterSelector collapsed={sidebarRail} />
+              </div>
             )}
-          </div>
-          <div className="app-sidebar__support">
-            <SupportLink href={supportUrl} label="Help keep this tool alive" />
           </div>
         </aside>
         <div className="app-main">
