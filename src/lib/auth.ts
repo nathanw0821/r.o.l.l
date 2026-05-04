@@ -207,7 +207,8 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/auth/sign-in"
-  }
+  },
+  debug: process.env.NODE_ENV !== "production" || true // Force debug on for now to catch this production error
 };
 
 export const getAppSession = cache(() => getServerSession(authOptions));
