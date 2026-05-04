@@ -537,6 +537,8 @@ export default function SummaryClient({
 
       <BuilderBetaGate 
         open={showBetaGate} 
+        title="Access B.U.I.L.D. Beta"
+        description="Battle Utility & Inventory Logistics Diagnostic. Create, simulate, and share custom legendary loadouts. This feature is in active development."
         onAccept={() => {
           acceptBuilderBeta();
           setShowBetaGate(false);

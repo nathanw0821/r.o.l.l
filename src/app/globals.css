@@ -204,9 +204,9 @@
 }
 
 [data-colorblind="high-contrast"] {
-  --color-success: #0b6bff;
-  --color-danger: #ff3b3b;
-  --color-warning: #ffb200;
+  --color-success: #00ff00;
+  --color-danger: #ff0000;
+  --color-warning: #ffff00;
   --color-border: #0a0a0a;
 }
 
@@ -1602,18 +1602,21 @@ a {
 }
 
 .summary-status-card[data-status="unlocked"] {
-  border-color: color-mix(in srgb, var(--color-success) 60%, var(--color-border));
-  background: color-mix(in srgb, var(--color-success) 14%, var(--color-panel));
+  border-color: color-mix(in srgb, var(--color-success) 70%, var(--color-border));
+  background: color-mix(in srgb, var(--color-success) 16%, var(--color-panel));
+  color: var(--color-success);
 }
 
 .summary-status-card[data-status="locked"] {
-  border-color: color-mix(in srgb, var(--color-warning) 60%, var(--color-border));
-  background: color-mix(in srgb, var(--color-warning) 14%, var(--color-panel));
+  border-color: color-mix(in srgb, var(--color-warning) 70%, var(--color-border));
+  background: color-mix(in srgb, var(--color-warning) 16%, var(--color-panel));
+  color: var(--color-warning);
 }
 
 .summary-status-card[data-status="seeking"] {
-  border-color: color-mix(in srgb, var(--color-accent) 60%, var(--color-border));
-  background: color-mix(in srgb, var(--color-accent) 14%, var(--color-panel));
+  border-color: color-mix(in srgb, var(--color-accent) 70%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-panel));
+  color: var(--color-accent);
 }
 
 .summary-status-card--grid {
