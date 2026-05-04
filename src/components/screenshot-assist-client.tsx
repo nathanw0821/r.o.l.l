@@ -117,7 +117,7 @@ export default function ScreenshotAssistClient({
   const [selectedIds, setSelectedIds] = React.useState<string[]>(defaultDraft.selectedIds);
   const [ocrLang, setOcrLang] = React.useState(defaultDraft.ocrLang);
   const [showBetaGate, setShowBetaGate] = React.useState(false);
-  const { hasAccess: hasBetaAccess, accept: acceptBeta } = useBuilderBetaAccess(isAdmin);
+  const { hasAccess: hasBetaAccess, accept: acceptBeta } = useBuilderBetaAccess(isAdmin, "roll-scan-beta-accepted");
 
   const autoSelectAiRef = React.useRef(autoSelectAi);
   React.useEffect(() => {
