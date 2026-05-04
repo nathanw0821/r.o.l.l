@@ -70,56 +70,55 @@ export class ImageProcessor {
     const data = imageData.data;
     const len = data.length;
 
-    // 1. Grayscale + Integral Image for fast local averaging
-    const integral = new Float64Array((canvas.width + 1) * (canvas.height + 1));
+    // 1. Grayscale conversion
     const grayData = new Uint8Array(len / 4);
+    for (let i = 0, j = 0; i < len; i += 4, j++) {
+      grayData[j] = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+    }
 
-    for (let y = 0; y < canvas.height; y++) {
-      let rowSum = 0;
-      for (let x = 0; x < canvas.width; x++) {
-        const i = (y * canvas.width + x) * 4;
-        const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
-        grayData[y * canvas.width + x] = gray;
-        rowSum += gray;
-        integral[(y + 1) * (canvas.width + 1) + (x + 1)] = integral[y * (canvas.width + 1) + (x + 1)] + rowSum;
+    // 2. Block-Based Adaptive Contrast Normalization
+    const width = canvas.width;
+    const height = canvas.height;
+    const blockSize = 16;
+    const normalizedData = new Uint8Array(width * height);
+
+    for (let by = 0; by < height; by += blockSize) {
+      for (let bx = 0; bx < width; bx += blockSize) {
+        // Find min/max in this block
+        let min = 255, max = 0;
+        for (let y = by; y < Math.min(by + blockSize, height); y++) {
+          for (let x = bx; x < Math.min(bx + blockSize, width); x++) {
+            const val = grayData[y * width + x];
+            if (val < min) min = val;
+            if (val > max) max = val;
+          }
+        }
+
+        // Normalize pixels in this block
+        const range = max - min;
+        for (let y = by; y < Math.min(by + blockSize, height); y++) {
+          for (let x = bx; x < Math.min(bx + blockSize, width); x++) {
+            const idx = y * width + x;
+            if (range < 15) {
+              // Flat area (likely background)
+              normalizedData[idx] = grayData[idx];
+            } else {
+              normalizedData[idx] = Math.round(((grayData[idx] - min) / range) * 255);
+            }
+          }
+        }
       }
     }
 
-    // 2. High-Pass Filter (Local Mean Subtraction)
-    // This removes the background (dark OR yellow) and makes text stand out.
-    const radius = 15; // Local window radius
-    const sensitivity = 25; // Minimum difference to consider as text
-
-    for (let y = 0; y < canvas.height; y++) {
-      for (let x = 0; x < canvas.width; x++) {
-        const x1 = Math.max(0, x - radius);
-        const y1 = Math.max(0, y - radius);
-        const x2 = Math.min(canvas.width, x + radius);
-        const y2 = Math.min(canvas.height, y + radius);
-        const count = (x2 - x1) * (y2 - y1);
-        
-        const sum = integral[y2 * (canvas.width + 1) + x2] 
-                  - integral[y1 * (canvas.width + 1) + x2] 
-                  - integral[y2 * (canvas.width + 1) + x1] 
-                  + integral[y1 * (canvas.width + 1) + x1];
-        
-        const avg = sum / count;
-        const pixel = grayData[y * canvas.width + x];
-        
-        // Polarity Invariant: |pixel - avg| 
-        // Bright text on dark avg -> High Diff
-        // Dark text on bright avg -> High Diff
-        // Flat background -> Low Diff
-        const diff = Math.abs(pixel - avg);
-        
-        // Output black text (0) on white background (255)
-        const val = diff > sensitivity ? 0 : 255;
-        
-        const idx = (y * canvas.width + x) * 4;
-        data[idx] = val;
-        data[idx + 1] = val;
-        data[idx + 2] = val;
-      }
+    // 3. Threshold and invert for Tesseract
+    for (let i = 0; i < len; i += 4) {
+      const idx = i / 4;
+      // High value = Foreground. Invert for Black on White.
+      const val = normalizedData[idx] > 100 ? 0 : 255;
+      data[i] = val;
+      data[i + 1] = val;
+      data[i + 2] = val;
+      data[i + 3] = 255;
     }
 
     ctx.putImageData(imageData, 0, 0);
