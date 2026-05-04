@@ -99,6 +99,16 @@ Object.entries(LEGENDARY_MOD_DICTIONARY).forEach(([tier, mods]) => {
     // Canonical English
     NORMALIZED_MOD_MAP[norm(canonical)] = canonical;
     
+    // Add common plural/possessive aliases to handle OCR truncations
+    if (canonical.endsWith("'s")) {
+      const base = canonical.slice(0, -2);
+      NORMALIZED_MOD_MAP[norm(base)] = canonical;
+    }
+    if (canonical === "Arms Keeper's") {
+      NORMALIZED_MOD_MAP[norm("Arm's Keeper")] = canonical;
+      NORMALIZED_MOD_MAP[norm("Arms Keeper")] = canonical;
+    }
+    
     // Localized Variants
     const translations = MOD_TRANSLATIONS[canonical] || [];
     translations.forEach(variant => {
