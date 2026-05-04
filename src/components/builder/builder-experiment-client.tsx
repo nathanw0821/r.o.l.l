@@ -22,20 +22,23 @@ import {
   RotateCcw,
   Trash2,
   Save,
-  Download
+  Download,
 } from "lucide-react";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import ProgressToggle from "@/components/progress-toggle";
-import { ARMOR_SET_SLOT_LABELS, getArmorSetRow } from "@/lib/builder/armor-sets";
+import {
+  ARMOR_SET_SLOT_LABELS,
+  getArmorSetRow,
+} from "@/lib/builder/armor-sets";
 import {
   ARMOR_MATERIAL_MODS,
   PA_MATERIAL_MODS,
   listArmorMiscModOptions,
   armorCraftingEffectLayers,
-  defaultArmorPieceCrafting
+  defaultArmorPieceCrafting,
 } from "@/lib/builder/armor-piece-mods";
 import {
   BASE_GEAR_GROUP_LABEL,
@@ -51,7 +54,7 @@ import {
   pairedPowerArmorHelmetId,
   POWER_ARMOR_HELMET_PIECES,
   trackableBaseRowCount,
-  type BaseGearPiece
+  type BaseGearPiece,
 } from "@/lib/builder/base-gear";
 import {
   aggregateEffectMath,
@@ -66,13 +69,13 @@ import {
   listEquippedModsInBenchOrder,
   listExtraEffectMathEntries,
   stripGhoulBlockedLegendarySelections,
-  type BuilderEffectTotals
+  type BuilderEffectTotals,
 } from "@/lib/builder/compatibility";
 import { isGhoulDiscouragedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import {
   defaultPowerArmorHelmetCrafting,
   emptyArmorLegendaryGrid,
-  normalizeBuilderPayload
+  normalizeBuilderPayload,
 } from "@/lib/builder/normalize-builder-payload";
 import {
   defaultHelmetIdForTorsoPieceId,
@@ -83,9 +86,13 @@ import {
   powerArmorFrameIntrinsicEffectMath,
   powerArmorInherentDamageReductionPercent,
   powerArmorInherentRadReductionPercent,
-  sanitizePowerArmorPiecesEquipped
+  sanitizePowerArmorPiecesEquipped,
 } from "@/lib/builder/power-armor-stats";
-import { DEFAULT_POWER_ARMOR_PIECES_EQUIPPED, type BuilderModDTO, type BuilderPayload } from "@/lib/builder/types";
+import {
+  DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
+  type BuilderModDTO,
+  type BuilderPayload,
+} from "@/lib/builder/types";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
 import { cn } from "@/lib/utils";
@@ -94,23 +101,29 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "@/components/ui/dialog";
 import BuilderTotalsStatKey, {
-  type BuilderTotalsStatKeyMode
+  type BuilderTotalsStatKeyMode,
 } from "@/components/builder/builder-totals-stat-key";
-import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
+import {
+  BuilderBetaGate,
+  useBuilderBetaAccess,
+} from "@/components/builder/builder-beta-gate";
 import { InfoTooltip } from "@/components/ui/tooltip";
 import {
   importNukesDragonsFo76CharacterUrl,
-  type NdImportResult
+  type NdImportResult,
 } from "@/lib/builder/nukes-dragons-import";
-import { SANDBOX_MUTATIONS, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
+import {
+  SANDBOX_MUTATIONS,
+  sandboxMutationMathLayer,
+} from "@/lib/builder/sandbox-mutations";
 import {
   findUnderarmorOption,
   UNDERARMOR_LININGS,
   UNDERARMOR_SHELLS,
-  UNDERARMOR_STYLES
+  UNDERARMOR_STYLES,
 } from "@/lib/builder/underarmor";
 import { triggerBuilderAchievement } from "@/actions/builder-achievements";
 import { LEGENDARY_PERK_CARDS } from "@/lib/builder/compatibility";
@@ -124,15 +137,18 @@ type ActivePick =
 
 function formatBaseOptionLabel(g: BaseGearPiece) {
   if (g.kind === "underarmor") return `${g.label} (underarmor)`;
-  if (g.kind === "weapon" && g.weaponSub) return `${g.label} (weapon · ${g.weaponSub})`;
+  if (g.kind === "weapon" && g.weaponSub)
+    return `${g.label} (weapon · ${g.weaponSub})`;
   if (g.kind === "armor" && g.armorSetKey) return g.label;
   if (g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)) return g.label;
-  if (g.kind === "powerArmor" && g.powerArmorSlot === "helmet") return `${g.label} (power armor · helmet)`;
+  if (g.kind === "powerArmor" && g.powerArmorSlot === "helmet")
+    return `${g.label} (power armor · helmet)`;
   return `${g.label} (${g.kind})`;
 }
 
 function defaultPayload(): BuilderPayload {
-  const first = BASE_GEAR_PIECES.find((p) => p.kind === "armor") ?? BASE_GEAR_PIECES[0]!;
+  const first =
+    BASE_GEAR_PIECES.find((p) => p.kind === "armor") ?? BASE_GEAR_PIECES[0]!;
   return {
     version: 5,
     basePieceId: first.id,
@@ -145,11 +161,15 @@ function defaultPayload(): BuilderPayload {
     powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
     powerArmorPiecesEquipped: DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
     ghoul: false,
-    underarmor: { shellId: UNDERARMOR_SHELLS[0]!.id, liningId: "none", styleId: "none" },
+    underarmor: {
+      shellId: UNDERARMOR_SHELLS[0]!.id,
+      liningId: "none",
+      styleId: "none",
+    },
     mutationIds: [],
     ignoreMutationPenalties: false,
     baseSpecial: { str: 1, per: 1, end: 1, cha: 1, int: 1, agi: 1, lck: 1 },
-    legendaryPerkIds: []
+    legendaryPerkIds: [],
   };
 }
 
@@ -171,21 +191,28 @@ function liveTotalsValueRowInt(base: number, total: number): React.ReactNode {
   const b = Math.round(base);
   const t = Math.round(total);
   const d = t - b;
-  
+
   return (
     <div className="flex items-center justify-end gap-1.5">
-      <div className={cn(
-        "flex h-6 items-center rounded-full bg-background/50 px-2.5 text-[11px] font-bold tabular-nums border border-border/40",
-        d !== 0 ? "text-foreground/90" : "text-foreground/70"
-      )}>
+      <div
+        className={cn(
+          "flex h-6 items-center rounded-full bg-background/50 px-2.5 text-[11px] font-bold tabular-nums border border-border/40",
+          d !== 0 ? "text-foreground/90" : "text-foreground/70",
+        )}
+      >
         {t}
       </div>
       {d !== 0 && (
-        <div className={cn(
-          "flex h-5 items-center rounded-full px-1.5 text-[9px] font-bold tabular-nums border",
-          d > 0 ? "bg-accent/10 border-accent/20 text-accent" : "bg-destructive/10 border-destructive/20 text-destructive"
-        )}>
-          {d > 0 ? "+" : ""}{d}
+        <div
+          className={cn(
+            "flex h-5 items-center rounded-full px-1.5 text-[9px] font-bold tabular-nums border",
+            d > 0
+              ? "bg-accent/10 border-accent/20 text-accent"
+              : "bg-destructive/10 border-destructive/20 text-destructive",
+          )}
+        >
+          {d > 0 ? "+" : ""}
+          {d}
         </div>
       )}
     </div>
@@ -196,21 +223,28 @@ function liveTotalsValueRowPct(base: number, total: number): React.ReactNode {
   const br = Math.round(base * 100);
   const tr = Math.round(total * 100);
   const d = tr - br;
-  
+
   return (
     <div className="flex items-center justify-end gap-1.5">
-      <div className={cn(
-        "flex h-6 items-center rounded-full bg-background/50 px-2.5 text-[11px] font-bold tabular-nums border border-border/40",
-        d !== 0 ? "text-foreground/90" : "text-foreground/70"
-      )}>
+      <div
+        className={cn(
+          "flex h-6 items-center rounded-full bg-background/50 px-2.5 text-[11px] font-bold tabular-nums border border-border/40",
+          d !== 0 ? "text-foreground/90" : "text-foreground/70",
+        )}
+      >
         {tr}%
       </div>
       {d !== 0 && (
-        <div className={cn(
-          "flex h-5 items-center rounded-full px-1.5 text-[9px] font-bold tabular-nums border",
-          d > 0 ? "bg-accent/10 border-accent/20 text-accent" : "bg-destructive/10 border-destructive/20 text-destructive"
-        )}>
-          {d > 0 ? "+" : ""}{d}%
+        <div
+          className={cn(
+            "flex h-5 items-center rounded-full px-1.5 text-[9px] font-bold tabular-nums border",
+            d > 0
+              ? "bg-accent/10 border-accent/20 text-accent"
+              : "bg-destructive/10 border-destructive/20 text-destructive",
+          )}
+        >
+          {d > 0 ? "+" : ""}
+          {d}%
         </div>
       )}
     </div>
@@ -221,45 +255,78 @@ function BuilderTotalsGrid({
   baseTotals,
   totals,
   powerArmorSandbox,
-  presentation = "balanced"
+  presentation = "balanced",
 }: {
   baseTotals: BuilderEffectTotals;
   totals: BuilderEffectTotals;
-  powerArmorSandbox?: { inherentDrPct: number; inherentRadReductionPct: number } | null;
+  powerArmorSandbox?: {
+    inherentDrPct: number;
+    inherentRadReductionPct: number;
+  } | null;
   presentation?: TotalsPresentation;
 }) {
   const resistRows = (
     <>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Damage resist">
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Damage resist"
+      >
         <Shield className="h-3 w-3 text-blue-400/70" />
         <span>DR</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.dr, totals.dr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Energy resist">
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.dr, totals.dr)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Energy resist"
+      >
         <Zap className="h-3 w-3 text-yellow-400/70" />
         <span>ER</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.er, totals.er)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Fire resist">
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.er, totals.er)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Fire resist"
+      >
         <Flame className="h-3 w-3 text-orange-500/70" />
         <span>FR</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.fr, totals.fr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Cryo resist">
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.fr, totals.fr)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Cryo resist"
+      >
         <Snowflake className="h-3 w-3 text-cyan-300/70" />
         <span>CR</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.cr, totals.cr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Poison resist">
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.cr, totals.cr)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Poison resist"
+      >
         <Droplets className="h-3 w-3 text-green-400/70" />
         <span>PR</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.pr, totals.pr)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Radiation resist">
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.pr, totals.pr)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Radiation resist"
+      >
         <Radiation className="h-3 w-3 text-lime-400/70" />
         <span>RR</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.rr, totals.rr)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.rr, totals.rr)}
+      </dd>
     </>
   );
 
@@ -270,57 +337,94 @@ function BuilderTotalsGrid({
     cha: "Charisma",
     int: "Intelligence",
     agi: "Agility",
-    lck: "Luck"
+    lck: "Luck",
   };
 
   const specialRows = BUILDER_SPECIAL_KEYS.flatMap((k) => [
-    <dt key={`${k}-l`} className="text-foreground/60 cursor-help underline underline-offset-2 decoration-dotted decoration-foreground/20" title={SPECIAL_NAMES[k]}>
+    <dt
+      key={`${k}-l`}
+      className="text-foreground/60 cursor-help underline underline-offset-2 decoration-dotted decoration-foreground/20"
+      title={SPECIAL_NAMES[k]}
+    >
       {BUILDER_SPECIAL_LABELS[k]}
     </dt>,
     <dd key={`${k}-r`} className="text-right">
       {liveTotalsValueRowInt(baseTotals[k], totals[k])}
-    </dd>
+    </dd>,
   ]);
 
   const paRows =
     powerArmorSandbox != null ? (
       <>
         <dt className="text-foreground/60">PA inherent DR %</dt>
-        <dd className="text-right tabular-nums">{powerArmorSandbox.inherentDrPct}%</dd>
+        <dd className="text-right tabular-nums">
+          {powerArmorSandbox.inherentDrPct}%
+        </dd>
         <dt className="text-foreground/60">PA inherent rad red. %</dt>
-        <dd className="text-right tabular-nums">{powerArmorSandbox.inherentRadReductionPct}%</dd>
+        <dd className="text-right tabular-nums">
+          {powerArmorSandbox.inherentRadReductionPct}%
+        </dd>
       </>
     ) : null;
 
   /** Default row order after resists (armor / underarmor / PA helmet). */
   const balancedCoreRows = (
     <>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Hit points (modeled bonus)">
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Hit points (modeled bonus)"
+      >
         <Heart className="h-3 w-3 text-red-400/70" />
         <span>HP bump</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.hp, totals.hp)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title={presentation === "weapon" ? "Weapon damage bonus from this base’s star picks" : "Weapon damage bonus"}>
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.hp, totals.hp)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title={
+          presentation === "weapon"
+            ? "Weapon damage bonus from this base’s star picks"
+            : "Weapon damage bonus"
+        }
+      >
         <Swords className="h-3 w-3 text-amber-400/70" />
         <span>Damage %</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}
+      </dd>
       {specialRows}
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="SPECIAL bonus not mapped to S.P.E.C.I.A.L. letters">
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="SPECIAL bonus not mapped to S.P.E.C.I.A.L. letters"
+      >
         <SparklesIcon className="h-3 w-3 text-purple-400/70" />
         <span>SPECIAL (other)</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Action Point regeneration">
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Action Point regeneration"
+      >
         <Activity className="h-3 w-3 text-emerald-400/70" />
         <span>AP regen</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}</dd>
-      <dt className="flex items-center gap-1.5 text-foreground/60" title="Carry weight bonus">
+      <dd className="text-right">
+        {liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}
+      </dd>
+      <dt
+        className="flex items-center gap-1.5 text-foreground/60"
+        title="Carry weight bonus"
+      >
         <Backpack className="h-3 w-3 text-orange-400/70" />
         <span>Carry wt</span>
       </dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.carryWeight, totals.carryWeight)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.carryWeight, totals.carryWeight)}
+      </dd>
     </>
   );
 
@@ -328,16 +432,26 @@ function BuilderTotalsGrid({
   const weaponCoreRows = (
     <>
       <dt className="text-foreground/60">Damage %</dt>
-      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowPct(baseTotals.damagePct, totals.damagePct)}
+      </dd>
       <dt className="text-foreground/60">HP bump</dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.hp, totals.hp)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.hp, totals.hp)}
+      </dd>
       <dt className="text-foreground/60">AP regen</dt>
-      <dd className="text-right">{liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowPct(baseTotals.apRegen, totals.apRegen)}
+      </dd>
       <dt className="text-foreground/60">Carry wt</dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.carryWeight, totals.carryWeight)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.carryWeight, totals.carryWeight)}
+      </dd>
       {specialRows}
       <dt className="text-foreground/60">SPECIAL (other)</dt>
-      <dd className="text-right">{liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}</dd>
+      <dd className="text-right">
+        {liveTotalsValueRowInt(baseTotals.specialBonus, totals.specialBonus)}
+      </dd>
     </>
   );
 
@@ -379,7 +493,8 @@ function useDensityCompact() {
   const [compact, setCompact] = React.useState(false);
   React.useEffect(() => {
     const root = document.documentElement;
-    const read = () => setCompact(root.getAttribute("data-density") === "compact");
+    const read = () =>
+      setCompact(root.getAttribute("data-density") === "compact");
     read();
     const obs = new MutationObserver(read);
     obs.observe(root, { attributes: true, attributeFilter: ["data-density"] });
@@ -391,7 +506,7 @@ function useDensityCompact() {
 function LegendaryModDetailFootprint({
   mod,
   piece = null,
-  density = "default"
+  density = "default",
 }: {
   mod: BuilderModDTO;
   /** When set, scaling descriptions (caps, addictions, etc.) show the max relevant line for this base. */
@@ -406,16 +521,24 @@ function LegendaryModDetailFootprint({
 
   if (density === "compact") {
     const line =
-      deltas ||
-      "No modeled DR/SPECIAL/damage in sandbox — still equippable.";
-    const titleBits = [desc, descRaw !== desc ? descRaw : "", ...extras.map((e) => `${e.key}: ${e.value}`)].filter(
-      Boolean
-    );
-    const title = titleBits.length ? `${line}\n\n${titleBits.join("\n")}` : line;
+      deltas || "No modeled DR/SPECIAL/damage in sandbox — still equippable.";
+    const titleBits = [
+      desc,
+      descRaw !== desc ? descRaw : "",
+      ...extras.map((e) => `${e.key}: ${e.value}`),
+    ].filter(Boolean);
+    const title = titleBits.length
+      ? `${line}\n\n${titleBits.join("\n")}`
+      : line;
     return (
-      <p className="mt-0.5 truncate text-[11px] leading-snug text-foreground/65" title={title}>
+      <p
+        className="mt-0.5 truncate text-[11px] leading-snug text-foreground/65"
+        title={title}
+      >
         <span className="font-medium text-accent/85 tabular-nums">{line}</span>
-        {tail ? <span className="text-foreground/45"> · details on hover</span> : null}
+        {tail ? (
+          <span className="text-foreground/45"> · details on hover</span>
+        ) : null}
       </p>
     );
   }
@@ -424,10 +547,13 @@ function LegendaryModDetailFootprint({
     <div className="mt-1 space-y-2">
       <div className="text-xs leading-relaxed">
         {deltas ? (
-          <span className="font-medium text-accent/90 tabular-nums">{deltas}</span>
+          <span className="font-medium text-accent/90 tabular-nums">
+            {deltas}
+          </span>
         ) : (
           <span className="text-foreground/55">
-            No resist, SPECIAL, or damage bonus modeled in sandbox totals — you can still equip this star.
+            No resist, SPECIAL, or damage bonus modeled in sandbox totals — you
+            can still equip this star.
           </span>
         )}
       </div>
@@ -444,7 +570,9 @@ function LegendaryModDetailFootprint({
           ) : null}
           {extras.length > 0 ? (
             <div>
-              <div className="font-semibold text-foreground/50">Catalog extras (not in totals)</div>
+              <div className="font-semibold text-foreground/50">
+                Catalog extras (not in totals)
+              </div>
               <ul className="mt-0.5 list-disc space-y-0.5 pl-4">
                 {extras.map((e) => (
                   <li key={e.key}>
@@ -469,7 +597,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
   compact,
   ghoulMode,
   isRecommended,
-  onPick
+  onPick,
 }: {
   mod: BuilderModDTO;
   piece: BaseGearPiece;
@@ -479,12 +607,26 @@ const ModPickerOption = React.memo(function ModPickerOption({
   onPick: (id: string) => void;
 }) {
   const unlock = mod.trackerUnlock ?? "unknown";
-  const statusAttr = unlock === "unlocked" ? "unlocked" : unlock === "locked" ? "locked" : undefined;
+  const statusAttr =
+    unlock === "unlocked"
+      ? "unlocked"
+      : unlock === "locked"
+        ? "locked"
+        : undefined;
   const statusLabel =
-    unlock === "unlocked" ? "Unlocked" : unlock === "locked" ? "Locked" : "Not in tracker";
-  const descDisplay = sandboxLegendaryDescription(mod.description, piece) || mod.description?.trim() || "";
+    unlock === "unlocked"
+      ? "Unlocked"
+      : unlock === "locked"
+        ? "Locked"
+        : "Not in tracker";
+  const descDisplay =
+    sandboxLegendaryDescription(mod.description, piece) ||
+    mod.description?.trim() ||
+    "";
   const title = compact
-    ? [mod.name, descDisplay, formatEffectMathDeltas(mod.effectMath)].filter(Boolean).join(" — ")
+    ? [mod.name, descDisplay, formatEffectMathDeltas(mod.effectMath)]
+        .filter(Boolean)
+        .join(" — ")
     : undefined;
 
   return (
@@ -492,18 +634,31 @@ const ModPickerOption = React.memo(function ModPickerOption({
       type="button"
       data-status={statusAttr}
       title={title}
-      style={{ contentVisibility: "auto", containIntrinsicSize: compact ? "auto 48px" : "auto 96px" }}
+      style={{
+        contentVisibility: "auto",
+        containIntrinsicSize: compact ? "auto 48px" : "auto 96px",
+      }}
       className={cn(
         "summary-status-card mod-picker-option flex w-full flex-col rounded-[var(--radius)] border text-left relative",
         "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
         unlock === "unknown" && "opacity-95",
         compact ? "gap-0 px-2 py-1.5" : "gap-0.5 py-2.5",
-        isRecommended && "border-accent/40 bg-accent/5"
+        isRecommended && "border-accent/40 bg-accent/5",
       )}
       onClick={() => onPick(mod.id)}
     >
-      <div className={cn("flex items-start justify-between gap-2", compact ? "px-0" : "px-0.5")}>
-        <span className={cn("min-w-0 font-semibold leading-snug flex items-center gap-2", compact ? "text-[13px]" : "text-sm")}>
+      <div
+        className={cn(
+          "flex items-start justify-between gap-2",
+          compact ? "px-0" : "px-0.5",
+        )}
+      >
+        <span
+          className={cn(
+            "min-w-0 font-semibold leading-snug flex items-center gap-2",
+            compact ? "text-[13px]" : "text-sm",
+          )}
+        >
           {mod.name}
           {isRecommended && (
             <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-accent font-bold">
@@ -516,13 +671,17 @@ const ModPickerOption = React.memo(function ModPickerOption({
         </span>
       </div>
       <div className={cn(compact ? "px-0" : "mt-1 px-0.5")}>
-        <LegendaryModDetailFootprint mod={mod} piece={piece} density={compact ? "compact" : "default"} />
+        <LegendaryModDetailFootprint
+          mod={mod}
+          piece={piece}
+          density={compact ? "compact" : "default"}
+        />
       </div>
       {ghoulMode && isGhoulDiscouragedLegendarySlug(mod.slug) ? (
         <p
           className={cn(
             "mt-1 rounded-[var(--radius)] border border-[color:color-mix(in_srgb,var(--color-warning)_35%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-warning)_12%,transparent)] px-1.5 py-1 text-[10px] leading-snug text-foreground/75",
-            compact ? "mx-0" : "mx-0.5"
+            compact ? "mx-0" : "mx-0.5",
           )}
         >
           Off-meta for typical Ghoul play — you can still pick it here.
@@ -539,18 +698,22 @@ type BuilderExperimentClientProps = {
 
 export default function BuilderExperimentClient({
   initialLearnedBasePieceIds = [],
-  isAdmin = false
+  isAdmin = false,
 }: BuilderExperimentClientProps) {
   const { data: session, status: sessionStatus } = useSession();
-  const isSignedIn = sessionStatus === "authenticated" && Boolean(session?.user?.id);
+  const isSignedIn =
+    sessionStatus === "authenticated" && Boolean(session?.user?.id);
 
   const [mods, setMods] = React.useState<BuilderModDTO[]>([]);
   const [loadError, setLoadError] = React.useState<string | null>(null);
-  
+
   // Persistence state
   const [isMounted, setIsMounted] = React.useState(false);
-  const [payload, setPayload] = React.useState<BuilderPayload>(defaultPayload());
-  const [undoPayload, setUndoPayload] = React.useState<BuilderPayload | null>(null);
+  const [payload, setPayload] =
+    React.useState<BuilderPayload>(defaultPayload());
+  const [undoPayload, setUndoPayload] = React.useState<BuilderPayload | null>(
+    null,
+  );
 
   React.useEffect(() => {
     if (isMounted) {
@@ -558,7 +721,9 @@ export default function BuilderExperimentClient({
     }
   }, [isMounted]);
 
-  const [savedLoadouts, setSavedLoadouts] = React.useState<{ id: string; name: string; payload: BuilderPayload }[]>([]);
+  const [savedLoadouts, setSavedLoadouts] = React.useState<
+    { id: string; name: string; payload: BuilderPayload }[]
+  >([]);
 
   const [activePick, setActivePick] = React.useState<ActivePick>(null);
   const [slotQuery, setSlotQuery] = React.useState("");
@@ -568,18 +733,27 @@ export default function BuilderExperimentClient({
   const [shareBusy, setShareBusy] = React.useState(false);
   const [shareResult, setShareResult] = React.useState<string | null>(null);
   const [learnedBasePieceIds, setLearnedBasePieceIds] = React.useState(
-    () => new Set(initialLearnedBasePieceIds)
+    () => new Set(initialLearnedBasePieceIds),
   );
-  const [learnedToggleError, setLearnedToggleError] = React.useState<string | null>(null);
-  const [pendingLearnedPieceId, setPendingLearnedPieceId] = React.useState<string | null>(null);
+  const [learnedToggleError, setLearnedToggleError] = React.useState<
+    string | null
+  >(null);
+  const [pendingLearnedPieceId, setPendingLearnedPieceId] = React.useState<
+    string | null
+  >(null);
   const [ndUrlInput, setNdUrlInput] = React.useState("");
-  const [ndImport, setNdImport] = React.useState<(NdImportResult & { appliedAt: number }) | null>(null);
+  const [ndImport, setNdImport] = React.useState<
+    (NdImportResult & { appliedAt: number }) | null
+  >(null);
   const [ndImportError, setNdImportError] = React.useState<string | null>(null);
 
-  const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<number | null>(null);
+  const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<
+    number | null
+  >(null);
   const internalUpdateRef = React.useRef(false);
 
-  const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } = useBuilderBetaAccess(isAdmin);
+  const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } =
+    useBuilderBetaAccess(isAdmin);
   const [showBetaPrompt, setShowBetaPrompt] = React.useState(false);
 
   React.useEffect(() => {
@@ -590,7 +764,7 @@ export default function BuilderExperimentClient({
         const norm = normalizeBuilderPayload(parsed) || parsed;
         if (norm?.basePieceId) setPayload(norm as BuilderPayload);
       }
-      
+
       const savedSlots = localStorage.getItem("roll-builder-saves");
       if (savedSlots) {
         setSavedLoadouts(JSON.parse(savedSlots));
@@ -613,7 +787,7 @@ export default function BuilderExperimentClient({
       armorLegendaryModIds: emptyArmorLegendaryGrid(),
       mutationIds: [],
       legendaryPerkIds: [],
-      baseSpecial: {}
+      baseSpecial: {},
     }));
   }, [payload]);
 
@@ -628,13 +802,20 @@ export default function BuilderExperimentClient({
     setPayload((prev) => {
       const nextCrafting = [...prev.armorPieceCrafting];
       nextCrafting[pieceIndex] = { materialModId: "none", miscModId: "none" };
-      
+
       const nextStars = [...prev.armorLegendaryModIds];
       nextStars[pieceIndex] = [null, null, null, null];
 
       let nextEquipped = prev.powerArmorPiecesEquipped;
       if (prev.equipmentKind === "powerArmor") {
-        const mask = [...prev.powerArmorPiecesEquipped] as unknown as [boolean, boolean, boolean, boolean, boolean, boolean];
+        const mask = [...prev.powerArmorPiecesEquipped] as unknown as [
+          boolean,
+          boolean,
+          boolean,
+          boolean,
+          boolean,
+          boolean,
+        ];
         mask[pieceIndex] = false;
         nextEquipped = mask;
       }
@@ -643,37 +824,52 @@ export default function BuilderExperimentClient({
         ...prev,
         powerArmorPiecesEquipped: nextEquipped,
         armorPieceCrafting: nextCrafting,
-        armorLegendaryModIds: nextStars
+        armorLegendaryModIds: nextStars,
       };
     });
   }, []);
 
-  const saveLoadout = React.useCallback((slotIndex: number) => {
-    const name = prompt("Enter a name for this loadout slot:", savedLoadouts[slotIndex]?.name || `Loadout ${slotIndex + 1}`);
-    if (name === null) return;
-    setSavedLoadouts((prev) => {
-      const next = [...prev];
-      next[slotIndex] = { id: String(slotIndex), name: name || `Loadout ${slotIndex + 1}`, payload };
-      
-      const filledCount = next.filter(x => x !== null && x !== undefined).length;
-      triggerBuilderAchievement("build_save");
-      if (filledCount >= 10) triggerBuilderAchievement("build_full");
-      
-      return next;
-    });
-    setActiveLoadoutIndex(slotIndex);
-  }, [payload, savedLoadouts]);
+  const saveLoadout = React.useCallback(
+    (slotIndex: number) => {
+      const name = prompt(
+        "Enter a name for this loadout slot:",
+        savedLoadouts[slotIndex]?.name || `Loadout ${slotIndex + 1}`,
+      );
+      if (name === null) return;
+      setSavedLoadouts((prev) => {
+        const next = [...prev];
+        next[slotIndex] = {
+          id: String(slotIndex),
+          name: name || `Loadout ${slotIndex + 1}`,
+          payload,
+        };
 
-  const loadLoadout = React.useCallback((slotIndex: number) => {
-    const saved = savedLoadouts[slotIndex];
-    if (saved) {
-      internalUpdateRef.current = true;
-      setPayload(saved.payload);
+        const filledCount = next.filter(
+          (x) => x !== null && x !== undefined,
+        ).length;
+        triggerBuilderAchievement("build_save");
+        if (filledCount >= 10) triggerBuilderAchievement("build_full");
+
+        return next;
+      });
       setActiveLoadoutIndex(slotIndex);
-      triggerBuilderAchievement("build_stats");
-      triggerBuilderAchievement("build_perks");
-    }
-  }, [savedLoadouts]);
+    },
+    [payload, savedLoadouts],
+  );
+
+  const loadLoadout = React.useCallback(
+    (slotIndex: number) => {
+      const saved = savedLoadouts[slotIndex];
+      if (saved) {
+        internalUpdateRef.current = true;
+        setPayload(saved.payload);
+        setActiveLoadoutIndex(slotIndex);
+        triggerBuilderAchievement("build_stats");
+        triggerBuilderAchievement("build_perks");
+      }
+    },
+    [savedLoadouts],
+  );
 
   React.useEffect(() => {
     if (isMounted) {
@@ -725,8 +921,8 @@ export default function BuilderExperimentClient({
       })
       .catch(() =>
         setLoadError(
-          "Builder catalog failed to load. On the server, run database migrations (`prisma migrate deploy`) and seed builder mods (`npm run db:seed:builder` or full `npm run db:seed`) if tables are empty."
-        )
+          "Builder catalog failed to load. On the server, run database migrations (`prisma migrate deploy`) and seed builder mods (`npm run db:seed:builder` or full `npm run db:seed`) if tables are empty.",
+        ),
       );
   }, []);
 
@@ -742,7 +938,8 @@ export default function BuilderExperimentClient({
 
   const piece = getBaseGearPiece(payload.basePieceId) ?? BASE_GEAR_PIECES[0]!;
   const isMultiPiece = isMultiPiecePayload(payload);
-  const fullArmorSet = piece.kind === "armor" && Boolean(piece.armorSetKey) && isMultiPiece;
+  const fullArmorSet =
+    piece.kind === "armor" && Boolean(piece.armorSetKey) && isMultiPiece;
   const baseStarsContextLabel = React.useMemo(() => {
     if (piece.kind === "armor" && piece.armorSetKey) {
       return getArmorSetRow(piece.armorSetKey)?.label ?? piece.label;
@@ -760,20 +957,30 @@ export default function BuilderExperimentClient({
       : piece.kind === "powerArmor"
         ? "powerArmor"
         : "balanced";
-  
-  const multiPieceSlotLabels = piece.kind === "powerArmor" ? POWER_ARMOR_PIECE_SLOT_LABELS : ARMOR_SET_SLOT_LABELS;
+
+  const multiPieceSlotLabels =
+    piece.kind === "powerArmor"
+      ? POWER_ARMOR_PIECE_SLOT_LABELS
+      : ARMOR_SET_SLOT_LABELS;
 
   const statKeyMode: BuilderTotalsStatKeyMode =
-    totalsPresentation === "weapon" ? "weapon" : totalsPresentation === "powerArmor" ? "powerArmor" : "default";
+    totalsPresentation === "weapon"
+      ? "weapon"
+      : totalsPresentation === "powerArmor"
+        ? "powerArmor"
+        : "default";
   const currentBaseLearned =
     isTrackableBasePieceId(piece.id) &&
     (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
       ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, piece.id)
       : learnedBasePieceIds.has(piece.id));
-  const trackableGroups = React.useMemo(() => listTrackableBaseGearByGroup(), []);
+  const trackableGroups = React.useMemo(
+    () => listTrackableBaseGearByGroup(),
+    [],
+  );
   const learnedTrackableCount = React.useMemo(
     () => countLearnedTrackableBases(learnedBasePieceIds),
-    [learnedBasePieceIds]
+    [learnedBasePieceIds],
   );
   const trackableTotal = trackableBaseRowCount();
 
@@ -783,7 +990,9 @@ export default function BuilderExperimentClient({
     const row = getBaseGearPiece(pieceId);
     const ids =
       row && isPowerArmorTorsoBasePiece(row)
-        ? [pieceId, pairedPowerArmorHelmetId(pieceId)].filter((x): x is string => Boolean(x))
+        ? [pieceId, pairedPowerArmorHelmetId(pieceId)].filter(
+            (x): x is string => Boolean(x),
+          )
         : [pieceId];
     setPendingLearnedPieceId(pieceId);
     try {
@@ -799,7 +1008,9 @@ export default function BuilderExperimentClient({
         return next;
       });
     } catch {
-      setLearnedToggleError("Could not update learned bases. Try signing in again.");
+      setLearnedToggleError(
+        "Could not update learned bases. Try signing in again.",
+      );
     } finally {
       setPendingLearnedPieceId(null);
     }
@@ -809,25 +1020,35 @@ export default function BuilderExperimentClient({
     setPayload((prev) => ({
       ...prev,
       equipmentKind: piece.kind,
-      weaponSub: piece.kind === "weapon" ? (piece.weaponSub ?? prev.weaponSub) : null
+      weaponSub:
+        piece.kind === "weapon" ? (piece.weaponSub ?? prev.weaponSub) : null,
     }));
   }, [piece.id, piece.kind, piece.weaponSub]);
 
   const equippedModsOrdered = React.useMemo(
     () => listEquippedModsInBenchOrder(payload, mods),
-    [mods, payload]
+    [mods, payload],
   );
 
   const equippedLegendaryBenchLines = React.useMemo(
     () => listEquippedLegendariesWithBenchLabels(payload, mods),
-    [mods, payload]
+    [mods, payload],
   );
 
   const underLayers = React.useMemo(() => {
     const layers: Record<string, number>[] = [];
-    const shell = findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId);
-    const lining = findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId);
-    const style = findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId);
+    const shell = findUnderarmorOption(
+      UNDERARMOR_SHELLS,
+      payload.underarmor.shellId,
+    );
+    const lining = findUnderarmorOption(
+      UNDERARMOR_LININGS,
+      payload.underarmor.liningId,
+    );
+    const style = findUnderarmorOption(
+      UNDERARMOR_STYLES,
+      payload.underarmor.styleId,
+    );
     if (shell?.effectMath) layers.push(shell.effectMath);
     if (lining?.effectMath) layers.push(lining.effectMath);
     if (style?.effectMath) layers.push(style.effectMath);
@@ -836,7 +1057,10 @@ export default function BuilderExperimentClient({
 
   const armorCraftingLayers = React.useMemo(() => {
     if (!isMultiPiece) return [];
-    return armorCraftingEffectLayers(payload.armorPieceCrafting, piece.kind === "powerArmor");
+    return armorCraftingEffectLayers(
+      payload.armorPieceCrafting,
+      piece.kind === "powerArmor",
+    );
   }, [isMultiPiece, piece.kind, payload.armorPieceCrafting]);
 
   const baseArmorStats = React.useMemo(() => {
@@ -849,7 +1073,7 @@ export default function BuilderExperimentClient({
         return getPowerArmorEquippedFlatStats(
           piece.id,
           payload.powerArmorHelmetId, // redundant but kept for type safety in getter
-          payload.powerArmorPiecesEquipped
+          payload.powerArmorPiecesEquipped,
         );
       }
       // Single helmet base
@@ -858,37 +1082,57 @@ export default function BuilderExperimentClient({
       }
     }
     return null;
-  }, [isMultiPiece, piece, payload.powerArmorHelmetId, payload.powerArmorPiecesEquipped]);
+  }, [
+    isMultiPiece,
+    piece,
+    payload.powerArmorHelmetId,
+    payload.powerArmorPiecesEquipped,
+  ]);
 
   const powerArmorFrameIntrinsicLayer = React.useMemo(() => {
-    if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece)) return null;
+    if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece))
+      return null;
     return powerArmorFrameIntrinsicEffectMath();
   }, [piece]);
 
   const powerArmorSandboxMeta = React.useMemo(() => {
     if (!isPowerArmorTorsoBasePiece(piece)) return null;
     return {
-      inherentDrPct: powerArmorInherentDamageReductionPercent(payload.powerArmorPiecesEquipped),
-      inherentRadReductionPct: powerArmorInherentRadReductionPercent(payload.powerArmorPiecesEquipped)
+      inherentDrPct: powerArmorInherentDamageReductionPercent(
+        payload.powerArmorPiecesEquipped,
+      ),
+      inherentRadReductionPct: powerArmorInherentRadReductionPercent(
+        payload.powerArmorPiecesEquipped,
+      ),
     };
   }, [piece, payload.powerArmorPiecesEquipped]);
 
-
-
   const ndPerkLayer = React.useMemo(() => {
     if (!ndImport?.layer) return null;
-    const keys = Object.keys(ndImport.layer).filter((k) => ndImport!.layer[k] !== 0);
+    const keys = Object.keys(ndImport.layer).filter(
+      (k) => ndImport!.layer[k] !== 0,
+    );
     if (keys.length === 0) return null;
     return ndImport.layer;
   }, [ndImport]);
 
   const mutationLayer = React.useMemo(
     () =>
-      sandboxMutationMathLayer(payload.mutationIds, payload.ignoreMutationPenalties, {
-        strangeInNumbersMutatedTeammates:
-          ndImport?.hasStrangeInNumbers && payload.mutationIds.length > 0 ? 4 : 0
-      }),
-    [payload.mutationIds, payload.ignoreMutationPenalties, ndImport?.hasStrangeInNumbers]
+      sandboxMutationMathLayer(
+        payload.mutationIds,
+        payload.ignoreMutationPenalties,
+        {
+          strangeInNumbersMutatedTeammates:
+            ndImport?.hasStrangeInNumbers && payload.mutationIds.length > 0
+              ? 4
+              : 0,
+        },
+      ),
+    [
+      payload.mutationIds,
+      payload.ignoreMutationPenalties,
+      ndImport?.hasStrangeInNumbers,
+    ],
   );
 
   /**
@@ -901,18 +1145,20 @@ export default function BuilderExperimentClient({
         ghoul: payload.ghoul,
         extraLayers: [
           ...armorCraftingLayers,
-          ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : [])
+          ...(powerArmorFrameIntrinsicLayer
+            ? [powerArmorFrameIntrinsicLayer]
+            : []),
         ],
         baseArmorStats,
-        baseSpecial: payload.baseSpecial
+        baseSpecial: payload.baseSpecial,
       }),
     [
       payload.ghoul,
       armorCraftingLayers,
       powerArmorFrameIntrinsicLayer,
       baseArmorStats,
-      payload.baseSpecial
-    ]
+      payload.baseSpecial,
+    ],
   );
 
   const totals = React.useMemo(
@@ -922,13 +1168,15 @@ export default function BuilderExperimentClient({
         extraLayers: [
           ...(piece.kind !== "powerArmor" ? underLayers : []),
           ...armorCraftingLayers,
-          ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : []),
+          ...(powerArmorFrameIntrinsicLayer
+            ? [powerArmorFrameIntrinsicLayer]
+            : []),
           ...(mutationLayer ? [mutationLayer] : []),
-          ...(ndPerkLayer ? [ndPerkLayer] : [])
+          ...(ndPerkLayer ? [ndPerkLayer] : []),
         ],
         baseArmorStats,
         baseSpecial: payload.baseSpecial,
-        legendaryPerkIds: payload.legendaryPerkIds
+        legendaryPerkIds: payload.legendaryPerkIds,
       }),
     [
       equippedModsOrdered,
@@ -940,8 +1188,8 @@ export default function BuilderExperimentClient({
       mutationLayer,
       baseArmorStats,
       payload.baseSpecial,
-      payload.legendaryPerkIds
-    ]
+      payload.legendaryPerkIds,
+    ],
   );
 
   /** How Ghoul mode changes sandbox totals vs human (legendary slice + global rules). @see https://fallout.fandom.com/wiki/Fallout_76_playable_ghoul */
@@ -950,26 +1198,39 @@ export default function BuilderExperimentClient({
     const lines: string[] = [
       "RR: still summed from gear and layers here — resist can change how radiation interacts with your character even though ghouls do not take rads like humans (full rad/Glow sim is out of scope for this sandbox).",
       "CHA: Live totals apply −10 effective Charisma vs human for playable Ghoul (perk-card equip limits are unchanged in-game).",
-      "Star picker: Overeater’s, Gourmand’s, Nutrition, and Hydration bench rows are hidden; Bloodied / Unyielding stay available with an off-meta note."
+      "Star picker: Overeater’s, Gourmand’s, Nutrition, and Hydration bench rows are hidden; Bloodied / Unyielding stay available with an off-meta note.",
     ];
     if (equippedModsOrdered.length > 0) {
-      const human = aggregateEffectMath(equippedModsOrdered, { ghoul: false, extraLayers: [] });
-      const ghoul = aggregateEffectMath(equippedModsOrdered, { ghoul: true, extraLayers: [] });
+      const human = aggregateEffectMath(equippedModsOrdered, {
+        ghoul: false,
+        extraLayers: [],
+      });
+      const ghoul = aggregateEffectMath(equippedModsOrdered, {
+        ghoul: true,
+        extraLayers: [],
+      });
       if (human.specialBonus !== ghoul.specialBonus) {
         lines.push(
-          `SPECIAL bonus roll-up (legendaries only): ${human.specialBonus} → ${ghoul.specialBonus} after Ghoul caps on flagged catalog rows.`
+          `SPECIAL bonus roll-up (legendaries only): ${human.specialBonus} → ${ghoul.specialBonus} after Ghoul caps on flagged catalog rows.`,
         );
       }
-      if (human.dr !== ghoul.dr || human.er !== ghoul.er || human.cha !== ghoul.cha) {
+      if (
+        human.dr !== ghoul.dr ||
+        human.er !== ghoul.er ||
+        human.cha !== ghoul.cha
+      ) {
         lines.push(
-          `Legendary-only row — DR ${human.dr}→${ghoul.dr}, ER ${human.er}→${ghoul.er}, CHA ${human.cha}→${ghoul.cha} (CHA includes −10 only when Ghoul is on).`
+          `Legendary-only row — DR ${human.dr}→${ghoul.dr}, ER ${human.er}→${ghoul.er}, CHA ${human.cha}→${ghoul.cha} (CHA includes −10 only when Ghoul is on).`,
         );
       }
     }
     return lines;
   }, [payload.ghoul, equippedModsOrdered]);
 
-  const shopping = React.useMemo(() => buildShoppingList(equippedModsOrdered), [equippedModsOrdered]);
+  const shopping = React.useMemo(
+    () => buildShoppingList(equippedModsOrdered),
+    [equippedModsOrdered],
+  );
 
   const assignSlot = React.useCallback(
     (modId: string) => {
@@ -992,7 +1253,7 @@ export default function BuilderExperimentClient({
       setActivePick(null);
       setSlotQuery("");
     },
-    [activePick]
+    [activePick],
   );
 
   const recommendedIds = React.useMemo(() => {
@@ -1010,8 +1271,13 @@ export default function BuilderExperimentClient({
 
   const optionsForActivePick = React.useMemo(() => {
     if (!activePick) return [];
-    const slotIndex = activePick.scope === "single" ? activePick.starIndex : activePick.starIndex;
-    const filtered = filterModsForSlot(mods, piece, slotIndex, { ghoul: payload.ghoul }).filter((m) => {
+    const slotIndex =
+      activePick.scope === "single"
+        ? activePick.starIndex
+        : activePick.starIndex;
+    const filtered = filterModsForSlot(mods, piece, slotIndex, {
+      ghoul: payload.ghoul,
+    }).filter((m) => {
       const q = deferredSlotQuery.trim().toLowerCase();
       if (!q) return true;
       return (
@@ -1032,7 +1298,14 @@ export default function BuilderExperimentClient({
       }
       return a.name.localeCompare(b.name);
     });
-  }, [mods, piece, activePick, deferredSlotQuery, payload.ghoul, recommendedIds]);
+  }, [
+    mods,
+    piece,
+    activePick,
+    deferredSlotQuery,
+    payload.ghoul,
+    recommendedIds,
+  ]);
 
   function setBase(id: string) {
     const next = getBaseGearPiece(id);
@@ -1042,7 +1315,7 @@ export default function BuilderExperimentClient({
       ...p,
       basePieceId: id,
       equipmentKind: next.kind,
-      weaponSub: next.kind === "weapon" ? next.weaponSub ?? null : null,
+      weaponSub: next.kind === "weapon" ? (next.weaponSub ?? null) : null,
       legendaryModIds: [null, null, null, null],
       armorLegendaryModIds: emptyArmorLegendaryGrid(isPA),
       armorPieceCrafting: defaultArmorPieceCrafting(isPA),
@@ -1052,7 +1325,7 @@ export default function BuilderExperimentClient({
       underarmor:
         next.kind === "underarmor" && next.defaultUnderarmorShellId
           ? { ...p.underarmor, shellId: next.defaultUnderarmorShellId }
-          : p.underarmor
+          : p.underarmor,
     }));
     setActivePick(null);
   }
@@ -1060,17 +1333,21 @@ export default function BuilderExperimentClient({
   function setArmorCraftingField(
     pieceIndex: number,
     field: "materialModId" | "miscModId",
-    value: string
+    value: string,
   ) {
     setPayload((p) => {
       const nextCraft = p.armorPieceCrafting.map((row, i) =>
-        i === pieceIndex ? { ...row, [field]: value } : row
+        i === pieceIndex ? { ...row, [field]: value } : row,
       );
       return { ...p, armorPieceCrafting: nextCraft };
     });
   }
 
-  function clearStarSlot(scope: "single" | "armorSet", pieceIndex: number | undefined, starIndex: number) {
+  function clearStarSlot(
+    scope: "single" | "armorSet",
+    pieceIndex: number | undefined,
+    starIndex: number,
+  ) {
     if (scope === "single") {
       setPayload((p) => {
         const next = [...p.legendaryModIds];
@@ -1099,8 +1376,8 @@ export default function BuilderExperimentClient({
         body: JSON.stringify({
           title: shareTitle,
           description: `${piece.label} · ${payload.ghoul ? "Ghoul" : "Human"} · sandbox`,
-          payload
-        })
+          payload,
+        }),
       });
       const body = await response.json();
       if (!response.ok || !body?.success) {
@@ -1116,7 +1393,8 @@ export default function BuilderExperimentClient({
   }
 
   const starsDisabled = piece.kind === "underarmor";
-  const showSingleStars = !isMultiPiece && !starsDisabled && piece.kind !== "powerArmor";
+  const showSingleStars =
+    !isMultiPiece && !starsDisabled && piece.kind !== "powerArmor";
 
   return (
     <div className="space-y-6">
@@ -1150,36 +1428,76 @@ export default function BuilderExperimentClient({
               share URLs, plus your R.O.L.L. legendary catalog for effect math.
             </span>
           </div>
-          
+
           <div className="mt-4 border-t border-border/60 pt-3">
             <p className="text-xs font-semibold text-foreground/80 uppercase tracking-wide mb-2">
               Credits &amp; Inspiration
             </p>
             <p className="text-xs leading-relaxed">
-              This diagnostic tool draws heavy inspiration from the following rich loadout planners and character builders:
+              This diagnostic tool draws heavy inspiration from the following
+              rich loadout planners and character builders:
             </p>
             <ul className="mt-2 list-disc pl-5 space-y-1 text-xs">
               <li>
-                <a href="https://www.falloutbuilds.com/fo76/planner/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Character Planner</a>
+                <a
+                  href="https://www.falloutbuilds.com/fo76/planner/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  FalloutBuilds Character Planner
+                </a>
               </li>
               <li>
-                <a href="https://www.falloutbuilds.com/fo76/mutations/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Mutations Database</a>
+                <a
+                  href="https://www.falloutbuilds.com/fo76/mutations/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  FalloutBuilds Mutations Database
+                </a>
               </li>
               <li>
-                <a href="https://www.falloutbuilds.com/fo76/perk-matrix/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Perk Matrix</a>
+                <a
+                  href="https://www.falloutbuilds.com/fo76/perk-matrix/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  FalloutBuilds Perk Matrix
+                </a>
               </li>
               <li>
-                <a href="https://www.falloutbuilds.com/fo76/perks/" target="_blank" rel="noreferrer" className="text-accent hover:underline">FalloutBuilds Perk Cards List</a>
+                <a
+                  href="https://www.falloutbuilds.com/fo76/perks/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  FalloutBuilds Perk Cards List
+                </a>
               </li>
               <li>
-                <a href="https://nukesdragons.com/fallout-76/character" target="_blank" rel="noreferrer" className="text-accent hover:underline">Nukes &amp; Dragons Character Builder</a>
+                <a
+                  href="https://nukesdragons.com/fallout-76/character"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  Nukes &amp; Dragons Character Builder
+                </a>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      {loadError ? <div className="text-sm text-[color:var(--color-warning)]">{loadError}</div> : null}
+      {loadError ? (
+        <div className="text-sm text-[color:var(--color-warning)]">
+          {loadError}
+        </div>
+      ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
         <div className="space-y-4">
@@ -1214,12 +1532,16 @@ export default function BuilderExperimentClient({
               <div
                 className={cn(
                   "mt-3 flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius)] border px-3 py-2",
-                  currentBaseLearned ? "border-[color:color-mix(in_srgb,var(--color-success)_60%,var(--color-border))]" : "border-border"
+                  currentBaseLearned
+                    ? "border-[color:color-mix(in_srgb,var(--color-success)_60%,var(--color-border))]"
+                    : "border-border",
                 )}
                 data-status={currentBaseLearned ? "unlocked" : "locked"}
               >
                 <div className="min-w-0">
-                  <div className="text-xs font-medium text-foreground/60">Plan learned (this base)</div>
+                  <div className="text-xs font-medium text-foreground/60">
+                    Plan learned (this base)
+                  </div>
                   <div className="text-xs text-foreground/55">
                     {isSignedIn
                       ? "Matches tracker-style unlock colors elsewhere in R.O.L.L."
@@ -1229,25 +1551,39 @@ export default function BuilderExperimentClient({
                 <ProgressToggle
                   unlocked={currentBaseLearned}
                   disabled={!isSignedIn || pendingLearnedPieceId === piece.id}
-                  onToggle={() => void toggleLearnedBasePiece(piece.id, !currentBaseLearned)}
+                  onToggle={() =>
+                    void toggleLearnedBasePiece(piece.id, !currentBaseLearned)
+                  }
                   className="shrink-0"
                 />
               </div>
             ) : null}
             {learnedToggleError ? (
-              <p className="mt-2 text-xs text-[color:var(--color-warning)]">{learnedToggleError}</p>
+              <p className="mt-2 text-xs text-[color:var(--color-warning)]">
+                {learnedToggleError}
+              </p>
             ) : null}
           </div>
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">Global Actions</div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button variant="secondary" size="sm" onClick={clearAllSelections} className="gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={clearAllSelections}
+                className="gap-2"
+              >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span>Clear All</span>
               </Button>
               {undoPayload ? (
-                <Button variant="outline" size="sm" onClick={undoClear} className="gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={undoClear}
+                  className="gap-2"
+                >
                   <RotateCcw className="h-3.5 w-3.5" />
                   <span>Undo Clear</span>
                 </Button>
@@ -1256,15 +1592,30 @@ export default function BuilderExperimentClient({
 
             <div className="mt-4 border-t border-border/60 pt-3">
               <div className="mb-2 flex items-center justify-between">
-                <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50">Saved Loadouts</div>
-                <div className={cn(
-                  "flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold border",
-                  activeLoadoutIndex === null 
-                    ? "bg-amber-400/10 border-amber-400/20 text-amber-500/90" 
-                    : "bg-emerald-400/10 border-emerald-400/20 text-emerald-500/90"
-                )}>
-                  <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", activeLoadoutIndex === null ? "bg-amber-500" : "bg-emerald-500")} />
-                  <span>{activeLoadoutIndex === null ? "Custom Build" : `Active: ${savedLoadouts[activeLoadoutIndex]?.name || "Loaded"}`}</span>
+                <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50">
+                  Saved Loadouts
+                </div>
+                <div
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold border",
+                    activeLoadoutIndex === null
+                      ? "bg-amber-400/10 border-amber-400/20 text-amber-500/90"
+                      : "bg-emerald-400/10 border-emerald-400/20 text-emerald-500/90",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "h-1.5 w-1.5 rounded-full animate-pulse",
+                      activeLoadoutIndex === null
+                        ? "bg-amber-500"
+                        : "bg-emerald-500",
+                    )}
+                  />
+                  <span>
+                    {activeLoadoutIndex === null
+                      ? "Custom Build"
+                      : `Active: ${savedLoadouts[activeLoadoutIndex]?.name || "Loaded"}`}
+                  </span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
@@ -1277,7 +1628,9 @@ export default function BuilderExperimentClient({
                         size="sm"
                         className={cn(
                           "h-8 px-2 text-[10px] font-medium transition-all",
-                          saved ? "bg-accent/10 border-accent/30 text-accent hover:bg-accent/20" : "opacity-40 hover:opacity-100"
+                          saved
+                            ? "bg-accent/10 border-accent/30 text-accent hover:bg-accent/20"
+                            : "opacity-40 hover:opacity-100",
                         )}
                         onClick={() => loadLoadout(i)}
                         disabled={!saved}
@@ -1313,14 +1666,21 @@ export default function BuilderExperimentClient({
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
-              <div className="text-sm font-semibold">Character Stats (Sandbox)</div>
+              <div className="text-sm font-semibold">
+                Character Stats (Sandbox)
+              </div>
               <InfoTooltip content="Input your base S.P.E.C.I.A.L. (1-15) and select legendary perks to see their impact on Live totals. These stats represent your character's baseline before gear and mutations are applied." />
             </div>
-            
+
             <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7">
               {BUILDER_SPECIAL_KEYS.map((key) => (
-                <div key={key} className="flex flex-col items-center gap-1 rounded-lg border border-border/40 bg-background/30 p-1.5 transition-colors hover:border-accent/30 hover:bg-background/50">
-                  <div className="text-[10px] font-bold uppercase tracking-tighter text-foreground/40">{key}</div>
+                <div
+                  key={key}
+                  className="flex flex-col items-center gap-1 rounded-lg border border-border/40 bg-background/30 p-1.5 transition-colors hover:border-accent/30 hover:bg-background/50"
+                >
+                  <div className="text-[10px] font-bold uppercase tracking-tighter text-foreground/40">
+                    {key}
+                  </div>
                   <input
                     type="number"
                     min="1"
@@ -1328,10 +1688,13 @@ export default function BuilderExperimentClient({
                     className="h-7 w-full border-none bg-transparent p-0 text-center text-sm font-bold focus:ring-0"
                     value={payload.baseSpecial[key] || 1}
                     onChange={(e) => {
-                      const val = Math.max(1, Math.min(15, parseInt(e.target.value) || 1));
+                      const val = Math.max(
+                        1,
+                        Math.min(15, parseInt(e.target.value) || 1),
+                      );
                       setPayload((p) => ({
                         ...p,
-                        baseSpecial: { ...p.baseSpecial, [key]: val }
+                        baseSpecial: { ...p.baseSpecial, [key]: val },
                       }));
                       triggerBuilderAchievement("build_stats");
                     }}
@@ -1341,12 +1704,17 @@ export default function BuilderExperimentClient({
             </div>
 
             <div className="mt-4 border-t border-border/60 pt-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50 mb-2">Legendary Perk Cards</div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/50 mb-2">
+                Legendary Perk Cards
+              </div>
               <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                 {Object.entries(LEGENDARY_PERK_CARDS).map(([id, perk]) => {
                   const on = payload.legendaryPerkIds.includes(id);
                   return (
-                    <label key={id} className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 hover:bg-background/40">
+                    <label
+                      key={id}
+                      className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 hover:bg-background/40"
+                    >
                       <input
                         type="checkbox"
                         checked={on}
@@ -1361,69 +1729,84 @@ export default function BuilderExperimentClient({
                         }}
                         className="h-3.5 w-3.5 accent-accent"
                       />
-                      <span className="text-[11px] text-foreground/80">{perk.label}</span>
+                      <span className="text-[11px] text-foreground/80">
+                        {perk.label}
+                      </span>
                     </label>
                   );
                 })}
               </div>
             </div>
           </div>
-            {sessionStatus === "unauthenticated" ? (
-              <p className="mt-2 text-xs text-foreground/60">
-                <Link href="/auth/sign-in?callbackUrl=/build" className="text-accent underline">
-                  Sign in
-                </Link>{" "}
-                to persist learned bases.
-              </p>
-            ) : null}
-            <details className="mt-3 rounded-[var(--radius)] border border-border bg-background/40">
-              <summary className="cursor-pointer select-none px-3 py-2 text-xs font-semibold text-foreground/75">
-                All armor, power armor &amp; underarmor bases ({learnedTrackableCount}{" / "}{trackableTotal} learned)
-              </summary>
-              <div className="max-h-72 space-y-3 overflow-y-auto border-t border-border px-3 py-3">
-                {trackableGroups.map((group) => (
-                  <div key={`${group.kind}-${group.label}`}>
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">
-                      {group.label}
-                    </div>
-                    <ul className="mt-1.5 space-y-1.5">
-                      {group.pieces.map((g) => {
-                        const learned =
-                          g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)
-                            ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, g.id)
-                            : learnedBasePieceIds.has(g.id);
-                        const pending = pendingLearnedPieceId === g.id;
-                        return (
-                          <li
-                            key={g.id}
-                            className={cn(
-                              "summary-status-card flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius)] border text-sm",
-                              learned ? "opacity-100" : "opacity-95"
-                            )}
-                            data-status={learned ? "unlocked" : "locked"}
-                          >
-                            <span className="min-w-0 font-medium leading-snug">{formatBaseOptionLabel(g)}</span>
-                            <ProgressToggle
-                              unlocked={learned}
-                              disabled={!isSignedIn || pending}
-                              onToggle={() => void toggleLearnedBasePiece(g.id, !learned)}
-                              className="shrink-0 text-xs"
-                            />
-                          </li>
-                        );
-                      })}
-                    </ul>
+          {sessionStatus === "unauthenticated" ? (
+            <p className="mt-2 text-xs text-foreground/60">
+              <Link
+                href="/auth/sign-in?callbackUrl=/build"
+                className="text-accent underline"
+              >
+                Sign in
+              </Link>{" "}
+              to persist learned bases.
+            </p>
+          ) : null}
+          <details className="mt-3 rounded-[var(--radius)] border border-border bg-background/40">
+            <summary className="cursor-pointer select-none px-3 py-2 text-xs font-semibold text-foreground/75">
+              All armor, power armor &amp; underarmor bases (
+              {learnedTrackableCount}
+              {" / "}
+              {trackableTotal} learned)
+            </summary>
+            <div className="max-h-72 space-y-3 overflow-y-auto border-t border-border px-3 py-3">
+              {trackableGroups.map((group) => (
+                <div key={`${group.kind}-${group.label}`}>
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">
+                    {group.label}
                   </div>
-                ))}
-              </div>
-            </details>
-            {fullArmorSet ? (
-              <p className="mt-2 text-xs text-foreground/65">
-                Full set: chest, then arms, then legs — four legendary stars per piece (20 total). Pick material +
-                misc per slot; fifth-star legendaries are not in this sandbox yet.
-              </p>
-            ) : null}
-
+                  <ul className="mt-1.5 space-y-1.5">
+                    {group.pieces.map((g) => {
+                      const learned =
+                        g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)
+                          ? isPowerArmorTorsoRowLearned(
+                              learnedBasePieceIds,
+                              g.id,
+                            )
+                          : learnedBasePieceIds.has(g.id);
+                      const pending = pendingLearnedPieceId === g.id;
+                      return (
+                        <li
+                          key={g.id}
+                          className={cn(
+                            "summary-status-card flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius)] border text-sm",
+                            learned ? "opacity-100" : "opacity-95",
+                          )}
+                          data-status={learned ? "unlocked" : "locked"}
+                        >
+                          <span className="min-w-0 font-medium leading-snug">
+                            {formatBaseOptionLabel(g)}
+                          </span>
+                          <ProgressToggle
+                            unlocked={learned}
+                            disabled={!isSignedIn || pending}
+                            onToggle={() =>
+                              void toggleLearnedBasePiece(g.id, !learned)
+                            }
+                            className="shrink-0 text-xs"
+                          />
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </details>
+          {fullArmorSet ? (
+            <p className="mt-2 text-xs text-foreground/65">
+              Full set: chest, then arms, then legs — four legendary stars per
+              piece (20 total). Pick material + misc per slot; fifth-star
+              legendaries are not in this sandbox yet.
+            </p>
+          ) : null}
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
@@ -1432,7 +1815,8 @@ export default function BuilderExperimentClient({
             </div>
             {piece.kind === "powerArmor" && (
               <p className="mt-2 rounded-[var(--radius)] bg-accent/5 px-2 py-1.5 text-[10px] font-medium leading-snug text-accent/90 border border-accent/15">
-                Note: Underarmor stats are ignored while Power Armor is selected (it is automatically unequipped in-game).
+                Note: Underarmor stats are ignored while Power Armor is selected
+                (it is automatically unequipped in-game).
               </p>
             )}
             <div className="mt-3 grid gap-3 md:grid-cols-3">
@@ -1442,7 +1826,10 @@ export default function BuilderExperimentClient({
                   className="mt-1 h-10 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
                   value={payload.underarmor.shellId}
                   onChange={(e) =>
-                    setPayload((p) => ({ ...p, underarmor: { ...p.underarmor, shellId: e.target.value } }))
+                    setPayload((p) => ({
+                      ...p,
+                      underarmor: { ...p.underarmor, shellId: e.target.value },
+                    }))
                   }
                 >
                   {UNDERARMOR_SHELLS.map((o) => (
@@ -1460,7 +1847,11 @@ export default function BuilderExperimentClient({
                   onChange={(e) =>
                     setPayload((p) => ({
                       ...p,
-                      underarmor: { ...p.underarmor, liningId: e.target.value === "none" ? null : e.target.value }
+                      underarmor: {
+                        ...p.underarmor,
+                        liningId:
+                          e.target.value === "none" ? null : e.target.value,
+                      },
                     }))
                   }
                 >
@@ -1479,7 +1870,11 @@ export default function BuilderExperimentClient({
                   onChange={(e) =>
                     setPayload((p) => ({
                       ...p,
-                      underarmor: { ...p.underarmor, styleId: e.target.value === "none" ? null : e.target.value }
+                      underarmor: {
+                        ...p.underarmor,
+                        styleId:
+                          e.target.value === "none" ? null : e.target.value,
+                      },
                     }))
                   }
                 >
@@ -1493,39 +1888,48 @@ export default function BuilderExperimentClient({
             </div>
           </div>
 
-
-
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
               <div className="text-sm font-semibold">Stars</div>
-              <InfoTooltip content={
-                starsDisabled 
-                  ? (piece.kind === "underarmor" 
-                      ? "Underarmor uses linings and styles only. Switch to armor, PA, or a weapon to plan legendary stars." 
-                      : "PA helmets don't use legendary stars. Plan modifications under 'Helmet crafting' instead.")
-                  : `Legendary planning for ${baseStarsContextLabel}. ${fullArmorSet ? "Each body slot below is part of this set." : "Four stars apply to this base only."}`
-              } />
+              <InfoTooltip
+                content={
+                  starsDisabled
+                    ? piece.kind === "underarmor"
+                      ? "Underarmor uses linings and styles only. Switch to armor, PA, or a weapon to plan legendary stars."
+                      : "PA helmets don't use legendary stars. Plan modifications under 'Helmet crafting' instead."
+                    : `Legendary planning for ${baseStarsContextLabel}. ${fullArmorSet ? "Each body slot below is part of this set." : "Four stars apply to this base only."}`
+                }
+              />
             </div>
 
             {isMultiPiece ? (
               <div className="mt-3 space-y-4">
                 {multiPieceSlotLabels.map((slotLabel, pieceIndex) => {
-                  const isEquipped = piece.kind === "powerArmor" ? payload.powerArmorPiecesEquipped[pieceIndex] : true;
-                  const isPAHelmet = piece.kind === "powerArmor" && pieceIndex === 0;
+                  const isEquipped =
+                    piece.kind === "powerArmor"
+                      ? payload.powerArmorPiecesEquipped[pieceIndex]
+                      : true;
+                  const isPAHelmet =
+                    piece.kind === "powerArmor" && pieceIndex === 0;
 
                   return (
                     <div
                       key={slotLabel}
                       className={cn(
                         "rounded-[var(--radius)] border border-border bg-background/40 p-3 transition-opacity",
-                        !isEquipped && "opacity-50"
+                        !isEquipped && "opacity-50",
                       )}
                     >
                       <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-foreground/70">
                         <div>
                           {slotLabel}
                           <span className="mt-0.5 block text-[10px] font-normal normal-case text-foreground/50">
-                            {formatBaseOptionLabel(piece)} · {isEquipped ? (piece.kind === "powerArmor" ? "modifications" : "material & misc") : "NOT EQUIPPED"}
+                            {formatBaseOptionLabel(piece)} ·{" "}
+                            {isEquipped
+                              ? piece.kind === "powerArmor"
+                                ? "modifications"
+                                : "material & misc"
+                              : "NOT EQUIPPED"}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1535,9 +1939,21 @@ export default function BuilderExperimentClient({
                               size="sm"
                               className="h-7 text-[10px] font-normal text-accent hover:text-accent/80"
                               onClick={() => {
-                                const next = [...payload.powerArmorPiecesEquipped] as unknown as [boolean, boolean, boolean, boolean, boolean, boolean];
+                                const next = [
+                                  ...payload.powerArmorPiecesEquipped,
+                                ] as unknown as [
+                                  boolean,
+                                  boolean,
+                                  boolean,
+                                  boolean,
+                                  boolean,
+                                  boolean,
+                                ];
                                 next[pieceIndex] = true;
-                                setPayload(p => ({ ...p, powerArmorPiecesEquipped: next }));
+                                setPayload((p) => ({
+                                  ...p,
+                                  powerArmorPiecesEquipped: next,
+                                }));
                               }}
                             >
                               Equip
@@ -1550,7 +1966,9 @@ export default function BuilderExperimentClient({
                               className="h-7 text-[10px] font-normal text-foreground/40 hover:text-destructive"
                               onClick={() => clearPiece(pieceIndex)}
                             >
-                              {piece.kind === "powerArmor" ? "Unequip" : "Clear This Piece"}
+                              {piece.kind === "powerArmor"
+                                ? "Unequip"
+                                : "Clear This Piece"}
                             </Button>
                           )}
                         </div>
@@ -1558,14 +1976,30 @@ export default function BuilderExperimentClient({
 
                       {isEquipped && (
                         <>
-                          <div className={cn("mt-2 grid gap-2", piece.kind === "powerArmor" ? "grid-cols-1" : "sm:grid-cols-2")}>
+                          <div
+                            className={cn(
+                              "mt-2 grid gap-2",
+                              piece.kind === "powerArmor"
+                                ? "grid-cols-1"
+                                : "sm:grid-cols-2",
+                            )}
+                          >
                             {piece.kind !== "powerArmor" && (
                               <label className="text-xs text-foreground/60">
                                 Material
                                 <select
                                   className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                                  value={payload.armorPieceCrafting[pieceIndex]?.materialModId ?? "none"}
-                                  onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
+                                  value={
+                                    payload.armorPieceCrafting[pieceIndex]
+                                      ?.materialModId ?? "none"
+                                  }
+                                  onChange={(e) =>
+                                    setArmorCraftingField(
+                                      pieceIndex,
+                                      "materialModId",
+                                      e.target.value,
+                                    )
+                                  }
                                 >
                                   {ARMOR_MATERIAL_MODS.map((o) => (
                                     <option key={o.id} value={o.id}>
@@ -1579,10 +2013,23 @@ export default function BuilderExperimentClient({
                               Misc
                               <select
                                 className="mt-1 h-9 w-full rounded-[var(--radius)] border border-border bg-background px-2 text-sm"
-                                value={payload.armorPieceCrafting[pieceIndex]?.miscModId ?? "none"}
-                                onChange={(e) => setArmorCraftingField(pieceIndex, "miscModId", e.target.value)}
+                                value={
+                                  payload.armorPieceCrafting[pieceIndex]
+                                    ?.miscModId ?? "none"
+                                }
+                                onChange={(e) =>
+                                  setArmorCraftingField(
+                                    pieceIndex,
+                                    "miscModId",
+                                    e.target.value,
+                                  )
+                                }
                               >
-                                {listArmorMiscModOptions(piece.armorSetKey ?? null, pieceIndex, { powerArmor: piece.kind === "powerArmor" }).map((o) => (
+                                {listArmorMiscModOptions(
+                                  piece.armorSetKey ?? null,
+                                  pieceIndex,
+                                  { powerArmor: piece.kind === "powerArmor" },
+                                ).map((o) => (
                                   <option key={o.id} value={o.id}>
                                     {o.label}
                                   </option>
@@ -1598,24 +2045,44 @@ export default function BuilderExperimentClient({
                           ) : (
                             <div className="mt-3 grid gap-2">
                               {SLOT_LABELS.map((label, starIndex) => {
-                                const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
-                                const mod = id ? mods.find((m) => m.id === id) : null;
+                                const id =
+                                  payload.armorLegendaryModIds[pieceIndex]![
+                                    starIndex
+                                  ];
+                                const mod = id
+                                  ? mods.find((m) => m.id === id)
+                                  : null;
                                 return (
                                   <div
                                     key={`${pieceIndex}-${starIndex}`}
                                     className="flex flex-col gap-2 rounded-[var(--radius)] border border-border bg-background/50 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
                                   >
                                     <div className="min-w-0 flex-1">
-                                      <div className="text-xs font-medium text-foreground/60">{label}</div>
-                                      <div className="mt-0.5 text-sm font-medium leading-snug">{mod?.name ?? "—"}</div>
-                                      {mod ? <LegendaryModDetailFootprint mod={mod} piece={piece} /> : null}
+                                      <div className="text-xs font-medium text-foreground/60">
+                                        {label}
+                                      </div>
+                                      <div className="mt-0.5 text-sm font-medium leading-snug">
+                                        {mod?.name ?? "—"}
+                                      </div>
+                                      {mod ? (
+                                        <LegendaryModDetailFootprint
+                                          mod={mod}
+                                          piece={piece}
+                                        />
+                                      ) : null}
                                     </div>
                                     <div className="flex shrink-0 gap-2 sm:pt-1">
                                       <Button
                                         type="button"
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => setActivePick({ scope: "armorSet", pieceIndex, starIndex })}
+                                        onClick={() =>
+                                          setActivePick({
+                                            scope: "armorSet",
+                                            pieceIndex,
+                                            starIndex,
+                                          })
+                                        }
                                       >
                                         Pick
                                       </Button>
@@ -1623,7 +2090,13 @@ export default function BuilderExperimentClient({
                                         type="button"
                                         size="sm"
                                         variant="ghost"
-                                        onClick={() => clearStarSlot("armorSet", pieceIndex, starIndex)}
+                                        onClick={() =>
+                                          clearStarSlot(
+                                            "armorSet",
+                                            pieceIndex,
+                                            starIndex,
+                                          )
+                                        }
                                       >
                                         Clear
                                       </Button>
@@ -1644,12 +2117,19 @@ export default function BuilderExperimentClient({
             {showSingleStars ? (
               <div className="mt-3 rounded-[var(--radius)] border border-border bg-background/40 p-3">
                 <div className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
-                  {piece.kind === "weapon" ? "Weapon" : piece.kind === "powerArmor" ? "Power armor" : "Armor"}
+                  {piece.kind === "weapon"
+                    ? "Weapon"
+                    : piece.kind === "powerArmor"
+                      ? "Power armor"
+                      : "Armor"}
                 </div>
                 <p className="mt-1 text-xs text-foreground/55">
                   Four legendary stars on{" "}
-                  <span className="font-medium text-foreground/75">{formatBaseOptionLabel(piece)}</span> — the right
-                  panel reflects this base plus your underarmor stack.
+                  <span className="font-medium text-foreground/75">
+                    {formatBaseOptionLabel(piece)}
+                  </span>{" "}
+                  — the right panel reflects this base plus your underarmor
+                  stack.
                 </p>
                 <div className="mt-3 grid gap-2">
                   {SLOT_LABELS.map((label, index) => {
@@ -1661,12 +2141,24 @@ export default function BuilderExperimentClient({
                         className="flex flex-col gap-2 rounded-[var(--radius)] border border-border bg-background/50 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
                       >
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs font-medium text-foreground/60">{label}</div>
-                          <div className="mt-0.5 text-sm font-medium leading-snug">{mod?.name ?? "—"}</div>
-                          {mod ? <LegendaryModDetailFootprint mod={mod} piece={piece} /> : null}
-                          {payload.ghoul && mod && isGhoulDiscouragedLegendarySlug(mod.slug) ? (
+                          <div className="text-xs font-medium text-foreground/60">
+                            {label}
+                          </div>
+                          <div className="mt-0.5 text-sm font-medium leading-snug">
+                            {mod?.name ?? "—"}
+                          </div>
+                          {mod ? (
+                            <LegendaryModDetailFootprint
+                              mod={mod}
+                              piece={piece}
+                            />
+                          ) : null}
+                          {payload.ghoul &&
+                          mod &&
+                          isGhoulDiscouragedLegendarySlug(mod.slug) ? (
                             <p className="mt-1 text-[10px] leading-snug text-[color:color-mix(in_srgb,var(--color-warning)_75%,var(--foreground))]">
-                              Off-meta for typical Ghoul builds — kept so you can compare numbers anyway.
+                              Off-meta for typical Ghoul builds — kept so you
+                              can compare numbers anyway.
                             </p>
                           ) : null}
                         </div>
@@ -1675,7 +2167,12 @@ export default function BuilderExperimentClient({
                             type="button"
                             size="sm"
                             variant="outline"
-                            onClick={() => setActivePick({ scope: "single", starIndex: index })}
+                            onClick={() =>
+                              setActivePick({
+                                scope: "single",
+                                starIndex: index,
+                              })
+                            }
                           >
                             Pick
                           </Button>
@@ -1683,7 +2180,9 @@ export default function BuilderExperimentClient({
                             type="button"
                             size="sm"
                             variant="ghost"
-                            onClick={() => clearStarSlot("single", undefined, index)}
+                            onClick={() =>
+                              clearStarSlot("single", undefined, index)
+                            }
                           >
                             Clear
                           </Button>
@@ -1695,7 +2194,6 @@ export default function BuilderExperimentClient({
               </div>
             ) : null}
           </div>
-
 
           <Dialog
             open={activePick !== null}
@@ -1709,21 +2207,32 @@ export default function BuilderExperimentClient({
             <DialogContent
               className={cn(
                 "builder-mod-picker flex max-h-[min(94vh,56rem)] flex-col gap-0",
-                isCompactDensity ? "max-w-xl p-3 sm:p-4" : "max-w-2xl p-5 sm:p-6"
+                isCompactDensity
+                  ? "max-w-xl p-3 sm:p-4"
+                  : "max-w-2xl p-5 sm:p-6",
               )}
             >
-              <DialogHeader className={cn("shrink-0 pr-8", isCompactDensity && "space-y-1")}>
-                <DialogTitle className={cn(isCompactDensity ? "text-sm" : "text-base")}>
-                  {activePick ? `Choose ${activePickLabel(activePick, baseStarsContextLabel)}` : "Choose mod"}
+              <DialogHeader
+                className={cn("shrink-0 pr-8", isCompactDensity && "space-y-1")}
+              >
+                <DialogTitle
+                  className={cn(isCompactDensity ? "text-sm" : "text-base")}
+                >
+                  {activePick
+                    ? `Choose ${activePickLabel(activePick, baseStarsContextLabel)}`
+                    : "Choose mod"}
                 </DialogTitle>
-                <DialogDescription className={cn(isCompactDensity && "text-xs leading-snug")}>
+                <DialogDescription
+                  className={cn(isCompactDensity && "text-xs leading-snug")}
+                >
                   {isCompactDensity
                     ? "Search, then tap a row. Hover a compact row for full description."
                     : "Search your catalog; rows use the same unlock colors as All Effects when this mod maps to a tracker tier. Mods with no modeled resists or SPECIAL still work here — details appear under each row."}
                   {payload.ghoul ? (
                     <span className="mt-1 block text-[11px] text-[color:color-mix(in_srgb,var(--color-warning)_80%,var(--foreground))]">
-                      Ghoul build: hunger{"/"}thirst rows follow playable Ghoul rules; Bloodied{" / "}Unyielding stay pickable
-                      with an off-meta note.
+                      Ghoul build: hunger{"/"}thirst rows follow playable Ghoul
+                      rules; Bloodied{" / "}Unyielding stay pickable with an
+                      off-meta note.
                     </span>
                   ) : null}
                 </DialogDescription>
@@ -1738,20 +2247,26 @@ export default function BuilderExperimentClient({
                 />
               </div>
               {slotQuery.trim() !== deferredSlotQuery.trim() ? (
-                <p className="mt-1 text-[11px] text-foreground/45">Updating results…</p>
+                <p className="mt-1 text-[11px] text-foreground/45">
+                  Updating results…
+                </p>
               ) : null}
               <div
                 className={cn(
                   "builder-mod-picker-scroll mt-2 min-h-[min(32vh,14rem)] flex-1 overflow-y-auto overscroll-y-contain pr-1 [scrollbar-gutter:stable]",
                   isCompactDensity
                     ? "max-h-[min(74vh,30rem)] space-y-1 sm:max-h-[min(76vh,32rem)]"
-                    : "max-h-[min(70vh,38rem)] space-y-2 sm:max-h-[min(72vh,40rem)] min-h-[min(36vh,18rem)]"
+                    : "max-h-[min(70vh,38rem)] space-y-2 sm:max-h-[min(72vh,40rem)] min-h-[min(36vh,18rem)]",
                 )}
               >
                 {piece.kind === "underarmor" ? (
-                  <div className="text-foreground/60">No compatible mods for underarmor.</div>
+                  <div className="text-foreground/60">
+                    No compatible mods for underarmor.
+                  </div>
                 ) : optionsForActivePick.length === 0 ? (
-                  <div className="text-foreground/60">No compatible mods for this slot and base.</div>
+                  <div className="text-foreground/60">
+                    No compatible mods for this slot and base.
+                  </div>
                 ) : (
                   optionsForActivePick.map((m) => (
                     <ModPickerOption
@@ -1783,8 +2298,18 @@ export default function BuilderExperimentClient({
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="text-sm font-semibold">R.O.L.L. link</div>
-            <Input className="mt-2" value={shareTitle} onChange={(e) => setShareTitle(e.target.value)} />
-            <Button type="button" className="mt-3" size="sm" onClick={shareBuild} disabled={shareBusy}>
+            <Input
+              className="mt-2"
+              value={shareTitle}
+              onChange={(e) => setShareTitle(e.target.value)}
+            />
+            <Button
+              type="button"
+              className="mt-3"
+              size="sm"
+              onClick={shareBuild}
+              disabled={shareBusy}
+            >
               {shareBusy ? "Saving…" : "Publish share link"}
             </Button>
             {shareResult?.startsWith(String.fromCharCode(47)) ? (
@@ -1794,7 +2319,9 @@ export default function BuilderExperimentClient({
                 </Link>
               </div>
             ) : shareResult ? (
-              <div className="mt-2 text-sm text-[color:var(--color-warning)]">{shareResult}</div>
+              <div className="mt-2 text-sm text-[color:var(--color-warning)]">
+                {shareResult}
+              </div>
             ) : null}
           </div>
         </div>
@@ -1806,7 +2333,9 @@ export default function BuilderExperimentClient({
               <InfoTooltip content="Drives R.O.L.L. Live totals including species, sandbox mutations, and serum-style penalty toggles. Addictions, food buffs, and temporary consumables are currently out of scope." />
             </div>
             <div className="mt-4 space-y-2 border-t border-border pt-3">
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Species{" / "}rules</div>
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">
+                Species{" / "}rules
+              </div>
               <label className="flex cursor-pointer items-start gap-2 text-xs text-foreground/75">
                 <input
                   type="checkbox"
@@ -1815,17 +2344,22 @@ export default function BuilderExperimentClient({
                     const next = e.target.checked;
                     setPayload((p) => {
                       const base = { ...p, ghoul: next };
-                      if (next && mods.length > 0) return stripGhoulBlockedLegendarySelections(base, mods);
+                      if (next && mods.length > 0)
+                        return stripGhoulBlockedLegendarySelections(base, mods);
                       return base;
                     });
                   }}
                   className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]"
                 />
                 <span>
-                  <span className="font-medium text-foreground/85">Ghoul build</span>
+                  <span className="font-medium text-foreground/85">
+                    Ghoul build
+                  </span>
                   <span className="block text-[11px] text-foreground/60">
-                    Playable Ghoul (Ghoul Within): hunger{"/"}thirst legendaries dropped from math; RR on gear still
-                    stacks; CHA includes −10 vs human; Bloodied{" / "}Unyielding stay pickable with warnings.
+                    Playable Ghoul (Ghoul Within): hunger{"/"}thirst legendaries
+                    dropped from math; RR on gear still stacks; CHA includes −10
+                    vs human; Bloodied{" / "}Unyielding stay pickable with
+                    warnings.
                   </span>
                 </span>
               </label>
@@ -1837,52 +2371,64 @@ export default function BuilderExperimentClient({
                 </ul>
               ) : null}
             </div>
-              <div className="flex items-center gap-2">
-                <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Mutations</div>
-                <InfoTooltip content="Mutation benefits are scaled automatically if your N&D import includes 'Strange in Numbers'. Serum toggle drops downsides only." />
+            <div className="flex items-center gap-2">
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">
+                Mutations
               </div>
-              <div className="max-h-44 space-y-1 overflow-y-auto pr-1 sm:columns-2 sm:gap-x-3">
-                {SANDBOX_MUTATIONS.map((m) => {
-                  const on = payload.mutationIds.includes(m.id);
-                  return (
-                    <label
-                      key={m.id}
-                      className="mb-1 flex cursor-pointer items-start gap-2 break-inside-avoid rounded-[var(--radius)] px-0.5 py-0.5 text-[11px] text-foreground/75 hover:bg-background/50"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={on}
-                        onChange={() => {
-                          setPayload((p) => {
-                            const next = on ? p.mutationIds.filter((x) => x !== m.id) : [...p.mutationIds, m.id];
-                            return { ...p, mutationIds: next };
-                          });
-                        }}
-                        className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[var(--accent)]"
-                      />
-                      <span>{m.label}</span>
-                    </label>
-                  );
-                })}
-              </div>
-              <div className="flex items-center justify-between gap-3 border-t border-border pt-2">
-                <div className="min-w-0">
-                  <div className="text-[11px] font-medium text-foreground/85">Ignore mutation penalties</div>
-                  <p className="text-[10px] leading-snug text-foreground/55">
-                    Serum-style: bonuses only; drop modeled downsides.
-                  </p>
+              <InfoTooltip content="Mutation benefits are scaled automatically if your N&D import includes 'Strange in Numbers'. Serum toggle drops downsides only." />
+            </div>
+            <div className="max-h-44 space-y-1 overflow-y-auto pr-1 sm:columns-2 sm:gap-x-3">
+              {SANDBOX_MUTATIONS.map((m) => {
+                const on = payload.mutationIds.includes(m.id);
+                return (
+                  <label
+                    key={m.id}
+                    className="mb-1 flex cursor-pointer items-start gap-2 break-inside-avoid rounded-[var(--radius)] px-0.5 py-0.5 text-[11px] text-foreground/75 hover:bg-background/50"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={on}
+                      onChange={() => {
+                        setPayload((p) => {
+                          const next = on
+                            ? p.mutationIds.filter((x) => x !== m.id)
+                            : [...p.mutationIds, m.id];
+                          return { ...p, mutationIds: next };
+                        });
+                      }}
+                      className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[var(--accent)]"
+                    />
+                    <span>{m.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <div className="flex items-center justify-between gap-3 border-t border-border pt-2">
+              <div className="min-w-0">
+                <div className="text-[11px] font-medium text-foreground/85">
+                  Ignore mutation penalties
                 </div>
-                <Switch
-                  checked={payload.ignoreMutationPenalties}
-                  onCheckedChange={(checked) => setPayload((p) => ({ ...p, ignoreMutationPenalties: checked }))}
-                  aria-label="Ignore mutation penalties"
-                />
+                <p className="text-[10px] leading-snug text-foreground/55">
+                  Serum-style: bonuses only; drop modeled downsides.
+                </p>
               </div>
+              <Switch
+                checked={payload.ignoreMutationPenalties}
+                onCheckedChange={(checked) =>
+                  setPayload((p) => ({
+                    ...p,
+                    ignoreMutationPenalties: checked,
+                  }))
+                }
+                aria-label="Ignore mutation penalties"
+              />
             </div>
           </div>
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
-              <div className="text-sm font-semibold">Nukes &amp; Dragons import</div>
+              <div className="text-sm font-semibold">
+                Nukes &amp; Dragons import
+              </div>
               <InfoTooltip content="Paste a share URL from nukesdragons.com to merge perk impacts into your Live totals. This covers carry weight, resists, and core stat hints." />
             </div>
             <Input
@@ -1934,7 +2480,9 @@ export default function BuilderExperimentClient({
               </Button>
             </div>
             {ndImportError ? (
-              <p className="mt-2 text-xs text-[color:var(--color-warning)]">{ndImportError}</p>
+              <p className="mt-2 text-xs text-[color:var(--color-warning)]">
+                {ndImportError}
+              </p>
             ) : null}
             {ndImport ? (
               <div className="mt-2 space-y-1.5 text-[11px] leading-snug text-foreground/65">
@@ -1943,7 +2491,9 @@ export default function BuilderExperimentClient({
                 ))}
                 {ndImport.unknownCodes.length > 0 ? (
                   <p>
-                    <span className="font-medium text-foreground/75">Codes not in R.O.L.L. table yet:</span>{" "}
+                    <span className="font-medium text-foreground/75">
+                      Codes not in R.O.L.L. table yet:
+                    </span>{" "}
                     {ndImport.unknownCodes.join(", ")}
                   </p>
                 ) : null}
@@ -1951,49 +2501,65 @@ export default function BuilderExperimentClient({
             ) : null}
           </div>
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            <div className="text-sm font-semibold">
-              {showSplitTotalsPanel ? (
-                <>Live totals · {formatBaseOptionLabel(piece)}</>
-              ) : (
-                <>
-                  Live totals
-                  {piece.kind === "underarmor" ? " · Underarmor" : null}
-                </>
-              )}
-            </div>
-            <p className="mt-1 text-xs text-foreground/60">
-              <div className="mt-1 flex items-start gap-2 rounded-md bg-accent/5 p-2 text-xs text-foreground/70 border border-accent/10">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent/70" />
-              <p className="leading-relaxed">
-                {fullArmorSet ? (
-                  <>
-                    <span className="font-semibold text-foreground/90">{baseStarsContextLabel}</span> full set logic: First value is base resists + material + misc. The <span className="font-semibold text-accent/80">(+…)</span> adds stars, underarmor, mutations, and imports.
-                  </>
-                ) : piece.kind === "weapon" ? (
-                  <>
-                    Base resists are 0 for weapons. All bonuses from stars, perks, and mutations land in the <span className="font-semibold text-accent/80">(+…)</span> delta.
-                  </>
-                ) : isPowerArmorTorsoBasePiece(piece) ? (
-                  <>
-                    First value includes chassis, toggled parts, frame stats, and crafting. Stars and other layers add to the <span className="font-semibold text-accent/80">(+…)</span> delta.
-                  </>
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">
+                {showSplitTotalsPanel ? (
+                  <>Live totals · {formatBaseOptionLabel(piece)}</>
                 ) : (
                   <>
-                    First value is base piece + crafting. All other bonuses (stars, underarmor, etc.) roll into the <span className="font-semibold text-accent/80">(+…)</span> delta.
+                    Live totals
+                    {piece.kind === "underarmor" ? " · Underarmor" : null}
                   </>
                 )}
-              </p>
+              </div>
+              <InfoTooltip content="Each row calculates: piece + crafting (+ frame on PA) then (+delta) for legendary stars, underarmor, mutations, and N&D imports. A single number means no extra bonuses exist for that stat." />
             </div>
-            </p>
+            <div className="mt-1 text-xs text-foreground/60">
+              <div className="mt-1 flex items-start gap-2 rounded-md bg-accent/5 p-2 text-xs text-foreground/70 border border-accent/10">
+                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent/70" />
+                <div className="leading-relaxed">
+                  {fullArmorSet ? (
+                    <>
+                      <span className="font-semibold text-foreground/90">
+                        {baseStarsContextLabel}
+                      </span>{" "}
+                      full set logic: First value is base resists + material +
+                      misc. The{" "}
+                      <span className="font-semibold text-accent/80">(+…)</span>{" "}
+                      adds stars, underarmor, mutations, and imports.
+                    </>
+                  ) : piece.kind === "weapon" ? (
+                    <>
+                      Base resists are 0 for weapons. All bonuses from stars,
+                      perks, and mutations land in the{" "}
+                      <span className="font-semibold text-accent/80">(+…)</span>{" "}
+                      delta.
+                    </>
+                  ) : isPowerArmorTorsoBasePiece(piece) ? (
+                    <>
+                      First value includes chassis, toggled parts, frame stats,
+                      and crafting. Stars and other layers add to the{" "}
+                      <span className="font-semibold text-accent/80">(+…)</span>{" "}
+                      delta.
+                    </>
+                  ) : (
+                    <>
+                      First value is base piece + crafting. All other bonuses
+                      (stars, underarmor, etc.) roll into the{" "}
+                      <span className="font-semibold text-accent/80">(+…)</span>{" "}
+                      delta.
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
             <p className="mt-1 text-xs text-foreground/50">
-              Each row is <span className="font-medium text-foreground/70">piece + crafting (+ frame on PA)</span>, then{" "}
-              <span className="font-medium text-foreground/70">(+delta)</span> for legendary stars plus underarmor{" / "}
-              mutations{" / "}N&amp;D, then <span className="font-medium text-foreground/70">= total</span>. A single number
-              means there is nothing in that (+…) bucket for that stat.
               {payload.ghoul
-                ? " Ghoul caps some legendaries and applies −10 effective CHA in this sandbox."
-                : null}{" "}
-              {ndPerkLayer ? "Imported N&D perk codes are folded into the (+…) portion where we model them." : null}
+                ? "Ghoul caps some legendaries and applies −10 effective CHA in this sandbox. "
+                : null}
+              {ndPerkLayer
+                ? "Imported N&D perk codes are folded into the (+…) portion where we model them."
+                : null}
             </p>
 
             <BuilderTotalsGrid
@@ -2003,20 +2569,34 @@ export default function BuilderExperimentClient({
               presentation={totalsPresentation}
             />
             <div className="mt-4 border-t border-border/60 pt-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/65">Effects</div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-foreground/65">
+                Effects
+              </div>
               {equippedLegendaryBenchLines.length === 0 ? (
-                <p className="mt-2 text-xs text-foreground/55">No legendary stars selected on this base.</p>
+                <p className="mt-2 text-xs text-foreground/55">
+                  No legendary stars selected on this base.
+                </p>
               ) : (
                 <ul className="mt-2 space-y-2.5">
                   {equippedLegendaryBenchLines.map(({ mod, benchLabel }) => {
                     const descRaw = mod.description?.trim() ?? "";
-                    const desc = sandboxLegendaryDescription(descRaw, piece) || descRaw;
+                    const desc =
+                      sandboxLegendaryDescription(descRaw, piece) || descRaw;
                     return (
-                      <li key={`${benchLabel}-${mod.id}`} className="text-xs leading-snug">
-                        <div className="font-medium text-foreground/85">{mod.name}</div>
-                        <div className="text-[11px] text-foreground/50">{benchLabel}</div>
+                      <li
+                        key={`${benchLabel}-${mod.id}`}
+                        className="text-xs leading-snug"
+                      >
+                        <div className="font-medium text-foreground/85">
+                          {mod.name}
+                        </div>
+                        <div className="text-[11px] text-foreground/50">
+                          {benchLabel}
+                        </div>
                         {desc ? (
-                          <p className="mt-0.5 text-foreground/60 line-clamp-3">{desc}</p>
+                          <p className="mt-0.5 text-foreground/60 line-clamp-3">
+                            {desc}
+                          </p>
                         ) : null}
                       </li>
                     );
@@ -2029,10 +2609,15 @@ export default function BuilderExperimentClient({
             <div className="text-sm font-semibold">Shopping list</div>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {shopping.lines.length === 0 ? (
-                <p className="text-xs text-foreground/50 italic">No legendary modules picked yet.</p>
+                <p className="text-xs text-foreground/50 italic">
+                  No legendary modules picked yet.
+                </p>
               ) : (
                 shopping.lines.map((line) => (
-                  <div key={line.label} className="flex items-center gap-1.5 rounded-full border border-border/60 bg-background/40 px-2.5 py-1 text-xs font-medium text-foreground/85">
+                  <div
+                    key={line.label}
+                    className="flex items-center gap-1.5 rounded-full border border-border/60 bg-background/40 px-2.5 py-1 text-xs font-medium text-foreground/85"
+                  >
                     <span className="text-accent font-bold">{line.count}×</span>
                     <span>{line.label}</span>
                   </div>
@@ -2042,8 +2627,8 @@ export default function BuilderExperimentClient({
           </div>
         </aside>
       </div>
-      <BuilderBetaGate 
-        open={showBetaPrompt} 
+      <BuilderBetaGate
+        open={showBetaPrompt}
         onAccept={() => {
           acceptBuilderBeta();
           setShowBetaPrompt(false);

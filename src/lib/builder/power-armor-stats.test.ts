@@ -21,8 +21,8 @@ describe("powerArmorPiecesEquipped", () => {
     expect(powerArmorInherentDamageReductionPercent(none)).toBe(0);
     expect(powerArmorInherentRadReductionPercent(none)).toBe(0);
 
-    expect(powerArmorInherentDamageReductionPercent(DEFAULT_POWER_ARMOR_PIECES_EQUIPPED)).toBe(42);
-    expect(powerArmorInherentRadReductionPercent(DEFAULT_POWER_ARMOR_PIECES_EQUIPPED)).toBe(90);
+    expect(powerArmorInherentDamageReductionPercent(DEFAULT_POWER_ARMOR_PIECES_EQUIPPED)).toBe(0);
+    expect(powerArmorInherentRadReductionPercent(DEFAULT_POWER_ARMOR_PIECES_EQUIPPED)).toBe(0);
   });
 
   it("sums chassis + toggled pieces (T-45 level 45 table + 60 chassis DR)", () => {
@@ -35,9 +35,9 @@ describe("powerArmorPiecesEquipped", () => {
       false,
       false
     ]);
-    // Chassis 60 + six pieces 54*5+90 = 420 (wiki armor-only total 360 + chassis 60).
-    expect(full!.dr).toBe(420);
-    expect(naked!.dr).toBe(60);
+    // Chassis 6 + six pieces (5+9+5+5+5+5) = 40 (Post-Backwoods overhaul stats).
+    expect(full!.dr).toBe(40);
+    expect(naked!.dr).toBe(6);
   });
 
   it("exposes frame STR/carry for aggregateEffectMath layers", () => {
