@@ -30,3 +30,15 @@ export async function getUserCharacters(userId: string) {
     orderBy: { createdAt: "asc" }
   });
 }
+
+export async function getUserGameAccounts(userId: string) {
+  return prisma.gameAccount.findMany({
+    where: { userId },
+    include: {
+      characters: {
+        orderBy: { createdAt: "asc" }
+      }
+    },
+    orderBy: { createdAt: "asc" }
+  });
+}
