@@ -12,16 +12,36 @@ export async function getActiveCharacterId(userId: string | undefined): Promise<
     return settings.activeCharacterId;
   }
 
-  // Fallback to first character
-  if (settings?.user?.characters?.[0]?.id) {
-    await prisma.userSettings.update({
+  // Check if any character already exists
+  const existingChar = await prisma.character.findFirst({
+    where: { userId },
+    orderBy: { createdAt: "asc" }
+  });
+
+  if (existingChar) {
+    await prisma.userSettings.upsert({
       where: { userId },
-      data: { activeCharacterId: settings.user.characters[0].id }
+      update: { activeCharacterId: existingChar.id },
+      create: { userId, activeCharacterId: existingChar.id }
     });
-    return settings.user.characters[0].id;
+    return existingChar.id;
   }
 
-  return undefined;
+  // Create a default character if literally none exist
+  const newChar = await prisma.character.create({
+    data: {
+      userId,
+      name: "Main Character"
+    }
+  });
+
+  await prisma.userSettings.upsert({
+    where: { userId },
+    update: { activeCharacterId: newChar.id },
+    create: { userId, activeCharacterId: newChar.id }
+  });
+
+  return newChar.id;
 }
 
 export async function getUserCharacters(userId: string) {
