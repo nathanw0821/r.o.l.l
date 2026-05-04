@@ -62,37 +62,31 @@ export class ImageProcessor {
   }
 
   /**
-   * Applies Grayscale, High Contrast, and Thresholding filters to a canvas.
-   * Optimized for Fallout 76 UI (Yellow/White text on dark backgrounds).
+   * Applies hardware-accelerated filters to the canvas.
+   * Optimized for Fallout 76 UI (varying polarities, high contrast).
    */
   applyFilters(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
+    // Save state
+    ctx.save();
+    
+    // Create a temporary canvas to hold the filtered result
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
 
-    for (let i = 0; i < data.length; i += 4) {
-      // More aggressive brightness boost to help with grayed-out text
-      // (RGB values for gray text in FO76 are typically ~100,100,100)
-      const r = Math.min(255, data[i] * 1.5);
-      const g = Math.min(255, data[i + 1] * 1.5);
-      const b = Math.min(255, data[i + 2] * 1.5);
+    // Apply high-contrast grayscale filter
+    // 300% contrast + 150% brightness helps lift grayed-out items 
+    // while keeping Tesseract's internal adaptive thresholding functional for the selected bar.
+    tempCtx.filter = 'grayscale(100%) contrast(300%) brightness(150%)';
+    tempCtx.drawImage(canvas, 0, 0);
 
-      // Standard grayscale conversion
-      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-      
-      // High Contrast + Thresholding
-      // Lowered threshold to 90 to capture grayed-out "unlocked but missing materials" text
-      const threshold = 90; 
-      
-      // Invert the result for Tesseract (Black text on White background)
-      const value = gray > threshold ? 0 : 255;
-
-      data[i] = value;     // Red
-      data[i + 1] = value; // Green
-      data[i + 2] = value; // Blue
-      // Alpha remains unchanged
-    }
-
-    ctx.putImageData(imageData, 0, 0);
+    // Clear original and draw filtered
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(tempCanvas, 0, 0);
+    
+    ctx.restore();
   }
 
   /**
