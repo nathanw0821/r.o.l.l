@@ -57,12 +57,14 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     density,
     scanlineMode,
     uiTone,
+    fontScale,
     setTheme,
     setAccent,
     setColorBlind,
     setDensity,
     setScanlineMode,
-    setUiTone
+    setUiTone,
+    setFontScale
   } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
   const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL ?? null;
@@ -623,6 +625,21 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 </button>
               ))}
             </div>
+          </div>
+          <div className="hub-group">
+            <div className="flex items-center justify-between text-xs text-foreground/60">
+              <span>Font Scale</span>
+              <span className="font-mono text-accent">{Math.round((fontScale || 1) * 100)}%</span>
+            </div>
+            <input
+              type="range"
+              min="0.8"
+              max="1.5"
+              step="0.05"
+              value={fontScale || 1}
+              onChange={(e) => setFontScale(parseFloat(e.target.value))}
+              className="mt-2 w-full accent-accent cursor-pointer"
+            />
           </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Navigation</div>
