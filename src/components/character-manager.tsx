@@ -142,6 +142,30 @@ export function CharacterManager({
     });
   };
 
+  const handleRename = async (id: string) => {
+    if (!editName.trim()) return;
+    startTransition(async () => {
+      try {
+        await renameCharacter({ id, name: editName.trim() });
+        setEditingId(null);
+        setEditName("");
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Failed to rename character");
+      }
+    });
+  };
+
+  const handleDeleteChar = async (id: string) => {
+    if (!window.confirm("Delete this character? This cannot be undone.")) return;
+    startTransition(async () => {
+      try {
+        await deleteCharacter(id);
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Failed to delete character");
+      }
+    });
+  };
+
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
       case "PC": return <Monitor className="h-3 w-3" />;
@@ -230,21 +254,56 @@ export function CharacterManager({
 
                 <div className="grid grid-cols-1 gap-2 pl-7">
                   {account.characters.map(char => (
-                    <button
-                      key={char.id}
-                      onClick={() => handleSelect(char)}
-                      className={cn(
-                        "flex items-center justify-between p-3 rounded-lg border transition-all text-left",
-                        char.id === activeCharacterId 
-                          ? "border-accent bg-accent/10 ring-1 ring-accent/20" 
-                          : "border-border/40 bg-panel/30 hover:border-accent/40 hover:bg-panel/50"
+                    <div key={char.id} className="group/char relative">
+                      {editingId === char.id ? (
+                        <div className="flex items-center gap-2 p-1">
+                          <Input 
+                            autoFocus
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleRename(char.id)}
+                            className="h-8 text-sm"
+                          />
+                          <Button size="sm" onClick={() => handleRename(char.id)} className="h-8 px-2"><Check className="h-3 w-3" /></Button>
+                          <Button variant="ghost" size="sm" onClick={() => setEditingId(null)} className="h-8 px-2"><X className="h-3 w-3" /></Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleSelect(char)}
+                            className={cn(
+                              "flex-1 flex items-center justify-between p-3 rounded-lg border transition-all text-left",
+                              char.id === activeCharacterId 
+                                ? "border-accent bg-accent/10 ring-1 ring-accent/20" 
+                                : "border-border/40 bg-panel/30 hover:border-accent/40 hover:bg-panel/50"
+                            )}
+                          >
+                            <span className={cn("text-sm font-medium", char.id === activeCharacterId ? "text-accent" : "text-foreground/80")}>
+                              {char.name}
+                            </span>
+                            {char.id === activeCharacterId && <Check className="h-4 w-4 text-accent" />}
+                          </button>
+                          <div className="flex flex-col gap-1 opacity-0 group-hover/char:opacity-100 transition-opacity pr-1">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => { setEditingId(char.id); setEditName(char.name); }}
+                              className="h-6 w-6 p-0 text-foreground/40 hover:text-accent"
+                            >
+                              <Edit2 className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleDeleteChar(char.id)}
+                              className="h-6 w-6 p-0 text-foreground/40 hover:text-destructive"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
                       )}
-                    >
-                      <span className={cn("text-sm font-medium", char.id === activeCharacterId ? "text-accent" : "text-foreground/80")}>
-                        {char.name}
-                      </span>
-                      {char.id === activeCharacterId && <Check className="h-4 w-4 text-accent" />}
-                    </button>
+                    </div>
                   ))}
                   
                   {account.characters.length < 5 && isCreatingChar !== account.id && (
@@ -280,18 +339,53 @@ export function CharacterManager({
                 <div className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/40">Unlinked Characters</div>
                 <div className="grid grid-cols-1 gap-2 pl-7">
                   {characters.filter(c => !c.gameAccountId).map(char => (
-                    <button
-                      key={char.id}
-                      onClick={() => handleSelect(char)}
-                      className={cn(
-                        "flex items-center justify-between p-3 rounded-lg border transition-all text-left border-border/40 bg-panel/30 hover:border-accent/40"
+                    <div key={char.id} className="group/char relative">
+                      {editingId === char.id ? (
+                        <div className="flex items-center gap-2 p-1">
+                          <Input 
+                            autoFocus
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleRename(char.id)}
+                            className="h-8 text-sm"
+                          />
+                          <Button size="sm" onClick={() => handleRename(char.id)} className="h-8 px-2"><Check className="h-3 w-3" /></Button>
+                          <Button variant="ghost" size="sm" onClick={() => setEditingId(null)} className="h-8 px-2"><X className="h-3 w-3" /></Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleSelect(char)}
+                            className={cn(
+                              "flex-1 flex items-center justify-between p-3 rounded-lg border transition-all text-left border-border/40 bg-panel/30 hover:border-accent/40"
+                            )}
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium">{char.name}</span>
+                              <span className="text-[10px] text-foreground/40 italic">Legacy / Unlinked</span>
+                            </div>
+                          </button>
+                          <div className="flex flex-col gap-1 opacity-0 group-hover/char:opacity-100 transition-opacity pr-1">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => { setEditingId(char.id); setEditName(char.name); }}
+                              className="h-6 w-6 p-0 text-foreground/40 hover:text-accent"
+                            >
+                              <Edit2 className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleDeleteChar(char.id)}
+                              className="h-6 w-6 p-0 text-foreground/40 hover:text-destructive"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
                       )}
-                    >
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">{char.name}</span>
-                        <span className="text-[10px] text-foreground/40 italic">Legacy / Unlinked</span>
-                      </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
               </div>

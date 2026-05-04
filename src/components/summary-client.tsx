@@ -449,7 +449,7 @@ export default function SummaryClient({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {tierOrder.map((tierLabel) => {
           const items = filteredRows.filter((row) => row.tier?.label === tierLabel);
           if (items.length === 0) return null;
