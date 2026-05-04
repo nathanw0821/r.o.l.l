@@ -416,15 +416,17 @@ export default function ScreenshotAssistClient({
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center rounded-[var(--radius)] border border-dashed border-border bg-panel/30 p-12 text-center">
         <Sparkles className="mb-4 h-12 w-12 text-accent/40" />
-        <h2 className="text-xl font-bold">Screenshot Assist Beta</h2>
-        <p className="mt-2 max-w-md text-foreground/60">
-          This tool is currently in experimental beta. Use screenshots from your in-game legendary crafting bench to sync your progress.
+        <h2 className="text-xl font-bold uppercase tracking-tight">S.C.A.N. Beta</h2>
+        <p className="mt-2 max-w-md text-foreground/60 text-sm">
+          Screen Capture & Analysis Network. Synchronize your learned mods directly from in-game screenshots using local-first OCR.
         </p>
         <Button onClick={() => setShowBetaGate(true)} className="mt-8">
           Access Beta Features
         </Button>
         <BuilderBetaGate 
           open={showBetaGate} 
+          title="Access S.C.A.N. Beta"
+          description="S.C.A.N. (Screen Capture & Analysis Network) uses local Tesseract OCR to read your legendary crafting bench. This feature is in active development."
           onAccept={() => { setShowBetaGate(false); acceptBeta(); }}
           onCancel={() => setShowBetaGate(false)}
         />
