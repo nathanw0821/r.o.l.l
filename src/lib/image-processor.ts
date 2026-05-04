@@ -62,17 +62,17 @@ export class ImageProcessor {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
+      // Boost brightness to help with grayed-out text
+      const r = Math.min(255, data[i] * 1.2);
+      const g = Math.min(255, data[i + 1] * 1.2);
+      const b = Math.min(255, data[i + 2] * 1.2);
 
       // Standard grayscale conversion
       const gray = 0.299 * r + 0.587 * g + 0.114 * b;
       
       // High Contrast + Thresholding
-      // Most FO76 UI text is bright, so we use a mid-high threshold to isolate it
-      const threshold = 180; 
+      // Lowered threshold from 180 to 120 to capture grayed-out "unlocked but missing materials" text
+      const threshold = 120; 
       const value = gray > threshold ? 255 : 0;
 
       data[i] = value;     // Red
