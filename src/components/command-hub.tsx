@@ -164,12 +164,28 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     setHubZonesOpen((current) => ({ ...current, [key]: !current[key] }));
   }
 
+  const searchInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
+        event.preventDefault();
+        setExpanded(true);
+        searchInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <div ref={hubRef} className={cn("command-hub", expanded && "command-hub--open")}>
       <div className="command-hub__bar">
         <div className="command-hub__search">
           <Search className="h-4 w-4 text-foreground/50" />
           <input
+            ref={searchInputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search effects, tiers, origins"
