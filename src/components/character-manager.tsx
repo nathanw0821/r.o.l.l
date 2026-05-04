@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useTransition } from "react";
 import { User, Plus, Edit2, Trash2, Check, X, Users, Monitor, Smartphone, Layout, Globe, Server } from "lucide-react";
 import { Button } from "@/components/ui/button";
