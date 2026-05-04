@@ -38,25 +38,28 @@ export function useBuilderBetaAccess(isAdmin: boolean) {
 export function BuilderBetaGate({
   open,
   onAccept,
-  onCancel
+  onCancel,
+  title = "Access B.U.I.L.D. Beta",
+  description = "This feature is experimental and uses ideas and inspiration from multiple community tools. Data and calculations should be taken with a grain of salt."
 }: {
   open: boolean;
   onAccept: () => void;
   onCancel: () => void;
+  title?: string;
+  description?: React.ReactNode;
 }) {
   return (
     <Dialog open={open} onOpenChange={(val) => { if (!val) onCancel(); }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Access B.U.I.L.D. Beta</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="space-y-4 pt-4 text-foreground/90">
-            <p>
-              This feature is experimental and uses ideas and inspiration from multiple community tools. 
-              Data and calculations should be taken with a grain of salt.
-            </p>
-            <p className="text-sm text-foreground/60">
-              By joining the beta, you'll gain access to the Battle Utility & Inventory Logistics Diagnostic tool.
-            </p>
+            <div className="space-y-4">
+              {typeof description === "string" ? <p>{description}</p> : description}
+              <p className="text-sm text-foreground/60">
+                By joining the beta, you'll gain access to the experimental diagnostics and logistics tools.
+              </p>
+            </div>
             <div className="flex justify-end gap-3 pt-2">
               <Button variant="outline" onClick={onCancel}>
                 No thanks
