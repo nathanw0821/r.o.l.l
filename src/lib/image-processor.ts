@@ -128,10 +128,22 @@ export class ImageProcessor {
 
         if (mode === 'dark') {
           // Pass 1: Target the dark list & faint gray text.
-          val = pixel > avg + 8 ? 0 : 255;
+          // Must be in a dark neighborhood (avg < 120). 
+          // Pixel must be noticeably brighter (+25) to strip antialiased halos and keep letters thin.
+          if (avg < 120 && pixel > avg + 25) {
+            val = 0;
+          } else {
+            val = 255;
+          }
         } else {
           // Pass 2: Target the yellow selection bar.
-          val = pixel < avg - 12 ? 0 : 255;
+          // Must be in a bright neighborhood (avg > 120).
+          // Pixel must be solid dark (< 100) to ignore the drop-shadows and keep the text crisp.
+          if (avg > 120 && pixel < 100) {
+            val = 0;
+          } else {
+            val = 255;
+          }
         }
 
         const idx = (y * width + x) * 4;
