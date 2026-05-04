@@ -51,25 +51,28 @@ export class ImageProcessor {
       await this.init(lang);
     }
 
-    const cloneCanvas = () => {
+    const passes = [
+      { mode: 'dark', threshold: 25 },   // Standard dark list
+      { mode: 'dark', threshold: 12 },   // Extra sensitive for faint gray text
+      { mode: 'yellow', threshold: 100 }, // Standard selection bar
+      { mode: 'yellow', threshold: 150 }  // Extra sensitive for thin fonts on yellow
+    ] as const;
+
+    const matches = new Set<string>();
+
+    const analyze = async (mode: 'dark' | 'yellow', threshold: number) => {
+      if (!this.worker) return;
+      
       const c = document.createElement('canvas');
       c.width = canvas.width;
       c.height = canvas.height;
       const ctx = c.getContext('2d');
-      if (ctx) ctx.drawImage(canvas, 0, 0);
-      return { c, ctx };
-    };
+      if (!ctx) return;
 
-    const pass1 = cloneCanvas();
-    if (pass1.ctx) this.applyFilterPass(pass1.c, pass1.ctx, 'dark');
-    
-    const pass2 = cloneCanvas();
-    if (pass2.ctx) this.applyFilterPass(pass2.c, pass2.ctx, 'yellow');
-
-    const matches = new Set<string>();
-
-    const analyze = async (c: HTMLCanvasElement) => {
-      const { text } = await this.processImage(c, lang);
+      ctx.drawImage(canvas, 0, 0);
+      this.applyFilterPass(c, ctx, mode, threshold);
+      
+      const { data: { text } } = await this.worker.recognize(c);
       const lines = text.split('\n');
 
       for (const line of lines) {
@@ -80,13 +83,15 @@ export class ImageProcessor {
       }
     };
 
-    await analyze(pass1.c);
-    await analyze(pass2.c);
+    // Run passes sequentially to avoid memory pressure, but collect all results
+    for (const pass of passes) {
+      await analyze(pass.mode, pass.threshold);
+    }
 
     return Array.from(matches);
   }
 
-  private applyFilterPass(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, mode: 'dark' | 'yellow') {
+  private applyFilterPass(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, mode: 'dark' | 'yellow', customThreshold: number) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     const len = data.length;
@@ -128,18 +133,16 @@ export class ImageProcessor {
 
         if (mode === 'dark') {
           // Pass 1: Target the dark list & faint gray text.
-          // Must be in a dark neighborhood (avg < 120). 
-          // Pixel must be noticeably brighter (+25) to strip antialiased halos and keep letters thin.
-          if (avg < 120 && pixel > avg + 25) {
+          // customThreshold here represents the "minimum brightness jump" above average
+          if (avg < 120 && pixel > avg + customThreshold) {
             val = 0;
           } else {
             val = 255;
           }
         } else {
           // Pass 2: Target the yellow selection bar.
-          // Must be in a bright neighborhood (avg > 120).
-          // Pixel must be solid dark (< 100) to ignore the drop-shadows and keep the text crisp.
-          if (avg > 120 && pixel < 100) {
+          // customThreshold here represents the "maximum brightness allowed" for text
+          if (avg > 120 && pixel < customThreshold) {
             val = 0;
           } else {
             val = 255;
