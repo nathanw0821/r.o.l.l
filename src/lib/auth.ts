@@ -1,4 +1,4 @@
-﻿import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
@@ -13,12 +13,17 @@ import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements"
 import { prisma } from "@/lib/prisma";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
-// Vercel Preview / branch deploys: `VERCEL_URL` is set per deployment; NextAuth needs a stable URL.
-if (!process.env.NEXTAUTH_URL?.trim() && process.env.VERCEL_URL) {
-  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+// Prioritize NEXTAUTH_URL and APP_URL for production domains.
+if (!process.env.NEXTAUTH_URL?.trim()) {
+  if (process.env.APP_URL) {
+    process.env.NEXTAUTH_URL = process.env.APP_URL;
+  } else if (process.env.VERCEL_URL) {
+    process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+  }
 }
-if (!process.env.APP_URL?.trim() && process.env.VERCEL_URL) {
-  process.env.APP_URL = `https://${process.env.VERCEL_URL}`;
+
+if (!process.env.APP_URL?.trim() && process.env.NEXTAUTH_URL) {
+  process.env.APP_URL = process.env.NEXTAUTH_URL;
 }
 
 const credentialsSchema = z.object({
