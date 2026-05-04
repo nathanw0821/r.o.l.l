@@ -41,8 +41,8 @@ const links: AppNavLink[] = [
   { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
   { href: "/overview", label: "Overview", icon: LayoutDashboard, activePrefixes: ["/overview"] },
   { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false },
-  { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/screenshot-assist", label: "Screenshot Assist", icon: Sparkles },
+  { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
   { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
@@ -347,7 +347,7 @@ export default function AppShell({
                 >
                   <Icon className="h-4 w-4" />
                   <span>{linkLabel}</span>
-                  {link.href === "/build" && (
+                  {(link.href === "/build" || link.href === "/screenshot-assist") && (
                     <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[8px] font-bold tracking-wider text-accent">
                       BETA
                     </span>

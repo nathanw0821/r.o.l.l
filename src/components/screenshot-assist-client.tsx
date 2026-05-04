@@ -12,6 +12,24 @@ import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
 import { ImageProcessor } from "@/lib/image-processor";
+import { useBuilderBetaAccess, BuilderBetaGate } from "@/components/builder/builder-beta-gate";
+
+const langOptions = [
+  { code: "eng", label: "English" },
+  { code: "deu", label: "German" },
+  { code: "fra", label: "French" },
+  { code: "spa", label: "Spanish" },
+  { code: "pol", label: "Polish" },
+  { code: "rus", label: "Russian" },
+  { code: "por", label: "Portuguese" },
+  { code: "chi_sim", label: "Chinese (Simplified)" },
+  { code: "nld", label: "Dutch" },
+  { code: "ukr", label: "Ukrainian" },
+  { code: "hin", label: "Hindi (Exp.)" },
+  { code: "ara", label: "Arabic (Exp.)" },
+  { code: "ben", label: "Bengali (Exp.)" },
+  { code: "urd", label: "Urdu (Exp.)" }
+];
 
 const tierOptions = ["all", "1 Star", "2 Star", "3 Star", "4 Star"] as const;
 const STORAGE_KEY = "roll.screenshot-assist.v1";
@@ -23,6 +41,7 @@ type DraftState = {
   lockedOnly: boolean;
   selectedIds: string[];
   autoSelectAi: boolean;
+  ocrLang: string;
 };
 
 const defaultDraft: DraftState = {
@@ -31,7 +50,8 @@ const defaultDraft: DraftState = {
   category: "all",
   lockedOnly: true,
   selectedIds: [],
-  autoSelectAi: false
+  autoSelectAi: false,
+  ocrLang: "eng"
 };
 
 function readDraft(): DraftState {
@@ -50,7 +70,8 @@ function readDraft(): DraftState {
       autoSelectAi: typeof parsed.autoSelectAi === "boolean" ? parsed.autoSelectAi : defaultDraft.autoSelectAi,
       selectedIds: Array.isArray(parsed.selectedIds)
         ? parsed.selectedIds.filter((value): value is string => typeof value === "string")
-        : defaultDraft.selectedIds
+        : defaultDraft.selectedIds,
+      ocrLang: typeof parsed.ocrLang === "string" ? parsed.ocrLang : defaultDraft.ocrLang
     };
   } catch {
     return defaultDraft;
@@ -93,6 +114,9 @@ export default function ScreenshotAssistClient({
   const [lockedOnly, setLockedOnly] = React.useState(defaultDraft.lockedOnly);
   const [autoSelectAi, setAutoSelectAi] = React.useState(defaultDraft.autoSelectAi);
   const [selectedIds, setSelectedIds] = React.useState<string[]>(defaultDraft.selectedIds);
+  const [ocrLang, setOcrLang] = React.useState(defaultDraft.ocrLang);
+  const [showBetaGate, setShowBetaGate] = React.useState(false);
+  const { hasAccess: hasBetaAccess, accept: acceptBeta } = useBuilderBetaAccess(isAdmin);
 
   const autoSelectAiRef = React.useRef(autoSelectAi);
   React.useEffect(() => {
@@ -150,7 +174,7 @@ export default function ScreenshotAssistClient({
       ctx.drawImage(img, 0, 0);
       processorRef.current.applyFilters(canvas, ctx);
       
-      const matches = await processorRef.current.extractLegendaryMods(canvas);
+      const matches = await processorRef.current.extractLegendaryMods(canvas, ocrLang);
       
       if (matches.length === 0) {
         setAiMessage("No legendary mods recognized by Tesseract OCR. Try a clearer image.");
@@ -201,6 +225,7 @@ export default function ScreenshotAssistClient({
     setLockedOnly(draft.lockedOnly);
     setAutoSelectAi(draft.autoSelectAi);
     setSelectedIds(draft.selectedIds);
+    setOcrLang(draft.ocrLang);
   }, []);
 
   React.useEffect(() => {
@@ -214,13 +239,14 @@ export default function ScreenshotAssistClient({
           category,
           lockedOnly,
           autoSelectAi,
-          selectedIds
+          selectedIds,
+          ocrLang
         } satisfies DraftState)
       );
     } catch {
       // ignore storage quota errors
     }
-  }, [query, tier, category, lockedOnly, autoSelectAi, selectedIds]);
+  }, [query, tier, category, lockedOnly, autoSelectAi, selectedIds, ocrLang]);
 
 
   React.useEffect(() => {
@@ -384,6 +410,26 @@ export default function ScreenshotAssistClient({
   const aiSuggestionSet = React.useMemo(() => new Set(aiSuggestedIds), [aiSuggestedIds]);
   const presetContent = assistPresetContent[preset];
 
+  if (!hasBetaAccess) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-[var(--radius)] border border-dashed border-border bg-panel/30 p-12 text-center">
+        <Sparkles className="mb-4 h-12 w-12 text-accent/40" />
+        <h2 className="text-xl font-bold">Screenshot Assist Beta</h2>
+        <p className="mt-2 max-w-md text-foreground/60">
+          This tool is currently in experimental beta. Use screenshots from your in-game legendary crafting bench to sync your progress.
+        </p>
+        <Button onClick={() => setShowBetaGate(true)} className="mt-8">
+          Access Beta Features
+        </Button>
+        <BuilderBetaGate 
+          open={showBetaGate} 
+          onAccept={() => { setShowBetaGate(false); acceptBeta(); }}
+          onCancel={() => setShowBetaGate(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={cn(isWindow ? "space-y-4" : "grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]")}>
       <div className="space-y-4">
@@ -471,8 +517,22 @@ export default function ScreenshotAssistClient({
               <div className="text-sm font-semibold">3. Scan & recognize</div>
               <div className="mt-1 text-xs text-foreground/60">Tesseract OCR scans your screenshot for matching legendary mods.</div>
             </div>
-            <div className="rounded-full border border-border px-2 py-1 text-[11px] text-foreground/60">
-              Shortlist: {filteredRows.length}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <label className="text-[10px] uppercase tracking-wider text-foreground/40">OCR Language</label>
+                <select 
+                  value={ocrLang}
+                  onChange={(e) => setOcrLang(e.target.value)}
+                  className="rounded border border-border bg-background px-2 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-accent"
+                >
+                  {langOptions.map(opt => (
+                    <option key={opt.code} value={opt.code}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="rounded-full border border-border px-2 py-1 text-[11px] text-foreground/60">
+                Shortlist: {filteredRows.length}
+              </div>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
