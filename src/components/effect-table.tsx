@@ -277,7 +277,7 @@ export default function EffectTable({
               data-effect-id={row.id}
               data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
               className={cn(
-                "effect-table-row rounded-[var(--radius)] border",
+                "effect-table-row summary-status-card rounded-[var(--radius)] border",
                 "grid items-start gap-3 table-grid"
               )}
             >
