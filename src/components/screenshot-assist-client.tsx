@@ -15,10 +15,7 @@ import { ImageProcessor } from "@/lib/image-processor";
 
 const tierOptions = ["all", "1 Star", "2 Star", "3 Star", "4 Star"] as const;
 const STORAGE_KEY = "roll.screenshot-assist.v1";
-const OPENAI_KEY_STORAGE_KEY = "roll.session-assist.openai-key.v1";
-/** Matches `/api/session-assist/analyze` candidate cap per request. */
-const AI_CANDIDATE_CHUNK = 120;
-
+// OpenAI support removed temporarily - Tesseract OCR only
 type DraftState = {
   query: string;
   tier: (typeof tierOptions)[number];
@@ -60,14 +57,6 @@ function readDraft(): DraftState {
   }
 }
 
-function readStoredOpenAiKey() {
-  if (typeof window === "undefined") return "";
-  try {
-    return window.sessionStorage.getItem(OPENAI_KEY_STORAGE_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
 
 function readFileAsDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
@@ -104,13 +93,11 @@ export default function ScreenshotAssistClient({
   const [lockedOnly, setLockedOnly] = React.useState(defaultDraft.lockedOnly);
   const [autoSelectAi, setAutoSelectAi] = React.useState(defaultDraft.autoSelectAi);
   const [selectedIds, setSelectedIds] = React.useState<string[]>(defaultDraft.selectedIds);
-  const [openAiKey, setOpenAiKey] = React.useState("");
 
   const autoSelectAiRef = React.useRef(autoSelectAi);
   React.useEffect(() => {
     autoSelectAiRef.current = autoSelectAi;
   }, [autoSelectAi]);
-  const [aiPending, setAiPending] = React.useState(false);
   const [aiMessage, setAiMessage] = React.useState<string | null>(null);
   const [aiSuggestedIds, setAiSuggestedIds] = React.useState<string[]>([]);
   const [aiReasonById, setAiReasonById] = React.useState<Record<string, string>>({});
@@ -185,7 +172,7 @@ export default function ScreenshotAssistClient({
         if (autoSelectAiRef.current) {
           setSelectedIds((current) => Array.from(new Set([...current, ...suggestedIds])));
         }
-        setAiMessage(`${suggestedIds.length} mods recognized by Tesseract. Review and "${autoSelectAiRef.current ? "Save Confirmed" : "Use suggestions"}".`);
+        setAiMessage(`${suggestedIds.length} mods recognized by Tesseract. Review and "${autoSelectAiRef.current ? "Save Confirmed" : "Use matches"}".`);
       }
     } catch (err) {
       setAiMessage(err instanceof Error ? err.message : "OCR failed.");
@@ -214,7 +201,6 @@ export default function ScreenshotAssistClient({
     setLockedOnly(draft.lockedOnly);
     setAutoSelectAi(draft.autoSelectAi);
     setSelectedIds(draft.selectedIds);
-    setOpenAiKey(readStoredOpenAiKey());
   }, []);
 
   React.useEffect(() => {
@@ -236,18 +222,6 @@ export default function ScreenshotAssistClient({
     }
   }, [query, tier, category, lockedOnly, autoSelectAi, selectedIds]);
 
-  React.useEffect(() => {
-    if (!hasLoadedDraft.current) return;
-    try {
-      if (openAiKey.trim()) {
-        window.sessionStorage.setItem(OPENAI_KEY_STORAGE_KEY, openAiKey);
-      } else {
-        window.sessionStorage.removeItem(OPENAI_KEY_STORAGE_KEY);
-      }
-    } catch {
-      // ignore browser storage errors
-    }
-  }, [openAiKey]);
 
   React.useEffect(() => {
     return () => {
@@ -376,96 +350,9 @@ export default function ScreenshotAssistClient({
   function applyAiSuggestions() {
     if (aiSuggestedIds.length === 0) return;
     setSelectedIds((current) => Array.from(new Set([...current, ...aiSuggestedIds])));
-    setMessage(`Added ${aiSuggestedIds.length} AI suggestion${aiSuggestedIds.length === 1 ? "" : "s"} to the checklist. Review them before saving.`);
+    setMessage(`Added ${aiSuggestedIds.length} OCR match${aiSuggestedIds.length === 1 ? "" : "es"} to the checklist. Review them before saving.`);
   }
 
-  async function requestAiSuggestions() {
-    if (!imageDataUrl) {
-      setAiMessage("Add a screenshot first.");
-      return;
-    }
-    if (!openAiKey.trim()) {
-      setAiMessage("Add your OpenAI API key.");
-      return;
-    }
-    if (filteredRows.length === 0) {
-      setAiMessage("No rows match the current filters.");
-      return;
-    }
-
-    setAiPending(true);
-    setAiMessage(null);
-    setAiSuggestedIds([]);
-    setAiReasonById({});
-
-    const key = openAiKey.trim();
-    const reasons = new Map<string, string>();
-    const orderedIds: string[] = [];
-    const cautions: string[] = [];
-    const chunks: (typeof filteredRows)[] = [];
-    for (let i = 0; i < filteredRows.length; i += AI_CANDIDATE_CHUNK) {
-      chunks.push(filteredRows.slice(i, i + AI_CANDIDATE_CHUNK));
-    }
-
-    try {
-      for (const chunk of chunks) {
-        const response = await fetch("/api/session-assist/analyze", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            apiKey: key,
-            imageDataUrl,
-            assistPreset: preset,
-            candidates: chunk.map((row) => ({
-              effectTierId: row.id,
-              effectName: row.effect.name,
-              tierLabel: row.tier?.label ?? "Unknown tier",
-              categories: row.categories.map((categoryRow) => categoryRow.category.name)
-            }))
-          })
-        });
-
-        const payload = (await response.json()) as {
-          success?: boolean;
-          matches?: { effectTierId: string; reason: string }[];
-          caution?: string;
-          error?: { message?: string };
-        };
-
-        if (!response.ok || !payload.success) {
-          throw new Error(payload.error?.message ?? "AI review could not complete.");
-        }
-
-        if (payload.caution?.trim()) cautions.push(payload.caution.trim());
-
-        for (const match of payload.matches ?? []) {
-          if (!reasons.has(match.effectTierId)) {
-            reasons.set(match.effectTierId, match.reason);
-            orderedIds.push(match.effectTierId);
-          }
-        }
-      }
-
-      setAiSuggestedIds(orderedIds);
-      setAiReasonById(Object.fromEntries(reasons));
-      if (autoSelectAiRef.current) {
-        setSelectedIds((current) => Array.from(new Set([...current, ...orderedIds])));
-      }
-
-      if (orderedIds.length === 0) {
-        setAiMessage(
-          cautions[cautions.length - 1] ?? "No clear matches. Narrow filters or try a clearer screenshot."
-        );
-      } else {
-        const batchNote = chunks.length > 1 ? ` · ${chunks.length} requests` : "";
-        setAiMessage(`${orderedIds.length} suggested${batchNote}. Review before "${autoSelectAiRef.current ? "Save Confirmed" : "Use suggestions"}".`);
-      }
-    } catch (error) {
-      setAiMessage(error instanceof Error ? error.message : "AI review could not complete.");
-    } finally {
-      setAiPending(false);
-    }
-  }
 
   async function saveConfirmed() {
     if (selectedIds.length === 0) return;
@@ -579,34 +466,8 @@ export default function ScreenshotAssistClient({
           </div>
         </div>
 
-        <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <div className="text-sm font-semibold">3. {presetContent.aiTitle}</div>
-              <div className="mt-1 text-xs text-foreground/60">Suggestions only; large lists use multiple requests.</div>
-            </div>
-            <div className="rounded-full border border-border px-2 py-1 text-[11px] text-foreground/60">
-              Shortlist: {filteredRows.length}
-            </div>
-          </div>
-          <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
-            <label className="text-xs text-foreground/60">
-              OpenAI API key
-              <Input
-                type="password"
-                value={openAiKey}
-                onChange={(event) => setOpenAiKey(event.target.value)}
-                placeholder="sk-..."
-                className="mt-1"
-                autoComplete="off"
-              />
-            </label>
-            <div className="flex flex-wrap items-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={requestTesseractAnalysis} disabled={ocrPending || aiPending}>
-                {ocrPending ? "OCR Scanning..." : "Tesseract Scan (Free)"}
-              </Button>
-              <Button type="button" variant="outline" size="sm" onClick={requestAiSuggestions} disabled={aiPending || ocrPending}>
-                {aiPending ? "Analyzing..." : presetContent.aiButton}
+              <Button type="button" variant="outline" size="sm" onClick={requestTesseractAnalysis} disabled={ocrPending}>
+                {ocrPending ? "Scanning..." : "Run Tesseract Scan"}
               </Button>
               <Button
                 type="button"
@@ -615,23 +476,20 @@ export default function ScreenshotAssistClient({
                 onClick={applyAiSuggestions}
                 disabled={aiSuggestedIds.length === 0}
               >
-                Use Suggestions ({aiSuggestedIds.length})
+                Use Matches ({aiSuggestedIds.length})
               </Button>
             </div>
-          </div>
-          <div className="mt-3 flex items-center justify-between gap-4 text-xs text-foreground/60">
-            <span>Key stays in this tab session. Image + shortlist go to OpenAI only when you run analyze.</span>
-            <label className="flex shrink-0 cursor-pointer items-center gap-2 text-foreground/80 hover:text-foreground">
+            <label className="flex cursor-pointer items-center gap-2 text-xs text-foreground/80 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={autoSelectAi}
                 onChange={(event) => setAutoSelectAi(event.target.checked)}
                 className="h-3.5 w-3.5 accent-[var(--accent)]"
               />
-              Auto-select AI suggestions
+              Auto-select OCR matches
             </label>
           </div>
-          {aiMessage ? <div className="mt-2 text-xs text-foreground/70">{aiMessage}</div> : null}
+          {aiMessage ? <div className="mt-3 text-xs text-foreground/70">{aiMessage}</div> : null}
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
@@ -693,7 +551,7 @@ export default function ScreenshotAssistClient({
                     {aiSuggested ? (
                       <div className="mt-1 space-y-0.5">
                         <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-accent)]">
-                          AI suggested
+                          OCR matched
                         </div>
                         {aiReasonById[row.id] ? (
                           <div className="text-[11px] leading-snug text-foreground/70">{aiReasonById[row.id]}</div>
