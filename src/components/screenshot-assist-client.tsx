@@ -183,8 +183,8 @@ export default function ScreenshotAssistClient({
         const matches = await processorRef.current.extractLegendaryMods(canvas, ocrLang);
         
         for (const match of matches) {
-          const row = localRows.find(r => r.effect.name === match);
-          if (row) {
+          const matchingRows = localRows.filter(r => r.effect.name === match);
+          for (const row of matchingRows) {
             allSuggestedIds.add(row.id);
             allReasons[row.id] = "Matched by S.C.A.N. OCR";
             totalMatches++;
