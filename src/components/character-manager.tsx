@@ -155,11 +155,22 @@ export function CharacterManager({
     });
   };
 
-  const handleDeleteChar = async (id: string) => {
-    if (!window.confirm("Delete this character? This cannot be undone.")) return;
+  const handleDeleteChar = async (char: Character) => {
+    const nameConfirm = window.prompt(`To delete this character, type their name exactly: "${char.name}"`);
+    if (nameConfirm !== char.name) {
+      if (nameConfirm !== null) alert("Name mismatch. Deletion cancelled.");
+      return;
+    }
+
+    const phraseConfirm = window.prompt('Type "DELETE MY CHARACTER FOREVER" to confirm permanent deletion.');
+    if (phraseConfirm !== "DELETE MY CHARACTER FOREVER") {
+      if (phraseConfirm !== null) alert("Confirmation phrase mismatch. Deletion cancelled.");
+      return;
+    }
+
     startTransition(async () => {
       try {
-        await deleteCharacter(id);
+        await deleteCharacter(char.id);
       } catch (err) {
         alert(err instanceof Error ? err.message : "Failed to delete character");
       }
@@ -295,7 +306,7 @@ export function CharacterManager({
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              onClick={() => handleDeleteChar(char.id)}
+                              onClick={() => handleDeleteChar(char)}
                               className="h-6 w-6 p-0 text-foreground/40 hover:text-destructive"
                             >
                               <Trash2 className="h-3 w-3" />
@@ -377,7 +388,7 @@ export function CharacterManager({
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              onClick={() => handleDeleteChar(char.id)}
+                              onClick={() => handleDeleteChar(char)}
                               className="h-6 w-6 p-0 text-foreground/40 hover:text-destructive"
                             >
                               <Trash2 className="h-3 w-3" />
