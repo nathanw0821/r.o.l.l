@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 
@@ -14,12 +14,14 @@ type ThemeContextValue = {
   density: "comfortable" | "compact";
   scanlineMode: ScanlineMode;
   uiTone: UiTone;
+  fontScale: number;
   setTheme: (theme: ThemeMode) => void;
   setAccent: (accent: string) => void;
   setColorBlind: (mode: ColorBlindMode) => void;
   setDensity: (density: "comfortable" | "compact") => void;
   setScanlineMode: (mode: ScanlineMode) => void;
   setUiTone: (tone: UiTone) => void;
+  setFontScale: (scale: number) => void;
 };
 
 const ThemeContext = React.createContext<ThemeContextValue | undefined>(undefined);
@@ -30,6 +32,7 @@ const COLORBLIND_KEY = "roll-colorblind";
 const DENSITY_KEY = "roll-density";
 const SCANLINE_KEY = "roll-scanline-mode";
 const UI_TONE_KEY = "roll-ui-tone";
+const FONT_SCALE_KEY = "roll-font-scale";
 
 function readStoredValue(key: string) {
   if (typeof window === "undefined") return null;
@@ -120,6 +123,10 @@ export function ThemeProvider({
   const [density, setDensityState] = React.useState<"comfortable" | "compact">(() => readStoredDensity(defaultDensity));
   const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>(() => readStoredScanline());
   const [uiTone, setUiToneState] = React.useState<UiTone>(() => readStoredUiTone());
+  const [fontScale, setFontScaleState] = React.useState<number>(() => {
+    const stored = readStoredValue(FONT_SCALE_KEY);
+    return stored ? parseFloat(stored) : 1.0;
+  });
 
   React.useEffect(() => {
     if (!preferDefaults) return;
@@ -169,6 +176,11 @@ export function ThemeProvider({
     window.localStorage.setItem(UI_TONE_KEY, uiTone);
   }, [uiTone]);
 
+  React.useEffect(() => {
+    document.documentElement.style.setProperty("--base-font-scale", String(fontScale));
+    window.localStorage.setItem(FONT_SCALE_KEY, String(fontScale));
+  }, [fontScale]);
+
   const value = React.useMemo(
     () => ({
       theme,
@@ -177,14 +189,16 @@ export function ThemeProvider({
       density,
       scanlineMode,
       uiTone,
+      fontScale,
       setTheme: setThemeState,
       setAccent: setAccentState,
       setColorBlind: setColorBlindState,
       setDensity: setDensityState,
       setScanlineMode: setScanlineModeState,
-      setUiTone: setUiToneState
+      setUiTone: setUiToneState,
+      setFontScale: setFontScaleState
     }),
-    [theme, accent, colorBlind, density, scanlineMode, uiTone]
+    [theme, accent, colorBlind, density, scanlineMode, uiTone, fontScale]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
