@@ -25,6 +25,7 @@ type DraftState = {
   category: string;
   lockedOnly: boolean;
   selectedIds: string[];
+  autoSelectAi: boolean;
 };
 
 const defaultDraft: DraftState = {
@@ -32,7 +33,8 @@ const defaultDraft: DraftState = {
   tier: "all",
   category: "all",
   lockedOnly: true,
-  selectedIds: []
+  selectedIds: [],
+  autoSelectAi: false
 };
 
 function readDraft(): DraftState {
@@ -48,6 +50,7 @@ function readDraft(): DraftState {
         : defaultDraft.tier,
       category: typeof parsed.category === "string" ? parsed.category : defaultDraft.category,
       lockedOnly: typeof parsed.lockedOnly === "boolean" ? parsed.lockedOnly : defaultDraft.lockedOnly,
+      autoSelectAi: typeof parsed.autoSelectAi === "boolean" ? parsed.autoSelectAi : defaultDraft.autoSelectAi,
       selectedIds: Array.isArray(parsed.selectedIds)
         ? parsed.selectedIds.filter((value): value is string => typeof value === "string")
         : defaultDraft.selectedIds
@@ -99,8 +102,14 @@ export default function ScreenshotAssistClient({
   const [tier, setTier] = React.useState<(typeof tierOptions)[number]>(defaultDraft.tier);
   const [category, setCategory] = React.useState(defaultDraft.category);
   const [lockedOnly, setLockedOnly] = React.useState(defaultDraft.lockedOnly);
+  const [autoSelectAi, setAutoSelectAi] = React.useState(defaultDraft.autoSelectAi);
   const [selectedIds, setSelectedIds] = React.useState<string[]>(defaultDraft.selectedIds);
   const [openAiKey, setOpenAiKey] = React.useState("");
+
+  const autoSelectAiRef = React.useRef(autoSelectAi);
+  React.useEffect(() => {
+    autoSelectAiRef.current = autoSelectAi;
+  }, [autoSelectAi]);
   const [aiPending, setAiPending] = React.useState(false);
   const [aiMessage, setAiMessage] = React.useState<string | null>(null);
   const [aiSuggestedIds, setAiSuggestedIds] = React.useState<string[]>([]);
@@ -173,7 +182,10 @@ export default function ScreenshotAssistClient({
         
         setAiSuggestedIds(suggestedIds);
         setAiReasonById(reasons);
-        setAiMessage(`${suggestedIds.length} mods recognized by Tesseract. Review and "Use suggestions".`);
+        if (autoSelectAiRef.current) {
+          setSelectedIds((current) => Array.from(new Set([...current, ...suggestedIds])));
+        }
+        setAiMessage(`${suggestedIds.length} mods recognized by Tesseract. Review and "${autoSelectAiRef.current ? "Save Confirmed" : "Use suggestions"}".`);
       }
     } catch (err) {
       setAiMessage(err instanceof Error ? err.message : "OCR failed.");
@@ -200,6 +212,7 @@ export default function ScreenshotAssistClient({
     setTier(draft.tier);
     setCategory(draft.category);
     setLockedOnly(draft.lockedOnly);
+    setAutoSelectAi(draft.autoSelectAi);
     setSelectedIds(draft.selectedIds);
     setOpenAiKey(readStoredOpenAiKey());
   }, []);
@@ -214,13 +227,14 @@ export default function ScreenshotAssistClient({
           tier,
           category,
           lockedOnly,
+          autoSelectAi,
           selectedIds
         } satisfies DraftState)
       );
     } catch {
       // ignore storage quota errors
     }
-  }, [query, tier, category, lockedOnly, selectedIds]);
+  }, [query, tier, category, lockedOnly, autoSelectAi, selectedIds]);
 
   React.useEffect(() => {
     if (!hasLoadedDraft.current) return;
@@ -343,6 +357,7 @@ export default function ScreenshotAssistClient({
     setTier(defaultDraft.tier);
     setCategory(defaultDraft.category);
     setLockedOnly(defaultDraft.lockedOnly);
+    setAutoSelectAi(defaultDraft.autoSelectAi);
     setSelectedIds(defaultDraft.selectedIds);
     setMessage(null);
     setAiMessage(null);
@@ -433,6 +448,9 @@ export default function ScreenshotAssistClient({
 
       setAiSuggestedIds(orderedIds);
       setAiReasonById(Object.fromEntries(reasons));
+      if (autoSelectAiRef.current) {
+        setSelectedIds((current) => Array.from(new Set([...current, ...orderedIds])));
+      }
 
       if (orderedIds.length === 0) {
         setAiMessage(
@@ -440,7 +458,7 @@ export default function ScreenshotAssistClient({
         );
       } else {
         const batchNote = chunks.length > 1 ? ` · ${chunks.length} requests` : "";
-        setAiMessage(`${orderedIds.length} suggested${batchNote}. Review before "Use suggestions".`);
+        setAiMessage(`${orderedIds.length} suggested${batchNote}. Review before "${autoSelectAiRef.current ? "Save Confirmed" : "Use suggestions"}".`);
       }
     } catch (error) {
       setAiMessage(error instanceof Error ? error.message : "AI review could not complete.");
@@ -601,8 +619,17 @@ export default function ScreenshotAssistClient({
               </Button>
             </div>
           </div>
-          <div className="mt-3 text-xs text-foreground/60">
-            Key stays in this tab session. Image + shortlist go to OpenAI only when you run analyze.
+          <div className="mt-3 flex items-center justify-between gap-4 text-xs text-foreground/60">
+            <span>Key stays in this tab session. Image + shortlist go to OpenAI only when you run analyze.</span>
+            <label className="flex shrink-0 cursor-pointer items-center gap-2 text-foreground/80 hover:text-foreground">
+              <input
+                type="checkbox"
+                checked={autoSelectAi}
+                onChange={(event) => setAutoSelectAi(event.target.checked)}
+                className="h-3.5 w-3.5 accent-[var(--accent)]"
+              />
+              Auto-select AI suggestions
+            </label>
           </div>
           {aiMessage ? <div className="mt-2 text-xs text-foreground/70">{aiMessage}</div> : null}
         </div>
