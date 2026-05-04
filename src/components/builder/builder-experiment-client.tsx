@@ -1311,6 +1311,7 @@ export default function BuilderExperimentClient({
             </div>
           </div>
 
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
               <div className="text-sm font-semibold">Character Stats (Sandbox)</div>
               <InfoTooltip content="Input your base S.P.E.C.I.A.L. (1-15) and select legendary perks to see their impact on Live totals. These stats represent your character's baseline before gear and mutations are applied." />
@@ -1424,6 +1425,7 @@ export default function BuilderExperimentClient({
             ) : null}
 
 
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
               <div className="text-sm font-semibold">Underarmor</div>
               <InfoTooltip content="Shell, lining, and style stack into totals. Mark shells as learned in the registry list to track them. Note: Underarmor never uses the legendary star bench." />
@@ -1798,6 +1800,7 @@ export default function BuilderExperimentClient({
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-5.5rem)] lg:self-start lg:overflow-y-auto">
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
               <div className="text-sm font-semibold">Character state</div>
               <InfoTooltip content="Drives R.O.L.L. Live totals including species, sandbox mutations, and serum-style penalty toggles. Addictions, food buffs, and temporary consumables are currently out of scope." />
@@ -1877,6 +1880,7 @@ export default function BuilderExperimentClient({
               </div>
             </div>
           </div>
+          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
               <div className="text-sm font-semibold">Nukes &amp; Dragons import</div>
               <InfoTooltip content="Paste a share URL from nukesdragons.com to merge perk impacts into your Live totals. This covers carry weight, resists, and core stat hints." />
