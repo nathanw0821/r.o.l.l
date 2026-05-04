@@ -14,6 +14,7 @@ import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-even
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
 import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
+import { InfoTooltip } from "@/components/ui/tooltip";
 
 export type SummaryRow = {
   id: string;
@@ -375,9 +376,12 @@ export default function SummaryClient({
       <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:text-left text-center">
           <div className="space-y-1">
-            <div className="text-sm font-semibold">Export Data</div>
-            <div className="text-xs text-foreground/60">Includes tier, effect, status, source, notes, and origins.</div>
-            <div className="pt-1">
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Export Data</div>
+              <InfoTooltip content="Download your registry as Excel, CSV, or JSON. You can export the current filtered view or your entire collection." />
+            </div>
+            <div className="text-xs text-foreground/60">Includes tier, effect, status, source, and more.</div>
+            <div className="flex items-center gap-2 pt-1">
               <button
                 type="button"
                 onClick={() => setSummaryLocked((value) => !value)}
@@ -389,8 +393,9 @@ export default function SummaryClient({
                 )}
               >
                 {summaryLocked ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
-                {summaryLocked ? "Summary Locked: Click opens All Effects" : "Summary Unlocked: Click toggles status"}
+                {summaryLocked ? "Summary Locked" : "Summary Unlocked"}
               </button>
+              <InfoTooltip content={summaryLocked ? "Clicking a card will now open its details in 'All Effects' instead of toggling status." : "Clicking a card toggles its 'Unlocked' status. Long-press to open details."} />
             </div>
           </div>
           <div className="flex gap-2">
@@ -496,14 +501,15 @@ export default function SummaryClient({
                       )}
                     </div>
                     <div className="summary-status-card__controls" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
-                        onClick={() => updateSeeking(row, !row.isSeeking)}
-                        data-active={row.isSeeking}
-                        className="summary-status-card__seeking-btn"
-                      >
-                        <Target className="h-4 w-4" />
-                      </button>
+                        <button
+                          title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+                          onClick={() => updateSeeking(row, !row.isSeeking)}
+                          data-active={row.isSeeking}
+                          className="summary-status-card__seeking-btn"
+                        >
+                          <Target className="h-4 w-4" />
+                          <span className="sr-only">Seeking</span>
+                        </button>
                       <div className="summary-status-card__count">
                         <button
                           onClick={() => updateCount(row, row.modCount - 1)}

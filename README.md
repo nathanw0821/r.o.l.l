@@ -1,25 +1,26 @@
-# R.O.L.L.
+# R.O.L.L. (Record Of Legendary Loadouts)
 
-**Record Of Legendary Loadouts** — a Fallout 76 companion for tracking legendary unlocks, browsing effects, and (experimentally) sandboxing loadout stats. Progress is manual-first and syncs when you sign in.
+A premium Fallout 76 companion for managing legendary mod unlocks and simulating character loadouts.
+
+## Core Features
+- **Registry Management**: Track your learned legendary mods across multiple accounts and platforms (PC, Xbox, PlayStation).
+- **S.C.A.N. (Beta)**: Local-first OCR analysis. Paste or upload in-game screenshots to automatically identify and sync your learned mods.
+- **B.U.I.L.D. (Beta)**: A high-fidelity sandbox for simulating the impact of legendary mods, underarmor, and mutations on your live character stats.
+- **Nukes & Dragons Integration**: Import your existing character builds to see real-time stat scaling within the R.O.L.L. interface.
+
+## Quick Start
+1. **Sync**: Sign in to persist your registry across devices.
+2. **Track**: Use the **All Effects** or **Summary** tabs to mark mods as 'Unlocked' or 'Seeking'.
+3. **Scan**: Head to the **S.C.A.N.** tab to batch-process screenshots and update your registry instantly.
+4. **Simulate**: Use the **B.U.I.L.D.** tab to experiment with gear combinations and see their mathematical impact on your DR, ER, and SPECIAL stats.
 
 ## Development
+- **Requirements**: Node 20.19+, Prisma-compatible database.
+- **Commands**:
+  - `npm install` - Install dependencies.
+  - `npm run dev` - Start the local development server.
+  - `npm run release:check` - Run full validation suite (Lint, Prisma, Build, Typecheck).
+  - `npm run db:seed:builder` - Seed the builder mod catalog.
 
-- **Node:** 20.19+ (see `package.json` engines)
-- **Install:** `npm install`
-- **Dev server:** `npm run dev`
-- **Release checks:** `npm run release:check` (lint, Prisma validate, Next build, TypeScript)
-
-Database setup uses Prisma; production builds run `prisma migrate deploy` before `next build` (see `vercel-build` script).
-
-## Credits & sources
-
-Full reference links and credit copy live in the app under **Overview → Readme**. Primary references include [Nuka Knights](https://nukaknights.com/en/), [Nukes & Dragons](https://nukesdragons.com/fallout-76/character) (Fallout 76 character planner), [The Duchess Flame](https://www.theduchessflame.com/), the [Fallout 76 portal on Fandom](https://fallout.fandom.com/wiki/Category:Fallout_76_portal), and [Bethesda’s Fallout 76 site](https://fallout.bethesda.net/en). R.O.L.L. re-presents community and official material in its own UI; it does not claim authorship of the underlying data.
-
-## Builder: Ghoul mode
-
-When **Ghoul** is enabled on the experimental loadout builder, Live totals follow a simplified reading of **playable ghoul** rules (Ghoul Within): hunger/thirst–linked bench rows are adjusted, **RR from gear still stacks** (resist can matter even though rad *damage* works differently for ghouls), and an effective **CHA −10** is applied. See the [Fallout Wiki — playable ghoul](https://fallout.fandom.com/wiki/Fallout_76_playable_ghoul) article for in-game details; the sandbox is approximate, not a full character sim.
-
-## Workflow Transition
-
-As of April 2026, the development workflow for R.O.L.L. has transitioned from using Cursor to **Antigravity** for AI-assisted coding and agentic operations. This shift ensures continued integration with Vercel, Neon, and Git while leveraging Antigravity's advanced capabilities.
-
+## Acknowledgments
+R.O.L.L. utilizes data and inspirations from the Fallout 76 community, including **Nuka Knights**, **Nukes & Dragons**, **The Duchess Flame**, and the **Fallout Wiki**.

@@ -12,6 +12,7 @@ import { getCraftComponentKind } from "@/lib/legendary-mod-sources";
 import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
+import { InfoTooltip } from "@/components/ui/tooltip";
 
 export type EffectTierRow = {
   id: string;
@@ -243,13 +244,13 @@ export default function EffectTable({
             </div>
           ) : null}
           <div className="effect-table-header hidden text-xs font-semibold uppercase text-foreground/60 md:grid table-grid">
-            <div>Effect</div>
-            <div>Categories</div>
-            <div>Description</div>
-            <div>Extra Component</div>
-            <div>Modules</div>
-            <div>Status</div>
-            <div>Notes</div>
+            <div className="flex items-center gap-1.5">Effect <InfoTooltip content="The name of the legendary effect and its tier (1-4 stars)." /></div>
+            <div className="flex items-center gap-1.5">Categories <InfoTooltip content="Weapon/Armor categories this effect applies to." /></div>
+            <div className="flex items-center gap-1.5">Description <InfoTooltip content="The in-game effect description." /></div>
+            <div className="flex items-center gap-1.5">Extra Component <InfoTooltip content="Additional materials required for crafting (e.g., Bobbleheads, Chemicals)." /></div>
+            <div className="flex items-center gap-1.5">Modules <InfoTooltip content="The number of Legendary Modules required to craft this mod." /></div>
+            <div className="flex items-center gap-1.5">Status <InfoTooltip content="Whether you have unlocked this mod, are seeking it, or how many you own." /></div>
+            <div className="flex items-center gap-1.5">Notes <InfoTooltip content="Additional community or development notes." /></div>
           </div>
         </>
       ) : null}

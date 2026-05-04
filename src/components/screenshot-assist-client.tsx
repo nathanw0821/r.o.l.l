@@ -12,8 +12,9 @@ import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
 import { ImageProcessor } from "@/lib/image-processor";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Info } from "lucide-react";
 import { useBuilderBetaAccess, BuilderBetaGate } from "@/components/builder/builder-beta-gate";
+import { InfoTooltip } from "@/components/ui/tooltip";
 
 const langOptions = [
   { code: "eng", label: "English" },
@@ -51,7 +52,7 @@ const defaultDraft: DraftState = {
   category: "all",
   lockedOnly: true,
   selectedIds: [],
-  autoSelectAi: false,
+  autoSelectAi: true,
   ocrLang: "eng"
 };
 
@@ -497,7 +498,10 @@ export default function ScreenshotAssistClient({
         </div>
 
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-          <div className="text-sm font-semibold">2. Shortlist</div>
+          <div className="flex items-center gap-2">
+            <div className="text-sm font-semibold">2. Shortlist</div>
+            <InfoTooltip content="Filter the effects you want to find or verify. Use 'Locked only' to avoid seeing things you already know." />
+          </div>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <label className="text-xs text-foreground/60">
               Search
@@ -550,8 +554,11 @@ export default function ScreenshotAssistClient({
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <div className="text-sm font-semibold">3. Scan & recognize</div>
-              <div className="mt-1 text-xs text-foreground/60">Tesseract OCR scans your screenshot for matching legendary mods.</div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-semibold">3. Scan & recognize</div>
+                <InfoTooltip content="Uses Tesseract.js (runs locally in your browser) to extract text from your screenshots and match them against the game's legendary mods." />
+              </div>
+              <div className="mt-1 text-xs text-foreground/60">Local-first OCR analysis.</div>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
@@ -602,8 +609,11 @@ export default function ScreenshotAssistClient({
         <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <div className="text-sm font-semibold">4. Confirm & save</div>
-              <div className="mt-1 text-xs text-foreground/60">Tick what you verify, then save.</div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-semibold">4. Confirm & save</div>
+                <InfoTooltip content="Review the matches found. Ticked items will be marked as 'Unlocked' in your permanent registry when you click Save." />
+              </div>
+              <div className="mt-1 text-xs text-foreground/60">Finalize your discoveries.</div>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" size="sm" onClick={selectVisible}>
