@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
+      // Basic validation
       if (account?.provider !== "credentials" && !user.email) {
         return false;
       }
@@ -83,8 +84,13 @@ export const authOptions: NextAuthOptions = {
   events: {
     async signIn({ user }) {
       if (!user.id) return;
-      await awardLoginAchievement(user.id);
-      await syncUserAchievements(user.id);
+      try {
+        await awardLoginAchievement(user.id);
+        await syncUserAchievements(user.id);
+      } catch (error) {
+        console.error("Auth Event Error (Achievement Sync):", error);
+        // Do not throw; we want the user to be able to sign in even if achievements fail.
+      }
     }
   },
   providers: [
@@ -165,7 +171,8 @@ export const authOptions: NextAuthOptions = {
       ? [
           GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true // Crucial for linking Google to existing email accounts
           })
         ]
       : []),
