@@ -18,31 +18,31 @@ export const assistPresetContent: Record<
   manual: {
     label: "Manual Review",
     shortLabel: "Manual",
-    description: "You tick matches; no automation.",
+    description: "Manual checklist; you look and tick.",
     windowSubtitle: "Manual checklist beside your screenshot.",
     checklistHint: "Default: compare image to the list.",
-    aiTitle: "Optional AI review",
-    aiButton: "Suggest From Screenshot",
-    analysisGuidance: "Be extremely conservative. Prefer no suggestion over a weak guess."
+    aiTitle: "OCR matched",
+    aiButton: "Run Tesseract Scan",
+    analysisGuidance: "Standard scan for matching mod names."
   },
   session: {
     label: "New Unlock Sweep",
     shortLabel: "Session Sweep",
-    description: "Still-locked first; after a run.",
+    description: "Optimized for confirming new drops.",
     windowSubtitle: "Quick pass for new drops this session.",
     checklistHint: "Filter to locked; confirm obvious unlocks.",
-    aiTitle: "Optional AI sweep",
-    aiButton: "Review Session Screenshot",
-    analysisGuidance: "Focus on likely new unlocks in the shortlist. Stay conservative."
+    aiTitle: "OCR sweep",
+    aiButton: "Scan For Unlocks",
+    analysisGuidance: "Focus on likely new unlocks in the shortlist."
   },
   ai: {
-    label: "AI Suggestions",
-    shortLabel: "AI Suggestions",
-    description: "BYO OpenAI key; you still confirm saves.",
-    windowSubtitle: "AI suggests from a tight shortlist only.",
+    label: "OCR Discovery",
+    shortLabel: "OCR Discovery",
+    description: "Scan & auto-select in multiple languages.",
+    windowSubtitle: "OCR suggests from a tight shortlist only.",
     checklistHint: "Narrow the list first for best results.",
-    aiTitle: "AI suggestion pass",
-    aiButton: "Suggest Likely Matches",
-    analysisGuidance: "Return only strong shortlist matches. Include concise reasons and avoid overcalling uncertain items."
+    aiTitle: "Multi-language scan",
+    aiButton: "Recognize Matches",
+    analysisGuidance: "Extract mod names from the screenshot using the selected OCR language."
   }
 };
