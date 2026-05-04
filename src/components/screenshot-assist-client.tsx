@@ -367,11 +367,7 @@ export default function ScreenshotAssistClient({
     setAiMessage(null);
     setAiSuggestedIds([]);
     setAiReasonById({});
-    setImageDataUrl(null);
-    setPreviewUrl((current) => {
-      if (current) URL.revokeObjectURL(current);
-      return null;
-    });
+    setImageQueue([]);
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEY);
     }
