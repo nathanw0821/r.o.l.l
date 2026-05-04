@@ -100,6 +100,7 @@ import BuilderTotalsStatKey, {
   type BuilderTotalsStatKeyMode
 } from "@/components/builder/builder-totals-stat-key";
 import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
+import { InfoTooltip } from "@/components/ui/tooltip";
 import {
   importNukesDragonsFo76CharacterUrl,
   type NdImportResult
@@ -1310,11 +1311,10 @@ export default function BuilderExperimentClient({
             </div>
           </div>
 
-          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            <div className="text-sm font-semibold">Character Stats (Sandbox)</div>
-            <p className="mt-1 text-xs text-foreground/60">
-              Input your base SPECIAL (1-15) and select legendary perks to see their impact on Live totals.
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Character Stats (Sandbox)</div>
+              <InfoTooltip content="Input your base S.P.E.C.I.A.L. (1-15) and select legendary perks to see their impact on Live totals. These stats represent your character's baseline before gear and mutations are applied." />
+            </div>
             
             <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7">
               {BUILDER_SPECIAL_KEYS.map((key) => (
@@ -1424,12 +1424,10 @@ export default function BuilderExperimentClient({
             ) : null}
 
 
-          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            <div className="text-sm font-semibold">Underarmor</div>
-            <p className="mt-1 text-xs text-foreground/55">
-              Shell, lining, and style stack into totals. Mark shells as learned in the list above — underarmor never
-              uses the outer legendary star bench.
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Underarmor</div>
+              <InfoTooltip content="Shell, lining, and style stack into totals. Mark shells as learned in the registry list to track them. Note: Underarmor never uses the legendary star bench." />
+            </div>
             {piece.kind === "powerArmor" && (
               <p className="mt-2 rounded-[var(--radius)] bg-accent/5 px-2 py-1.5 text-[10px] font-medium leading-snug text-accent/90 border border-accent/15">
                 Note: Underarmor stats are ignored while Power Armor is selected (it is automatically unequipped in-game).
@@ -1496,33 +1494,16 @@ export default function BuilderExperimentClient({
 
 
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            <div className="text-sm font-semibold">Stars</div>
-            {starsDisabled ? (
-              <p className="mt-2 text-xs text-foreground/65">
-                {piece.kind === "underarmor" ? (
-                  <>
-                    Underarmor uses linings and styles only — no outer legendary stars. Switch base to armor, power
-                    armor, or a weapon to plan star mods (underarmor bases stay trackable in the list above).
-                  </>
-                ) : (
-                  <>
-                    Power armor helmets never use the outer legendary star bench — plan modifications under{" "}
-                    <span className="font-medium text-foreground/80">Helmet crafting</span> above. Switch to a torso or
-                    weapon base to pick star mods.
-                  </>
-                )}
-              </p>
-            ) : (
-              <p className="mt-2 text-xs text-foreground/70">
-                Legendary planning for{" "}
-                <span className="font-semibold text-foreground/90">{baseStarsContextLabel}</span>
-                {fullArmorSet
-                  ? " — each body slot below is part of this set; stars and crafting apply only to this armor."
-                  : showSingleStars
-                    ? " — four stars apply to this base only."
-                    : null}
-              </p>
-            )}
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Stars</div>
+              <InfoTooltip content={
+                starsDisabled 
+                  ? (piece.kind === "underarmor" 
+                      ? "Underarmor uses linings and styles only. Switch to armor, PA, or a weapon to plan legendary stars." 
+                      : "PA helmets don't use legendary stars. Plan modifications under 'Helmet crafting' instead.")
+                  : `Legendary planning for ${baseStarsContextLabel}. ${fullArmorSet ? "Each body slot below is part of this set." : "Four stars apply to this base only."}`
+              } />
+            </div>
 
             {isMultiPiece ? (
               <div className="mt-3 space-y-4">
@@ -1817,13 +1798,10 @@ export default function BuilderExperimentClient({
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-5.5rem)] lg:self-start lg:overflow-y-auto">
-          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            <div className="text-sm font-semibold">Character state</div>
-            <p className="mt-1 border-l-2 border-accent/35 pl-2 text-xs leading-snug text-foreground/60">
-              Same <span className="font-medium text-foreground/75">idea</span> as the Nukes &amp; Dragons planner
-              switchboard — here it only drives R.O.L.L. Live totals (species, sandbox mutations, serum-style penalty
-              toggle). Addictions, Glow, lunches, and other planner knobs are out of scope.
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Character state</div>
+              <InfoTooltip content="Drives R.O.L.L. Live totals including species, sandbox mutations, and serum-style penalty toggles. Addictions, food buffs, and temporary consumables are currently out of scope." />
+            </div>
             <div className="mt-4 space-y-2 border-t border-border pt-3">
               <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Species{" / "}rules</div>
               <label className="flex cursor-pointer items-start gap-2 text-xs text-foreground/75">
@@ -1856,15 +1834,10 @@ export default function BuilderExperimentClient({
                 </ul>
               ) : null}
             </div>
-            <div className="mt-4 space-y-2 border-t border-border pt-3">
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Mutations</div>
-              <p className="text-[11px] leading-snug text-foreground/60">
-                R.O.L.L. sandbox list — not auto-imported from share URLs. Approximate stat splits; serum toggle drops
-                modeled downsides only (no Class Freak). When your applied N&amp;D URL includes{" "}
-                <span className="font-medium text-foreground/75">Strange in Numbers</span> (<code className="text-[10px]">p=</code>{" "}
-                token <code className="text-[10px]">ce</code>), mutation <span className="font-medium">benefits</span>{" "}
-                are scaled as if four mutated teammates are on your team (+100%).
-              </p>
+              <div className="flex items-center gap-2">
+                <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Mutations</div>
+                <InfoTooltip content="Mutation benefits are scaled automatically if your N&D import includes 'Strange in Numbers'. Serum toggle drops downsides only." />
+              </div>
               <div className="max-h-44 space-y-1 overflow-y-auto pr-1 sm:columns-2 sm:gap-x-3">
                 {SANDBOX_MUTATIONS.map((m) => {
                   const on = payload.mutationIds.includes(m.id);
@@ -1904,21 +1877,10 @@ export default function BuilderExperimentClient({
               </div>
             </div>
           </div>
-          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            <div className="text-sm font-semibold">Nukes &amp; Dragons import</div>
-            <p className="mt-1 text-xs text-foreground/60">
-              Paste a share URL from the{" "}
-              <a
-                className="text-accent underline"
-                href="https://nukesdragons.com/fallout-76/character"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Fallout 76 character planner
-              </a>
-              . R.O.L.L. merges a <span className="font-medium text-foreground/75">partial</span> perk table into Live
-              totals (carry, resists, a few damage{"/"}AP{"/"}HP hints). Expand the table in code for full coverage.
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Nukes &amp; Dragons import</div>
+              <InfoTooltip content="Paste a share URL from nukesdragons.com to merge perk impacts into your Live totals. This covers carry weight, resists, and core stat hints." />
+            </div>
             <Input
               className="mt-2 font-mono text-[11px] leading-snug"
               placeholder="https://nukesdragons.com/fallout-76/character?p=…&s=…&v=2"
