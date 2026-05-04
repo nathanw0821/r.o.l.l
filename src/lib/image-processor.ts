@@ -85,7 +85,7 @@ export class ImageProcessor {
       ctx.drawImage(canvas, 0, 0);
       this.applyFilterPass(c, ctx, mode, threshold);
       
-      const { data: { text } } = await this.worker.recognize(c);
+      const { data: { text } } = await this.worker!.recognize(c);
       const lines = text.split('\n');
 
       for (const line of lines) {
@@ -119,7 +119,7 @@ export class ImageProcessor {
       legendaryPerks: []
     };
 
-    const { data: { text } } = await this.worker.recognize(canvas);
+    const { data: { text } } = await this.worker!.recognize(canvas);
     const lines = text.split('\n');
 
     for (const line of lines) {
