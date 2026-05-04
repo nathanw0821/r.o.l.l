@@ -76,23 +76,30 @@ export class ImageProcessor {
       grayData[j] = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
     }
 
-    // 2. Block-Based Adaptive Contrast Normalization
+    // 2. Block-Based Adaptive Contrast Normalization with Dynamic Polarity
     const width = canvas.width;
     const height = canvas.height;
-    const blockSize = 16;
+    const blockSize = 24; // Large enough to include background, small enough for local contrast
     const normalizedData = new Uint8Array(width * height);
 
     for (let by = 0; by < height; by += blockSize) {
       for (let bx = 0; bx < width; bx += blockSize) {
-        // Find min/max in this block
-        let min = 255, max = 0;
+        // Find min, max, and avg in this block
+        let min = 255, max = 0, sum = 0, count = 0;
         for (let y = by; y < Math.min(by + blockSize, height); y++) {
           for (let x = bx; x < Math.min(bx + blockSize, width); x++) {
             const val = grayData[y * width + x];
             if (val < min) min = val;
             if (val > max) max = val;
+            sum += val;
+            count++;
           }
         }
+
+        const avg = sum / count;
+        // If average is bright, this block is part of the yellow selection bar.
+        // If average is dark, this block is part of the standard list.
+        const isBrightBackground = avg > 128; 
 
         // Normalize pixels in this block
         const range = max - min;
@@ -100,21 +107,30 @@ export class ImageProcessor {
           for (let x = bx; x < Math.min(bx + blockSize, width); x++) {
             const idx = y * width + x;
             if (range < 15) {
-              // Flat area (likely background)
-              normalizedData[idx] = grayData[idx];
+              // Flat area (pure background), output as pure white to keep Tesseract clean
+              normalizedData[idx] = 255; 
             } else {
-              normalizedData[idx] = Math.round(((grayData[idx] - min) / range) * 255);
+              // Scale to full 0-255 range
+              let scaled = ((grayData[idx] - min) / range) * 255;
+              
+              // Standard list (Dark Bg): scaled text is 255. We want it 0 (Black). -> INVERT
+              // Yellow bar (Bright Bg): scaled text is 0. We want it 0 (Black). -> DO NOT INVERT
+              if (!isBrightBackground) {
+                scaled = 255 - scaled;
+              }
+              
+              // Apply hard threshold for crisp edges (Text is now 0, background is 255)
+              normalizedData[idx] = scaled < 128 ? 0 : 255;
             }
           }
         }
       }
     }
 
-    // 3. Threshold and invert for Tesseract
+    // 3. Write final binary image to canvas
     for (let i = 0; i < len; i += 4) {
       const idx = i / 4;
-      // High value = Foreground. Invert for Black on White.
-      const val = normalizedData[idx] > 100 ? 0 : 255;
+      const val = normalizedData[idx];
       data[i] = val;
       data[i + 1] = val;
       data[i + 2] = val;
