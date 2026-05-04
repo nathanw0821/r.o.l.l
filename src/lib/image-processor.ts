@@ -81,44 +81,72 @@ export class ImageProcessor {
       histogram[gray]++;
     }
 
-    // 2. Otsu's Method to find optimal threshold
-    let total = len / 4;
-    let sum = 0;
-    for (let t = 0; t < 256; t++) sum += t * histogram[t];
-
-    let sumB = 0;
-    let wB = 0;
-    let wF = 0;
-    let varMax = 0;
-    let threshold = 0;
-
+    // 2. Triangle Thresholding (Better for skewed histograms with large background peaks)
+    // Find the min and max gray levels
+    let min = 255, max = 0;
     for (let t = 0; t < 256; t++) {
-      wB += histogram[t];
-      if (wB === 0) continue;
-      wF = total - wB;
-      if (wF === 0) break;
+      if (histogram[t] > 0) {
+        if (t < min) min = t;
+        if (t > max) max = t;
+      }
+    }
 
-      sumB += t * histogram[t];
-      const mB = sumB / wB;
-      const mF = (sum - sumB) / wF;
+    // Find the peak of the histogram
+    let peak = 0;
+    let peakCount = 0;
+    for (let t = min; t <= max; t++) {
+      if (histogram[t] > peakCount) {
+        peakCount = histogram[t];
+        peak = t;
+      }
+    }
 
-      const varBetween = wB * wF * (mB - mF) * (mB - mF);
-      if (varBetween > varMax) {
-        varMax = varBetween;
-        threshold = t;
+    let threshold = 0;
+    // Triangle method calculation
+    if (peak - min > max - peak) {
+      // Peak is closer to max
+      let dMax = 0;
+      for (let t = min; t < peak; t++) {
+        const d = Math.abs((peak - min) * (histogram[t] - histogram[min]) - (t - min) * (peakCount - histogram[min]));
+        if (d > dMax) {
+          dMax = d;
+          threshold = t;
+        }
+      }
+    } else {
+      // Peak is closer to min (typical for dark FO76 UI)
+      let dMax = 0;
+      for (let t = peak + 1; t <= max; t++) {
+        const d = Math.abs((max - peak) * (histogram[t] - histogram[max]) - (t - peak) * (peakCount - histogram[max]));
+        if (d > dMax) {
+          dMax = d;
+          threshold = t;
+        }
       }
     }
 
     // 3. Apply threshold and invert (Tesseract prefers black text on white)
-    // We adjust the threshold slightly lower to be more inclusive of gray text 
-    // if the background is very dark.
-    const finalThreshold = Math.max(40, threshold - 10); 
+    // For the yellow bar (high gray), we want it to be white (255) and its black text to be black (0).
+    // For standard text (high gray), we want it to be black (0) and background white (255).
+    // This is the "Mixed Polarity" problem. 
+    // SOLUTION: Use a very sensitive threshold and then a Sharpening effect.
+    const finalThreshold = Math.max(30, threshold - 5); 
 
     for (let i = 0, j = 0; i < len; i += 4, j++) {
-      const value = grayData[j] > finalThreshold ? 0 : 255;
-      data[i] = value;
-      data[i + 1] = value;
-      data[i + 2] = value;
+      // Standard items (High Gray > Threshold) -> Black (0)
+      // Background (Low Gray < Threshold) -> White (255)
+      // Selected Bar (High Gray > Threshold) -> Black (0)
+      // Selected Text (Low Gray < Threshold) -> White (255)
+      // This results in mixed polarity. Tesseract 5.x handles this via its internal adaptive thresholder.
+      // So we will provide a CLEAN grayscale contrast-stretched image instead of a binary one.
+      const val = grayData[j];
+      const stretched = Math.min(255, Math.max(0, (val - min) * (255 / (max - min))));
+      
+      // Binary fallback for now, but with better sensitivity
+      const binary = stretched > finalThreshold ? 0 : 255;
+      data[i] = binary;
+      data[i + 1] = binary;
+      data[i + 2] = binary;
     }
 
     ctx.putImageData(imageData, 0, 0);
