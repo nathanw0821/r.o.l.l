@@ -37,10 +37,14 @@
 * **The 30-Day Rule:** If "Pro" features (syncing >1 account/4+ characters) aren't used for 30+ days, auto-downgrade to Free tier and stop charges.
 * **Founder Initiative:** Users in the first 6 months receive **Founder Adoption** status (1 month of free Proscribed usage).
 
+## 5. DEPLOYMENT WORKFLOW & CI/CD
+* **Primary Protocol:** **Git-Triggered Deployments Only.**
+* **Rule:** Never use the Vercel CLI (`vercel --prod`) for manual deployments. All production builds must be triggered by pushing to the `main` branch.
+* **Integrations:** GitHub -> Vercel (Automatic Build) & Neon (Database Migration).
+
 ---
 
-## 4. IMMEDIATE EXECUTION TASKS for WORKSPACE AGENT
-1.  **Initialize Tesseract.js Pipeline:** Create the `ImageProcessor` module to handle clipboard events and Canvas filtering.
-2.  **Schema Update:** Refactor the database to support the `[Account][Character]` 15-slot array.
-3.  **Dictionary Mapping:** Generate the JSON map for all current Fallout 76 legendary prefixes to validate OCR text.
-4.  **Routing Repair:** Audit and fix the public shareable link controllers to ensure "Crafting Resumes" render correctly.
+## 6. IMMEDIATE EXECUTION TASKS for WORKSPACE AGENT
+1.  **Strict Deployment Rule:** Adhere to Section 5. Only push to `main` for live updates.
+2.  **OCR Refinement:** Continue optimizing the multi-pass sweep for 100% accuracy.
+3.  **Beta Access:** Ensure B.U.I.L.D. and S.C.A.N. beta prompts are synchronized and premium.
