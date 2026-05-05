@@ -25,4 +25,5 @@ A premium Fallout 76 companion for managing legendary mod unlocks and simulating
   - `npm run db:seed:builder` - Seed the builder mod catalog.
 
 ## Acknowledgments
+
 R.O.L.L. utilizes data and inspirations from the Fallout 76 community, including **Nuka Knights**, **Nukes & Dragons**, **The Duchess Flame**, and the **Fallout Wiki**.
