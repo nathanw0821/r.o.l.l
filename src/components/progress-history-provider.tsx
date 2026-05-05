@@ -84,7 +84,7 @@ export function ProgressHistoryProvider({ children }: { children: React.ReactNod
           setEntries(
             payload.map((entry) => ({
               id: entry.effectTierId,
-              unlocked: entry.unlocked
+              entry: entry.unlocked === null ? null : { unlocked: entry.unlocked }
             }))
           );
         }

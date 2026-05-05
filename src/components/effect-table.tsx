@@ -47,18 +47,18 @@ export default function EffectTable({
   const [isCompactDensity, setIsCompactDensity] = React.useState(false);
   const handledFocusRef = React.useRef<string | null>(null);
   const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters } = useFilters();
-  const { map: localProgress } = useLocalProgress(!canEdit);
+  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!canEdit);
   const { commitEntries } = useProgressHistory();
 
   React.useEffect(() => {
     const merged: EffectTierRow[] = rows.map((row) => {
-      const localValue = localProgress[row.id];
-      if (localValue === undefined) return row;
+      const entry = localProgress[row.id];
+      if (entry === undefined) return row;
       return {
         ...row,
-        unlocked: localValue,
-        isSeeking: row.isSeeking,
-        modCount: row.modCount,
+        unlocked: entry.unlocked,
+        isSeeking: entry.isSeeking ?? row.isSeeking,
+        modCount: entry.modCount ?? row.modCount,
         selectionSource: "edited" as const
       };
     });
@@ -196,7 +196,11 @@ export default function EffectTable({
           : item
       )
     );
-    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
+    if (canEdit) {
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
+    } else {
+      setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: nextSeeking });
+    }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }]);
   }
 
@@ -209,7 +213,11 @@ export default function EffectTable({
           : item
       )
     );
-    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
+    if (canEdit) {
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
+    } else {
+      setLocalEntry(row.id, { unlocked: row.unlocked, modCount: clamped });
+    }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }]);
   }
 

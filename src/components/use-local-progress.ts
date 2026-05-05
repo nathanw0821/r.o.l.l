@@ -6,7 +6,13 @@ const COOKIE_NAME = "roll_local_progress";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 const LOCAL_PROGRESS_EVENT = "roll:local-progress";
 
-export type LocalProgressMap = Record<string, boolean>;
+export type LocalProgressEntry = {
+  unlocked: boolean;
+  isSeeking?: boolean;
+  modCount?: number;
+};
+
+export type LocalProgressMap = Record<string, LocalProgressEntry>;
 
 function readCookieValue(name: string) {
   if (typeof document === "undefined") return null;
@@ -39,10 +45,15 @@ export function readLocalProgress(): LocalProgressMap {
   if (!raw) return {};
   try {
     const parsed = JSON.parse(raw) as Record<string, unknown>;
-    const entries = Object.entries(parsed).filter(
-      ([key, value]) => typeof key === "string" && typeof value === "boolean"
-    );
-    return Object.fromEntries(entries) as LocalProgressMap;
+    const normalized: LocalProgressMap = {};
+    for (const [key, value] of Object.entries(parsed)) {
+      if (typeof value === "boolean") {
+        normalized[key] = { unlocked: value };
+      } else if (value && typeof value === "object" && "unlocked" in value) {
+        normalized[key] = value as LocalProgressEntry;
+      }
+    }
+    return normalized;
   } catch {
     return {};
   }
@@ -86,14 +97,14 @@ export function useLocalProgress(enabled = true) {
   }, [enabled]);
 
   const setEntry = React.useCallback(
-    (id: string, unlocked: boolean | null) => {
+    (id: string, entry: LocalProgressEntry | null) => {
       if (!enabled) return;
       setMap((prev) => {
         const next = { ...prev };
-        if (unlocked === null) {
+        if (entry === null) {
           delete next[id];
         } else {
-          next[id] = unlocked;
+          next[id] = { ...prev[id], ...entry };
         }
         writeLocalProgress(next);
         broadcastLocalProgress(next);
@@ -104,15 +115,15 @@ export function useLocalProgress(enabled = true) {
   );
 
   const setEntries = React.useCallback(
-    (entries: { id: string; unlocked: boolean | null }[]) => {
+    (entries: { id: string; entry: Partial<LocalProgressEntry> | null }[]) => {
       if (!enabled || entries.length === 0) return;
       setMap((prev) => {
         const next = { ...prev };
-        for (const entry of entries) {
-          if (entry.unlocked === null) {
-            delete next[entry.id];
+        for (const item of entries) {
+          if (item.entry === null) {
+            delete next[item.id];
           } else {
-            next[entry.id] = entry.unlocked;
+            next[item.id] = { ...prev[item.id], ...item.entry } as LocalProgressEntry;
           }
         }
         writeLocalProgress(next);
@@ -130,7 +141,7 @@ export function useLocalProgress(enabled = true) {
   }, []);
 
   const unlockedCount = React.useMemo(
-    () => Object.values(map).filter((value) => value).length,
+    () => Object.values(map).filter((entry) => entry.unlocked).length,
     [map]
   );
 
@@ -143,3 +154,4 @@ export function useLocalProgress(enabled = true) {
     hasLocal: Object.keys(map).length > 0
   };
 }
+

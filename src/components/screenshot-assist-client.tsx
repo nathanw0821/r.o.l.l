@@ -323,11 +323,11 @@ export default function ScreenshotAssistClient({
 
   React.useEffect(() => {
     const merged = rows.map((row) => {
-      const localValue = localProgress[row.id];
-      if (localValue === undefined) return row;
+      const entry = localProgress[row.id];
+      if (entry === undefined) return row;
       return {
         ...row,
-        unlocked: localValue,
+        unlocked: entry.unlocked,
         selectionSource: "edited" as const
       };
     });

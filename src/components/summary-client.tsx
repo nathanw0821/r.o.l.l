@@ -116,7 +116,7 @@ export default function SummaryClient({
   } = useFilters();
   const [localRows, setLocalRows] = React.useState(rows);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
-  const { map: localProgress } = useLocalProgress(!isSignedIn);
+  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!isSignedIn);
   const { commitEntries } = useProgressHistory();
   const [exportMode, setExportMode] = React.useState<"filtered" | "all">("filtered");
   const [summaryLocked, setSummaryLocked] = React.useState(false);
@@ -137,11 +137,13 @@ export default function SummaryClient({
 
   React.useEffect(() => {
     const merged = rows.map((row) => {
-      const localValue = localProgress[row.id];
-      if (localValue === undefined) return row;
+      const entry = localProgress[row.id];
+      if (entry === undefined) return row;
       return {
         ...row,
-        unlocked: localValue,
+        unlocked: entry.unlocked,
+        isSeeking: entry.isSeeking ?? row.isSeeking,
+        modCount: entry.modCount ?? row.modCount,
         selectionSource: "edited" as const
       };
     });
@@ -207,7 +209,11 @@ export default function SummaryClient({
           : item
       )
     );
-    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
+    if (isSignedIn) {
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
+    } else {
+      setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: nextSeeking });
+    }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }]);
   }
 
@@ -220,7 +226,11 @@ export default function SummaryClient({
           : item
       )
     );
-    await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
+    if (isSignedIn) {
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
+    } else {
+      setLocalEntry(row.id, { unlocked: row.unlocked, modCount: clamped });
+    }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }]);
   }
 
