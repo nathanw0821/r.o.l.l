@@ -80,6 +80,8 @@ export type BuilderPayload = {
   legendaryPerkIds: string[];
   /** When true, mutation scaling is increased (Strange in Numbers). */
   hasStrangeInNumbers: boolean;
+  /** Optional Nukes & Dragons URL if imported. */
+  ndUrl?: string;
 };
 
 /** Matched against active tracker rows (`Effect` name + tier star); `unknown` if not found in dataset. */

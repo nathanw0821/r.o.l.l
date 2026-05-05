@@ -166,6 +166,7 @@ function buildPayloadV5(fields: {
   ignoreMutationPenalties: boolean;
   baseSpecial?: Record<string, number>;
   legendaryPerkIds?: string[];
+  hasStrangeInNumbers?: boolean;
   ndUrl?: string;
 }): BuilderPayload {
   return {
@@ -185,6 +186,7 @@ function buildPayloadV5(fields: {
     ignoreMutationPenalties: fields.ignoreMutationPenalties,
     baseSpecial: fields.baseSpecial ?? {},
     legendaryPerkIds: fields.legendaryPerkIds ?? [],
+    hasStrangeInNumbers: fields.hasStrangeInNumbers ?? false,
     ndUrl: fields.ndUrl
   };
 }
@@ -235,6 +237,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties),
       baseSpecial: readBaseSpecial(v),
       legendaryPerkIds: readLegendaryPerkIds(v),
+      hasStrangeInNumbers: Boolean(v.hasStrangeInNumbers),
       ndUrl: typeof v.ndUrl === "string" ? v.ndUrl : undefined
     });
   }
@@ -276,7 +279,8 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       ghoul: Boolean(v.ghoul),
       underarmor: readUnderarmor(v),
       mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
-      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
+      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties),
+      hasStrangeInNumbers: false
     });
   }
 
@@ -312,7 +316,8 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
         ghoul: Boolean(v.ghoul),
         underarmor: readUnderarmor(v),
         mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
-        ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
+        ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties),
+        hasStrangeInNumbers: false
       });
     }
 
@@ -331,7 +336,8 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       ghoul: Boolean(v.ghoul),
       underarmor: readUnderarmor(v),
       mutationIds: sanitizeSandboxMutationIds(v.mutationIds),
-      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties)
+      ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties),
+      hasStrangeInNumbers: false
     });
   }
 
