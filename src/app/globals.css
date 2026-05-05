@@ -1662,6 +1662,7 @@ a {
 }
 
 .summary-status-card {
+  position: relative;
   border-color: var(--color-border);
   background: color-mix(in srgb, var(--color-panel) 88%, transparent);
   color: var(--color-fg);
