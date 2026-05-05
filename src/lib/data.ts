@@ -89,14 +89,26 @@ async function fetchUserProgressMap(characterId: string, datasetVersionId: strin
 async function fetchGlobalProgressMap(userId: string, datasetVersionId: string) {
   const rows = await prisma.userProgress.findMany({
     where: { userId, effectTier: { datasetVersionId }, unlocked: true },
-    select: { effectTierId: true, character: { select: { name: true } } }
+    select: { 
+      effectTierId: true, 
+      character: { 
+        select: { 
+          name: true, 
+          gameAccount: { select: { name: true } } 
+        } 
+      } 
+    }
   });
   
   const map = new Map<string, string[]>();
   for (const row of rows) {
     if (!row.character) continue;
     const list = map.get(row.effectTierId) || [];
-    list.push(row.character.name);
+    const accountName = row.character.gameAccount?.name;
+    const displayName = accountName 
+      ? `${row.character.name} (${accountName})` 
+      : row.character.name;
+    list.push(displayName);
     map.set(row.effectTierId, list);
   }
   return map;

@@ -6,7 +6,6 @@ A premium Fallout 76 companion for managing legendary mod unlocks and simulating
 - **Registry Management**: Track your learned legendary mods across multiple accounts and platforms (PC, Xbox, PlayStation).
 - **S.C.A.N. (Beta)**: Local-first OCR analysis. Paste or upload in-game screenshots to automatically identify and sync your learned mods.
 - **B.U.I.L.D. (Beta)**: A high-fidelity sandbox for simulating the impact of legendary mods, underarmor, and mutations on your live character stats.
-- **Nukes & Dragons Integration**: Import your existing character builds to see real-time stat scaling within the R.O.L.L. interface.
 
 ## Quick Start
 1. **Sync**: Sign in to persist your registry across devices.
