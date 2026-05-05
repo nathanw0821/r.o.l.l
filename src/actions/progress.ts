@@ -75,9 +75,9 @@ export async function updateProgress(input: {
         }
       },
       update: { 
-        unlocked: unlocked ?? undefined,
-        isSeeking,
-        modCount
+        ...(unlocked !== undefined && { unlocked: unlocked ?? undefined }),
+        ...(isSeeking !== undefined && { isSeeking }),
+        ...(modCount !== undefined && { modCount })
       },
       create: {
         userId: session.user.id,
@@ -138,9 +138,9 @@ export async function bulkUpdateProgress(input: {
           }
         },
         update: { 
-          unlocked: entry.unlocked ?? undefined,
-          isSeeking: entry.isSeeking,
-          modCount: entry.modCount
+          ...(entry.unlocked !== undefined && { unlocked: entry.unlocked ?? undefined }),
+          ...(entry.isSeeking !== undefined && { isSeeking: entry.isSeeking }),
+          ...(entry.modCount !== undefined && { modCount: entry.modCount })
         },
         create: {
           userId: session.user.id,
