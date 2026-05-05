@@ -112,10 +112,6 @@ import {
 } from "@/components/builder/builder-beta-gate";
 import { InfoTooltip } from "@/components/ui/tooltip";
 import {
-  importNukesDragonsFo76CharacterUrl,
-  type NdImportResult,
-} from "@/lib/builder/nukes-dragons-import";
-import {
   SANDBOX_MUTATIONS,
   sandboxMutationMathLayer,
 } from "@/lib/builder/sandbox-mutations";
@@ -170,6 +166,7 @@ function defaultPayload(): BuilderPayload {
     ignoreMutationPenalties: false,
     baseSpecial: { str: 1, per: 1, end: 1, cha: 1, int: 1, agi: 1, lck: 1 },
     legendaryPerkIds: [],
+    hasStrangeInNumbers: false,
   };
 }
 
@@ -741,11 +738,6 @@ export default function BuilderExperimentClient({
   const [pendingLearnedPieceId, setPendingLearnedPieceId] = React.useState<
     string | null
   >(null);
-  const [ndUrlInput, setNdUrlInput] = React.useState("");
-  const [ndImport, setNdImport] = React.useState<
-    (NdImportResult & { appliedAt: number }) | null
-  >(null);
-  const [ndImportError, setNdImportError] = React.useState<string | null>(null);
 
   const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<
     number | null
@@ -892,18 +884,7 @@ export default function BuilderExperimentClient({
     setActiveLoadoutIndex(null);
   }, [payload, isMounted]);
 
-  // Sync ndImport when payload.ndUrl changes (e.g. on load)
-  React.useEffect(() => {
-    if (payload.ndUrl) {
-      const r = importNukesDragonsFo76CharacterUrl(payload.ndUrl);
-      if (!("error" in r)) {
-        setNdImport({ ...r, appliedAt: Date.now() });
-        setNdUrlInput(payload.ndUrl);
-      }
-    } else {
-      setNdImport(null);
-    }
-  }, [payload.ndUrl]);
+
 
   React.useEffect(() => {
     setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
@@ -1107,15 +1088,6 @@ export default function BuilderExperimentClient({
     };
   }, [piece, payload.powerArmorPiecesEquipped]);
 
-  const ndPerkLayer = React.useMemo(() => {
-    if (!ndImport?.layer) return null;
-    const keys = Object.keys(ndImport.layer).filter(
-      (k) => ndImport!.layer[k] !== 0,
-    );
-    if (keys.length === 0) return null;
-    return ndImport.layer;
-  }, [ndImport]);
-
   const mutationLayer = React.useMemo(
     () =>
       sandboxMutationMathLayer(
@@ -1123,7 +1095,7 @@ export default function BuilderExperimentClient({
         payload.ignoreMutationPenalties,
         {
           strangeInNumbersMutatedTeammates:
-            ndImport?.hasStrangeInNumbers && payload.mutationIds.length > 0
+            payload.hasStrangeInNumbers && payload.mutationIds.length > 0
               ? 4
               : 0,
         },
@@ -1131,7 +1103,7 @@ export default function BuilderExperimentClient({
     [
       payload.mutationIds,
       payload.ignoreMutationPenalties,
-      ndImport?.hasStrangeInNumbers,
+      payload.hasStrangeInNumbers,
     ],
   );
 
@@ -1172,7 +1144,6 @@ export default function BuilderExperimentClient({
             ? [powerArmorFrameIntrinsicLayer]
             : []),
           ...(mutationLayer ? [mutationLayer] : []),
-          ...(ndPerkLayer ? [ndPerkLayer] : []),
         ],
         baseArmorStats,
         baseSpecial: payload.baseSpecial,
@@ -1184,7 +1155,6 @@ export default function BuilderExperimentClient({
       underLayers,
       armorCraftingLayers,
       powerArmorFrameIntrinsicLayer,
-      ndPerkLayer,
       mutationLayer,
       baseArmorStats,
       payload.baseSpecial,
@@ -2375,7 +2345,6 @@ export default function BuilderExperimentClient({
               <div className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">
                 Mutations
               </div>
-              <InfoTooltip content="Mutation benefits are scaled automatically if your N&D import includes 'Strange in Numbers'. Serum toggle drops downsides only." />
             </div>
             <div className="max-h-44 space-y-1 overflow-y-auto pr-1 sm:columns-2 sm:gap-x-3">
               {SANDBOX_MUTATIONS.map((m) => {
@@ -2406,6 +2375,26 @@ export default function BuilderExperimentClient({
             <div className="flex items-center justify-between gap-3 border-t border-border pt-2">
               <div className="min-w-0">
                 <div className="text-[11px] font-medium text-foreground/85">
+                  Strange in Numbers
+                </div>
+                <p className="text-[10px] leading-snug text-foreground/55">
+                  Positive mutation effects +25% if teammates are mutated.
+                </p>
+              </div>
+              <Switch
+                checked={payload.hasStrangeInNumbers}
+                onCheckedChange={(checked) =>
+                  setPayload((p) => ({
+                    ...p,
+                    hasStrangeInNumbers: checked,
+                  }))
+                }
+                aria-label="Strange in Numbers"
+              />
+            </div>
+            <div className="flex items-center justify-between gap-3 border-t border-border pt-2">
+              <div className="min-w-0">
+                <div className="text-[11px] font-medium text-foreground/85">
                   Ignore mutation penalties
                 </div>
                 <p className="text-[10px] leading-snug text-foreground/55">
@@ -2424,82 +2413,7 @@ export default function BuilderExperimentClient({
               />
             </div>
           </div>
-          <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-            <div className="flex items-center gap-2">
-              <div className="text-sm font-semibold">
-                Nukes &amp; Dragons import
-              </div>
-              <InfoTooltip content="Paste a share URL from nukesdragons.com to merge perk impacts into your Live totals. This covers carry weight, resists, and core stat hints." />
-            </div>
-            <Input
-              className="mt-2 font-mono text-[11px] leading-snug"
-              placeholder="https://nukesdragons.com/fallout-76/character?p=…&s=…&v=2"
-              value={ndUrlInput}
-              onChange={(e) => {
-                setNdUrlInput(e.target.value);
-                setNdImportError(null);
-              }}
-            />
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant="secondary"
-                onClick={() => {
-                  setNdImportError(null);
-                  const r = importNukesDragonsFo76CharacterUrl(ndUrlInput);
-                  if ("error" in r) {
-                    setNdImportError(r.error);
-                    setNdImport(null);
-                    return;
-                  }
-                  setNdImport({ ...r, appliedAt: Date.now() });
-                  setPayload((p) => {
-                    const next: BuilderPayload = { ...p, ndUrl: ndUrlInput };
-                    if (r.special) {
-                      next.baseSpecial = { ...p.baseSpecial, ...r.special };
-                    }
-                    return next;
-                  });
-                }}
-              >
-                Apply to Live totals
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  setNdImport(null);
-                  setNdImportError(null);
-                  setNdUrlInput("");
-                  setPayload((p) => ({ ...p, ndUrl: undefined }));
-                }}
-              >
-                Clear import
-              </Button>
-            </div>
-            {ndImportError ? (
-              <p className="mt-2 text-xs text-[color:var(--color-warning)]">
-                {ndImportError}
-              </p>
-            ) : null}
-            {ndImport ? (
-              <div className="mt-2 space-y-1.5 text-[11px] leading-snug text-foreground/65">
-                {ndImport.warnings.map((w) => (
-                  <p key={w}>{w}</p>
-                ))}
-                {ndImport.unknownCodes.length > 0 ? (
-                  <p>
-                    <span className="font-medium text-foreground/75">
-                      Codes not in R.O.L.L. table yet:
-                    </span>{" "}
-                    {ndImport.unknownCodes.join(", ")}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
+
           <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
             <div className="flex items-center gap-2">
               <div className="text-sm font-semibold">
@@ -2512,7 +2426,7 @@ export default function BuilderExperimentClient({
                   </>
                 )}
               </div>
-              <InfoTooltip content="Each row calculates: piece + crafting (+ frame on PA) then (+delta) for legendary stars, underarmor, mutations, and N&D imports. A single number means no extra bonuses exist for that stat." />
+              <InfoTooltip content="Each row calculates: piece + crafting (+ frame on PA) then (+delta) for legendary stars, underarmor, and mutations. A single number means no extra bonuses exist for that stat." />
             </div>
             <div className="mt-1 text-xs text-foreground/60">
               <div className="mt-1 flex items-start gap-2 rounded-md bg-accent/5 p-2 text-xs text-foreground/70 border border-accent/10">
@@ -2557,9 +2471,7 @@ export default function BuilderExperimentClient({
               {payload.ghoul
                 ? "Ghoul caps some legendaries and applies −10 effective CHA in this sandbox. "
                 : null}
-              {ndPerkLayer
-                ? "Imported N&D perk codes are folded into the (+…) portion where we model them."
-                : null}
+
             </p>
 
             <BuilderTotalsGrid
