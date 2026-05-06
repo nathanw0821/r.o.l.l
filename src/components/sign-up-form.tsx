@@ -119,7 +119,6 @@ export default function SignUpForm() {
           {[
             { id: "google", label: "Continue with Google / YouTube" },
             { id: "twitch", label: "Continue with Twitch" },
-            { id: "discord", label: "Continue with Discord" },
             { id: "reddit", label: "Continue with Reddit" },
             { id: "azure-ad", label: "Continue with Microsoft / Xbox" }
           ]
