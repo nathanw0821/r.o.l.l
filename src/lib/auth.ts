@@ -3,7 +3,7 @@ import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import TwitchProvider from "next-auth/providers/twitch";
-import DiscordProvider from "next-auth/providers/discord";
+
 import RedditProvider from "next-auth/providers/reddit";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { cache } from "react";
@@ -176,14 +176,7 @@ export const authOptions: NextAuthOptions = {
           })
         ]
       : []),
-    ...(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET
-      ? [
-          DiscordProvider({
-            clientId: process.env.DISCORD_CLIENT_ID,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET
-          })
-        ]
-      : []),
+
     ...(process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET
       ? [
           RedditProvider({

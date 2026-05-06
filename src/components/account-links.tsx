@@ -13,7 +13,7 @@ type ProviderInfo = {
 const providerLabels: Record<string, string> = {
   google: "Google / YouTube",
   twitch: "Twitch",
-  discord: "Discord",
+
   reddit: "Reddit",
   "azure-ad": "Microsoft / Xbox",
   credentials: "Local Username"
