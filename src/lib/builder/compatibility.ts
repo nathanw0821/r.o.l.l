@@ -503,7 +503,13 @@ export function buildShoppingList(mods: BuilderModDTO[]): { modules: number; lin
     }
   }
 
-  const lines = Array.from(map.entries()).map(([label, count]) => ({ label, count }));
+  const lines = Array.from(map.entries())
+    .filter(([label]) => {
+      const lower = label.toLowerCase();
+      return lower !== "legendary module" && lower !== "legendary modules";
+    })
+    .map(([label, count]) => ({ label, count }));
+
   if (modules > 0) {
     lines.unshift({ label: "Legendary modules (total)", count: modules });
   }

@@ -309,10 +309,54 @@ const SEED_MODS = mergeBySlug(
 );
 
 export async function seedBuilderCatalog(prisma: PrismaClient) {
+  // Fetch existing effect tiers to get real crafting costs if available
+  const dbTiers = await prisma.effectTier.findMany({
+    include: { effect: true, tier: true }
+  });
+
+  const costLookup = new Map<string, { modules: number; extra: string | null }>();
+  for (const et of dbTiers) {
+    const key = `${et.effect.name.toLowerCase()}|${et.tier.label.toLowerCase()}`;
+    costLookup.set(key, {
+      modules: et.legendaryModules ?? 0,
+      extra: et.extraComponent || null
+    });
+  }
+
   await prisma.legendaryMod.deleteMany({
     where: { slug: { in: ["infestation-corrosive", "infestation-armor-weeps"] } }
   });
+
   for (const mod of SEED_MODS) {
+    // Try to find real cost from DB tiers
+    const starLabel = `${mod.starRank} Star`.toLowerCase();
+    const lookupKey = `${mod.name.toLowerCase()}|${starLabel}`;
+    const dbCost = costLookup.get(lookupKey);
+
+    let finalModules = mod.starRank === 1 ? 15 : mod.starRank === 2 ? 30 : mod.starRank === 3 ? 60 : 120;
+    let finalItems: { name: string; count: number }[] = [];
+
+    if (dbCost) {
+      if (dbCost.modules > 0) finalModules = dbCost.modules;
+      if (dbCost.extra) {
+        // Parse extra component string (e.g. "5 Black Titanium" or "1 Bloodbug Proboscis; 1 Stinging Barb")
+        const parts = dbCost.extra.split(";").map(p => p.trim()).filter(Boolean);
+        for (const p of parts) {
+          const match = p.match(/^(\d+)\s+(.+)$/);
+          if (match) {
+            finalItems.push({ name: match[2]!, count: parseInt(match[1]!, 10) });
+          } else {
+            finalItems.push({ name: p, count: 1 });
+          }
+        }
+      }
+    }
+
+    const craftingCost = {
+      legendaryModules: finalModules,
+      items: finalItems
+    };
+
     await prisma.legendaryMod.upsert({
       where: { slug: mod.slug },
       create: {
@@ -323,7 +367,7 @@ export async function seedBuilderCatalog(prisma: PrismaClient) {
         subCategory: mod.subCategory,
         description: mod.description,
         effectMath: mod.effectMath as Prisma.InputJsonValue,
-        craftingCost: mod.craftingCost as Prisma.InputJsonValue,
+        craftingCost: craftingCost as Prisma.InputJsonValue,
         allowedOnPowerArmor: mod.allowedOnPowerArmor,
         allowedOnArmor: mod.allowedOnArmor,
         allowedOnWeapon: mod.allowedOnWeapon,
@@ -338,7 +382,7 @@ export async function seedBuilderCatalog(prisma: PrismaClient) {
         subCategory: mod.subCategory,
         description: mod.description,
         effectMath: mod.effectMath as Prisma.InputJsonValue,
-        craftingCost: mod.craftingCost as Prisma.InputJsonValue,
+        craftingCost: craftingCost as Prisma.InputJsonValue,
         allowedOnPowerArmor: mod.allowedOnPowerArmor,
         allowedOnArmor: mod.allowedOnArmor,
         allowedOnWeapon: mod.allowedOnWeapon,
