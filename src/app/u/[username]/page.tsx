@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPublicCraftingResume } from "@/lib/public-profile";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatTierStars } from "@/lib/tier-format";
 import { ShieldCheck, User as UserIcon, ExternalLink } from "lucide-react";

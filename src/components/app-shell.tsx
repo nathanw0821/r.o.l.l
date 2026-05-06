@@ -112,7 +112,7 @@ export default function AppShell({
   const [mobileSidebarReveal, setMobileSidebarReveal] = React.useState(1);
   const mobileSidebarRevealRef = React.useRef(1);
   const { map: localProgress } = useLocalProgress(!isSignedIn);
-  const { hasAccess: hasBuilderAccess } = useBuilderBetaAccess(isAdmin);
+  useBuilderBetaAccess(isAdmin);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
   const visibleLinks = React.useMemo(
     () => links.filter((link) => {

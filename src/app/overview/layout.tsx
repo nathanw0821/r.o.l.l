@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import PageHeader from "@/components/page-header";
 import OverviewTabs from "@/components/overview-tabs";
 

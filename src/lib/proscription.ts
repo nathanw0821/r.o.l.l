@@ -1,5 +1,3 @@
-import { prisma } from "@/lib/prisma";
-
 /**
  * Proscription Billing Engine (Placeholder)
  * Logic for usage-based automated billing and "Active Heartbeats".
@@ -13,7 +11,7 @@ export async function recordHeartbeat(userId: string) {
   // auto-downgrade to Free tier.
 }
 
-export async function checkProscriptionStatus(userId: string) {
+export async function checkProscriptionStatus() {
   // Check if user is in "Founder Adoption" status (first 6 months)
   // or if they should be downgraded due to inactivity.
   return {

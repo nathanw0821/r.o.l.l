@@ -91,7 +91,7 @@ export const MOD_TRANSLATIONS: Record<string, string[]> = {
 };
 
 // Populate normalized map
-Object.entries(LEGENDARY_MOD_DICTIONARY).forEach(([tier, mods]) => {
+Object.values(LEGENDARY_MOD_DICTIONARY).forEach((mods) => {
   mods.forEach(mod => {
     const canonical = mod;
     const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');

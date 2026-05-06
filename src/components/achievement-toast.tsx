@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Trophy, X, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { AchievementDefinition } from "@/lib/achievements";
 
 export type ToastItem = {
