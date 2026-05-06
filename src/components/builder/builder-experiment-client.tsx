@@ -1000,6 +1000,20 @@ export default function BuilderExperimentClient({
     [mods, payload],
   );
 
+  const groupedLegendaryEffects = React.useMemo(() => {
+    const map = new Map<string, { mod: BuilderModDTO; count: number; benchLabels: string[] }>();
+    for (const { mod, benchLabel } of equippedLegendaryBenchLines) {
+      const existing = map.get(mod.id);
+      if (existing) {
+        existing.count++;
+        existing.benchLabels.push(benchLabel);
+      } else {
+        map.set(mod.id, { mod, count: 1, benchLabels: [benchLabel] });
+      }
+    }
+    return Array.from(map.values());
+  }, [equippedLegendaryBenchLines]);
+
   const underLayers = React.useMemo(() => {
     const layers: Record<string, number>[] = [];
     const shell = findUnderarmorOption(
@@ -2469,29 +2483,36 @@ export default function BuilderExperimentClient({
               <div className="text-xs font-semibold uppercase tracking-wide text-foreground/65">
                 Effects
               </div>
-              {equippedLegendaryBenchLines.length === 0 ? (
+              {groupedLegendaryEffects.length === 0 ? (
                 <p className="mt-2 text-xs text-foreground/55">
                   No legendary stars selected on this base.
                 </p>
               ) : (
-                <ul className="mt-2 space-y-2.5">
-                  {equippedLegendaryBenchLines.map(({ mod, benchLabel }) => {
+                <ul className="mt-2 space-y-3">
+                  {groupedLegendaryEffects.map(({ mod, count, benchLabels }) => {
                     const descRaw = mod.description?.trim() ?? "";
                     const desc =
                       sandboxLegendaryDescription(descRaw, piece) || descRaw;
                     return (
                       <li
-                        key={`${benchLabel}-${mod.id}`}
+                        key={mod.id}
                         className="text-xs leading-snug"
                       >
-                        <div className="font-medium text-foreground/85">
-                          {mod.name}
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-bold text-foreground/90">
+                            {mod.name}
+                          </span>
+                          {count > 1 && (
+                            <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-bold text-accent">
+                              ×{count}
+                            </span>
+                          )}
                         </div>
-                        <div className="text-[11px] text-foreground/50">
-                          {benchLabel}
+                        <div className="mt-0.5 text-[10px] text-foreground/45 leading-relaxed">
+                          {benchLabels.join(" · ")}
                         </div>
                         {desc ? (
-                          <p className="mt-0.5 text-foreground/60 line-clamp-3">
+                          <p className="mt-1 text-foreground/60 line-clamp-3">
                             {desc}
                           </p>
                         ) : null}
