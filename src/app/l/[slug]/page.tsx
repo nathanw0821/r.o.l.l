@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { isAdminUser } from "@/lib/app-config";
+import { notFound } from "next/navigation";
 import { ARMOR_SET_SLOT_LABELS, getArmorSetRow } from "@/lib/builder/armor-sets";
 import {
   armorCraftingEffectLayers,
@@ -101,7 +97,6 @@ function baseArmorFromPayload(payload: BuilderPayload) {
 }
 
 export default async function SharedLoadoutPage({ params }: PageProps) {
-  const session = await getServerSession(authOptions);
   
   // Removed admin-only gate for shared B.U.I.L.D. links to allow beta testers to view and share builds.
   // if (!isAdminUser(session?.user)) {

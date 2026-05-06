@@ -12,7 +12,7 @@ import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
 import { ImageProcessor } from "@/lib/image-processor";
-import { Sparkles, Info, RefreshCw, Camera } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useBuilderBetaAccess, BuilderBetaGate } from "@/components/builder/builder-beta-gate";
 import { InfoTooltip } from "@/components/ui/tooltip";
 
@@ -457,7 +457,7 @@ export default function ScreenshotAssistClient({
     if (!buildScanResult) return;
     
     const saved = typeof window !== "undefined" ? localStorage.getItem("roll-builder-payload") : null;
-    let payload = saved ? JSON.parse(saved) : {
+    const payload = saved ? JSON.parse(saved) : {
       version: 5,
       basePieceId: "armor-set-secret-service",
       equipmentKind: "armor",

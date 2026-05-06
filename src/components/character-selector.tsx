@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { User, ChevronDown, Monitor, Smartphone, Layout, Server, Check, Settings2 } from "lucide-react";
+import { User, ChevronDown, Monitor, Smartphone, Layout, Server, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CharacterManager } from "@/components/character-manager";
 import { setActiveCharacter } from "@/actions/character";

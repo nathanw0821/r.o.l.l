@@ -1,4 +1,5 @@
 
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require('fs');
 const content = fs.readFileSync('../src/components/builder/builder-experiment-client.tsx', 'utf8');
 

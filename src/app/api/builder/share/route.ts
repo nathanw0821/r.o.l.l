@@ -46,7 +46,7 @@ const payloadSchema = z
     ...p,
     powerArmorHelmetId: p.powerArmorHelmetId ?? null,
     powerArmorHelmetCrafting: p.powerArmorHelmetCrafting ?? { materialModId: "none", miscModId: "none" },
-    powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(p.powerArmorPiecesEquipped as any),
+    powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(p.powerArmorPiecesEquipped),
     mutationIds: sanitizeSandboxMutationIds(p.mutationIds ?? []),
     ignoreMutationPenalties: p.ignoreMutationPenalties ?? false,
     baseSpecial: p.baseSpecial ?? {},

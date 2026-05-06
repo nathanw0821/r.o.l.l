@@ -16,7 +16,6 @@ import {
   Swords,
   Activity,
   Backpack,
-  Dumbbell,
   Sparkles as SparklesIcon,
   Search,
   RotateCcw,
@@ -35,7 +34,6 @@ import {
 } from "@/lib/builder/armor-sets";
 import {
   ARMOR_MATERIAL_MODS,
-  PA_MATERIAL_MODS,
   listArmorMiscModOptions,
   armorCraftingEffectLayers,
   defaultArmorPieceCrafting,
@@ -52,7 +50,6 @@ import {
   isTrackableBasePieceId,
   listTrackableBaseGearByGroup,
   pairedPowerArmorHelmetId,
-  POWER_ARMOR_HELMET_PIECES,
   trackableBaseRowCount,
   type BaseGearPiece,
 } from "@/lib/builder/base-gear";
@@ -63,7 +60,6 @@ import {
   buildShoppingList,
   filterModsForSlot,
   formatEffectMathDeltas,
-  isFullArmorSetPayload,
   isMultiPiecePayload,
   listEquippedLegendariesWithBenchLabels,
   listEquippedModsInBenchOrder,
@@ -78,15 +74,12 @@ import {
   normalizeBuilderPayload,
 } from "@/lib/builder/normalize-builder-payload";
 import {
-  defaultHelmetIdForTorsoPieceId,
   getPowerArmorEquippedFlatStats,
   getPowerArmorSlotBaseStats,
-  isKnownPowerArmorHelmetPieceId,
   POWER_ARMOR_PIECE_SLOT_LABELS,
   powerArmorFrameIntrinsicEffectMath,
   powerArmorInherentDamageReductionPercent,
   powerArmorInherentRadReductionPercent,
-  sanitizePowerArmorPiecesEquipped,
 } from "@/lib/builder/power-armor-stats";
 import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
@@ -103,9 +96,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import BuilderTotalsStatKey, {
-  type BuilderTotalsStatKeyMode,
-} from "@/components/builder/builder-totals-stat-key";
 import {
   BuilderBetaGate,
   useBuilderBetaAccess,
@@ -769,7 +759,7 @@ export default function BuilderExperimentClient({
       // ignore
     }
     setIsMounted(true);
-  }, [isAdmin]);
+  }, [isAdmin, hasBuilderAccess]);
 
   const clearAllSelections = React.useCallback(() => {
     setUndoPayload(payload);
@@ -944,12 +934,6 @@ export default function BuilderExperimentClient({
       ? POWER_ARMOR_PIECE_SLOT_LABELS
       : ARMOR_SET_SLOT_LABELS;
 
-  const statKeyMode: BuilderTotalsStatKeyMode =
-    totalsPresentation === "weapon"
-      ? "weapon"
-      : totalsPresentation === "powerArmor"
-        ? "powerArmor"
-        : "default";
   const currentBaseLearned =
     isTrackableBasePieceId(piece.id) &&
     (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
@@ -1159,6 +1143,7 @@ export default function BuilderExperimentClient({
       baseArmorStats,
       payload.baseSpecial,
       payload.legendaryPerkIds,
+      piece.kind,
     ],
   );
 

@@ -12,7 +12,6 @@ const BuilderExperimentClient = dynamic(
   }
 );
 
-import { redirect } from "next/navigation";
 import { isAdminUser } from "@/lib/app-config";
 
 export const metadata: Metadata = {

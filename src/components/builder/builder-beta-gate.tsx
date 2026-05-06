@@ -59,7 +59,7 @@ export function BuilderBetaGate({
             <div className="space-y-4">
               {typeof description === "string" ? <p>{description}</p> : description}
               <p className="text-sm text-foreground/60">
-                By joining the beta, you'll gain access to the experimental diagnostics and logistics tools.
+                By joining the beta, you&apos;ll gain access to the experimental diagnostics and logistics tools.
               </p>
             </div>
             <div className="flex justify-end gap-3 pt-2">
@@ -67,7 +67,7 @@ export function BuilderBetaGate({
                 No thanks
               </Button>
               <Button onClick={onAccept}>
-                I'm in
+                I&apos;m in
               </Button>
             </div>
           </DialogDescription>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { User, Plus, Edit2, Trash2, Check, X, Users, Monitor, Smartphone, Layout, Globe, Server, Settings2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Check, X, Users, Monitor, Smartphone, Layout, Server, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -50,7 +50,6 @@ export function CharacterManager({
   const [linkingCharId, setLinkingCharId] = useState<string | null>(null);
   const [linkingStep, setLinkingStep] = useState<"options" | "create" | "existing" | null>(null);
 
-  const activeCharacter = characters.find(c => c.id === activeCharacterId);
 
   const handleCreateAccount = async () => {
     if (!newAccountName.trim()) return;
@@ -227,7 +226,7 @@ export function CharacterManager({
                 />
                 <select 
                   value={newAccountPlatform}
-                  onChange={(e) => setNewAccountPlatform(e.target.value as any)}
+                  onChange={(e) => setNewAccountPlatform(e.target.value as "PC" | "XBOX" | "PS")}
                   className="h-9 bg-panel/50 border border-input rounded-md px-2 text-xs outline-none"
                 >
                   <option value="PC">PC</option>
@@ -411,7 +410,7 @@ export function CharacterManager({
               <div className="text-center space-y-1">
                 <h3 className="text-lg font-bold tracking-tight">Link Character</h3>
                 <p className="text-xs text-foreground/60">
-                  "{characters.find(c => c.id === linkingCharId)?.name}" needs to be linked to a game account.
+                  &quot;{characters.find(c => c.id === linkingCharId)?.name}&quot; needs to be linked to a game account.
                 </p>
               </div>
 
@@ -483,7 +482,7 @@ export function CharacterManager({
                       <label className="text-[10px] uppercase font-bold text-foreground/40">Platform</label>
                       <select 
                         value={newAccountPlatform}
-                        onChange={(e) => setNewAccountPlatform(e.target.value as any)}
+                        onChange={(e) => setNewAccountPlatform(e.target.value as "PC" | "XBOX" | "PS")}
                         className="w-full h-9 bg-panel/50 border border-input rounded-md px-2 text-xs outline-none"
                       >
                         <option value="PC">PC</option>
