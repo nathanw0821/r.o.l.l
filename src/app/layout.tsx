@@ -12,6 +12,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { prisma } from "@/lib/prisma";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
+import { trackVisitor } from "@/lib/metrics";
 
 const vt323 = "https://fonts.googleapis.com/css2?family=VT323&display=swap";
 const shareTechMono = "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap";
@@ -60,6 +61,10 @@ function buildUiBootstrapScript() {
 
 async function DynamicShell({ children }: { children: ReactNode }) {
   const session = await getAppSession();
+  
+  // Track visitor (fire and forget)
+  trackVisitor(session?.user?.id).catch(() => undefined);
+
   const isAdmin = isAdminUser(session?.user);
   const initialTheme: ThemeMode = "system";
   const initialAccent = "ember";

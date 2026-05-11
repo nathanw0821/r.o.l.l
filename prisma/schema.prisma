@@ -435,3 +435,24 @@ model Feedback {
 
   @@index([status, createdAt])
 }
+
+model VisitorStats {
+  id           String   @id @default(cuid())
+  date         DateTime @unique @default(now())
+  guestHits    Int      @default(0)
+  userHits     Int      @default(0)
+  uniqueGuests Int      @default(0)
+  uniqueUsers  Int      @default(0)
+
+  @@index([date])
+}
+
+model DailyUniqueVisitor {
+  id        String   @id @default(cuid())
+  date      DateTime @default(now())
+  hash      String
+  isUser    Boolean  @default(false)
+
+  @@unique([date, hash])
+  @@index([date])
+}
