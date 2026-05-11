@@ -11,6 +11,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
 
 if (!process.env.NEXTAUTH_URL && process.env.APP_URL) {
@@ -93,6 +94,9 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        const limiter = await rateLimit("sign-in", 10, 60000); // 10 per minute
+        if (!limiter.success) return null;
+
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
