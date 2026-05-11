@@ -2,7 +2,8 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { parseJson } from "@/lib/api/validation";
-import { badRequest, internalError, ok } from "@/lib/api/responses";
+import { badRequest, internalError, ok, tooManyRequests } from "@/lib/api/responses";
+import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 
 const feedbackSchema = z.object({
@@ -17,6 +18,11 @@ function normalizeOptionalEmail(value?: string) {
 }
 
 export async function POST(request: Request) {
+  const limiter = await rateLimit("feedback", 3, 60000); // 3 per minute
+  if (!limiter.success) {
+    return tooManyRequests("Too many requests. Please try again later.");
+  }
+
   const parsed = await parseJson(request, feedbackSchema);
   if ("response" in parsed) return parsed.response;
 

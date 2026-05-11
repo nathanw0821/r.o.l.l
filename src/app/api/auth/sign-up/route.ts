@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { parseJson } from "@/lib/api/validation";
-import { badRequest, forbidden, internalError, ok } from "@/lib/api/responses";
+import { badRequest, forbidden, internalError, ok, tooManyRequests } from "@/lib/api/responses";
 import { isPublicRegistrationEnabled } from "@/lib/app-config";
 import { issueEmailVerification } from "@/lib/email-verification";
+import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 
 const signUpSchema = z.object({
@@ -13,7 +14,11 @@ const signUpSchema = z.object({
     .min(3)
     .max(32)
     .regex(/^[a-z0-9._-]+$/i, "Username can use letters, numbers, dots, underscores, and dashes only."),
-  password: z.string().min(8)
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .regex(/[0-9]/, "Password must contain at least one number.")
 });
 
 function normalizeEmail(raw: string) {
@@ -31,6 +36,11 @@ function isEmailLike(value: string) {
 export async function POST(request: Request) {
   if (!isPublicRegistrationEnabled()) {
     return forbidden("Public sign-up is disabled.");
+  }
+
+  const limiter = await rateLimit("sign-up", 5, 60000); // 5 per minute
+  if (!limiter.success) {
+    return tooManyRequests("Too many requests. Please try again later.");
   }
 
   const parsed = await parseJson(request, signUpSchema);
@@ -78,8 +88,7 @@ export async function POST(request: Request) {
 
     return ok({
       email,
-      delivered: verification.delivered,
-      verificationUrl: verification.verificationUrl
+      delivered: verification.delivered
     }, 201);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to create account.";

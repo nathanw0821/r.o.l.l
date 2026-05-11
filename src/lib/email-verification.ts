@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { getSiteUrl } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 
@@ -12,6 +12,10 @@ type VerificationUser = {
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
+}
+
+function hashToken(token: string) {
+  return createHash("sha256").update(token).digest("hex");
 }
 
 export function buildEmailVerificationUrl(token: string) {
@@ -113,12 +117,13 @@ export async function issueEmailVerification(user: VerificationUser) {
   });
 
   const token = randomBytes(32).toString("hex");
+  const tokenHash = hashToken(token);
   const expires = new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS);
 
   await prisma.verificationToken.create({
     data: {
       identifier: email,
-      token,
+      token: tokenHash,
       expires
     }
   });
@@ -150,8 +155,9 @@ export async function consumeEmailVerificationToken(token: string) {
     return { ok: false as const, reason: "missing" as const };
   }
 
+  const tokenHash = hashToken(normalizedToken);
   const verification = await prisma.verificationToken.findUnique({
-    where: { token: normalizedToken }
+    where: { token: tokenHash }
   });
 
   if (!verification) {

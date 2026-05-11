@@ -8,6 +8,7 @@ export type ApiErrorCode =
   | "NOT_FOUND"
   | "IMPORT_ERROR"
   | "BAD_REQUEST"
+  | "TOO_MANY_REQUESTS"
   | "INTERNAL_ERROR";
 
 export type ApiErrorDetail = {
@@ -48,6 +49,10 @@ export function validationError(error: ZodError, message = "Validation failed") 
 
 export function badRequest(message: string, details?: ApiErrorDetail[]) {
   return fail(400, "BAD_REQUEST", message, details);
+}
+
+export function tooManyRequests(message = "Too many requests") {
+  return fail(429, "TOO_MANY_REQUESTS", message);
 }
 
 export function unauthorized(message = "Unauthorized") {

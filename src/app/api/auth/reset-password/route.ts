@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { badRequest, ok } from "@/lib/api/responses";
+import { badRequest, ok, tooManyRequests } from "@/lib/api/responses";
+import { rateLimit } from "@/lib/rate-limit";
 import { parseJson } from "@/lib/api/validation";
 import { resetPasswordByToken } from "@/lib/password-reset";
 
@@ -9,6 +10,11 @@ const resetPasswordSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const limiter = await rateLimit("reset-password", 5, 60000); // 5 per minute
+  if (!limiter.success) {
+    return tooManyRequests("Too many requests. Please try again later.");
+  }
+
   const parsed = await parseJson(request, resetPasswordSchema);
   if ("response" in parsed) return parsed.response;
 
