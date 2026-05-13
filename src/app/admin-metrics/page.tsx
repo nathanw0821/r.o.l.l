@@ -10,7 +10,16 @@ import type { VisitorStats } from "@prisma/client";
 export default async function AdminMetricsPage() {
   const session = await getServerSession(authOptions);
   if (!isAdminUser(session?.user)) {
-    return forbidden("Admin access required.");
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center space-y-4 rounded-[var(--radius-lg)] border border-border bg-panel p-8 text-center">
+        <h2 className="text-xl font-bold">Access Denied</h2>
+        <p className="text-sm text-foreground/60 max-w-md">
+          You do not have administrative privileges to view traffic metrics. 
+          If you believe this is an error, please contact the site administrator.
+        </p>
+        <BrandStack align="center" className="mt-4" />
+      </div>
+    );
   }
 
   const metrics = await getVisitorMetrics(30);

@@ -14,8 +14,22 @@ import { prisma } from "@/lib/prisma";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 import { trackVisitor } from "@/lib/metrics";
 
-const vt323 = "https://fonts.googleapis.com/css2?family=VT323&display=swap";
-const shareTechMono = "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap";
+import { VT323, Share_Tech_Mono } from "next/font/google";
+import VisitorTracker from "@/components/visitor-tracker";
+
+const fontVT323 = VT323({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-vt323",
+  display: "swap",
+});
+
+const fontShareTechMono = Share_Tech_Mono({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-share-tech-mono",
+  display: "swap",
+});
 
 const siteUrl = getSiteUrl();
 
@@ -62,24 +76,17 @@ function buildUiBootstrapScript() {
 async function DynamicShell({ children }: { children: ReactNode }) {
   const session = await getAppSession();
   
-  // Track visitor (fire and forget)
-  trackVisitor(session?.user?.id).catch(() => undefined);
+  const [mainChar] = await Promise.all([
+    session?.user?.id 
+      ? prisma.character.findFirst({ where: { userId: session.user.id, name: "Main Character" } })
+      : Promise.resolve(null)
+  ]);
 
   const isAdmin = isAdminUser(session?.user);
   const initialTheme: ThemeMode = "system";
   const initialAccent = "ember";
   const initialColorBlind: ColorBlindMode = "none";
   const initialDensity = "compact";
-
-  let mainCharacterId: string | null = null;
-  if (session?.user?.id) {
-    const mainChar = await prisma.character.findFirst({
-      where: { userId: session.user.id, name: "Main Character" }
-    });
-    if (mainChar) {
-      mainCharacterId = mainChar.id;
-    }
-  }
 
   return (
     <Providers
@@ -91,10 +98,21 @@ async function DynamicShell({ children }: { children: ReactNode }) {
       preferDefaults={false}
     >
       <AppShell isAdmin={isAdmin}>
+        <VisitorTracker userId={session?.user?.id} />
         {children}
-        {mainCharacterId && <RenameMainCharacterPrompt characterId={mainCharacterId} />}
+        {mainChar?.id && <RenameMainCharacterPrompt characterId={mainChar.id} />}
       </AppShell>
     </Providers>
+  );
+}
+
+function ShellLoading() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#f4efe8] dark:bg-[#0f1113]">
+      <div className="text-sm font-mono text-foreground/40 animate-pulse">
+        Initializing R.O.L.L. System...
+      </div>
+    </div>
   );
 }
 
@@ -112,12 +130,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-scanlines="balanced"
       data-ui-tone="neutral"
       data-sidebar-collapsed="0"
+      className={`${fontVT323.variable} ${fontShareTechMono.variable}`}
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href={vt323} rel="stylesheet" />
-        <link href={shareTechMono} rel="stylesheet" />
         <Script
           id="ui-bootstrap"
           strategy="beforeInteractive"
@@ -125,7 +140,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
-        <Suspense>
+        <Suspense fallback={<ShellLoading />}>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>
         <Analytics />
