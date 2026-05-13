@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-?import { trackVisitor } from "@/lib/metrics";
+import { trackVisitor } from "@/lib/metrics";
 
 export async function POST(req: NextRequest) {
   try {
