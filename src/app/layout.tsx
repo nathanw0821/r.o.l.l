@@ -76,11 +76,15 @@ function buildUiBootstrapScript() {
 async function DynamicShell({ children }: { children: ReactNode }) {
   const session = await getAppSession();
   
-  const [mainChar] = await Promise.all([
-    session?.user?.id 
-      ? prisma.character.findFirst({ where: { userId: session.user.id, name: "Main Character" } })
-      : Promise.resolve(null)
-  ]);
+  let mainCharacterId: string | null = null;
+  if (session?.user?.id) {
+    const mainChar = await prisma.character.findFirst({
+      where: { userId: session.user.id, name: "Main Character" }
+    });
+    if (mainChar) {
+      mainCharacterId = mainChar.id;
+    }
+  }
 
   const isAdmin = isAdminUser(session?.user);
   const initialTheme: ThemeMode = "system";
@@ -100,7 +104,7 @@ async function DynamicShell({ children }: { children: ReactNode }) {
       <AppShell isAdmin={isAdmin}>
         <VisitorTracker userId={session?.user?.id} />
         {children}
-        {mainChar?.id && <RenameMainCharacterPrompt characterId={mainChar.id} />}
+        {mainCharacterId && <RenameMainCharacterPrompt characterId={mainCharacterId} />}
       </AppShell>
     </Providers>
   );

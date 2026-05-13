@@ -175,10 +175,10 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
 
   const [progressMap, globalProgressMap] = await Promise.all([
     characterId && scoped.length > 0
-      ? await fetchUserProgressMap(characterId, dataset.id)
+      ? fetchUserProgressMap(characterId, dataset.id)
       : Promise.resolve(new Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>()),
     userId
-      ? await fetchGlobalProgressMap(userId, dataset.id)
+      ? fetchGlobalProgressMap(userId, dataset.id)
       : Promise.resolve(new Map<string, string[]>())
   ]);
 
