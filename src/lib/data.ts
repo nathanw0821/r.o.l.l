@@ -152,17 +152,16 @@ function mergeCatalogWithUserState(
 
 async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string): Promise<MergedEffectTierRow[]> {
   await ensureProfileApplied(userId);
-  const dataset = await getActiveDatasetVersion();
-  if (!dataset) return [];
-
-  const tier =
+  const [dataset, characterId, tier] = await Promise.all([
+    getActiveDatasetVersion(),
+    getActiveCharacterId(userId),
     tierLabel === undefined
-      ? null
-      : await prisma.tier.findUnique({ where: { label: tierLabel }, select: { id: true, label: true } });
+      ? Promise.resolve(null)
+      : prisma.tier.findUnique({ where: { label: tierLabel }, select: { id: true, label: true } })
+  ]);
 
+  if (!dataset) return [];
   if (tierLabel !== undefined && !tier) return [];
-
-  const characterId = await getActiveCharacterId(userId);
 
   const [baselineMap, catalog] = await Promise.all([
     characterId ? getImportedBaselineMap(dataset.id, characterId) : Promise.resolve(new Map<string, boolean>()),
@@ -300,24 +299,23 @@ export async function getProgressSummary(userId?: string) {
     return { total: 0, unlocked: 0, percent: 0 };
   }
 
-  const total = await prisma.effectTier.count({
-    where: { datasetVersionId: dataset.id }
-  });
+  const [total, characterId] = await Promise.all([
+    prisma.effectTier.count({ where: { datasetVersionId: dataset.id } }),
+    getActiveCharacterId(userId)
+  ]);
 
-  if (!userId) {
-    return getGuestProgressSummaryCached(dataset.id);
-  }
-
-  const characterId = await getActiveCharacterId(userId);
-  if (!characterId) {
+  if (!userId || !characterId) {
+    if (!userId) return getGuestProgressSummaryCached(dataset.id);
     return { total, unlocked: 0, percent: 0 };
   }
 
-  const baselineMap = await getImportedBaselineMap(dataset.id, characterId);
-  const progressRows = await prisma.userProgress.findMany({
-    where: { characterId, effectTier: { datasetVersionId: dataset.id } },
-    select: { effectTierId: true, unlocked: true }
-  });
+  const [baselineMap, progressRows] = await Promise.all([
+    getImportedBaselineMap(dataset.id, characterId),
+    prisma.userProgress.findMany({
+      where: { characterId, effectTier: { datasetVersionId: dataset.id } },
+      select: { effectTierId: true, unlocked: true }
+    })
+  ]);
 
   let unlocked = 0;
   for (const value of baselineMap.values()) {

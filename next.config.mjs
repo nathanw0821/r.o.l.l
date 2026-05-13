@@ -32,7 +32,7 @@ const allowedOrigins = Array.from(
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  cacheComponents: true,
+  cacheComponents: false,
   experimental: {
     serverActions: {
       allowedOrigins

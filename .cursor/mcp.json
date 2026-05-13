@@ -19,6 +19,11 @@
         "MCP_MODE": "${env:MCP_MODE}"
       },
       "envFile": "${workspaceFolder}/.env.mcp.local"
+    },
+    "roll-git": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git", "${workspaceFolder}"]
     }
   }
 }
