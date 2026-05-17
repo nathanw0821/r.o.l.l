@@ -287,6 +287,25 @@ export default function SummaryClient({
     try {
       setIsExportingImage(true);
       
+      // Resolve CSS variables manually from computed styles of document.body
+      const computed = window.getComputedStyle(document.body);
+      const getVar = (name: string, fallback: string) => computed.getPropertyValue(name).trim() || fallback;
+      
+      const colors = {
+        bgSecondary: getVar("--background-secondary", "#13171b"),
+        bgPrimary: getVar("--background-primary", "#0f1113"),
+        border: getVar("--border", "#2d3339"),
+        textPrimary: getVar("--text-primary", "#f0ece7"),
+        textMuted: getVar("--text-muted", "#c0b7ad"),
+        accent: getVar("--color-accent", "#f3a24d"),
+        success: getVar("--color-success", "#4cc38a"),
+        warning: getVar("--color-warning", "#d9a441"),
+        surfaceSecondary: getVar("--surface-secondary", "#1e2328"),
+        surface: getVar("--surface", "#171a1d"),
+        shadowPanel: getVar("--shadow-panel", "none"),
+        shadowFloating: getVar("--shadow-floating", "none"),
+      };
+
       exportContainer = document.createElement("div");
       exportContainer.id = "roll-image-export-temp";
       exportContainer.style.position = "absolute";
@@ -295,21 +314,20 @@ export default function SummaryClient({
       exportContainer.style.width = "1800px";
       exportContainer.style.padding = "48px";
       exportContainer.style.boxSizing = "border-box";
-      exportContainer.style.backgroundColor = "var(--background-secondary)";
+      exportContainer.style.backgroundColor = colors.bgSecondary;
       
       const innerWrapper = document.createElement("div");
-      innerWrapper.style.backgroundColor = "var(--background-primary)";
-      innerWrapper.style.border = "1px solid var(--border)";
+      innerWrapper.style.backgroundColor = colors.bgPrimary;
+      innerWrapper.style.border = `1px solid ${colors.border}`;
       innerWrapper.style.borderRadius = "16px";
       innerWrapper.style.padding = "40px";
-      innerWrapper.style.boxShadow = "var(--shadow-floating)";
+      innerWrapper.style.boxShadow = colors.shadowFloating;
       innerWrapper.style.display = "flex";
       innerWrapper.style.flexDirection = "column";
       innerWrapper.style.gap = "32px";
       innerWrapper.style.boxSizing = "border-box";
       
-      const bodyStyle = window.getComputedStyle(document.body);
-      innerWrapper.style.fontFamily = bodyStyle.fontFamily;
+      innerWrapper.style.fontFamily = computed.fontFamily;
       
       const unlockedCount = exportRows.filter((r) => r.unlocked).length;
       const seekingCount = exportRows.filter((r) => r.isSeeking && !r.unlocked).length;
@@ -318,28 +336,28 @@ export default function SummaryClient({
       const stamp = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
       
       innerWrapper.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--border); padding-bottom: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid ${colors.border}; padding-bottom: 24px; box-sizing: border-box;">
           <div>
-            <div style="font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-accent); margin-bottom: 4px;">Registry Summary</div>
-            <h1 style="font-size: 38px; font-weight: 900; letter-spacing: -0.02em; color: var(--text-primary); margin: 0; line-height: 1;">R.O.L.L. LEGENDARY</h1>
-            <p style="font-size: 14px; color: var(--text-muted); margin: 8px 0 0 0;">Checklist & Collection Tracker • Generated on ${stamp}</p>
+            <div style="font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: ${colors.accent}; margin-bottom: 4px;">Registry Summary</div>
+            <h1 style="font-size: 38px; font-weight: 900; letter-spacing: -0.02em; color: ${colors.textPrimary}; margin: 0; line-height: 1;">R.O.L.L. LEGENDARY</h1>
+            <p style="font-size: 14px; color: ${colors.textMuted}; margin: 8px 0 0 0;">Checklist & Collection Tracker • Generated on ${stamp}</p>
           </div>
           <div style="display: flex; gap: 32px; align-items: center;">
             <div style="text-align: right;">
-              <div style="font-size: 28px; font-weight: 900; color: var(--color-success); line-height: 1;">${unlockedCount}</div>
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-top: 4px;">Unlocked</div>
+              <div style="font-size: 28px; font-weight: 900; color: ${colors.success}; line-height: 1;">${unlockedCount}</div>
+              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: ${colors.textMuted}; margin-top: 4px;">Unlocked</div>
             </div>
             <div style="text-align: right;">
-              <div style="font-size: 28px; font-weight: 900; color: var(--color-accent); line-height: 1;">${seekingCount}</div>
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-top: 4px;">Seeking</div>
+              <div style="font-size: 28px; font-weight: 900; color: ${colors.accent}; line-height: 1;">${seekingCount}</div>
+              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: ${colors.textMuted}; margin-top: 4px;">Seeking</div>
             </div>
             <div style="text-align: right;">
-              <div style="font-size: 28px; font-weight: 900; color: var(--color-warning); line-height: 1;">${lockedCount}</div>
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-top: 4px;">Locked</div>
+              <div style="font-size: 28px; font-weight: 900; color: ${colors.warning}; line-height: 1;">${lockedCount}</div>
+              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: ${colors.textMuted}; margin-top: 4px;">Locked</div>
             </div>
-            <div style="border-left: 1px solid var(--border); padding-left: 24px; text-align: right; box-sizing: border-box;">
-              <div style="font-size: 28px; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalCount}</div>
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-top: 4px;">Total Mods</div>
+            <div style="border-left: 1px solid ${colors.border}; padding-left: 24px; text-align: right; box-sizing: border-box;">
+              <div style="font-size: 28px; font-weight: 900; color: ${colors.textPrimary}; line-height: 1;">${totalCount}</div>
+              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: ${colors.textMuted}; margin-top: 4px;">Total Mods</div>
             </div>
           </div>
         </div>
@@ -352,7 +370,7 @@ export default function SummaryClient({
             let cardsHtml = "";
             if (items.length === 0) {
               cardsHtml = `
-                <div style="grid-column: span 2; border: 1px dashed var(--border); border-radius: 8px; padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; font-style: italic;">
+                <div style="grid-column: span 2; border: 1px dashed ${colors.border}; border-radius: 8px; padding: 24px; text-align: center; color: ${colors.textMuted}; font-size: 12px; font-style: italic;">
                   No items in this tier
                 </div>
               `;
@@ -360,35 +378,35 @@ export default function SummaryClient({
               cardsHtml = items.map((row) => {
                 const status = row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked";
                 let statusLabel = "Locked";
-                let cardBg = "color-mix(in srgb, var(--surface) 96%, transparent)";
-                let cardBorder = "var(--border)";
-                let cardColor = "var(--text-primary)";
+                let cardBg = `color-mix(in srgb, ${colors.surface} 96%, transparent)`;
+                let cardBorder = colors.border;
+                let cardColor = colors.textPrimary;
                 
                 if (status === "unlocked") {
                   statusLabel = "Unlocked";
-                  cardBg = "color-mix(in srgb, var(--color-success) 14%, var(--surface))";
-                  cardBorder = "color-mix(in srgb, var(--color-success) 70%, var(--border))";
-                  cardColor = "var(--color-success)";
+                  cardBg = `color-mix(in srgb, ${colors.success} 14%, ${colors.surface})`;
+                  cardBorder = `color-mix(in srgb, ${colors.success} 70%, ${colors.border})`;
+                  cardColor = colors.success;
                 } else if (status === "locked") {
                   statusLabel = "Locked";
-                  cardBg = "color-mix(in srgb, var(--color-warning) 14%, var(--surface))";
-                  cardBorder = "color-mix(in srgb, var(--color-warning) 70%, var(--border))";
-                  cardColor = "var(--color-warning)";
+                  cardBg = `color-mix(in srgb, ${colors.warning} 14%, ${colors.surface})`;
+                  cardBorder = `color-mix(in srgb, ${colors.warning} 70%, ${colors.border})`;
+                  cardColor = colors.warning;
                 } else if (status === "seeking") {
                   statusLabel = "Seeking";
-                  cardBg = "color-mix(in srgb, var(--color-accent) 14%, var(--surface))";
-                  cardBorder = "color-mix(in srgb, var(--color-accent) 70%, var(--border))";
-                  cardColor = "var(--color-accent)";
+                  cardBg = `color-mix(in srgb, ${colors.accent} 14%, ${colors.surface})`;
+                  cardBorder = `color-mix(in srgb, ${colors.accent} 70%, ${colors.border})`;
+                  cardColor = colors.accent;
                 }
                 
                 const countBadgeHtml = row.modCount > 0 
-                  ? `<div style="background: color-mix(in srgb, var(--color-panel) 80%, black); border-radius: 12px; padding: 2px 8px; font-size: 11px; font-weight: 800; border: 1px solid var(--border); margin-left: 6px; white-space: nowrap; color: ${cardColor}; flex-shrink: 0; box-sizing: border-box;">x${row.modCount}</div>`
+                  ? `<div style="background: color-mix(in srgb, ${colors.surface} 80%, black); border-radius: 12px; padding: 2px 8px; font-size: 11px; font-weight: 800; border: 1px solid ${colors.border}; margin-left: 6px; white-space: nowrap; color: ${cardColor}; flex-shrink: 0; box-sizing: border-box;">x${row.modCount}</div>`
                   : "";
                   
                 return `
                   <div style="background: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 8px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; min-height: 58px; box-sizing: border-box; color: ${cardColor};">
                     <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;">
-                      <div style="font-size: 13.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; color: var(--text-primary);">${row.effect.name}</div>
+                      <div style="font-size: 13.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; color: ${colors.textPrimary};">${row.effect.name}</div>
                       <div style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: ${cardColor}; opacity: 0.9;">${statusLabel}</div>
                     </div>
                     ${countBadgeHtml}
@@ -398,10 +416,10 @@ export default function SummaryClient({
             }
             
             return `
-              <div style="background: var(--surface-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-panel); display: flex; flex-direction: column; gap: 16px; box-sizing: border-box;">
-                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px; box-sizing: border-box;">
-                  <span style="font-size: 16px; font-weight: 800; color: var(--color-warning);">${tierDisplay.stars || tierLabel}</span>
-                  <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); background: color-mix(in srgb, var(--text-muted) 10%, transparent); padding: 2px 6px; border-radius: 4px;">${items.length} items</span>
+              <div style="background: ${colors.surfaceSecondary}; border: 1px solid ${colors.border}; border-radius: 12px; padding: 20px; box-shadow: ${colors.shadowPanel}; display: flex; flex-direction: column; gap: 16px; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid ${colors.border}; padding-bottom: 12px; box-sizing: border-box;">
+                  <span style="font-size: 16px; font-weight: 800; color: ${colors.warning};">${tierDisplay.stars || tierLabel}</span>
+                  <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: ${colors.textMuted}; background: color-mix(in srgb, ${colors.textMuted} 10%, transparent); padding: 2px 6px; border-radius: 4px;">${items.length} items</span>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; box-sizing: border-box;">
                   ${cardsHtml}
@@ -411,7 +429,7 @@ export default function SummaryClient({
           }).join("")}
         </div>
         
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 16px; font-size: 11px; color: var(--text-muted); box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid ${colors.border}; padding-top: 16px; font-size: 11px; color: ${colors.textMuted}; box-sizing: border-box;">
           <span>R.O.L.L. Legendary Checklist</span>
           <span>Progress: ${((unlockedCount / (totalCount || 1)) * 100).toFixed(1)}% Complete</span>
         </div>

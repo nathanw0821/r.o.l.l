@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap } from "lucide-react";
+import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
 import SupportLink from "@/components/support-link";
@@ -184,15 +184,25 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   return (
     <div ref={hubRef} className={cn("command-hub", expanded && "command-hub--open")}>
       <div className="command-hub__bar">
-        <div className="command-hub__search">
-          <Search className="h-4 w-4 text-foreground/50" />
+        <div className="command-hub__search relative">
+          <Search className="h-4 w-4 text-foreground/50 shrink-0" />
           <input
             ref={searchInputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search effects, tiers, origins"
-            className="w-full bg-transparent text-sm text-foreground placeholder:text-foreground/40 focus:outline-none"
+            className="w-full bg-transparent text-sm text-foreground placeholder:text-foreground/40 focus:outline-none pr-6"
           />
+          {query.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/80 focus:outline-none cursor-pointer"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
         <div className="command-hub__stat">
           <div className="text-[10px] uppercase text-foreground/50">Completion</div>
