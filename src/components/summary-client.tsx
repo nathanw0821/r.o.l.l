@@ -125,6 +125,8 @@ export default function SummaryClient({
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } = useBuilderBetaAccess(isAdmin);
   const [showBetaGate, setShowBetaGate] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<"summary" | "seeking" | "owned" | "still-need">(initialTab);
+  const [isExportingImage, setIsExportingImage] = React.useState(false);
+  const gridRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const stored = window.localStorage.getItem(SUMMARY_LOCK_KEY);
@@ -276,6 +278,37 @@ export default function SummaryClient({
     if (kind === "xlsx") await exportXlsx(exportRows, `roll-export-${stamp}.xlsx`);
     if (kind === "csv") exportCsv(exportRows, `roll-export-${stamp}.csv`);
     if (kind === "json") exportJson(exportRows, `roll-export-${stamp}.json`);
+  }
+
+  async function handleExportImage() {
+    if (!gridRef.current) return;
+    try {
+      setIsExportingImage(true);
+      // Wait for React to re-render to hide the UI controls
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const { toPng } = await import("html-to-image");
+      const bgColor = window.getComputedStyle(document.body).backgroundColor;
+
+      const dataUrl = await toPng(gridRef.current, {
+        cacheBust: true,
+        backgroundColor: bgColor,
+        style: {
+          padding: "32px",
+          margin: "0",
+        },
+      });
+
+      const stamp = new Date().toISOString().slice(0, 10);
+      const link = document.createElement("a");
+      link.download = `roll-summary-export-${stamp}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Failed to export image", err);
+    } finally {
+      setIsExportingImage(false);
+    }
   }
 
   function navigateToAllEffects(row: SummaryRow) {
@@ -455,6 +488,9 @@ export default function SummaryClient({
           ))}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={handleExportImage} disabled={isExportingImage}>
+            {isExportingImage ? "Generating..." : "Export Image (PNG)"}
+          </Button>
           <Button type="button" variant="outline" size="sm" onClick={() => handleExport("xlsx")}>Export Excel</Button>
           <Button type="button" variant="outline" size="sm" onClick={() => handleExport("csv")}>Export CSV</Button>
           <Button type="button" variant="outline" size="sm" onClick={() => handleExport("json")}>Export JSON</Button>
@@ -464,7 +500,7 @@ export default function SummaryClient({
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div ref={gridRef} className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {tierOrder.map((tierLabel) => {
           const items = filteredRows.filter((row) => row.tier?.label === tierLabel);
           if (items.length === 0) return null;
@@ -504,13 +540,14 @@ export default function SummaryClient({
                                 ? "Unlocked"
                                 : "Locked"}
                       </div>
-                      {row.unlockedBy.length > 0 && (
+                      {!isExportingImage && row.unlockedBy.length > 0 && (
                         <div className="mt-1 text-[9px] text-foreground/40 leading-tight">
                           Unlocked by: {row.unlockedBy.join(", ")}
                         </div>
                       )}
                     </div>
                     <div className="summary-status-card__controls" onClick={(e) => e.stopPropagation()}>
+                      {!isExportingImage && (
                         <button
                           title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
                           onClick={() => updateSeeking(row, !row.isSeeking)}
@@ -520,27 +557,40 @@ export default function SummaryClient({
                           <Target className="h-4 w-4" />
                           <span className="sr-only">Seeking</span>
                         </button>
+                      )}
                       <div className="summary-status-card__count">
-                        <button
-                          onClick={() => updateCount(row, row.modCount - 1)}
-                          className="summary-status-card__count-btn"
-                        >
-                          <Minus className="h-2.5 w-2.5" />
-                        </button>
-                        <input
-                          type="number"
-                          min="0"
-                          value={row.modCount === 0 ? "" : row.modCount}
-                          onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
-                          placeholder="0"
-                          className="min-w-[1.2rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          onClick={() => updateCount(row, row.modCount + 1)}
-                          className="summary-status-card__count-btn"
-                        >
-                          <Plus className="h-2.5 w-2.5" />
-                        </button>
+                        {!isExportingImage && (
+                          <button
+                            onClick={() => updateCount(row, row.modCount - 1)}
+                            className="summary-status-card__count-btn"
+                          >
+                            <Minus className="h-2.5 w-2.5" />
+                          </button>
+                        )}
+                        
+                        {isExportingImage ? (
+                          <span className="min-w-[1.2rem] w-8 text-center font-bold text-sm">
+                            {row.modCount > 0 ? row.modCount : ""}
+                          </span>
+                        ) : (
+                          <input
+                            type="number"
+                            min="0"
+                            value={row.modCount === 0 ? "" : row.modCount}
+                            onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
+                            placeholder="0"
+                            className="min-w-[1.2rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        )}
+
+                        {!isExportingImage && (
+                          <button
+                            onClick={() => updateCount(row, row.modCount + 1)}
+                            className="summary-status-card__count-btn"
+                          >
+                            <Plus className="h-2.5 w-2.5" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

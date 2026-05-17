@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type SelectionSource } from "@/lib/filter-utils";
 
@@ -97,12 +98,24 @@ export default function FilterBar({
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <input
-          value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
-          placeholder="Search effects, tiers, categories, or origins"
-          className="w-full rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm md:max-w-sm"
-        />
+        <div className="relative w-full md:max-w-sm">
+          <input
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder="Search effects, tiers, categories, or origins"
+            className="w-full rounded-[var(--radius)] border border-border bg-panel px-3 py-2 pr-8 text-sm"
+          />
+          {query.length > 0 && (
+            <button
+              type="button"
+              onClick={() => onQueryChange("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/80 focus:outline-none"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <FilterDropdown
             label="Source"
