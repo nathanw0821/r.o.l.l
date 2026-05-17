@@ -5,9 +5,10 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const userId = body.userId;
+    const guestUuid = body.guestUuid;
     
     // Perform tracking in the background
-    await trackVisitor(userId);
+    await trackVisitor(userId, guestUuid);
     
     return NextResponse.json({ success: true });
   } catch (error) {
