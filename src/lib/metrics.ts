@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Tracks a visitor hit for the current day.
- * Increments total hits and checks for uniqueness based on a hashed IP + User Agent.
+ * Increments total hits and checks for uniqueness based on a hashed IP + User Agent or Guest UUID.
  */
-export async function trackVisitor(userId?: string) {
+export async function trackVisitor(userId?: string, guestUuid?: string) {
   try {
     const headerList = await headers();
     const ip = headerList.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
@@ -16,8 +16,10 @@ export async function trackVisitor(userId?: string) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    // Use guestUuid as primary uniqueness factor if available, otherwise fallback to IP+UA
+    const identityString = guestUuid || `${ip}-${ua}`;
     const hash = createHash("sha256")
-      .update(`${ip}-${ua}-${today.toISOString()}`)
+      .update(`${identityString}-${today.toISOString()}`)
       .digest("hex");
 
     const isUser = Boolean(userId);
