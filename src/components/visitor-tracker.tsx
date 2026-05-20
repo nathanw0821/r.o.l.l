@@ -27,7 +27,7 @@ export default function VisitorTracker({ userId }: { userId?: string }) {
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [userId]);
+  }, [userId, guestUuid]);
 
   return null;
 }

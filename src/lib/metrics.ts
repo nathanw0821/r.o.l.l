@@ -56,7 +56,7 @@ export async function trackVisitor(userId?: string, guestUuid?: string) {
           ...(isUser ? { uniqueUsers: { increment: 1 } } : { uniqueGuests: { increment: 1 } })
         }
       });
-    } catch (e) {
+    } catch {
       // Duplicate error (P2002) is expected if the visitor already hit the site today.
       // We just ignore it.
     }

@@ -11,18 +11,12 @@ import {
   Snowflake,
   Droplets,
   Radiation,
-  Info,
-  Heart,
-  Swords,
   Activity,
-  Backpack,
-  Sparkles as SparklesIcon,
   Search,
   RotateCcw,
   Trash2,
   Save,
   Download,
-  Info as InfoIcon,
   Sparkle,
   CheckCircle2,
   Terminal,
@@ -46,15 +40,12 @@ import {
   BASE_GEAR_GROUP_LABEL,
   BASE_GEAR_GROUP_ORDER,
   BASE_GEAR_PIECES,
-  countLearnedTrackableBases,
   getBaseGearPiece,
   isPowerArmorHelmetBasePiece,
   isPowerArmorTorsoBasePiece,
   isPowerArmorTorsoRowLearned,
   isTrackableBasePieceId,
-  listTrackableBaseGearByGroup,
   pairedPowerArmorHelmetId,
-  trackableBaseRowCount,
   type BaseGearPiece,
 } from "@/lib/builder/base-gear";
 import {
@@ -82,10 +73,7 @@ import {
 import {
   getPowerArmorEquippedFlatStats,
   getPowerArmorSlotBaseStats,
-  POWER_ARMOR_PIECE_SLOT_LABELS,
   powerArmorFrameIntrinsicEffectMath,
-  powerArmorInherentDamageReductionPercent,
-  powerArmorInherentRadReductionPercent,
 } from "@/lib/builder/power-armor-stats";
 import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
@@ -106,7 +94,7 @@ import {
   BuilderBetaGate,
   useBuilderBetaAccess,
 } from "@/components/builder/builder-beta-gate";
-import { InfoTooltip } from "@/components/ui/tooltip";
+
 import {
   SANDBOX_MUTATIONS,
   sandboxMutationMathLayer,
@@ -177,7 +165,6 @@ function activePickLabel(active: ActivePick, baseLabel: string): string {
   return `${star} · ${slot} · ${baseLabel}`;
 }
 
-type TotalsPresentation = "weapon" | "powerArmor" | "balanced";
 
 function useDensityCompact() {
   const [compact, setCompact] = React.useState(false);
@@ -596,45 +583,18 @@ export default function BuilderExperimentClient({
 
   const piece = getBaseGearPiece(payload.basePieceId) ?? BASE_GEAR_PIECES[0]!;
   const isMultiPiece = isMultiPiecePayload(payload);
-  const fullArmorSet =
-    piece.kind === "armor" && Boolean(piece.armorSetKey) && isMultiPiece;
   const baseStarsContextLabel = React.useMemo(() => {
     if (piece.kind === "armor" && piece.armorSetKey) {
       return getArmorSetRow(piece.armorSetKey)?.label ?? piece.label;
     }
     return formatBaseOptionLabel(piece);
   }, [piece]);
-  const showSplitTotalsPanel =
-    isMultiPiece ||
-    piece.kind === "weapon" ||
-    (piece.kind === "powerArmor" && !isPowerArmorHelmetBasePiece(piece));
-
-  const totalsPresentation: TotalsPresentation =
-    piece.kind === "weapon"
-      ? "weapon"
-      : piece.kind === "powerArmor"
-        ? "powerArmor"
-        : "balanced";
-
-  const multiPieceSlotLabels =
-    piece.kind === "powerArmor"
-      ? POWER_ARMOR_PIECE_SLOT_LABELS
-      : ARMOR_SET_SLOT_LABELS;
 
   const currentBaseLearned =
     isTrackableBasePieceId(piece.id) &&
     (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
       ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, piece.id)
       : learnedBasePieceIds.has(piece.id));
-  const trackableGroups = React.useMemo(
-    () => listTrackableBaseGearByGroup(),
-    [],
-  );
-  const learnedTrackableCount = React.useMemo(
-    () => countLearnedTrackableBases(learnedBasePieceIds),
-    [learnedBasePieceIds],
-  );
-  const trackableTotal = trackableBaseRowCount();
 
   async function toggleLearnedBasePiece(pieceId: string, learned: boolean) {
     setLearnedToggleError(null);
@@ -759,17 +719,6 @@ export default function BuilderExperimentClient({
     return powerArmorFrameIntrinsicEffectMath();
   }, [piece]);
 
-  const powerArmorSandboxMeta = React.useMemo(() => {
-    if (!isPowerArmorTorsoBasePiece(piece)) return null;
-    return {
-      inherentDrPct: powerArmorInherentDamageReductionPercent(
-        payload.powerArmorPiecesEquipped,
-      ),
-      inherentRadReductionPct: powerArmorInherentRadReductionPercent(
-        payload.powerArmorPiecesEquipped,
-      ),
-    };
-  }, [piece, payload.powerArmorPiecesEquipped]);
 
   const mutationLayer = React.useMemo(
     () =>
@@ -1030,8 +979,7 @@ export default function BuilderExperimentClient({
   }
 
   const starsDisabled = piece.kind === "underarmor";
-  const showSingleStars =
-    !isMultiPiece && !starsDisabled && piece.kind !== "powerArmor";
+
 
   // Gear schematic card generator for multi-piece view
   function renderGearSlotCard(pieceIndex: number, label: string) {

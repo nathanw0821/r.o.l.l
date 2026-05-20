@@ -12,9 +12,8 @@ import type { SessionAssistRow } from "@/lib/session-assist";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
 import { ImageProcessor } from "@/lib/image-processor";
-import { Sparkles, Terminal, Upload, CheckCircle2, ShieldAlert, Sparkle, Trash2, RotateCcw, Save, Shield } from "lucide-react";
+import { Sparkles, Terminal, Upload, CheckCircle2, Sparkle, Trash2, Shield } from "lucide-react";
 import { useBuilderBetaAccess, BuilderBetaGate } from "@/components/builder/builder-beta-gate";
-import { InfoTooltip } from "@/components/ui/tooltip";
 
 const langOptions = [
   { code: "eng", label: "English" },
