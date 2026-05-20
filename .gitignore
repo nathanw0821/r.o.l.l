@@ -20,3 +20,6 @@ tsconfig.tsbuildinfo
 .vercel
 .env*.local
 dist-worker/
+.wrangler/
+wrangler.log
+

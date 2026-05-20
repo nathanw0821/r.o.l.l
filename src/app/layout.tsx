@@ -9,8 +9,6 @@ import { getSiteUrl } from "@/lib/app-config";
 import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 
 import { VT323, Share_Tech_Mono } from "next/font/google";
@@ -146,8 +144,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Suspense fallback={<ShellLoading />}>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );
