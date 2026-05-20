@@ -334,7 +334,7 @@ export async function seedBuilderCatalog(prisma: PrismaClient) {
     const dbCost = costLookup.get(lookupKey);
 
     let finalModules = mod.starRank === 1 ? 15 : mod.starRank === 2 ? 30 : mod.starRank === 3 ? 60 : 120;
-    let finalItems: { name: string; count: number }[] = [];
+    const finalItems: { name: string; count: number }[] = [];
 
     if (dbCost) {
       if (dbCost.modules > 0) finalModules = dbCost.modules;

@@ -8,11 +8,10 @@ import AppShell from "@/components/app-shell";
 import { getSiteUrl } from "@/lib/app-config";
 import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { prisma } from "@/lib/prisma";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
-import { trackVisitor } from "@/lib/metrics";
 
 import { VT323, Share_Tech_Mono } from "next/font/google";
 import VisitorTracker from "@/components/visitor-tracker";
