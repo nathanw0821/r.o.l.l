@@ -33,7 +33,7 @@ const allowedOrigins = Array.from(
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   cacheComponents: false,
-  serverExternalPackages: ["@prisma/client", ".prisma/client"],
+  serverExternalPackages: ["@prisma/client", ".prisma/client", "exceljs"],
   outputFileTracingIncludes: {
     "**/*": [
       "./node_modules/pg-cloudflare/dist/**",
