@@ -1,7 +1,7 @@
 name = "r-o-l-l"
 main = ".open-next/worker.js"
 compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "enable_nodejs_http_modules"]
 minify = true
 
 routes = [
