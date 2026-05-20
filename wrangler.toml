@@ -4,6 +4,11 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 minify = true
 
+routes = [
+  { pattern = "fallout76.wiki", custom_domain = true },
+  { pattern = "www.fallout76.wiki", custom_domain = true }
+]
+
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
