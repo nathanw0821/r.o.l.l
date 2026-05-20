@@ -16,10 +16,5 @@ ALLOW_PUBLIC_REGISTRATION = "true"
 EMAIL_FROM = "R.O.L.L <no-reply@support.fallout76.wiki>"
 GOOGLE_CLIENT_ID = "717058834888-tri1suu3o125h1haajjrffufioj75ga7.apps.googleusercontent.com"
 
-[[triggers.crons]]
-# Source Check
-schedules = ["0 19 * * *"]
-
-[[triggers.crons]]
-# Source Sync
-schedules = ["20 19 * * *"]
+[triggers]
+crons = ["0 19 * * *", "20 19 * * *"]
