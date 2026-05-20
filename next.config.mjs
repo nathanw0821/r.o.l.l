@@ -67,6 +67,21 @@ const nextConfig = {
       allowedOrigins
     }
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "www.fallout76.wiki"
+          }
+        ],
+        destination: "https://fallout76.wiki/:path*",
+        permanent: true
+      }
+    ];
+  },
   async headers() {
     return [
       {
