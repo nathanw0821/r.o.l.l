@@ -111,7 +111,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
                     className="p-3 rounded-lg border border-border bg-panel hover:border-accent/50 transition-colors"
                   >
                     <div className="font-medium text-sm">{mod.effect.name}</div>
-                    <div className="text-[10px] text-foreground/40 mt-1 uppercase">
+                    <div className="text-[0.78rem] text-foreground/40 mt-1 uppercase">
                       {mod.categories.map(c => c.category.name).join(" • ")}
                     </div>
                   </div>

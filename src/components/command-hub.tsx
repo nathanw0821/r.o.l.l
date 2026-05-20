@@ -205,7 +205,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           )}
         </div>
         <div className="command-hub__stat">
-          <div className="text-[10px] uppercase text-foreground/50">Completion</div>
+          <div className="text-[0.78rem] uppercase text-foreground/50">Completion</div>
           <div className="text-base font-semibold">{displayPercent}%</div>
         </div>
         <button
@@ -403,7 +403,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             </Button>
           </div>
           {hasActiveFilters ? (
-            <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-foreground/60">
+            <div className="mt-2 flex flex-wrap gap-2 text-[0.84rem] text-foreground/60">
               {query.trim().length > 0 ? (
                 <button
                   type="button"

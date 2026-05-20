@@ -70,7 +70,7 @@ export default function AccountLinks() {
                   type="button"
                   onClick={() => handleUnlink(provider)}
                   disabled={pendingProvider === provider}
-                  className="ml-2 text-[10px] text-foreground/50 hover:text-foreground"
+                  className="ml-2 text-[0.78rem] text-foreground/50 hover:text-foreground"
                 >
                   {pendingProvider === provider ? "..." : "Unlink"}
                 </button>

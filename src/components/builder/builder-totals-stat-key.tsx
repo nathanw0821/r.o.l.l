@@ -34,7 +34,7 @@ export default function BuilderTotalsStatKey({
   return (
     <details
       className={cn(
-        "group rounded-[var(--radius)] border border-border/70 bg-background/40 text-[11px] leading-snug text-foreground/68 open:border-border",
+        "group rounded-[var(--radius)] border border-border/70 bg-background/40 text-[0.84rem] leading-snug text-foreground/68 open:border-border",
         className
       )}
     >

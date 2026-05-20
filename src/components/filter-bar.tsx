@@ -52,7 +52,7 @@ function FilterDropdown({
         )}
       >
         <span className="text-foreground">{label}</span>
-        {count > 0 ? <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-[color:var(--text-primary)]">{count}</span> : null}
+        {count > 0 ? <span className="rounded-full bg-accent px-2 py-0.5 text-[0.78rem] text-[color:var(--text-primary)]">{count}</span> : null}
       </summary>
       <div className="absolute left-0 z-20 mt-2 w-56 rounded-[var(--radius)] border border-border bg-panel p-2 shadow-panel">
         {options.length === 0 ? (

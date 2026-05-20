@@ -83,7 +83,7 @@ export function CharacterSelector({
 
   return (
     <div className={cn("flex flex-col gap-1 w-full px-2", collapsed && "items-center px-0")}>
-      <div className="text-[9px] uppercase tracking-widest font-bold text-foreground/30 px-2 mb-1">
+      <div className="text-[0.72rem] uppercase tracking-widest font-bold text-foreground/30 px-2 mb-1">
         {!collapsed && "Active Character"}
       </div>
       
@@ -106,7 +106,7 @@ export function CharacterSelector({
                 <span className="truncate text-xs font-bold text-foreground/80">
                   {activeCharacter?.name ?? "Guest User"}
                 </span>
-                <span className="truncate text-[10px] text-foreground/40 uppercase tracking-tight">
+                <span className="truncate text-[0.78rem] text-foreground/40 uppercase tracking-tight">
                   {data.gameAccounts.find(a => a.id === activeCharacter?.gameAccountId)?.name ?? "Unlinked"}
                 </span>
               </div>
@@ -119,7 +119,7 @@ export function CharacterSelector({
           <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-[320px] overflow-auto rounded-xl border border-border bg-panel p-1 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 custom-scrollbar">
             {data.gameAccounts.map(account => (
               <div key={account.id} className="mb-2 last:mb-0">
-                <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-foreground/30 bg-foreground/5 rounded-md mb-1">
+                <div className="flex items-center gap-2 px-3 py-1.5 text-[0.72rem] font-bold uppercase tracking-widest text-foreground/30 bg-foreground/5 rounded-md mb-1">
                   {getPlatformIcon(account.platform)}
                   <span>{account.name}</span>
                 </div>

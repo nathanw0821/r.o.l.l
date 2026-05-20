@@ -33,7 +33,7 @@ export function InfoTooltip({ content }: { content: React.ReactNode }) {
     <TooltipProvider delayDuration={200}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button type="button" className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-foreground/10 text-[10px] font-bold hover:bg-foreground/20 transition-colors">
+          <button type="button" className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-foreground/10 text-[0.78rem] font-bold hover:bg-foreground/20 transition-colors">
             i
           </button>
         </TooltipTrigger>

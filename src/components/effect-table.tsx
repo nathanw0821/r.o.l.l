@@ -306,7 +306,7 @@ export default function EffectTable({
                     {categoryList.map((category) => (
                       <span
                         key={category}
-                        className="rounded-full border border-border px-2 py-0.5 text-[11px] text-foreground/70"
+                        className="rounded-full border border-border px-2 py-0.5 text-[0.84rem] text-foreground/70"
                       >
                         {category}
                       </span>
@@ -327,11 +327,11 @@ export default function EffectTable({
                       {sourceLabel}
                     </div>
                     {row.isSeeking && !row.unlocked && (
-                      <span className="text-[10px] font-bold text-accent uppercase tracking-wider">Seeking</span>
+                      <span className="text-[0.78rem] font-bold text-accent uppercase tracking-wider">Seeking</span>
                     )}
                   </div>
                   {row.unlockedBy.length > 0 && (
-                    <div className="text-[10px] text-foreground/50 leading-tight">
+                    <div className="text-[0.78rem] text-foreground/50 leading-tight">
                       <span className="font-semibold text-foreground/40 uppercase">By:</span> {row.unlockedBy.join(", ")}
                     </div>
                   )}
@@ -456,7 +456,7 @@ export default function EffectTable({
                   {categoryList.slice(0, 4).map((category) => (
                     <span
                       key={category}
-                      className="rounded-full border border-border px-2 py-0.5 text-[11px] text-foreground/70"
+                      className="rounded-full border border-border px-2 py-0.5 text-[0.84rem] text-foreground/70"
                     >
                       {category}
                     </span>

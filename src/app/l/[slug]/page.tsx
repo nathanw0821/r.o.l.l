@@ -235,7 +235,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
       <div className="rounded-[var(--radius)] border border-border bg-panel p-5">
         <div className="flex items-center justify-between border-b border-border/50 pb-3">
           <div className="text-sm font-bold uppercase tracking-widest text-foreground/70">Legendary slots</div>
-          <div className="text-[10px] uppercase font-bold text-foreground/40 tracking-wider">Bench breakdown</div>
+          <div className="text-[0.78rem] uppercase font-bold text-foreground/40 tracking-wider">Bench breakdown</div>
         </div>
         {isFullArmorSetPayload(payload) ? (
           <div className="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -245,10 +245,10 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
               const misc = craft ? findArmorMiscMod(craft.miscModId) : undefined;
               return (
               <div key={slotLabel} className="space-y-3">
-                <div className="inline-flex items-center rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent border border-accent/20">{slotLabel}</div>
+                <div className="inline-flex items-center rounded-md bg-accent/10 px-2 py-0.5 text-[0.78rem] font-bold uppercase tracking-wider text-accent border border-accent/20">{slotLabel}</div>
                 {craft ? (
-                  <p className="text-[11px] text-foreground/50 leading-relaxed">
-                    <span className="font-semibold text-foreground/40 uppercase text-[9px] mr-1">Craft:</span>
+                  <p className="text-[0.84rem] text-foreground/50 leading-relaxed">
+                    <span className="font-semibold text-foreground/40 uppercase text-[0.72rem] mr-1">Craft:</span>
                     {mat?.label ?? craft.materialModId} · {misc?.label ?? craft.miscModId}
                   </p>
                 ) : null}
@@ -262,21 +262,21 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                     return (
                       <div key={`${pieceIndex}-${starIndex}`} className="text-xs group">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-foreground/40 font-mono text-[10px] w-5 shrink-0">{starLabel}</span>
+                          <span className="text-foreground/40 font-mono text-[0.78rem] w-5 shrink-0">{starLabel}</span>
                           <span className={mod ? "font-semibold text-foreground/90" : "text-foreground/30 italic"}>
                             {mod?.name ?? "—"}
                           </span>
-                          {delta ? <span className="ml-1 text-[10px] font-bold text-accent/80">{delta}</span> : null}
+                          {delta ? <span className="ml-1 text-[0.78rem] font-bold text-accent/80">{delta}</span> : null}
                         </div>
                         {mod?.description ? (
-                          <div className="mt-1 pl-7 text-[10px] leading-relaxed text-foreground/50 italic line-clamp-2">
+                          <div className="mt-1 pl-7 text-[0.78rem] leading-relaxed text-foreground/50 italic line-clamp-2">
                             {sandboxLegendaryDescription(mod.description, piece ?? undefined)}
                           </div>
                         ) : null}
                         {extras.length > 0 ? (
                           <div className="mt-1 pl-7 flex flex-wrap gap-x-3 gap-y-1">
                             {extras.map((e) => (
-                              <div key={e.key} className="text-[9px] text-foreground/40">
+                              <div key={e.key} className="text-[0.72rem] text-foreground/40">
                                 <span className="font-mono text-foreground/30">{e.key}:</span> {e.value}
                               </div>
                             ))}
@@ -300,20 +300,20 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
               const extras = mod ? listExtraEffectMathEntries(math) : [];
               return (
                 <div key={i} className="space-y-1.5 p-3 rounded-lg bg-foreground/[0.02] border border-border/30">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-foreground/40">{starLabel} Star</div>
+                  <div className="text-[0.78rem] font-bold uppercase tracking-wider text-foreground/40">{starLabel} Star</div>
                   <div className="text-sm font-semibold text-foreground/90">
                     {mod?.name ?? "—"}
                   </div>
-                  {delta ? <div className="text-[10px] font-bold text-accent/80">{delta}</div> : null}
+                  {delta ? <div className="text-[0.78rem] font-bold text-accent/80">{delta}</div> : null}
                   {mod?.description ? (
-                    <div className="text-[10px] leading-relaxed text-foreground/50 italic">
+                    <div className="text-[0.78rem] leading-relaxed text-foreground/50 italic">
                       {sandboxLegendaryDescription(mod.description, piece ?? undefined)}
                     </div>
                   ) : null}
                   {extras.length > 0 ? (
                     <div className="pt-1 flex flex-wrap gap-2 border-t border-border/40 mt-1">
                       {extras.map((e) => (
-                        <div key={e.key} className="text-[9px] text-foreground/40">
+                        <div key={e.key} className="text-[0.72rem] text-foreground/40">
                           <span className="font-mono text-foreground/30">{e.key}:</span> {e.value}
                         </div>
                       ))}
@@ -329,7 +329,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
       <div className="grid gap-6 lg:grid-cols-3 items-start">
         <div className="rounded-[var(--radius)] border border-border bg-panel p-5 lg:col-span-1">
           <div className="text-sm font-bold uppercase tracking-widest text-foreground/70 border-b border-border/50 pb-3">Totals</div>
-          <p className="mt-3 text-[11px] leading-relaxed text-foreground/50 italic">
+          <p className="mt-3 text-[0.84rem] leading-relaxed text-foreground/50 italic">
             {isFullArmorSetPayload(payload) 
               ? "Includes full-set base resistances plus legendary and underarmor effect math."
               : "Includes base resist hints, legendary stars, and underarmor effect math."
@@ -352,12 +352,12 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
               { label: "Carry wt", value: totals.carryWeight },
             ].map((row) => (
               <React.Fragment key={row.label}>
-                <dt className="text-foreground/40 font-medium uppercase tracking-wider text-[10px]">{row.label}</dt>
+                <dt className="text-foreground/40 font-medium uppercase tracking-wider text-[0.78rem]">{row.label}</dt>
                 <dd className="text-right font-mono text-foreground/90 font-bold">{row.value}</dd>
               </React.Fragment>
             ))}
           </dl>
-          <p className="mt-4 text-[9px] text-foreground/30 uppercase font-bold tracking-widest text-center border-t border-border/30 pt-3">
+          <p className="mt-4 text-[0.72rem] text-foreground/30 uppercase font-bold tracking-widest text-center border-t border-border/30 pt-3">
             Excludes perk card bonuses
           </p>
         </div>
@@ -376,18 +376,18 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-foreground/90 text-sm">{mod.name}</span>
                       {count > 1 && (
-                        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[9px] font-bold text-accent border border-accent/20">
+                        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[0.72rem] font-bold text-accent border border-accent/20">
                           ×{count}
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] text-foreground/40 leading-relaxed flex flex-wrap gap-1">
+                    <div className="text-[0.78rem] text-foreground/40 leading-relaxed flex flex-wrap gap-1">
                       {benchLabels.map((l, idx) => (
                         <span key={idx} className="bg-foreground/[0.03] px-1.5 py-0.5 rounded border border-border/30 whitespace-nowrap">{l}</span>
                       ))}
                     </div>
                     {desc ? (
-                      <p className="text-[11px] text-foreground/60 leading-relaxed italic border-l-2 border-accent/30 pl-3">
+                      <p className="text-[0.84rem] text-foreground/60 leading-relaxed italic border-l-2 border-accent/30 pl-3">
                         {desc}
                       </p>
                     ) : null}
@@ -408,7 +408,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                 <div key={line.label} className="flex items-center justify-between group">
                   <span className="text-xs text-foreground/70 group-hover:text-foreground/90 transition-colors">{line.label}</span>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-foreground/40 font-mono">QTY</span>
+                    <span className="text-[0.78rem] text-foreground/40 font-mono">QTY</span>
                     <span className="font-mono text-xs font-bold text-accent">{line.count}</span>
                   </div>
                 </div>
@@ -416,11 +416,11 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
             )}
           </div>
           <div className="mt-8 pt-4 border-t border-border/40">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-foreground/30 mb-2">Build Integrity</div>
+            <div className="text-[0.78rem] font-bold uppercase tracking-widest text-foreground/30 mb-2">Build Integrity</div>
             <div className="h-1.5 w-full bg-foreground/[0.05] rounded-full overflow-hidden">
                <div className="h-full bg-accent transition-all duration-500" style={{ width: '100%' }} />
             </div>
-            <p className="mt-2 text-[9px] text-foreground/40 leading-relaxed uppercase tracking-wide">
+            <p className="mt-2 text-[0.72rem] text-foreground/40 leading-relaxed uppercase tracking-wide">
               Shared loadout pages are read-only snapshots.
             </p>
           </div>

@@ -135,7 +135,7 @@ export default function AdminSyncPanel() {
               </div>
               <div
                 className={cn(
-                  "rounded-full border px-2 py-0.5 text-[11px]",
+                  "rounded-full border px-2 py-0.5 text-[0.84rem]",
                   source.lastStatus === "success"
                     ? "border-[color:color-mix(in_srgb,var(--color-success)_44%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-success)_12%,var(--color-panel))] text-[color:var(--color-success)]"
                     : source.lastStatus === "failed"
@@ -209,7 +209,7 @@ export default function AdminSyncPanel() {
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <span
                     className={cn(
-                      "rounded-full border px-2 py-0.5 text-[11px]",
+                      "rounded-full border px-2 py-0.5 text-[0.84rem]",
                       source.lastCheckStatus === "changed"
                         ? "border-[color:color-mix(in_srgb,var(--color-warning)_44%,var(--color-border))] bg-[color:color-mix(in_srgb,var(--color-warning)_12%,var(--color-panel))] text-[color:var(--color-warning)]"
                         : source.lastCheckStatus === "unchanged"

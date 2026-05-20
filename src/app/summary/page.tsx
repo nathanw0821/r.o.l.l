@@ -72,7 +72,7 @@ export default async function SummaryPage() {
                     style={{ width: `${globalSummary.percent}%` }}
                   />
                 </div>
-                <p className="mt-1 text-[10px] text-foreground/50">
+                <p className="mt-1 text-[0.78rem] text-foreground/50">
                   Total unique legendary effects unlocked across all characters in your roster.
                 </p>
               </div>
