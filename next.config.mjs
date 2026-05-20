@@ -48,6 +48,15 @@ const nextConfig = {
       "./node_modules/pg-cloudflare/esm/**"
     ]
   },
+  outputFileTracingExcludes: {
+    "*": [
+      "**/node_modules/exceljs/**",
+      "**/node_modules/unzipper/**",
+      "**/node_modules/fstream/**",
+      "**/node_modules/bluebird/**",
+      "**/node_modules/async/**"
+    ]
+  },
   experimental: {
     serverActions: {
       allowedOrigins
