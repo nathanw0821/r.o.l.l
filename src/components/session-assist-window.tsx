@@ -4,10 +4,19 @@ import * as React from "react";
 import Link from "next/link";
 import { Camera, ExternalLink, PanelLeftOpen, Pin, PinOff, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ScreenshotAssistClient from "@/components/screenshot-assist-client";
+import dynamic from "next/dynamic";
 import { useSessionAssist } from "@/components/session-assist-provider";
 import { assistPresetContent } from "@/lib/session-assist-presets";
 import type { SessionAssistRow } from "@/lib/session-assist";
+
+const ScreenshotAssistClient = dynamic(() => import("@/components/screenshot-assist-client"), {
+  ssr: false,
+  loading: () => (
+    <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
+      Loading S.C.A.N. Module...
+    </div>
+  ),
+});
 
 type LoadState =
   | { status: "idle" | "loading" }

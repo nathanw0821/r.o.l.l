@@ -1,4 +1,4 @@
-import { createWorker, Worker } from 'tesseract.js';
+import type { Worker } from 'tesseract.js';
 import { validateLegendaryMod } from './legendary-dictionary';
 import { 
   normalizeArmorName, 
@@ -38,6 +38,7 @@ export class ImageProcessor {
     }
     
     this.currentLanguage = lang;
+    const { createWorker } = await import('tesseract.js');
     this.worker = await createWorker(lang);
   }
 
