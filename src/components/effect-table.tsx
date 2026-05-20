@@ -407,8 +407,8 @@ export default function EffectTable({
               className={cn("effect-tile effect-tile--button summary-status-card", isPending && "opacity-60")}
             >
               <div className="effect-tile__header">
-                <div>
-                  <div className="font-semibold">{row.effect.name}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold break-words">{row.effect.name}</div>
                   {tierDisplay.stars ? (
                     <div className="mt-1 text-base font-semibold leading-none tracking-[0.14em] text-foreground/65" title={tierDisplay.label}>
                       {tierDisplay.stars}

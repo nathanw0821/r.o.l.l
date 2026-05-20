@@ -58,6 +58,7 @@ export function CharacterManager({
         await createGameAccount({ name: newAccountName.trim(), platform: newAccountPlatform });
         setIsCreatingAccount(false);
         setNewAccountName("");
+        window.location.reload();
       } catch (err) {
         alert(err instanceof Error ? err.message : "Failed to create account");
       }
@@ -71,6 +72,7 @@ export function CharacterManager({
         await createCharacter({ name: newCharName.trim(), gameAccountId });
         setIsCreatingChar(null);
         setNewCharName("");
+        window.location.reload();
       } catch (err) {
         alert(err instanceof Error ? err.message : "Failed to create character");
       }
@@ -82,6 +84,7 @@ export function CharacterManager({
     startTransition(async () => {
       try {
         await deleteGameAccount(id);
+        window.location.reload();
       } catch (err) {
         alert(err instanceof Error ? err.message : "Failed to delete account");
       }
@@ -148,6 +151,7 @@ export function CharacterManager({
         await renameCharacter({ id, name: editName.trim() });
         setEditingId(null);
         setEditName("");
+        window.location.reload();
       } catch (err) {
         alert(err instanceof Error ? err.message : "Failed to rename character");
       }
@@ -170,6 +174,7 @@ export function CharacterManager({
     startTransition(async () => {
       try {
         await deleteCharacter(char.id);
+        window.location.reload();
       } catch (err) {
         alert(err instanceof Error ? err.message : "Failed to delete character");
       }
