@@ -24,6 +24,7 @@ import { formatTierStars } from "@/lib/tier-format";
 import { usePersistedAppNavigation } from "@/components/use-persisted-app-navigation";
 import { useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 import { CharacterSelector } from "@/components/character-selector";
+import MigrationNotice from "@/components/migration-notice";
 
 type AppNavLink = {
   href: string;
@@ -441,6 +442,7 @@ export default function AppShell({
           </div>
         </div>
       </div>
+      <MigrationNotice />
     </div>
   );
 }

@@ -683,7 +683,7 @@ export default function SummaryClient({
                       pendingId === row.id && "opacity-60"
                     )}
                   >
-                    <div>
+                    <div className="min-w-0">
                       <div className="text-sm font-semibold truncate pr-6">{row.effect.name}</div>
                       <div className="mt-1 text-[0.84rem] font-semibold uppercase tracking-[0.12em]">
                         {pendingId === row.id

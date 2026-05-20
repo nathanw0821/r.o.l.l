@@ -1496,6 +1496,7 @@ a {
   align-items: center;
   justify-content: center;
   min-width: 5.5rem;
+  flex-shrink: 0;
   border-radius: 999px;
   border: 1px solid currentColor;
   padding: 0.35rem 0.75rem;
