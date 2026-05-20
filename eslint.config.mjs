@@ -2,11 +2,19 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
 
 const config = [
-  ...nextVitals,
-  ...nextTypescript,
   {
-    ignores: ["coverage/**"]
-  }
+    ignores: [
+      "coverage/**",
+      ".next/**",
+      ".open-next/**",
+      "dist-worker/**",
+      ".vercel/**",
+      ".wrangler/**",
+      "node_modules/**"
+    ]
+  },
+  ...nextVitals,
+  ...nextTypescript
 ];
 
 export default config;

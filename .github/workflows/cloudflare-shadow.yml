@@ -36,9 +36,24 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: https://fallout76.wiki
 
+      - name: Output Bundle and Asset Sizes
+        run: |
+          echo "=== Standalone Server Bundle and WASM Files ==="
+          ls -lh .open-next/ || true
+          find .open-next/server-functions/default -type f -exec ls -lh {} + | sort -k 5 -h || true
+          echo "=== Assets Size ==="
+          du -sh .open-next/assets || true
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --minify
+
+      - name: Upload Wrangler Log on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wrangler-logs
+          path: .wrangler/logs/
