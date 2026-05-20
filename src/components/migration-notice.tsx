@@ -5,6 +5,7 @@ import { Info, X, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "roll-migration-notice-dismissed-v2";
+const LAST_SHOWN_KEY = "roll-migration-notice-last-shown";
 
 export default function MigrationNotice() {
   const [visible, setVisible] = React.useState(false);
@@ -13,9 +14,19 @@ export default function MigrationNotice() {
   React.useEffect(() => {
     // Only check localStorage on the client side
     const dismissed = window.localStorage.getItem(STORAGE_KEY);
-    if (!dismissed) {
+    if (dismissed) return;
+
+    const lastShown = window.localStorage.getItem(LAST_SHOWN_KEY);
+    const now = Date.now();
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+    if (!lastShown || now - parseInt(lastShown, 10) > ONE_DAY_MS) {
       // Small timeout to let page load smoothly before notice slides in
-      const timeout = setTimeout(() => setVisible(true), 1000);
+      const timeout = setTimeout(() => {
+        setVisible(true);
+        // Record that we showed it today so it doesn't pop up on every single refresh during the day
+        window.localStorage.setItem(LAST_SHOWN_KEY, Date.now().toString());
+      }, 1000);
       return () => clearTimeout(timeout);
     }
   }, []);
