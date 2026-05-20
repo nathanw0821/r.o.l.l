@@ -119,7 +119,7 @@ export default function SignInForm({
             </a>
             , create an OAuth 2.0 Client ID (Web application) and set the authorized redirect URI to:
           </p>
-          <p className="mt-2 break-all font-mono text-[11px] text-foreground/75">{googleCallbackExample}</p>
+          <p className="mt-2 break-all font-mono text-[0.84rem] text-foreground/75">{googleCallbackExample}</p>
           {!oauthCallbackBase ? (
             <p className="mt-2">
               Replace the host with your real <code className="text-foreground/65">NEXTAUTH_URL</code> / production

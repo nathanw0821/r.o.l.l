@@ -107,7 +107,7 @@ export default async function OverviewAchievementsPage() {
                     </div>
                     <div
                       className={cn(
-                        "rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
+                        "rounded-full border px-2 py-0.5 text-[0.84rem] font-semibold uppercase tracking-wide",
                         achievement.unlocked
                           ? "border-accent/60 text-accent"
                           : "border-border text-foreground/50"
@@ -117,7 +117,7 @@ export default async function OverviewAchievementsPage() {
                     </div>
                   </div>
                   {achievement.unlockedAt ? (
-                    <div className="mt-3 text-[11px] text-foreground/50">
+                    <div className="mt-3 text-[0.84rem] text-foreground/50">
                       Earned {achievement.unlockedAt.toLocaleString()}
                     </div>
                   ) : null}

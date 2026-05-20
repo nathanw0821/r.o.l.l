@@ -190,7 +190,7 @@ export function CharacterManager({
       <DialogTrigger asChild>
         <Button 
           variant="ghost" 
-          className="w-full justify-start gap-2 h-9 text-[10px] uppercase font-bold text-foreground/40 hover:text-accent hover:bg-accent/5 px-3"
+          className="w-full justify-start gap-2 h-9 text-[0.78rem] uppercase font-bold text-foreground/40 hover:text-accent hover:bg-accent/5 px-3"
         >
           <Settings2 className="h-3.5 w-3.5" />
           <span>Manage Registry</span>
@@ -211,7 +211,7 @@ export function CharacterManager({
               variant="ghost" 
               size="sm" 
               onClick={() => setIsCreatingAccount(true)}
-              className="mb-4 h-8 gap-1.5 text-[10px] uppercase tracking-[0.15em] font-bold text-foreground/40 hover:text-accent hover:bg-accent/5"
+              className="mb-4 h-8 gap-1.5 text-[0.78rem] uppercase tracking-[0.15em] font-bold text-foreground/40 hover:text-accent hover:bg-accent/5"
             >
               <Plus className="h-3 w-3" /> Add Game Account
             </Button>
@@ -319,7 +319,7 @@ export function CharacterManager({
                   {account.characters.length < 5 && isCreatingChar !== account.id && (
                     <button 
                       onClick={() => setIsCreatingChar(account.id)}
-                      className="flex items-center gap-2 p-2.5 text-[10px] uppercase font-bold text-foreground/30 hover:text-accent/60 transition-colors"
+                      className="flex items-center gap-2 p-2.5 text-[0.78rem] uppercase font-bold text-foreground/30 hover:text-accent/60 transition-colors"
                     >
                       <Plus className="h-3 w-3" /> New Character
                     </button>
@@ -372,7 +372,7 @@ export function CharacterManager({
                           >
                             <div className="flex flex-col">
                               <span className="text-sm font-medium">{char.name}</span>
-                              <span className="text-[10px] text-foreground/40 italic">Legacy / Unlinked</span>
+                              <span className="text-[0.78rem] text-foreground/40 italic">Legacy / Unlinked</span>
                             </div>
                           </button>
                           <div className="flex flex-col gap-1 opacity-0 group-hover/char:opacity-100 transition-opacity pr-1">
@@ -421,7 +421,7 @@ export function CharacterManager({
                       <Users className="h-4 w-4 text-accent" />
                       <div className="flex flex-col items-start">
                         <span className="text-sm">Use Existing Account</span>
-                        <span className="text-[10px] opacity-50">Select one of your {gameAccounts.length} accounts</span>
+                        <span className="text-[0.78rem] opacity-50">Select one of your {gameAccounts.length} accounts</span>
                       </div>
                     </Button>
                   )}
@@ -429,7 +429,7 @@ export function CharacterManager({
                     <Plus className="h-4 w-4 text-accent" />
                     <div className="flex flex-col items-start">
                       <span className="text-sm">Create New Account</span>
-                      <span className="text-[10px] opacity-50">Start a fresh account for this character</span>
+                      <span className="text-[0.78rem] opacity-50">Start a fresh account for this character</span>
                     </div>
                   </Button>
                   <Button variant="ghost" onClick={() => { setLinkingCharId(null); setLinkingStep(null); }} className="mt-2 text-xs">
@@ -455,10 +455,10 @@ export function CharacterManager({
                           <div className="p-1.5 rounded bg-panel">{getPlatformIcon(acc.platform)}</div>
                           <div className="flex flex-col">
                             <span className="text-sm font-medium">{acc.name}</span>
-                            <span className="text-[10px] opacity-50">{acc.characters.length}/5 Characters</span>
+                            <span className="text-[0.78rem] opacity-50">{acc.characters.length}/5 Characters</span>
                           </div>
                         </div>
-                        {acc.characters.length >= 5 && <span className="text-[10px] font-bold text-destructive">FULL</span>}
+                        {acc.characters.length >= 5 && <span className="text-[0.78rem] font-bold text-destructive">FULL</span>}
                       </button>
                     ))}
                   </div>
@@ -470,7 +470,7 @@ export function CharacterManager({
                 <div className="space-y-4 p-4 border border-accent/20 bg-accent/5 rounded-xl">
                   <div className="space-y-3">
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-foreground/40">Account Name</label>
+                      <label className="text-[0.78rem] uppercase font-bold text-foreground/40">Account Name</label>
                       <Input 
                         placeholder="e.g. Steam Main" 
                         value={newAccountName}
@@ -479,7 +479,7 @@ export function CharacterManager({
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-foreground/40">Platform</label>
+                      <label className="text-[0.78rem] uppercase font-bold text-foreground/40">Platform</label>
                       <select 
                         value={newAccountPlatform}
                         onChange={(e) => setNewAccountPlatform(e.target.value as "PC" | "XBOX" | "PS")}
@@ -504,7 +504,7 @@ export function CharacterManager({
             </div>
           </div>
         )}
-        <div className="p-4 bg-accent/5 border-t border-border/40 text-[10px] text-center text-foreground/40 font-medium">
+        <div className="p-4 bg-accent/5 border-t border-border/40 text-[0.78rem] text-center text-foreground/40 font-medium">
           Multi-Platform characters share account achievements but maintain separate loadouts.
         </div>
       </DialogContent>

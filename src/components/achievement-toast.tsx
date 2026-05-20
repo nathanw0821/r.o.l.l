@@ -40,7 +40,7 @@ export function AchievementToast({
         
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+            <span className="text-[0.78rem] font-bold uppercase tracking-[0.2em] text-accent">
               Achievement Unlocked
             </span>
             <button 

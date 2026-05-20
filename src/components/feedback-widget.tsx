@@ -108,7 +108,7 @@ export default function FeedbackWidget() {
                   className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
                   placeholder="Share details"
                 />
-                <span className="text-[11px] text-foreground/50">{message.length}/500</span>
+                <span className="text-[0.84rem] text-foreground/50">{message.length}/500</span>
               </label>
               <label className="flex flex-col gap-1 text-xs">
                 <span>Reply email (optional)</span>

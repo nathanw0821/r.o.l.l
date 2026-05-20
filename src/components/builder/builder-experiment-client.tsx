@@ -219,7 +219,7 @@ function LegendaryModDetailFootprint({
       : line;
     return (
       <p
-        className="mt-0.5 truncate text-[10px] leading-snug text-foreground/65"
+        className="mt-0.5 truncate text-[0.78rem] leading-snug text-foreground/65"
         title={title}
       >
         <span className="font-semibold text-accent/85 tabular-nums">{line}</span>
@@ -232,7 +232,7 @@ function LegendaryModDetailFootprint({
 
   return (
     <div className="mt-1 space-y-1 bg-background/30 p-1.5 rounded border border-border/10">
-      <div className="text-[10px] leading-snug font-mono">
+      <div className="text-[0.78rem] leading-snug font-mono">
         {deltas ? (
           <span className="font-semibold text-accent/90 tabular-nums">
             {deltas}
@@ -244,7 +244,7 @@ function LegendaryModDetailFootprint({
         )}
       </div>
       {tail ? (
-        <div className="space-y-1 border-t border-border/10 pt-1 text-[10px] leading-snug text-foreground/70">
+        <div className="space-y-1 border-t border-border/10 pt-1 text-[0.78rem] leading-snug text-foreground/70">
           {desc ? (
             <p>
               <span className="font-bold text-accent/70">Desc: </span>
@@ -253,10 +253,10 @@ function LegendaryModDetailFootprint({
           ) : null}
           {extras.length > 0 ? (
             <div>
-              <div className="font-bold text-foreground/40 uppercase text-[8px] tracking-tight">
+              <div className="font-bold text-foreground/40 uppercase text-[0.84rem] tracking-tight">
                 Extras (not in sandbox totals)
               </div>
-              <ul className="list-disc pl-3 text-[9px] text-foreground/50 space-y-0.5">
+              <ul className="list-disc pl-3 text-[0.72rem] text-foreground/50 space-y-0.5">
                 {extras.map((e) => (
                   <li key={e.key}>
                     <span className="font-mono">{e.key}</span>: {e.value}
@@ -335,13 +335,13 @@ const ModPickerOption = React.memo(function ModPickerOption({
             {mod.name}
           </span>
           {isRecommended && (
-            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[8px] uppercase tracking-wider text-accent font-black animate-pulse">
+            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.84rem] uppercase tracking-wider text-accent font-black animate-pulse">
               <Sparkle className="h-2 w-2 inline mr-0.5" /> Recom.
             </span>
           )}
         </span>
         <span className={cn(
-          "shrink-0 text-[8px] font-black uppercase tracking-widest",
+          "shrink-0 text-[0.84rem] font-black uppercase tracking-widest",
           unlock === "unlocked" ? "text-accent" : "text-foreground/40"
         )}>
           {statusLabel}
@@ -357,7 +357,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
       </div>
       
       {ghoulMode && isGhoulDiscouragedLegendarySlug(mod.slug) ? (
-        <p className="mt-1.5 rounded border border-warning/30 bg-warning/5 px-2 py-0.5 text-[8px] leading-tight text-warning/80 italic font-sans">
+        <p className="mt-1.5 rounded border border-warning/30 bg-warning/5 px-2 py-0.5 text-[0.84rem] leading-tight text-warning/80 italic font-sans">
           Off-meta for typical Ghoul builds.
         </p>
       ) : null}
@@ -1056,12 +1056,12 @@ export default function BuilderExperimentClient({
       >
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between text-[9px] uppercase font-black text-foreground/50 tracking-widest border-b border-border/20 pb-1 mb-1.5">
+          <div className="flex items-center justify-between text-[0.72rem] uppercase font-black text-foreground/50 tracking-widest border-b border-border/20 pb-1 mb-1.5">
             <span>{label}</span>
             {isPA && (
               <button
                 type="button"
-                className="text-[8px] text-accent hover:underline font-black uppercase transition-colors"
+                className="text-[0.84rem] text-accent hover:underline font-black uppercase transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (isEquipped) {
@@ -1082,19 +1082,19 @@ export default function BuilderExperimentClient({
             <div className="space-y-2">
               {/* Mods display */}
               {(material || misc) ? (
-                <div className="text-[8px] text-accent/80 leading-tight uppercase font-black tracking-wider bg-accent/5 p-1 rounded border border-accent/10">
+                <div className="text-[0.84rem] text-accent/80 leading-tight uppercase font-black tracking-wider bg-accent/5 p-1 rounded border border-accent/10">
                   {material && <div className="truncate">Mat: {material}</div>}
                   {misc && <div className="truncate">Misc: {misc}</div>}
                 </div>
               ) : (
-                <div className="text-[8px] text-foreground/30 italic">No crafting mods</div>
+                <div className="text-[0.84rem] text-foreground/30 italic">No crafting mods</div>
               )}
 
               {/* Tweak selectors */}
               <div className="flex flex-col gap-1 mt-1">
                 {!isPA && (
                   <select
-                    className="h-5 text-[8px] w-full rounded border border-border/35 bg-background/60 px-1 font-mono uppercase text-foreground/80 cursor-pointer"
+                    className="h-5 text-[0.84rem] w-full rounded border border-border/35 bg-background/60 px-1 font-mono uppercase text-foreground/80 cursor-pointer"
                     value={craft?.materialModId ?? "none"}
                     onChange={(e) => setArmorCraftingField(pieceIndex, "materialModId", e.target.value)}
                   >
@@ -1106,7 +1106,7 @@ export default function BuilderExperimentClient({
                   </select>
                 )}
                 <select
-                  className="h-5 text-[8px] w-full rounded border border-border/35 bg-background/60 px-1 font-mono uppercase text-foreground/80 cursor-pointer"
+                  className="h-5 text-[0.84rem] w-full rounded border border-border/35 bg-background/60 px-1 font-mono uppercase text-foreground/80 cursor-pointer"
                   value={craft?.miscModId ?? "none"}
                   onChange={(e) => setArmorCraftingField(pieceIndex, "miscModId", e.target.value)}
                 >
@@ -1120,7 +1120,7 @@ export default function BuilderExperimentClient({
 
               {/* Legendary star rows */}
               {isPAHelmet ? (
-                <div className="text-[8px] text-foreground/40 italic leading-snug mt-1.5 pt-1.5 border-t border-border/10">PA Helm - Stars Lock</div>
+                <div className="text-[0.84rem] text-foreground/40 italic leading-snug mt-1.5 pt-1.5 border-t border-border/10">PA Helm - Stars Lock</div>
               ) : (
                 <div className="space-y-1 mt-1.5 pt-1.5 border-t border-border/10">
                   {SLOT_LABELS.map((starLabel, starIndex) => {
@@ -1130,7 +1130,7 @@ export default function BuilderExperimentClient({
                       <div 
                         key={starIndex}
                         className={cn(
-                          "flex items-center justify-between text-[9px] rounded px-1.5 py-0.5 cursor-pointer transition-all border",
+                          "flex items-center justify-between text-[0.72rem] rounded px-1.5 py-0.5 cursor-pointer transition-all border",
                           mod 
                             ? "border-accent/30 bg-accent/[0.04] text-foreground/90 hover:border-accent/60" 
                             : "border-dashed border-border/30 text-foreground/40 hover:border-accent/40 hover:text-foreground/75"
@@ -1143,7 +1143,7 @@ export default function BuilderExperimentClient({
                         {mod && (
                           <button
                             type="button"
-                            className="text-[8px] text-foreground/40 hover:text-destructive px-1 font-bold"
+                            className="text-[0.84rem] text-foreground/40 hover:text-destructive px-1 font-bold"
                             onClick={(e) => {
                               e.stopPropagation();
                               clearStarSlot("armorSet", pieceIndex, starIndex);
@@ -1160,7 +1160,7 @@ export default function BuilderExperimentClient({
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-6 text-center text-foreground/20 font-black">
-              <span className="text-[8px] tracking-widest">OFFLINE</span>
+              <span className="text-[0.84rem] tracking-widest">OFFLINE</span>
             </div>
           )}
         </div>
@@ -1225,11 +1225,11 @@ export default function BuilderExperimentClient({
           <h1 className="text-xl font-black font-mono tracking-tight text-foreground mt-1">
             B.U.I.L.D. SANDBOX TERMINAL
           </h1>
-          <p className="text-[11px] font-mono text-foreground/50 uppercase mt-0.5 tracking-wider">
+          <p className="text-[0.84rem] font-mono text-foreground/50 uppercase mt-0.5 tracking-wider">
             Battle Utility &amp; Inventory Logistics Diagnostic // Nuka Knights (Backwoods Edition)
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 font-mono text-[10px]">
+        <div className="flex flex-wrap gap-2 font-mono text-[0.78rem]">
           <a
             className="rounded border border-accent/25 bg-accent/5 px-2.5 py-1 text-accent font-bold hover:bg-accent/15 transition-all"
             href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
@@ -1280,11 +1280,11 @@ export default function BuilderExperimentClient({
                       <span className="font-bold text-accent/90" title={key.toUpperCase()}>
                         {BUILDER_SPECIAL_LABELS[key]}
                       </span>
-                      <div className="flex items-center gap-1 text-[11px]">
+                      <div className="flex items-center gap-1 text-[0.84rem]">
                         <span className="font-black text-foreground">{live}</span>
                         {delta !== 0 && (
                           <span className={cn(
-                            "text-[8px] px-1 rounded font-black tracking-tight",
+                            "text-[0.84rem] px-1 rounded font-black tracking-tight",
                             delta > 0 ? "text-accent bg-accent/10 border border-accent/20" : "text-danger bg-danger/10 border border-danger/20"
                           )}>
                             {delta > 0 ? "+" : ""}{delta}
@@ -1300,7 +1300,7 @@ export default function BuilderExperimentClient({
                       />
                     </div>
                     {/* Mini inline baseline increment/decrement */}
-                    <div className="flex items-center gap-1 mt-0.5 justify-end text-[9px]">
+                    <div className="flex items-center gap-1 mt-0.5 justify-end text-[0.72rem]">
                       <span className="text-foreground/30 mr-1">Base: {base}</span>
                       <button
                         type="button"
@@ -1358,14 +1358,14 @@ export default function BuilderExperimentClient({
                 
                 return (
                   <div key={k} className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors">
-                    <div className="flex items-center gap-1 text-[9px] text-foreground/45 font-black uppercase tracking-wider">
+                    <div className="flex items-center gap-1 text-[0.72rem] text-foreground/45 font-black uppercase tracking-wider">
                       <Icon className={cn("h-3 w-3 shrink-0", col)} />
                       <span>{l}</span>
                     </div>
                     <div className="flex items-baseline justify-between mt-1">
                       <span className="text-sm font-black text-foreground">{live}</span>
                       {delta !== 0 && (
-                        <span className="text-[9px] text-accent font-black tracking-tight bg-accent/5 px-1 border border-accent/20 rounded">
+                        <span className="text-[0.72rem] text-accent font-black tracking-tight bg-accent/5 px-1 border border-accent/20 rounded">
                           +{delta}
                         </span>
                       )}
@@ -1389,7 +1389,7 @@ export default function BuilderExperimentClient({
             
             <div className="grid gap-3 sm:grid-cols-2 items-center">
               <div>
-                <label className="text-[10px] text-foreground/45 uppercase font-bold tracking-widest">Active Target Base</label>
+                <label className="text-[0.78rem] text-foreground/45 uppercase font-bold tracking-widest">Active Target Base</label>
                 <select
                   className="mt-1 h-9 w-full rounded border border-border/30 bg-background/55 px-2 text-xs font-mono uppercase text-foreground/90 cursor-pointer hover:border-accent transition-colors"
                   value={payload.basePieceId}
@@ -1425,8 +1425,8 @@ export default function BuilderExperimentClient({
                     : "border-border/20 bg-background/25"
                 )}>
                   <div className="min-w-0">
-                    <div className="text-[9px] font-black uppercase text-accent tracking-wider">Plan Registry Sync</div>
-                    <div className="text-[9px] text-foreground/45 mt-0.5 uppercase">
+                    <div className="text-[0.72rem] font-black uppercase text-accent tracking-wider">Plan Registry Sync</div>
+                    <div className="text-[0.72rem] text-foreground/45 mt-0.5 uppercase">
                       {isSignedIn ? "Database persistent" : "Offline draft"}
                     </div>
                   </div>
@@ -1443,7 +1443,7 @@ export default function BuilderExperimentClient({
             </div>
 
             {learnedToggleError ? (
-              <p className="text-[10px] text-danger font-bold">
+              <p className="text-[0.78rem] text-danger font-bold">
                 &gt;&gt; ERROR: {learnedToggleError}
               </p>
             ) : null}
@@ -1455,7 +1455,7 @@ export default function BuilderExperimentClient({
             
             <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 relative z-10">
               <span>[ Chassis Bay schematic ]</span>
-              <span className="text-[9px] text-foreground/40 font-normal">Active frame: {piece.label}</span>
+              <span className="text-[0.72rem] text-foreground/40 font-normal">Active frame: {piece.label}</span>
             </div>
 
             {isMultiPiece ? (
@@ -1502,7 +1502,7 @@ export default function BuilderExperimentClient({
                 <div className="flex flex-col items-center p-6 text-center border border-dashed border-accent/25 bg-accent/[0.01] rounded-xl w-full max-w-md mb-4 relative overflow-hidden">
                   <Boxes className="h-10 w-10 text-accent/50 mb-2 animate-pulse" />
                   <span className="text-sm font-black uppercase tracking-wider text-accent">{piece.label}</span>
-                  <span className="text-[9px] text-foreground/45 mt-1 uppercase tracking-widest font-mono">
+                  <span className="text-[0.72rem] text-foreground/45 mt-1 uppercase tracking-widest font-mono">
                     {piece.kind === "weapon" ? `Weapon Matrix // ${piece.weaponSub || "Tactical"}` : "Core Stack Lining"}
                   </span>
                 </div>
@@ -1523,7 +1523,7 @@ export default function BuilderExperimentClient({
                           )}
                         >
                           <div className="min-w-0 flex-1">
-                            <div className="text-[9px] font-black uppercase text-foreground/45 tracking-widest">
+                            <div className="text-[0.72rem] font-black uppercase text-foreground/45 tracking-widest">
                               {starIndex + 1}★ {starLabel}
                             </div>
                             <div className="text-xs font-bold text-foreground mt-0.5 uppercase tracking-wide">
@@ -1541,7 +1541,7 @@ export default function BuilderExperimentClient({
                               type="button"
                               size="sm"
                               variant="outline"
-                              className="h-7 text-[9px] uppercase font-mono hover:text-accent hover:border-accent"
+                              className="h-7 text-[0.72rem] uppercase font-mono hover:text-accent hover:border-accent"
                               onClick={() => setActivePick({ scope: "single", starIndex })}
                             >
                               Bench
@@ -1551,7 +1551,7 @@ export default function BuilderExperimentClient({
                                 type="button"
                                 size="sm"
                                 variant="ghost"
-                                className="h-7 text-[9px] uppercase font-mono hover:text-destructive text-foreground/40"
+                                className="h-7 text-[0.72rem] uppercase font-mono hover:text-destructive text-foreground/40"
                                 onClick={() => clearStarSlot("single", undefined, starIndex)}
                               >
                                 Clear
@@ -1565,13 +1565,13 @@ export default function BuilderExperimentClient({
                 ) : (
                   <div className="text-center py-6 text-foreground/30 border border-dashed border-border/30 bg-background/10 rounded-xl w-full max-w-md">
                     <div className="text-xs uppercase tracking-widest font-black">LEGENDARY STAR BENCH DISABLED</div>
-                    <div className="text-[9px] text-foreground/40 mt-1">&gt; linings_applied_via_aux_logistics.exe</div>
+                    <div className="text-[0.72rem] text-foreground/40 mt-1">&gt; linings_applied_via_aux_logistics.exe</div>
                   </div>
                 )}
               </div>
             )}
 
-            <div className="text-[9px] text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
+            <div className="text-[0.72rem] text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
               Telemetric calculations updated instant client-side. Cloudflare 0ms CPU load.
             </div>
           </div>
@@ -1588,7 +1588,7 @@ export default function BuilderExperimentClient({
                 [ Presets holotape deck ]
               </div>
               <div className={cn(
-                "flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase border tracking-wider",
+                "flex items-center gap-1 px-2 py-0.5 rounded text-[0.84rem] font-black uppercase border tracking-wider",
                 activeLoadoutIndex === null
                   ? "bg-amber-400/10 border-amber-400/20 text-amber-500/90"
                   : "bg-emerald-400/10 border-emerald-400/20 text-emerald-500/90"
@@ -1610,7 +1610,7 @@ export default function BuilderExperimentClient({
                       variant={saved ? "secondary" : "outline"}
                       size="sm"
                       className={cn(
-                        "h-7 px-1 text-[9px] font-bold uppercase transition-all truncate text-center",
+                        "h-7 px-1 text-[0.72rem] font-bold uppercase transition-all truncate text-center",
                         saved 
                           ? "bg-accent/10 border-accent/30 text-accent hover:bg-accent/20" 
                           : "opacity-40 hover:opacity-100 border-dashed"
@@ -1623,7 +1623,7 @@ export default function BuilderExperimentClient({
                     </Button>
                     <button
                       type="button"
-                      className="flex items-center justify-center gap-1 text-[8px] text-foreground/45 hover:text-accent font-black uppercase tracking-wider py-0.5"
+                      className="flex items-center justify-center gap-1 text-[0.84rem] text-foreground/45 hover:text-accent font-black uppercase tracking-wider py-0.5"
                       onClick={() => saveLoadout(i)}
                     >
                       {saved ? (
@@ -1666,14 +1666,14 @@ export default function BuilderExperimentClient({
                 />
                 <span>
                   <span className="font-bold text-accent">GHOUL BIOLOGY ACTIVATION</span>
-                  <span className="block text-[9px] text-foreground/50 uppercase tracking-wide mt-0.5">
+                  <span className="block text-[0.72rem] text-foreground/50 uppercase tracking-wide mt-0.5">
                     Radiation immunised; CHA −10 penalty; Blocked rows stripped.
                   </span>
                 </span>
               </label>
 
               {ghoulLegendarySandboxNotes ? (
-                <div className="p-2 border border-warning/30 bg-warning/5 text-[9px] rounded text-warning/90 space-y-1">
+                <div className="p-2 border border-warning/30 bg-warning/5 text-[0.72rem] rounded text-warning/90 space-y-1">
                   <div className="font-black uppercase tracking-widest">&gt;&gt; WARNING: RAD DEVIATION LOGGED</div>
                   <ul className="list-disc pl-3.5 space-y-0.5 font-sans">
                     {ghoulLegendarySandboxNotes.map((line, i) => (
@@ -1690,7 +1690,7 @@ export default function BuilderExperimentClient({
                 variant="secondary"
                 size="sm"
                 onClick={clearAllSelections}
-                className="gap-1.5 h-7 text-[9px] uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20 flex-1"
+                className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20 flex-1"
               >
                 <Trash2 className="h-3 w-3" />
                 <span>Flush Registry</span>
@@ -1700,7 +1700,7 @@ export default function BuilderExperimentClient({
                   variant="outline"
                   size="sm"
                   onClick={undoClear}
-                  className="gap-1.5 h-7 text-[9px] uppercase font-mono flex-1 font-bold"
+                  className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono flex-1 font-bold"
                 >
                   <RotateCcw className="h-3 w-3" />
                   <span>Restore</span>
@@ -1715,7 +1715,7 @@ export default function BuilderExperimentClient({
               [ MUTATION SERUM MATRIX ]
             </div>
             
-            <div className="max-h-36 space-y-1 overflow-y-auto pr-1 grid grid-cols-2 gap-1 text-[10px]">
+            <div className="max-h-36 space-y-1 overflow-y-auto pr-1 grid grid-cols-2 gap-1 text-[0.78rem]">
               {SANDBOX_MUTATIONS.map((m) => {
                 const on = payload.mutationIds.includes(m.id);
                 return (
@@ -1745,11 +1745,11 @@ export default function BuilderExperimentClient({
               })}
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-border/15 text-[10px]">
+            <div className="space-y-2 pt-2 border-t border-border/15 text-[0.78rem]">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <div className="font-bold text-foreground">Strange in Numbers</div>
-                  <p className="text-[9px] text-foreground/45 leading-tight">Teammate mutations amplify +25%.</p>
+                  <p className="text-[0.72rem] text-foreground/45 leading-tight">Teammate mutations amplify +25%.</p>
                 </div>
                 <Switch
                   checked={payload.hasStrangeInNumbers}
@@ -1766,7 +1766,7 @@ export default function BuilderExperimentClient({
               <div className="flex items-center justify-between gap-3 pt-1">
                 <div className="min-w-0">
                   <div className="font-bold text-foreground">Ignore Serum penalties</div>
-                  <p className="text-[9px] text-foreground/45 leading-tight">Filter mutation negatives.</p>
+                  <p className="text-[0.72rem] text-foreground/45 leading-tight">Filter mutation negatives.</p>
                 </div>
                 <Switch
                   checked={payload.ignoreMutationPenalties}
@@ -1788,7 +1788,7 @@ export default function BuilderExperimentClient({
               <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
                 [ UNDERARMOR SUB-SYSTEMS ]
               </div>
-              <div className="grid gap-2 text-[10px]">
+              <div className="grid gap-2 text-[0.78rem]">
                 <label className="flex flex-col">
                   <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Shell Core</span>
                   <select
@@ -1847,7 +1847,7 @@ export default function BuilderExperimentClient({
                   <label
                     key={id}
                     className={cn(
-                      "flex cursor-pointer items-center gap-2 rounded p-1 transition-colors hover:bg-background/45 border text-[10px]",
+                      "flex cursor-pointer items-center gap-2 rounded p-1 transition-colors hover:bg-background/45 border text-[0.78rem]",
                       on ? "border-accent/30 bg-accent/5 text-accent" : "border-transparent text-foreground/75"
                     )}
                   >
@@ -1880,14 +1880,14 @@ export default function BuilderExperimentClient({
             
             <div className="flex flex-wrap gap-1.5">
               {shopping.lines.length === 0 ? (
-                <p className="text-[10px] text-foreground/30 italic uppercase">
+                <p className="text-[0.78rem] text-foreground/30 italic uppercase">
                   &gt; legendary bench is idle. no modules required.
                 </p>
               ) : (
                 shopping.lines.map((line) => (
                   <div
                     key={line.label}
-                    className="flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/5 px-2.5 py-0.5 text-[9px] font-black text-accent uppercase tracking-widest"
+                    className="flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/5 px-2.5 py-0.5 text-[0.72rem] font-black text-accent uppercase tracking-widest"
                   >
                     <span>{line.count}×</span>
                     <span>{line.label}</span>
@@ -1904,7 +1904,7 @@ export default function BuilderExperimentClient({
             </div>
             
             {groupedLegendaryEffects.length === 0 ? (
-              <p className="text-[10px] text-foreground/35 italic uppercase">
+              <p className="text-[0.78rem] text-foreground/35 italic uppercase">
                 &gt; no legendary effects currently loaded.
               </p>
             ) : (
@@ -1913,22 +1913,22 @@ export default function BuilderExperimentClient({
                   const descRaw = mod.description?.trim() ?? "";
                   const desc = sandboxLegendaryDescription(descRaw, piece) || descRaw;
                   return (
-                    <li key={mod.id} className="text-[10px] leading-snug border-b border-border/10 pb-2">
+                    <li key={mod.id} className="text-[0.78rem] leading-snug border-b border-border/10 pb-2">
                       <div className="flex items-baseline gap-2">
                         <span className="font-black text-accent/90 uppercase tracking-wide">
                           {mod.name}
                         </span>
                         {count > 1 && (
-                          <span className="rounded-full bg-accent/10 px-1.5 py-0.2 text-[8px] font-black text-accent border border-accent/20">
+                          <span className="rounded-full bg-accent/10 px-1.5 py-0.2 text-[0.84rem] font-black text-accent border border-accent/20">
                             ×{count}
                           </span>
                         )}
                       </div>
-                      <div className="text-[8px] text-foreground/45 mt-0.5 font-bold uppercase tracking-wider">
+                      <div className="text-[0.84rem] text-foreground/45 mt-0.5 font-bold uppercase tracking-wider">
                         {benchLabels.join(" · ")}
                       </div>
                       {desc ? (
-                        <p className="mt-1 text-foreground/70 font-sans italic text-[9.5px]">
+                        <p className="mt-1 text-foreground/70 font-sans italic text-[0.75rem]">
                           {desc}
                         </p>
                       ) : null}
@@ -1952,7 +1952,7 @@ export default function BuilderExperimentClient({
             />
             <Button
               type="button"
-              className="w-full h-8 text-[10px] font-black uppercase tracking-widest bg-accent hover:bg-accent/80 text-accent-foreground shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
+              className="w-full h-8 text-[0.78rem] font-black uppercase tracking-widest bg-accent hover:bg-accent/80 text-accent-foreground shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
               onClick={shareBuild}
               disabled={shareBusy}
             >
@@ -1966,7 +1966,7 @@ export default function BuilderExperimentClient({
                 </Link>
               </div>
             ) : shareResult ? (
-              <div className="p-2 border border-danger/30 bg-danger/5 text-[9px] rounded text-danger font-bold uppercase">
+              <div className="p-2 border border-danger/30 bg-danger/5 text-[0.72rem] rounded text-danger font-bold uppercase">
                 &gt;&gt; ERROR: {shareResult}
               </div>
             ) : null}
@@ -2002,12 +2002,12 @@ export default function BuilderExperimentClient({
                 ? `&gt; CONFIGURE SLOT: ${activePickLabel(activePick, baseStarsContextLabel)}`
                 : "CHOOSE MOD"}
             </DialogTitle>
-            <DialogDescription className="text-[10px] text-foreground/50 uppercase tracking-widest leading-relaxed">
+            <DialogDescription className="text-[0.78rem] text-foreground/50 uppercase tracking-widest leading-relaxed">
               {isCompactDensity
                 ? "Search compatible catalog mods. Tap row to equip."
                 : "Search compatibilities. Unlocked entries sync from legendary ledger tracker database values."}
               {payload.ghoul ? (
-                <span className="mt-1.5 block text-[9px] text-warning/90 font-bold bg-warning/5 p-1 rounded border border-warning/20">
+                <span className="mt-1.5 block text-[0.72rem] text-warning/90 font-bold bg-warning/5 p-1 rounded border border-warning/20">
                   GHOUL NOTICE: FOOD/WATER ACCENTS STRIPPED FROM EFFECT MATH.
                 </span>
               ) : null}
@@ -2028,7 +2028,7 @@ export default function BuilderExperimentClient({
           </div>
           
           {slotQuery.trim() !== deferredSlotQuery.trim() ? (
-            <p className="mt-1 text-[9px] text-foreground/35 uppercase tracking-wider relative z-10 animate-pulse">
+            <p className="mt-1 text-[0.72rem] text-foreground/35 uppercase tracking-wider relative z-10 animate-pulse">
               &gt; searching matrices database...
             </p>
           ) : null}
@@ -2069,7 +2069,7 @@ export default function BuilderExperimentClient({
           <div className="mt-4 pt-3 border-t border-border/15 shrink-0 flex items-center justify-between relative z-10">
             <Button
               type="button"
-              className="h-8 text-[10px] uppercase font-mono hover:text-accent font-bold"
+              className="h-8 text-[0.78rem] uppercase font-mono hover:text-accent font-bold"
               variant="outline"
               size="sm"
               onClick={() => {
@@ -2079,7 +2079,7 @@ export default function BuilderExperimentClient({
             >
               EJECT BENCH
             </Button>
-            <span className="text-[8px] text-foreground/30 uppercase tracking-widest font-mono">
+            <span className="text-[0.84rem] text-foreground/30 uppercase tracking-widest font-mono">
               SECURE LEDGER CONNECTION ENABLED
             </span>
           </div>

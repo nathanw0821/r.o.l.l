@@ -92,7 +92,7 @@ export default function AdminFeedbackList({
                 <MessageSquare className="h-4 w-4 text-accent" />
                 <h3 className="line-clamp-1 text-sm font-semibold">{item.subject}</h3>
               </div>
-              <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide
+              <span className={`rounded-full px-2 py-0.5 text-[0.78rem] font-bold uppercase tracking-wide
                 ${item.status === 'new' ? 'bg-blue-500/10 text-blue-500' : 
                   item.status === 'resolved' ? 'bg-green-500/10 text-green-500' : 
                   item.status === 'archived' ? 'bg-foreground/10 text-foreground/60' :
@@ -120,7 +120,7 @@ export default function AdminFeedbackList({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-semibold text-foreground/70">Admin Notes</label>
                   {isModified && (
-                    <span className="text-[10px] text-amber-500">Unsaved changes</span>
+                    <span className="text-[0.78rem] text-amber-500">Unsaved changes</span>
                   )}
                 </div>
                 <textarea

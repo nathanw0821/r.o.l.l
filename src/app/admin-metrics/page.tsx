@@ -66,7 +66,7 @@ export default async function AdminMetricsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-border bg-foreground/5 uppercase text-[10px] tracking-wider text-foreground/50">
+              <tr className="border-b border-border bg-foreground/5 uppercase text-[0.78rem] tracking-wider text-foreground/50">
                 <th className="px-4 py-2">Date</th>
                 <th className="px-4 py-2">Unique Guests</th>
                 <th className="px-4 py-2">Unique Users</th>
@@ -111,7 +111,7 @@ function MetricCard({ title, value, subtitle, highlight = false }: {
     <div className={`rounded-[var(--radius-lg)] border p-5 ${highlight ? 'border-accent bg-accent/5' : 'border-border bg-panel'}`}>
       <div className="text-xs font-medium uppercase tracking-wider text-foreground/50">{title}</div>
       <div className={`mt-2 text-3xl font-bold ${highlight ? 'text-accent' : ''}`}>{value}</div>
-      <div className="mt-1 text-[10px] text-foreground/40">{subtitle}</div>
+      <div className="mt-1 text-[0.78rem] text-foreground/40">{subtitle}</div>
     </div>
   );
 }

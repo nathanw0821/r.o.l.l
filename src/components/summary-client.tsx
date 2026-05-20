@@ -665,7 +665,7 @@ export default function SummaryClient({
             <div key={tierLabel} className="rounded-[var(--radius)] border border-border bg-panel p-4">
               <div className="flex items-center justify-between text-sm font-semibold mb-3">
                 <span title={tierDisplay.label}>{tierDisplay.stars || tierLabel}</span>
-                <span className="text-[10px] uppercase tracking-widest text-foreground/40">{items.length} items</span>
+                <span className="text-[0.78rem] uppercase tracking-widest text-foreground/40">{items.length} items</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {items.map((row) => (
@@ -685,7 +685,7 @@ export default function SummaryClient({
                   >
                     <div>
                       <div className="text-sm font-semibold truncate pr-6">{row.effect.name}</div>
-                      <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
+                      <div className="mt-1 text-[0.84rem] font-semibold uppercase tracking-[0.12em]">
                         {pendingId === row.id
                           ? "Saving..."
                           : summaryLocked
@@ -697,7 +697,7 @@ export default function SummaryClient({
                                 : "Locked"}
                       </div>
                       {!isExportingImage && row.unlockedBy.length > 0 && (
-                        <div className="mt-1 text-[9px] text-foreground/40 leading-tight">
+                        <div className="mt-1 text-[0.72rem] text-foreground/40 leading-tight">
                           Unlocked by: {row.unlockedBy.join(", ")}
                         </div>
                       )}

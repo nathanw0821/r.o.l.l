@@ -349,7 +349,7 @@ export default function AppShell({
                   <Icon className="h-4 w-4" />
                   <span>{linkLabel}</span>
                   {(link.href === "/build" || link.href === "/screenshot-assist") && (
-                    <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[8px] font-bold tracking-wider text-accent">
+                    <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[0.6875rem] font-bold tracking-wider text-accent">
                       BETA
                     </span>
                   )}
