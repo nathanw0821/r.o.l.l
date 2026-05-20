@@ -216,6 +216,49 @@ export async function getActiveDatasetVersion() {
   });
 }
 
+export type LightweightProgressRow = {
+  id: string;
+  tierLabel: string;
+  categories: string[];
+  unlocked: boolean;
+};
+
+export async function getLightweightProgress(userId: string): Promise<LightweightProgressRow[]> {
+  const dataset = await getActiveDatasetVersion();
+  if (!dataset) return [];
+
+  const characterId = await getActiveCharacterId(userId);
+  if (!characterId) return [];
+
+  const [catalog, baselineRows, progressRows] = await Promise.all([
+    getCatalogEffectTiersCached(dataset.id),
+    prisma.userImportBaseline.findMany({
+      where: { characterId, datasetVersionId: dataset.id },
+      select: { effectTierId: true, unlocked: true }
+    }),
+    prisma.userProgress.findMany({
+      where: { characterId, effectTier: { datasetVersionId: dataset.id } },
+      select: { effectTierId: true, unlocked: true }
+    })
+  ]);
+
+  const baselineMap = new Map(baselineRows.map(r => [r.effectTierId, r.unlocked]));
+  const progressMap = new Map(progressRows.map(r => [r.effectTierId, r.unlocked]));
+
+  return catalog.map((item) => {
+    const baseline = baselineMap.get(item.id);
+    const progress = progressMap.get(item.id);
+    const unlocked = progress !== undefined ? progress : (baseline ?? false);
+    return {
+      id: item.id,
+      tierLabel: item.tier?.label ?? "Unknown",
+      categories: item.categories.map((c) => c.category.name),
+      unlocked
+    };
+  });
+}
+
+
 export async function getEffectTiersByTierLabel(tierLabel: string, userId?: string) {
   return loadMergedEffectTiers(userId, tierLabel);
 }

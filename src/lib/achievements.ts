@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getAllEffectTiers, getGlobalProgressSummary, type MergedEffectTierRow } from "@/lib/data";
+import { getLightweightProgress, getGlobalProgressSummary, type LightweightProgressRow } from "@/lib/data";
 
 export type AchievementGroup = "visible" | "hidden" | "easterEgg";
 
@@ -267,23 +267,21 @@ export async function awardAchievements(userId: string, keys: string[]) {
 }
 
 function hasFullCategory(
-  rows: Awaited<ReturnType<typeof getAllEffectTiers>>,
+  rows: LightweightProgressRow[],
   categoryName: string
 ) {
-  const matching = (rows as MergedEffectTierRow[]).filter((row) =>
-    row.categories.some((category) => category.category.name === categoryName)
-  );
+  const matching = rows.filter((row) => row.categories.includes(categoryName));
   return matching.length > 0 && matching.every((row) => row.unlocked);
 }
 
-function hasFullTier(rows: Awaited<ReturnType<typeof getAllEffectTiers>>, tierLabel: string) {
-  const matching = rows.filter((row) => row.tier?.label === tierLabel);
+function hasFullTier(rows: LightweightProgressRow[], tierLabel: string) {
+  const matching = rows.filter((row) => row.tierLabel === tierLabel);
   return matching.length > 0 && matching.every((row) => row.unlocked);
 }
 
 export async function syncUserAchievements(userId: string) {
   const [rows, importedBaselineCount, globalSummary] = await Promise.all([
-    getAllEffectTiers(userId),
+    getLightweightProgress(userId),
     prisma.userImportBaseline.count({ where: { userId } }),
     getGlobalProgressSummary(userId)
   ]);
