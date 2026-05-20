@@ -27,12 +27,12 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_PLACEHOLDER }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || secrets.DATABASE_URL_PLACEHOLDER }}
 
       - name: Build Next.js with OpenNext
         run: npm run build:cf
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_PLACEHOLDER }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || secrets.DATABASE_URL_PLACEHOLDER }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: https://fallout76.wiki
 
