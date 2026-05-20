@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { safeRevalidatePath } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -66,7 +66,7 @@ export async function createCharacter(input: { name: string, gameAccountId?: str
   if (characterCount === 4) earned.push("full_roster"); // 4 prior + 1 new = 5
   const achievements = await awardAchievements(session.user.id, earned);
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
   return { achievements };
 }
 
@@ -100,7 +100,7 @@ export async function renameCharacter(input: { id: string, name: string }) {
   if (parsed.data.name.toLowerCase() === "main character") earned.push("identity_theft");
   const achievements = await awardAchievements(session.user.id, earned);
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
   return { achievements };
 }
 
@@ -127,7 +127,7 @@ export async function setActiveCharacter(characterId: string) {
   // Achievements
   const achievements = await awardAchievements(session.user.id, ["changing_gears"]);
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
   return { achievements };
 }
 
@@ -174,7 +174,7 @@ export async function deleteCharacter(characterId: string) {
   if (characterCount === 2) earned.push("the_one"); // Deleted from 2 to 1
   const achievements = await awardAchievements(session.user.id, earned);
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
   return { achievements };
 }
 
@@ -220,5 +220,5 @@ export async function linkCharacterToAccount(characterId: string, gameAccountId:
     create: { userId: session.user.id, activeCharacterId: characterId }
   });
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
 }

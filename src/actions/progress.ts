@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { safeRevalidatePath } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { syncUserAchievements } from "@/lib/achievements";
@@ -21,17 +21,17 @@ const bulkToggleSchema = z.object({
 });
 
 function revalidateTrackerPaths() {
-  revalidatePath("/");
-  revalidatePath("/all-effects");
-  revalidatePath("/1-star");
-  revalidatePath("/2-star");
-  revalidatePath("/3-star");
-  revalidatePath("/4-star");
-  revalidatePath("/");
-  revalidatePath("/summary");
-  revalidatePath("/overview/achievements");
-  revalidatePath("/screenshot-assist");
-  revalidatePath("/achievements");
+  safeRevalidatePath("/");
+  safeRevalidatePath("/all-effects");
+  safeRevalidatePath("/1-star");
+  safeRevalidatePath("/2-star");
+  safeRevalidatePath("/3-star");
+  safeRevalidatePath("/4-star");
+  safeRevalidatePath("/");
+  safeRevalidatePath("/summary");
+  safeRevalidatePath("/overview/achievements");
+  safeRevalidatePath("/screenshot-assist");
+  safeRevalidatePath("/achievements");
 }
 
 export async function updateProgress(input: { 

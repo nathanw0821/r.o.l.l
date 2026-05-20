@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { safeRevalidatePath } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -34,7 +34,7 @@ export async function createGameAccount(input: { name: string; platform: "PC" | 
     }
   });
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
 }
 
 export async function deleteGameAccount(accountId: string) {
@@ -58,7 +58,7 @@ export async function deleteGameAccount(accountId: string) {
     where: { id: accountId }
   });
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
 }
 
 export async function createGameAccountAndLinkCharacter(input: { 
@@ -103,5 +103,5 @@ export async function createGameAccountAndLinkCharacter(input: {
     });
   });
 
-  revalidatePath("/", "layout");
+  safeRevalidatePath("/", "layout");
 }
