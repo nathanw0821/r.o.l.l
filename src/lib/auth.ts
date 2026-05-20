@@ -98,6 +98,14 @@ export const authOptions: NextAuthOptions = {
       process.env.APP_URL = process.env.NEXTAUTH_URL;
     }
 
+    console.log("[NextAuth get providers] process.env check:", {
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? "defined" : "undefined",
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? "defined" : "undefined",
+      TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID ? "defined" : "undefined",
+      REDDIT_CLIENT_ID: process.env.REDDIT_CLIENT_ID ? "defined" : "undefined",
+      AZURE_AD_CLIENT_ID: process.env.AZURE_AD_CLIENT_ID ? "defined" : "undefined",
+    });
+
     return [
       CredentialsProvider({
         name: "Username or Email",
@@ -177,11 +185,28 @@ export const authOptions: NextAuthOptions = {
       }),
       ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
         ? [
-            GoogleProvider({
-              clientId: process.env.GOOGLE_CLIENT_ID,
-              clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-              allowDangerousEmailAccountLinking: true // Crucial for linking Google to existing email accounts
-            })
+            {
+              ...GoogleProvider({
+                clientId: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                allowDangerousEmailAccountLinking: true // Crucial for linking Google to existing email accounts
+              }),
+              wellKnown: undefined,
+              authorization: {
+                url: "https://accounts.google.com/o/oauth2/v2/auth",
+                params: {
+                  scope: "openid email profile"
+                }
+              },
+              token: {
+                url: "https://oauth2.googleapis.com/token"
+              },
+              userinfo: {
+                url: "https://openidconnect.googleapis.com/v1/userinfo"
+              },
+              jwks_endpoint: "https://www.googleapis.com/oauth2/v3/certs",
+              issuer: "https://accounts.google.com"
+            }
           ]
         : []),
       ...(process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET
@@ -229,7 +254,7 @@ export const authOptions: NextAuthOptions = {
       }
     }
   } : undefined,
-  debug: false
+  debug: true
 };
 
 export const getAppSession = cache(() => getServerSession(authOptions));
