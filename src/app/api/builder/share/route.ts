@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { revalidateTag } from "next/cache";
+import { safeRevalidateTag } from "@/lib/revalidate";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
     }
   });
 
-  revalidateTag(sharedBuildTagForSlug(record.slug), { expire: 0 });
+  safeRevalidateTag(sharedBuildTagForSlug(record.slug), { expire: 0 });
 
   return ok({ slug: record.slug, path: `/l/${record.slug}` });
 }

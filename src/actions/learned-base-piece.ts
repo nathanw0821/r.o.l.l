@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { safeRevalidatePath } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { isTrackableBasePieceId } from "@/lib/builder/base-gear";
@@ -60,5 +60,5 @@ export async function updateLearnedBasePiece(input: { basePieceId: string; learn
     });
   }
 
-  revalidatePath("/build");
+  safeRevalidatePath("/build");
 }

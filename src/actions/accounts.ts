@@ -3,7 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { safeRevalidatePath } from "@/lib/revalidate";
 import { z } from "zod";
 
 const unlinkSchema = z.object({
@@ -35,8 +35,8 @@ export async function unlinkAccount(input: { provider: string }) {
     where: { userId, provider: parsed.data.provider }
   });
 
-  revalidatePath("/settings");
-  revalidatePath("/overview/profile");
-  revalidatePath("/profile");
+  safeRevalidatePath("/settings");
+  safeRevalidatePath("/overview/profile");
+  safeRevalidatePath("/profile");
   return { ok: true };
 }
