@@ -61,6 +61,8 @@ import {
   aggregateEffectMath,
   BUILDER_SPECIAL_KEYS,
   BUILDER_SPECIAL_LABELS,
+  SPECIAL_FULL_NAMES,
+  RESIST_FULL_NAMES,
   buildShoppingList,
   filterModsForSlot,
   formatEffectMathDeltas,
@@ -1277,7 +1279,7 @@ export default function BuilderExperimentClient({
                 return (
                   <div key={key} className="space-y-1 font-mono">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-accent/90" title={key.toUpperCase()}>
+                      <span className="font-bold text-accent/90 cursor-help" title={SPECIAL_FULL_NAMES[key] || key.toUpperCase()}>
                         {BUILDER_SPECIAL_LABELS[key]}
                       </span>
                       <div className="flex items-center gap-1 text-[0.84rem]">
@@ -1357,7 +1359,7 @@ export default function BuilderExperimentClient({
                 const delta = live - base;
                 
                 return (
-                  <div key={k} className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors">
+                  <div key={k} className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors cursor-help" title={RESIST_FULL_NAMES[k] || l}>
                     <div className="flex items-center gap-1 text-[0.72rem] text-foreground/45 font-black uppercase tracking-wider">
                       <Icon className={cn("h-3 w-3 shrink-0", col)} />
                       <span>{l}</span>
