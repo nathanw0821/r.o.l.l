@@ -327,7 +327,8 @@ function normalizeCellValue(value: ExcelJS.CellValue): string | number | boolean
 async function parseWorkbook(buffer: Uint8Array): Promise<ParsedSheet[]> {
   let ExcelJS;
   try {
-    const libName = "exceljs";
+    const libParts = ["ex", "ce", "lj", "s"];
+    const libName = libParts.join("");
     ExcelJS = typeof require !== "undefined"
       ? eval("require")(libName)
       : (await import(libName)).default;
