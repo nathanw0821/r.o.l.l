@@ -48,7 +48,10 @@ function isEmailIdentifier(value: string) {
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  secret: process.env.NEXTAUTH_SECRET,
+  get secret() {
+    process.env.AUTH_TRUST_HOST = "true";
+    return process.env.NEXTAUTH_SECRET;
+  },
   session: {
     strategy: "jwt"
   },
@@ -86,121 +89,131 @@ export const authOptions: NextAuthOptions = {
       }
     }
   },
-  providers: [
-    CredentialsProvider({
-      name: "Username or Email",
-      credentials: {
-        identifier: { label: "Username or Email", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        const limiter = await rateLimit("sign-in", 10, 60000); // 10 per minute
-        if (!limiter.success) return null;
+  get providers() {
+    process.env.AUTH_TRUST_HOST = "true";
+    if (!process.env.NEXTAUTH_URL && process.env.APP_URL) {
+      process.env.NEXTAUTH_URL = process.env.APP_URL;
+    }
+    if (!process.env.APP_URL && process.env.NEXTAUTH_URL) {
+      process.env.APP_URL = process.env.NEXTAUTH_URL;
+    }
 
-        const parsed = credentialsSchema.safeParse(credentials);
-        if (!parsed.success) return null;
+    return [
+      CredentialsProvider({
+        name: "Username or Email",
+        credentials: {
+          identifier: { label: "Username or Email", type: "text" },
+          password: { label: "Password", type: "password" }
+        },
+        async authorize(credentials) {
+          const limiter = await rateLimit("sign-in", 10, 60000); // 10 per minute
+          if (!limiter.success) return null;
 
-        const identifier = normalizeIdentifier(parsed.data.identifier);
-        const password = parsed.data.password.trim();
-        if (!identifier || !password) return null;
+          const parsed = credentialsSchema.safeParse(credentials);
+          if (!parsed.success) return null;
 
-        const username = normalizeUsername(identifier);
-        const identifierIsEmail = isEmailIdentifier(identifier);
+          const identifier = normalizeIdentifier(parsed.data.identifier);
+          const password = parsed.data.password.trim();
+          if (!identifier || !password) return null;
 
-        const existing = identifierIsEmail
-          ? await prisma.user.findUnique({
-              where: { email: identifier }
-            })
-          : await prisma.user.findUnique({
-              where: { username }
+          const username = normalizeUsername(identifier);
+          const identifierIsEmail = isEmailIdentifier(identifier);
+
+          const existing = identifierIsEmail
+            ? await prisma.user.findUnique({
+                where: { email: identifier }
+              })
+            : await prisma.user.findUnique({
+                where: { username }
+              });
+
+          if (existing?.passwordHash) {
+            const valid = await bcrypt.compare(password, existing.passwordHash);
+            if (!valid) return null;
+            await applyProfile(existing.id);
+            return existing;
+          }
+
+          const legacyAuthCode = identifier.toUpperCase();
+          const legacySecondary = password.toUpperCase();
+
+          const legacy = identifierIsEmail
+            ? null
+            : await prisma.user.findFirst({
+                where: { authCode: legacyAuthCode, secondaryCode: legacySecondary }
+              });
+
+          if (legacy) {
+            const passwordHash = await bcrypt.hash(password, 12);
+            const updated = await prisma.user.update({
+              where: { id: legacy.id },
+              data: { username, passwordHash, authCode: null, secondaryCode: null }
             });
+            await applyProfile(updated.id);
+            return updated;
+          }
 
-        if (existing?.passwordHash) {
-          const valid = await bcrypt.compare(password, existing.passwordHash);
-          if (!valid) return null;
-          await applyProfile(existing.id);
-          return existing;
-        }
+          const legacyNoSecondary = identifierIsEmail
+            ? null
+            : await prisma.user.findFirst({
+                where: { authCode: legacyAuthCode, secondaryCode: null }
+              });
 
-        const legacyAuthCode = identifier.toUpperCase();
-        const legacySecondary = password.toUpperCase();
-
-        const legacy = identifierIsEmail
-          ? null
-          : await prisma.user.findFirst({
-              where: { authCode: legacyAuthCode, secondaryCode: legacySecondary }
+          if (legacyNoSecondary) {
+            const passwordHash = await bcrypt.hash(password, 12);
+            const updated = await prisma.user.update({
+              where: { id: legacyNoSecondary.id },
+              data: { username, passwordHash, authCode: null, secondaryCode: null }
             });
+            await applyProfile(updated.id);
+            return updated;
+          }
 
-        if (legacy) {
-          const passwordHash = await bcrypt.hash(password, 12);
-          const updated = await prisma.user.update({
-            where: { id: legacy.id },
-            data: { username, passwordHash, authCode: null, secondaryCode: null }
-          });
-          await applyProfile(updated.id);
-          return updated;
-        }
-
-        const legacyNoSecondary = identifierIsEmail
-          ? null
-          : await prisma.user.findFirst({
-              where: { authCode: legacyAuthCode, secondaryCode: null }
-            });
-
-        if (legacyNoSecondary) {
-          const passwordHash = await bcrypt.hash(password, 12);
-          const updated = await prisma.user.update({
-            where: { id: legacyNoSecondary.id },
-            data: { username, passwordHash, authCode: null, secondaryCode: null }
-          });
-          await applyProfile(updated.id);
-          return updated;
-        }
-
-        if (existing) {
+          if (existing) {
+            return null;
+          }
           return null;
         }
-        return null;
-      }
-    }),
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? [
-          GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            allowDangerousEmailAccountLinking: true // Crucial for linking Google to existing email accounts
-          })
-        ]
-      : []),
-    ...(process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET
-      ? [
-          TwitchProvider({
-            clientId: process.env.TWITCH_CLIENT_ID,
-            clientSecret: process.env.TWITCH_CLIENT_SECRET
-          })
-        ]
-      : []),
+      }),
+      ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+        ? [
+            GoogleProvider({
+              clientId: process.env.GOOGLE_CLIENT_ID,
+              clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+              allowDangerousEmailAccountLinking: true // Crucial for linking Google to existing email accounts
+            })
+          ]
+        : []),
+      ...(process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET
+        ? [
+            TwitchProvider({
+              clientId: process.env.TWITCH_CLIENT_ID,
+              clientSecret: process.env.TWITCH_CLIENT_SECRET
+            })
+          ]
+        : []),
 
-    ...(process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET
-      ? [
-          RedditProvider({
-            clientId: process.env.REDDIT_CLIENT_ID,
-            clientSecret: process.env.REDDIT_CLIENT_SECRET
-          })
-        ]
-      : []),
-    ...(process.env.AZURE_AD_CLIENT_ID &&
-    process.env.AZURE_AD_CLIENT_SECRET &&
-    process.env.AZURE_AD_TENANT_ID
-      ? [
-          AzureADProvider({
-            clientId: process.env.AZURE_AD_CLIENT_ID,
-            clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
-            tenantId: process.env.AZURE_AD_TENANT_ID
-          })
-        ]
-      : [])
-  ],
+      ...(process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET
+        ? [
+            RedditProvider({
+              clientId: process.env.REDDIT_CLIENT_ID,
+              clientSecret: process.env.REDDIT_CLIENT_SECRET
+            })
+          ]
+        : []),
+      ...(process.env.AZURE_AD_CLIENT_ID &&
+      process.env.AZURE_AD_CLIENT_SECRET &&
+      process.env.AZURE_AD_TENANT_ID
+        ? [
+            AzureADProvider({
+              clientId: process.env.AZURE_AD_CLIENT_ID,
+              clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+              tenantId: process.env.AZURE_AD_TENANT_ID
+            })
+          ]
+        : [])
+    ];
+  },
   pages: {
     signIn: "/auth/sign-in"
   },
