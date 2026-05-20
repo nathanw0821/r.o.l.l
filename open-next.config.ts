@@ -9,4 +9,5 @@ export default defineCloudflareConfig({
 	cloudflare: {
 		useWorkerdCondition: false,
 	}
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any);
