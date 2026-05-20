@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { parseJson } from "@/lib/api/validation";
-import { ok, badRequest, tooManyRequests } from "@/lib/api/responses";
+import { ok, tooManyRequests } from "@/lib/api/responses";
 import { requestPasswordReset } from "@/lib/password-reset";
 import { rateLimit } from "@/lib/rate-limit";
 

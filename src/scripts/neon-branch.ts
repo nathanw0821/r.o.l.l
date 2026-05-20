@@ -1,4 +1,3 @@
-import { z } from "zod";
 
 const NEON_API_KEY = process.env.NEON_API_KEY;
 const PROJECT_ID = "crimson-resonance-amtmsyq3"; // Extracted from Fortress scan
@@ -42,6 +41,8 @@ async function createBranch(branchName: string) {
 }
 
 const args = process.argv.slice(2);
-const name = args[0] || `shadow-deploy-${new Date().toISOString().split('T')[0]}`;
+const targetBranchName = args[0] || `shadow-deploy-${new Date().toISOString().split('T')[0]}`;
 
-createBranch(name);
+createBranch(targetBranchName);
+
+export {};

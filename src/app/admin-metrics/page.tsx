@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { isAdminUser } from "@/lib/app-config";
-import { forbidden } from "@/lib/api/responses";
 import { getVisitorMetrics } from "@/lib/metrics";
 import { format } from "date-fns";
 import BrandStack from "@/components/brand-stack";

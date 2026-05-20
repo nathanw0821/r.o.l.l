@@ -332,7 +332,7 @@ async function parseWorkbook(buffer: Uint8Array): Promise<ParsedSheet[]> {
     ExcelJS = typeof require !== "undefined"
       ? eval("require")(libName)
       : (await import(libName)).default;
-  } catch (error) {
+  } catch {
     throw new Error("Excel import is not supported in this environment.");
   }
   const workbook = new ExcelJS.Workbook();
