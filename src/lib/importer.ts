@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import ExcelJS from "exceljs";
+import type ExcelJS from "exceljs";
 import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
@@ -325,11 +325,19 @@ function normalizeCellValue(value: ExcelJS.CellValue): string | number | boolean
 }
 
 async function parseWorkbook(buffer: Uint8Array): Promise<ParsedSheet[]> {
+  let ExcelJS;
+  try {
+    ExcelJS = typeof require !== "undefined"
+      ? eval("require")("exceljs")
+      : (await import("exceljs")).default;
+  } catch (error) {
+    throw new Error("Excel import is not supported in this environment.");
+  }
   const workbook = new ExcelJS.Workbook();
   const workbookSource = Buffer.from(toArrayBuffer(buffer)) as unknown as Parameters<typeof workbook.xlsx.load>[0];
   await workbook.xlsx.load(workbookSource);
 
-  return workbook.worksheets.map((worksheet) => {
+  return workbook.worksheets.map((worksheet: ExcelJS.Worksheet) => {
     const rows: (string | number | boolean | null)[][] = [];
     let header: string[] = [];
 
