@@ -54,7 +54,12 @@ const nextConfig = {
       "**/node_modules/unzipper/**",
       "**/node_modules/fstream/**",
       "**/node_modules/bluebird/**",
-      "**/node_modules/async/**"
+      "**/node_modules/async/**",
+      "**/node_modules/@prisma/client/runtime/query_compiler_*_bg.mysql.*",
+      "**/node_modules/@prisma/client/runtime/query_compiler_*_bg.sqlite.*",
+      "**/node_modules/@prisma/client/runtime/query_compiler_*_bg.sqlserver.*",
+      "**/node_modules/@prisma/client/runtime/query_compiler_*_bg.cockroachdb.*",
+      "**/node_modules/**/*.map"
     ]
   },
   experimental: {
