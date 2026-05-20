@@ -1,4 +1,4 @@
-name: Cloudflare Shadow Deploy
+name: Production Deployment
 
 on:
   push:
