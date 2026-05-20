@@ -1,0 +1,19 @@
+name = "roll"
+main = ".open-next/worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[vars]
+NEXTAUTH_URL = "https://fallout76.wiki"
+
+[[triggers.crons]]
+# Source Check
+schedules = ["0 19 * * *"]
+
+[[triggers.crons]]
+# Source Sync
+schedules = ["20 19 * * *"]

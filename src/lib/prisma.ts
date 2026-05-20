@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import { Pool } from "@neondatabase/serverless";
 import { normalizeDatabaseUrl } from "@/lib/database-url";
 
 const globalForPrisma = globalThis as unknown as {

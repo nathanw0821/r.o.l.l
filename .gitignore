@@ -1,5 +1,6 @@
 node_modules
 .next
+.open-next
 .vercel
 
 # Local-only static files (Next serves from public/ when present). Favicon is src/app/icon.png.

@@ -33,6 +33,12 @@ const allowedOrigins = Array.from(
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   cacheComponents: false,
+  outputFileTracingIncludes: {
+    "**/*": [
+      "./node_modules/pg-cloudflare/dist/**",
+      "./node_modules/pg-cloudflare/esm/**"
+    ]
+  },
   experimental: {
     serverActions: {
       allowedOrigins
