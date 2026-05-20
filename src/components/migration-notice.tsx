@@ -8,6 +8,7 @@ const STORAGE_KEY = "roll-migration-notice-dismissed-v2";
 
 export default function MigrationNotice() {
   const [visible, setVisible] = React.useState(false);
+  const [dontShowAgain, setDontShowAgain] = React.useState(false);
 
   React.useEffect(() => {
     // Only check localStorage on the client side
@@ -21,7 +22,9 @@ export default function MigrationNotice() {
 
   const handleDismiss = () => {
     setVisible(false);
-    window.localStorage.setItem(STORAGE_KEY, "true");
+    if (dontShowAgain) {
+      window.localStorage.setItem(STORAGE_KEY, "true");
+    }
   };
 
   if (!visible) return null;
@@ -62,6 +65,21 @@ export default function MigrationNotice() {
           <p className="mt-2 text-xs text-foreground/80 leading-relaxed">
             Some features are still in active transition. If you spot anything that is broken or behaving unexpectedly, please submit feedback on-site or let us know directly on Discord!
           </p>
+          <div className="mt-3 flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="dont-show-again"
+              checked={dontShowAgain}
+              onChange={(e) => setDontShowAgain(e.target.checked)}
+              className="h-3.5 w-3.5 rounded border-border bg-transparent text-accent focus:ring-accent accent-accent cursor-pointer"
+            />
+            <label
+              htmlFor="dont-show-again"
+              className="text-[0.72rem] font-medium text-foreground/60 hover:text-foreground cursor-pointer select-none"
+            >
+              Don&apos;t show this again
+            </label>
+          </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <a
               href="https://discord.gg/sMuQv7Waks"
