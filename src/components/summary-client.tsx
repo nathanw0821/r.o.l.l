@@ -48,7 +48,8 @@ function downloadBlob(blob: Blob, filename: string) {
 }
 
 async function exportXlsx(rows: SummaryRow[], filename: string) {
-  const ExcelJS = (await import("exceljs")).default;
+  const libName = "exceljs";
+  const ExcelJS = (await import(libName)).default;
   const data = shapeExportRows(rows);
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Effects");

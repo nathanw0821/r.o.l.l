@@ -327,9 +327,10 @@ function normalizeCellValue(value: ExcelJS.CellValue): string | number | boolean
 async function parseWorkbook(buffer: Uint8Array): Promise<ParsedSheet[]> {
   let ExcelJS;
   try {
+    const libName = "exceljs";
     ExcelJS = typeof require !== "undefined"
-      ? eval("require")("exceljs")
-      : (await import("exceljs")).default;
+      ? eval("require")(libName)
+      : (await import(libName)).default;
   } catch (error) {
     throw new Error("Excel import is not supported in this environment.");
   }
