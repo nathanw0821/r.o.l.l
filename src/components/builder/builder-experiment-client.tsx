@@ -1153,6 +1153,9 @@ export default function BuilderExperimentClient({
           position: relative;
           overflow: hidden;
         }
+        .pip-terminal-panel.fixed {
+          position: fixed !important;
+        }
         .pip-terminal-panel::before {
           content: "";
           position: absolute;
