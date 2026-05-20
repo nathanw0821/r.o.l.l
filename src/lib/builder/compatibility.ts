@@ -108,6 +108,26 @@ export const BUILDER_SPECIAL_LABELS: Record<BuilderSpecialKey, string> = {
   lck: "LCK"
 };
 
+export const SPECIAL_FULL_NAMES: Record<string, string> = {
+  str: "Strength",
+  per: "Perception",
+  end: "Endurance",
+  cha: "Charisma",
+  int: "Intelligence",
+  agi: "Agility",
+  lck: "Luck"
+};
+
+export const RESIST_FULL_NAMES: Record<string, string> = {
+  dr: "Damage Resistance",
+  er: "Energy Resistance",
+  fr: "Fire Resistance",
+  cr: "Cryo Resistance",
+  pr: "Poison Resistance",
+  rr: "Radiation Resistance"
+};
+
+
 function addLayerFromRecord(
   m: Record<string, unknown>,
   acc: {

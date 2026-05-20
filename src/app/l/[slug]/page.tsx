@@ -16,6 +16,8 @@ import {
   aggregateEffectMath,
   BUILDER_SPECIAL_KEYS,
   BUILDER_SPECIAL_LABELS,
+  SPECIAL_FULL_NAMES,
+  RESIST_FULL_NAMES,
   buildShoppingList,
   collectEquippedLegendaryModIds,
   formatEffectMathDeltas,
@@ -338,21 +340,21 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
           <BuilderTotalsStatKey className="mt-4" />
           <dl className="mt-4 grid grid-cols-2 gap-y-1.5 text-xs">
             {[
-              { label: "DR", value: totals.dr },
-              { label: "ER", value: totals.er },
-              { label: "FR", value: totals.fr },
-              { label: "CR", value: totals.cr },
-              { label: "PR", value: totals.pr },
-              { label: "RR", value: totals.rr },
-              { label: "HP", value: totals.hp },
-              { label: "Damage %", value: `${Math.round(totals.damagePct * 100)}%` },
-              ...BUILDER_SPECIAL_KEYS.map(k => ({ label: BUILDER_SPECIAL_LABELS[k], value: totals[k] })),
-              { label: "SPECIAL (other)", value: totals.specialBonus },
-              { label: "AP regen", value: `${Math.round(totals.apRegen * 100)}%` },
-              { label: "Carry wt", value: totals.carryWeight },
+              {label: "DR", value: totals.dr, title: RESIST_FULL_NAMES.dr},
+              {label: "ER", value: totals.er, title: RESIST_FULL_NAMES.er},
+              {label: "FR", value: totals.fr, title: RESIST_FULL_NAMES.fr},
+              {label: "CR", value: totals.cr, title: RESIST_FULL_NAMES.cr},
+              {label: "PR", value: totals.pr, title: RESIST_FULL_NAMES.pr},
+              {label: "RR", value: totals.rr, title: RESIST_FULL_NAMES.rr},
+              { label: "HP", value: totals.hp, title: "Hit Points" },
+              { label: "Damage %", value: `${Math.round(totals.damagePct * 100)}%`, title: "Weapon Damage Bonus" },
+              ...BUILDER_SPECIAL_KEYS.map(k => ({ label: BUILDER_SPECIAL_LABELS[k], value: totals[k], title: SPECIAL_FULL_NAMES[k] })),
+              { label: "SPECIAL (other)", value: totals.specialBonus, title: "Other SPECIAL bonuses" },
+              { label: "AP regen", value: `${Math.round(totals.apRegen * 100)}%`, title: "Action Point Regeneration" },
+              { label: "Carry wt", value: totals.carryWeight, title: "Carry Weight Bonus" },
             ].map((row) => (
               <React.Fragment key={row.label}>
-                <dt className="text-foreground/40 font-medium uppercase tracking-wider text-[0.78rem]">{row.label}</dt>
+                <dt className="text-foreground/40 font-medium uppercase tracking-wider text-[0.78rem] cursor-help" title={row.title}>{row.label}</dt>
                 <dd className="text-right font-mono text-foreground/90 font-bold">{row.value}</dd>
               </React.Fragment>
             ))}

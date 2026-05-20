@@ -35,6 +35,16 @@ const langOptions = [
 
 const tierOptions = ["all", "1 Star", "2 Star", "3 Star", "4 Star"] as const;
 const STORAGE_KEY = "roll.screenshot-assist.v1";
+
+const SPECIAL_FULL_NAMES: Record<string, string> = {
+  str: "Strength",
+  per: "Perception",
+  end: "Endurance",
+  cha: "Charisma",
+  int: "Intelligence",
+  agi: "Agility",
+  lck: "Luck"
+};
 // OpenAI support removed temporarily - Tesseract OCR only
 type DraftState = {
   query: string;
@@ -835,7 +845,7 @@ export default function ScreenshotAssistClient({
                   <div className="text-[0.78rem] font-bold uppercase tracking-wider text-foreground/45">SPECIAL Core Stats</div>
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {Object.entries(buildScanResult.special).map(([k, v]) => (
-                      <span key={k} className="inline-flex items-center rounded bg-accent/20 px-2 py-0.5 text-[0.72rem] font-black text-accent border border-accent/30 tabular-nums">
+                      <span key={k} className="inline-flex items-center rounded bg-accent/20 px-2 py-0.5 text-[0.72rem] font-black text-accent border border-accent/30 tabular-nums cursor-help" title={SPECIAL_FULL_NAMES[k.toLowerCase()] || k.toUpperCase()}>
                         {k.toUpperCase()} {v}
                       </span>
                     ))}
