@@ -180,6 +180,9 @@ export default function AppShell({
     let frame = 0;
     let pendingY = lastY;
     let revealRef = mobileSidebarRevealRef.current;
+    let scrollStopTimeout: number | null = null;
+    let accumulatedUpScroll = 0;
+
     const applyReveal = (next: number) => {
       const clamped = Math.max(0, Math.min(1, next));
       if (Math.abs(clamped - revealRef) < 0.02) return;
@@ -198,13 +201,36 @@ export default function AppShell({
       if (y <= 24) {
         applyReveal(1);
         lastY = y;
+        if (scrollStopTimeout) {
+          window.clearTimeout(scrollStopTimeout);
+          scrollStopTimeout = null;
+        }
+        accumulatedUpScroll = 0;
         return;
       }
       const delta = y - lastY;
       if (delta > 0.5) {
+        // Scrolling down: immediately hide the bar incrementally, cancel upward reveal timers
+        if (scrollStopTimeout) {
+          window.clearTimeout(scrollStopTimeout);
+          scrollStopTimeout = null;
+        }
+        accumulatedUpScroll = 0;
         applyReveal(revealRef - delta / 120);
       } else if (delta < -0.5) {
-        applyReveal(revealRef + (-delta) / 120);
+        // Scrolling up: don't reveal immediately during active fast scroll.
+        // Instead, accumulate upward distance and reveal only when scroll stops or slows.
+        accumulatedUpScroll += Math.abs(delta);
+        if (scrollStopTimeout) {
+          window.clearTimeout(scrollStopTimeout);
+        }
+        scrollStopTimeout = window.setTimeout(() => {
+          if (accumulatedUpScroll > 30) {
+            applyReveal(1);
+          }
+          accumulatedUpScroll = 0;
+          scrollStopTimeout = null;
+        }, 150) as unknown as number;
       }
       lastY = y;
     };
@@ -219,6 +245,7 @@ export default function AppShell({
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (frame) window.cancelAnimationFrame(frame);
+      if (scrollStopTimeout) window.clearTimeout(scrollStopTimeout);
     };
   }, [isMobile]);
 
