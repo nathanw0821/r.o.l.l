@@ -836,6 +836,12 @@ a {
   gap: 0.35rem;
 }
 
+.app-sidebar--rail,
+html[data-sidebar-collapsed="1"] .app-sidebar {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
 .app-sidebar--rail .brand-stack__subtitle,
 .app-sidebar--rail .brand-stack__support,
 .app-sidebar--rail .app-nav__link span,
@@ -856,7 +862,10 @@ a {
 }
 
 .app-sidebar--rail .app-sidebar__top {
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
 }
 
 .app-sidebar--rail .app-brand {
@@ -884,7 +893,10 @@ a {
   }
 
   html[data-sidebar-collapsed="1"] .app-sidebar .app-sidebar__top {
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
   }
 
   html[data-sidebar-collapsed="1"] .app-sidebar .app-brand {
@@ -1120,7 +1132,7 @@ a {
 }
 
 .app-main {
-  padding: 2rem 3rem;
+  padding: 1rem 3rem 2rem;
 }
 
 .content-canvas {
