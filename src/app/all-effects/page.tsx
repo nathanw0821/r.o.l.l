@@ -22,7 +22,7 @@ async function AllEffectsOverview() {
     <>
       <PageHeader
         title="All Effects"
-        description="Full registry across all tiers. Toggle unlocks if you are signed in."
+        description="Full registry across all tiers. Toggle unlocks to track your progress."
       />
       <div className="space-y-2">
         <div className="text-xs text-foreground/60">
