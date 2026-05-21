@@ -11,6 +11,16 @@ export type AppNavStackEntry = {
   scrollY: number;
 };
 
+function isRouteIgnored(path: string) {
+  const pathname = path.split("?")[0] || "";
+  return (
+    pathname === "/_not-found" ||
+    pathname.includes("path*") ||
+    pathname.includes(":path") ||
+    pathname.includes("*path")
+  );
+}
+
 function readPathKey(pathname: string) {
   if (typeof window === "undefined") {
     return pathname;
@@ -28,7 +38,10 @@ function loadStack(): AppNavStackEntry[] {
     return data.entries
       .filter(
         (e): e is AppNavStackEntry =>
-          Boolean(e) && typeof e === "object" && typeof (e as AppNavStackEntry).path === "string"
+          Boolean(e) &&
+          typeof e === "object" &&
+          typeof (e as AppNavStackEntry).path === "string" &&
+          !isRouteIgnored((e as AppNavStackEntry).path)
       )
       .map((e) => ({
         path: e.path,
@@ -61,6 +74,9 @@ export function usePersistedAppNavigation() {
   }, []);
 
   React.useLayoutEffect(() => {
+    if (isRouteIgnored(pathname)) {
+      return;
+    }
     const key = readPathKey(pathname);
 
     if (goingBackRef.current) {
@@ -125,6 +141,9 @@ export function usePersistedAppNavigation() {
   }, [pathname, bump]);
 
   React.useEffect(() => {
+    if (isRouteIgnored(pathname)) {
+      return;
+    }
     const key = readPathKey(pathname);
     let frame = 0;
     const flush = () => {
