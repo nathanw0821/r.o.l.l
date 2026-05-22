@@ -10,7 +10,7 @@ async function HomeSummaryOverview() {
   const summary = await getProgressSummary(session?.user?.id);
 
   return (
-    <Card>
+    <Card className="primary-page-header">
       <CardHeader>
         <CardTitle>Summary</CardTitle>
         <CardDescription>
@@ -98,7 +98,7 @@ function HomeSummaryTrackerFallback() {
 
 export default function HomePage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 summary-page-container">
       <Suspense fallback={<HomeSummaryOverviewFallback />}>
         <HomeSummaryOverview />
       </Suspense>

@@ -459,6 +459,7 @@ export default function AppShell({
         </aside>
         <div className="app-main">
           <div className="content-canvas">
+            <div className="top-scroll-mask" />
             <DeferredLocalProgressSync />
             <DeferredCommandHubShell authKey={authKey} isSignedIn={isSignedIn} />
             <DeferredFeedbackWidget />

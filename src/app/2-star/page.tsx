@@ -13,7 +13,7 @@ export default async function TierTwoPage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="primary-page-header">
         <CardHeader>
           <CardTitle>{formatTierStars(tierLabel)} 2-Star Legendaries</CardTitle>
           <CardDescription>Browse all 2-Star Legendaries.</CardDescription>

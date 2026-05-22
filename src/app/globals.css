@@ -1848,3 +1848,62 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   border-top-left-radius: calc(var(--radius) - 1px);
   border-top-right-radius: calc(var(--radius) - 1px);
 }
+
+/* Top Viewport Scroll Mask to completely block scrolled-past card items */
+.top-scroll-mask {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--background);
+  z-index: 25;
+  pointer-events: none;
+  --mask-height: 1.5rem;
+  height: var(--mask-height);
+  margin-bottom: calc(-1 * var(--mask-height));
+}
+
+@media (max-width: 1199px) {
+  .top-scroll-mask {
+    --mask-height: 4.5rem;
+  }
+}
+
+.content-canvas:has(.summary-page-container) .top-scroll-mask {
+  --mask-height: 4.5rem;
+}
+
+/* Primary Page Header Card Sticky behaviors */
+.primary-page-header {
+  position: sticky;
+  z-index: 28;
+  background: var(--color-panel) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-panel);
+}
+
+@media (max-width: 1199px) {
+  .primary-page-header {
+    top: 4.5rem; /* Stack below command-hub on mobile viewports */
+  }
+}
+
+@media (min-width: 1200px) {
+  /* Side-by-side layout in desktop viewports */
+  .command-hub {
+    margin-bottom: -3.5rem; /* pull main layout up to sit side-by-side with command-hub */
+  }
+  .primary-page-header {
+    top: 1.5rem;
+    margin-right: 43.5rem; /* leaves room for command-hub on the right side */
+  }
+}
+
+/* On summary pages, the large header cards (Summary overview and Progress Diagnostic) should scroll with the page, not stay sticky, so that the star tier headers can stick cleanly under the search bar */
+.summary-page-container .primary-page-header {
+  position: relative;
+  top: auto;
+  z-index: 1;
+}
+
+
