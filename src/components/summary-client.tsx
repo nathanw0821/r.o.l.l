@@ -663,7 +663,7 @@ export default function SummaryClient({
           const tierDisplay = formatTierStarsWithLabel(tierLabel);
           return (
             <div key={tierLabel} className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="flex items-center justify-between text-sm font-semibold mb-3">
+              <div className="star-tier-header flex items-center justify-between text-sm font-semibold mb-3">
                 <span title={tierDisplay.label}>{tierDisplay.stars || tierLabel}</span>
                 <span className="text-[0.78rem] uppercase tracking-widest text-foreground/40">{items.length} items</span>
               </div>
