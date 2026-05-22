@@ -11,7 +11,7 @@ export default function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <Card className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <Card className="flex flex-col sm:flex-row sm:items-center sm:justify-between primary-page-header">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>

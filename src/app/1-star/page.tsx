@@ -13,7 +13,7 @@ export default async function TierOnePage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="primary-page-header">
         <CardHeader>
           <CardTitle>{formatTierStars(tierLabel)} 1-Star Legendaries</CardTitle>
           <CardDescription>Browse all 1-Star Legendaries.</CardDescription>

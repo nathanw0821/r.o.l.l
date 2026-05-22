@@ -13,7 +13,7 @@ export default async function TierThreePage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="primary-page-header">
         <CardHeader>
           <CardTitle>{formatTierStars(tierLabel)} 3-Star Legendaries</CardTitle>
           <CardDescription>Browse all 3-Star Legendaries.</CardDescription>

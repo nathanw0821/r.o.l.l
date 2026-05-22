@@ -25,7 +25,7 @@ export default async function SummaryPage() {
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 summary-page-container">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Summary</h1>
         {user?.username && (
@@ -38,7 +38,7 @@ export default async function SummaryPage() {
           </Link>
         )}
       </div>
-      <Card>
+      <Card className="primary-page-header">
         <CardHeader>
           <CardTitle>Progress Diagnostic</CardTitle>
           <CardDescription>
