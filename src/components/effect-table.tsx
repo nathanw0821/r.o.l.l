@@ -13,6 +13,7 @@ import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-even
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
 import { InfoTooltip } from "@/components/ui/tooltip";
+import { Card } from "@/components/ui/card";
 
 export type EffectTierRow = {
   id: string;
@@ -35,12 +36,16 @@ export default function EffectTable({
   rows,
   canEdit,
   focusId = null,
-  showChrome = true
+  showChrome = true,
+  title,
+  description
 }: {
   rows: EffectTierRow[];
   canEdit: boolean;
   focusId?: string | null;
   showChrome?: boolean;
+  title?: string;
+  description?: string;
 }) {
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
@@ -239,8 +244,39 @@ export default function EffectTable({
     );
   }
 
+  const totalCount = localRows.length;
+  const unlockedCount = localRows.filter((row) => row.unlocked).length;
+  const percent = totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0;
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-6">
+      {title && (
+        <Card className="primary-page-header">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6">
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                {title}
+              </h2>
+              {description && <p className="text-sm text-foreground/60">{description}</p>}
+            </div>
+            
+            <div className="flex flex-col gap-2 min-w-[200px] md:min-w-[280px]">
+              <div className="flex items-center justify-between text-sm font-semibold">
+                <span className="text-foreground/70">Completion Progress</span>
+                <span className="text-accent font-mono">{percent}% ({unlockedCount}/{totalCount})</span>
+              </div>
+              <div className="h-2 w-full bg-muted rounded-full overflow-hidden border border-border/40">
+                <div 
+                  className="h-full bg-accent transition-all duration-500 rounded-full" 
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      <div className="space-y-2">
       {showChrome ? (
         <>
           <div className="text-xs text-foreground/60">
@@ -485,6 +521,7 @@ export default function EffectTable({
         })}
       </div>
       ) : null}
+      </div>
     </div>
   );
 }

@@ -1873,6 +1873,12 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   --mask-height: 4.5rem;
 }
 
+@media (max-width: 1199px) {
+  .content-canvas:has(.summary-page-container) .top-scroll-mask {
+    --mask-height: 7.5rem;
+  }
+}
+
 /* Primary Page Header Card Sticky behaviors */
 .primary-page-header {
   position: sticky;
@@ -1904,6 +1910,32 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   position: relative;
   top: auto;
   z-index: 1;
+}
+
+/* Summary page tab header sticky behavior */
+.summary-tab-header {
+  position: sticky;
+  z-index: 28;
+  background: var(--color-panel) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-panel);
+  transition: all 0.2s;
+}
+
+@media (max-width: 1199px) {
+  .summary-tab-header {
+    top: 4.5rem; /* Stack below command-hub on mobile viewports */
+  }
+  .summary-page-container .star-tier-header {
+    top: 7.5rem; /* Push star headers below sticky tab header on mobile */
+  }
+}
+
+@media (min-width: 1200px) {
+  .summary-tab-header {
+    top: 1.5rem;
+    margin-right: 43.5rem; /* Leaves room for command-hub on the right */
+  }
 }
 
 
