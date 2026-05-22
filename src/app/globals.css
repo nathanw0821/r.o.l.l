@@ -1442,6 +1442,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 .effect-table-row {
   padding: var(--effect-row-padding);
   box-shadow: var(--shadow-panel);
+  will-change: transform;
 }
 
 [data-density="compact"] .effect-table-list {
@@ -1484,6 +1485,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   display: flex;
   flex-direction: column;
   gap: var(--effect-tile-gap);
+  will-change: transform;
 }
 
 .effect-tile--button {
@@ -1681,6 +1683,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   color: var(--color-fg);
   padding: var(--summary-card-padding-y) var(--summary-card-padding-x);
   box-shadow: var(--shadow-panel);
+  will-change: transform;
 }
 
 .summary-status-card[data-status="unlocked"] {
@@ -1832,4 +1835,16 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   .table-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.star-tier-header {
+  position: sticky;
+  top: 4.5rem;
+  z-index: 10;
+  background-color: var(--color-panel);
+  margin: -1rem -1rem 0.75rem -1rem;
+  padding: 1rem 1rem 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  border-top-left-radius: calc(var(--radius) - 1px);
+  border-top-right-radius: calc(var(--radius) - 1px);
 }
