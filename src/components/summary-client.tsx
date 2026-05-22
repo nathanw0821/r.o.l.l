@@ -531,7 +531,7 @@ export default function SummaryClient({
         </div>
       )}
 
-      <div className="flex gap-2 rounded-[var(--radius)] border border-border bg-panel p-1">
+      <div className="summary-tab-header flex gap-2 rounded-[var(--radius)] border border-border bg-panel p-1">
         <button
           onClick={() => setActiveTab("summary")}
           className={cn(
