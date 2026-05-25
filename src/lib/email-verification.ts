@@ -166,7 +166,7 @@ export async function consumeEmailVerificationToken(token: string) {
 
   if (verification.expires < new Date()) {
     await prisma.verificationToken.delete({
-      where: { token: normalizedToken }
+      where: { token: tokenHash }
     });
 
     return { ok: false as const, reason: "expired" as const };
@@ -179,7 +179,7 @@ export async function consumeEmailVerificationToken(token: string) {
 
   if (!user) {
     await prisma.verificationToken.delete({
-      where: { token: normalizedToken }
+      where: { token: tokenHash }
     });
 
     return { ok: false as const, reason: "missing-user" as const };

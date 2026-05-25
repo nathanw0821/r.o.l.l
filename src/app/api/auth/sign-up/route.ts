@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import { hashPassword } from "@/lib/password-hash";
 import { z } from "zod";
 import { parseJson } from "@/lib/api/validation";
 import { badRequest, forbidden, internalError, ok, tooManyRequests } from "@/lib/api/responses";
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const passwordHash = await bcrypt.hash(password, 12);
+    const passwordHash = await hashPassword(password);
     const user = await prisma.user.create({
       data: {
         email,

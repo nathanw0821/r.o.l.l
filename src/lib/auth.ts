@@ -7,7 +7,7 @@ import TwitchProvider from "next-auth/providers/twitch";
 import RedditProvider from "next-auth/providers/reddit";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { cache } from "react";
-import bcrypt from "bcryptjs";
+import { verifyPassword, hashPassword, isLegacyHash } from "@/lib/password-hash";
 import { z } from "zod";
 import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements";
 import { prisma } from "@/lib/prisma";
@@ -136,8 +136,24 @@ export const authOptions: NextAuthOptions = {
               });
 
           if (existing?.passwordHash) {
-            const valid = await bcrypt.compare(password, existing.passwordHash);
+            const valid = await verifyPassword(password, existing.passwordHash);
             if (!valid) return null;
+
+            // Automatically upgrade legacy bcrypt hashes to high-performance Web Crypto PBKDF2 on successful login
+            if (isLegacyHash(existing.passwordHash)) {
+              try {
+                const newHash = await hashPassword(password);
+                await prisma.user.update({
+                  where: { id: existing.id },
+                  data: { passwordHash: newHash }
+                });
+                console.log(`[Security Upgrade] Upgraded password hash format for user: ${existing.email || existing.username}`);
+              } catch (upgradeErr) {
+                // Log and fail silently to ensure user login is not disrupted
+                console.error("[Security Upgrade] Failed to upgrade legacy password hash:", upgradeErr);
+              }
+            }
+
             await applyProfile(existing.id);
             return existing;
           }
@@ -152,7 +168,7 @@ export const authOptions: NextAuthOptions = {
               });
 
           if (legacy) {
-            const passwordHash = await bcrypt.hash(password, 12);
+            const passwordHash = await hashPassword(password);
             const updated = await prisma.user.update({
               where: { id: legacy.id },
               data: { username, passwordHash, authCode: null, secondaryCode: null }
@@ -168,7 +184,7 @@ export const authOptions: NextAuthOptions = {
               });
 
           if (legacyNoSecondary) {
-            const passwordHash = await bcrypt.hash(password, 12);
+            const passwordHash = await hashPassword(password);
             const updated = await prisma.user.update({
               where: { id: legacyNoSecondary.id },
               data: { username, passwordHash, authCode: null, secondaryCode: null }

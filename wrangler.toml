@@ -23,3 +23,10 @@ GOOGLE_CLIENT_ID = "717058834888-tri1suu3o125h1haajjrffufioj75ga7.apps.googleuse
 
 [triggers]
 crons = ["0 19 * * *", "20 19 * * *"]
+
+[[kv_namespaces]]
+binding = "KV_LIMITER"
+# To deploy this in your Cloudflare account, run: npx wrangler kv:namespace create KV_LIMITER
+# and replace the id below with the generated ID:
+id = "916a6d603bc7470586b217fb9bcb3297"
+
