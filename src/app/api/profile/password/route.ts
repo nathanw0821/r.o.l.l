@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import { verifyPassword, hashPassword } from "@/lib/password-hash";
 import { z } from "zod";
 import { requireUser } from "@/lib/api/auth";
 import { badRequest, ok } from "@/lib/api/responses";
@@ -32,13 +32,13 @@ export async function POST(request: Request) {
     if (!parsed.data.currentPassword) {
       return badRequest("Current password is required.");
     }
-    const valid = await bcrypt.compare(parsed.data.currentPassword, user.passwordHash);
+    const valid = await verifyPassword(parsed.data.currentPassword, user.passwordHash);
     if (!valid) {
       return badRequest("Current password is incorrect.");
     }
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.newPassword, 12);
+  const passwordHash = await hashPassword(parsed.data.newPassword);
   await prisma.user.update({
     where: { id: auth.user.id },
     data: { passwordHash }

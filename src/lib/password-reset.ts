@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "@/lib/password-hash";
 import { getSiteUrl } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 
@@ -170,7 +170,7 @@ export async function resetPasswordByToken(rawToken: string, nextPassword: strin
     return { ok: false as const, reason: "expired-or-invalid" as const };
   }
 
-  const passwordHash = await bcrypt.hash(nextPassword, 12);
+  const passwordHash = await hashPassword(nextPassword);
 
   await prisma.$transaction([
     prisma.user.update({
