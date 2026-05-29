@@ -7,7 +7,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 1 Star	Berserker's	Weapon: Ranged • Weapon: Melee	Damage increases up to +50% as Damage Resistance decreases.	5 Psycho	15	Yes			1 Star Unlocked	30
 1 Star	Bloodied	Weapon: Ranged • Weapon: Melee	Damage increases up to +130% as Health decreases.	1 Adrenal Reaction Serum	15	Yes			2 Star Unlocked	22
 1 Star	Bolstering	Armor • Power Armor	Grants up to +35 ER/DR, the lower your Health.	5 Med-X	15	Yes			3 Star Unlocked	26
-1 Star	Chameleon	Armor • Power Armor	Become invisible while sneaking and not moving.	1 Chameleon Serum	15	No			4 Star Unlocked	17
+1 Star	Chameleon	Armor • Power Armor	Become invisible while sneaking and not moving.	1 Chameleon Serum	15	Yes			4 Star Unlocked	17
 1 Star	Cloaking	Armor • Power Armor	Being hit in melee causes you to become invisible once every 30 seconds.	1 Stealth Boy	15	Yes				
 1 Star	Executioner's	Weapon: Ranged • Weapon: Melee	+50% more damage when your target is below 40% Health.	25 Leather	15	Yes				
 1 Star	Exterminator's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Mirelurks and Insects. [Weapon] +50% damage to Mirelurks and Insects.	1 Bloodbug Proboscis; 1 Stinging Barb	15	Yes				
@@ -36,7 +36,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 1 Star	Unyielding	Armor	Gain up to +3 to all S.P.E.C.I.A.L. (except END) when Health is low.	5 X-Cell	15	No				
 1 Star	Vampire's	Weapon: Ranged • Weapon: Melee	Restore 2% Health over 2 seconds when you hit a target.	10 Bloodpacks	15	Yes				
 1 Star	Vanguard's	Armor • Power Armor	Grants up to +35 ER/DR, the higher your Health.	5 Blood Pack	15	Yes				
-1 Star	Heavyweight	Armor	-90% weight and does not count as armor for the Chameleon Mutation.	1 Bird Bones Serum	15	No				
+1 Star	Heavyweight	Armor	-90% weight and does not count as armor for the Chameleon Mutation.	1 Bird Bones Serum	15	Yes				
 1 Star	Zealot's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Scorched. [Weapon] +50% damage to Scorched.	10 Ultracite	15	Yes				
 2 Star	Agility	Armor • Power Armor	+2 Agility.	1 Bobblehead: Agility	30	No				
 2 Star	Antiseptic	Armor • Power Armor	+25% reduced disease chance from environmental hazards.	10 Disease Cure	30	Yes				
@@ -48,7 +48,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 2 Star	Explosive	Weapon: Ranged	Projectiles explode for +20% weapon damage.	1 Bobblehead: Explosive	30	Yes				
 2 Star	Fierce	Armor • Power Armor	Fortify limb resistance based on Kill Streak count (1% per kill).	1 Bobblehead: Strength	30	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt			
 2 Star	Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Pus Sac	30	No				
-2 Star	Glutton	Armor • Power Armor	Hunger and Thirst grow 10% slower.	1 Perfect Bubblegum	30	No				
+2 Star	Glutton	Armor • Power Armor	Hunger and Thirst grow 10% slower.	1 Perfect Bubblegum	30	Yes				
 2 Star	Hardy	Armor • Power Armor	Receive 7% less explosion damage.	1 Bobblehead: Explosive	30	Yes				
 2 Star	HazMat	Armor • Power Armor	+25 Radiation Resistance.	10 Rad-x	30	Yes				
 2 Star	Heavy Hitter's	Weapon: Melee	+40% power attack damage.	25 Concrete	30	Yes				
@@ -74,9 +74,9 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 3 Star	Active	Armor • Power Armor	Max AP increased by +20.	1 Bobblehead: Agility	60	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt			
 3 Star	Adamantium	Armor	Receive 15% less limb damage.	1 Twisted Muscles Serum	60	No				
 3 Star	Agility	Weapon: Ranged • Weapon: Melee	+3 Agility.	1 Bobblehead: Agility	60	Yes				
-3 Star	Arms Keeper's	Armor • Power Armor	Weapon weights reduced by 20%.	1 Bobblehead: Small Guns	60	No				
+3 Star	Arms Keeper's	Armor • Power Armor	Weapon weights reduced by 20%.	1 Bobblehead: Small Guns	60	Yes				
 3 Star	Barbarian	Weapon: Melee	+1 STR per kill while on a Kill Streak (max 10).	1 Bobblehead: Melee	60	No	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt			
-3 Star	Belted	Armor • Power Armor	Ammo weight reduced by 20%.	25 Lead	60	No				
+3 Star	Belted	Armor • Power Armor	Ammo weight reduced by 20%.	25 Lead	60	Yes				
 3 Star	Blocker	Weapon: Melee	+15% more damage blocked.	10 Oil	60	No				
 3 Star	Burning	Armor • Power Armor	5% chance to deal 12 Fire damage per second for 3s to melee attackers.	15 Floater Flamer Pus Sac	60	Yes				
 3 Star	Cavalier's	Armor • Power Armor	-5% damage taken while sprinting.	10 Oil	60	Yes				
@@ -102,7 +102,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 3 Star	Reflex	Armor • Power Armor	2% evade.	1 Bobblehead: Agility	60	Yes	Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt			
 3 Star	Resilient	Weapon: Ranged	+500 damage resistance while reloading.	5 Med-X	60	Yes				
 3 Star	Safecracker's	Armor • Power Armor	+1 lockpicking skill +1 hacking skill.	1 Bobblehead: Lock Picking	60	Yes				
-3 Star	Secret Agent's	Armor	+25% less noise while sneaking +25% reduce detection chance.	1 Bobblehead: Sneak	60	Yes				
+3 Star	Secret Agent's	Armor	+25% less noise while sneaking +25% reduce detection chance.	1 Bobblehead: Sneak	60	No				
 3 Star	Sentinel's	Armor • Power Armor	-5% damage taken while not moving.	1 Scaly Skin Serum	60	No				
 3 Star	Steadfast	Weapon: Ranged	+50 damage resistance while aiming.	5 Ballistic Fiber	60	Yes				
 3 Star	Strength	Weapon: Ranged • Weapon: Melee	+3 Strength.	1 Bobblehead: Strength	60	Yes				
@@ -116,13 +116,13 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Bully's	Weapon: Ranged • Weapon: Melee	+25% damage per crippled limb the target has.	1 Buffout	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
 4 Star	Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3 Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Choo-Choo's	Power Armor	10% chance for 500 damage & Bloody Mess when sprinting into targets (up to 50% on full stack).	15 Cannonballs	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
-4 Star	Combo-Breaker's	Weapon: Melee	When dealing damage, 50% chance to not use AP (10% chance for auto melee).	1 Day Tripper	120	No	RAID: Gleaming Depths (Stage 3 only)			
+4 Star	Combo-Breaker's	Weapon: Melee	When dealing damage, 50% chance to not use AP (10% chance for auto melee).	1 Day Tripper	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Conductor's	Weapon: Ranged • Weapon: Melee	Critical hits restore 10 Health & AP instantly and 100 more over 5s for you & teammates within 100ft.	5 Pure Crimson Flux	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Electrician's	Weapon: Ranged	When reloading, emit a shock wave that stuns nearby targets for 3s.	1 Bobblehead: Energy Weapons	120	Yes	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Encircler's	Weapon: Ranged • Weapon: Melee	+10% damage for each combat target around you (up to +50%).	1 Overdrive	120	Yes	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Fencer's	Weapon: Melee	+12.5% melee damage; +12.5% per nearby teammate (up to +50% on full team).	1 Bobblehead: Melee	120	No	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Fracturer's	Weapon: Ranged • Weapon: Melee	When crippling limbs, they explode and deal up to 50 explosion damage to nearby targets.	25 Gunpowder	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Icemen's	Weapon: Melee	Applies Cryo on hit that slows targets when dealing damage in V.A.T.S.	5 Pure Fluorescent Flux	120	No	RAID: Gleaming Depths (Stage 4 only)			
+4 Star	Icemen's	Weapon: Melee	Applies Cryo on hit that slows targets when dealing damage in V.A.T.S.	5 Pure Fluorescent Flux	120	Yes	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Limit-Breaking	Armor • Power Armor	Each worn armor piece reduces critical hit cost by -10% (up to -50% on full stack).	5 Pure Violet Flux	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Miasma's	Armor • Power Armor	When hit, a poisonous DoT cloud harms nearby targets for 10s (damage increases per equipped piece).	1 Plague Walker Serum	120	No	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Pin-Pointer's	Weapon: Ranged	+20% weak spot damage.	1 Formula P	120	Yes	RAID: Gleaming Depths (Stage 1 only)			

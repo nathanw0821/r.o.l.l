@@ -21,7 +21,8 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
-    "db:seed:builder": "tsx src/scripts/seed-builder-only.ts"
+    "db:seed:builder": "tsx src/scripts/seed-builder-only.ts",
+    "db:sync-to-tsv": "tsx src/scripts/sync-database-to-tsv.ts"
   },
   "prisma": {
     "seed": "tsx src/seed.ts"
