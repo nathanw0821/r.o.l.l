@@ -142,6 +142,7 @@ model User {
   createdAt               DateTime               @default(now())
   storeUnlocks            UserStoreUnlock[]
   uuid                    String?                @unique @default(uuid())
+  agreedToTerms           Boolean                @default(false)
 }
 
 /// Curated legendary mod catalog for the loadout builder (separate from import `Effect` rows).
