@@ -80,6 +80,7 @@ const DeferredCommandHubShell = dynamic(() => import("@/components/command-hub-s
 const DeferredLocalProgressSync = dynamic(() => import("@/components/local-progress-sync"), { ssr: false });
 const DeferredUsernameCompletion = dynamic(() => import("@/components/username-completion"), { ssr: false });
 const DeferredFeedbackWidget = dynamic(() => import("@/components/feedback-widget"), { ssr: false });
+const DeferredTermsModal = dynamic(() => import("@/components/terms-modal"), { ssr: false });
 
 function isNavLinkActive(pathname: string, link: AppNavLink) {
   if (link.activePaths?.includes(pathname)) {
@@ -467,10 +468,23 @@ export default function AppShell({
               {children}
             </main>
             <DeferredUsernameCompletion />
+
+            {/* Retro pip-boy styled footer */}
+            <footer className="mt-8 border-t border-border pt-6 pb-4 text-xs text-foreground/45 font-mono">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <span>© 2026 R.O.L.L. ALL RIGHTS RESERVED.</span>
+                <div className="flex items-center justify-center gap-3">
+                  <Link href="/terms" className="hover:text-accent transition-colors">&gt; TERMS OF SERVICE</Link>
+                  <span className="text-foreground/20">|</span>
+                  <Link href="/privacy" className="hover:text-accent transition-colors">&gt; PRIVACY POLICY</Link>
+                </div>
+              </div>
+            </footer>
           </div>
         </div>
       </div>
       <MigrationNotice />
+      {isSignedIn && <DeferredTermsModal userEmail={session?.user?.email} />}
     </div>
   );
 }
