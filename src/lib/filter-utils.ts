@@ -297,3 +297,10 @@ export function collectOriginOptions(rows: FilterableRow[]) {
 export function toggleSelection<T extends string>(current: T[], value: T) {
   return current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
 }
+
+export const NEW_MODS = new Set(["hauler's", "raging", "satiated", "tarnished", "vector"]);
+
+export function isNewMod(name: string): boolean {
+  return NEW_MODS.has(name.trim().toLowerCase());
+}
+

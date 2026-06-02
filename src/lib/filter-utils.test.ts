@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { applyFilters, expandQueryTokens, FilterState, FilterableRow } from "./filter-utils";
+import { applyFilters, expandQueryTokens, FilterState, FilterableRow, isNewMod } from "./filter-utils";
 
 describe("filter-utils acronym expansions", () => {
   it("should expand community abbreviations correctly", () => {
@@ -118,3 +118,26 @@ describe("applyFilters with acronym matching", () => {
     expect(results).toHaveLength(0);
   });
 });
+
+describe("isNewMod", () => {
+  it("should return true for the 5 new legendary mods", () => {
+    expect(isNewMod("Hauler's")).toBe(true);
+    expect(isNewMod("Raging")).toBe(true);
+    expect(isNewMod("Satiated")).toBe(true);
+    expect(isNewMod("Tarnished")).toBe(true);
+    expect(isNewMod("Vector")).toBe(true);
+  });
+
+  it("should return true regardless of casing or extra whitespace", () => {
+    expect(isNewMod("  hauler's  ")).toBe(true);
+    expect(isNewMod("RAGING")).toBe(true);
+    expect(isNewMod("satiated")).toBe(true);
+  });
+
+  it("should return false for old/existing mods", () => {
+    expect(isNewMod("Aegis")).toBe(false);
+    expect(isNewMod("Unyielding")).toBe(false);
+    expect(isNewMod("Bloodied")).toBe(false);
+  });
+});
+

@@ -83,6 +83,7 @@ import {
 } from "@/lib/builder/types";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
+import { isNewMod } from "@/lib/filter-utils";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -325,6 +326,11 @@ const ModPickerOption = React.memo(function ModPickerOption({
           <span className={unlock === "unlocked" ? "text-accent" : "text-foreground"}>
             {mod.name}
           </span>
+          {isNewMod(mod.name) && (
+            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.7rem] uppercase tracking-wider text-accent font-black animate-pulse">
+              New
+            </span>
+          )}
           {isRecommended && (
             <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.84rem] uppercase tracking-wider text-accent font-black animate-pulse">
               <Sparkle className="h-2 w-2 inline mr-0.5" /> Recom.
