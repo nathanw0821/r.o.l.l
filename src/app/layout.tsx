@@ -12,7 +12,6 @@ import { prisma } from "@/lib/prisma";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 
 import { VT323, Share_Tech_Mono } from "next/font/google";
-import VisitorTracker from "@/components/visitor-tracker";
 
 const fontVT323 = VT323({
   weight: "400",
@@ -99,7 +98,6 @@ async function DynamicShell({ children }: { children: ReactNode }) {
       preferDefaults={false}
     >
       <AppShell isAdmin={isAdmin}>
-        <VisitorTracker userId={session?.user?.id} />
         {children}
         {mainCharacterId && <RenameMainCharacterPrompt characterId={mainCharacterId} />}
       </AppShell>

@@ -386,18 +386,7 @@ export default function AppShell({
               );
             })}
 
-            {isAdmin && (
-              <Link
-                href="/admin-metrics"
-                className={cn(
-                  "app-nav__link mt-4 border-t border-border pt-4",
-                  pathname === "/admin-metrics" && "app-nav__link--active"
-                )}
-              >
-                <LayoutDashboard className="h-4 w-4 text-accent" />
-                <span className="text-accent font-bold">Admin Metrics</span>
-              </Link>
-            )}
+
           </nav>
           <div className="mt-auto flex flex-col gap-2">
             <div className="app-sidebar__auth">

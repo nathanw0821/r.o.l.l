@@ -32,29 +32,29 @@ Feral's | LOCKED	Nocturnal | UNLOCKED	Zealot's | UNLOCKED									1 Star	Nocturn
 											1 Star	Stalker's	No	Vital	Yes	Resilient	Yes	Thrill-Seeker's	No
 Acrobat's | LOCKED	Diver's | LOCKED	Nimble | LOCKED			Aegis | UNLOCKED	Fracturer's | UNLOCKED	Reflective | LOCKED				1 Star	Suppressor's	Yes	Warming	Yes	Safecracker's	Yes	Viper's	Yes
 											1 Star	Troubleshooter's	Yes			Secret Agent's	Yes		
-Active | LOCKED	Doctor's | LOCKED	Pack Rat's | UNLOCKED			Battle-Loader's | LOCKED	Icemen's | LOCKED	Rejuvenator's | LOCKED				1 Star	Two Shot	Yes			Sentinel's	No		
+Active | LOCKED	Doctor's | LOCKED	Pack Rat's | UNLOCKED			Battle-Loader's | LOCKED	Hauler's | LOCKED	Rejuvenator's | LOCKED				1 Star	Two Shot	Yes			Sentinel's	No		
 											1 Star	Unyielding	No			Steadfast	Yes		
-Adamantium | LOCKED	Durability | UNLOCKED	Perception | UNLOCKED			Bruiser's | LOCKED	Limit-Breaking | UNLOCKED	Runner's | UNLOCKED				1 Star	Vampire's	Yes			Strength	Yes		
+Adamantium | LOCKED	Durability | UNLOCKED	Perception | UNLOCKED			Bruiser's | LOCKED	Icemen's | LOCKED	Runner's | UNLOCKED				1 Star	Vampire's	Yes			Strength	Yes		
 											1 Star	Vanguard's	Yes			Swift	Yes		
-Agility | UNLOCKED	Electrified | UNLOCKED	Reflex | UNLOCKED			Bully's | UNLOCKED	Miasma's | LOCKED	Sawbones's | LOCKED				1 Star	Heavyweight	No			Thru-hiker's	Yes		
+Agility | UNLOCKED	Electrified | UNLOCKED	Reflex | UNLOCKED			Bully's | UNLOCKED	Limit-Breaking | UNLOCKED	Satiated | LOCKED				1 Star	Heavyweight	No			Thru-hiker's	Yes		
 											1 Star	Zealot's	Yes			Toxic	Yes		
-Arms Keeper's | LOCKED	Endurance | UNLOCKED	Resilient | UNLOCKED			Charged | UNLOCKED	Pin-Pointer's | UNLOCKED	Scanner's | LOCKED				2 Star					V.A.T.S. Optimized	Yes		
+Arms Keeper's | LOCKED	Endurance | UNLOCKED	Resilient | UNLOCKED			Charged | UNLOCKED	Miasma's | LOCKED	Sawbones's | LOCKED				2 Star					V.A.T.S. Optimized	Yes		
 											2 Star								
-Barbarian | LOCKED	Frozen | UNLOCKED	Safecracker's | UNLOCKED			Choo-Choo's | UNLOCKED	Polished | LOCKED	Stabilizer's | LOCKED				2 Star								
+Barbarian | LOCKED	Frozen | UNLOCKED	Safecracker's | UNLOCKED			Choo-Choo's | UNLOCKED	Pin-Pointer's | UNLOCKED	Scanner's | LOCKED				2 Star								
 											2 Star								
-Belted | LOCKED	Ghost's | UNLOCKED	Secret Agent's | UNLOCKED			Combo-Breaker's | LOCKED	Pounder's | UNLOCKED	Stalwart's | UNLOCKED				2 Star								
+Belted | LOCKED	Ghost's | UNLOCKED	Secret Agent's | UNLOCKED			Combo-Breaker's | LOCKED	Polished | LOCKED	Stabilizer's | LOCKED				2 Star								
 											2 Star								
-Blocker | LOCKED	Glowing | LOCKED	Sentinel's | LOCKED			Conductor's | UNLOCKED	Propelling | LOCKED	Tanky's | UNLOCKED				2 Star								
+Blocker | LOCKED	Glowing | LOCKED	Sentinel's | LOCKED			Conductor's | UNLOCKED	Pounder's | UNLOCKED	Stalwart's | UNLOCKED				2 Star								
 											2 Star								
-Burning | UNLOCKED	Healthy | LOCKED	Steadfast | UNLOCKED			Electrician's | UNLOCKED	Pyromaniac's | UNLOCKED	Thrill-Seeker's | LOCKED				2 Star								
+Burning | UNLOCKED	Healthy | LOCKED	Steadfast | UNLOCKED			Electrician's | UNLOCKED	Propelling | LOCKED	Tanky's | UNLOCKED				2 Star								
 											2 Star								
-Cavalier's | UNLOCKED	Intelligence | UNLOCKED	Strength | UNLOCKED			Encircler's | UNLOCKED	Radioactive-Powered | UNLOCKED	Viper's | UNLOCKED				2 Star								
+Cavalier's | UNLOCKED	Intelligence | UNLOCKED	Strength | UNLOCKED			Encircler's | UNLOCKED	Pyromaniac's | UNLOCKED	Tarnished | LOCKED				2 Star								
 											2 Star								
-Charisma | UNLOCKED	Lightweight | UNLOCKED	Swift | UNLOCKED			Fencer's | LOCKED	Ranger's | UNLOCKED					2 Star								
+Charisma | UNLOCKED	Lightweight | UNLOCKED	Swift | UNLOCKED			Fencer's | LOCKED	Radioactive-Powered | UNLOCKED	Thrill-Seeker's | LOCKED				2 Star								
 											2 Star								
-Defender's | UNLOCKED	Luck | LOCKED	Thru-hiker's | UNLOCKED									2 Star								
+Defender's | UNLOCKED	Luck | LOCKED	Thru-hiker's | UNLOCKED				Raging | LOCKED	Vector | LOCKED				2 Star								
 											2 Star								
-Dissipating | UNLOCKED	Lucky | UNLOCKED	Toxic | UNLOCKED									2 Star								
+Dissipating | UNLOCKED	Lucky | UNLOCKED	Toxic | UNLOCKED				Ranger's | UNLOCKED	Viper's | UNLOCKED				2 Star								
 											2 Star								
 		V.A.T.S. Optimized | UNLOCKED									2 Star								
 											2 Star								
@@ -121,6 +121,7 @@ Dissipating | UNLOCKED	Lucky | UNLOCKED	Toxic | UNLOCKED									2 Star
 											4 Star	Encircler's	Yes						
 											4 Star	Fencer's	No						
 											4 Star	Fracturer's	Yes						
+											4 Star	Hauler's	No						
 											4 Star	Icemen's	No						
 											4 Star	Limit-Breaking	Yes						
 											4 Star	Miasma's	No						
@@ -130,13 +131,18 @@ Dissipating | UNLOCKED	Lucky | UNLOCKED	Toxic | UNLOCKED									2 Star
 											4 Star	Propelling	No						
 											4 Star	Pyromaniac's	Yes						
 											4 Star	Radioactive-Powered	Yes						
+											4 Star	Raging	No						
 											4 Star	Ranger's	Yes						
 											4 Star	Reflective	No						
 											4 Star	Rejuvenator's	No						
 											4 Star	Runner's	Yes						
+											4 Star	Satiated	No						
 											4 Star	Sawbones's	No						
 											4 Star	Scanner's	No						
 											4 Star	Stabilizer's	No						
 											4 Star	Stalwart's	Yes						
 											4 Star	Tanky's	Yes						
+											4 Star	Tarnished	No						
+											4 Star	Thrill-Seeker's	No						
+											4 Star	Vector	No						
 											4 Star	Viper's	No						

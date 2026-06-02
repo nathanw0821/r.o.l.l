@@ -7,7 +7,7 @@ import { useFilters } from "@/components/filter-context";
 import { useProgressHistory } from "@/components/progress-history-provider";
 import ProgressToggle from "@/components/progress-toggle";
 import { useLocalProgress } from "@/components/use-local-progress";
-import { applyFilters, collectOriginOptions, type SelectionSource } from "@/lib/filter-utils";
+import { applyFilters, collectOriginOptions, isNewMod, type SelectionSource } from "@/lib/filter-utils";
 import { getCraftComponentKind } from "@/lib/legendary-mod-sources";
 import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
@@ -327,7 +327,14 @@ export default function EffectTable({
               )}
             >
               <div className="min-w-0">
-                <div className="font-semibold">{row.effect.name}</div>
+                <div className="font-semibold flex items-center gap-1.5 flex-wrap">
+                  <span>{row.effect.name}</span>
+                  {isNewMod(row.effect.name) && (
+                    <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.7rem] uppercase tracking-wider text-accent font-black animate-pulse">
+                      New
+                    </span>
+                  )}
+                </div>
                 {tierDisplay.stars ? (
                   <div className="mt-1 text-lg font-semibold leading-none tracking-[0.16em] text-foreground/70" title={tierDisplay.label}>
                     {tierDisplay.stars}
@@ -444,7 +451,14 @@ export default function EffectTable({
             >
               <div className="effect-tile__header">
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold break-words">{row.effect.name}</div>
+                  <div className="font-semibold break-words flex items-center gap-1.5 flex-wrap">
+                    <span>{row.effect.name}</span>
+                    {isNewMod(row.effect.name) && (
+                      <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.7rem] uppercase tracking-wider text-accent font-black animate-pulse">
+                        New
+                      </span>
+                    )}
+                  </div>
                   {tierDisplay.stars ? (
                     <div className="mt-1 text-base font-semibold leading-none tracking-[0.14em] text-foreground/65" title={tierDisplay.label}>
                       {tierDisplay.stars}
