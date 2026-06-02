@@ -1,4 +1,4 @@
-﻿import fs from "fs";
+import fs from "fs";
 import path from "path";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
@@ -301,6 +301,94 @@ async function ingestDataset(datasetVersionId: string, filePath: string) {
   }
 }
 
+async function migrateProgressAndBaselines(previousVersionId: string, newVersionId: string) {
+  console.log(`Migrating user progress and baselines from version ${previousVersionId} to ${newVersionId}...`);
+
+  const oldEffectTiers = await prisma.effectTier.findMany({
+    where: { datasetVersionId: previousVersionId },
+    include: { effect: true, tier: true }
+  });
+
+  const newEffectTiers = await prisma.effectTier.findMany({
+    where: { datasetVersionId: newVersionId },
+    include: { effect: true, tier: true }
+  });
+
+  const oldKeyById = new Map(
+    oldEffectTiers.map((row) => [row.id, `${row.tier.label}||${row.effect.name}`.toLowerCase()])
+  );
+  const newMap = new Map(
+    newEffectTiers.map((row) => [`${row.tier.label}||${row.effect.name}`.toLowerCase(), row.id])
+  );
+
+  // Migrate UserProgress
+  const oldProgress = await prisma.userProgress.findMany({
+    where: { effectTierId: { in: Array.from(oldKeyById.keys()) } }
+  });
+
+  const migratedProgress = oldProgress
+    .map((progress) => {
+      const key = oldKeyById.get(progress.effectTierId);
+      if (!key) return null;
+      const newEffectTierId = newMap.get(key);
+      if (!newEffectTierId) return null;
+      return {
+        userId: progress.userId,
+        characterId: progress.characterId,
+        effectTierId: newEffectTierId,
+        unlocked: progress.unlocked,
+        notes: progress.notes ?? undefined,
+        isSeeking: progress.isSeeking,
+        modCount: progress.modCount,
+      };
+    })
+    .filter((row): row is NonNullable<typeof row> => Boolean(row));
+
+  if (migratedProgress.length > 0) {
+    const newProgressTierIds = migratedProgress.map(p => p.effectTierId);
+    await prisma.userProgress.deleteMany({
+      where: { effectTierId: { in: newProgressTierIds } }
+    });
+
+    await prisma.userProgress.createMany({ data: migratedProgress, skipDuplicates: true });
+    console.log(`Successfully migrated ${migratedProgress.length} user progress records.`);
+  }
+
+  // Migrate UserImportBaseline
+  const oldBaselines = await prisma.userImportBaseline.findMany({
+    where: { datasetVersionId: previousVersionId }
+  });
+
+  const migratedBaselines = oldBaselines
+    .map((baseline) => {
+      const key = oldKeyById.get(baseline.effectTierId);
+      if (!key) return null;
+      const newEffectTierId = newMap.get(key);
+      if (!newEffectTierId) return null;
+      return {
+        userId: baseline.userId,
+        characterId: baseline.characterId,
+        datasetVersionId: newVersionId,
+        effectTierId: newEffectTierId,
+        unlocked: baseline.unlocked,
+      };
+    })
+    .filter((row): row is NonNullable<typeof row> => Boolean(row));
+
+  if (migratedBaselines.length > 0) {
+    const newBaselineTierIds = migratedBaselines.map(b => b.effectTierId);
+    await prisma.userImportBaseline.deleteMany({
+      where: {
+        datasetVersionId: newVersionId,
+        effectTierId: { in: newBaselineTierIds }
+      }
+    });
+
+    await prisma.userImportBaseline.createMany({ data: migratedBaselines, skipDuplicates: true });
+    console.log(`Successfully migrated ${migratedBaselines.length} user import baselines.`);
+  }
+}
+
 async function main() {
   const previous = await prisma.datasetVersion.findFirst({
     where: { isActive: true },
@@ -331,6 +419,47 @@ async function main() {
   }
 
   await seedBuilderCatalog(prisma);
+
+  // Migrate progress and baselines from the most recent version that has progress
+  let previousVersionId = previous?.id;
+  if (!previousVersionId) {
+    const fallbackVersion = await prisma.datasetVersion.findFirst({
+      where: { id: { not: datasetVersion.id } },
+      orderBy: { importedAt: "desc" }
+    });
+    previousVersionId = fallbackVersion?.id;
+  }
+
+  if (previousVersionId) {
+    let sourceVersionId = previousVersionId;
+    const hasProgress = await prisma.userProgress.findFirst({
+      where: {
+        effectTier: { datasetVersionId: previousVersionId }
+      }
+    });
+
+    if (!hasProgress) {
+      console.log(`Version ${previousVersionId} has no user progress records. Scanning for older versions with progress...`);
+      const allVersions = await prisma.datasetVersion.findMany({
+        where: { id: { not: datasetVersion.id } },
+        orderBy: { importedAt: "desc" }
+      });
+      for (const ver of allVersions) {
+        const checkProgress = await prisma.userProgress.findFirst({
+          where: {
+            effectTier: { datasetVersionId: ver.id }
+          }
+        });
+        if (checkProgress) {
+          console.log(`Found user progress records in older version ${ver.id} (${ver.label}). Using this version as migration source.`);
+          sourceVersionId = ver.id;
+          break;
+        }
+      }
+    }
+
+    await migrateProgressAndBaselines(sourceVersionId, datasetVersion.id);
+  }
 }
 
 main()
