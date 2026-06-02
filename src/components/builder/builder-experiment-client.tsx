@@ -327,7 +327,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
             {mod.name}
           </span>
           {isNewMod(mod.name) && (
-            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.7rem] uppercase tracking-wider text-accent font-black animate-pulse">
+            <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
               New
             </span>
           )}
