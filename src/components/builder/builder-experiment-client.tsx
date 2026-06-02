@@ -322,8 +322,11 @@ const ModPickerOption = React.memo(function ModPickerOption({
       onClick={() => onPick(mod.id)}
     >
       <div className="flex items-start justify-between gap-2 w-full">
-        <span className="min-w-0 font-bold flex items-center gap-2 text-xs">
-          <span className={unlock === "unlocked" ? "text-accent" : "text-foreground"}>
+        <span className="min-w-0 font-bold flex flex-wrap items-center gap-1.5 text-xs">
+          <span className={cn(
+            "break-words",
+            unlock === "unlocked" ? "text-accent" : "text-foreground"
+          )}>
             {mod.name}
           </span>
           {isNewMod(mod.name) && (
@@ -338,7 +341,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
           )}
         </span>
         <span className={cn(
-          "shrink-0 text-[0.84rem] font-black uppercase tracking-widest",
+          "shrink-0 text-[0.72rem] font-black uppercase tracking-wider mt-0.5",
           unlock === "unlocked" ? "text-accent" : "text-foreground/40"
         )}>
           {statusLabel}
