@@ -330,7 +330,7 @@ export default function EffectTable({
                 <div className="font-semibold flex items-center gap-1.5 flex-wrap">
                   <span>{row.effect.name}</span>
                   {isNewMod(row.effect.name) && (
-                    <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.7rem] uppercase tracking-wider text-accent font-black animate-pulse">
+                    <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
                       New
                     </span>
                   )}
@@ -454,7 +454,7 @@ export default function EffectTable({
                   <div className="font-semibold break-words flex items-center gap-1.5 flex-wrap">
                     <span>{row.effect.name}</span>
                     {isNewMod(row.effect.name) && (
-                      <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.7rem] uppercase tracking-wider text-accent font-black animate-pulse">
+                      <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
                         New
                       </span>
                     )}
