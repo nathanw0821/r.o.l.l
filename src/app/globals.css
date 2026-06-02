@@ -1509,13 +1509,14 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 5.5rem;
   flex-shrink: 0;
   border-radius: 999px;
   border: 1px solid currentColor;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.72rem;
-  font-weight: 700;
+  padding: 0.18rem 0.5rem;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   line-height: 1;
 }
 
