@@ -28,20 +28,20 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 3 Star	Nimble	Weapon: Ranged	+100% faster movement speed while aiming.	25 Springs	60	No				
 3 Star	Secret Agent's	Armor	+25% less noise while sneaking +25% reduce detection chance.	1 Bobblehead: Sneak	60	No				
 3 Star	Sentinel's	Armor • Power Armor	-5% damage taken while not moving.	1 Scaly Skin Serum	60	No				
-4 Star	Battle-Loader's	Armor • Power Armor	15% Chance to Instantly Reload When Bashing Enemies (up to 75% Chance on Full Stack)	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) & Bigfoot			
+4 Star	Battle-Loader's	Armor • Power Armor	15% Chance to Instantly Reload When Bashing Enemies (up to 75% Chance on Full Stack)	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
 4 Star	Bruiser's	Armor • Power Armor	Melee weapons deal +5% bonus damage (up to +25% on full stack).	1 Bufftats	120	No	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Fencer's	Weapon: Melee	+12.5% melee damage; +12.5% per nearby teammate (up to +50% on full team).	1 Bobblehead: Melee	120	No	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Hauler's	Armor • Power Armor	Increases Carrying Capacity by 30.	5 Cloth	120	No	Infestations			
 4 Star	Miasma's	Armor • Power Armor	When hit, a poisonous DoT cloud harms nearby targets for 10s (damage increases per equipped piece).	1 Plague Walker Serum	120	No	RAID: Gleaming Depths (Stage 4 only)			
-4 Star	Polished	Weapon: Ranged • Weapon: Melee	The Greater the Equipped Item Condition (+100%), the Greater the Weapon Damage (up to +60%)	1 Improved Repair Kit	120	No	RAID: Gleaming Depths (only Stage 4) & Bigfoot			
-4 Star	Propelling	Power Armor	Movement & Sprint Speed Increased by +5% (up to +25% on Full Stack)	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (only Stage 5) & Bigfoot			
+4 Star	Polished	Weapon: Ranged • Weapon: Melee	The Greater the Equipped Item Condition (+100%), the Greater the Weapon Damage (up to +60%)	1 Improved Repair Kit	120	No	RAID: Gleaming Depths (only Stage 4) • Bigfoot			
+4 Star	Propelling	Power Armor	Movement & Sprint Speed Increased by +5% (up to +25% on Full Stack)	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (only Stage 5) • Bigfoot			
 4 Star	Raging	Armor • Power Armor	Upon being hit, deal +3% Damage for 10 seconds.	1 Buffout	120	No	Infestations			
 4 Star	Reflective	Power Armor	Return 10% of damage received back toward enemy target (up to 50% on full stack).	1 Bobblehead: Science	120	No	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Rejuvenator's	Power Armor	Gradually restores wearer's & teammates Health & AP within 50ft.	5 Stimpak Diffuser	120	No	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Satiated	Weapon: Ranged • Weapon: Melee	[Human] Kills Restore Hunger and Thirst. [Ghoul] Kills Restore Feral	5 Salt	120	No	Infestations			
 4 Star	Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) & Bigfoot			
+4 Star	Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
 4 Star	Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Infestations			
 4 Star	Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Grants 3% Melee Weapon Speed and 3% Reload Speed per Kill Streak stack (max 30% each).	1 Adrenal Reaction Serum	120	No				
 4 Star	Vector	Armor • Power Armor	Gain 10% Bonus V.A.T.S. Accuracy Against Distant Targets	1 Magnifying Glass	120	No	Infestations			

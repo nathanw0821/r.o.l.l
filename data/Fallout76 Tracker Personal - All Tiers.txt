@@ -110,8 +110,8 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 3 Star	Thru-hiker's	Armor • Power Armor	Food, drink, and chem weights reduced by 20%.	10 Purified Water	60	Yes				
 3 Star	Toxic	Armor • Power Armor	5% chance to deal 12 Poison damage per second for 7s to melee attackers.	15 Floater Gnasher Pus Sac	60	Yes				
 3 Star	V.A.T.S. Optimized	Weapon: Ranged • Weapon: Melee	-35% action point cost.	10 Sugar	60	Yes				
-4 Star	Aegis	Power Armor	Fortifies Physical & Energy Resists by +50 and Poison, Cryo & Fire Resists by +20 for Wearer & Teammates Within a 50ft Radius	5 Circuitry	120	Yes	RAID: Gleaming Depths (only Stage 3) & Bigfoot			
-4 Star	Battle-Loader's	Armor • Power Armor	15% Chance to Instantly Reload When Bashing Enemies (up to 75% Chance on Full Stack)	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) & Bigfoot			
+4 Star	Aegis	Power Armor	Fortifies Physical & Energy Resists by +50 and Poison, Cryo & Fire Resists by +20 for Wearer & Teammates Within a 50ft Radius	5 Circuitry	120	Yes	RAID: Gleaming Depths (only Stage 3) • Bigfoot			
+4 Star	Battle-Loader's	Armor • Power Armor	15% Chance to Instantly Reload When Bashing Enemies (up to 75% Chance on Full Stack)	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
 4 Star	Bruiser's	Armor • Power Armor	Melee weapons deal +5% bonus damage (up to +25% on full stack).	1 Bufftats	120	No	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Bully's	Weapon: Ranged • Weapon: Melee	+25% damage per crippled limb the target has.	1 Buffout	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
 4 Star	Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3 Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
@@ -127,11 +127,11 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Limit-Breaking	Armor • Power Armor	Each worn armor piece reduces critical hit cost by -10% (up to -50% on full stack).	5 Pure Violet Flux	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Miasma's	Armor • Power Armor	When hit, a poisonous DoT cloud harms nearby targets for 10s (damage increases per equipped piece).	1 Plague Walker Serum	120	No	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Pin-Pointer's	Weapon: Ranged	+20% weak spot damage.	1 Formula P	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Polished	Weapon: Ranged • Weapon: Melee	The Greater the Equipped Item Condition (+100%), the Greater the Weapon Damage (up to +60%)	1 Improved Repair Kit	120	No	RAID: Gleaming Depths (only Stage 4) & Bigfoot			
+4 Star	Polished	Weapon: Ranged • Weapon: Melee	The Greater the Equipped Item Condition (+100%), the Greater the Weapon Damage (up to +60%)	1 Improved Repair Kit	120	No	RAID: Gleaming Depths (only Stage 4) • Bigfoot			
 4 Star	Pounder's	Weapon: Melee	+10% damage per Onslaught stack, +10 max stacks.	1 Fury	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
-4 Star	Propelling	Power Armor	Movement & Sprint Speed Increased by +5% (up to +25% on Full Stack)	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (only Stage 5) & Bigfoot			
+4 Star	Propelling	Power Armor	Movement & Sprint Speed Increased by +5% (up to +25% on Full Stack)	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (only Stage 5) • Bigfoot			
 4 Star	Pyromaniac's	Weapon: Ranged • Weapon: Melee	When a combat target is burning, deal +50% bonus damage.	15 Asbestos	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
-4 Star	Radioactive-Powered	Power Armor	Gain +2 AP Regeneration at the Cost of RADS (up to +10 AP on Full Stack)	5 Pure Cobalt Flux	120	Yes	RAID: Gleaming Depths (only Stage 1) & Bigfoot			
+4 Star	Radioactive-Powered	Power Armor	Gain +2 AP Regeneration at the Cost of RADS (up to +10 AP on Full Stack)	5 Pure Cobalt Flux	120	Yes	RAID: Gleaming Depths (only Stage 1) • Bigfoot			
 4 Star	Raging	Armor • Power Armor	Upon being hit, deal +3% Damage for 10 seconds.	1 Buffout	120	No	Infestations			
 4 Star	Ranger's	Armor • Power Armor	Ranged weapons deal +5% bonus damage (up to +25% on full stack).	1 Psychobuff	120	Yes	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Satiated	Weapon: Ranged • Weapon: Melee	[Human] Kills Restore Hunger and Thirst. [Ghoul] Kills Restore Feral	5 Salt	120	No	Infestations			
@@ -140,7 +140,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Runner's	Armor • Power Armor	Sprinting AP cost reduced by -20% (up to -100% on full stack).	10 Purified Water	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
 4 Star	Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) & Bigfoot			
+4 Star	Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
 4 Star	Stalwart's	Power Armor	Power Armor breaks 5% slower for owner & teammates within 50ft (up to 25% on full stack).	1 Bobblehead: Leader	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Tanky's	Armor • Power Armor	+200 DR for 10s when standing still (20s cooldown; up to +1000 on full stack).	5 Ballistic Fiber	120	Yes	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Infestations			
