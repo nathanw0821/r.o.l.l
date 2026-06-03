@@ -5,7 +5,7 @@ describe("import-normalize display notes", () => {
   it("should extract correct origins from notes", () => {
     expect(extractOriginsFromNotes("Infestations")).toEqual(["Infestations"]);
     expect(extractOriginsFromNotes("RAID: Gleaming Depths (only Stage 3) • Bigfoot")).toEqual(["Bigfoot", "Gleaming Depths"]);
-    expect(extractOriginsFromNotes("Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt")).toEqual(["Burning Springs", "Head Hunt & Grunt Hunt"]);
+    expect(extractOriginsFromNotes("Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt")).toEqual(["Bounties", "Burning Springs", "Head Hunt & Grunt Hunt"]);
   });
 
   it("should normalize display notes and strip origins correctly", () => {
@@ -17,11 +17,11 @@ describe("import-normalize display notes", () => {
       )
     ).toBe("RAID: (only Stage 3)");
 
-    // For Bounty Hunting: origin includes Burning Springs and Head Hunt & Grunt Hunt
+    // For Bounty Hunting: origin includes Bounties, Burning Springs and Head Hunt & Grunt Hunt
     expect(
       normalizeDisplayNotes(
-        "Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt",
-        ["Burning Springs", "Head Hunt & Grunt Hunt"]
+        "Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt",
+        ["Bounties", "Burning Springs", "Head Hunt & Grunt Hunt"]
       )
     ).toBe("Bounty Hunting");
   });

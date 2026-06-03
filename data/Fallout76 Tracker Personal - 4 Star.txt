@@ -1,6 +1,6 @@
 Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlocked	Notes				
-Aegis	Power Armor	Fortifies Physical & Energy Resists by +50 and Poison, Cryo & Fire Resists by +20 for Wearer & Teammates Within a 50ft Radius	5 Circuitry	120	Yes	RAID: Gleaming Depths (only Stage 3) • Bigfoot		Tier Progress		
-Battle-Loader's	Armor • Power Armor	15% Chance to Instantly Reload When Bashing Enemies (up to 75% Chance on Full Stack)	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot		Unlocked	18	
+Aegis	Power Armor	Fortifies Physical and Energy Resists (+50) and Poison, Cryo, and Fire Resists (+20) for you and nearby teammates.	5 Circuitry	120	Yes	RAID: Gleaming Depths (only Stage 3) • Bigfoot		Tier Progress		
+Battle-Loader's	Armor • Power Armor	Gives you a 15% chance to instantly reload when bashing enemies (stacks up to 75%).	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot		Unlocked	18	
 Bruiser's	Armor • Power Armor	Melee weapons deal +5% bonus damage (up to +25% on full stack).	1 Bufftats	120	No	RAID: Gleaming Depths (Stage 4 only)		Total	32	
 Bully's	Weapon: Ranged • Weapon: Melee	+25% damage per crippled limb the target has.	1 Buffout	120	Yes	RAID: Gleaming Depths (Stage 1 only)		% Complete	56.3%	
 Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3 Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)				
@@ -12,15 +12,15 @@ Encircler's	Weapon: Ranged • Weapon: Melee	+10% damage for each combat target 
 Fencer's	Weapon: Melee	+12.5% melee damage; +12.5% per nearby teammate (up to +50% on full team).	1 Bobblehead: Melee	120	No	RAID: Gleaming Depths (Stage 2 only)				
 Fracturer's	Weapon: Ranged • Weapon: Melee	When crippling limbs, they explode and deal up to 50 explosion damage to nearby targets.	25 Gunpowder	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
 Hauler's	Armor • Power Armor	Increases Carrying Capacity by 30.	5 Cloth	120	No	Infestations				
-Icemen's	Weapon: Melee	Applies Cryo on hit that slows targets when dealing damage in V.A.T.S.	5 Pure Fluorescent Flux	120	No	RAID: Gleaming Depths (Stage 4 only)				
+Icemen's	Weapon: Melee	Applies cryo on hit that slows targets when dealing damage in V.A.T.S.	5 Pure Fluorescent Flux	120	No	RAID: Gleaming Depths (only Stage 4) • Bigfoot				
 Limit-Breaking	Armor • Power Armor	Each worn armor piece reduces critical hit cost by -10% (up to -50% on full stack).	5 Pure Violet Flux	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
 Miasma's	Armor • Power Armor	When hit, a poisonous DoT cloud harms nearby targets for 10s (damage increases per equipped piece).	1 Plague Walker Serum	120	No	RAID: Gleaming Depths (Stage 4 only)				
 Pin-Pointer's	Weapon: Ranged	+20% weak spot damage.	1 Formula P	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
-Polished	Weapon: Ranged • Weapon: Melee	The Greater the Equipped Item Condition (+100%), the Greater the Weapon Damage (up to +60%)	1 Improved Repair Kit	120	No	RAID: Gleaming Depths (only Stage 4) • Bigfoot				
+Polished	Weapon: Ranged • Weapon: Melee	Weapon damage increases the higher the item condition is (up to +60% damage).	1 Improved Repair Kit	120	No	RAID: Gleaming Depths (only Stage 4) • Bigfoot				
 Pounder's	Weapon: Melee	+10% damage per Onslaught stack, +10 max stacks.	1 Fury	120	Yes	RAID: Gleaming Depths (Stage 3 only)				
-Propelling	Power Armor	Movement & Sprint Speed Increased by +5% (up to +25% on Full Stack)	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (only Stage 5) • Bigfoot				
+Propelling	Power Armor	Increases movement and sprint speed (+5% up to +25% on full stack).	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (only Stage 5) • Bigfoot				
 Pyromaniac's	Weapon: Ranged • Weapon: Melee	When a combat target is burning, deal +50% bonus damage.	15 Asbestos	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
-Radioactive-Powered	Power Armor	Gain +2 AP Regeneration at the Cost of RADS (up to +10 AP on Full Stack)	5 Pure Cobalt Flux	120	Yes	RAID: Gleaming Depths (only Stage 1) • Bigfoot				
+Radioactive-Powered	Power Armor	Grants +2 AP regeneration at the cost of taking RADs.	5 Pure Cobalt Flux	120	Yes	RAID: Gleaming Depths (only Stage 1) • Bigfoot				
 Raging	Armor • Power Armor	Upon being hit, deal +3% Damage for 10 seconds.	1 Buffout	120	No	Infestations				
 Ranger's	Armor • Power Armor	Ranged weapons deal +5% bonus damage (up to +25% on full stack).	1 Psychobuff	120	Yes	RAID: Gleaming Depths (Stage 4 only)				
 Satiated	Weapon: Ranged • Weapon: Melee	[Human] Kills Restore Hunger and Thirst. [Ghoul] Kills Restore Feral	5 Salt	120	No	Infestations				
@@ -29,7 +29,7 @@ Rejuvenator's	Power Armor	Gradually restores wearer's & teammates Health & AP wi
 Runner's	Armor • Power Armor	Sprinting AP cost reduced by -20% (up to -100% on full stack).	10 Purified Water	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
 Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)				
 Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)				
-Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot				
+Stabilizer's	Weapon: Ranged	Improves stability and handling.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot				
 Stalwart's	Power Armor	Power Armor breaks 5% slower for owner & teammates within 50ft (up to 25% on full stack).	1 Bobblehead: Leader	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
 Tanky's	Armor • Power Armor	+200 DR for 10s when standing still (20s cooldown; up to +1000 on full stack).	5 Ballistic Fiber	120	Yes	RAID: Gleaming Depths (Stage 2 only)				
 Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Infestations				
