@@ -328,7 +328,7 @@ export default function EffectTable({
             >
               <div className="min-w-0">
                 <div className="font-semibold flex items-center gap-1.5 flex-wrap min-w-0 w-full">
-                  <span className="break-words">{row.effect.name}</span>
+                  <span className="break-words" style={{ overflowWrap: "anywhere" }}>{row.effect.name}</span>
                   {isNewMod(row.effect.name) && (
                     <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
                       New
@@ -452,7 +452,7 @@ export default function EffectTable({
               <div className="effect-tile__header">
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold flex items-center gap-1.5 flex-wrap min-w-0 w-full">
-                    <span className="break-words">{row.effect.name}</span>
+                    <span className="break-words" style={{ overflowWrap: "anywhere" }}>{row.effect.name}</span>
                     {isNewMod(row.effect.name) && (
                       <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
                         New

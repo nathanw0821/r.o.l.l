@@ -122,7 +122,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Encircler's	Weapon: Ranged • Weapon: Melee	+10% damage for each combat target around you (up to +50%).	1 Overdrive	120	Yes	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Fencer's	Weapon: Melee	+12.5% melee damage; +12.5% per nearby teammate (up to +50% on full team).	1 Bobblehead: Melee	120	No	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Fracturer's	Weapon: Ranged • Weapon: Melee	When crippling limbs, they explode and deal up to 50 explosion damage to nearby targets.	25 Gunpowder	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Hauler's	Armor • Power Armor	Increases Carrying Capacity by 30.	5 Cloth	120	No	Only in Infestations			
+4 Star	Hauler's	Armor • Power Armor	Increases Carrying Capacity by 30.	5 Cloth	120	No	Infestations			
 4 Star	Icemen's	Weapon: Melee	Applies Cryo on hit that slows targets when dealing damage in V.A.T.S.	5 Pure Fluorescent Flux	120	Yes	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Limit-Breaking	Armor • Power Armor	Each worn armor piece reduces critical hit cost by -10% (up to -50% on full stack).	5 Pure Violet Flux	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Miasma's	Armor • Power Armor	When hit, a poisonous DoT cloud harms nearby targets for 10s (damage increases per equipped piece).	1 Plague Walker Serum	120	No	RAID: Gleaming Depths (Stage 4 only)			
@@ -132,9 +132,9 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Propelling	Power Armor	Movement & Sprint Speed Increased by +5% (up to +25% on Full Stack)	15 Vault Steel Scrap	120	No	RAID: Gleaming Depths (only Stage 5) & Bigfoot			
 4 Star	Pyromaniac's	Weapon: Ranged • Weapon: Melee	When a combat target is burning, deal +50% bonus damage.	15 Asbestos	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Radioactive-Powered	Power Armor	Gain +2 AP Regeneration at the Cost of RADS (up to +10 AP on Full Stack)	5 Pure Cobalt Flux	120	Yes	RAID: Gleaming Depths (only Stage 1) & Bigfoot			
-4 Star	Raging	Armor • Power Armor	Upon being hit, deal +3% Damage for 10 seconds.	1 Buffout	120	No	Only in Infestations			
+4 Star	Raging	Armor • Power Armor	Upon being hit, deal +3% Damage for 10 seconds.	1 Buffout	120	No	Infestations			
 4 Star	Ranger's	Armor • Power Armor	Ranged weapons deal +5% bonus damage (up to +25% on full stack).	1 Psychobuff	120	Yes	RAID: Gleaming Depths (Stage 4 only)			
-4 Star	Satiated	Weapon: Ranged • Weapon: Melee	[Human] Kills Restore Hunger and Thirst. [Ghoul] Kills Restore Feral	5 Salt	120	No	Only in Infestations			
+4 Star	Satiated	Weapon: Ranged • Weapon: Melee	[Human] Kills Restore Hunger and Thirst. [Ghoul] Kills Restore Feral	5 Salt	120	No	Infestations			
 4 Star	Reflective	Power Armor	Return 10% of damage received back toward enemy target (up to 50% on full stack).	1 Bobblehead: Science	120	No	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Rejuvenator's	Power Armor	Gradually restores wearer's & teammates Health & AP within 50ft.	5 Stimpak Diffuser	120	No	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Runner's	Armor • Power Armor	Sprinting AP cost reduced by -20% (up to -100% on full stack).	10 Purified Water	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
@@ -143,7 +143,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) & Bigfoot			
 4 Star	Stalwart's	Power Armor	Power Armor breaks 5% slower for owner & teammates within 50ft (up to 25% on full stack).	1 Bobblehead: Leader	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Tanky's	Armor • Power Armor	+200 DR for 10s when standing still (20s cooldown; up to +1000 on full stack).	5 Ballistic Fiber	120	Yes	RAID: Gleaming Depths (Stage 2 only)			
-4 Star	Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Only in Infestations			
+4 Star	Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Infestations			
 4 Star	Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Grants 3% Melee Weapon Speed and 3% Reload Speed per Kill Streak stack (max 30% each).	1 Adrenal Reaction Serum	120	No				
-4 Star	Vector	Armor • Power Armor	Gain 10% Bonus V.A.T.S. Accuracy Against Distant Targets	1 Magnifying Glass	120	No	Only in Infestations			
+4 Star	Vector	Armor • Power Armor	Gain 10% Bonus V.A.T.S. Accuracy Against Distant Targets	1 Magnifying Glass	120	No	Infestations			
 4 Star	Viper's	Weapon: Ranged • Weapon: Melee	When a combat target is poisoned, deal +50% bonus damage.	15 Acid	120	Yes	RAID: Gleaming Depths (Stage 5 only)			

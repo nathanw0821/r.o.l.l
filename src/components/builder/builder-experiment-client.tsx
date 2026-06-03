@@ -323,10 +323,13 @@ const ModPickerOption = React.memo(function ModPickerOption({
     >
       <div className="flex items-start justify-between gap-2 w-full">
         <span className="min-w-0 font-bold flex flex-wrap items-center gap-1.5 text-xs">
-          <span className={cn(
-            "break-words",
-            unlock === "unlocked" ? "text-accent" : "text-foreground"
-          )}>
+          <span 
+            className={cn(
+              "break-words",
+              unlock === "unlocked" ? "text-accent" : "text-foreground"
+            )}
+            style={{ overflowWrap: "anywhere" }}
+          >
             {mod.name}
           </span>
           {isNewMod(mod.name) && (

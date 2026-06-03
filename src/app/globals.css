@@ -1502,7 +1502,8 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
 }
 
 .effect-tile__status {
