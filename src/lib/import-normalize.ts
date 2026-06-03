@@ -1,4 +1,4 @@
-﻿export type ImportCellValue = string | number | boolean | null | undefined;
+export type ImportCellValue = string | number | boolean | null | undefined;
 
 function normalizeRaw(value: ImportCellValue) {
   if (value === null || value === undefined) return "";
@@ -153,7 +153,7 @@ export function normalizeDisplayNotes(value: ImportCellValue, origins?: string[]
   if (!origins || origins.length === 0) return deduped;
   const stripped = stripOriginsFromNotes(deduped, origins);
   const cleaned = dedupeNoteSegments(stripped ?? "") ?? stripped;
-  return cleaned ?? null;
+  return cleaned || deduped;
 }
 
 export function extractOriginsFromNotes(value: ImportCellValue): string[] {
