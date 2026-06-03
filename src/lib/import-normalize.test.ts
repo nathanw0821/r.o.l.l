@@ -4,18 +4,18 @@ import { normalizeDisplayNotes, extractOriginsFromNotes } from "./import-normali
 describe("import-normalize display notes", () => {
   it("should extract correct origins from notes", () => {
     expect(extractOriginsFromNotes("Infestations")).toEqual(["Infestations"]);
-    expect(extractOriginsFromNotes("RAID: Gleaming Depths (only Stage 3) & Bigfoot")).toEqual(["Gleaming Depths & Bigfoot"]);
+    expect(extractOriginsFromNotes("RAID: Gleaming Depths (only Stage 3) • Bigfoot")).toEqual(["Bigfoot", "Gleaming Depths"]);
     expect(extractOriginsFromNotes("Burning Springs • Bounty Hunting: Head Hunt & Grunt Hunt")).toEqual(["Burning Springs", "Head Hunt & Grunt Hunt"]);
   });
 
   it("should normalize display notes and strip origins correctly", () => {
-    // For Aegis: origin is "Gleaming Depths & Bigfoot" (non-contiguous in the note due to parentheses, so it remains unstripped)
+    // For Aegis: origins are "Bigfoot" and "Gleaming Depths"
     expect(
       normalizeDisplayNotes(
-        "RAID: Gleaming Depths (only Stage 3) & Bigfoot",
-        ["Gleaming Depths & Bigfoot"]
+        "RAID: Gleaming Depths (only Stage 3) • Bigfoot",
+        ["Bigfoot", "Gleaming Depths"]
       )
-    ).toBe("RAID: Gleaming Depths (only Stage 3) & Bigfoot");
+    ).toBe("RAID: (only Stage 3)");
 
     // For Bounty Hunting: origin includes Burning Springs and Head Hunt & Grunt Hunt
     expect(
