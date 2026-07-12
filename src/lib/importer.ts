@@ -3,7 +3,12 @@ import path from "path";
 import type ExcelJS from "exceljs";
 import { safeRevalidateTag } from "@/lib/revalidate";
 import { z } from "zod";
-import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
+import {
+  GUEST_PROGRESS_SUMMARY_TAG,
+  ROLL_CATALOG_CACHE_TAG,
+  ACTIVE_DATASET_VERSION_TAG,
+  TIER_CACHE_TAG
+} from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { getActiveCharacterId } from "@/lib/character";
 import { normalizeNoteValue, parseUnlockedValue } from "@/lib/import-normalize";
@@ -626,5 +631,7 @@ export async function importWorkbook(buffer: Uint8Array, filename: string, userI
   });
   safeRevalidateTag(ROLL_CATALOG_CACHE_TAG, { expire: 0 });
   safeRevalidateTag(GUEST_PROGRESS_SUMMARY_TAG, { expire: 0 });
+  safeRevalidateTag(ACTIVE_DATASET_VERSION_TAG, { expire: 0 });
+  safeRevalidateTag(TIER_CACHE_TAG, { expire: 0 });
   return { ok: true, datasetVersionId: datasetVersion.id, baseline: baselineCounts } as const;
 }

@@ -10,3 +10,10 @@ export const BUILDER_MODS_CACHE_TAG = "builder-mods-catalog";
 export function sharedBuildTagForSlug(slug: string) {
   return `shared-build:${slug}`;
 }
+
+/** Active dataset version cache. */
+export const ACTIVE_DATASET_VERSION_TAG = "active-dataset-version";
+
+/** Star tier metadata cache. */
+export const TIER_CACHE_TAG = "roll-tier";
+
