@@ -3,7 +3,12 @@ import { cache } from "react";
 import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
+import {
+  GUEST_PROGRESS_SUMMARY_TAG,
+  ROLL_CATALOG_CACHE_TAG,
+  ACTIVE_DATASET_VERSION_TAG,
+  TIER_CACHE_TAG
+} from "@/lib/cache-tags";
 import { extractOriginsFromNotes, normalizeDisplayNotes } from "@/lib/import-normalize";
 import { appendLegendaryModSourceNotes } from "@/lib/legendary-mod-sources";
 import { applyImportedProfileIfNeeded, getImportedBaselineMap } from "@/lib/profile";
@@ -150,6 +155,16 @@ function mergeCatalogWithUserState(
   });
 }
 
+const getTierByLabelCached = unstable_cache(
+  async (label: string) =>
+    prisma.tier.findUnique({
+      where: { label },
+      select: { id: true, label: true }
+    }),
+  ["roll-tier-by-label"],
+  { tags: [TIER_CACHE_TAG] }
+);
+
 async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string): Promise<MergedEffectTierRow[]> {
   await ensureProfileApplied(userId);
   const [dataset, characterId, tier] = await Promise.all([
@@ -157,7 +172,7 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
     getActiveCharacterId(userId),
     tierLabel === undefined
       ? Promise.resolve(null)
-      : prisma.tier.findUnique({ where: { label: tierLabel }, select: { id: true, label: true } })
+      : getTierByLabelCached(tierLabel)
   ]);
 
   if (!dataset) return [];
@@ -209,11 +224,18 @@ export async function getGlobalProgressSummary(userId: string) {
   return { total, unlocked, percent };
 }
 
+const getActiveDatasetVersionCached = unstable_cache(
+  async () =>
+    prisma.datasetVersion.findFirst({
+      where: { isActive: true },
+      orderBy: { importedAt: "desc" }
+    }),
+  ["active-dataset-version"],
+  { tags: [ACTIVE_DATASET_VERSION_TAG] }
+);
+
 export async function getActiveDatasetVersion() {
-  return prisma.datasetVersion.findFirst({
-    where: { isActive: true },
-    orderBy: { importedAt: "desc" }
-  });
+  return getActiveDatasetVersionCached();
 }
 
 export type LightweightProgressRow = {

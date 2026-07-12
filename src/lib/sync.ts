@@ -1,7 +1,12 @@
 import { getSyncUrlError } from "@/lib/app-config";
 import { createHash } from "node:crypto";
 import { safeRevalidateTag } from "@/lib/revalidate";
-import { GUEST_PROGRESS_SUMMARY_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
+import {
+  GUEST_PROGRESS_SUMMARY_TAG,
+  ROLL_CATALOG_CACHE_TAG,
+  ACTIVE_DATASET_VERSION_TAG,
+  TIER_CACHE_TAG
+} from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { normalizeNoteValue, type ImportCellValue } from "@/lib/import-normalize";
 
@@ -724,5 +729,7 @@ export async function runSync() {
 
   safeRevalidateTag(ROLL_CATALOG_CACHE_TAG, { expire: 0 });
   safeRevalidateTag(GUEST_PROGRESS_SUMMARY_TAG, { expire: 0 });
+  safeRevalidateTag(ACTIVE_DATASET_VERSION_TAG, { expire: 0 });
+  safeRevalidateTag(TIER_CACHE_TAG, { expire: 0 });
   return { ok: true, datasetVersionId, errors } as const;
 }
