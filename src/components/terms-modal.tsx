@@ -138,7 +138,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
             <div className="flex items-center gap-3 text-accent border-b border-border pb-3">
               <ShieldAlert className="h-7 w-7 text-accent animate-pulse" />
               <div>
-                <span className="text-[0.65rem] font-bold tracking-widest text-accent/60 block uppercase">SYSTEM REVISION REQ_30MAY2026</span>
+                <span className="text-[0.65rem] font-bold tracking-widest text-accent/60 block uppercase">SYSTEM REVISION REQ_12JUL2026</span>
                 <h2 className="text-xl font-bold tracking-tight">Terms &amp; Privacy Update Required</h2>
               </div>
             </div>
@@ -151,8 +151,8 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
             <div className="rounded-[var(--radius)] border border-border bg-panel p-4 space-y-2 text-xs">
               <div className="font-bold text-accent">&gt; CORE DOCUMENTATION REVISIONS:</div>
               <ul className="list-none space-y-2 text-foreground/75 pl-2">
-                <li>• <Link href="/terms" target="_blank" className="underline hover:text-accent font-bold">Terms of Service (May 30, 2026)</Link></li>
-                <li>• <Link href="/privacy" target="_blank" className="underline hover:text-accent font-bold">Privacy Policy (May 30, 2026)</Link></li>
+                <li>• <Link href="/terms" target="_blank" className="underline hover:text-accent font-bold">Terms of Service (July 12, 2026)</Link></li>
+                <li>• <Link href="/privacy" target="_blank" className="underline hover:text-accent font-bold">Privacy Policy (July 12, 2026)</Link></li>
               </ul>
             </div>
 
@@ -165,12 +165,12 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                   className="w-full flex items-center justify-between text-left px-3 py-2 border border-border bg-panel rounded-[var(--radius)] text-xs font-bold text-accent hover:border-accent/40 transition-colors font-mono"
                 >
                   <span>{activeSection === "tos" ? "[-] HIDE FULL TERMS OF SERVICE" : "[+] READ FULL TERMS OF SERVICE"}</span>
-                  <span className="text-[0.65rem] opacity-65 font-normal">May 30, 2026</span>
+                  <span className="text-[0.65rem] opacity-65 font-normal">July 12, 2026</span>
                 </button>
                 {activeSection === "tos" && (
                   <div className="mt-1.5 border border-border/80 bg-panel/40 p-4 rounded-[var(--radius)] text-xs text-foreground/80 leading-relaxed max-h-48 overflow-y-auto font-sans">
                     <h3 className="font-bold text-accent mb-2 font-mono">Terms of Service for R.O.L.L.</h3>
-                    <p className="mb-2 font-bold font-mono">Last Updated: May 30, 2026</p>
+                    <p className="mb-2 font-bold font-mono">Last Updated: July 12, 2026</p>
                     <div className="space-y-3 font-sans">
                       <div>
                         <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">1. Acceptance of Terms</h4>
@@ -200,6 +200,10 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                         <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">7. Changes to Terms</h4>
                         <p>We reserve the right to modify these Terms at any time. If a revision is material, we will provide a mandatory notice upon your next login. Your continued use of the service after changes go into effect constitutes acceptance of the new terms.</p>
                       </div>
+                      <div>
+                        <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">8. Public Visitor Metrics</h4>
+                        <p>R.O.L.L. tracks and displays aggregate, anonymized unique visitor traffic counts in the public web UI. By using this service, you acknowledge and agree that a temporary, browser-cached indicator (via localStorage) will be utilized daily to report unique visits to the server without transmitting or storing any personal data or IP addresses, as detailed in our Privacy Policy.</p>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -212,12 +216,12 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                   className="w-full flex items-center justify-between text-left px-3 py-2 border border-border bg-panel rounded-[var(--radius)] text-xs font-bold text-accent hover:border-accent/40 transition-colors font-mono"
                 >
                   <span>{activeSection === "privacy" ? "[-] HIDE FULL PRIVACY POLICY" : "[+] READ FULL PRIVACY POLICY"}</span>
-                  <span className="text-[0.65rem] opacity-65 font-normal">May 30, 2026</span>
+                  <span className="text-[0.65rem] opacity-65 font-normal">July 12, 2026</span>
                 </button>
                 {activeSection === "privacy" && (
                   <div className="mt-1.5 border border-border/80 bg-panel/40 p-4 rounded-[var(--radius)] text-xs text-foreground/80 leading-relaxed max-h-48 overflow-y-auto font-sans">
                     <h3 className="font-bold text-accent mb-2 font-mono">Privacy Policy for R.O.L.L.</h3>
-                    <p className="mb-2 font-bold font-mono">Last Updated: May 30, 2026</p>
+                    <p className="mb-2 font-bold font-mono">Last Updated: July 12, 2026</p>
                     <div className="space-y-3 font-sans">
                       <div>
                         <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">1. Information We Collect</h4>
@@ -225,6 +229,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                         <ul className="list-disc pl-4 space-y-1 mt-1 text-[0.7rem] text-foreground/75">
                           <li><strong>Account Information:</strong> Your chosen username and email address, which are collected strictly for authentication and account recovery purposes.</li>
                           <li><strong>Usage Logs &amp; Metrics:</strong> When enabled, we collect basic, anonymized session metrics and interaction logs strictly to debug system performance, optimize server latency, and improve database query efficiency.</li>
+                          <li><strong>Unique Visit Tracking:</strong> To display aggregate site traffic stats inside the web UI, the application utilizes local client-side storage (<code>localStorage</code>) to record a stateless daily visit indicator. This is used solely to prevent duplicate counting during a 24-hour period, is automatically reset daily, and does not collect, process, or store IP addresses, cookies, or any personal data on our servers.</li>
                         </ul>
                       </div>
                       <div>

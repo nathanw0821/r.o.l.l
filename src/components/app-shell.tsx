@@ -25,6 +25,7 @@ import { usePersistedAppNavigation } from "@/components/use-persisted-app-naviga
 import { useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 import { CharacterSelector } from "@/components/character-selector";
 import MigrationNotice from "@/components/migration-notice";
+import { useVisitorTracking } from "@/lib/hooks/use-visitor-tracking";
 
 type AppNavLink = {
   href: string;
@@ -104,6 +105,7 @@ export default function AppShell({
   const pathname = usePathname();
   const { canGoBack, goBack } = usePersistedAppNavigation();
   const { data: session } = useSession();
+  useVisitorTracking();
   const isSignedIn = Boolean(session?.user);
   const authKey = session?.user?.id ?? "guest";
   const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL ?? null;

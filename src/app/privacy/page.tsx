@@ -17,7 +17,7 @@ export default function PrivacyPage() {
             <span className="text-[0.7rem] uppercase font-mono tracking-widest text-accent font-bold">SYSTEM PROTOCOL // DOCUMENT 102</span>
             <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono">Privacy Policy for R.O.L.L.</h1>
             <p className="text-sm text-foreground/50 mt-1 font-mono">
-              Last Updated: May 30, 2026
+              Last Updated: July 12, 2026
             </p>
           </div>
           <BrandStack />
@@ -36,6 +36,10 @@ export default function PrivacyPage() {
             <li>
               <strong>Usage Logs &amp; Metrics:</strong> When enabled, we collect basic, anonymized session metrics and interaction logs strictly to debug system performance, optimize server latency, and improve database query efficiency.
             </li>
+            <li>
+              <strong>Unique Visit Tracking:</strong> To display aggregate site traffic stats inside the web UI, the application utilizes local client-side storage (<code>localStorage</code>) to record a stateless daily visit indicator. This is used solely to prevent duplicate counting during a 24-hour period, is automatically reset daily, and does not collect, process, or store IP addresses, cookies, or any personal data on our servers.
+            </li>
+
           </ul>
         </section>
 
