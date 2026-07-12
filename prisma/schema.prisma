@@ -450,13 +450,3 @@ model VisitorStats {
 
   @@index([date])
 }
-
-model DailyUniqueVisitor {
-  id        String   @id @default(cuid())
-  date      DateTime @default(now())
-  hash      String
-  isUser    Boolean  @default(false)
-
-  @@unique([date, hash])
-  @@index([date])
-}

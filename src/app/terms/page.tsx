@@ -17,7 +17,7 @@ export default function TermsPage() {
             <span className="text-[0.7rem] uppercase font-mono tracking-widest text-accent font-bold">SYSTEM PROTOCOL // DOCUMENT 101</span>
             <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono">Terms of Service for R.O.L.L.</h1>
             <p className="text-sm text-foreground/50 mt-1 font-mono">
-              Last Updated: May 30, 2026
+              Last Updated: July 12, 2026
             </p>
           </div>
           <BrandStack />
@@ -74,6 +74,14 @@ export default function TermsPage() {
             We reserve the right to modify these Terms at any time. If a revision is material, we will provide a mandatory notice upon your next login. Your continued use of the service after changes go into effect constitutes acceptance of the new terms.
           </p>
         </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">8. Public Visitor Metrics</h2>
+          <p>
+            R.O.L.L. tracks and displays aggregate, anonymized unique visitor traffic counts in the public web UI. By using this service, you acknowledge and agree that a temporary, browser-cached indicator (via localStorage) will be utilized daily to report unique visits to the server without transmitting or storing any personal data or IP addresses, as detailed in our Privacy Policy.
+          </p>
+        </section>
+
       </div>
 
       <div className="flex justify-between items-center text-xs font-mono text-foreground/40 px-2">
