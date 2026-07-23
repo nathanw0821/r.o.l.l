@@ -291,27 +291,29 @@ export default function SummaryClient({
       const width = is4k ? 3840 : 1920;
       const height = is4k ? 2160 : 1080;
       
-      const computed = window.getComputedStyle(document.body);
-      const getVar = (name: string, fallback: string) => computed.getPropertyValue(name).trim() || fallback;
-      
       const colors = {
-        bgSecondary: getVar("--background-secondary", "#13171b"),
-        bgPrimary: getVar("--background-primary", "#0f1113"),
-        border: getVar("--border", "#2d3339"),
-        textPrimary: getVar("--text-primary", "#f0ece7"),
-        textMuted: getVar("--text-muted", "#c0b7ad"),
-        accent: getVar("--color-accent", "#f3a24d"),
-        success: getVar("--color-success", "#4cc38a"),
-        warning: getVar("--color-warning", "#e55353"),
-        surfaceSecondary: getVar("--surface-secondary", "#1e2328"),
-        surface: getVar("--surface", "#171a1d"),
+        bgSecondary: "#0b0f12",
+        bgPrimary: "#12181d",
+        border: "#2b3945",
+        borderRow: "rgba(43, 57, 69, 0.4)",
+        textPrimary: "#eef7f5",
+        textMuted: "#8ba6a0",
+        accent: "#f3a24d",
+        success: "#4cc38a",
+        warning: "#e55353",
+        surfaceSecondary: "#18222a",
+        surface: "#12181d",
       };
 
       exportContainer = document.createElement("div");
       exportContainer.id = "roll-image-export-temp";
-      exportContainer.style.position = "absolute";
-      exportContainer.style.left = "-99999px";
+      exportContainer.style.position = "fixed";
+      exportContainer.style.left = "0";
       exportContainer.style.top = "0";
+      exportContainer.style.zIndex = "-9999";
+      exportContainer.style.opacity = "1";
+      exportContainer.style.pointerEvents = "none";
+      exportContainer.style.overflow = "hidden";
       exportContainer.style.width = `${width}px`;
       exportContainer.style.height = `${height}px`;
       exportContainer.style.padding = is4k ? "36px" : "18px";
@@ -363,7 +365,7 @@ export default function SummaryClient({
               const countColor = row.modCount > 0 ? colors.accent : colors.textMuted;
               
               return `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: ${2 * scale}px ${6 * scale}px; border-bottom: 1px solid color-mix(in srgb, ${colors.border} 40%, transparent); font-size: ${11 * scale}px; line-height: 1.2; box-sizing: border-box; min-height: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: ${2 * scale}px ${6 * scale}px; border-bottom: 1px solid ${colors.borderRow}; font-size: ${11 * scale}px; line-height: 1.2; box-sizing: border-box; min-height: 0;">
                   <span style="font-weight: 700; color: ${isUnlocked ? colors.textPrimary : colors.textMuted}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 65%;">${row.effect.name}</span>
                   <div style="display: flex; align-items: center; gap: ${10 * scale}px;">
                     <span style="font-weight: 800; color: ${countColor}; font-size: ${10.5 * scale}px;">${countText}</span>
@@ -391,12 +393,18 @@ export default function SummaryClient({
       exportContainer.appendChild(innerWrapper);
       document.body.appendChild(exportContainer);
       
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      
       const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(exportContainer, {
         width,
         height,
         pixelRatio: 1,
         cacheBust: true,
+        style: {
+          opacity: "1",
+          visibility: "visible",
+        }
       });
       
       const link = document.createElement("a");
