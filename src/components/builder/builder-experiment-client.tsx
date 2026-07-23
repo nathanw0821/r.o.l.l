@@ -1783,7 +1783,7 @@ export default function BuilderExperimentClient({
               </div>
               <div className="grid gap-2 text-[0.78rem]">
                 <label className="flex flex-col">
-                  <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Shell Core</span>
+                  <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Cosmetic Base</span>
                   <select
                     className="h-8 rounded border border-border/30 bg-background/55 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer"
                     value={payload.underarmor.shellId}
@@ -1802,7 +1802,7 @@ export default function BuilderExperimentClient({
                   </select>
                 </label>
                 <label className="flex flex-col">
-                  <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Lining Mod</span>
+                  <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Lining Mod (Resistances)</span>
                   <select
                     className="h-8 rounded border border-border/30 bg-background/55 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer"
                     value={payload.underarmor.liningId ?? "none"}
@@ -1817,6 +1817,28 @@ export default function BuilderExperimentClient({
                     }
                   >
                     {UNDERARMOR_LININGS.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col">
+                  <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Underarmor Style (S.P.E.C.I.A.L. Bonus)</span>
+                  <select
+                    className="h-8 rounded border border-border/30 bg-background/55 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer"
+                    value={payload.underarmor.styleId ?? "none"}
+                    onChange={(e) =>
+                      setPayload((p) => ({
+                        ...p,
+                        underarmor: {
+                          ...p.underarmor,
+                          styleId: e.target.value === "none" ? null : e.target.value,
+                        },
+                      }))
+                    }
+                  >
+                    {UNDERARMOR_STYLES.map((o) => (
                       <option key={o.id} value={o.id}>
                         {o.label}
                       </option>
