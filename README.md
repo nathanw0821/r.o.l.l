@@ -1,114 +1,78 @@
-# ☢️ R.O.L.L. (Record Of Legendary Loadouts)
+# ☢️ R.O.L.L. · Record Of Legendary Loadouts
 
-[![Aesthetic: CRT Green](https://img.shields.io/badge/Aesthetic-CRT%20Green-green?style=flat-square)](#)
-[![Stack: Next.js + Tailwind](https://img.shields.io/badge/Stack-Next.js%20%7C%20Prisma%20%7C%20Tailwind-blueviolet?style=flat-square)](#)
-[![Runtime: Cloudflare Workers](https://img.shields.io/badge/Runtime-Cloudflare%20Edge-blue?style=flat-square)](#)
+[![Site](https://img.shields.io/badge/Live-fallout76.wiki-f3a24d?style=for-the-badge&logo=cloudflare)](https://fallout76.wiki)
+[![Node](https://img.shields.io/badge/Node.js-24%2B-43853d?style=for-the-badge&logo=node.js)](https://nodejs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-000000?style=for-the-badge&logo=next.js)](https://nextjs.org)
+[![Runtime](https://img.shields.io/badge/Runtime-Cloudflare%20Workers-f38020?style=for-the-badge&logo=cloudflareworkers)](https://workers.cloudflare.com)
 
-A premium, terminal-styled **Fallout 76 companion application** engineered to manage legendary mod unlocks, run advanced OCR local-first scans, and simulate character loadouts in a high-fidelity sandbox environment.
-
-Designed with a high-fidelity, glow-overlay **Pip-Boy CRT green theme**, R.O.L.L. brings the immersive aesthetic of the Wasteland directly to your desktop and mobile browser.
-
----
-
-## ⚡ Core Features
-
-### 🗃️ 1. Registry Management
-Track your learned legendary mods across multiple accounts and platforms (**PC, Xbox, PlayStation**). Mark legendary effects from **1★ to 3★** as *Unlocked* or *Seeking*, sync plans, and organize your trade/craft inventory with a centralized profile dashboard.
-
-### 📷 2. S.C.A.N. (Beta) — Local-First OCR
-Skip manual input. Paste or drag-and-drop in-game screenshots of your Fallout 76 inventory or Pip-Boy screens. Our local-first OCR processing system runs completely in your browser via Tesseract.js, instantly parsing weapon and armor listings to auto-identify and sync learned mods directly to your cloud registry.
-
-### 🛠️ 3. B.U.I.L.D. (Beta) — Interactive Sandbox
-A robust, high-fidelity engineering workbench simulating real-time character loadouts.
-*   **Schematic Layout Grid:** A visual chassis mapping representing individual gear slots (Helmet, Chest/Torso, Left Arm, Right Arm, Left Leg, Right Leg).
-*   **Dynamic Customization:** Toggle legendary effects tier-by-tier and slot-by-slot, apply material modifications, misc mods (Targeting HUD, Jetpacks, etc.), underarmor shells, and mutations.
-*   **Live SPECIAL Telemetry:** Instantly see your DR (Damage Resistance), ER (Energy Resistance), FR (Fire Resistance), CR (Cryo Resistance), PR (Poison Resistance), RR (Rad Resistance), and total SPECIAL stats recalculate as you alter your gear.
-*   **Intelligent Constraints:** Automatically handles regular armor sets (5 pieces, helm lock) and Power Armor sets (6 pieces, helm misc mod support with locked legendary slots) using exact schematic payload layouts.
+**R.O.L.L.** is a high-performance, terminal-styled companion application for **Fallout 76**. Built for PC and mobile, it helps players track legendary mod crafting unlocks, run local-first OCR inventory scans, and simulate character loadouts in a real-time sandbox.
 
 ---
 
-## 🚀 Quick Start & User Guide
+## ✨ Features at a Glance
 
-1.  **Sync & Authenticate:** Securely register or sign in to persist your registry, progress achievements, and custom loadouts across all your devices.
-2.  **All Effects Registry:** Jump into the **All Effects** or **Summary** dashboard to manually browse legendary effects, filtering by tier or slot to flag items as *Unlocked* or *Seeking*.
-3.  **Process Screenshots:** Head to the **S.C.A.N.** terminal to drop or upload batch screenshots. Review OCR parsed cards, verify, and commit them directly to your active plan database.
-4.  **Simulate Build Stats:** Head to the **B.U.I.L.D.** bay to select your active chassis (e.g., Secret Service Armor, Union Power Armor, or standard weapon matrix). Customize components and verify resistance metrics.
-
----
-
-## 🛠️ Development & Engineering
-
-### Requirements
-*   **Node.js**: `v20.19.0` or higher
-*   **Package Manager**: `npm`
-*   **Database**: PostgreSQL or Prisma-compatible client
-
-### Setup Local Environment
-
-1.  **Clone the Repository:**
-    ```bash
-    git clone https://github.com/nathanw/r.o.l.l.git
-    cd r.o.l.l
-    ```
-
-2.  **Configure Environment Variables:**
-    Create a `.env` or `.env.local` file in the root directory:
-    ```env
-    DATABASE_URL="postgresql://user:password@localhost:5432/roll_db"
-    NEXTAUTH_SECRET="your-nextauth-secret-key"
-    NEXTAUTH_URL="http://localhost:3000"
-    
-    # OAuth Providers
-    GOOGLE_CLIENT_ID="your-google-client-id"
-    GOOGLE_CLIENT_SECRET="your-google-client-secret"
-    ```
-
-3.  **Install Dependencies:**
-    ```bash
-    npm install
-    ```
-
-4.  **Seed Database Catalog:**
-    Set up standard builder databases, legendary mods metadata, and schema structures:
-    ```bash
-    npx prisma db push
-    npm run db:seed
-    npm run db:seed:builder
-    ```
-
-5.  **Run Development Server:**
-    ```bash
-    npm run dev
-    ```
-    Open [http://localhost:3000](http://localhost:3000) to view the terminal UI in your browser.
-
-### Key Terminal Commands
-
-*   `npm run lint` - Execute ESLint static analysis checking.
-*   `npm run typecheck` - Run TypeScript compiler checks (`tsc --noEmit`).
-*   `npm run test` - Execute fast unit and integration tests using Vitest.
-*   `npm run build` - Generate an optimized production build using Webpack and OpenNext.
-*   `npm run release:check` - Unify linting, schema validation, tests, and production compilation to check integrity prior to commits.
+| Feature | Description |
+| :--- | :--- |
+| **🗃️ Registry Tracker** | Track learned & seeking legendary mods across **1★ to 4★** tiers for multi-character rosters. |
+| **🛠️ B.U.I.L.D. Sandbox** | Simulate full gear sets (Armor, Power Armor, Weapons, Underarmor, Mutations) with real-time DR/ER/RR & SPECIAL stats. |
+| **📷 S.C.A.N. (OCR)** | Drag-and-drop Pip-Boy inventory screenshots for local in-browser OCR parsing via Tesseract.js. |
+| **⚡ Auto-Pull Sync** | Daily 1:00 PM EST automated data scraping from NukaKnights with Discord Webhook notifications. |
+| **🖼️ PNG Exporter** | Export single-screen **1080p/4K Summary Grids** and visual Pip-Boy build loadout cards. |
+| **📱 Offline PWA** | Progressive Web App support for second-screen and offline in-game use. |
 
 ---
 
-## 🌐 Deployment Configuration
+## ⚡ Quick Start
 
-R.O.L.L. is architected to compile via **OpenNext** and deploy onto the **Cloudflare Workers / Edge Runtime** for global, low-latency execution.
+```bash
+# 1. Clone & Install
+git clone https://github.com/nathanw0821/r.o.l.l.git
+cd r.o.l.l
+npm ci
 
-### Cloudflare Compatibilities
-In `wrangler.toml`, compatibility settings are configured to support outbound OIDC handshakes and secure database pools on edge platforms:
-```toml
-compatibility_flags = ["nodejs_compat", "enable_nodejs_http_modules"]
+# 2. Setup Environment (.env)
+cp .env.example .env
+
+# 3. Push Database & Launch Dev Server
+npx prisma db push
+npm run dev
 ```
-This is required to resolve NextAuth OIDC token exchanges by enabling local Node.js network streams within the edge isolates.
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🤝 Acknowledgments
+## 🛠️ CLI Toolkit
 
-R.O.L.L. is proudly built with and inspired by excellent resources developed by the dedicated **Fallout 76 community**:
-*   **Nuka Knights** (Datamined articles, resistance structures, and backwoods patch notes)
-*   **Nukes & Dragons** (Character build calculations and overlay specifications)
-*   **The Duchess Flame** (Registry maps and legendary mechanics guides)
-*   **The Fallout Wiki** (General descriptions and base item assets)
+| Command | Purpose |
+| :--- | :--- |
+| `npm run dev` | Launch Next.js local development server |
+| `npm run typecheck` | Run TypeScript type checks (`tsc --noEmit`) |
+| `npm run lint` | Run ESLint static analysis |
+| `npm run test` | Run Vitest unit suite (24 tests) |
+| `npm run build:cf` | Build production Cloudflare Worker bundle (`opennextjs-cloudflare`) |
+| `npm run release:check` | Run full pre-commit verification (lint + validate + test + build) |
+
+---
+
+## 🏗️ Architecture
+
+* **Framework**: Next.js 16 (App Router + Server Actions)
+* **Database**: PostgreSQL (Neon Serverless) + Prisma ORM 7
+* **Auth**: NextAuth.js (JWT HTTP-Only Session Cookies + Google OIDC + Password Hashing)
+* **Deployment**: Cloudflare Workers (Edge Runtime) via OpenNext
+* **Styling**: Vanilla CSS Design System + Tailwind Utilities + Radix Primitives
+
+---
+
+## 🤝 Credits & Acknowledgments
+
+R.O.L.L. is built for the Fallout 76 community with reference data from:
+* **[NukaKnights](https://nukaknights.com)** · Legendary effect descriptions, crafting costs, and patch datamines
+* **Nukes & Dragons** · Character build math & SPECIAL mechanics
+* **The Duchess Flame** · Registry guides and crafting component maps
+* **Fallout Wiki** · Base item assets and lore reference
+
+---
+
+Licensed under [MIT](LICENSE) © R.O.L.L. Team
