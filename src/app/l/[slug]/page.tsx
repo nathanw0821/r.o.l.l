@@ -24,6 +24,7 @@ import {
   listEquippedModsInBenchOrder
 } from "@/lib/builder/compatibility";
 import { getCachedPublishedSharedBuild } from "@/lib/builder/get-shared-build";
+import { getCachedBuilderModCatalog } from "@/lib/builder/get-builder-mod-catalog";
 import { normalizeBuilderPayload } from "@/lib/builder/normalize-builder-payload";
 import {
   getPowerArmorEquippedFlatStats,
@@ -40,27 +41,8 @@ import {
 } from "@/lib/builder/underarmor";
 import { getSortedMutationLabels, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
-import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
-
-const modDetailSelect = {
-  id: true,
-  slug: true,
-  name: true,
-  starRank: true,
-  category: true,
-  subCategory: true,
-  description: true,
-  effectMath: true,
-  craftingCost: true,
-  allowedOnPowerArmor: true,
-  allowedOnArmor: true,
-  allowedOnWeapon: true,
-  infestationOnly: true,
-  fifthStarEligible: true,
-  ghoulSpecialCap: true
-} as const;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -110,9 +92,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   }
 
   const piece = getBaseGearPiece(payload.basePieceId);
-  const modRows = await prisma.legendaryMod.findMany({
-    select: modDetailSelect
-  });
+  const modRows = await getCachedBuilderModCatalog();
 
   const dtoList: BuilderModDTO[] = modRows.map((m) => ({
     id: m.id,
