@@ -46,7 +46,7 @@ export async function exportBuilderLoadoutCard(params: {
         <div style="background: rgba(18, 24, 30, 0.85); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; items-center: center; gap: 8px;">
-              <span style="font-size: 15px; font-weight: 900; color: #4cc38a; text-transform: uppercase; tracking: 0.05em;">${mod.name}</span>
+              <span style="font-size: 15px; font-weight: 900; color: #4cc38a; text-transform: uppercase; tracking: 0.05em;">${mod.starRank}★ ${mod.name}</span>
               ${count > 1 ? `<span style="background: rgba(76, 195, 138, 0.15); border: 1px solid rgba(76, 195, 138, 0.3); color: #4cc38a; border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 900;">×${count}</span>` : ""}
             </div>
             <div style="font-size: 11px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em;">
