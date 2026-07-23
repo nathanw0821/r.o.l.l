@@ -151,22 +151,22 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
     if (style?.effectMath) layers.push(style.effectMath);
   }
   if (isFullArmorSetPayload(payload)) {
-    for (const layer of armorCraftingEffectLayers(payload.armorPieceCrafting)) {
+    for (const layer of armorCraftingEffectLayers(payload.armorPieceCrafting, piece?.kind === "powerArmor")) {
       layers.push(layer);
     }
   } else if (piece?.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
     const torsoRow = payload.armorPieceCrafting[0];
-    for (const layer of armorCraftingEffectLayers([torsoRow ?? { materialModId: "none", miscModId: "none" }])) {
+    for (const layer of armorCraftingEffectLayers([torsoRow ?? { materialModId: "none", miscModId: "none" }], true)) {
       layers.push(layer);
     }
     if (payload.powerArmorHelmetId && isKnownPowerArmorHelmetPieceId(payload.powerArmorHelmetId)) {
-      for (const layer of armorCraftingEffectLayers([payload.powerArmorHelmetCrafting])) {
+      for (const layer of armorCraftingEffectLayers([payload.powerArmorHelmetCrafting], true)) {
         layers.push(layer);
       }
     }
   } else if (piece?.kind === "powerArmor" && isPowerArmorHelmetBasePiece(piece)) {
     const row = payload.armorPieceCrafting[0];
-    for (const layer of armorCraftingEffectLayers([row ?? { materialModId: "none", miscModId: "none" }])) {
+    for (const layer of armorCraftingEffectLayers([row ?? { materialModId: "none", miscModId: "none" }], true)) {
       layers.push(layer);
     }
   }
@@ -175,12 +175,21 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   if (piece?.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)) {
     layers.push(powerArmorFrameIntrinsicEffectMath());
   }
-  const mutationLayer = sandboxMutationMathLayer(payload.mutationIds, payload.ignoreMutationPenalties);
+  const mutationLayer = sandboxMutationMathLayer(
+    payload.mutationIds,
+    payload.ignoreMutationPenalties,
+    {
+      strangeInNumbersMutatedTeammates:
+        payload.hasStrangeInNumbers && payload.mutationIds.length > 0 ? 4 : 0
+    }
+  );
   if (mutationLayer) layers.push(mutationLayer);
   const totals = aggregateEffectMath(equippedOrdered, {
     ghoul: payload.ghoul,
     extraLayers: layers,
-    baseArmorStats
+    baseArmorStats,
+    baseSpecial: payload.baseSpecial,
+    legendaryPerkIds: payload.legendaryPerkIds
   });
   const shopping = buildShoppingList(equippedOrdered);
 

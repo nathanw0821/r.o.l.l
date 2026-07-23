@@ -1202,7 +1202,7 @@ export default function BuilderExperimentClient({
             B.U.I.L.D. SANDBOX TERMINAL
           </h1>
           <p className="text-[0.84rem] font-mono text-foreground/50 uppercase mt-0.5 tracking-wider">
-            Battle Utility &amp; Inventory Logistics Diagnostic // Nuka Knights (Backwoods Edition)
+            Battle Utility &amp; Inventory Logistics Diagnostic
           </p>
         </div>
         <div className="flex flex-wrap gap-2 font-mono text-[0.78rem]">
@@ -1532,7 +1532,27 @@ export default function BuilderExperimentClient({
                   variant="outline"
                   size="sm"
                   className="h-9 w-full text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
-                  onClick={() => exportBuilderLoadoutCard({ piece, payload, totals, groupedEffects: groupedLegendaryEffects })}
+                  onClick={() =>
+                    exportBuilderLoadoutCard({
+                      piece,
+                      payload,
+                      totals,
+                      groupedEffects: groupedLegendaryEffects,
+                      modRows: mods,
+                      shoppingLines: shopping.lines,
+                      underarmorLabels: {
+                        shell: findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label ?? "Standard",
+                        lining: findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label ?? "None",
+                        style: findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId)?.label ?? "None"
+                      },
+                      mutationSummary:
+                        payload.mutationIds.length > 0
+                          ? payload.mutationIds
+                              .map((id) => SANDBOX_MUTATIONS.find((m) => m.id === id)?.label ?? id)
+                              .join(" · ")
+                          : null
+                    })
+                  }
                 >
                   Export Build Card (PNG)
                 </Button>
