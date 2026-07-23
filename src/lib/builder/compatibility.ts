@@ -518,31 +518,72 @@ export function listEquippedLegendariesWithBenchLabels(
   payload: BuilderPayload,
   mods: BuilderModDTO[]
 ): EquippedLegendaryBenchLine[] {
-  const byId = new Map(mods.map((m) => [m.id, m]));
+  const map = new Map(mods.map((m) => [m.id, m]));
+  const isSet = isMultiPiecePayload(payload);
   const out: EquippedLegendaryBenchLine[] = [];
 
-  if (isMultiPiecePayload(payload)) {
-    payload.armorLegendaryModIds.forEach((row, pieceIndex) => {
-      const slot = ARMOR_SET_SLOT_LABELS[pieceIndex] ?? `Slot ${pieceIndex + 1}`;
-      row.forEach((id, starIndex) => {
-        if (!id) return;
-        const mod = byId.get(id);
-        if (!mod) return;
-        const star = BENCH_STAR_LABELS[starIndex] ?? `Star ${starIndex + 1}`;
-        out.push({ mod, benchLabel: `${slot} · ${star}` });
-      });
-    });
-    return out;
+  if (isSet) {
+    const pieces = payload.armorPieceCrafting.length;
+    for (let p = 0; p < pieces; p++) {
+      const pieceName = ARMOR_SET_SLOT_LABELS[p] ?? `Piece ${p + 1}`;
+      const stars = payload.armorLegendaryModIds[p] ?? [null, null, null, null];
+      for (let s = 0; s < 4; s++) {
+        const id = stars[s];
+        if (!id) continue;
+        const mod = map.get(id);
+        if (!mod) continue;
+        const starName = BENCH_STAR_LABELS[s] ?? `${s + 1}th star`;
+        out.push({ mod, benchLabel: `${pieceName} · ${starName}` });
+      }
+    }
+  } else {
+    for (let s = 0; s < 4; s++) {
+      const id = payload.legendaryModIds[s];
+      if (!id) continue;
+      const mod = map.get(id);
+      if (!mod) continue;
+      const starName = BENCH_STAR_LABELS[s] ?? `${s + 1}th star`;
+      out.push({ mod, benchLabel: starName });
+    }
+  }
+  return out;
+}
+
+export type GroupedLegendaryEffect = {
+  mod: BuilderModDTO;
+  count: number;
+  benchLabels: string[];
+};
+
+/**
+ * Groups equipped legendary lines by mod ID, sorted strictly by:
+ * 1. Star Rank ascending (1★ → 2★ → 3★ → 4★)
+ * 2. Effect Name alphabetical ascending (A → Z)
+ */
+export function getGroupedLegendaryEffects(
+  lines: EquippedLegendaryBenchLine[]
+): GroupedLegendaryEffect[] {
+  const map = new Map<string, { mod: BuilderModDTO; count: number; benchLabels: string[] }>();
+  for (const { mod, benchLabel } of lines) {
+    const existing = map.get(mod.id);
+    if (existing) {
+      existing.count++;
+      existing.benchLabels.push(benchLabel);
+    } else {
+      map.set(mod.id, { mod, count: 1, benchLabels: [benchLabel] });
+    }
   }
 
-  payload.legendaryModIds.forEach((id, starIndex) => {
-    if (!id) return;
-    const mod = byId.get(id);
-    if (!mod) return;
-    const star = BENCH_STAR_LABELS[starIndex] ?? `Star ${starIndex + 1}`;
-    out.push({ mod, benchLabel: star });
+  const list = Array.from(map.values());
+
+  // Sort: 1) starRank ascending, 2) mod.name alphabetical A -> Z
+  list.sort((a, b) => {
+    const rankDiff = a.mod.starRank - b.mod.starRank;
+    if (rankDiff !== 0) return rankDiff;
+    return a.mod.name.localeCompare(b.mod.name);
   });
-  return out;
+
+  return list;
 }
 
 import {

@@ -19,6 +19,7 @@ import {
   SPECIAL_FULL_NAMES,
   buildShoppingList,
   collectEquippedLegendaryModIds,
+  getGroupedLegendaryEffects,
   isFullArmorSetPayload,
   listEquippedLegendariesWithBenchLabels,
   listEquippedModsInBenchOrder
@@ -183,19 +184,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   });
   const shopping = buildShoppingList(equippedOrdered);
 
-  const groupedLegendaryEffects = (() => {
-    const map = new Map<string, { mod: BuilderModDTO; count: number; benchLabels: string[] }>();
-    for (const { mod, benchLabel } of equippedLegendaryBenchLines) {
-      const existing = map.get(mod.id);
-      if (existing) {
-        existing.count++;
-        existing.benchLabels.push(benchLabel);
-      } else {
-        map.set(mod.id, { mod, count: 1, benchLabels: [benchLabel] });
-      }
-    }
-    return Array.from(map.values());
-  })();
+  const groupedLegendaryEffects = getGroupedLegendaryEffects(equippedLegendaryBenchLines);
 
   const mutationSummary =
     payload.mutationIds.length > 0
@@ -307,7 +296,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                     <li key={mod.id} className="text-[0.78rem] leading-snug border-b border-border/10 pb-2">
                       <div className="flex items-baseline gap-2">
                         <span className="font-black text-accent/90 uppercase tracking-wide">
-                          {mod.name}
+                          {mod.starRank}★ {mod.name}
                         </span>
                         {count > 1 && (
                           <span className="rounded-full bg-accent/10 px-1.5 py-0.2 text-[0.84rem] font-black text-accent border border-accent/20">
