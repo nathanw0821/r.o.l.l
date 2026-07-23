@@ -9,7 +9,6 @@ import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import {
   ArrowLeft,
   Boxes,
-  LayoutDashboard,
   ListChecks,
   PanelLeftClose,
   PanelLeftOpen,
@@ -40,16 +39,18 @@ type AppNavLink = {
   prefetch?: boolean;
 };
 
-const links: AppNavLink[] = [
+const trackingLinks: AppNavLink[] = [
   { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
-  { href: "/overview", label: "Overview", icon: LayoutDashboard, activePrefixes: ["/overview"] },
-  { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false },
-  { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles },
-  { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
   { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
-  { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" }
+  { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
+  { href: "/all-effects", label: "All Effects", icon: ListChecks }
+];
+
+const experimentalLinks: AppNavLink[] = [
+  { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false },
+  { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles }
 ];
 
 type TierProgressSummary = {
@@ -118,8 +119,8 @@ export default function AppShell({
   const { map: localProgress } = useLocalProgress(!isSignedIn);
   useBuilderBetaAccess(isAdmin);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
-  const visibleLinks = React.useMemo(
-    () => links.filter((link) => {
+  const visibleTrackingLinks = React.useMemo(
+    () => trackingLinks.filter((link) => {
       if (link.requiresAuth && !isSignedIn) return false;
       return true;
     }),
@@ -361,7 +362,7 @@ export default function AppShell({
               <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
               <span>Back</span>
             </button>
-            {visibleLinks.map((link) => {
+            {visibleTrackingLinks.map((link) => {
               const active = isNavLinkActive(pathname, link);
               const Icon = link.icon;
               const tier = link.tierLabel ? tierLookup.get(link.tierLabel) : null;
@@ -379,14 +380,36 @@ export default function AppShell({
                 >
                   <Icon className="h-4 w-4" />
                   <span>{linkLabel}</span>
-                  {(link.href === "/build" || link.href === "/screenshot-assist") && (
-                    <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[0.6875rem] font-bold tracking-wider text-accent">
-                      BETA
-                    </span>
-                  )}
                 </Link>
               );
             })}
+
+            <div className="mt-6 pt-4 border-t border-border/20 space-y-1">
+              {!sidebarCollapsed && (
+                <div className="px-3 mb-1 text-[0.6875rem] font-black uppercase tracking-widest text-foreground/40 font-mono">
+                  BETA &amp; EXPERIMENTAL
+                </div>
+              )}
+              {experimentalLinks.map((link) => {
+                const active = isNavLinkActive(pathname, link);
+                const Icon = link.icon;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    prefetch={false}
+                    aria-label={link.ariaLabel ?? link.label}
+                    className={cn("app-nav__link", active && "app-nav__link--active")}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{link.label}</span>
+                    <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[0.6875rem] font-bold tracking-wider text-accent">
+                      BETA
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
 
 
           </nav>

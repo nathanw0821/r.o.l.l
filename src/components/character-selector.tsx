@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { User, ChevronDown, Monitor, Smartphone, Layout, Server, Check } from "lucide-react";
+import Link from "next/link";
+import { User, ChevronDown, Monitor, Smartphone, Layout, Server, Check, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CharacterManager } from "@/components/character-manager";
 import { setActiveCharacter } from "@/actions/character";
@@ -144,7 +145,15 @@ export function CharacterSelector({
               </div>
             ))}
             
-            <div className="mt-1 border-t border-border/40 pt-1">
+            <div className="mt-1 border-t border-border/40 pt-1 space-y-1">
+              <Link
+                href="/overview"
+                onClick={() => setIsExpanded(false)}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-bold text-accent hover:bg-accent/10 transition-all border border-accent/20"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                <span>Account Overview &amp; Settings</span>
+              </Link>
               <CharacterManager 
                 characters={data.characters} 
                 gameAccounts={data.gameAccounts} 
