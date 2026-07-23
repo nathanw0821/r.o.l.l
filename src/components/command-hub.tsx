@@ -182,7 +182,8 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   }, []);
 
   return (
-    <div ref={hubRef} className={cn("command-hub", expanded && "command-hub--open")}>
+    <>
+      <div ref={hubRef} className={cn("command-hub", expanded && "command-hub--open")}>
       <div className="command-hub__bar">
         <div className="command-hub__search relative">
           <Search className="h-4 w-4 text-foreground/50 shrink-0" />
@@ -689,5 +690,27 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
         </div>
       ) : null}
     </div>
+      
+      {/* Floating Quick-Filter button on mobile */}
+      <button
+        type="button"
+        onClick={() => {
+          setExpanded(true);
+          searchInputRef.current?.focus();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+        className={cn(
+          "md:hidden fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-accent text-accent-foreground font-mono text-xs font-black uppercase shadow-xl border border-accent/40 backdrop-blur-md active:scale-95 transition-all",
+          expanded && "hidden"
+        )}
+        aria-label="Open Command Hub Filters"
+      >
+        <SlidersHorizontal className="h-4 w-4 shrink-0" />
+        <span>Quick Filters</span>
+        {hasActiveFilters && (
+          <span className="h-2 w-2 rounded-full bg-warning animate-ping" />
+        )}
+      </button>
+    </>
   );
 }

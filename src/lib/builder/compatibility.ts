@@ -6,6 +6,7 @@ import {
 import { type BaseGearPiece, getBaseGearPiece } from "@/lib/builder/base-gear";
 import { isGhoulBlockedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
+import { UNDERARMOR_STYLES } from "@/lib/builder/underarmor";
 
 /** Normalize catalog subCategory for comparison (matches site-style labels). */
 function normalizeWeaponSubLabel(raw: string | null | undefined): string {
@@ -510,7 +511,14 @@ const STAR_MODULE_COSTS: Record<number, number> = {
   4: 120
 };
 
-export function buildShoppingList(mods: BuilderModDTO[]): { modules: number; lines: ShoppingLine[] } {
+export function buildShoppingList(
+  mods: BuilderModDTO[],
+  opts?: {
+    underarmor?: { shellId?: string | null; liningId?: string | null; styleId?: string | null };
+    pieceKind?: string;
+    isMultiPiece?: boolean;
+  }
+): { modules: number; lines: ShoppingLine[] } {
   let modules = 0;
   const map = new Map<string, number>();
 
@@ -529,7 +537,7 @@ export function buildShoppingList(mods: BuilderModDTO[]): { modules: number; lin
         map.set(name, (map.get(name) ?? 0) + count);
       }
     } else if (mod.extraComponent) {
-      // Parse extraComponent strings like "1 Adrenal Reaction Serum" or "1 Bloodbug Proboscis, 1 Stinging Barb"
+      // Parse extraComponent strings like "1 Adrenal Reaction Serum" or "1 Bloodbug Proboscis"
       const parts = mod.extraComponent.split(/;|,|•/);
       for (const part of parts) {
         const trimmed = part.trim();
@@ -546,6 +554,56 @@ export function buildShoppingList(mods: BuilderModDTO[]): { modules: number; lin
     }
   }
 
+  // Underarmor Linings & Styles Requirements
+  if (opts?.underarmor) {
+    const { liningId, styleId } = opts.underarmor;
+    if (liningId && liningId !== "none") {
+      if (liningId === "shielded") {
+        map.set("Ballistic Fiber", (map.get("Ballistic Fiber") ?? 0) + 11);
+        map.set("Adhesive", (map.get("Adhesive") ?? 0) + 15);
+        map.set("Circuitry", (map.get("Circuitry") ?? 0) + 12);
+        map.set("Pure Cobalt Flux", (map.get("Pure Cobalt Flux") ?? 0) + 4);
+      } else if (liningId === "protective") {
+        map.set("Ballistic Fiber", (map.get("Ballistic Fiber") ?? 0) + 9);
+        map.set("Adhesive", (map.get("Adhesive") ?? 0) + 12);
+        map.set("Circuitry", (map.get("Circuitry") ?? 0) + 10);
+        map.set("Pure Cobalt Flux", (map.get("Pure Cobalt Flux") ?? 0) + 2);
+      } else if (liningId === "resistant") {
+        map.set("Ballistic Fiber", (map.get("Ballistic Fiber") ?? 0) + 7);
+        map.set("Adhesive", (map.get("Adhesive") ?? 0) + 9);
+        map.set("Circuitry", (map.get("Circuitry") ?? 0) + 8);
+      } else if (liningId === "treated") {
+        map.set("Ballistic Fiber", (map.get("Ballistic Fiber") ?? 0) + 4);
+        map.set("Adhesive", (map.get("Adhesive") ?? 0) + 6);
+      } else if (liningId === "standard") {
+        map.set("Ballistic Fiber", (map.get("Ballistic Fiber") ?? 0) + 2);
+        map.set("Adhesive", (map.get("Adhesive") ?? 0) + 3);
+      }
+    }
+
+    if (styleId && styleId !== "none") {
+      const styleObj = UNDERARMOR_STYLES.find((s) => s.id === styleId);
+      const styleName = styleObj ? styleObj.label.split(" (")[0] : "Underarmor Style Plan";
+      map.set(`Plan: ${styleName}`, (map.get(`Plan: ${styleName}`) ?? 0) + 1);
+      map.set("Adhesive", (map.get("Adhesive") ?? 0) + 15);
+      map.set("Rubber", (map.get("Rubber") ?? 0) + 10);
+    }
+  }
+
+  // Base Gear Crafting Scraps
+  const pieceCount = opts?.isMultiPiece ? 5 : 1;
+  if (opts?.pieceKind !== "weapon") {
+    map.set("Ballistic Fiber", (map.get("Ballistic Fiber") ?? 0) + 10 * pieceCount);
+    map.set("Screws", (map.get("Screws") ?? 0) + 8 * pieceCount);
+    map.set("Springs", (map.get("Springs") ?? 0) + 6 * pieceCount);
+    map.set("Steel", (map.get("Steel") ?? 0) + 20 * pieceCount);
+    map.set("Leather", (map.get("Leather") ?? 0) + 6 * pieceCount);
+  } else {
+    map.set("Steel", (map.get("Steel") ?? 0) + 25);
+    map.set("Screws", (map.get("Screws") ?? 0) + 10);
+    map.set("Wood / Plastic", (map.get("Wood / Plastic") ?? 0) + 15);
+  }
+
   const lines = Array.from(map.entries())
     .filter(([label]) => {
       const lower = label.toLowerCase();
@@ -554,7 +612,8 @@ export function buildShoppingList(mods: BuilderModDTO[]): { modules: number; lin
     .map(([label, count]) => ({ label, count }));
 
   if (modules > 0) {
-    lines.unshift({ label: "Legendary modules (total)", count: modules });
+    lines.unshift({ label: "Legendary modules", count: modules });
   }
+
   return { modules, lines };
 }

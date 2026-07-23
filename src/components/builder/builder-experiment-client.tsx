@@ -26,6 +26,7 @@ import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-expo
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import ProgressToggle from "@/components/progress-toggle";
 import {
   ARMOR_SET_SLOT_LABELS,
@@ -833,8 +834,8 @@ export default function BuilderExperimentClient({
   }, [payload.ghoul, equippedModsOrdered]);
 
   const shopping = React.useMemo(
-    () => buildShoppingList(equippedModsOrdered),
-    [equippedModsOrdered],
+    () => buildShoppingList(equippedModsOrdered, { underarmor: payload.underarmor, pieceKind: piece.kind, isMultiPiece }),
+    [equippedModsOrdered, payload.underarmor, piece.kind, isMultiPiece],
   );
 
   const assignSlot = React.useCallback(
@@ -1248,74 +1249,124 @@ export default function BuilderExperimentClient({
               <Activity className="h-3.5 w-3.5" /> [ S.P.E.C.I.A.L. TELEMETRY ]
             </div>
             
-            <div className="space-y-3">
-              {BUILDER_SPECIAL_KEYS.map((key) => {
-                const live = totals[key];
-                const base = payload.baseSpecial[key] || 1;
-                const delta = live - base;
-                const percent = Math.min(100, Math.max(5, (live / 20) * 100));
-                
-                return (
-                  <div key={key} className="space-y-1 font-mono">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-accent/90 cursor-help" title={SPECIAL_FULL_NAMES[key] || key.toUpperCase()}>
-                        {BUILDER_SPECIAL_LABELS[key]}
-                      </span>
-                      <div className="flex items-center gap-1 text-[0.84rem]">
-                        <span className="font-black text-foreground">{live}</span>
-                        {delta !== 0 && (
-                          <span className={cn(
-                            "text-[0.84rem] px-1 rounded font-black tracking-tight",
-                            delta > 0 ? "text-accent bg-accent/10 border border-accent/20" : "text-danger bg-danger/10 border border-danger/20"
-                          )}>
-                            {delta > 0 ? "+" : ""}{delta}
-                          </span>
-                        )}
+            <TooltipProvider delayDuration={150}>
+              <div className="space-y-3">
+                {BUILDER_SPECIAL_KEYS.map((key) => {
+                  const live = totals[key];
+                  const base = payload.baseSpecial[key] || 1;
+                  const delta = live - base;
+                  const percent = Math.min(100, Math.max(5, (live / 20) * 100));
+
+                  // Breakdown lines for SPECIAL
+                  const bLines: { source: string; val: string }[] = [
+                    { source: "Base S.P.E.C.I.A.L.", val: `${base}` }
+                  ];
+
+                  const style = findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId);
+                  if (style?.effectMath && style.effectMath[key]) {
+                    bLines.push({ source: `${style.label.split(" (")[0]}`, val: `+${style.effectMath[key]}` });
+                  }
+
+                  payload.legendaryPerkIds.forEach((id) => {
+                    const perk = LEGENDARY_PERK_CARDS[id];
+                    if (perk?.specialBonus && perk.specialBonus[key]) {
+                      bLines.push({ source: perk.label.split(" (")[0], val: `+${perk.specialBonus[key]}` });
+                    }
+                  });
+
+                  payload.legendaryModIds.forEach((id, idx) => {
+                    if (!id) return;
+                    const mod = mods.find((m) => m.id === id);
+                    if (mod?.effectMath && mod.effectMath[key]) {
+                      bLines.push({ source: `${mod.name} (${idx + 1}★)`, val: `+${mod.effectMath[key]}` });
+                    }
+                  });
+
+                  if (payload.ghoul && key === "cha") {
+                    bLines.push({ source: "Ghoul Biology", val: "-10" });
+                  }
+                  
+                  return (
+                    <div key={key} className="space-y-1 font-mono">
+                      <div className="flex items-center justify-between text-xs">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="font-bold text-accent/90 cursor-help hover:underline decoration-accent/40 decoration-dashed underline-offset-2">
+                              {BUILDER_SPECIAL_LABELS[key]}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="bg-background/95 border-border/70 p-2.5 font-mono text-[0.78rem] shadow-xl space-y-1.5 min-w-[200px]">
+                            <div className="font-black text-accent border-b border-border/20 pb-1 flex justify-between">
+                              <span>{SPECIAL_FULL_NAMES[key] || key.toUpperCase()}</span>
+                              <span>Total: {live}</span>
+                            </div>
+                            <div className="space-y-1 text-foreground/80 text-[0.75rem]">
+                              {bLines.map((b, i) => (
+                                <div key={i} className="flex justify-between gap-3">
+                                  <span className="text-foreground/60">{b.source}</span>
+                                  <span className="font-bold text-accent">{b.val}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+
+                        <div className="flex items-center gap-1 text-[0.84rem]">
+                          <span className="font-black text-foreground">{live}</span>
+                          {delta !== 0 && (
+                            <span className={cn(
+                              "text-[0.84rem] px-1 rounded font-black tracking-tight",
+                              delta > 0 ? "text-accent bg-accent/10 border border-accent/20" : "text-danger bg-danger/10 border border-danger/20"
+                            )}>
+                              {delta > 0 ? "+" : ""}{delta}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {/* Progress track */}
+                      <div className="h-1.5 w-full bg-background/60 rounded border border-border/15 overflow-hidden relative">
+                        <div 
+                          className="h-full bg-accent shadow-[0_0_6px_var(--color-accent)] transition-all duration-200"
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+                      {/* Mini inline baseline increment/decrement */}
+                      <div className="flex items-center gap-1 mt-0.5 justify-end text-[0.72rem]">
+                        <span className="text-foreground/30 mr-1">Base: {base}</span>
+                        <button
+                          type="button"
+                          className="w-3.5 h-3.5 rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
+                          onClick={() => {
+                            const val = Math.max(1, base - 1);
+                            setPayload(p => ({
+                              ...p,
+                              baseSpecial: { ...p.baseSpecial, [key]: val }
+                            }));
+                            triggerBuilderAchievement("build_stats");
+                          }}
+                        >
+                          -
+                        </button>
+                        <button
+                          type="button"
+                          className="w-3.5 h-3.5 rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
+                          onClick={() => {
+                            const val = Math.min(15, base + 1);
+                            setPayload(p => ({
+                              ...p,
+                              baseSpecial: { ...p.baseSpecial, [key]: val }
+                            }));
+                            triggerBuilderAchievement("build_stats");
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
-                    {/* Progress track */}
-                    <div className="h-1.5 w-full bg-background/60 rounded border border-border/15 overflow-hidden relative">
-                      <div 
-                        className="h-full bg-accent shadow-[0_0_6px_var(--color-accent)] transition-all duration-200"
-                        style={{ width: `${percent}%` }}
-                      />
-                    </div>
-                    {/* Mini inline baseline increment/decrement */}
-                    <div className="flex items-center gap-1 mt-0.5 justify-end text-[0.72rem]">
-                      <span className="text-foreground/30 mr-1">Base: {base}</span>
-                      <button
-                        type="button"
-                        className="w-3.5 h-3.5 rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
-                        onClick={() => {
-                          const val = Math.max(1, base - 1);
-                          setPayload(p => ({
-                            ...p,
-                            baseSpecial: { ...p.baseSpecial, [key]: val }
-                          }));
-                          triggerBuilderAchievement("build_stats");
-                        }}
-                      >
-                        -
-                      </button>
-                      <button
-                        type="button"
-                        className="w-3.5 h-3.5 rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
-                        onClick={() => {
-                          const val = Math.min(15, base + 1);
-                          setPayload(p => ({
-                            ...p,
-                            baseSpecial: { ...p.baseSpecial, [key]: val }
-                          }));
-                          triggerBuilderAchievement("build_stats");
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            </TooltipProvider>
           </div>
 
           {/* Tactical Resistance cards */}
@@ -1324,37 +1375,78 @@ export default function BuilderExperimentClient({
               <Shield className="h-3.5 w-3.5" /> [ RESISTANCE RATINGS ]
             </div>
             
-            <div className="grid grid-cols-2 gap-2 font-mono">
-              {[
-                { k: "dr", l: "DR", icon: Shield, col: "text-blue-400/80" },
-                { k: "er", l: "ER", icon: Zap, col: "text-yellow-400/80" },
-                { k: "fr", l: "FR", icon: Flame, col: "text-orange-400/80" },
-                { k: "cr", l: "CR", icon: Snowflake, col: "text-cyan-400/80" },
-                { k: "pr", l: "PR", icon: Droplets, col: "text-green-400/80" },
-                { k: "rr", l: "RR", icon: Radiation, col: "text-lime-400/80" },
-              ].map(({ k, l, icon: Icon, col }) => {
-                const live = totals[k as keyof BuilderEffectTotals] as number;
-                const base = intrinsicBenchTotals[k as keyof BuilderEffectTotals] as number;
-                const delta = live - base;
-                
-                return (
-                  <div key={k} className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors cursor-help" title={RESIST_FULL_NAMES[k] || l}>
-                    <div className="flex items-center gap-1 text-[0.72rem] text-foreground/45 font-black uppercase tracking-wider">
-                      <Icon className={cn("h-3 w-3 shrink-0", col)} />
-                      <span>{l}</span>
-                    </div>
-                    <div className="flex items-baseline justify-between mt-1">
-                      <span className="text-sm font-black text-foreground">{live}</span>
-                      {delta !== 0 && (
-                        <span className="text-[0.72rem] text-accent font-black tracking-tight bg-accent/5 px-1 border border-accent/20 rounded">
-                          +{delta}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <TooltipProvider delayDuration={150}>
+              <div className="grid grid-cols-2 gap-2 font-mono">
+                {[
+                  { k: "dr", l: "DR", icon: Shield, col: "text-blue-400/80" },
+                  { k: "er", l: "ER", icon: Zap, col: "text-yellow-400/80" },
+                  { k: "fr", l: "FR", icon: Flame, col: "text-orange-400/80" },
+                  { k: "cr", l: "CR", icon: Snowflake, col: "text-cyan-400/80" },
+                  { k: "pr", l: "PR", icon: Droplets, col: "text-green-400/80" },
+                  { k: "rr", l: "RR", icon: Radiation, col: "text-lime-400/80" },
+                ].map(({ k, l, icon: Icon, col }) => {
+                  const live = totals[k as keyof BuilderEffectTotals] as number;
+                  const base = intrinsicBenchTotals[k as keyof BuilderEffectTotals] as number;
+                  const delta = live - base;
+
+                  // Breakdown lines for Resistance
+                  const rLines: { source: string; val: string }[] = [];
+                  if (base > 0) rLines.push({ source: "Base / Gear Base", val: `${base}` });
+
+                  const lining = findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId);
+                  if (lining?.effectMath && lining.effectMath[k]) {
+                    rLines.push({ source: `${lining.label.split(" (")[0]}`, val: `+${lining.effectMath[k]}` });
+                  }
+
+                  payload.legendaryModIds.forEach((id, idx) => {
+                    if (!id) return;
+                    const mod = mods.find((m) => m.id === id);
+                    if (mod?.effectMath && mod.effectMath[k]) {
+                      rLines.push({ source: `${mod.name} (${idx + 1}★)`, val: `+${mod.effectMath[k]}` });
+                    }
+                  });
+                  
+                  return (
+                    <Tooltip key={k}>
+                      <TooltipTrigger asChild>
+                        <div className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors cursor-help">
+                          <div className="flex items-center gap-1 text-[0.72rem] text-foreground/45 font-black uppercase tracking-wider">
+                            <Icon className={cn("h-3 w-3 shrink-0", col)} />
+                            <span>{l}</span>
+                          </div>
+                          <div className="flex items-baseline justify-between mt-1">
+                            <span className="text-sm font-black text-foreground">{live}</span>
+                            {delta !== 0 && (
+                              <span className="text-[0.72rem] text-accent font-black tracking-tight bg-accent/5 px-1 border border-accent/20 rounded">
+                                +{delta}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="bg-background/95 border-border/70 p-2.5 font-mono text-[0.78rem] shadow-xl space-y-1.5 min-w-[210px]">
+                        <div className="font-black text-accent border-b border-border/20 pb-1 flex justify-between">
+                          <span>{RESIST_FULL_NAMES[k] || l}</span>
+                          <span>Total: {live}</span>
+                        </div>
+                        <div className="space-y-1 text-foreground/80 text-[0.75rem]">
+                          {rLines.length === 0 ? (
+                            <div className="text-foreground/40 italic">0 resistances active</div>
+                          ) : (
+                            rLines.map((r, i) => (
+                              <div key={i} className="flex justify-between gap-3">
+                                <span className="text-foreground/60">{r.source}</span>
+                                <span className="font-bold text-accent">{r.val}</span>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            </TooltipProvider>
           </div>
 
         </div>
@@ -1781,11 +1873,11 @@ export default function BuilderExperimentClient({
               <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
                 [ UNDERARMOR SUB-SYSTEMS ]
               </div>
-              <div className="grid gap-2 text-[0.78rem]">
-                <label className="flex flex-col">
+              <div className="grid gap-2.5 text-[0.78rem] w-full max-w-full overflow-hidden">
+                <label className="flex flex-col min-w-0 max-w-full">
                   <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Cosmetic Base</span>
                   <select
-                    className="h-8 rounded border border-border/30 bg-background/55 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer"
+                    className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full max-w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
                     value={payload.underarmor.shellId}
                     onChange={(e) =>
                       setPayload((p) => ({
@@ -1795,16 +1887,16 @@ export default function BuilderExperimentClient({
                     }
                   >
                     {UNDERARMOR_SHELLS.map((o) => (
-                      <option key={o.id} value={o.id}>
+                      <option key={o.id} value={o.id} className="bg-background text-foreground">
                         {o.label}
                       </option>
                     ))}
                   </select>
                 </label>
-                <label className="flex flex-col">
+                <label className="flex flex-col min-w-0 max-w-full">
                   <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Lining Mod (Resistances)</span>
                   <select
-                    className="h-8 rounded border border-border/30 bg-background/55 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer"
+                    className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full max-w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
                     value={payload.underarmor.liningId ?? "none"}
                     onChange={(e) =>
                       setPayload((p) => ({
@@ -1817,16 +1909,16 @@ export default function BuilderExperimentClient({
                     }
                   >
                     {UNDERARMOR_LININGS.map((o) => (
-                      <option key={o.id} value={o.id}>
+                      <option key={o.id} value={o.id} className="bg-background text-foreground">
                         {o.label}
                       </option>
                     ))}
                   </select>
                 </label>
-                <label className="flex flex-col">
+                <label className="flex flex-col min-w-0 max-w-full">
                   <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Underarmor Style (S.P.E.C.I.A.L. Bonus)</span>
                   <select
-                    className="h-8 rounded border border-border/30 bg-background/55 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer"
+                    className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full max-w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
                     value={payload.underarmor.styleId ?? "none"}
                     onChange={(e) =>
                       setPayload((p) => ({
@@ -1839,7 +1931,7 @@ export default function BuilderExperimentClient({
                     }
                   >
                     {UNDERARMOR_STYLES.map((o) => (
-                      <option key={o.id} value={o.id}>
+                      <option key={o.id} value={o.id} className="bg-background text-foreground">
                         {o.label}
                       </option>
                     ))}
