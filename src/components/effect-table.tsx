@@ -251,25 +251,27 @@ export default function EffectTable({
   return (
     <div className="space-y-6">
       {title && (
-        <Card className="primary-page-header">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6">
+        <Card className="primary-page-header border border-border/30 bg-panel shadow-sm font-mono overflow-hidden">
+          <div className="p-6 space-y-4">
             <div className="space-y-1">
-              <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+              <h2 className="text-xl font-mono font-bold uppercase tracking-wider text-foreground">
                 {title}
               </h2>
-              {description && <p className="text-sm text-foreground/60">{description}</p>}
+              {description && <p className="text-sm font-mono text-foreground/60 leading-relaxed">{description}</p>}
             </div>
             
-            <div className="flex flex-col gap-2 min-w-[200px] md:min-w-[280px]">
-              <div className="flex items-center justify-between text-sm font-semibold">
-                <span className="text-foreground/70">Completion Progress</span>
-                <span className="text-accent font-mono">{percent}% ({unlockedCount}/{totalCount})</span>
+            <div className="pt-3 border-t border-border/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
+                <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Total Effects</span>
+                <span className="text-2xl font-mono font-bold text-foreground mt-1">{totalCount}</span>
               </div>
-              <div className="h-2 w-full bg-muted rounded-full overflow-hidden border border-border/40">
-                <div 
-                  className="h-full bg-accent transition-all duration-500 rounded-full" 
-                  style={{ width: `${percent}%` }}
-                />
+              <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
+                <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Unlocked</span>
+                <span className="text-2xl font-mono font-bold text-foreground mt-1">{unlockedCount}</span>
+              </div>
+              <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
+                <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Completion</span>
+                <span className="text-2xl font-mono font-bold text-foreground mt-1">{percent}%</span>
               </div>
             </div>
           </div>
