@@ -9,7 +9,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 2 Star	Agility	Armor • Power Armor	+2 Agility.	1 Bobblehead: Agility	30	No				
 2 Star	Elementalist	Armor • Power Armor	Increase all resistances by 5.	1 Bobblehead: Endurance	30	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
 2 Star	Fierce	Armor • Power Armor	Fortify limb resistance based on Kill Streak count (1% per kill).	1 Bobblehead: Strength	30	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
-2 Star	Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Pus Sac	30	No				
+2 Star	Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Puc Sac	30	No				
 2 Star	Pain Killer	Armor • Power Armor	Gain Health over time while on a Kill Streak; stronger with higher streak.	1 Bobblehead: Medicine	30	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
 2 Star	Perception	Armor • Power Armor	+2 Perception.	1 Bobblehead: Perception	30	No				
 2 Star	Pick Pocketer's	Weapon: Melee	Target kills have 50% chance to grant 1–4 Caps.	1 Bobblehead: Caps	30	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
@@ -42,7 +42,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Satiated	Weapon: Ranged • Weapon: Melee	[Human] Kills Restore Hunger and Thirst. [Ghoul] Kills Restore Feral	5 Salt	120	No	Infestations			
 4 Star	Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Stabilizer's	Weapon: Ranged	Improves stability and handling.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
+4 Star	Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
 4 Star	Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Infestations			
-4 Star	Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Grants 3% Melee Weapon Speed and 3% Reload Speed per Kill Streak stack (max 30% each).	1 Adrenal Reaction Serum	120	No	Bigfoot			
+4 Star	Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Reload Speed & Melee Attack Speed increases based on Killstreak Count (2% per Kill).	1x Adrenal Reaction Serum	120	No	Bigfoot			
 4 Star	Vector	Armor • Power Armor	Gain 10% Bonus V.A.T.S. Accuracy Against Distant Targets	1 Magnifying Glass	120	No	Infestations			
