@@ -1,131 +1,154 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CREDIT_PARAGRAPHS, PRIMARY_REFERENCE_SITES } from "@/content/sources-and-credits";
+import * as React from "react";
+import { Card } from "@/components/ui/card";
+import { PRIMARY_REFERENCE_SITES } from "@/content/sources-and-credits";
+import { Boxes, Camera, Cpu, Layers, ShieldCheck, Zap, ExternalLink, RefreshCw, BookmarkCheck } from "lucide-react";
 
 export default async function OverviewReadmePage() {
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>R.O.L.L. readme</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4 text-sm text-foreground/80">
-            <p>
-              Record Of Legendary Loadouts is a Fallout 76 companion for tracking legendary unlocks, browsing effects,
-              and syncing progress. It is manual-first and built for reliable public hosting.
-            </p>
-
-            <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground/60">Sources &amp; credit</h2>
-              <div className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/78">
-                {CREDIT_PARAGRAPHS.map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </div>
-              <p className="mt-3 text-xs text-foreground/60">
-                Reference links are for attribution and further reading. R.O.L.L. is not affiliated with these sites.
-              </p>
-              <ul className="mt-3 list-none space-y-3 border-t border-border/70 pt-3 text-sm text-foreground/80">
-                {PRIMARY_REFERENCE_SITES.map((s) => (
-                  <li key={s.href}>
-                    <a
-                      href={s.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent"
-                    >
-                      {s.title}
-                    </a>
-                    <span className="text-foreground/65"> — {s.description}</span>
-                    {s.secondary ? (
-                      <div className="mt-1.5 text-xs text-foreground/60">
-                        <a
-                          href={s.secondary.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent"
-                        >
-                          {s.secondary.label}
-                        </a>
-                      </div>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
+    <div className="space-y-6 font-mono">
+      {/* Top Banner Card */}
+      <Card className="border border-border/30 bg-panel shadow-sm font-mono overflow-hidden">
+        <div className="p-6 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-accent text-xs font-black uppercase tracking-widest">
+              <Cpu className="h-4 w-4" />
+              <span>System Protocol &amp; Guide</span>
             </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Track</div>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Summary, Overview, All Effects, star-tier pages, and Still Need.</li>
-                  <li>Locked and Unlocked status editing syncs across views.</li>
-                  <li>Per-tier completion in sidebar and Command Hub.</li>
-                  <li>Undo for the last five changes.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Summary mode</div>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Summary can be locked to prevent accidental toggles.</li>
-                  <li>When locked, selecting an effect opens its location in All Effects.</li>
-                  <li>Long press or hold tap opens All Effects even when unlocked.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Overview tabs</div>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Profile, Achievements, and Readme live under Overview.</li>
-                  <li>Sign in with username/email or linked providers like Google.</li>
-                  <li>Link or unlink providers from your account panel.</li>
-                  <li>Password reset is supported by email.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Sync and backup</div>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Guest progress saves locally in this browser.</li>
-                  <li>Signed-in progress syncs to your account.</li>
-                  <li>Imports and exports support backup, restore, and migration.</li>
-                  <li>Progress reset tools are available in Settings.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Command Hub and layout</div>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Search and filter by status, source, origins, and categories.</li>
-                  <li>Theme, accent, density, scanlines, and color assistance controls.</li>
-                  <li>Sidebar can be collapsed; mobile top bar auto-hides on downward scroll.</li>
-                  <li>Compact is the default density for faster scanning.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4">
-                <div className="text-xs uppercase text-foreground/60">Data</div>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Effects include categories, descriptions, costs, notes, and origins.</li>
-                  <li>Named scrap-source notes are appended where confirmed.</li>
-                  <li>Crafting costs use consistent module and component colors.</li>
-                  <li>Achievements track progress, exploration, and hidden finds.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-[var(--radius)] border border-border bg-panel p-4 md:col-span-2">
-                <div className="text-xs uppercase text-foreground/60">Admin and hosting</div>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  <li>Admin Import and source monitoring maintain the public dataset.</li>
-                  <li>Saved sync sources support manual checks and controlled update runs.</li>
-                  <li>Feedback inbox and Session Assist are available for admin workflows.</li>
-                  <li>The app is built for safer long-term public hosting across patches.</li>
-                </ul>
-              </div>
-            </div>
+            <span className="text-[0.72rem] text-foreground/45 uppercase tracking-wider">v0.1.0 · Cloudflare Edge</span>
           </div>
-        </CardContent>
+          <h1 className="text-2xl font-black uppercase tracking-wider text-foreground">
+            R.O.L.L. · Record Of Legendary Loadouts
+          </h1>
+          <p className="text-sm text-foreground/70 leading-relaxed max-w-3xl font-mono">
+            A premium, high-fidelity Wasteland companion engineered for Fallout 76. Track 1★–4★ legendary crafting unlocks, run in-browser OCR inventory scans, and simulate character loadouts with real-time SPECIAL telemetry.
+          </p>
+        </div>
+      </Card>
+
+      {/* High-Signal Feature Cards */}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
+          <div className="flex items-center gap-2.5 text-accent">
+            <Layers className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">Legendary Registry</h3>
+          </div>
+          <p className="text-xs text-foreground/70 leading-relaxed">
+            Track 148 legendary mod effects across 1★ to 4★ tiers. Sync unlocked or seeking status per character with local &amp; cloud storage.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
+          <div className="flex items-center gap-2.5 text-accent">
+            <Boxes className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">B.U.I.L.D. Sandbox</h3>
+          </div>
+          <p className="text-xs text-foreground/70 leading-relaxed">
+            Simulate custom gear sets (Armor, Power Armor, Weapons, Mutations). Calculate DR/ER/RR and SPECIAL stats with schematic bench tools.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
+          <div className="flex items-center gap-2.5 text-accent">
+            <Camera className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">S.C.A.N. Terminal</h3>
+          </div>
+          <p className="text-xs text-foreground/70 leading-relaxed">
+            Local-first OCR screenshot scanner. Drop Pip-Boy inventory captures to auto-parse and unlock learned mod recipes in seconds.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
+          <div className="flex items-center gap-2.5 text-accent">
+            <RefreshCw className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">Live Auto-Pull Sync</h3>
+          </div>
+          <p className="text-xs text-foreground/70 leading-relaxed">
+            Daily 1:00 PM EST automated patch scraping from NukaKnights. Imports dataset changes with atomic DB cutover &amp; Discord alerts.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
+          <div className="flex items-center gap-2.5 text-accent">
+            <BookmarkCheck className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">1080p/4K Exporters</h3>
+          </div>
+          <p className="text-xs text-foreground/70 leading-relaxed">
+            Export single-screen 1080p and 4K summary PNG checklist grids alongside visual Pip-Boy loadout card exports for Discord &amp; Reddit.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
+          <div className="flex items-center gap-2.5 text-accent">
+            <Zap className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">Offline PWA Mode</h3>
+          </div>
+          <p className="text-xs text-foreground/70 leading-relaxed">
+            Progressive Web App support. Install to mobile, tablet, or second monitor for zero-latency offline companion use while playing.
+          </p>
+        </div>
+      </div>
+
+      {/* Quick Controls Cheat Sheet */}
+      <Card className="border border-border/30 bg-panel p-6 space-y-4">
+        <h2 className="text-sm font-black uppercase tracking-wider text-accent border-b border-border/20 pb-2">
+          &gt; COMMAND HUB &amp; INTERACTIVE CONTROLS
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2 text-xs">
+          <div className="border border-border/20 bg-background/25 p-3 rounded-lg space-y-1">
+            <span className="font-bold text-foreground uppercase">Summary Lock Mode</span>
+            <p className="text-foreground/65">Toggle lock icon on Summary page to prevent accidental edits. Clicking a card jumps straight to its detail row.</p>
+          </div>
+          <div className="border border-border/20 bg-background/25 p-3 rounded-lg space-y-1">
+            <span className="font-bold text-foreground uppercase">Command Hub Search</span>
+            <p className="text-foreground/65">Press Command Hub filter to search by category, origins, acquisition source, or unlocked/seeking status.</p>
+          </div>
+          <div className="border border-border/20 bg-background/25 p-3 rounded-lg space-y-1">
+            <span className="font-bold text-foreground uppercase">Multi-Character Roster</span>
+            <p className="text-foreground/65">Manage up to 5 distinct character profiles or track account-wide unique unlocks across all your main/alt builds.</p>
+          </div>
+          <div className="border border-border/20 bg-background/25 p-3 rounded-lg space-y-1">
+            <span className="font-bold text-foreground uppercase">Local &amp; Cloud Persistence</span>
+            <p className="text-foreground/65">Guests save data locally in-browser. Signed-in users sync securely to Cloudflare Edge + Neon PostgreSQL.</p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Sources & Community Attributions */}
+      <Card className="border border-border/30 bg-panel p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-border/20 pb-2">
+          <h2 className="text-sm font-black uppercase tracking-wider text-accent">
+            &gt; COMMUNITY ATTRIBUTION &amp; DATA SOURCES
+          </h2>
+          <ShieldCheck className="h-4 w-4 text-accent" />
+        </div>
+        <p className="text-xs text-foreground/70 leading-relaxed">
+          Express credit for data retrieval, research, verification, and compilation belongs to the dedicated Fallout 76 community creators. R.O.L.L. re-sorts and presents this knowledge to empower player research:
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 pt-1">
+          {PRIMARY_REFERENCE_SITES.map((site) => (
+            <a
+              key={site.href}
+              href={site.href}
+              target="_blank"
+              rel="noreferrer"
+              className="border border-border/20 bg-background/30 hover:border-accent/40 p-3.5 rounded-lg transition-all flex flex-col justify-between group space-y-2"
+            >
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase text-foreground group-hover:text-accent transition-colors">{site.title}</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-foreground/40 group-hover:text-accent transition-colors" />
+                </div>
+                <p className="text-[0.78rem] text-foreground/60 mt-1 line-clamp-2">{site.description}</p>
+              </div>
+              {site.secondary && (
+                <span className="text-[0.72rem] text-accent/80 underline tracking-wider uppercase font-semibold">
+                  {site.secondary.label}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
       </Card>
     </div>
   );
