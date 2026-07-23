@@ -32,7 +32,7 @@ export async function fetchAndParseNukaKnights(
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 R.O.L.L-AutoPull/1.0"
     },
-    signal: AbortSignal.timeout(20000)
+    signal: AbortSignal.timeout(25000)
   });
 
   if (!response.ok) {
@@ -42,57 +42,84 @@ export async function fetchAndParseNukaKnights(
   const html = await response.text();
   const rows: ScrapedModRow[] = [];
 
-  // Match container blocks: data-listtitle="1st Star"
-  const containerRegex =
-    /<div[^>]*class=["'][^"']*mod_fallout76rewards_legendarymods[^"']*["'][^>]*data-listtitle=["']([^"']+)["'][^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g;
+  // Split HTML into blocks by container: mod_fallout76rewards_legendarymods
+  const blocks = html.split(/<div[^>]*class=["'][^"']*mod_fallout76rewards_legendarymods/i);
 
-  // Match rows inside container
-  const rowRegex = /<div[^>]*class=["'][^"']*\brow\b[^"']*["'][^>]*>([\s\S]*?)<\/div>\s*<\/div>/g;
+  for (let b = 1; b < blocks.length; b += 1) {
+    const block = blocks[b];
+    const titleMatch = /data-listtitle=["']([^"']+)["']/i.exec(block);
+    if (!titleMatch) continue;
 
-  let containerMatch: RegExpExecArray | null;
-  while ((containerMatch = containerRegex.exec(html)) !== null) {
-    const rawTitle = containerMatch[1].trim();
+    const rawTitle = titleMatch[1].trim();
     const tierLabel = STAR_MAP[rawTitle] ?? rawTitle;
-    const containerInner = containerMatch[2];
     const defaultModules = MODULE_COSTS[tierLabel] ?? 15;
 
-    let rowMatch: RegExpExecArray | null;
-    while ((rowMatch = rowRegex.exec(containerInner)) !== null) {
-      const rowHtml = rowMatch[1];
+    // Find all mod rows inside this section
+    const rowSegments = block.split(/<div[^>]*class=["'][^"']*\bmod_name\b[^"']*["']/i);
 
-      const nameMatch = /<div[^>]*class=["'][^"']*\bmod_name\b[^"']*["'][^>]*>([\s\S]*?)<\/div>/.exec(rowHtml);
-      const descMatch = /<div[^>]*class=["'][^"']*\bmod_desc\b[^"']*["'][^>]*>([\s\S]*?)<\/div>/.exec(rowHtml);
-      const addonMatch = /<div[^>]*class=["'][^"']*\bmod_addon\b[^"']*["'][^>]*>([\s\S]*?)<\/div>/.exec(rowHtml);
-      const relMatch = /<div[^>]*class=["'][^"']*\bmod_rel\b[^"']*["'][^>]*>([\s\S]*?)<\/div>/.exec(rowHtml);
+    for (let i = 1; i < rowSegments.length; i += 1) {
+      const seg = rowSegments[i];
 
-      if (nameMatch && descMatch) {
-        const name = nameMatch[1].replace(/<[^>]+>/g, "").trim();
-        const desc = descMatch[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-        const addon = addonMatch ? addonMatch[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : undefined;
+      // Extract mod_name
+      const nameEnd = seg.indexOf("</div>");
+      if (nameEnd === -1) continue;
+      const rawName = seg.slice(0, nameEnd).replace(/<[^>]+>/g, "").replace(/^>+\s*/, "").trim();
 
-        const categoryTitles: string[] = [];
-        if (relMatch) {
+      // Extract mod_desc
+      const descStartMatch = /<div[^>]*class=["'][^"']*\bmod_desc\b[^"']*["'][^>]*>/i.exec(seg);
+      if (!descStartMatch) continue;
+
+      const descStartIndex = descStartMatch.index + descStartMatch[0].length;
+      const descEndIndex = seg.indexOf("</div>", descStartIndex);
+      if (descEndIndex === -1) continue;
+
+      const desc = seg.slice(descStartIndex, descEndIndex).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+      // Extract mod_addon
+      let addon: string | undefined;
+      const addonStartMatch = /<div[^>]*class=["'][^"']*\bmod_addon\b[^"']*["'][^>]*>/i.exec(seg);
+      if (addonStartMatch) {
+        const addonStartIndex = addonStartMatch.index + addonStartMatch[0].length;
+        const addonEndIndex = seg.indexOf("</div>", addonStartIndex);
+        if (addonEndIndex !== -1) {
+          const rawAddon = seg.slice(addonStartIndex, addonEndIndex).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+          if (rawAddon) addon = rawAddon;
+        }
+      }
+
+      // Extract categories from mod_rel img titles
+      const categoryTitles: string[] = [];
+      const relStartMatch = /<div[^>]*class=["'][^"']*\bmod_rel\b[^"']*["'][^>]*>/i.exec(seg);
+      if (relStartMatch) {
+        const relStartIndex = relStartMatch.index + relStartMatch[0].length;
+        const relEndIndex = seg.indexOf("</div>", relStartIndex);
+        if (relEndIndex !== -1) {
+          const relChunk = seg.slice(relStartIndex, relEndIndex);
           const imgTitleRegex = /title=["']([^"']+)["']/g;
           let imgMatch: RegExpExecArray | null;
-          while ((imgMatch = imgTitleRegex.exec(relMatch[1])) !== null) {
+          while ((imgMatch = imgTitleRegex.exec(relChunk)) !== null) {
             categoryTitles.push(imgMatch[1].trim());
           }
         }
+      }
 
-        if (name && desc) {
-          rows.push({
-            tier: tierLabel,
-            effectName: name,
-            description: desc,
-            extraComponent: addon || undefined,
-            categories: categoryTitles.length > 0 ? categoryTitles.join(" • ") : undefined,
-            legendaryModules: defaultModules,
-            sourceName: "NukaKnights",
-            sourceUrl: articleUrl
-          });
-        }
+      if (rawName && desc) {
+        rows.push({
+          tier: tierLabel,
+          effectName: rawName,
+          description: desc,
+          extraComponent: addon,
+          categories: categoryTitles.length > 0 ? categoryTitles.join(" • ") : undefined,
+          legendaryModules: defaultModules,
+          sourceName: "NukaKnights",
+          sourceUrl: articleUrl
+        });
       }
     }
+  }
+
+  if (rows.length < 140) {
+    throw new Error(`Scraper validation failed: only extracted ${rows.length} rows (expected >= 140)`);
   }
 
   return rows;
