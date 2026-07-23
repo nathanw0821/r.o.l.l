@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import { X, ShieldAlert, Trash2, ArrowRight, AlertTriangle } from "lucide-react";
+import { ShieldAlert, Trash2, ArrowRight, AlertTriangle } from "lucide-react";
 
 interface TermsModalProps {
   userEmail?: string | null;
@@ -55,7 +55,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
       } else {
         setError("Failed to accept terms. Please check your connection.");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -121,7 +121,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
         setError("Server error. Failed to delete account.");
         setLoading(false);
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Unable to complete deletion.");
       setLoading(false);
     }
@@ -190,7 +190,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                       </div>
                       <div>
                         <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">5. Limitation of Liability</h4>
-                        <p>R.O.L.L. is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, either express or implied. To the maximum extent permitted by law, the developer of R.O.L.L. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of data, profile corruption, system downtime, server malfunction, or unauthorized data exposure resulting from your use of the application.</p>
+                        <p>R.O.L.L. is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without warranties of any kind, either express or implied. To the maximum extent permitted by law, the developer of R.O.L.L. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of data, profile corruption, system downtime, server malfunction, or unauthorized data exposure resulting from your use of the application.</p>
                       </div>
                       <div>
                         <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">6. Termination</h4>

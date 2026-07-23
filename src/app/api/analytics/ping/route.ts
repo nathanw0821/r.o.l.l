@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { parseJson } from "@/lib/api/validation";
-import { badRequest, internalError, ok } from "@/lib/api/responses";
+import { internalError, ok } from "@/lib/api/responses";
 import { prisma } from "@/lib/prisma";
 
 const pingSchema = z.object({

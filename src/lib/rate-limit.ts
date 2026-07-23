@@ -14,13 +14,13 @@ export async function rateLimit(key: string, limit: number, windowMs: number) {
   const now = Date.now();
 
   // Try to retrieve Cloudflare KV_LIMITER namespace if running in Cloudflare context
-  let kv: any = null;
+  let kv: { get: (key: string) => Promise<string | null>; put: (key: string, value: string, options?: { expirationTtl?: number }) => Promise<void> } | null = null;
   try {
     const ctx = getCloudflareContext();
     if (ctx && ctx.env) {
-      kv = (ctx.env as any).KV_LIMITER;
+      kv = (ctx.env as Record<string, unknown>).KV_LIMITER as typeof kv;
     }
-  } catch (e) {
+  } catch {
     // Fail silently in local development/test/build environments
   }
 

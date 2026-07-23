@@ -62,3 +62,4 @@ jobs:
         with:
           name: wrangler-logs
           path: .wrangler/logs/
+          if-no-files-found: ignore
