@@ -1540,7 +1540,7 @@ export default function BuilderExperimentClient({
                   variant="outline"
                   size="sm"
                   className="h-9 w-full text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
-                  onClick={() => exportBuilderLoadoutCard({ piece, payload, totals, equippedLines: listEquippedLegendariesWithBenchLabels(payload, mods) })}
+                  onClick={() => exportBuilderLoadoutCard({ piece, payload, totals, groupedEffects: groupedLegendaryEffects })}
                 >
                   Export Build Card (PNG)
                 </Button>

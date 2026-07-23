@@ -17,14 +17,11 @@ import {
   BUILDER_SPECIAL_KEYS,
   BUILDER_SPECIAL_LABELS,
   SPECIAL_FULL_NAMES,
-  RESIST_FULL_NAMES,
   buildShoppingList,
   collectEquippedLegendaryModIds,
-  formatEffectMathDeltas,
   isFullArmorSetPayload,
   listEquippedLegendariesWithBenchLabels,
-  listEquippedModsInBenchOrder,
-  listExtraEffectMathEntries
+  listEquippedModsInBenchOrder
 } from "@/lib/builder/compatibility";
 import { getCachedPublishedSharedBuild } from "@/lib/builder/get-shared-build";
 import { normalizeBuilderPayload } from "@/lib/builder/normalize-builder-payload";
@@ -43,7 +40,6 @@ import {
 } from "@/lib/builder/underarmor";
 import { SANDBOX_MUTATIONS, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
-import BuilderTotalsStatKey from "@/components/builder/builder-totals-stat-key";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -211,222 +207,276 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   const SLOT_LABELS = ["1st", "2nd", "3rd", "4th"];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{row.title}</h1>
-          <p className="mt-1 text-sm text-foreground/65 flex items-center gap-2">
-            <span className="font-semibold text-accent">{piece?.label ?? payload.basePieceId}</span>
-            <span className="h-1 w-1 rounded-full bg-border" />
-            <span>{payload.ghoul ? "Ghoul" : "Human"}</span>
-            <span className="h-1 w-1 rounded-full bg-border" />
-            <span>shared via B.U.I.L.D.</span>
-          </p>
-          {mutationSummary ? (
-            <p className="mt-2 text-xs text-foreground/55 italic">
-              Sandbox mutations: {mutationSummary}
-              {payload.ignoreMutationPenalties ? " (penalties ignored)" : ""}
-            </p>
-          ) : null}
+    <div className="max-w-7xl mx-auto space-y-4 font-mono">
+      {/* Top Diagnostic Banner */}
+      <div className="pip-terminal-panel p-4 rounded-xl border border-accent/30 bg-panel shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/20 pb-3">
+          <div>
+            <div className="text-[0.72rem] font-bold text-accent uppercase tracking-widest">&gt; SYSTEM DIAGNOSTICS: ACTIVE TRANSMISSION LOADOUT</div>
+            <h1 className="text-2xl font-black uppercase text-foreground tracking-wide mt-1">{row.title}</h1>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono">
+            <span className="px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold uppercase">{piece?.label ?? payload.basePieceId}</span>
+            <span className="px-2 py-0.5 rounded bg-background/50 border border-border/30 text-foreground/70 font-bold uppercase">{payload.ghoul ? "Ghoul Biology" : "Human Spec"}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-           {/* Placeholder for future actions like copy link or clone */}
-        </div>
+        <p className="text-[0.75rem] text-foreground/50 mt-2 italic">
+          Shared via B.U.I.L.D. Diagnostic Hub · {new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+        </p>
       </div>
 
-      <div className="rounded-[var(--radius)] border border-border bg-panel p-5">
-        <div className="flex items-center justify-between border-b border-border/50 pb-3">
-          <div className="text-sm font-bold uppercase tracking-widest text-foreground/70">Legendary slots</div>
-          <div className="text-[0.78rem] uppercase font-bold text-foreground/40 tracking-wider">Bench breakdown</div>
-        </div>
-        {isFullArmorSetPayload(payload) ? (
-          <div className="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {ARMOR_SET_SLOT_LABELS.map((slotLabel, pieceIndex) => {
-              const craft = payload.armorPieceCrafting[pieceIndex];
-              const mat = craft ? findArmorMaterialMod(craft.materialModId) : undefined;
-              const misc = craft ? findArmorMiscMod(craft.miscModId) : undefined;
-              return (
-              <div key={slotLabel} className="space-y-3">
-                <div className="inline-flex items-center rounded-md bg-accent/10 px-2 py-0.5 text-[0.78rem] font-bold uppercase tracking-wider text-accent border border-accent/20">{slotLabel}</div>
-                {craft ? (
-                  <p className="text-[0.84rem] text-foreground/50 leading-relaxed">
-                    <span className="font-semibold text-foreground/40 uppercase text-[0.72rem] mr-1">Craft:</span>
-                    {mat?.label ?? craft.materialModId} · {misc?.label ?? craft.miscModId}
-                  </p>
-                ) : null}
-                <div className="space-y-2">
-                  {SLOT_LABELS.map((starLabel, starIndex) => {
-                    const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
-                    const mod = id ? modRows.find((m) => m.id === id) : null;
-                    const math = (mod?.effectMath as Record<string, unknown>) ?? {};
-                    const delta = mod ? formatEffectMathDeltas(math) : "";
-                    const extras = mod ? listExtraEffectMathEntries(math) : [];
-                    return (
-                      <div key={`${pieceIndex}-${starIndex}`} className="text-xs group">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-foreground/40 font-mono text-[0.78rem] w-5 shrink-0">{starLabel}</span>
-                          <span className={mod ? "font-semibold text-foreground/90" : "text-foreground/30 italic"}>
-                            {mod?.name ?? "—"}
-                          </span>
-                          {delta ? <span className="ml-1 text-[0.78rem] font-bold text-accent/80">{delta}</span> : null}
-                        </div>
-                        {mod?.description ? (
-                          <div className="mt-1 pl-7 text-[0.78rem] leading-relaxed text-foreground/50 italic line-clamp-2">
-                            {sandboxLegendaryDescription(mod.description, piece ?? undefined)}
-                          </div>
-                        ) : null}
-                        {extras.length > 0 ? (
-                          <div className="mt-1 pl-7 flex flex-wrap gap-x-3 gap-y-1">
-                            {extras.map((e) => (
-                              <div key={e.key} className="text-[0.72rem] text-foreground/40">
-                                <span className="font-mono text-foreground/30">{e.key}:</span> {e.value}
-                              </div>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-            })}
-          </div>
-        ) : (
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {payload.legendaryModIds.map((id, i) => {
-              const mod = id ? modRows.find((m) => m.id === id) : null;
-              const starLabel = SLOT_LABELS[i] || `${i + 1}th`;
-              const math = (mod?.effectMath as Record<string, unknown>) ?? {};
-              const delta = mod ? formatEffectMathDeltas(math) : "";
-              const extras = mod ? listExtraEffectMathEntries(math) : [];
-              return (
-                <div key={i} className="space-y-1.5 p-3 rounded-lg bg-foreground/[0.02] border border-border/30">
-                  <div className="text-[0.78rem] font-bold uppercase tracking-wider text-foreground/40">{starLabel} Star</div>
-                  <div className="text-sm font-semibold text-foreground/90">
-                    {mod?.name ?? "—"}
-                  </div>
-                  {delta ? <div className="text-[0.78rem] font-bold text-accent/80">{delta}</div> : null}
-                  {mod?.description ? (
-                    <div className="text-[0.78rem] leading-relaxed text-foreground/50 italic">
-                      {sandboxLegendaryDescription(mod.description, piece ?? undefined)}
-                    </div>
-                  ) : null}
-                  {extras.length > 0 ? (
-                    <div className="pt-1 flex flex-wrap gap-2 border-t border-border/40 mt-1">
-                      {extras.map((e) => (
-                        <div key={e.key} className="text-[0.72rem] text-foreground/40">
-                          <span className="font-mono text-foreground/30">{e.key}:</span> {e.value}
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-3 items-start">
-        <div className="rounded-[var(--radius)] border border-border bg-panel p-5 lg:col-span-1">
-          <div className="text-sm font-bold uppercase tracking-widest text-foreground/70 border-b border-border/50 pb-3">Totals</div>
-          <p className="mt-3 text-[0.84rem] leading-relaxed text-foreground/50 italic">
-            {isFullArmorSetPayload(payload) 
-              ? "Includes full-set base resistances plus legendary and underarmor effect math."
-              : "Includes base resist hints, legendary stars, and underarmor effect math."
-            }
-          </p>
-          <BuilderTotalsStatKey className="mt-4" />
-          <dl className="mt-4 grid grid-cols-2 gap-y-1.5 text-xs">
-            {[
-              {label: "DR", value: totals.dr, title: RESIST_FULL_NAMES.dr},
-              {label: "ER", value: totals.er, title: RESIST_FULL_NAMES.er},
-              {label: "FR", value: totals.fr, title: RESIST_FULL_NAMES.fr},
-              {label: "CR", value: totals.cr, title: RESIST_FULL_NAMES.cr},
-              {label: "PR", value: totals.pr, title: RESIST_FULL_NAMES.pr},
-              {label: "RR", value: totals.rr, title: RESIST_FULL_NAMES.rr},
-              { label: "HP", value: totals.hp, title: "Hit Points" },
-              { label: "Damage %", value: `${Math.round(totals.damagePct * 100)}%`, title: "Weapon Damage Bonus" },
-              ...BUILDER_SPECIAL_KEYS.map(k => ({ label: BUILDER_SPECIAL_LABELS[k], value: totals[k], title: SPECIAL_FULL_NAMES[k] })),
-              { label: "SPECIAL (other)", value: totals.specialBonus, title: "Other SPECIAL bonuses" },
-              { label: "AP regen", value: `${Math.round(totals.apRegen * 100)}%`, title: "Action Point Regeneration" },
-              { label: "Carry wt", value: totals.carryWeight, title: "Carry Weight Bonus" },
-            ].map((row) => (
-              <React.Fragment key={row.label}>
-                <dt className="text-foreground/40 font-medium uppercase tracking-wider text-[0.78rem] cursor-help" title={row.title}>{row.label}</dt>
-                <dd className="text-right font-mono text-foreground/90 font-bold">{row.value}</dd>
-              </React.Fragment>
-            ))}
-          </dl>
-          <p className="mt-4 text-[0.72rem] text-foreground/30 uppercase font-bold tracking-widest text-center border-t border-border/30 pt-3">
-            Excludes perk card bonuses
-          </p>
-        </div>
-
-        <div className="rounded-[var(--radius)] border border-border bg-panel p-5 lg:col-span-1">
-          <div className="text-sm font-bold uppercase tracking-widest text-foreground/70 border-b border-border/50 pb-3">Effect Summary</div>
-          {groupedLegendaryEffects.length === 0 ? (
-            <p className="mt-4 text-xs text-foreground/40 italic">No legendary effects active.</p>
-          ) : (
-            <div className="mt-4 space-y-5">
-              {groupedLegendaryEffects.map(({ mod, count, benchLabels }) => {
-                const descRaw = mod.description?.trim() ?? "";
-                const desc = sandboxLegendaryDescription(descRaw, piece ?? undefined) || descRaw;
+      {/* 3-Column Terminal Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+        
+        {/* COLUMN 1: TELEMETRY & STATS */}
+        <div className="space-y-4">
+          
+          {/* SPECIAL Telemetry */}
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
+            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+              [ S.P.E.C.I.A.L. TELEMETRY ]
+            </div>
+            <div className="space-y-2">
+              {BUILDER_SPECIAL_KEYS.map((k) => {
+                const label = BUILDER_SPECIAL_LABELS[k];
+                const live = totals[k];
+                const pct = Math.min(100, Math.max(5, (live / 30) * 100));
                 return (
-                  <div key={mod.id} className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-foreground/90 text-sm">{mod.name}</span>
-                      {count > 1 && (
-                        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[0.72rem] font-bold text-accent border border-accent/20">
-                          ×{count}
-                        </span>
-                      )}
+                  <div key={k} className="space-y-1">
+                    <div className="flex justify-between text-xs font-bold uppercase">
+                      <span className="text-foreground/70">{label} ({SPECIAL_FULL_NAMES[k]})</span>
+                      <span className="text-accent">{live}</span>
                     </div>
-                    <div className="text-[0.78rem] text-foreground/40 leading-relaxed flex flex-wrap gap-1">
-                      {benchLabels.map((l, idx) => (
-                        <span key={idx} className="bg-foreground/[0.03] px-1.5 py-0.5 rounded border border-border/30 whitespace-nowrap">{l}</span>
-                      ))}
+                    <div className="h-2 w-full rounded-full bg-background/60 overflow-hidden border border-border/20">
+                      <div className="h-full bg-accent transition-all duration-300" style={{ width: `${pct}%` }} />
                     </div>
-                    {desc ? (
-                      <p className="text-[0.84rem] text-foreground/60 leading-relaxed italic border-l-2 border-accent/30 pl-3">
-                        {desc}
-                      </p>
-                    ) : null}
                   </div>
                 );
               })}
             </div>
-          )}
-        </div>
+          </div>
 
-        <div className="rounded-[var(--radius)] border border-border bg-panel p-5 lg:col-span-1">
-          <div className="text-sm font-bold uppercase tracking-widest text-foreground/70 border-b border-border/50 pb-3">Shopping List</div>
-          <div className="mt-4 space-y-2">
-            {shopping.lines.length === 0 ? (
-              <p className="text-xs text-foreground/40 italic">No crafting materials required.</p>
+          {/* Resistance Ratings */}
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
+            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+              [ RESISTANCE RATINGS ]
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+              <div className="p-2.5 rounded bg-background/50 border border-border/30 flex justify-between items-center">
+                <span className="text-foreground/60 font-bold">DR</span>
+                <span className="font-black text-accent text-sm">{totals.dr}</span>
+              </div>
+              <div className="p-2.5 rounded bg-background/50 border border-border/30 flex justify-between items-center">
+                <span className="text-foreground/60 font-bold">ER</span>
+                <span className="font-black text-accent text-sm">{totals.er}</span>
+              </div>
+              <div className="p-2.5 rounded bg-background/50 border border-border/30 flex justify-between items-center">
+                <span className="text-foreground/60 font-bold">FR</span>
+                <span className="font-black text-accent text-sm">{totals.fr}</span>
+              </div>
+              <div className="p-2.5 rounded bg-background/50 border border-border/30 flex justify-between items-center">
+                <span className="text-foreground/60 font-bold">RR</span>
+                <span className="font-black text-accent text-sm">{totals.rr}</span>
+              </div>
+              <div className="p-2.5 rounded bg-background/50 border border-border/30 flex justify-between items-center">
+                <span className="text-foreground/60 font-bold">PR</span>
+                <span className="font-black text-accent text-sm">{totals.pr}</span>
+              </div>
+              <div className="p-2.5 rounded bg-background/50 border border-border/30 flex justify-between items-center">
+                <span className="text-foreground/60 font-bold">CR</span>
+                <span className="font-black text-accent text-sm">{totals.cr}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Legendary Matrices Grouped */}
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
+            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+              [ ACTIVE LEGENDARY MATRICES ]
+            </div>
+            {groupedLegendaryEffects.length === 0 ? (
+              <p className="text-[0.78rem] text-foreground/35 italic uppercase">
+                &gt; no legendary effects loaded on chassis.
+              </p>
             ) : (
-              shopping.lines.map((line) => (
-                <div key={line.label} className="flex items-center justify-between group">
-                  <span className="text-xs text-foreground/70 group-hover:text-foreground/90 transition-colors">{line.label}</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[0.78rem] text-foreground/40 font-mono">QTY</span>
-                    <span className="font-mono text-xs font-bold text-accent">{line.count}</span>
-                  </div>
-                </div>
-              ))
+              <ul className="space-y-3 max-h-72 overflow-y-auto pr-1">
+                {groupedLegendaryEffects.map(({ mod, count, benchLabels }) => {
+                  const descRaw = mod.description?.trim() ?? "";
+                  const desc = sandboxLegendaryDescription(descRaw, piece ?? undefined) || descRaw;
+                  return (
+                    <li key={mod.id} className="text-[0.78rem] leading-snug border-b border-border/10 pb-2">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-black text-accent/90 uppercase tracking-wide">
+                          {mod.name}
+                        </span>
+                        {count > 1 && (
+                          <span className="rounded-full bg-accent/10 px-1.5 py-0.2 text-[0.84rem] font-black text-accent border border-accent/20">
+                            ×{count}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[0.84rem] text-foreground/45 mt-0.5 font-bold uppercase tracking-wider">
+                        {benchLabels.join(" · ")}
+                      </div>
+                      {desc ? (
+                        <p className="mt-1 text-foreground/70 font-sans italic text-[0.75rem]">
+                          {desc}
+                        </p>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
             )}
           </div>
-          <div className="mt-8 pt-4 border-t border-border/40">
-            <div className="text-[0.78rem] font-bold uppercase tracking-widest text-foreground/30 mb-2">Build Integrity</div>
-            <div className="h-1.5 w-full bg-foreground/[0.05] rounded-full overflow-hidden">
-               <div className="h-full bg-accent transition-all duration-500" style={{ width: '100%' }} />
-            </div>
-            <p className="mt-2 text-[0.72rem] text-foreground/40 leading-relaxed uppercase tracking-wide">
-              Shared loadout pages are read-only snapshots.
-            </p>
-          </div>
+
         </div>
+
+        {/* COLUMN 2: CHASSIS D&V SCHEMATIC & SUB-SYSTEMS */}
+        <div className="space-y-4">
+          
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
+            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+              [ CHASSIS D&amp;V SCHEMATIC ]
+            </div>
+
+            {isFullArmorSetPayload(payload) ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {ARMOR_SET_SLOT_LABELS.map((slotLabel, pieceIndex) => {
+                  const craft = payload.armorPieceCrafting[pieceIndex];
+                  const mat = craft ? findArmorMaterialMod(craft.materialModId) : undefined;
+                  const misc = craft ? findArmorMiscMod(craft.miscModId) : undefined;
+                  return (
+                    <div key={slotLabel} className="p-3 rounded border border-border/30 bg-background/25 space-y-2">
+                      <div className="text-[0.78rem] font-black uppercase text-accent tracking-wider border-b border-border/15 pb-1 flex justify-between">
+                        <span>{slotLabel}</span>
+                      </div>
+                      {craft ? (
+                        <div className="text-[0.72rem] text-foreground/50 uppercase font-mono">
+                          {mat?.label ?? craft.materialModId} · {misc?.label ?? craft.miscModId}
+                        </div>
+                      ) : null}
+                      <div className="space-y-1 text-xs">
+                        {SLOT_LABELS.map((starLabel, starIndex) => {
+                          const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
+                          const mod = id ? modRows.find((m) => m.id === id) : null;
+                          return (
+                            <div key={starIndex} className="flex justify-between items-center text-[0.78rem]">
+                              <span className="text-foreground/40 font-bold">{starIndex + 1}★</span>
+                              <span className={mod ? "font-bold text-foreground" : "text-foreground/30 italic"}>
+                                {mod ? mod.name : "—"}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {SLOT_LABELS.map((starLabel, starIndex) => {
+                  const id = payload.legendaryModIds[starIndex];
+                  const mod = id ? modRows.find((m) => m.id === id) : null;
+                  return (
+                    <div key={starIndex} className="p-3 rounded border border-border/30 bg-background/25 flex justify-between items-center text-xs">
+                      <span className="text-foreground/40 font-bold">{starIndex + 1}★ {starLabel} Star</span>
+                      <span className={mod ? "font-bold text-accent text-sm" : "text-foreground/30 italic"}>
+                        {mod ? mod.name : "— Empty Slot —"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Underarmor & Mutations Sub-Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {piece?.kind !== "powerArmor" && (
+              <div className="pip-terminal-panel p-4 rounded-xl space-y-2 font-mono">
+                <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+                  [ UNDERARMOR SUB-SYSTEMS ]
+                </div>
+                <div className="space-y-1.5 text-xs text-foreground/80">
+                  <div>
+                    <span className="text-foreground/40 uppercase">Base: </span>
+                    <span className="font-bold">{findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label ?? "Standard"}</span>
+                  </div>
+                  <div>
+                    <span className="text-foreground/40 uppercase">Lining: </span>
+                    <span className="font-bold">{findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label ?? "None"}</span>
+                  </div>
+                  <div>
+                    <span className="text-foreground/40 uppercase">Style: </span>
+                    <span className="font-bold">{findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId)?.label ?? "None"}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="pip-terminal-panel p-4 rounded-xl space-y-2 font-mono">
+              <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+                [ MUTATION SERUM MATRIX ]
+              </div>
+              {mutationSummary ? (
+                <div className="text-xs font-bold text-accent leading-relaxed">{mutationSummary}</div>
+              ) : (
+                <div className="text-xs text-foreground/40 italic">No mutations active.</div>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        {/* COLUMN 3: PERKS & CRAFTING LOGISTICS */}
+        <div className="space-y-4">
+          
+          {/* Legendary Perks */}
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
+            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+              [ LEGENDARY PERKS ]
+            </div>
+            {payload.legendaryPerkIds.length === 0 ? (
+              <div className="text-xs text-foreground/40 italic">No legendary perks equipped.</div>
+            ) : (
+              <div className="space-y-1.5 text-xs">
+                {payload.legendaryPerkIds.map((id) => (
+                  <div key={id} className="p-2 rounded bg-background/30 border border-border/20 text-foreground/90 font-bold uppercase">
+                    {id.replace(/-/g, " ")}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Bench Materials List */}
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
+            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
+              [ BENCH MATERIALS LIST ]
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {shopping.lines.length === 0 ? (
+                <p className="text-[0.78rem] text-foreground/30 italic uppercase">
+                  &gt; no materials required.
+                </p>
+              ) : (
+                shopping.lines.map((line) => (
+                  <div
+                    key={line.label}
+                    className="flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/5 px-2.5 py-0.5 text-[0.72rem] font-black text-accent uppercase tracking-widest"
+                  >
+                    <span>{line.count}×</span>
+                    <span>{line.label}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
   );
