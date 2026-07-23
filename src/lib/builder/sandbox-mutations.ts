@@ -210,3 +210,12 @@ export function sanitizeSandboxMutationIds(raw: unknown): string[] {
   }
   return out;
 }
+
+export function getSortedMutationLabels(mutationIds: readonly string[] | undefined): string[] {
+  if (!mutationIds || mutationIds.length === 0) return [];
+  const labels = mutationIds
+    .map((id) => MUTATION_BY_ID.get(id)?.label ?? id)
+    .filter(Boolean);
+  labels.sort((a, b) => a.localeCompare(b));
+  return labels;
+}

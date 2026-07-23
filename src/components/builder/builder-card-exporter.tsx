@@ -5,6 +5,7 @@ import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 import type { BuilderEffectTotals, BuilderSpecialKey } from "@/lib/builder/compatibility";
 import { ARMOR_SET_SLOT_LABELS } from "@/lib/builder/armor-sets";
 import { findArmorMaterialMod, findArmorMiscMod } from "@/lib/builder/armor-piece-mods";
+import { getSortedMutationLabels } from "@/lib/builder/sandbox-mutations";
 
 export type ExportGroupedEffect = {
   mod: BuilderModDTO;
@@ -29,8 +30,7 @@ export async function exportBuilderLoadoutCard(params: {
     groupedEffects,
     modRows,
     shoppingLines,
-    underarmorLabels,
-    mutationSummary
+    underarmorLabels
   } = params;
 
   let container: HTMLDivElement | null = null;
@@ -132,7 +132,7 @@ export async function exportBuilderLoadoutCard(params: {
 
         const stars = [0, 1, 2, 3].map((s) => {
           const id = payload.armorLegendaryModIds[p]?.[s];
-          const mod = id ? modRows.find((m) => m.id === id) : null;
+          const mod = id ? modRows.find((m) => m.id === id || m.slug === id) : null;
           return `
             <div style="display: flex; justify-content: space-between; font-size: 11px; margin-top: 2px;">
               <span style="color: #a0aec0;">${s + 1}★</span>
@@ -152,7 +152,7 @@ export async function exportBuilderLoadoutCard(params: {
     } else {
       const stars = [0, 1, 2, 3].map((s) => {
         const id = payload.legendaryModIds[s];
-        const mod = id ? modRows.find((m) => m.id === id) : null;
+        const mod = id ? modRows.find((m) => m.id === id || m.slug === id) : null;
         return `
           <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 8px; background: rgba(18,24,30,0.8); border-radius: 6px;">
             <span style="color: #a0aec0;">${s + 1}★ Star</span>
@@ -162,6 +162,9 @@ export async function exportBuilderLoadoutCard(params: {
       }).join("");
       schematicHtml = `<div style="display: flex; flex-direction: column; gap: 8px;">${stars}</div>`;
     }
+
+    const sortedMutations = getSortedMutationLabels(payload.mutationIds);
+    const sortedMutationText = sortedMutations.length > 0 ? sortedMutations.join(" · ") : "No active mutations";
 
     // Legendary Perks HTML
     const perksHtml = payload.legendaryPerkIds.length > 0
@@ -255,7 +258,7 @@ export async function exportBuilderLoadoutCard(params: {
             <div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 8px; padding: 10px;">
               <div style="font-size: 10px; font-weight: 900; color: #4cc38a; text-transform: uppercase; margin-bottom: 4px;">[ MUTATIONS ]</div>
               <div style="font-size: 10px; color: #4cc38a; font-weight: 700; line-height: 1.3;">
-                ${mutationSummary || "No active mutations"}
+                ${sortedMutationText}
               </div>
             </div>
           </div>

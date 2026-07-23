@@ -102,6 +102,7 @@ import {
 import {
   SANDBOX_MUTATIONS,
   sandboxMutationMathLayer,
+  getSortedMutationLabels,
 } from "@/lib/builder/sandbox-mutations";
 import {
   findUnderarmorOption,
@@ -1547,9 +1548,7 @@ export default function BuilderExperimentClient({
                       },
                       mutationSummary:
                         payload.mutationIds.length > 0
-                          ? payload.mutationIds
-                              .map((id) => SANDBOX_MUTATIONS.find((m) => m.id === id)?.label ?? id)
-                              .join(" · ")
+                          ? getSortedMutationLabels(payload.mutationIds).join(" · ")
                           : null
                     })
                   }
