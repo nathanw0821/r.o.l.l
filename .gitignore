@@ -5,6 +5,8 @@ node_modules
 
 # Local-only static files (Next serves from public/ when present). Favicon is src/app/icon.png.
 public/
+!public/.well-known/security.txt
+!public/security.txt
 
 .env
 .env.local
