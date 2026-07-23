@@ -200,14 +200,47 @@ export type BuilderEffectTotals = {
   carryWeight: number;
 };
 
-export const LEGENDARY_PERK_CARDS: Record<string, { label: string; specialBonus: Partial<Record<BuilderSpecialKey, number>> }> = {
-  "legendary-strength": { label: "Legendary Strength (+5)", specialBonus: { str: 5 } },
-  "legendary-perception": { label: "Legendary Perception (+5)", specialBonus: { per: 5 } },
-  "legendary-endurance": { label: "Legendary Endurance (+5)", specialBonus: { end: 5 } },
-  "legendary-charisma": { label: "Legendary Charisma (+5)", specialBonus: { cha: 5 } },
-  "legendary-intelligence": { label: "Legendary Intelligence (+5)", specialBonus: { int: 5 } },
-  "legendary-agility": { label: "Legendary Agility (+5)", specialBonus: { agi: 5 } },
-  "legendary-luck": { label: "Legendary Luck (+5)", specialBonus: { lck: 5 } },
+export type LegendaryPerkDef = {
+  id: string;
+  label: string;
+  category: "special" | "combat" | "utility";
+  desc: string;
+  specialBonus?: Partial<Record<BuilderSpecialKey, number>>;
+  resBonus?: Partial<Record<"fr" | "pr" | "dr" | "er" | "rr" | "cr", number>>;
+};
+
+export const LEGENDARY_PERK_CARDS: Record<string, LegendaryPerkDef> = {
+  // SPECIAL Attribute Cards (7)
+  "legendary-strength": { id: "legendary-strength", label: "Legendary Strength (+5)", category: "special", desc: "+5 Strength & +5 Perk Points", specialBonus: { str: 5 } },
+  "legendary-perception": { id: "legendary-perception", label: "Legendary Perception (+5)", category: "special", desc: "+5 Perception & +5 Perk Points", specialBonus: { per: 5 } },
+  "legendary-endurance": { id: "legendary-endurance", label: "Legendary Endurance (+5)", category: "special", desc: "+5 Endurance & +5 Perk Points", specialBonus: { end: 5 } },
+  "legendary-charisma": { id: "legendary-charisma", label: "Legendary Charisma (+5)", category: "special", desc: "+5 Charisma & +5 Perk Points", specialBonus: { cha: 5 } },
+  "legendary-intelligence": { id: "legendary-intelligence", label: "Legendary Intelligence (+5)", category: "special", desc: "+5 Intelligence & +5 Perk Points", specialBonus: { int: 5 } },
+  "legendary-agility": { id: "legendary-agility", label: "Legendary Agility (+5)", category: "special", desc: "+5 Agility & +5 Perk Points", specialBonus: { agi: 5 } },
+  "legendary-luck": { id: "legendary-luck", label: "Legendary Luck (+5)", category: "special", desc: "+5 Luck & +5 Perk Points", specialBonus: { lck: 5 } },
+
+  // Combat & Damage Cards (9)
+  "blood-sacrifice": { id: "blood-sacrifice", label: "Blood Sacrifice", category: "combat", desc: "Teammates gain +40 DR & heal over 10s upon your death", resBonus: { dr: 40 } },
+  "collateral-damage": { id: "collateral-damage", label: "Collateral Damage", category: "combat", desc: "Melee kills have a 20% chance to cause an explosion" },
+  "detonation-contagion": { id: "detonation-contagion", label: "Detonation Contagion", category: "combat", desc: "Thrown explosive kills have a 20% chance to cause an explosion" },
+  "exploding-palm": { id: "exploding-palm", label: "Exploding Palm", category: "combat", desc: "Unarmed attacks have a 20% chance to trigger an explosion" },
+  "far-flung-fireworks": { id: "far-flung-fireworks", label: "Far-Flung Fireworks", category: "combat", desc: "Ranged kills have a 20% chance to cause an explosion" },
+  "follow-through": { id: "follow-through", label: "Follow Through", category: "combat", desc: "Ranged sneak attacks increase target damage taken by 40% for 10s" },
+  "hack-and-slash": { id: "hack-and-slash", label: "Hack and Slash", category: "combat", desc: "Melee VATS attacks have a 50% chance to deal area damage" },
+  "retribution": { id: "retribution", label: "Retribution", category: "combat", desc: "Blocking a melee attack restores 40 HP & 40 AP" },
+  "taking-one-for-the-team": { id: "taking-one-for-the-team", label: "Taking One for the Team", category: "combat", desc: "Enemies take +40% damage when attacking you on a team" },
+
+  // Utility & Survival Cards (10)
+  "ammo-factory": { id: "ammo-factory", label: "Ammo Factory", category: "utility", desc: "Produce +150% more rounds when crafting ammo" },
+  "brawling-chemist": { id: "brawling-chemist", label: "Brawling Chemist", category: "utility", desc: "Generates 1 combat-enhancing chem every 40 seconds" },
+  "electric-absorption": { id: "electric-absorption", label: "Electric Absorption", category: "utility", desc: "20% chance energy attacks recharge PA Fusion Core & heal HP" },
+  "funky-duds": { id: "funky-duds", label: "Funky Duds (+200 PR)", category: "utility", desc: "+200 Poison Resistance with matching armor set", resBonus: { pr: 200 } },
+  "master-infiltrator": { id: "master-infiltrator", label: "Master Infiltrator", category: "utility", desc: "Auto-unlock lvl 3 locks & terminals (+3 Lockpick & Hack)" },
+  "nuclear-prolificator": { id: "nuclear-prolificator", label: "Nuclear Prolificator", category: "utility", desc: "Generates 1 Mini Nuke every 60 seconds" },
+  "power-armor-reboot": { id: "power-armor-reboot", label: "Power Armor Reboot", category: "utility", desc: "40% chance to auto-revive with full health in PA" },
+  "power-sprinter": { id: "power-sprinter", label: "Power Sprinter", category: "utility", desc: "Sprinting in PA consumes 50% less AP" },
+  "sizzling-style": { id: "sizzling-style", label: "Sizzling Style (+200 FR)", category: "utility", desc: "+200 Fire Resistance with matching armor set", resBonus: { fr: 200 } },
+  "survival-shortcut": { id: "survival-shortcut", label: "Survival Shortcut", category: "utility", desc: "Generates 1 Survival Syringe every 15 minutes" },
 };
 
 /** Roll up resist / HP hints from `effectMath` blobs (MVP, not full game sim). */
@@ -240,7 +273,7 @@ export function aggregateEffectMath(
     lck: 0,
     specialBonus: 0,
     apRegen: 0,
-    carryWeight: 0
+    carryWeight: 0,
   };
 
   if (opts.baseArmorStats) {
@@ -266,13 +299,23 @@ export function aggregateEffectMath(
     for (const id of opts.legendaryPerkIds) {
       const perk = LEGENDARY_PERK_CARDS[id];
       if (perk) {
-        acc.str += perk.specialBonus.str || 0;
-        acc.per += perk.specialBonus.per || 0;
-        acc.end += perk.specialBonus.end || 0;
-        acc.cha += perk.specialBonus.cha || 0;
-        acc.int += perk.specialBonus.int || 0;
-        acc.agi += perk.specialBonus.agi || 0;
-        acc.lck += perk.specialBonus.lck || 0;
+        if (perk.specialBonus) {
+          acc.str += perk.specialBonus.str || 0;
+          acc.per += perk.specialBonus.per || 0;
+          acc.end += perk.specialBonus.end || 0;
+          acc.cha += perk.specialBonus.cha || 0;
+          acc.int += perk.specialBonus.int || 0;
+          acc.agi += perk.specialBonus.agi || 0;
+          acc.lck += perk.specialBonus.lck || 0;
+        }
+        if (perk.resBonus) {
+          if (perk.resBonus.dr) acc.dr += perk.resBonus.dr;
+          if (perk.resBonus.er) acc.er += perk.resBonus.er;
+          if (perk.resBonus.fr) acc.fr += perk.resBonus.fr;
+          if (perk.resBonus.cr) acc.cr += perk.resBonus.cr;
+          if (perk.resBonus.pr) acc.pr += perk.resBonus.pr;
+          if (perk.resBonus.rr) acc.rr += perk.resBonus.rr;
+        }
       }
     }
   }

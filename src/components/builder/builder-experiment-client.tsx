@@ -423,6 +423,9 @@ export default function BuilderExperimentClient({
   const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<
     number | null
   >(null);
+  const [legendaryPerkCategory, setLegendaryPerkCategory] = React.useState<
+    "special" | "combat" | "utility"
+  >("special");
   const internalUpdateRef = React.useRef(false);
 
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } =
@@ -1982,40 +1985,85 @@ export default function BuilderExperimentClient({
           </div>
 
           {/* Legendary Perks selections */}
-          <div className="pip-terminal-panel p-4 rounded-xl space-y-2 font-mono">
-            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-              [ LEGENDARY CLEARANCE PERKS ]
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
+            <div className="flex items-center justify-between border-b border-border/20 pb-2">
+              <div className="text-xs font-black uppercase tracking-widest text-accent">
+                [ LEGENDARY PERKS ]
+              </div>
+              <div className="text-[0.72rem] font-bold text-accent/90 uppercase tracking-wider bg-accent/10 px-2 py-0.5 rounded border border-accent/20">
+                {payload.legendaryPerkIds.length} / 6 SLOTS
+              </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-1 max-h-36 overflow-y-auto pr-1">
-              {Object.entries(LEGENDARY_PERK_CARDS).map(([id, perk]) => {
-                const on = payload.legendaryPerkIds.includes(id);
-                return (
-                  <label
-                    key={id}
-                    className={cn(
-                      "flex cursor-pointer items-center gap-2 rounded p-1 transition-colors hover:bg-background/45 border text-[0.78rem]",
-                      on ? "border-accent/30 bg-accent/5 text-accent" : "border-transparent text-foreground/75"
-                    )}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={on}
-                      onChange={() => {
-                        setPayload((p) => {
-                          const next = on
-                            ? p.legendaryPerkIds.filter((x) => x !== id)
-                            : [...p.legendaryPerkIds, id];
-                          return { ...p, legendaryPerkIds: next };
-                        });
-                        triggerBuilderAchievement("build_perks");
-                      }}
-                      className="h-3 w-3 shrink-0 accent-accent cursor-pointer"
-                    />
-                    <span className="truncate">{perk.label}</span>
-                  </label>
-                );
-              })}
+            <div className="space-y-2">
+              <div className="flex gap-1 border-b border-border/15 pb-1.5 text-[0.72rem] uppercase font-bold">
+                <button
+                  type="button"
+                  onClick={() => setLegendaryPerkCategory("special")}
+                  className={cn(
+                    "px-2 py-0.5 rounded transition-all cursor-pointer",
+                    legendaryPerkCategory === "special" ? "bg-accent/20 text-accent border border-accent/40" : "text-foreground/50 hover:text-foreground"
+                  )}
+                >
+                  SPECIAL (7)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLegendaryPerkCategory("combat")}
+                  className={cn(
+                    "px-2 py-0.5 rounded transition-all cursor-pointer",
+                    legendaryPerkCategory === "combat" ? "bg-accent/20 text-accent border border-accent/40" : "text-foreground/50 hover:text-foreground"
+                  )}
+                >
+                  Combat (9)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLegendaryPerkCategory("utility")}
+                  className={cn(
+                    "px-2 py-0.5 rounded transition-all cursor-pointer",
+                    legendaryPerkCategory === "utility" ? "bg-accent/20 text-accent border border-accent/40" : "text-foreground/50 hover:text-foreground"
+                  )}
+                >
+                  Utility (10)
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto pr-1">
+                {Object.values(LEGENDARY_PERK_CARDS)
+                  .filter((perk) => perk.category === legendaryPerkCategory)
+                  .map((perk) => {
+                    const on = payload.legendaryPerkIds.includes(perk.id);
+                    return (
+                      <label
+                        key={perk.id}
+                        className={cn(
+                          "flex cursor-pointer items-start gap-2 rounded p-1.5 transition-colors hover:bg-background/45 border text-[0.78rem]",
+                          on ? "border-accent/40 bg-accent/10 text-accent font-semibold" : "border-border/15 text-foreground/75"
+                        )}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() => {
+                            setPayload((p) => {
+                              const next = on
+                                ? p.legendaryPerkIds.filter((x) => x !== perk.id)
+                                : [...p.legendaryPerkIds, perk.id];
+                              return { ...p, legendaryPerkIds: next };
+                            });
+                            triggerBuilderAchievement("build_perks");
+                          }}
+                          className="h-3.5 w-3.5 mt-0.5 shrink-0 accent-accent cursor-pointer"
+                        />
+                        <div className="min-w-0">
+                          <div className="font-bold text-foreground truncate">{perk.label}</div>
+                          <div className="text-[0.72rem] text-foreground/50 leading-tight font-sans mt-0.5">{perk.desc}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
+              </div>
             </div>
           </div>
 
