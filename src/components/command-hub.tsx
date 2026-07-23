@@ -221,6 +221,18 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
       {expanded ? (
         <div className="command-hub__body">
+          {/* Mobile close header */}
+          <div className="xl:hidden flex items-center justify-between border-b border-border/30 pb-2 mb-2 w-full font-mono">
+            <span className="text-xs font-black uppercase text-accent tracking-widest">[ COMMAND CENTER FILTERS ]</span>
+            <button
+              type="button"
+              onClick={() => setExpanded(false)}
+              className="flex items-center gap-1 text-xs font-bold uppercase text-foreground/60 hover:text-foreground bg-background/50 px-2.5 py-1 rounded border border-border/30 cursor-pointer"
+            >
+              <X className="h-3.5 w-3.5" />
+              <span>Close</span>
+            </button>
+          </div>
         <section className="hub-zone">
           <div className="hub-zone__title">
             <Zap className="h-4 w-4" />
@@ -695,12 +707,10 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
       <button
         type="button"
         onClick={() => {
-          setExpanded(true);
-          searchInputRef.current?.focus();
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          setExpanded((prev) => !prev);
         }}
         className={cn(
-          "md:hidden fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-accent text-accent-foreground font-mono text-xs font-black uppercase shadow-xl border border-accent/40 backdrop-blur-md active:scale-95 transition-all",
+          "xl:hidden fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-accent text-accent-foreground font-mono text-xs font-black uppercase shadow-xl border border-accent/40 backdrop-blur-md active:scale-95 transition-all cursor-pointer",
           expanded && "hidden"
         )}
         aria-label="Open Command Hub Filters"

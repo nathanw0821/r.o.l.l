@@ -1891,50 +1891,41 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 }
 
 @media (max-width: 1199px) {
+  .command-hub {
+    position: relative;
+    top: auto;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    z-index: 10;
+  }
   .primary-page-header {
-    top: 4.5rem; /* Stack below command-hub on mobile viewports */
+    position: relative;
+    top: auto;
+  }
+  .summary-tab-header {
+    position: relative;
+    top: auto;
+  }
+  .summary-page-container .star-tier-header {
+    position: relative;
+    top: auto;
   }
 }
 
 @media (min-width: 1200px) {
   /* Side-by-side layout in desktop viewports */
   .command-hub {
+    position: sticky;
+    top: 1.5rem;
     margin-bottom: -3.5rem; /* pull main layout up to sit side-by-side with command-hub */
   }
   .primary-page-header {
+    position: sticky;
     top: 1.5rem;
     margin-right: 43.5rem; /* leaves room for command-hub on the right side */
   }
-}
-
-/* On summary pages, the large header cards (Summary overview and Progress Diagnostic) should scroll with the page, not stay sticky, so that the star tier headers can stick cleanly under the search bar */
-.summary-page-container .primary-page-header {
-  position: relative;
-  top: auto;
-  z-index: 1;
-}
-
-/* Summary page tab header sticky behavior */
-.summary-tab-header {
-  position: sticky;
-  z-index: 28;
-  background: var(--color-panel) !important;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-panel);
-  transition: all 0.2s;
-}
-
-@media (max-width: 1199px) {
   .summary-tab-header {
-    top: 4.5rem; /* Stack below command-hub on mobile viewports */
-  }
-  .summary-page-container .star-tier-header {
-    top: 7.5rem; /* Push star headers below sticky tab header on mobile */
-  }
-}
-
-@media (min-width: 1200px) {
-  .summary-tab-header {
+    position: sticky;
     top: 1.5rem;
     margin-right: 43.5rem; /* Leaves room for command-hub on the right */
   }
