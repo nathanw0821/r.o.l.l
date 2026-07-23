@@ -8,7 +8,7 @@ Elementalist	Armor • Power Armor	Increase all resistances by 5.	1 Bobblehead: 
 Endurance	Armor • Power Armor	+2 Endurance.	1 Bobblehead: Endurance	30	Yes			Armor	Armor Unlocked	10
 Explosive	Weapon: Ranged	Projectiles explode for +20% weapon damage.	1 Bobblehead: Explosive	30	Yes			Power Armor	Power Armor Unlocked	10
 Fierce	Armor • Power Armor	Fortify limb resistance based on Kill Streak count (1% per kill).	1 Bobblehead: Strength	30	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			Power Armor Locked	9
-Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Pus Sac	30	No					
+Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Puc Sac	30	No					
 Glutton	Armor • Power Armor	Hunger and Thirst grow 10% slower.	1 Perfect Bubblegum	30	No					
 Hardy	Armor • Power Armor	Receive 7% less explosion damage.	1 Bobblehead: Explosive	30	Yes					
 HazMat	Armor • Power Armor	+25 Radiation Resistance.	10 Rad-x	30	Yes					

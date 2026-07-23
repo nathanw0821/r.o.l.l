@@ -3,7 +3,7 @@ Aegis	Power Armor	Fortifies Physical and Energy Resists (+50) and Poison, Cryo, 
 Battle-Loader's	Armor • Power Armor	Gives you a 15% chance to instantly reload when bashing enemies (stacks up to 75%).	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot		Unlocked	18	
 Bruiser's	Armor • Power Armor	Melee weapons deal +5% bonus damage (up to +25% on full stack).	1 Bufftats	120	No	RAID: Gleaming Depths (Stage 4 only)		Total	32	
 Bully's	Weapon: Ranged • Weapon: Melee	+25% damage per crippled limb the target has.	1 Buffout	120	Yes	RAID: Gleaming Depths (Stage 1 only)		% Complete	56.3%	
-Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3 Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)				
+Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3x Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)				
 Choo-Choo's	Power Armor	10% chance for 500 damage & Bloody Mess when sprinting into targets (up to 50% on full stack).	15 Cannonballs	120	Yes	RAID: Gleaming Depths (Stage 3 only)		Weapons	Weapons Unlocked	10
 Combo-Breaker's	Weapon: Melee	When dealing damage, 50% chance to not use AP (10% chance for auto melee).	1 Day Tripper	120	No	RAID: Gleaming Depths (Stage 3 only)		Armor	Armor Unlocked	8
 Conductor's	Weapon: Ranged • Weapon: Melee	Critical hits restore 10 Health & AP instantly and 100 more over 5s for you & teammates within 100ft.	5 Pure Crimson Flux	120	Yes	RAID: Gleaming Depths (Stage 3 only)		Power Armor	Power Armor Unlocked	8
@@ -29,10 +29,10 @@ Rejuvenator's	Power Armor	Gradually restores wearer's & teammates Health & AP wi
 Runner's	Armor • Power Armor	Sprinting AP cost reduced by -20% (up to -100% on full stack).	10 Purified Water	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
 Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)				
 Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)				
-Stabilizer's	Weapon: Ranged	Improves stability and handling.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot				
+Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot				
 Stalwart's	Power Armor	Power Armor breaks 5% slower for owner & teammates within 50ft (up to 25% on full stack).	1 Bobblehead: Leader	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
 Tanky's	Armor • Power Armor	+200 DR for 10s when standing still (20s cooldown; up to +1000 on full stack).	5 Ballistic Fiber	120	Yes	RAID: Gleaming Depths (Stage 2 only)				
 Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Infestations				
-Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Grants 3% Melee Weapon Speed and 3% Reload Speed per Kill Streak stack (max 30% each).	1 Adrenal Reaction Serum	120	No	Bigfoot				
+Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Reload Speed & Melee Attack Speed increases based on Killstreak Count (2% per Kill).	1x Adrenal Reaction Serum	120	No	Bigfoot				
 Vector	Armor • Power Armor	Gain 10% Bonus V.A.T.S. Accuracy Against Distant Targets	1 Magnifying Glass	120	No	Infestations				
 Viper's	Weapon: Ranged • Weapon: Melee	When a combat target is poisoned, deal +50% bonus damage.	15 Acid	120	Yes	RAID: Gleaming Depths (Stage 5 only)				

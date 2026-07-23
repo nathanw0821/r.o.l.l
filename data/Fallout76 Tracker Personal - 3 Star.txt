@@ -8,9 +8,9 @@ Barbarian	Weapon: Melee	+1 STR per kill while on a Kill Streak (max 10).	1 Bobbl
 Belted	Armor • Power Armor	Ammo weight reduced by 20%.	25 Lead	60	No			Armor	Armor Unlocked	13
 Blocker	Weapon: Melee	+15% more damage blocked.	10 Oil	60	No			Power Armor	Power Armor Unlocked	12
 Burning	Armor • Power Armor	5% chance to deal 12 Fire damage per second for 3s to melee attackers.	15 Floater Flamer Pus Sac	60	Yes				Power Armor Locked	6
-Cavalier's	Armor • Power Armor	-5% damage taken while sprinting.	10 Oil	60	Yes					
+Cavalier's	Armor • Power Armor	-10% Damage Taken While Sprinting.	10 Oil	60	Yes					
 Charisma	Weapon: Ranged • Weapon: Melee	+3 Charisma.	1 Bobblehead: Charisma	60	Yes					
-Defender's	Armor • Power Armor • Weapon: Melee	[Armor] -15% damage taken while blocking. [Melee] -40% damage taken while power attacking.	25 Steel	60	Yes					
+Defender's	Armor • Power Armor • Weapon: Melee	[Armor] 5% Chance To Automatically Block Attacks. [Melee] -40% damage taken while power attacking.	25 Steel	60	Yes					
 Dissipating	Armor • Power Armor	+0.25% radiation damage recovery.	10 RadAway	60	Yes					
 Diver's	Armor	Breathe underwater.	15 Plastic	60	No					
 Doctor's	Armor • Power Armor	+5% effectiveness of Stimpaks, RadAway, and Rad-X.	1 Stimpak: Super	60	No					
@@ -28,7 +28,7 @@ Lucky	Weapon: Ranged • Weapon: Melee	+15 bonus V.A.T.S. critical charge.	1 Bob
 Nimble	Weapon: Ranged	+100% faster movement speed while aiming.	25 Springs	60	No					
 Pack Rat's	Armor • Power Armor	Junk item weights reduced by 20%.	1 Marsupial Serum	60	Yes					
 Perception	Weapon: Ranged • Weapon: Melee	+3 Perception.	1 Bobblehead: Perception	60	Yes					
-Reflex	Armor • Power Armor	2% evade.	1 Bobblehead: Agility	60	Yes	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt				
+Reflex	Armor	2% evade.	1 Bobblehead: Agility	60	Yes	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt				
 Resilient	Weapon: Ranged	+500 damage resistance while reloading.	5 Med-X	60	Yes					
 Safecracker's	Armor • Power Armor	+1 lockpicking skill +1 hacking skill.	1 Bobblehead: Lock Picking	60	Yes					
 Secret Agent's	Armor	+25% less noise while sneaking +25% reduce detection chance.	1 Bobblehead: Sneak	60	Yes					
