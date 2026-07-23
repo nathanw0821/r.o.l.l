@@ -2068,7 +2068,7 @@ export default function BuilderExperimentClient({
 
       {/* Beta access overlay gate */}
       <BuilderBetaGate
-        open={showBetaPrompt}
+        open={showBetaPrompt && !hasBuilderAccess}
         onAccept={() => {
           acceptBuilderBeta();
           setShowBetaPrompt(false);
