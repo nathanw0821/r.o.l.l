@@ -1,16 +1,16 @@
 Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlocked	Notes			
 1 Star	Adrenal	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Weapon] +10% damage per kill while on a Kill Streak. [Armor] +10 Damage and Energy Resistance per kill while on a Kill Streak (Max 10).	1 Adrenal Reaction Serum	15	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt		Overall Progress	
 1 Star	Anti-armor	Weapon: Ranged • Weapon: Melee	+50% Armor Penetration	5 Black Titanium	15	Yes			Unlocked	95
-1 Star	Aristocrat's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] Up to +20 ER/DR based on Caps. [Weapon] Up to +50% damage based on Caps.	1 Bobblehead: Caps	15	Yes			Total	141
+1 Star	Aristocrat's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] Reflect incoming damage based on caps held (Max 10%). [Weapon] Up to +50% damage based on Caps.	1 Bobblehead: Caps	15	Yes			Total	141
 1 Star	Assassin's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Humans. [Weapon] +50% damage to Humans.	1 Liquid Courage	15	Yes			% Complete	67.4%
 1 Star	Auto Stim	Armor • Power Armor	Automatically use a Stimpak when hit while Health is 25% or less, once every 60 seconds.	5 Stimpak	15	Yes				
 1 Star	Berserker's	Weapon: Ranged • Weapon: Melee	Damage increases up to +50% as Damage Resistance decreases.	5 Psycho	15	Yes			1 Star Unlocked	30
 1 Star	Bloodied	Weapon: Ranged • Weapon: Melee	Damage increases up to +130% as Health decreases.	1 Adrenal Reaction Serum	15	Yes			2 Star Unlocked	22
-1 Star	Bolstering	Armor • Power Armor	Grants up to +35 ER/DR, the lower your Health.	5 Med-X	15	Yes			3 Star Unlocked	26
+1 Star	Bolstering	Armor • Power Armor	Grants up to 10% Damage Reduction at lower Health Percent.	5 Med-X	15	Yes			3 Star Unlocked	26
 1 Star	Chameleon	Armor • Power Armor	Become invisible while sneaking and not moving.	1 Chameleon Serum	15	Yes			4 Star Unlocked	17
 1 Star	Cloaking	Armor • Power Armor	Being hit in melee causes you to become invisible once every 30 seconds.	1 Stealth Boy	15	Yes				
 1 Star	Executioner's	Weapon: Ranged • Weapon: Melee	+50% more damage when your target is below 40% Health.	25 Leather	15	Yes				
-1 Star	Exterminator's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Mirelurks and Insects. [Weapon] +50% damage to Mirelurks and Insects.	1 Bloodbug Proboscis; 1 Stinging Barb	15	Yes				
+1 Star	Exterminator's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Mirelurks and Insects. [Weapon] +50% damage to Mirelurks and Insects.	1 Bloodbug Proboscis, 1 Stigwing Barb	15	Yes				
 1 Star	Feral's	Weapon: Melee	[Ghoul] Target kills make you go feral faster.	5 Black Titanium	15	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
 1 Star	Furious	Weapon: Ranged • Weapon: Melee	+5% damage per Onslaught stack, +9 max stacks.	1 Fury	15	Yes				
 1 Star	Ghoul Slayer's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Ghouls. [Weapon] +50% damage to Ghouls.	1 RadShield	15	Yes				
@@ -23,9 +23,9 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 1 Star	Lucid	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Ghoul] [Armor] Damage reduction up to +6% as you fill Feral meter. [Weapon] Damage increases up to +40% as you fill Feral meter.	1 Bobblehead: Medicine	15	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
 1 Star	Medic's	Weapon: Ranged • Weapon: Melee	Attacks will heal friendly targets by 5% Health.	1 Bobblehead: Medicine	15	Yes				
 1 Star	Mutant Slayer's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Super Mutants. [Weapon] +50% damage to Super Mutants.	1 Super Mutant Head	15	Yes				
-1 Star	Mutant's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] +10 DR/ER while mutated. [Weapon] Damage increases up to +50% as you gain Mutations.	10 Asbestos	15	Yes				
+1 Star	Mutant's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] Up to 5% Damage Reduction as you acquire more Mutations. [Weapon] Damage increases up to +50% as you gain Mutations.	10 Asbestos	15	Yes				
 1 Star	Nocturnal	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] +4 Perception and Agility while cloaked. [Weapon] +50% damage while cloaked.	10 Nuclear Material	15	Yes				
-1 Star	Overeater's	Armor • Power Armor	Increases Damage Reduction up to 6% as you fill Hunger/Thirst meters.	1 Perfect Bubblegum	15	Yes				
+1 Star	Overeater's	Armor • Power Armor	Increases Max Health up to 40 as you fill Hunger/Thirst meters.	1 Perfect Bubblegum	15	Yes				
 1 Star	Quad	Weapon: Ranged	+300% ammo capacity.	1 Fusion Core	15	Yes				
 1 Star	Regenerating	Armor • Power Armor	+0.5% heal rate.	1 Healing Factor Serum	15	Yes				
 1 Star	Sniper's	Weapon: Ranged	100% damage to distant targets.	1 Bobblehead: Perception	15	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
@@ -35,8 +35,8 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 1 Star	Two Shot	Weapon: Ranged	+1 projectile, +75% damage, -150% hip-fire accuracy, +100% recoil.	20 Lead	15	Yes				
 1 Star	Unyielding	Armor	Gain up to +3 to all S.P.E.C.I.A.L. (except END) when Health is low.	5 X-Cell	15	No				
 1 Star	Vampire's	Weapon: Ranged • Weapon: Melee	Restore 2% Health over 2 seconds when you hit a target.	10 Bloodpacks	15	Yes				
-1 Star	Vanguard's	Armor • Power Armor	Grants up to +35 ER/DR, the higher your Health.	5 Blood Pack	15	Yes				
-1 Star	Heavyweight	Armor	-90% weight and does not count as armor for the Chameleon Mutation.	1 Bird Bones Serum	15	Yes				
+1 Star	Vanguard's	Armor • Power Armor	Grants up to 6% Damage Reduction as Health Increases.	5 Blood Pack	15	Yes				
+1 Star	Heavyweight	Armor	Grants up to 10% Damage Reduction at Higher Encumbrance (Max at 150% Encumbrance).	1 Bird Bones Serum	15	Yes				
 1 Star	Zealot's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Scorched. [Weapon] +50% damage to Scorched.	10 Ultracite	15	Yes				
 2 Star	Agility	Armor • Power Armor	+2 Agility.	1 Bobblehead: Agility	30	No				
 2 Star	Antiseptic	Armor • Power Armor	+25% reduced disease chance from environmental hazards.	10 Disease Cure	30	Yes				
@@ -47,7 +47,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 2 Star	Endurance	Armor • Power Armor	+2 Endurance.	1 Bobblehead: Endurance	30	Yes				
 2 Star	Explosive	Weapon: Ranged	Projectiles explode for +20% weapon damage.	1 Bobblehead: Explosive	30	Yes				
 2 Star	Fierce	Armor • Power Armor	Fortify limb resistance based on Kill Streak count (1% per kill).	1 Bobblehead: Strength	30	No	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
-2 Star	Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Pus Sac	30	No				
+2 Star	Fireproof	Armor • Power Armor	+25 Fire Resistance.	10 Floater Flamer Puc Sac	30	No				
 2 Star	Glutton	Armor • Power Armor	Hunger and Thirst grow 10% slower.	1 Perfect Bubblegum	30	Yes				
 2 Star	Hardy	Armor • Power Armor	Receive 7% less explosion damage.	1 Bobblehead: Explosive	30	Yes				
 2 Star	HazMat	Armor • Power Armor	+25 Radiation Resistance.	10 Rad-x	30	Yes				
@@ -79,9 +79,9 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 3 Star	Belted	Armor • Power Armor	Ammo weight reduced by 20%.	25 Lead	60	Yes				
 3 Star	Blocker	Weapon: Melee	+15% more damage blocked.	10 Oil	60	No				
 3 Star	Burning	Armor • Power Armor	5% chance to deal 12 Fire damage per second for 3s to melee attackers.	15 Floater Flamer Pus Sac	60	Yes				
-3 Star	Cavalier's	Armor • Power Armor	-5% damage taken while sprinting.	10 Oil	60	Yes				
+3 Star	Cavalier's	Armor • Power Armor	-10% Damage Taken While Sprinting.	10 Oil	60	Yes				
 3 Star	Charisma	Weapon: Ranged • Weapon: Melee	+3 Charisma.	1 Bobblehead: Charisma	60	Yes				
-3 Star	Defender's	Armor • Power Armor • Weapon: Melee	[Armor] -15% damage taken while blocking. [Melee] -40% damage taken while power attacking.	25 Steel	60	Yes				
+3 Star	Defender's	Armor • Power Armor • Weapon: Melee	[Armor] 5% Chance To Automatically Block Attacks. [Melee] -40% damage taken while power attacking.	25 Steel	60	Yes				
 3 Star	Dissipating	Armor • Power Armor	+0.25% radiation damage recovery.	10 RadAway	60	Yes				
 3 Star	Diver's	Armor	Breathe underwater.	15 Plastic	60	No				
 3 Star	Doctor's	Armor • Power Armor	+5% effectiveness of Stimpaks, RadAway, and Rad-X.	1 Stimpak: Super	60	No				
@@ -99,7 +99,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 3 Star	Nimble	Weapon: Ranged	+100% faster movement speed while aiming.	25 Springs	60	No				
 3 Star	Pack Rat's	Armor • Power Armor	Junk item weights reduced by 20%.	1 Marsupial Serum	60	Yes				
 3 Star	Perception	Weapon: Ranged • Weapon: Melee	+3 Perception.	1 Bobblehead: Perception	60	Yes				
-3 Star	Reflex	Armor • Power Armor	2% evade.	1 Bobblehead: Agility	60	Yes	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
+3 Star	Reflex	Armor	2% evade.	1 Bobblehead: Agility	60	Yes	Burning Springs • Bounties • Bounty Hunting: Head Hunt & Grunt Hunt			
 3 Star	Resilient	Weapon: Ranged	+500 damage resistance while reloading.	5 Med-X	60	Yes				
 3 Star	Safecracker's	Armor • Power Armor	+1 lockpicking skill +1 hacking skill.	1 Bobblehead: Lock Picking	60	Yes				
 3 Star	Secret Agent's	Armor	+25% less noise while sneaking +25% reduce detection chance.	1 Bobblehead: Sneak	60	No				
@@ -114,7 +114,7 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Battle-Loader's	Armor • Power Armor	Gives you a 15% chance to instantly reload when bashing enemies (stacks up to 75%).	1 Talons Serum	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
 4 Star	Bruiser's	Armor • Power Armor	Melee weapons deal +5% bonus damage (up to +25% on full stack).	1 Bufftats	120	No	RAID: Gleaming Depths (Stage 4 only)			
 4 Star	Bully's	Weapon: Ranged • Weapon: Melee	+25% damage per crippled limb the target has.	1 Buffout	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3 Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
+4 Star	Charged	Weapon: Melee	Light attacks build up charge released with heavy attack (max charges 3).	3x Fusion Core	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Choo-Choo's	Power Armor	10% chance for 500 damage & Bloody Mess when sprinting into targets (up to 50% on full stack).	15 Cannonballs	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Combo-Breaker's	Weapon: Melee	When dealing damage, 50% chance to not use AP (10% chance for auto melee).	1 Day Tripper	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
 4 Star	Conductor's	Weapon: Ranged • Weapon: Melee	Critical hits restore 10 Health & AP instantly and 100 more over 5s for you & teammates within 100ft.	5 Pure Crimson Flux	120	Yes	RAID: Gleaming Depths (Stage 3 only)			
@@ -140,10 +140,10 @@ Tier	Effect Name	Categories	Description	Extra Component	Legendary Modules	Unlock
 4 Star	Runner's	Armor • Power Armor	Sprinting AP cost reduced by -20% (up to -100% on full stack).	10 Purified Water	120	Yes	RAID: Gleaming Depths (Stage 1 only)			
 4 Star	Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)			
-4 Star	Stabilizer's	Weapon: Ranged	Improves stability and handling.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
+4 Star	Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot			
 4 Star	Stalwart's	Power Armor	Power Armor breaks 5% slower for owner & teammates within 50ft (up to 25% on full stack).	1 Bobblehead: Leader	120	Yes	RAID: Gleaming Depths (Stage 5 only)			
 4 Star	Tanky's	Armor • Power Armor	+200 DR for 10s when standing still (20s cooldown; up to +1000 on full stack).	5 Ballistic Fiber	120	Yes	RAID: Gleaming Depths (Stage 2 only)			
 4 Star	Tarnished	Weapon: Ranged • Weapon: Melee	Damage Increases (up to +120%) as Weapon Durability Decreases.	5 Fiberglass	120	No	Infestations			
-4 Star	Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Grants 3% Melee Weapon Speed and 3% Reload Speed per Kill Streak stack (max 30% each).	1 Adrenal Reaction Serum	120	No	Bigfoot			
+4 Star	Thrill-Seeker's	Weapon: Ranged • Weapon: Melee	Reload Speed & Melee Attack Speed increases based on Killstreak Count (2% per Kill).	1x Adrenal Reaction Serum	120	No	Bigfoot			
 4 Star	Vector	Armor • Power Armor	Gain 10% Bonus V.A.T.S. Accuracy Against Distant Targets	1 Magnifying Glass	120	No	Infestations			
 4 Star	Viper's	Weapon: Ranged • Weapon: Melee	When a combat target is poisoned, deal +50% bonus damage.	15 Acid	120	Yes	RAID: Gleaming Depths (Stage 5 only)			

@@ -68,7 +68,7 @@ function weapon(
 
 /** 1★ armor — common primary bench effects (names match in-game conventions). */
 const ARMOR_1: BuilderLegendarySeedRow[] = [
-  armor("aristocrats", "Aristocrat's", 1, "+20 DR and +20 ER (maximum armor bonus from caps; sandbox ceiling).", {
+  armor("aristocrats", "Aristocrat's", 1, "Reflect incoming damage based on caps held (max 10%).", {
     effectMath: { dr: 20, er: 20 }
   }),
   armor("assassins-armor", "Assassin's", 1, "Damage reduction vs humans."),
@@ -79,7 +79,7 @@ const ARMOR_1: BuilderLegendarySeedRow[] = [
   armor("mutants-armor", "Mutant's", 1, "Damage / energy resist if mutated."),
   armor("nocturnal-armor", "Nocturnal", 1, "Damage and energy resist increase at night."),
   armor("troubleshooters-armor", "Troubleshooter's", 1, "Damage reduction vs robots."),
-  armor("vanguards", "Vanguard's", 1, "Damage and energy resist increase at high health."),
+  armor("vanguards", "Vanguard's", 1, "Damage reduction increase at high health."),
   armor("weightless", "Weightless", 1, "Chameleon when stationary and not moving."),
   armor("zealots-armor", "Zealot's", 1, "Damage reduction vs Scorched.")
 ];
