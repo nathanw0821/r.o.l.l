@@ -442,10 +442,15 @@ export function stripGhoulBlockedLegendarySelections(
   payload: BuilderPayload,
   mods: Pick<BuilderModDTO, "id" | "slug">[]
 ): BuilderPayload {
-  const slugById = new Map(mods.map((m) => [m.id, m.slug]));
+  const slugById = new Map<string, string>();
+  for (const m of mods) {
+    if (m.id) slugById.set(m.id, m.slug);
+    if (m.slug) slugById.set(m.slug, m.slug);
+  }
   const clear = (id: string | null): string | null => {
     if (!id) return null;
-    const slug = slugById.get(id);
+    const raw = id.replace(/^et-/, "");
+    const slug = slugById.get(id) ?? slugById.get(raw) ?? raw;
     if (slug && isGhoulBlockedLegendarySlug(slug)) return null;
     return id;
   };
