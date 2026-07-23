@@ -103,5 +103,6 @@ export type BuilderModDTO = {
   infestationOnly: boolean;
   fifthStarEligible: boolean;
   ghoulSpecialCap: number | null;
+  extraComponent?: string | null;
   trackerUnlock: BuilderModTrackerUnlock;
 };

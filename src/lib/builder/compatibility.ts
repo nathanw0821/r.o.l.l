@@ -503,22 +503,45 @@ export function listEquippedLegendariesWithBenchLabels(
 
 export type ShoppingLine = { label: string; count: number };
 
+const STAR_MODULE_COSTS: Record<number, number> = {
+  1: 15,
+  2: 30,
+  3: 60,
+  4: 120
+};
+
 export function buildShoppingList(mods: BuilderModDTO[]): { modules: number; lines: ShoppingLine[] } {
   let modules = 0;
   const map = new Map<string, number>();
 
   for (const mod of mods) {
     const cost = mod.craftingCost;
-    const modCount = readEffectMathNumber(cost.legendaryModules);
+    const modCount = readEffectMathNumber(cost?.legendaryModules) || STAR_MODULE_COSTS[mod.starRank] || 15;
     modules += modCount;
-    const items = cost.items;
-    if (Array.isArray(items)) {
+
+    const items = cost?.items;
+    if (Array.isArray(items) && items.length > 0) {
       for (const row of items) {
         if (!row || typeof row !== "object") continue;
         const name = (row as { name?: string }).name;
         const count = readEffectMathNumber((row as { count?: number }).count);
         if (!name || count <= 0) continue;
         map.set(name, (map.get(name) ?? 0) + count);
+      }
+    } else if (mod.extraComponent) {
+      // Parse extraComponent strings like "1 Adrenal Reaction Serum" or "1 Bloodbug Proboscis, 1 Stinging Barb"
+      const parts = mod.extraComponent.split(/;|,|•/);
+      for (const part of parts) {
+        const trimmed = part.trim();
+        if (!trimmed) continue;
+        const match = /^(\d+)\s*x?\s*(.+)$/i.exec(trimmed);
+        if (match) {
+          const count = parseInt(match[1], 10) || 1;
+          const name = match[2].trim();
+          map.set(name, (map.get(name) ?? 0) + count);
+        } else {
+          map.set(trimmed, (map.get(trimmed) ?? 0) + 1);
+        }
       }
     }
   }
