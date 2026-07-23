@@ -1,16 +1,22 @@
 "use client";
 
 import type { BaseGearPiece } from "@/lib/builder/base-gear";
-import type { BuilderPayload } from "@/lib/builder/types";
-import type { BuilderEffectTotals, EquippedLegendaryBenchLine } from "@/lib/builder/compatibility";
+import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
+import type { BuilderEffectTotals, BuilderSpecialKey } from "@/lib/builder/compatibility";
+
+export type ExportGroupedEffect = {
+  mod: BuilderModDTO;
+  count: number;
+  benchLabels: string[];
+};
 
 export async function exportBuilderLoadoutCard(params: {
   piece: BaseGearPiece;
   payload: BuilderPayload;
   totals: BuilderEffectTotals;
-  equippedLines: EquippedLegendaryBenchLine[];
+  groupedEffects: ExportGroupedEffect[];
 }) {
-  const { piece, totals, equippedLines } = params;
+  const { piece, totals, groupedEffects } = params;
   let container: HTMLDivElement | null = null;
 
   try {
@@ -30,77 +36,110 @@ export async function exportBuilderLoadoutCard(params: {
     container.style.height = `${height}px`;
     container.style.padding = "24px";
     container.style.boxSizing = "border-box";
-    container.style.backgroundColor = "#0f1113";
-
-    const inner = document.createElement("div");
-    inner.style.backgroundColor = "#13171b";
-    inner.style.border = "2px solid #2d3339";
-    inner.style.borderRadius = "16px";
-    inner.style.padding = "32px";
-    inner.style.height = "100%";
-    inner.style.display = "flex";
-    inner.style.flexDirection = "column";
-    inner.style.gap = "24px";
-    inner.style.boxSizing = "border-box";
-    inner.style.fontFamily = "var(--font-share-tech-mono), monospace, system-ui, sans-serif";
+    container.style.backgroundColor = "#080b0e";
 
     const stamp = new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 
-    const modsListHtml = equippedLines.length > 0
-      ? equippedLines.map(({ mod, benchLabel }) => `
-        <div style="background: rgba(23, 26, 29, 0.8); border: 1px solid #2d3339; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div style="font-size: 14px; font-weight: 800; color: #f0ece7;">${mod.name}</div>
-            <div style="font-size: 10px; color: #f3a24d; text-transform: uppercase; margin-top: 2px;">${benchLabel}</div>
+    // Grouped Legendary Effects HTML
+    const modsListHtml = groupedEffects.length > 0
+      ? groupedEffects.map(({ mod, count, benchLabels }) => `
+        <div style="background: rgba(18, 24, 30, 0.85); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; items-center: center; gap: 8px;">
+              <span style="font-size: 15px; font-weight: 900; color: #4cc38a; text-transform: uppercase; tracking: 0.05em;">${mod.name}</span>
+              ${count > 1 ? `<span style="background: rgba(76, 195, 138, 0.15); border: 1px solid rgba(76, 195, 138, 0.3); color: #4cc38a; border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 900;">×${count}</span>` : ""}
+            </div>
+            <div style="font-size: 11px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em;">
+              ${benchLabels.join(" · ")}
+            </div>
           </div>
-          <div style="font-size: 11px; color: #c0b7ad; text-align: right; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-            ${mod.description || ""}
-          </div>
+          ${mod.description ? `<div style="font-size: 12px; color: rgba(240, 236, 231, 0.75); font-style: italic; margin-top: 2px;">${mod.description}</div>` : ""}
         </div>
       `).join("")
-      : `<div style="color: #c0b7ad; font-style: italic; font-size: 13px;">No legendary mods equipped.</div>`;
+      : `<div style="color: rgba(240, 236, 231, 0.4); font-style: italic; font-size: 13px;">No legendary effects installed on chassis.</div>`;
+
+    // S.P.E.C.I.A.L. HTML
+    const specialKeys: Array<{ key: BuilderSpecialKey; label: string }> = [
+      { key: "str", label: "STR" },
+      { key: "per", label: "PER" },
+      { key: "end", label: "END" },
+      { key: "cha", label: "CHA" },
+      { key: "int", label: "INT" },
+      { key: "agi", label: "AGI" },
+      { key: "lck", label: "LCK" },
+    ];
+
+    const specialHtml = specialKeys.map(({ key, label }) => `
+      <div style="background: rgba(18, 24, 30, 0.9); padding: 10px 6px; border-radius: 8px; border: 1px solid rgba(76, 195, 138, 0.2); text-align: center;">
+        <div style="font-size: 10px; font-weight: 800; color: #a0aec0; letter-spacing: 0.1em;">${label}</div>
+        <div style="font-size: 18px; font-weight: 900; color: #4cc38a; margin-top: 2px;">${totals[key] ?? 0}</div>
+      </div>
+    `).join("");
+
+    // Resistance HTML
+    const resistsHtml = `
+      <div style="background: rgba(18, 24, 30, 0.9); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(76, 195, 138, 0.2); display: flex; justify-content: space-between;">
+        <span style="font-size: 12px; font-weight: 700; color: #a0aec0;">DR (DAMAGE)</span>
+        <span style="font-size: 14px; font-weight: 900; color: #4cc38a;">${totals.dr}</span>
+      </div>
+      <div style="background: rgba(18, 24, 30, 0.9); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(76, 195, 138, 0.2); display: flex; justify-content: space-between;">
+        <span style="font-size: 12px; font-weight: 700; color: #a0aec0;">ER (ENERGY)</span>
+        <span style="font-size: 14px; font-weight: 900; color: #4cc38a;">${totals.er}</span>
+      </div>
+      <div style="background: rgba(18, 24, 30, 0.9); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(76, 195, 138, 0.2); display: flex; justify-content: space-between;">
+        <span style="font-size: 12px; font-weight: 700; color: #a0aec0;">FR (FIRE)</span>
+        <span style="font-size: 14px; font-weight: 900; color: #4cc38a;">${totals.fr}</span>
+      </div>
+      <div style="background: rgba(18, 24, 30, 0.9); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(76, 195, 138, 0.2); display: flex; justify-content: space-between;">
+        <span style="font-size: 12px; font-weight: 700; color: #a0aec0;">RR (RADIATION)</span>
+        <span style="font-size: 14px; font-weight: 900; color: #4cc38a;">${totals.rr}</span>
+      </div>
+    `;
+
+    const inner = document.createElement("div");
+    inner.style.backgroundColor = "#0e1216";
+    inner.style.border = "2px solid rgba(76, 195, 138, 0.35)";
+    inner.style.borderRadius = "16px";
+    inner.style.padding = "28px";
+    inner.style.height = "100%";
+    inner.style.display = "flex";
+    inner.style.flexDirection = "column";
+    inner.style.gap = "20px";
+    inner.style.boxSizing = "border-box";
+    inner.style.fontFamily = "monospace, system-ui, sans-serif";
 
     inner.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f3a24d; padding-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(76, 195, 138, 0.4); padding-bottom: 14px;">
         <div>
-          <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.15em; color: #f3a24d; text-transform: uppercase;">B.U.I.L.D. Diagnostic Summary</div>
-          <h1 style="font-size: 32px; font-weight: 900; color: #f0ece7; margin: 4px 0 0 0; text-transform: uppercase;">${piece.label}</h1>
+          <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.2em; color: #4cc38a; text-transform: uppercase;">&gt; SYSTEM DIAGNOSTICS: B.U.I.L.D. SPEC CARD</div>
+          <h1 style="font-size: 28px; font-weight: 900; color: #f0ece7; margin: 4px 0 0 0; text-transform: uppercase; letter-spacing: 0.05em;">${piece.label}</h1>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 14px; font-weight: 800; color: #f3a24d;">R.O.L.L. B.U.I.L.D. CARD</div>
-          <div style="font-size: 11px; color: #c0b7ad; margin-top: 2px;">${stamp} · fallout76.wiki</div>
+          <div style="font-size: 14px; font-weight: 900; color: #4cc38a; letter-spacing: 0.1em;">FALLOUT 76 R.O.L.L. HUB</div>
+          <div style="font-size: 11px; color: #a0aec0; margin-top: 2px;">${stamp} · fallout76.wiki</div>
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; flex: 1; min-height: 0;">
-        <div style="background: #171a1d; border: 1px solid #2d3339; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; min-height: 0;">
-          <div style="font-size: 14px; font-weight: 900; color: #f3a24d; text-transform: uppercase; border-bottom: 1px solid #2d3339; padding-bottom: 8px;">Equipped Legendary Effects (${equippedLines.length})</div>
-          <div style="display: flex; flex-direction: column; gap: 8px; overflow: hidden; flex: 1;">
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex: 1; min-height: 0;">
+        <div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-height: 0;">
+          <div style="font-size: 12px; font-weight: 900; color: #4cc38a; text-transform: uppercase; letter-spacing: 0.15em; border-bottom: 1px solid rgba(76, 195, 138, 0.2); padding-bottom: 8px;">[ ACTIVE LEGENDARY MATRICES ]</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1;">
             ${modsListHtml}
           </div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div style="background: #171a1d; border: 1px solid #2d3339; border-radius: 12px; padding: 16px;">
-            <div style="font-size: 13px; font-weight: 900; color: #f3a24d; text-transform: uppercase; margin-bottom: 10px;">S.P.E.C.I.A.L. Totals</div>
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center;">
-              <div style="background: #13171b; padding: 8px 4px; border-radius: 6px; border: 1px solid #2d3339;"><div style="font-size: 9px; color: #c0b7ad;">STR</div><div style="font-size: 16px; font-weight: 900; color: #4cc38a;">${totals.str}</div></div>
-              <div style="background: #13171b; padding: 8px 4px; border-radius: 6px; border: 1px solid #2d3339;"><div style="font-size: 9px; color: #c0b7ad;">PER</div><div style="font-size: 16px; font-weight: 900; color: #4cc38a;">${totals.per}</div></div>
-              <div style="background: #13171b; padding: 8px 4px; border-radius: 6px; border: 1px solid #2d3339;"><div style="font-size: 9px; color: #c0b7ad;">END</div><div style="font-size: 16px; font-weight: 900; color: #4cc38a;">${totals.end}</div></div>
-              <div style="background: #13171b; padding: 8px 4px; border-radius: 6px; border: 1px solid #2d3339;"><div style="font-size: 9px; color: #c0b7ad;">CHA</div><div style="font-size: 16px; font-weight: 900; color: #4cc38a;">${totals.cha}</div></div>
-              <div style="background: #13171b; padding: 8px 4px; border-radius: 6px; border: 1px solid #2d3339;"><div style="font-size: 9px; color: #c0b7ad;">INT</div><div style="font-size: 16px; font-weight: 900; color: #4cc38a;">${totals.int}</div></div>
-              <div style="background: #13171b; padding: 8px 4px; border-radius: 6px; border: 1px solid #2d3339;"><div style="font-size: 9px; color: #c0b7ad;">AGI</div><div style="font-size: 16px; font-weight: 900; color: #4cc38a;">${totals.agi}</div></div>
-              <div style="background: #13171b; padding: 8px 4px; border-radius: 6px; border: 1px solid #2d3339;"><div style="font-size: 9px; color: #c0b7ad;">LCK</div><div style="font-size: 16px; font-weight: 900; color: #4cc38a;">${totals.lck}</div></div>
+          <div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 12px; padding: 16px;">
+            <div style="font-size: 12px; font-weight: 900; color: #4cc38a; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 10px;">[ S.P.E.C.I.A.L. TELEMETRY ]</div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;">
+              ${specialHtml}
             </div>
           </div>
 
-          <div style="background: #171a1d; border: 1px solid #2d3339; border-radius: 12px; padding: 16px; flex: 1;">
-            <div style="font-size: 13px; font-weight: 900; color: #f3a24d; text-transform: uppercase; margin-bottom: 10px;">Resistances & Vitals</div>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px; color: #f0ece7;">
-              <div style="background: #13171b; padding: 10px; border-radius: 6px; border: 1px solid #2d3339;">DR: <span style="font-weight: 800; color: #f3a24d;">${totals.dr}</span></div>
-              <div style="background: #13171b; padding: 10px; border-radius: 6px; border: 1px solid #2d3339;">ER: <span style="font-weight: 800; color: #f3a24d;">${totals.er}</span></div>
-              <div style="background: #13171b; padding: 10px; border-radius: 6px; border: 1px solid #2d3339;">FR: <span style="font-weight: 800; color: #f3a24d;">${totals.fr}</span></div>
-              <div style="background: #13171b; padding: 10px; border-radius: 6px; border: 1px solid #2d3339;">RR: <span style="font-weight: 800; color: #f3a24d;">${totals.rr}</span></div>
+          <div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 12px; padding: 16px; flex: 1;">
+            <div style="font-size: 12px; font-weight: 900; color: #4cc38a; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 10px;">[ RESISTANCE RATINGS ]</div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+              ${resistsHtml}
             </div>
           </div>
         </div>
