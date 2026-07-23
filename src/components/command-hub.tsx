@@ -637,19 +637,32 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             </div>
           </div>
           <div className="hub-group">
-            <div className="flex items-center justify-between text-xs text-foreground/60">
+            <div className="flex items-center justify-between text-xs text-foreground/60 mb-2">
               <span>Font Scale</span>
               <span className="font-mono text-accent">{Math.round((fontScale || 1) * 100)}%</span>
             </div>
-            <input
-              type="range"
-              min="0.8"
-              max="1.5"
-              step="0.05"
-              value={fontScale || 1}
-              onChange={(e) => setFontScale(parseFloat(e.target.value))}
-              className="mt-2 w-full accent-accent cursor-pointer"
-            />
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                { scale: 0.9, label: "90%" },
+                { scale: 1.0, label: "100% (Default)" },
+                { scale: 1.1, label: "110%" },
+                { scale: 1.2, label: "120%" }
+              ] as const).map((option) => (
+                <button
+                  key={option.scale}
+                  type="button"
+                  onClick={() => setFontScale(option.scale)}
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-xs transition-all",
+                    Math.abs((fontScale || 1) - option.scale) < 0.01
+                      ? "border-accent text-accent bg-accent/10 font-bold"
+                      : "border-border text-foreground/60 hover:border-accent hover:text-foreground"
+                  )}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="hub-group">
             <div className="text-xs text-foreground/60">Navigation</div>
