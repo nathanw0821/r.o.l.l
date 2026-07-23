@@ -502,14 +502,13 @@ export function listEquippedLegendariesWithBenchLabels(
   return out;
 }
 
-export type ShoppingLine = { label: string; count: number };
+import {
+  STAR_MODULE_COSTS,
+  getBaseRandomizeModuleCost,
+  calculateCraftingLogistics,
+} from "@/lib/builder/crafting-costs";
 
-const STAR_MODULE_COSTS: Record<number, number> = {
-  1: 15,
-  2: 30,
-  3: 60,
-  4: 120
-};
+export type ShoppingLine = { label: string; count: number };
 
 export function buildShoppingList(
   mods: BuilderModDTO[],
@@ -519,13 +518,15 @@ export function buildShoppingList(
     isMultiPiece?: boolean;
   }
 ): { modules: number; lines: ShoppingLine[] } {
-  let modules = 0;
+  let modBoxModules = 0;
+  let maxStarRank = 0;
   const map = new Map<string, number>();
 
   for (const mod of mods) {
+    if (mod.starRank > maxStarRank) maxStarRank = mod.starRank;
     const cost = mod.craftingCost;
     const modCount = readEffectMathNumber(cost?.legendaryModules) || STAR_MODULE_COSTS[mod.starRank] || 15;
-    modules += modCount;
+    modBoxModules += modCount;
 
     const items = cost?.items;
     if (Array.isArray(items) && items.length > 0) {
@@ -553,6 +554,13 @@ export function buildShoppingList(
       }
     }
   }
+
+  // Calculate logistics (Modules + Scrip)
+  const logistics = calculateCraftingLogistics(mods.length, modBoxModules, {
+    isMultiPiece: opts?.isMultiPiece,
+    pieceCount: 5,
+    maxStarRank,
+  });
 
   // Underarmor Linings & Styles Requirements
   if (opts?.underarmor) {
@@ -611,9 +619,17 @@ export function buildShoppingList(
     })
     .map(([label, count]) => ({ label, count }));
 
-  if (modules > 0) {
-    lines.unshift({ label: "Legendary modules", count: modules });
+  if (logistics.legendaryModules > 0) {
+    lines.unshift({ label: "Legendary modules (total)", count: logistics.legendaryModules });
+    if (logistics.baseRandomizeModules > 0) {
+      const feePerPiece = getBaseRandomizeModuleCost(maxStarRank);
+      lines.unshift({ label: `Base random roll modules (${feePerPiece}/pc)`, count: logistics.baseRandomizeModules });
+    }
   }
 
-  return { modules, lines };
+  if (logistics.legendaryScrip > 0) {
+    lines.unshift({ label: "Legendary Scrip (mod application fee)", count: logistics.legendaryScrip });
+  }
+
+  return { modules: logistics.legendaryModules, lines };
 }
