@@ -62,11 +62,11 @@
   --color-fg: var(--text-primary);
   --color-panel: var(--surface);
   --color-border: var(--border);
-  --base-font-scale: 1.18;
+  --base-font-scale: 1.0;
 }
 
 html {
-  font-size: calc(18px * var(--base-font-scale));
+  font-size: calc(16px * var(--base-font-scale, 1));
 }
 
 [data-theme="dark"] {
