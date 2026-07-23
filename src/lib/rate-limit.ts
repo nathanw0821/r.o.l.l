@@ -3,6 +3,11 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 const localCache = new Map<string, { count: number; expiresAt: number }>();
 
+interface CloudflareKVNamespace {
+  get(key: string): Promise<string | null>;
+  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+}
+
 /**
  * Distributed rate limiter.
  * Leverages Cloudflare KV (using `KV_LIMITER` namespace) if deployed to Cloudflare,
@@ -14,11 +19,11 @@ export async function rateLimit(key: string, limit: number, windowMs: number) {
   const now = Date.now();
 
   // Try to retrieve Cloudflare KV_LIMITER namespace if running in Cloudflare context
-  let kv: { get: (key: string) => Promise<string | null>; put: (key: string, value: string, options?: { expirationTtl?: number }) => Promise<void> } | null = null;
+  let kv: CloudflareKVNamespace | null = null;
   try {
     const ctx = getCloudflareContext();
     if (ctx && ctx.env) {
-      kv = (ctx.env as Record<string, unknown>).KV_LIMITER as typeof kv;
+      kv = (ctx.env as Record<string, unknown>).KV_LIMITER as CloudflareKVNamespace;
     }
   } catch {
     // Fail silently in local development/test/build environments
