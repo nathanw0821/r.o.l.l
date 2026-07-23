@@ -334,7 +334,11 @@ async function migrateProgress(previousVersionId: string, newVersionId: string) 
     );
 
   if (migrated.length > 0) {
-    await prisma.userProgress.createMany({ data: migrated, skipDuplicates: true });
+    const BATCH_SIZE = 500;
+    for (let i = 0; i < migrated.length; i += BATCH_SIZE) {
+      const batch = migrated.slice(i, i + BATCH_SIZE);
+      await prisma.userProgress.createMany({ data: batch, skipDuplicates: true });
+    }
   }
 }
 
@@ -718,10 +722,13 @@ export async function runSync() {
 
   if (previous) {
     await migrateProgress(previous.id, datasetVersionId);
-    await prisma.datasetVersion.update({ where: { id: previous.id }, data: { isActive: false } });
+    await prisma.$transaction([
+      prisma.datasetVersion.update({ where: { id: previous.id }, data: { isActive: false } }),
+      prisma.datasetVersion.update({ where: { id: datasetVersionId }, data: { isActive: true } })
+    ]);
+  } else {
+    await prisma.datasetVersion.update({ where: { id: datasetVersionId }, data: { isActive: true } });
   }
-
-  await prisma.datasetVersion.update({ where: { id: datasetVersionId }, data: { isActive: true } });
 
   const status = errors.length > 0 ? "partial" : "success";
   await prisma.syncRun.update({
