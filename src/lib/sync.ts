@@ -352,7 +352,7 @@ async function createDatasetVersionFromRows(rows: NormalizedRow[], sources: Sync
         })),
         rowCount: rows.length
       },
-      isActive: true
+      isActive: false
     }
   });
 
@@ -720,6 +720,8 @@ export async function runSync() {
     await migrateProgress(previous.id, datasetVersionId);
     await prisma.datasetVersion.update({ where: { id: previous.id }, data: { isActive: false } });
   }
+
+  await prisma.datasetVersion.update({ where: { id: datasetVersionId }, data: { isActive: true } });
 
   const status = errors.length > 0 ? "partial" : "success";
   await prisma.syncRun.update({
