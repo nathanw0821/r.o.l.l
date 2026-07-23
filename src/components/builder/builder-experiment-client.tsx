@@ -22,6 +22,7 @@ import {
   Terminal,
 } from "lucide-react";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
+import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -1395,6 +1396,18 @@ export default function BuilderExperimentClient({
                     </optgroup>
                   ))}
                 </select>
+              </div>
+
+              <div className="flex flex-col gap-1 sm:mt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-9 w-full text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
+                  onClick={() => exportBuilderLoadoutCard({ piece, payload, totals, equippedLines: listEquippedLegendariesWithBenchLabels(payload, mods) })}
+                >
+                  Export Build Card (PNG)
+                </Button>
               </div>
 
               {isTrackableBasePieceId(piece.id) ? (

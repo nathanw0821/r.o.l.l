@@ -745,6 +745,31 @@ export async function runSync() {
     }
   });
 
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (webhookUrl) {
+    try {
+      const embed = {
+        title: "⚡ Fallout 76 Legendary Mod Data Auto-Updated",
+        description: "R.O.L.L Auto-Pull Sync has imported live legendary mod dataset updates from NukaKnights.",
+        color: 0xfaad14,
+        fields: [
+          { name: "Verified Mod Effects", value: `${mergedRows.length} Legendary Mods`, inline: true },
+          { name: "Synced Sources", value: successfulSources.map((s) => s.name).join(", "), inline: true },
+          { name: "Dataset Version", value: `\`${datasetVersionId}\``, inline: false }
+        ],
+        footer: { text: "R.O.L.L · fallout76.wiki" },
+        timestamp: new Date().toISOString()
+      };
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ embeds: [embed] })
+      }).catch(() => undefined);
+    } catch {
+      // ignore notification errors
+    }
+  }
+
   safeRevalidateTag(ROLL_CATALOG_CACHE_TAG, { expire: 0 });
   safeRevalidateTag(GUEST_PROGRESS_SUMMARY_TAG, { expire: 0 });
   safeRevalidateTag(ACTIVE_DATASET_VERSION_TAG, { expire: 0 });

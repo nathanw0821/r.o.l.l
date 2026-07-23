@@ -12,7 +12,7 @@ const accents = [
   { value: "brass", label: "Brass" },
   { value: "frost", label: "Frost" },
   { value: "sunset", label: "Sunset" },
-  { value: "mint", label: "Mint" },
+  { value: "mint", label: "CachyOS" },
   { value: "nightfall", label: "Nightfall" }
 ] as const;
 

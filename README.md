@@ -47,7 +47,7 @@ A robust, high-fidelity engineering workbench simulating real-time character loa
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/nathanw0821/r.o.l.l.git
+    git clone https://github.com/nathanw/r.o.l.l.git
     cd r.o.l.l
     ```
 

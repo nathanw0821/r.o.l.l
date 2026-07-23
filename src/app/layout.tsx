@@ -32,7 +32,13 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
   title: "R.O.L.L | Record Of Legendary Loadouts",
-  description: "Record of legendary effects, components, and acquisition paths for Fallout 76."
+  description: "Record of legendary effects, components, and acquisition paths for Fallout 76.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "R.O.L.L"
+  }
 };
 
 type ThemeMode = "light" | "dark" | "system";
