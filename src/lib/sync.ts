@@ -43,14 +43,16 @@ type NormalizedRow = {
   sourceUrl?: string | null;
 };
 
+import { fetchAndParseNukaKnights } from "@/lib/nukaknights-scraper";
+
 const DEFAULT_SOURCES = [
   {
     name: "NukaKnights",
     kind: "nukaknights",
-    url: "",
-    referenceUrl: "https://nukaknights.com/en/",
-    format: "csv",
-    enabled: false
+    url: "https://nukaknights.com/articles/legendary-mods-all-descriptions-and-usages.html",
+    referenceUrl: "https://nukaknights.com/articles/legendary-mods-all-descriptions-and-usages.html",
+    format: "html",
+    enabled: true
   },
   {
     name: "TheDuchessFlame",
@@ -458,6 +460,11 @@ async function createDatasetVersionFromRows(rows: NormalizedRow[], sources: Sync
 }
 
 async function fetchSourceRows(source: SyncSourceRecord) {
+  if (source.kind === "nukaknights" || source.format === "html") {
+    const targetUrl = source.url || source.referenceUrl || "https://nukaknights.com/articles/legendary-mods-all-descriptions-and-usages.html";
+    return fetchAndParseNukaKnights(targetUrl);
+  }
+
   if (!source.url) {
     throw new Error("Missing source URL");
   }
@@ -520,8 +527,10 @@ export async function ensureSyncSources() {
       where: { id: current.id },
       data: {
         name: source.name,
-        referenceUrl: current.referenceUrl ?? source.referenceUrl,
-        format: current.format ?? source.format
+        url: source.kind === "nukaknights" ? source.url : current.url,
+        referenceUrl: source.referenceUrl,
+        format: source.kind === "nukaknights" ? "html" : (current.format ?? source.format),
+        enabled: source.kind === "nukaknights" ? true : current.enabled
       }
     });
   }

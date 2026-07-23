@@ -110,17 +110,17 @@ export default function AdminSyncPanel() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="text-sm font-semibold">Sync</div>
+          <div className="text-sm font-semibold">NukaKnights Live Auto-Pull Sync</div>
           <div className="text-xs text-foreground/60">
-            Check watches reference pages. Run Sync uses enabled feed URLs only.
+            Daily automated check runs at <strong>1:00 PM EST (18:00 UTC)</strong> via Cloudflare Workers Cron.
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" onClick={handleCheck} disabled={checkPending}>
-            {checkPending ? "Checking..." : "Check for Changes"}
+            {checkPending ? "Checking NukaKnights..." : "Check for Changes"}
           </Button>
-          <Button type="button" variant="outline" size="sm" onClick={handleSync} disabled={syncPending}>
-            {syncPending ? "Syncing..." : "Run Sync"}
+          <Button type="button" size="sm" onClick={handleSync} disabled={syncPending} className="bg-[var(--accent)] text-white hover:opacity-90">
+            {syncPending ? "Auto-Pulling Live Data..." : "Manual Auto-Pull from NukaKnights"}
           </Button>
         </div>
       </div>
