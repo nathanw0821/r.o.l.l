@@ -39,7 +39,7 @@ import {
   UNDERARMOR_SHELLS,
   UNDERARMOR_STYLES
 } from "@/lib/builder/underarmor";
-import { SANDBOX_MUTATIONS, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
+import { getSortedMutationLabels, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
 import { prisma } from "@/lib/prisma";
 
@@ -114,7 +114,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   const ids = collectEquippedLegendaryModIds(payload);
   const modRows = ids.length
     ? await prisma.legendaryMod.findMany({
-        where: { id: { in: ids } },
+        where: { OR: [{ id: { in: ids } }, { slug: { in: ids } }] },
         select: modDetailSelect
       })
     : [];
@@ -194,13 +194,6 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   const shopping = buildShoppingList(equippedOrdered);
 
   const groupedLegendaryEffects = getGroupedLegendaryEffects(equippedLegendaryBenchLines);
-
-  const mutationSummary =
-    payload.mutationIds.length > 0
-      ? payload.mutationIds
-          .map((id) => SANDBOX_MUTATIONS.find((m) => m.id === id)?.label ?? id)
-          .join(" · ")
-      : null;
 
   const SLOT_LABELS = ["1st", "2nd", "3rd", "4th"];
 
@@ -357,7 +350,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
                       <div className="space-y-1 text-xs">
                         {SLOT_LABELS.map((starLabel, starIndex) => {
                           const id = payload.armorLegendaryModIds[pieceIndex]![starIndex];
-                          const mod = id ? modRows.find((m) => m.id === id) : null;
+                          const mod = id ? dtoList.find((m) => m.id === id || m.slug === id) : null;
                           return (
                             <div key={starIndex} className="flex justify-between items-center text-[0.78rem]">
                               <span className="text-foreground/40 font-bold">{starIndex + 1}★</span>
@@ -376,7 +369,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
               <div className="space-y-2">
                 {SLOT_LABELS.map((starLabel, starIndex) => {
                   const id = payload.legendaryModIds[starIndex];
-                  const mod = id ? modRows.find((m) => m.id === id) : null;
+                  const mod = id ? dtoList.find((m) => m.id === id || m.slug === id) : null;
                   return (
                     <div key={starIndex} className="p-3 rounded border border-border/30 bg-background/25 flex justify-between items-center text-xs">
                       <span className="text-foreground/40 font-bold">{starIndex + 1}★ {starLabel} Star</span>
@@ -418,8 +411,10 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
               <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
                 [ MUTATION SERUM MATRIX ]
               </div>
-              {mutationSummary ? (
-                <div className="text-xs font-bold text-accent leading-relaxed">{mutationSummary}</div>
+              {getSortedMutationLabels(payload.mutationIds).length > 0 ? (
+                <div className="text-xs font-bold text-accent leading-relaxed">
+                  {getSortedMutationLabels(payload.mutationIds).join(" · ")}
+                </div>
               ) : (
                 <div className="text-xs text-foreground/40 italic">No mutations active.</div>
               )}
