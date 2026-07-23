@@ -339,6 +339,41 @@ export default function SummaryClient({
       
       const scale = is4k ? 2 : 1;
       
+      const maxItemsInCol = Math.max(
+        ...tierOrder.map((t) => exportRows.filter((r) => r.tier?.label === t).length),
+        1
+      );
+
+      let baseFontSize = 12.5;
+      let countFontSize = 12;
+      let symbolFontSize = 14.5;
+      let rowPy = 1.5;
+      let useSpaceBetween = true;
+      let dynamicRowGap = 4;
+
+      if (maxItemsInCol <= 8) {
+        baseFontSize = 21;
+        countFontSize = 19;
+        symbolFontSize = 24;
+        rowPy = 10;
+        useSpaceBetween = false;
+        dynamicRowGap = 12;
+      } else if (maxItemsInCol <= 15) {
+        baseFontSize = 17;
+        countFontSize = 15;
+        symbolFontSize = 19;
+        rowPy = 6;
+        useSpaceBetween = false;
+        dynamicRowGap = 8;
+      } else if (maxItemsInCol <= 25) {
+        baseFontSize = 14.5;
+        countFontSize = 13.5;
+        symbolFontSize = 16.5;
+        rowPy = 3.5;
+        useSpaceBetween = false;
+        dynamicRowGap = 5;
+      }
+      
       innerWrapper.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid ${colors.border}; padding-bottom: ${10 * scale}px; box-sizing: border-box; flex-shrink: 0;">
           <div style="display: flex; align-items: center; gap: ${16 * scale}px;">
@@ -365,15 +400,17 @@ export default function SummaryClient({
               const countColor = row.modCount > 0 ? colors.accent : colors.textMuted;
               
               return `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: ${2 * scale}px ${6 * scale}px; border-bottom: 1px solid ${colors.borderRow}; font-size: ${11 * scale}px; line-height: 1.2; box-sizing: border-box; min-height: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: ${rowPy * scale}px ${6 * scale}px; border-bottom: 1px solid ${colors.borderRow}; font-size: ${baseFontSize * scale}px; line-height: 1.25; box-sizing: border-box; min-height: 0;">
                   <span style="font-weight: 700; color: ${isUnlocked ? colors.textPrimary : colors.textMuted}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 65%;">${row.effect.name}</span>
                   <div style="display: flex; align-items: center; gap: ${10 * scale}px;">
-                    <span style="font-weight: 800; color: ${countColor}; font-size: ${10.5 * scale}px;">${countText}</span>
-                    <span style="font-weight: 900; color: ${symbolColor}; font-size: ${13 * scale}px; width: ${14 * scale}px; text-align: center;">${symbol}</span>
+                    <span style="font-weight: 800; color: ${countColor}; font-size: ${countFontSize * scale}px;">${countText}</span>
+                    <span style="font-weight: 900; color: ${symbolColor}; font-size: ${symbolFontSize * scale}px; width: ${16 * scale}px; text-align: center;">${symbol}</span>
                   </div>
                 </div>
               `;
             }).join("");
+            
+            const columnJustify = useSpaceBetween ? "justify-content: space-between;" : `justify-content: flex-start; gap: ${dynamicRowGap * scale}px;`;
             
             return `
               <div style="background: ${colors.surfaceSecondary}; border: 1px solid ${colors.border}; border-radius: ${8 * scale}px; padding: ${12 * scale}px; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; min-height: 0;">
@@ -381,7 +418,7 @@ export default function SummaryClient({
                   <span style="font-size: ${14 * scale}px; font-weight: 900; color: ${colors.accent}; tracking-wider">${tierDisplay.stars || tierLabel}</span>
                   <span style="font-size: ${11 * scale}px; font-weight: 800; color: ${colors.textMuted};">${items.length} MODS</span>
                 </div>
-                <div style="display: flex; flex-direction: column; justify-content: space-between; flex: 1; min-height: 0; overflow: hidden;">
+                <div style="display: flex; flex-direction: column; ${columnJustify} flex: 1; min-height: 0; overflow: hidden;">
                   ${rowsHtml}
                 </div>
               </div>
