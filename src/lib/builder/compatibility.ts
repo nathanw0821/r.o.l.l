@@ -483,7 +483,11 @@ export function listEquippedModsInBenchOrder(
   payload: BuilderPayload,
   mods: BuilderModDTO[]
 ): BuilderModDTO[] {
-  const map = new Map(mods.map((m) => [m.id, m]));
+  const map = new Map<string, BuilderModDTO>();
+  for (const m of mods) {
+    map.set(m.id, m);
+    if (m.slug) map.set(m.slug, m);
+  }
   const ids: string[] = [];
   if (isMultiPiecePayload(payload)) {
     for (const row of payload.armorLegendaryModIds) {
@@ -518,7 +522,11 @@ export function listEquippedLegendariesWithBenchLabels(
   payload: BuilderPayload,
   mods: BuilderModDTO[]
 ): EquippedLegendaryBenchLine[] {
-  const map = new Map(mods.map((m) => [m.id, m]));
+  const map = new Map<string, BuilderModDTO>();
+  for (const m of mods) {
+    map.set(m.id, m);
+    if (m.slug) map.set(m.slug, m);
+  }
   const isSet = isMultiPiecePayload(payload);
   const out: EquippedLegendaryBenchLine[] = [];
 
