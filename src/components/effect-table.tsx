@@ -259,6 +259,19 @@ export default function EffectTable({
               </h2>
               {description && <p className="text-sm font-mono text-foreground/60 leading-relaxed">{description}</p>}
             </div>
+
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between text-xs font-mono font-bold uppercase tracking-wider text-foreground/70">
+                <span>Tier Completion Progress</span>
+                <span className="text-accent font-mono">{percent}% ({unlockedCount}/{totalCount})</span>
+              </div>
+              <div className="h-2.5 w-full bg-background/50 rounded-full overflow-hidden border border-border/30 p-0.5">
+                <div 
+                  className="h-full bg-accent transition-all duration-500 rounded-full shadow-[0_0_8px_color-mix(in_srgb,var(--color-accent)_40%,transparent)]" 
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+            </div>
             
             <div className="pt-3 border-t border-border/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
