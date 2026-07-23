@@ -18,7 +18,6 @@ import {
   BUILDER_SPECIAL_LABELS,
   SPECIAL_FULL_NAMES,
   buildShoppingList,
-  collectEquippedLegendaryModIds,
   getGroupedLegendaryEffects,
   isFullArmorSetPayload,
   listEquippedLegendariesWithBenchLabels,
@@ -111,13 +110,9 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   }
 
   const piece = getBaseGearPiece(payload.basePieceId);
-  const ids = collectEquippedLegendaryModIds(payload);
-  const modRows = ids.length
-    ? await prisma.legendaryMod.findMany({
-        where: { OR: [{ id: { in: ids } }, { slug: { in: ids } }] },
-        select: modDetailSelect
-      })
-    : [];
+  const modRows = await prisma.legendaryMod.findMany({
+    select: modDetailSelect
+  });
 
   const dtoList: BuilderModDTO[] = modRows.map((m) => ({
     id: m.id,
