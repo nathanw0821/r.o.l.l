@@ -655,6 +655,7 @@ export default function ScreenshotAssistClient({
             <div className="mt-4 flex flex-wrap gap-2.5 max-h-[144px] overflow-y-auto pr-1">
               {imageQueue.map((url, idx) => (
                 <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded border border-border bg-background/50 cursor-pointer shadow-sm hover:border-accent transition-all duration-200">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={url} alt={`Queue ${idx}`} className="h-full w-full object-cover" />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="text-[0.72rem] font-bold uppercase tracking-wider text-destructive flex items-center gap-1" onClick={() => setImageQueue(prev => prev.filter((_, i) => i !== idx))}>
@@ -910,6 +911,7 @@ export default function ScreenshotAssistClient({
                       <span>{ocrPending ? "INGESTING_OCR..." : "STREAM_LOCKED"}</span>
                     </div>
                     <div className="relative overflow-hidden rounded border border-border/50 bg-background/50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={url} alt={`Screenshot ${idx + 1}`} className="h-auto w-full object-contain" />
                       {/* Interactive laser scanner sweep bar */}
                       {ocrPending && (

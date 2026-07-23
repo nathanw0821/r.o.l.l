@@ -57,7 +57,7 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-bold text-accent border-b border-border pb-1">5. Limitation of Liability</h2>
           <p>
-            R.O.L.L. is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, either express or implied. To the maximum extent permitted by law, the developer of R.O.L.L. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of data, profile corruption, system downtime, server malfunction, or unauthorized data exposure resulting from your use of the application.
+            R.O.L.L. is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without warranties of any kind, either express or implied. To the maximum extent permitted by law, the developer of R.O.L.L. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of data, profile corruption, system downtime, server malfunction, or unauthorized data exposure resulting from your use of the application.
           </p>
         </section>
 

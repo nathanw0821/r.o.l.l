@@ -21,11 +21,11 @@ async function main() {
   
   // 1. Get the admin user
   const user = await prisma.user.findFirst({
-    where: { email: "nathanw0821@gmail.com" }
+    where: { email: "nathanw@gmail.com" }
   });
   
   if (!user) {
-    console.error("❌ Admin user nathanw0821@gmail.com not found in database.");
+    console.error("❌ Admin user nathanw@gmail.com not found in database.");
     return;
   }
   
@@ -75,7 +75,7 @@ async function main() {
   const unlockedKeys = new Set<string>();
 
   // Helper to add to set
-  const addUnlockedKey = (effectTier: any) => {
+  const addUnlockedKey = (effectTier: { tier: { label: string }; effect: { name: string } }) => {
     const tierLabel = effectTier.tier.label.trim().toLowerCase(); // e.g. "1 star"
     const effectName = effectTier.effect.name.trim().toLowerCase(); // e.g. "adrenal"
     unlockedKeys.add(`${tierLabel}:${effectName}`);
