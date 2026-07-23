@@ -1891,12 +1891,45 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 }
 
 @media (max-width: 1199px) {
+  .feedback-widget {
+    left: 1.25rem;
+    right: auto;
+    bottom: 1.25rem;
+    z-index: 44;
+  }
   .command-hub {
     position: relative;
     top: auto;
     max-width: 100%;
     margin-bottom: 1rem;
     z-index: 10;
+  }
+  .command-hub--open {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    z-index: 99999 !important;
+    background: rgba(10, 14, 18, 0.97) !important;
+    backdrop-filter: blur(16px) !important;
+    overflow-y: auto !important;
+    padding: 1.25rem !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  .command-hub--open .command-hub__body {
+    position: relative !important;
+    top: 0 !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0.5rem 0 3rem 0 !important;
   }
   .primary-page-header {
     position: relative;
