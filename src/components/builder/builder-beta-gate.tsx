@@ -6,14 +6,25 @@ import { Button } from "@/components/ui/button";
 
 export const BETA_ACCEPTED_KEY = "roll-builder-beta-accepted";
 
+function getStoredBetaAccess(key: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(key) === "true";
+  } catch {
+    return false;
+  }
+}
+
 export function useBuilderBetaAccess(isAdmin: boolean, storageKey: string = BETA_ACCEPTED_KEY) {
-  const [accepted, setAccepted] = React.useState<boolean | null>(null);
+  const [accepted, setAccepted] = React.useState<boolean>(() => getStoredBetaAccess(storageKey));
 
   React.useEffect(() => {
     const check = () => {
-      const val = window.localStorage.getItem(storageKey) === "true";
+      const val = getStoredBetaAccess(storageKey);
       setAccepted(val);
     };
+
+    // Check again on mount
     check();
 
     const handleStorage = (e: StorageEvent) => {
@@ -24,14 +35,18 @@ export function useBuilderBetaAccess(isAdmin: boolean, storageKey: string = BETA
   }, [storageKey]);
 
   const accept = React.useCallback(() => {
-    window.localStorage.setItem(storageKey, "true");
+    try {
+      window.localStorage.setItem(storageKey, "true");
+    } catch {
+      // ignore
+    }
     setAccepted(true);
-    // Dispatch custom event for same-window updates
+    // Dispatch custom event for same-window updates across tabs/components
     window.dispatchEvent(new Event("storage"));
   }, [storageKey]);
 
   return {
-    hasAccess: isAdmin || accepted === true,
+    hasAccess: isAdmin || accepted,
     accepted,
     accept
   };
@@ -50,6 +65,19 @@ export function BuilderBetaGate({
   title?: string;
   description?: React.ReactNode;
 }) {
+  const [dontShowAgain, setDontShowAgain] = React.useState(true);
+
+  const handleConfirm = () => {
+    if (dontShowAgain) {
+      try {
+        window.localStorage.setItem(BETA_ACCEPTED_KEY, "true");
+      } catch {
+        // ignore
+      }
+    }
+    onAccept();
+  };
+
   return (
     <Dialog open={open} onOpenChange={(val) => { if (!val) onCancel(); }}>
       <DialogContent className="sm:max-w-[425px]">
@@ -62,11 +90,23 @@ export function BuilderBetaGate({
                 By joining the beta, you&apos;ll gain access to the experimental diagnostics and logistics tools.
               </p>
             </div>
-            <div className="flex justify-end gap-3 pt-2">
+            <div className="mt-4 flex items-center gap-2 text-xs text-foreground/70">
+              <input
+                type="checkbox"
+                id="dont-show-beta-again"
+                checked={dontShowAgain}
+                onChange={(e) => setDontShowAgain(e.target.checked)}
+                className="h-4 w-4 rounded border-border accent-[var(--accent)] cursor-pointer"
+              />
+              <label htmlFor="dont-show-beta-again" className="cursor-pointer font-medium">
+                Don&apos;t show this notice again
+              </label>
+            </div>
+            <div className="flex justify-end gap-3 pt-3">
               <Button variant="outline" onClick={onCancel}>
                 No thanks
               </Button>
-              <Button onClick={onAccept}>
+              <Button onClick={handleConfirm} className="bg-[var(--accent)] text-white hover:opacity-90">
                 I&apos;m in
               </Button>
             </div>
