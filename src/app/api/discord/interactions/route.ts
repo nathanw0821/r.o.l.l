@@ -178,10 +178,88 @@ export async function POST(req: Request) {
                   name: "Tinkerer's Bench Crafting Recipe",
                   value: craftingStr,
                   inline: false
+                },
+                {
+                  name: "Acquisition & Scrapping Notes",
+                  value: "• **Plan Unlock**: 1.5% chance when scrapping legendary gear.\n• **Mod Box Drop**: 1% chance when scrapping legendary gear.\n• **Bench**: Craftable at Tinkerer's Bench once learned.",
+                  inline: false
                 }
               ],
               footer: {
                 text: "R.O.L.L. · Record Of Legendary Loadouts",
+                icon_url: "https://fallout76.wiki/favicon-v3.png"
+              }
+            }
+          ]
+        }
+      });
+    }
+
+    // Command: /craft <query>
+    if (name === "craft") {
+      const queryOption = options?.find((o: { name: string; value: string }) => o.name === "query");
+      const query = queryOption?.value?.toLowerCase().trim() || "";
+      const normQuery = normalizeFuzzySearchString(query);
+
+      const filterableCatalog: FilterableRow[] = catalog.map((m) => ({
+        effect: { name: m.name },
+        tier: { label: `${m.starRank || 1} Star` },
+        categories: [{ category: { name: [m.category, m.subCategory].filter(Boolean).join(" ") } }],
+        description: m.description,
+        unlocked: true,
+        isSeeking: false,
+        modCount: 1,
+        modObj: m
+      }));
+
+      const filtered = applyFilters(filterableCatalog, { query, sources: [], status: [], origins: [] });
+      let match: (typeof catalog)[0] | undefined = (filtered[0] as unknown as { modObj: (typeof catalog)[0] })?.modObj;
+
+      if (!match) {
+        match = catalog.find((m) => {
+          const normName = normalizeFuzzySearchString(m.name);
+          const normSlug = normalizeFuzzySearchString(m.slug);
+          return normName === normQuery || normSlug === normQuery || normName.includes(normQuery) || normQuery.includes(normName);
+        });
+      }
+
+      if (!match) {
+        return NextResponse.json({
+          type: 4,
+          data: {
+            content: `⚠️ No legendary mod found matching **"${query}"**. Try searching for *Pinpointer's*, *Bloodied*, *Unyielding*, *WWR*, or *25LVC*.`,
+            flags: 64
+          }
+        });
+      }
+
+      const starCount = match.starRank || 1;
+      const stars = "★".repeat(starCount);
+      const craftingStr = formatCraftingCost(starCount, match.craftingCost as Record<string, unknown>);
+
+      return NextResponse.json({
+        type: 4,
+        data: {
+          embeds: [
+            {
+              title: `🛠️ Tinkerer's Bench Recipe: ${stars} ${match.name}`,
+              url: `https://fallout76.wiki/all-effects#${match.slug}`,
+              description: `Crafting requirements for applying or crafting the **${match.name}** legendary mod box:`,
+              color: 0xeab308,
+              fields: [
+                {
+                  name: "Required Materials",
+                  value: craftingStr,
+                  inline: false
+                },
+                {
+                  name: "Acquisition & Learning",
+                  value: "• **Plan Unlock**: 1.5% chance when scrapping legendary gear.\n• **Loose Mod Box Drop**: 1% chance when scrapping legendary gear.\n• **Tinkerer's Bench**: Craftable once plan is learned.",
+                  inline: false
+                }
+              ],
+              footer: {
+                text: "R.O.L.L. Modular Crafting Engine · fallout76.wiki",
                 icon_url: "https://fallout76.wiki/favicon-v3.png"
               }
             }

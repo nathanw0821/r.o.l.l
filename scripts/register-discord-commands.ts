@@ -23,6 +23,18 @@ const commands = [
     ]
   },
   {
+    name: "craft",
+    description: "Look up Tinkerer's Bench crafting material requirements & acquisition for any mod",
+    options: [
+      {
+        name: "query",
+        description: "Mod name or shorthand (e.g. Pinpointer's, Bloodied, Unyielding, WWR)",
+        type: 3,
+        required: true
+      }
+    ]
+  },
+  {
     name: "scrip",
     description: "Calculate modular legendary crafting scrip & module cost breakdown",
     options: [
