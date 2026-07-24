@@ -34,6 +34,11 @@ export const metadata: Metadata = {
   title: "R.O.L.L | Record Of Legendary Loadouts",
   description: "Record of legendary effects, components, and acquisition paths for Fallout 76.",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+    shortcut: "/favicon-v3.png"
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
