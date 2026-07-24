@@ -313,3 +313,86 @@ export async function exportBuilderLoadoutCard(params: {
     }
   }
 }
+
+export async function exportPerkDeckCard(params: {
+  characterName: string;
+  slotName: string;
+  specials: Record<string, number>;
+  equippedCards: Array<{ cardId: string; rank: number }>;
+}) {
+  const { characterName, slotName, specials, equippedCards } = params;
+  let container: HTMLDivElement | null = null;
+
+  try {
+    const width = 1920;
+    const height = 1080;
+
+    container = document.createElement("div");
+    container.id = "roll-perk-card-export-temp";
+    container.style.position = "fixed";
+    container.style.left = "0";
+    container.style.top = "0";
+    container.style.zIndex = "-9999";
+    container.style.opacity = "1";
+    container.style.pointerEvents = "none";
+    container.style.width = `${width}px`;
+    container.style.height = `${height}px`;
+    container.style.padding = "24px";
+    container.style.boxSizing = "border-box";
+    container.style.backgroundColor = "#080b0e";
+
+    const stamp = new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+
+    const inner = document.createElement("div");
+    inner.style.width = "100%";
+    inner.style.height = "100%";
+    inner.style.display = "flex";
+    inner.style.flexDirection = "column";
+    inner.style.gap = "16px";
+    inner.style.fontFamily = "monospace";
+    inner.style.color = "#e2e8f0";
+
+    const specialsHtml = Object.entries(specials)
+      .map(([k, v]) => `<div style="background: rgba(14, 18, 22, 0.9); border: 1px solid rgba(76, 195, 138, 0.3); border-radius: 8px; padding: 10px; text-align: center;"><div style="color: #4cc38a; font-weight: 900; font-size: 18px;">${k}</div><div style="font-size: 14px; font-weight: 700; color: #fff;">${v} PTS</div></div>`)
+      .join("");
+
+    const cardsHtml = equippedCards
+      .map(
+        (c) =>
+          `<div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 8px; padding: 10px;"><div style="color: #f59e0b; font-weight: 800; font-size: 14px;">${c.cardId} (${c.rank}★)</div></div>`
+      )
+      .join("");
+
+    inner.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(76, 195, 138, 0.4); padding-bottom: 12px;">
+        <div>
+          <div style="color: #4cc38a; font-size: 12px; font-weight: 900; letter-spacing: 0.15em;">VAULT-TEC PUNCH CARD MACHINE // P.E.R.K. DECK</div>
+          <div style="font-size: 28px; font-weight: 900; color: #ffffff;">${characterName} — ${slotName}</div>
+        </div>
+        <div style="text-align: right; color: rgba(226, 232, 240, 0.6); font-size: 12px;">${stamp} · fallout76.wiki</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;">${specialsHtml}</div>
+      <div style="font-size: 14px; font-weight: 900; color: #4cc38a; margin-top: 10px;">[ EQUIPPED PERK CARDS DECK (${equippedCards.length}) ]</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; flex: 1;">${cardsHtml || "<div style='color: rgba(255,255,255,0.4);'>No cards equipped</div>"}</div>
+    `;
+
+    container.appendChild(inner);
+    document.body.appendChild(container);
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    const { toPng } = await import("html-to-image");
+    const dataUrl = await toPng(container, { width, height, pixelRatio: 1, cacheBust: true });
+
+    const link = document.createElement("a");
+    link.download = `roll-perk-deck-${characterName.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${stamp.replace(/[^a-zA-Z0-9]/g, "-")}.png`;
+    link.href = dataUrl;
+    link.click();
+  } catch (err) {
+    console.error("Failed to export perk deck PNG:", err);
+  } finally {
+    if (container && document.body.contains(container)) {
+      document.body.removeChild(container);
+    }
+  }
+}
