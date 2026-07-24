@@ -6,6 +6,7 @@ import { isPublicRegistrationEnabled } from "@/lib/app-config";
 import { issueEmailVerification } from "@/lib/email-verification";
 import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const signUpSchema = z.object({
   email: z.string().email(),
@@ -18,7 +19,8 @@ const signUpSchema = z.object({
     .string()
     .min(8, "Password must be at least 8 characters.")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number.")
+    .regex(/[0-9]/, "Password must contain at least one number."),
+  turnstileToken: z.string().nullable().optional()
 });
 
 function normalizeEmail(raw: string) {
@@ -45,6 +47,11 @@ export async function POST(request: Request) {
 
   const parsed = await parseJson(request, signUpSchema);
   if ("response" in parsed) return parsed.response;
+
+  const turnstile = await verifyTurnstileToken(parsed.data.turnstileToken);
+  if (!turnstile.success) {
+    return badRequest("Security verification failed. Please complete the anti-bot verification.");
+  }
 
   const email = normalizeEmail(parsed.data.email);
   const username = normalizeUsername(parsed.data.username);

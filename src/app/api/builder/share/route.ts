@@ -12,6 +12,10 @@ import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
 
 
 
+import { rateLimit } from "@/lib/rate-limit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
+import { tooManyRequests } from "@/lib/api/responses";
+
 const underarmorSchema = z.object({
   shellId: z.string().min(1),
   liningId: z.string().nullable(),
@@ -57,7 +61,8 @@ const bodySchema = z.object({
   title: z.string().min(2).max(120),
   seoTitle: z.string().max(140).optional(),
   description: z.string().max(500).optional(),
-  payload: payloadSchema
+  payload: payloadSchema,
+  turnstileToken: z.string().nullable().optional()
 });
 
 function makeSlug(title: string) {
@@ -71,6 +76,11 @@ function makeSlug(title: string) {
 }
 
 export async function POST(request: Request) {
+  const limiter = await rateLimit("publish-build", 10, 60000); // 10 per minute
+  if (!limiter.success) {
+    return tooManyRequests("Too many requests. Please try again later.");
+  }
+
   let json: unknown;
   try {
     json = await request.json();
@@ -81,6 +91,11 @@ export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     return validationError(parsed.error, "Invalid build payload.");
+  }
+
+  const turnstile = await verifyTurnstileToken(parsed.data.turnstileToken);
+  if (!turnstile.success) {
+    return badRequest("Security verification failed. Please complete the anti-bot verification.");
   }
 
   const session = await getServerSession(authOptions);
