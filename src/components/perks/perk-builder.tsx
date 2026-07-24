@@ -139,7 +139,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
     if (selectedCategory !== "ALL") {
       result = result.filter((c) => c.special === selectedCategory);
     }
-    return result;
+    return result.sort((a, b) => a.name.localeCompare(b.name));
   }, [searchQuery, selectedCategory]);
 
   return (
