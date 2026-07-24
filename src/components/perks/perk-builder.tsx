@@ -4,6 +4,7 @@ import * as React from "react";
 import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, searchPerkCards } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
 
 type EquippedItem = { cardId: string; rank: number };
 
@@ -132,6 +133,15 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
     return result;
   }, [searchQuery, selectedCategory]);
 
+  const handleExportDeckPng = () => {
+    exportPerkDeckCard({
+      characterName: characterName || "Vault Dweller",
+      slotName: `Punch Card Loadout ${activeSlot + 1}`,
+      specials,
+      equippedCards
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Banner */}
@@ -145,9 +155,14 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
               Perk Equipment &amp; Reconfiguration Kit for {characterName ? <strong>{characterName}</strong> : "Selected Character"}
             </p>
           </div>
-          <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-accent text-accent-foreground font-mono">
-            {saving ? "Saving..." : "Save Active Loadout"}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-accent text-accent">
+              📸 Export Deck PNG
+            </Button>
+            <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-accent text-accent-foreground font-mono text-xs">
+              {saving ? "Saving..." : "Save Active Loadout"}
+            </Button>
+          </div>
         </div>
         {saveMessage ? <div className="mt-3 text-xs font-mono text-emerald-400">{saveMessage}</div> : null}
       </div>
