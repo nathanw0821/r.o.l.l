@@ -26,18 +26,18 @@ import { CharacterSelector } from "@/components/character-selector";
 import MigrationNotice from "@/components/migration-notice";
 import { useVisitorTracking } from "@/lib/hooks/use-visitor-tracking";
 
-type AppNavLink = {
+interface AppNavLink {
   href: string;
   label: string;
-  icon: typeof Sparkles;
   ariaLabel?: string;
-  tierLabel?: string;
-  requiresAuth?: boolean;
+  icon: React.ComponentType<{ className?: string }>;
   activePaths?: string[];
   activePrefixes?: string[];
-  /** When false, avoids prefetching the route (keeps tracker sessions free of extra RSC work). */
   prefetch?: boolean;
-};
+  tierLabel?: string;
+  isBuildTab?: boolean;
+  requiresAuth?: boolean;
+}
 
 const trackingLinks: AppNavLink[] = [
   { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
@@ -45,11 +45,11 @@ const trackingLinks: AppNavLink[] = [
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
   { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
   { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
-  { href: "/all-effects", label: "All Effects", icon: ListChecks }
+  { href: "/all-effects", label: "All Effects", icon: ListChecks },
+  { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false, isBuildTab: true }
 ];
 
 const experimentalLinks: AppNavLink[] = [
-  { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false },
   { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles }
 ];
 
@@ -369,18 +369,20 @@ export default function AppShell({
               const linkLabel = tier ? `${formatTierStars(link.tierLabel)} ${tier.percent}%` : link.label;
 
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  prefetch={link.prefetch === false ? false : undefined}
-                  aria-label={
-                    tier ? `${link.ariaLabel ?? link.label} ${tier.percent}% complete` : link.ariaLabel ?? link.label
-                  }
-                  className={cn("app-nav__link", active && "app-nav__link--active")}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{linkLabel}</span>
-                </Link>
+                <React.Fragment key={link.href}>
+                  {link.isBuildTab && <div className="my-2 border-t border-border/20" />}
+                  <Link
+                    href={link.href}
+                    prefetch={link.prefetch === false ? false : undefined}
+                    aria-label={
+                      tier ? `${link.ariaLabel ?? link.label} ${tier.percent}% complete` : link.ariaLabel ?? link.label
+                    }
+                    className={cn("app-nav__link", active && "app-nav__link--active")}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{linkLabel}</span>
+                  </Link>
+                </React.Fragment>
               );
             })}
 

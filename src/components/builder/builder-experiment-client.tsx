@@ -574,15 +574,37 @@ export default function BuilderExperimentClient({
     setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
   }, [initialLearnedBasePieceIds]);
 
-  const loadMods = React.useCallback(() => {
+  const loadMods = React.useCallback((forceRefresh = false) => {
+    if (!forceRefresh) {
+      try {
+        const cached = sessionStorage.getItem("roll-builder-mods-cache");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMods(parsed);
+            setLoadError(null);
+            return;
+          }
+        }
+      } catch {
+        // Fall back to fetch on storage error
+      }
+    }
+
     fetch("/api/builder/mods")
       .then((r) => r.json())
       .then((body) => {
         if (!body?.success || !Array.isArray(body.data?.mods)) {
           throw new Error("Could not load builder catalog.");
         }
-        setMods(body.data.mods as BuilderModDTO[]);
+        const catalog = body.data.mods as BuilderModDTO[];
+        setMods(catalog);
         setLoadError(null);
+        try {
+          sessionStorage.setItem("roll-builder-mods-cache", JSON.stringify(catalog));
+        } catch {
+          // Ignore quota errors
+        }
       })
       .catch(() =>
         setLoadError(
@@ -597,7 +619,7 @@ export default function BuilderExperimentClient({
 
   React.useEffect(() => {
     return subscribeProgressChange(() => {
-      loadMods();
+      loadMods(true);
     });
   }, [loadMods]);
 
@@ -1798,7 +1820,7 @@ export default function BuilderExperimentClient({
                 [ MUTATION SERUM MATRIX ]
               </div>
               
-              <div className="max-h-36 space-y-1 overflow-y-auto pr-1 grid grid-cols-2 gap-1 text-[0.78rem]">
+              <div className="max-h-36 space-y-1 overflow-y-auto pr-1 grid grid-cols-2 gap-1 text-[0.78rem] content-visibility-auto">
                 {SANDBOX_MUTATIONS.map((m) => {
                   const on = payload.mutationIds.includes(m.id);
                   return (
