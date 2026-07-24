@@ -78,15 +78,20 @@ const commands = [
   },
   {
     name: "progress",
-    description: "Look up a R.O.L.L. user's public tracker progress & completion rank",
+    description: "Look up a R.O.L.L. user's public tracker progress (or leave blank for your linked account)",
     options: [
       {
         name: "username",
-        description: "R.O.L.L. username",
+        description: "R.O.L.L. username (optional if your Discord is linked)",
         type: 3,
-        required: true
+        required: false
       }
     ]
+  },
+  {
+    name: "rules",
+    description: "Display official Vault-Tec Community Rules & Code of Conduct",
+    options: []
   },
   {
     name: "random",

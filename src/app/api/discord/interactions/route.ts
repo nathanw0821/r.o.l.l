@@ -268,6 +268,48 @@ export async function POST(req: Request) {
       });
     }
 
+    // Command: /rules
+    if (name === "rules") {
+      return NextResponse.json({
+        type: 4,
+        data: {
+          embeds: [
+            {
+              title: "📜 Vault-Tec Community Rules & Code of Conduct",
+              url: "https://fallout76.wiki/rules",
+              color: 0x3b82f6,
+              fields: [
+                {
+                  name: "1. Respect Fellow Dwellers 🤝",
+                  value: "Zero tolerance for hate speech, harassment, toxicity, or personal attacks. Treat all members with respect.",
+                  inline: false
+                },
+                {
+                  name: "2. Safe & Legitimate Trading 🤝",
+                  value: "• **No RMT**: Real-money trading is strictly banned.\n• **No Scamming**: Always verify trade items before confirming.\n• Use trusted community couriers for high-value trades.",
+                  inline: false
+                },
+                {
+                  name: "3. Honest Tracking & No Exploits 🛠️",
+                  value: "Do not attempt to flood, exploit, or abuse site API endpoints, share links, or bot commands.",
+                  inline: false
+                },
+                {
+                  name: "4. Bot Usage 🤖",
+                  value: "Use bot commands (`/effect`, `/craft`, `/compare`, `/progress`, `/random`, `/scrip`, `/build`) in designated bot channels to keep chat clean.",
+                  inline: false
+                }
+              ],
+              footer: {
+                text: "R.O.L.L. Vault Network · fallout76.wiki/rules",
+                icon_url: "https://fallout76.wiki/favicon-v3.png"
+              }
+            }
+          ]
+        }
+      });
+    }
+
     // Command 2: /compare <first> <second>
     if (name === "compare") {
       const firstOpt = options?.find((o: { name: string; value: string }) => o.name === "first")?.value?.trim() || "";
@@ -338,22 +380,45 @@ export async function POST(req: Request) {
       });
     }
 
-    // Command 3: /progress <username>
+    // Command 3: /progress [username]
     if (name === "progress") {
       const username = options?.find((o: { name: string; value: string }) => o.name === "username")?.value?.trim() || "";
-      if (!username) {
-        return NextResponse.json({
-          type: 4,
-          data: { content: "💡 Enter a R.O.L.L. username to view public tracker progress.", flags: 64 }
+      const discordUserId = interaction.member?.user?.id || interaction.user?.id;
+
+      let user = null;
+
+      // 1. If username provided, query by name/username
+      if (username) {
+        user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { name: { equals: username, mode: "insensitive" } },
+              { username: { equals: username, mode: "insensitive" } }
+            ]
+          },
+          include: { progress: true }
         });
       }
-
-      const user = await prisma.user.findFirst({
-        where: { name: { equals: username, mode: "insensitive" } },
-        include: { progress: true }
-      });
+      // 2. If no username provided, resolve linked account via caller Discord User ID
+      else if (discordUserId) {
+        const linkedAccount = await prisma.account.findFirst({
+          where: { provider: "discord", providerAccountId: String(discordUserId) },
+          include: { user: { include: { progress: true } } }
+        });
+        user = linkedAccount?.user ?? null;
+      }
 
       if (!user) {
+        if (!username) {
+          return NextResponse.json({
+            type: 4,
+            data: {
+              content: `💡 Your Discord account is not linked to R.O.L.L. yet!\n\nLink your account at **[fallout76.wiki/settings](https://fallout76.wiki/settings)** to run \`/progress\` automatically, or pass a username (e.g. \`/progress VaultDweller\`).`,
+              flags: 64
+            }
+          });
+        }
+
         return NextResponse.json({
           type: 4,
           data: {
@@ -374,7 +439,7 @@ export async function POST(req: Request) {
         data: {
           embeds: [
             {
-              title: `📻 R.O.L.L. Tracker Progress: ${user.name || username}`,
+              title: `📻 R.O.L.L. Tracker Progress: ${user.name || user.username || "Vault Dweller"}`,
               color: 0x10b981,
               fields: [
                 { name: "Account Rank Badge", value: badge, inline: true },
