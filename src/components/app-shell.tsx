@@ -301,7 +301,9 @@ export default function AppShell({
     [displayTierProgress]
   );
   const hasGoogleProvider = Boolean(providers.google);
+  const hasDiscordProvider = Boolean(providers.discord);
   const googleLinked = linkedProviders.includes("google");
+  const discordLinked = linkedProviders.includes("discord");
   const sidebarRail = sidebarCollapsed && !isMobile;
   const onToggleSidebar = React.useCallback(() => {
     setSidebarCollapsed((value) => !value);
@@ -312,8 +314,14 @@ export default function AppShell({
   const onLinkGoogleSettings = React.useCallback(() => {
     signIn("google", { callbackUrl: "/settings" });
   }, []);
+  const onLinkDiscordSettings = React.useCallback(() => {
+    signIn("discord", { callbackUrl: "/settings" });
+  }, []);
   const onSignInGoogleHome = React.useCallback(() => {
     signIn("google", { callbackUrl: "/" });
+  }, []);
+  const onSignInDiscordHome = React.useCallback(() => {
+    signIn("discord", { callbackUrl: "/" });
   }, []);
 
   return (
@@ -416,10 +424,10 @@ export default function AppShell({
 
           </nav>
           <div className="mt-auto flex flex-col gap-2">
-            <div className="app-sidebar__auth">
+            <div className="app-sidebar__auth space-y-2">
               {isSignedIn ? (
                 <>
-                  <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
+                  <div className="flex flex-col gap-1.5">
                     {hasGoogleProvider ? (
                       googleLinked ? (
                         <div className="app-sidebar__auth-status">Google linked</div>
@@ -433,10 +441,24 @@ export default function AppShell({
                         </button>
                       )
                     ) : null}
+
+                    {hasDiscordProvider ? (
+                      discordLinked ? (
+                        <div className="app-sidebar__auth-status app-sidebar__auth-status--discord">Discord linked</div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="app-sidebar__auth-button app-sidebar__auth-button--discord"
+                          onClick={onLinkDiscordSettings}
+                        >
+                          Link Discord
+                        </button>
+                      )
+                    ) : null}
                   </div>
                   <button
                     type="button"
-                    className="app-sidebar__auth-button"
+                    className="app-sidebar__auth-button mt-1"
                     onClick={onSignOut}
                   >
                     Sign out
@@ -450,7 +472,7 @@ export default function AppShell({
                   <Link href="/auth/sign-up" className="app-sidebar__auth-button app-sidebar__auth-button--primary">
                     Sign up
                   </Link>
-                  <div className="app-sidebar__auth-provider-slot" aria-hidden={!hasGoogleProvider}>
+                  <div className="flex flex-col gap-1.5">
                     {hasGoogleProvider ? (
                       <button
                         type="button"
@@ -458,6 +480,15 @@ export default function AppShell({
                         onClick={onSignInGoogleHome}
                       >
                         Continue with Google
+                      </button>
+                    ) : null}
+                    {hasDiscordProvider ? (
+                      <button
+                        type="button"
+                        className="app-sidebar__auth-button app-sidebar__auth-button--discord"
+                        onClick={onSignInDiscordHome}
+                      >
+                        Continue with Discord
                       </button>
                     ) : null}
                   </div>
