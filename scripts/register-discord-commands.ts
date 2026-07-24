@@ -98,6 +98,25 @@ const commands = [
     ]
   },
   {
+    name: "perk",
+    description: "Look up Fallout 76 perk cards, S.P.E.C.I.A.L. categories, costs & rank stats",
+    options: [
+      {
+        name: "query",
+        description: "Perk card name (e.g. Heavy Gunner, Commando, Serendipity, Adrenaline)",
+        type: 3,
+        required: true,
+        autocomplete: true
+      },
+      {
+        name: "rank",
+        description: "Specific rank level (1 to 5)",
+        type: 4,
+        required: false
+      }
+    ]
+  },
+  {
     name: "rules",
     description: "Display official Vault-Tec Community Rules & Code of Conduct",
     options: []

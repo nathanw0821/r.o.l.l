@@ -50,6 +50,7 @@ const trackingLinks: AppNavLink[] = [
 ];
 
 const experimentalLinks: AppNavLink[] = [
+  { href: "/perks", label: "P.E.R.K. (Beta)", icon: Boxes, activePrefixes: ["/perks"] },
   { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles }
 ];
 
