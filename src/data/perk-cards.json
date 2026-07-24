@@ -90,16 +90,29 @@
     ]
   },
   {
-    "id": "lock-and-load",
-    "name": "Lock and Load",
+    "id": "traveling-pharmacy",
+    "name": "Traveling Pharmacy",
     "special": "S",
-    "minLevel": 37,
+    "minLevel": 3,
     "maxRank": 3,
-    "imageUrl": "https://fallout.wiki/images/thumb/9/9b/FO76_Lock_and_Load_Perk_Card.png/300px-FO76_Lock_and_Load_Perk_Card.png",
+    "imageUrl": "https://fallout.wiki/images/thumb/2/29/FO76_Traveling_Pharmacy_Perk_Card.png/300px-FO76_Traveling_Pharmacy_Perk_Card.png",
     "ranks": [
-      { "rank": 1, "cost": 1, "description": "Heavy guns reload 10% faster." },
-      { "rank": 2, "cost": 2, "description": "Heavy guns reload 20% faster." },
-      { "rank": 3, "cost": 3, "description": "Heavy guns reload 30% faster." }
+      { "rank": 1, "cost": 1, "description": "Weights of all Chems (including Stimpaks) are reduced by 30%." },
+      { "rank": 2, "cost": 2, "description": "Weights of all Chems (including Stimpaks) are reduced by 60%." },
+      { "rank": 3, "cost": 3, "description": "Weights of all Chems (including Stimpaks) are reduced by 90%." }
+    ]
+  },
+  {
+    "id": "martial-artist",
+    "name": "Martial Artist",
+    "special": "S",
+    "minLevel": 16,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e6/FO76_Martial_Artist_Perk_Card.png/300px-FO76_Martial_Artist_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your melee weapons weigh 20% less and you swing 10% faster." },
+      { "rank": 2, "cost": 2, "description": "Your melee weapons weigh 40% less and you swing 20% faster." },
+      { "rank": 3, "cost": 3, "description": "Your melee weapons weigh 60% less and you swing 30% faster." }
     ]
   },
   {
@@ -155,6 +168,19 @@
     ]
   },
   {
+    "id": "rifleman",
+    "name": "Rifleman",
+    "special": "P",
+    "minLevel": 8,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/2/23/FO76_Rifleman_Perk_Card.png/300px-FO76_Rifleman_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your non-automatic rifles deal +10% damage." },
+      { "rank": 2, "cost": 2, "description": "Your non-automatic rifles deal +15% damage." },
+      { "rank": 3, "cost": 3, "description": "Your non-automatic rifles deal +20% damage." }
+    ]
+  },
+  {
     "id": "tank-killer",
     "name": "Tank Killer",
     "special": "P",
@@ -168,16 +194,15 @@
     ]
   },
   {
-    "id": "fire-in-the-hole",
-    "name": "Fire in the Hole",
+    "id": "grenadier",
+    "name": "Grenadier",
     "special": "P",
-    "minLevel": 10,
-    "maxRank": 3,
-    "imageUrl": "https://fallout.wiki/images/thumb/c/c5/FO76_Fire_in_the_Hole_Perk_Card.png/300px-FO76_Fire_in_the_Hole_Perk_Card.png",
+    "minLevel": 35,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/b/b3/FO76_Grenadier_Perk_Card.png/300px-FO76_Grenadier_Perk_Card.png",
     "ranks": [
-      { "rank": 1, "cost": 1, "description": "See a throwing arc for thrown weapons, and they travel 15% farther." },
-      { "rank": 2, "cost": 2, "description": "See a throwing arc for thrown weapons, and they travel 30% farther." },
-      { "rank": 3, "cost": 3, "description": "See a throwing arc for thrown weapons, and they travel 50% farther." }
+      { "rank": 1, "cost": 1, "description": "Your explosives detonate with 50% larger radius." },
+      { "rank": 2, "cost": 2, "description": "Your explosives detonate with 100% larger radius." }
     ]
   },
   {
@@ -326,6 +351,19 @@
     ]
   },
   {
+    "id": "stabilized",
+    "name": "Stabilized",
+    "special": "I",
+    "minLevel": 36,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/4/49/FO76_Stabilized_Perk_Card.png/300px-FO76_Stabilized_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "In Power Armor, heavy guns gain 15% accuracy and ignore 15% armor." },
+      { "rank": 2, "cost": 2, "description": "In Power Armor, heavy guns gain 30% accuracy and ignore 30% armor." },
+      { "rank": 3, "cost": 3, "description": "In Power Armor, heavy guns gain 45% accuracy and ignore 45% armor." }
+    ]
+  },
+  {
     "id": "adrenaline",
     "name": "Adrenaline",
     "special": "A",
@@ -375,6 +413,19 @@
     "imageUrl": "https://fallout.wiki/images/thumb/7/75/FO76_Escape_Artist_Perk_Card.png/300px-FO76_Escape_Artist_Perk_Card.png",
     "ranks": [
       { "rank": 1, "cost": 1, "description": "Sneak to lose enemies, and running no longer affects stealth." }
+    ]
+  },
+  {
+    "id": "dodgy",
+    "name": "Dodgy",
+    "special": "A",
+    "minLevel": 45,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e0/FO76_Dodgy_Perk_Card.png/300px-FO76_Dodgy_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Spend 30 Action Points to avoid 10% of each attack's damage." },
+      { "rank": 2, "cost": 2, "description": "Spend 30 Action Points to avoid 20% of each attack's damage." },
+      { "rank": 3, "cost": 3, "description": "Spend 30 Action Points to avoid 30% of each attack's damage." }
     ]
   },
   {
@@ -442,6 +493,32 @@
     ]
   },
   {
+    "id": "critical-savvy",
+    "name": "Critical Savvy",
+    "special": "L",
+    "minLevel": 44,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/4/4e/FO76_Critical_Savvy_Perk_Card.png/300px-FO76_Critical_Savvy_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Critical Hits now consume 85% of your critical meter." },
+      { "rank": 2, "cost": 2, "description": "Critical Hits now consume 70% of your critical meter." },
+      { "rank": 3, "cost": 3, "description": "Critical Hits now consume 55% of your critical meter." }
+    ]
+  },
+  {
+    "id": "ricochet",
+    "name": "Ricochet",
+    "special": "L",
+    "minLevel": 38,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/8/87/FO76_Ricochet_Perk_Card.png/300px-FO76_Ricochet_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Gain a 6% chance to deflect enemy ranged attacks back at them." },
+      { "rank": 2, "cost": 2, "description": "Gain a 12% chance to deflect enemy ranged attacks back at them." },
+      { "rank": 3, "cost": 3, "description": "Gain a 18% chance to deflect enemy ranged attacks back at them." }
+    ]
+  },
+  {
     "id": "legendary-strength",
     "name": "Legendary Strength",
     "special": "LEGENDARY",
@@ -467,6 +544,34 @@
       { "rank": 2, "cost": 2, "description": "+2 LUK and +2 LUK Perk Point capacity. (Cap at 15)." },
       { "rank": 3, "cost": 3, "description": "+3 LUK and +3 LUK Perk Point capacity. (Cap at 15)." },
       { "rank": 4, "cost": 4, "description": "+5 LUK and +5 LUK Perk Point capacity. (Cap at 15)." }
+    ]
+  },
+  {
+    "id": "follow-through",
+    "name": "Follow Through",
+    "special": "LEGENDARY",
+    "minLevel": 50,
+    "maxRank": 4,
+    "imageUrl": "https://fallout.wiki/images/thumb/f/f6/FO76_Follow_Through_Perk_Card.png/300px-FO76_Follow_Through_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Ranged sneak attacks increase target's damage taken by 10% for 10s." },
+      { "rank": 2, "cost": 2, "description": "Ranged sneak attacks increase target's damage taken by 20% for 10s." },
+      { "rank": 3, "cost": 3, "description": "Ranged sneak attacks increase target's damage taken by 30% for 10s." },
+      { "rank": 4, "cost": 4, "description": "Ranged sneak attacks increase target's damage taken by 40% for 10s." }
+    ]
+  },
+  {
+    "id": "taking-one-for-the-team",
+    "name": "Taking One for the Team",
+    "special": "LEGENDARY",
+    "minLevel": 50,
+    "maxRank": 4,
+    "imageUrl": "https://fallout.wiki/images/thumb/3/3b/FO76_Taking_One_for_the_Team_Perk_Card.png/300px-FO76_Taking_One_for_the_Team_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Enemies take 10% more damage when attacking you on a team." },
+      { "rank": 2, "cost": 2, "description": "Enemies take 20% more damage when attacking you on a team." },
+      { "rank": 3, "cost": 3, "description": "Enemies take 30% more damage when attacking you on a team." },
+      { "rank": 4, "cost": 4, "description": "Enemies take 40% more damage when attacking you on a team." }
     ]
   }
 ]
