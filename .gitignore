@@ -7,6 +7,8 @@ node_modules
 public/
 !public/.well-known/security.txt
 !public/security.txt
+!public/favicon-v3.png
+!public/favicon.png
 
 .env
 .env.local
