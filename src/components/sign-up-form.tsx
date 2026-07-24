@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { getProviders, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 
 type SignUpResponse =
   | {
@@ -34,6 +35,7 @@ export default function SignUpForm() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [turnstileToken, setTurnstileToken] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }> | null>(null);
@@ -68,7 +70,8 @@ export default function SignUpForm() {
       body: JSON.stringify({
         email,
         username,
-        password
+        password,
+        turnstileToken
       })
     });
 
@@ -180,6 +183,7 @@ export default function SignUpForm() {
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
       </label>
+      <TurnstileWidget onVerify={setTurnstileToken} className="flex justify-center my-2" />
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Creating account..." : "Create Account"}
       </Button>

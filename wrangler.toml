@@ -13,6 +13,9 @@ routes = [
 directory = ".open-next/assets"
 binding = "ASSETS"
 
+[placement]
+mode = "smart"
+
 [vars]
 NEXTAUTH_URL = "https://fallout76.wiki"
 ADMIN_EMAILS = "nathanw@gmail.com"
@@ -20,6 +23,7 @@ ADMIN_USERNAMES = "ezkialez,test"
 ALLOW_PUBLIC_REGISTRATION = "true"
 EMAIL_FROM = "R.O.L.L <no-reply@support.fallout76.wiki>"
 GOOGLE_CLIENT_ID = "717058834888-tri1suu3o125h1haajjrffufioj75ga7.apps.googleusercontent.com"
+NEXT_PUBLIC_TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 
 [triggers]
 crons = ["0 18 * * *"]
