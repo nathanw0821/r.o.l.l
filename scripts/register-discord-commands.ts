@@ -18,7 +18,8 @@ const commands = [
         name: "query",
         description: "Mod name or shorthand (e.g. Bloodied, Unyielding, VATS Optimized, WWR, 25LVC)",
         type: 3,
-        required: true
+        required: true,
+        autocomplete: true
       }
     ]
   },
@@ -30,9 +31,15 @@ const commands = [
         name: "query",
         description: "Mod name or shorthand (e.g. Pinpointer's, Bloodied, Unyielding, WWR)",
         type: 3,
-        required: true
+        required: true,
+        autocomplete: true
       }
     ]
+  },
+  {
+    name: "daily",
+    description: "View live Fallout 76 Daily Reset countdowns & Minerva's location status",
+    options: []
   },
   {
     name: "scrip",
@@ -66,13 +73,15 @@ const commands = [
         name: "first",
         description: "First legendary effect name or shorthand (e.g. Bloodied)",
         type: 3,
-        required: true
+        required: true,
+        autocomplete: true
       },
       {
         name: "second",
         description: "Second legendary effect name or shorthand (e.g. Anti-Armor)",
         type: 3,
-        required: true
+        required: true,
+        autocomplete: true
       }
     ]
   },

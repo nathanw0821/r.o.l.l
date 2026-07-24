@@ -92,10 +92,98 @@ export async function POST(req: Request) {
     return NextResponse.json({ type: 1 });
   }
 
+  // Type 4: Discord Autocomplete (Dynamic Dropdowns)
+  if (interaction.type === 4) {
+    const catalog = await getCachedBuilderModCatalog();
+    const options = interaction.data?.options || [];
+    const focusedOption = options.find((o: { focused?: boolean }) => o.focused);
+    const query = focusedOption?.value?.toLowerCase().trim() || "";
+    const normQuery = normalizeFuzzySearchString(query);
+
+    const matches = catalog
+      .filter((m) => {
+        if (!query) return true;
+        const normName = normalizeFuzzySearchString(m.name);
+        const normSlug = normalizeFuzzySearchString(m.slug);
+        return normName.includes(normQuery) || normSlug.includes(normQuery) || normQuery.includes(normName);
+      })
+      .slice(0, 25);
+
+    return NextResponse.json({
+      type: 8,
+      data: {
+        choices: matches.map((m) => {
+          const stars = "★".repeat(m.starRank || 1);
+          return {
+            name: `${stars} ${m.name} (${[m.category, m.subCategory].filter(Boolean).join(" / ")})`,
+            value: m.name
+          };
+        })
+      }
+    });
+  }
+
   // Type 2: Application Command (Slash Commands)
   if (interaction.type === 2) {
     const { name, options } = interaction.data;
     const catalog = await getCachedBuilderModCatalog();
+
+    // Command: /daily
+    if (name === "daily") {
+      const now = new Date();
+      const nextReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 16, 0, 0));
+      if (now.getTime() >= nextReset.getTime()) {
+        nextReset.setUTCDate(nextReset.getUTCDate() + 1);
+      }
+      const resetUnix = Math.floor(nextReset.getTime() / 1000);
+
+      const dayOfWeek = now.getUTCDay();
+      const locations = ["Fort Atlas", "Foundation", "Crater", "The Whitespring Resort"];
+      const location = locations[Math.floor(now.getUTCDate() / 7) % 4];
+
+      let minervaStatus = "";
+      if (dayOfWeek >= 1 && dayOfWeek <= 3) {
+        minervaStatus = `🟢 **Active Now at ${location}** (Standard Sale)`;
+      } else if (dayOfWeek >= 4 && dayOfWeek <= 5) {
+        minervaStatus = `🟡 **Arriving Thursday at 12:00 PM EST** (Big Sale at ${location})`;
+      } else {
+        minervaStatus = `🔴 **Resting & Preparing Next Inventory**`;
+      }
+
+      return NextResponse.json({
+        type: 4,
+        data: {
+          embeds: [
+            {
+              title: "☢️ Fallout 76 Daily Resets & Minerva Tracker",
+              url: "https://fallout76.wiki",
+              color: 0x10b981,
+              fields: [
+                {
+                  name: "⏳ Daily Scrip & Cap Reset",
+                  value: `Next reset: <t:${resetUnix}:R> (<t:${resetUnix}:t> local time)\nResets: Scrip Vendor (500 scrip), Caps (1,400 caps), Gold Bullion (400 bullion).`,
+                  inline: false
+                },
+                {
+                  name: "🎪 Minerva Location & Status",
+                  value: minervaStatus,
+                  inline: false
+                },
+                {
+                  name: "📻 R.O.L.L. Companion Hub",
+                  value: "Track your 148+ legendary mod box progress & builds at [fallout76.wiki](https://fallout76.wiki)!",
+                  inline: false
+                }
+              ],
+              footer: {
+                text: "R.O.L.L. Wasteland Network · fallout76.wiki",
+                icon_url: "https://fallout76.wiki/favicon-v3.png"
+              }
+            }
+          ]
+        }
+      });
+    }
 
     // Command 1: /effect <query>
     if (name === "effect") {
