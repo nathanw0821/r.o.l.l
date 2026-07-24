@@ -64,6 +64,19 @@
     ]
   },
   {
+    "id": "pack-rat",
+    "name": "Pack Rat",
+    "special": "S",
+    "minLevel": 7,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/8/8b/FO76_Pack_Rat_Perk_Card.png/300px-FO76_Pack_Rat_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "The weight of all junk items is reduced by 25%." },
+      { "rank": 2, "cost": 2, "description": "The weight of all junk items is reduced by 50%." },
+      { "rank": 3, "cost": 3, "description": "The weight of all junk items is reduced by 75%." }
+    ]
+  },
+  {
     "id": "incisor",
     "name": "Incisor",
     "special": "S",
@@ -202,7 +215,58 @@
     "imageUrl": "https://fallout.wiki/images/thumb/b/b3/FO76_Grenadier_Perk_Card.png/300px-FO76_Grenadier_Perk_Card.png",
     "ranks": [
       { "rank": 1, "cost": 1, "description": "Your explosives detonate with 50% larger radius." },
-      { "rank": 2, "cost": 2, "description": "Your explosives detonate with 100% larger radius." }
+      { "rank": 2, "cost": 2, "description": "Your explosives detonate with double (100%) area of effect radius." }
+    ]
+  },
+  {
+    "id": "ghoulish",
+    "name": "Ghoulish",
+    "special": "E",
+    "minLevel": 36,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/7/7b/FO76_Ghoulish_Perk_Card.png/300px-FO76_Ghoulish_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Radiation now regenerates your lost Health! (Ghouls: Feral meter boost)." },
+      { "rank": 2, "cost": 2, "description": "Radiation regenerates even more lost Health!" },
+      { "rank": 3, "cost": 3, "description": "Radiation regenerates a large amount of lost Health!" }
+    ]
+  },
+  {
+    "id": "what-barely-kills-you",
+    "name": "What Barely Kills You",
+    "special": "E",
+    "minLevel": 40,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/5/53/FO76_Lifegiver_Perk_Card.png/300px-FO76_Lifegiver_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "High radiation levels grant up to +50 Damage & Energy Resistance." },
+      { "rank": 2, "cost": 2, "description": "High radiation levels grant up to +100 Damage & Energy Resistance." }
+    ]
+  },
+  {
+    "id": "natural-resistance",
+    "name": "Natural Resistance",
+    "special": "E",
+    "minLevel": 20,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/d/d4/FO76_Fireproof_Perk_Card.png/300px-FO76_Fireproof_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Gain +20 Fire, Cryo, and Poison Resistance." },
+      { "rank": 2, "cost": 2, "description": "Gain +40 Fire, Cryo, and Poison Resistance." },
+      { "rank": 3, "cost": 3, "description": "Gain +60 Fire, Cryo, and Poison Resistance." }
+    ]
+  },
+  {
+    "id": "pyromaniac",
+    "name": "Pyromaniac",
+    "special": "E",
+    "minLevel": 28,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/d/d4/FO76_Fireproof_Perk_Card.png/300px-FO76_Fireproof_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Deal +15% damage with flame weapons and take 15% less damage from fire." },
+      { "rank": 2, "cost": 2, "description": "Deal +30% damage with flame weapons and take 30% less damage from fire." },
+      { "rank": 3, "cost": 3, "description": "Deal +45% damage with flame weapons and take 45% less damage from fire." }
     ]
   },
   {
@@ -258,6 +322,17 @@
     ]
   },
   {
+    "id": "toxic-personality",
+    "name": "Toxic Personality",
+    "special": "C",
+    "minLevel": 32,
+    "maxRank": 1,
+    "imageUrl": "https://fallout.wiki/images/thumb/1/11/FO76_Tenderizer_Perk_Card.png/300px-FO76_Tenderizer_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Teammates gain +25 Rad Resistance and heal when you take radiation damage." }
+    ]
+  },
+  {
     "id": "tenderizer",
     "name": "Tenderizer",
     "special": "C",
@@ -292,6 +367,42 @@
       { "rank": 1, "cost": 1, "description": "Gain 5% more XP when you are on a team." },
       { "rank": 2, "cost": 2, "description": "Gain 10% more XP when you are on a team." },
       { "rank": 3, "cost": 3, "description": "Gain 15% more XP when you are on a team." }
+    ]
+  },
+  {
+    "id": "science",
+    "name": "Science",
+    "special": "I",
+    "minLevel": 20,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e0/FO76_Science_Perk_Card.png/300px-FO76_Science_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Craft energy weapon mods. Energy weapons deal +5% damage." },
+      { "rank": 2, "cost": 2, "description": "Craft Rank 1 energy weapon mods. Energy weapons deal +10% damage." }
+    ]
+  },
+  {
+    "id": "science-expert",
+    "name": "Science Expert",
+    "special": "I",
+    "minLevel": 31,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/7/7b/FO76_Science_Expert_Perk_Card.png/300px-FO76_Science_Expert_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Craft Rank 2 energy weapon mods. Energy weapons deal +5% damage." },
+      { "rank": 2, "cost": 2, "description": "Craft Rank 2 energy weapon mods. Energy weapons deal +10% damage." }
+    ]
+  },
+  {
+    "id": "science-master",
+    "name": "Science Master",
+    "special": "I",
+    "minLevel": 45,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/4/49/FO76_Science_Master_Perk_Card.png/300px-FO76_Science_Master_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Craft Rank 3 energy weapon mods. Energy weapons deal +5% damage." },
+      { "rank": 2, "cost": 2, "description": "Craft Rank 3 energy weapon mods. Energy weapons deal +10% damage." }
     ]
   },
   {
@@ -364,6 +475,18 @@
     ]
   },
   {
+    "id": "feral-frenzy",
+    "name": "Feral Frenzy",
+    "special": "A",
+    "minLevel": 42,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/d/d4/FO76_Adrenaline_Perk_Card.png/300px-FO76_Adrenaline_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "High Feral meter grants +10% movement speed and +15% melee attack speed." },
+      { "rank": 2, "cost": 2, "description": "High Feral meter grants +20% movement speed and +30% melee attack speed." }
+    ]
+  },
+  {
     "id": "adrenaline",
     "name": "Adrenaline",
     "special": "A",
@@ -426,6 +549,32 @@
       { "rank": 1, "cost": 1, "description": "Spend 30 Action Points to avoid 10% of each attack's damage." },
       { "rank": 2, "cost": 2, "description": "Spend 30 Action Points to avoid 20% of each attack's damage." },
       { "rank": 3, "cost": 3, "description": "Spend 30 Action Points to avoid 30% of each attack's damage." }
+    ]
+  },
+  {
+    "id": "thru-hiker",
+    "name": "Thru-Hiker",
+    "special": "A",
+    "minLevel": 7,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/b/b8/FO76_Thru_Hiker_Perk_Card.png/300px-FO76_Thru_Hiker_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Food and drink weights are reduced by 30%." },
+      { "rank": 2, "cost": 2, "description": "Food and drink weights are reduced by 60%." },
+      { "rank": 3, "cost": 3, "description": "Food and drink weights are reduced by 90%." }
+    ]
+  },
+  {
+    "id": "super-duper",
+    "name": "Super Duper",
+    "special": "L",
+    "minLevel": 50,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/3/30/FO76_Bloody_Mess_Perk_Card.png/300px-FO76_Bloody_Mess_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "When crafting anything, gain a 10% chance to double the results!" },
+      { "rank": 2, "cost": 2, "description": "When crafting anything, gain a 20% chance to double the results!" },
+      { "rank": 3, "cost": 3, "description": "When crafting anything, gain a 30% chance to double the results!" }
     ]
   },
   {
@@ -516,6 +665,48 @@
       { "rank": 1, "cost": 1, "description": "Gain a 6% chance to deflect enemy ranged attacks back at them." },
       { "rank": 2, "cost": 2, "description": "Gain a 12% chance to deflect enemy ranged attacks back at them." },
       { "rank": 3, "cost": 3, "description": "Gain a 18% chance to deflect enemy ranged attacks back at them." }
+    ]
+  },
+  {
+    "id": "master-infiltrator",
+    "name": "Master Infiltrator",
+    "special": "LEGENDARY",
+    "minLevel": 50,
+    "maxRank": 4,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e3/FO76_Legendary_Strength_Perk_Card.png/300px-FO76_Legendary_Strength_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Auto-pick level 1 locks and hack level 1 terminals. Lockpicking/Hacking +3." },
+      { "rank": 2, "cost": 2, "description": "Auto-pick level 2 locks and hack level 2 terminals." },
+      { "rank": 3, "cost": 3, "description": "Auto-pick level 3 locks and hack level 3 terminals." },
+      { "rank": 4, "cost": 4, "description": "Auto-pick level 3 locks & hack terminals instantly without entering interface." }
+    ]
+  },
+  {
+    "id": "electric-absorption",
+    "name": "Electric Absorption",
+    "special": "LEGENDARY",
+    "minLevel": 50,
+    "maxRank": 4,
+    "imageUrl": "https://fallout.wiki/images/thumb/a/a6/FO76_Legendary_Luck_Perk_Card.png/300px-FO76_Legendary_Luck_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Enemy energy attacks have a 10% chance to recharge your Power Armor core & heal." },
+      { "rank": 2, "cost": 2, "description": "13% chance to recharge core & heal." },
+      { "rank": 3, "cost": 3, "description": "16% chance to recharge core & heal." },
+      { "rank": 4, "cost": 4, "description": "20% chance to recharge core & heal." }
+    ]
+  },
+  {
+    "id": "ammo-factory",
+    "name": "Ammo Factory",
+    "special": "LEGENDARY",
+    "minLevel": 50,
+    "maxRank": 4,
+    "imageUrl": "https://fallout.wiki/images/thumb/f/f6/FO76_Follow_Through_Perk_Card.png/300px-FO76_Follow_Through_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Produce 50% more ammo when crafting." },
+      { "rank": 2, "cost": 2, "description": "Produce 75% more ammo when crafting." },
+      { "rank": 3, "cost": 3, "description": "Produce 100% more ammo when crafting." },
+      { "rank": 4, "cost": 4, "description": "Produce 150% more ammo when crafting." }
     ]
   },
   {
