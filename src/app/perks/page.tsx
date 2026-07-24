@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import PerkBuilder from "@/components/perks/perk-builder";
 
 export const metadata = {
-  title: "P.E.R.K. Loadout Manager (Beta) | R.O.L.L.",
+  title: "P.E.R.K. Loadout Manager | R.O.L.L.",
   description: "Fallout 76 Perk Equipment & Reconfiguration Kit (P.E.R.K.) with 6 Punch Card Machine loadout slots per character."
 };
 
