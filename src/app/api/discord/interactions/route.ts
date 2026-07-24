@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCachedBuilderModCatalog } from "@/lib/builder/get-builder-mod-catalog";
 import { getLegendaryScripCost } from "@/lib/builder/crafting-costs";
+import { normalizeFuzzySearchString, applyFilters, type FilterableRow } from "@/lib/filter-utils";
 
 // Web Crypto Ed25519 signature verification for Discord Webhooks
 async function verifyDiscordSignature(
@@ -66,19 +67,48 @@ export async function POST(req: Request) {
       const query = queryOption?.value?.toLowerCase().trim() || "";
 
       const catalog = await getCachedBuilderModCatalog();
-      const match = catalog.find(
-        (m) =>
-          m.name.toLowerCase() === query ||
-          m.slug.toLowerCase() === query ||
-          m.id.toLowerCase() === query ||
-          m.name.toLowerCase().includes(query)
-      );
+      const normQuery = normalizeFuzzySearchString(query);
+
+      // 1. Direct or fuzzy search matching via applyFilters
+      const filterableCatalog: FilterableRow[] = catalog.map((m) => ({
+        effect: { name: m.name },
+        tier: { label: `${m.starRank || 1} Star` },
+        categories: [{ category: { name: [m.category, m.subCategory].filter(Boolean).join(" ") } }],
+        description: m.description,
+        unlocked: true,
+        isSeeking: false,
+        modCount: 1,
+        modObj: m
+      }));
+
+      const filtered = applyFilters(filterableCatalog, {
+        query,
+        sources: [],
+        status: [],
+        origins: []
+      });
+
+      let match: (typeof catalog)[0] | undefined = (filtered[0] as unknown as { modObj: (typeof catalog)[0] })?.modObj;
+
+      // 2. Fallback to normalized fuzzy string comparison
+      if (!match) {
+        match = catalog.find((m) => {
+          const normName = normalizeFuzzySearchString(m.name);
+          const normSlug = normalizeFuzzySearchString(m.slug);
+          return (
+            normName === normQuery ||
+            normSlug === normQuery ||
+            normName.includes(normQuery) ||
+            normQuery.includes(normName)
+          );
+        });
+      }
 
       if (!match) {
         return NextResponse.json({
           type: 4,
           data: {
-            content: `⚠️ No legendary mod found matching **"${query}"**. Try searching for *Bloodied*, *Unyielding*, *Powered*, *Arms Keeper's*, or *Vampire's*.`,
+            content: `⚠️ No legendary mod found matching **"${query}"**. Try searching for *Bloodied*, *Unyielding*, *VATS Optimized*, *Arms Keeper's*, *WWR*, or *25LVC*.`,
             flags: 64 // Ephemeral response
           }
         });

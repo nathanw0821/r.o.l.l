@@ -71,27 +71,33 @@ const ACRONYM_MAP: Record<string, Record<string, string[]>> = {
     "replenish": ["inertial"]
   },
   "weapon_minor": {
-    "15r": ["15% faster reload", "swift"],
-    "fr": ["15% faster reload", "swift"],
-    "25v": ["25% less v.a.t.s. action point cost", "vats optimized", "lvc"],
-    "lvc": ["25% less v.a.t.s. action point cost", "vats optimized"],
-    "15c": ["15% faster v.a.t.s. critical fill", "vats enhanced", "crit fill"],
+    "15r": ["15% faster reload", "swift", "15fr", "fr"],
+    "fr": ["15% faster reload", "swift", "15r"],
+    "25v": ["25% less v.a.t.s. action point cost", "vats optimized", "lvc", "vats opt", "vatsopt"],
+    "lvc": ["25% less v.a.t.s. action point cost", "vats optimized", "vatsopt"],
+    "vatsopt": ["vats optimized", "v.a.t.s. optimized", "25% less v.a.t.s. action point cost"],
+    "vats-optimized": ["vats optimized", "v.a.t.s. optimized"],
+    "vats_optimized": ["vats optimized", "v.a.t.s. optimized"],
+    "15c": ["15% faster v.a.t.s. critical fill", "vats enhanced", "crit fill", "15cf"],
     "15cf": ["15% faster v.a.t.s. critical fill", "vats enhanced"],
+    "vats-enhanced": ["vats enhanced", "v.a.t.s. enhanced", "50vhc"],
+    "vatsenhanced": ["vats enhanced", "v.a.t.s. enhanced"],
     "90": ["90% reduced weight", "lightweight", "90rw", "rw"],
-    "rw": ["90% reduced weight", "lightweight"],
-    "50bs": ["breaks 50% slower", "durability"],
-    "dur": ["breaks 50% slower", "durability"],
-    "break": ["breaks 50% slower"],
+    "90rw": ["90% reduced weight", "lightweight", "rw"],
+    "rw": ["90% reduced weight", "lightweight", "90rw"],
+    "50bs": ["breaks 50% slower", "durability", "dur"],
+    "dur": ["breaks 50% slower", "durability", "50bs"],
+    "break": ["breaks 50% slower", "durability"],
     "15b": ["15% less damage while blocking", "blocking", "defenders"],
     "250": ["reloading damage resistance", "resilient"],
     "50dr": ["damage resistance while aiming", "steadfast"],
-    "3str": ["+3 strength", "strength weapon"],
-    "3per": ["+3 perception", "perception weapon"],
-    "3end": ["+3 endurance", "endurance weapon"],
-    "3cha": ["+3 charisma", "charisma weapon"],
-    "3int": ["+3 intelligence", "intelligence weapon"],
-    "3agi": ["+3 agility", "agility weapon"],
-    "3luc": ["+3 luck", "luck weapon"]
+    "3str": ["+3 strength", "strength weapon", "strength"],
+    "3per": ["+3 perception", "perception weapon", "perception"],
+    "3end": ["+3 endurance", "endurance weapon", "endurance"],
+    "3cha": ["+3 charisma", "charisma weapon", "charisma"],
+    "3int": ["+3 intelligence", "intelligence weapon", "intelligence"],
+    "3agi": ["+3 agility", "agility weapon", "agility"],
+    "3luc": ["+3 luck", "luck weapon", "luck"]
   },
   "armor_prefixes": {
     "ari": ["aristocrat", "aristocrat's", "aristocrats"],
@@ -109,10 +115,13 @@ const ACRONYM_MAP: Record<string, Record<string, string[]>> = {
     "mut": ["mutant", "mutant's", "mutants"],
     "noc": ["nocturnal"],
     "n": ["nocturnal"],
-    "oe": ["overeater", "overeater's", "overeaters"],
+    "oe": ["overeater", "overeater's", "overeaters", "over-eater's"],
+    "overeaters": ["over-eater's", "overeater's", "overeater"],
+    "overeater": ["over-eater's", "overeater's"],
     "regen": ["regenerating"],
     "tro": ["troubleshooter", "troubleshooter's"],
     "uny": ["unyielding"],
+    "unyielding": ["unyielding", "uny"],
     "van": ["vanguard", "vanguard's", "vanguards"],
     "w": ["weightless"],
     "zeal": ["zealot", "zealot's", "zealots"],
@@ -121,27 +130,39 @@ const ACRONYM_MAP: Record<string, Record<string, string[]>> = {
   "armor_major": {
     "ap": ["increases action point refresh", "powered", "ap refresh"],
     "pow": ["increases action point refresh", "powered"],
+    "powered": ["increases action point refresh", "powered", "ap refresh"],
     "led": ["less explosive damage", "hardy"],
+    "hardy": ["less explosive damage", "hardy", "led"],
     "cryo": ["cryo resistance", "antifreeze"],
     "fire": ["fire resistance", "warming"],
     "poison": ["poison resistance", "poisoner's", "poisoners"],
     "rad": ["radiation resistance", "hazmat"],
-    "2int": ["+2 intelligence", "intelligence armor"],
-    "2str": ["+2 strength", "strength armor"],
-    "2agi": ["+2 agility", "agility armor"],
-    "2per": ["+2 perception", "perception armor"],
-    "2end": ["+2 endurance", "endurance armor"],
-    "2cha": ["+2 charisma", "charisma armor"],
-    "2luc": ["+2 luck", "luck armor"],
+    "2int": ["+2 intelligence", "intelligence armor", "intelligence"],
+    "2str": ["+2 strength", "strength armor", "strength"],
+    "2agi": ["+2 agility", "agility armor", "agility"],
+    "2per": ["+2 perception", "perception armor", "perception"],
+    "2end": ["+2 endurance", "endurance armor", "endurance"],
+    "2cha": ["+2 charisma", "charisma armor", "charisma"],
+    "2luc": ["+2 luck", "luck armor", "luck"],
     "htd": ["harder to detect while sneaking", "sneak"]
   },
   "armor_minor": {
-    "wwr": ["weapon weight reduced", "arms keeper", "arms keeper's"],
+    "wwr": ["weapon weight reduced", "arms keeper", "arms keeper's", "armskeepers"],
+    "armskeeper": ["arms keeper's", "arms keeper", "weapon weight reduced", "wwr"],
+    "armskeepers": ["arms keeper's", "arms keeper", "weapon weight reduced", "wwr"],
     "awr": ["ammo weight reduced", "belted"],
-    "fdc": ["food, drink, and chem weight reduced", "thru-hiker", "thru-hiker's", "fdcr"],
+    "belted": ["ammo weight reduced", "belted", "awr"],
+    "fdc": ["food, drink, and chem weight reduced", "thru-hiker", "thru-hiker's", "thru hiker", "fdcr", "fwr"],
+    "thruhiker": ["thru-hiker's", "thru-hiker", "fdc"],
+    "thruhikers": ["thru-hiker's", "thru-hiker", "fdc"],
     "jwr": ["junk weight reduced", "pack rat", "pack rat's"],
+    "packrat": ["pack rat's", "pack rat", "jwr"],
     "sent": ["sentinel", "sentinel's", "75% chance to reduce damage by 15% while standing still"],
+    "sentinel": ["sentinel's", "sentinel", "sent"],
+    "sentinels": ["sentinel's", "sentinel", "sent"],
     "cav": ["cavalier", "cavalier's", "75% chance to reduce damage by 15% while sprinting"],
+    "cavalier": ["cavalier's", "cavalier", "cav"],
+    "cavaliers": ["cavalier's", "cavalier", "cav"],
     "htd": ["harder to detect while sneaking", "secret agent", "sneak"],
     "sneak": ["harder to detect while sneaking", "secret agent"],
     "safe": ["safecracker", "lockpicking"],
@@ -196,13 +217,23 @@ export function expandQueryTokens(query: string): QueryTokenExpansion[][] {
   });
 }
 
+export function normalizeFuzzySearchString(str: string): string {
+  return str.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 function matchTokenValue(haystack: string, value: string, isOriginalShorthand: boolean): boolean {
   if (isOriginalShorthand && value.length <= 3) {
     const escaped = value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     const regex = new RegExp(`(?:^|[^a-zA-Z0-9])${escaped}(?:$|[^a-zA-Z0-9])`);
-    return regex.test(haystack);
+    if (regex.test(haystack)) return true;
   }
-  return haystack.includes(value);
+  
+  if (haystack.includes(value)) return true;
+
+  // Punctuation-agnostic fuzzy matching (strips periods, apostrophes, hyphens, spaces)
+  const normHaystack = normalizeFuzzySearchString(haystack);
+  const normValue = normalizeFuzzySearchString(value);
+  return normValue.length > 0 && normHaystack.includes(normValue);
 }
 
 export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterState) {
