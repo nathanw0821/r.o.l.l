@@ -1,4 +1,4 @@
-# ☢️ R.O.L.L. · Record Of Legendary Loadouts
+# ☢️ R.O.L.L. — Record Of Legendary Loadouts & Build Engine
 
 [![Site](https://img.shields.io/badge/Live-fallout76.wiki-f3a24d?style=for-the-badge&logo=cloudflare)](https://fallout76.wiki)
 [![Node](https://img.shields.io/badge/Node.js-24%2B-43853d?style=for-the-badge&logo=node.js)](https://nodejs.org)
