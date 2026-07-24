@@ -121,6 +121,7 @@ export default function SignUpForm() {
         <div className="space-y-2">
           {[
             { id: "google", label: "Continue with Google / YouTube" },
+            { id: "discord", label: "Continue with Discord" },
             { id: "twitch", label: "Continue with Twitch" },
             { id: "reddit", label: "Continue with Reddit" },
             { id: "azure-ad", label: "Continue with Microsoft / Xbox" }
