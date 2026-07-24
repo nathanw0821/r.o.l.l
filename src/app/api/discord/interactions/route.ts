@@ -131,11 +131,20 @@ export async function POST(req: Request) {
     // Command: /daily
     if (name === "daily") {
       const now = new Date();
-      const nextReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 16, 0, 0));
-      if (now.getTime() >= nextReset.getTime()) {
-        nextReset.setUTCDate(nextReset.getUTCDate() + 1);
+      
+      // 1. Next 16:00 UTC (12:00 PM EST) Economy & Vendor Reset
+      const nextNoonReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 16, 0, 0));
+      if (now.getTime() >= nextNoonReset.getTime()) {
+        nextNoonReset.setUTCDate(nextNoonReset.getUTCDate() + 1);
       }
-      const resetUnix = Math.floor(nextReset.getTime() / 1000);
+      const noonResetUnix = Math.floor(nextNoonReset.getTime() / 1000);
+
+      // 2. Next 00:00 UTC (8:00 PM EST) Faction & Personal Daily Quests Reset
+      const nextEveningReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
+      if (now.getTime() >= nextEveningReset.getTime()) {
+        nextEveningReset.setUTCDate(nextEveningReset.getUTCDate() + 1);
+      }
+      const eveningResetUnix = Math.floor(nextEveningReset.getTime() / 1000);
 
       const dayOfWeek = now.getUTCDay();
       const locations = ["Fort Atlas", "Foundation", "Crater", "The Whitespring Resort"];
@@ -160,8 +169,13 @@ export async function POST(req: Request) {
               color: 0x10b981,
               fields: [
                 {
-                  name: "⏳ Daily Scrip & Cap Reset",
-                  value: `Next reset: <t:${resetUnix}:R> (<t:${resetUnix}:t> local time)\nResets: Scrip Vendor (500 scrip), Caps (1,400 caps), Gold Bullion (400 bullion).`,
+                  name: "☀️ Economy & Vendor Reset (12:00 PM EST)",
+                  value: `Next reset: <t:${noonResetUnix}:R> (<t:${noonResetUnix}:t> local time)\n• **Resets**: Legendary Scrip (500 scrip), Vendor Caps (1,400 caps), Treasury Bullion (400 bullion), Atomic Shop Daily.`,
+                  inline: false
+                },
+                {
+                  name: "🌙 Faction & Daily Quests Reset (8:00 PM EST)",
+                  value: `Next reset: <t:${eveningResetUnix}:R> (<t:${eveningResetUnix}:t> local time)\n• **Resets**: Foundation & Crater Faction Dailies (Ward, Rocksy, Wren, Davenport), Personal Dailies (Biv, Stings & Things, Tidy, Heart of the Enemy).`,
                   inline: false
                 },
                 {
