@@ -1978,4 +1978,10 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   -webkit-backdrop-filter: none !important;
 }
 
+/* Skip style & layout calculations for off-screen list containers */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 300px;
+}
+
 

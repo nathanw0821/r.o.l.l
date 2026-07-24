@@ -6,49 +6,12 @@ import { Button } from "@/components/ui/button";
 
 export const BETA_ACCEPTED_KEY = "roll-builder-beta-accepted";
 
-function getStoredBetaAccess(key: string): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return window.localStorage.getItem(key) === "true";
-  } catch {
-    return false;
-  }
-}
-
-export function useBuilderBetaAccess(isAdmin: boolean, storageKey: string = BETA_ACCEPTED_KEY) {
-  const [accepted, setAccepted] = React.useState<boolean>(() => getStoredBetaAccess(storageKey));
-
-  React.useEffect(() => {
-    const check = () => {
-      const val = getStoredBetaAccess(storageKey);
-      setAccepted(val);
-    };
-
-    // Check again on mount
-    check();
-
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === storageKey) check();
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, [storageKey]);
-
-  const accept = React.useCallback(() => {
-    try {
-      window.localStorage.setItem(storageKey, "true");
-    } catch {
-      // ignore
-    }
-    setAccepted(true);
-    // Dispatch custom event for same-window updates across tabs/components
-    window.dispatchEvent(new Event("storage"));
-  }, [storageKey]);
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function useBuilderBetaAccess(...args: unknown[]) {
   return {
-    hasAccess: isAdmin || accepted,
-    accepted,
-    accept
+    hasAccess: true,
+    accepted: true,
+    accept: () => {}
   };
 }
 
