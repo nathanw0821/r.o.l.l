@@ -490,6 +490,8 @@ export default function AppShell({
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <span>© 2026 R.O.L.L. ALL RIGHTS RESERVED.</span>
                 <div className="flex items-center justify-center gap-3 md:mr-36">
+                  <Link href="/rules" className="hover:text-accent transition-colors">&gt; COMMUNITY RULES</Link>
+                  <span className="text-foreground/20">|</span>
                   <Link href="/terms" className="hover:text-accent transition-colors">&gt; TERMS OF SERVICE</Link>
                   <span className="text-foreground/20">|</span>
                   <Link href="/privacy" className="hover:text-accent transition-colors">&gt; PRIVACY POLICY</Link>
