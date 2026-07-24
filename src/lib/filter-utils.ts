@@ -183,8 +183,13 @@ export type QueryTokenExpansion = {
 };
 
 export function expandQueryTokens(query: string): QueryTokenExpansion[][] {
-  const tokens = query.toLowerCase().split(/[\s/+,]+/).filter(Boolean);
-  return tokens.map((token) => {
+  const cleanQuery = query.trim().toLowerCase();
+  const tokens = cleanQuery.split(/[\s/+,]+/).filter(Boolean);
+  
+  // Evaluate individual tokens and full multi-word query
+  const tokenList = tokens.length > 1 ? [...tokens, cleanQuery] : tokens;
+
+  return tokenList.map((token) => {
     const expansionsMap = new Map<string, boolean>();
 
     let isShorthand = false;
