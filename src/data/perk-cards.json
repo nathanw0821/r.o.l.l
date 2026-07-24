@@ -35,22 +35,22 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "On kills, heal 2 HP and reduce how feral you are by 2%. "
+        "description": "On kills, heal 2 HP and reduce how feral you are by 2%."
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "On kills, heal 4 HP and reduce how feral you are by 3%. "
+        "description": "On kills, heal 4 HP and reduce how feral you are by 3%."
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "On kills, heal 6 HP and reduce how feral you are by 4%. "
+        "description": "On kills, heal 6 HP and reduce how feral you are by 4%."
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "On kills, heal 8 HP and reduce how feral you are by 5%. "
+        "description": "On kills, heal 8 HP and reduce how feral you are by 5%."
       }
     ]
   },
@@ -695,12 +695,12 @@
       {
         "rank": 2,
         "cost": 2,
-        "description": "Rad Resistance is reduced by 100.  (Up to 0)"
+        "description": "Rad Resistance is reduced by 100. (Up to 0)"
       },
       {
         "rank": 3,
         "cost": 3,
-        "description": "Rad Resistance is reduced by 150.  (Up to 0)"
+        "description": "Rad Resistance is reduced by 150. (Up to 0)"
       }
     ]
   },
@@ -3780,7 +3780,7 @@
       {
         "rank": 3,
         "cost": 3,
-        "description": "Devastate and stagger enemies by sprinting into them with Power Armor. "
+        "description": "Devastate and stagger enemies by sprinting into them with Power Armor."
       }
     ]
   },
@@ -3810,7 +3810,7 @@
       {
         "rank": 1,
         "cost": 2,
-        "description": "The positive effects of pre-war alcohol are doubled. "
+        "description": "The positive effects of pre-war alcohol are doubled."
       },
       {
         "rank": 2,
