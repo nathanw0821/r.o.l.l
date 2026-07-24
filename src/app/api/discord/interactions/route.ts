@@ -3,6 +3,7 @@ import { getCachedBuilderModCatalog } from "@/lib/builder/get-builder-mod-catalo
 import { getLegendaryScripCost } from "@/lib/builder/crafting-costs";
 import { normalizeFuzzySearchString, applyFilters, type FilterableRow } from "@/lib/filter-utils";
 import { prisma } from "@/lib/prisma";
+import { searchPerkCards } from "@/lib/perks/catalog";
 import type { BuilderPayload } from "@/lib/builder/types";
 
 // Web Crypto Ed25519 signature verification for Discord Webhooks
@@ -94,10 +95,25 @@ export async function POST(req: Request) {
 
   // Type 4: Discord Autocomplete (Dynamic Dropdowns)
   if (interaction.type === 4) {
-    const catalog = await getCachedBuilderModCatalog();
+    const commandName = interaction.data?.name;
     const options = interaction.data?.options || [];
     const focusedOption = options.find((o: { focused?: boolean }) => o.focused);
     const query = focusedOption?.value?.toLowerCase().trim() || "";
+
+    if (commandName === "perk") {
+      const matches = searchPerkCards(query).slice(0, 25);
+      return NextResponse.json({
+        type: 8,
+        data: {
+          choices: matches.map((c) => ({
+            name: `[${c.special}] ${c.name} (${c.maxRank}★)`,
+            value: c.name
+          }))
+        }
+      });
+    }
+
+    const catalog = await getCachedBuilderModCatalog();
     const normQuery = normalizeFuzzySearchString(query);
 
     const matches = catalog
@@ -127,6 +143,51 @@ export async function POST(req: Request) {
   if (interaction.type === 2) {
     const { name, options } = interaction.data;
     const catalog = await getCachedBuilderModCatalog();
+
+    // Command: /perk <query> [rank]
+    if (name === "perk") {
+      const queryOption = options?.find((o: { name: string; value: string }) => o.name === "query");
+      const rankOption = options?.find((o: { name: string; value: number }) => o.name === "rank");
+      const query = queryOption?.value?.toLowerCase().trim() || "";
+      const selectedRank = rankOption?.value ? Number(rankOption.value) : undefined;
+
+      const matches = searchPerkCards(query);
+      const card = matches[0];
+
+      if (!card) {
+        return NextResponse.json({
+          type: 4,
+          data: {
+            content: `⚠️ No Fallout 76 perk card found matching **"${query}"**. Try searching for *Heavy Gunner*, *Commando*, *Serendipity*, *Adrenaline*, or *Starched Genes*.`,
+            flags: 64
+          }
+        });
+      }
+
+      const ranksText = card.ranks
+        .filter((r) => !selectedRank || r.rank === selectedRank)
+        .map((r) => `• **${r.rank}★** (Cost: ${r.cost} pts): ${r.description}`)
+        .join("\n");
+
+      return NextResponse.json({
+        type: 4,
+        data: {
+          embeds: [
+            {
+              title: `🃏 [${card.special}] ${card.name} (Max Rank: ${"★".repeat(card.maxRank)})`,
+              url: "https://fallout76.wiki/perks",
+              description: `Level Requirement: **Level ${card.minLevel}**\n\n**Rank Effects & Point Costs:**\n${ranksText}`,
+              color: 0xf59e0b,
+              thumbnail: card.imageUrl ? { url: card.imageUrl } : undefined,
+              footer: {
+                text: "P.E.R.K. Knowledgebase · fallout76.wiki",
+                icon_url: "https://fallout76.wiki/favicon-v3.png"
+              }
+            }
+          ]
+        }
+      });
+    }
 
     // Command: /daily
     if (name === "daily") {

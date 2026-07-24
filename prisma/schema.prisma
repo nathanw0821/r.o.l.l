@@ -270,11 +270,27 @@ model Character {
   importBaseline     UserImportBaseline[]
   learnedBasePieces  UserLearnedBasePiece[]
   progress           UserProgress[]
+  perkLoadouts       CharacterPerkLoadout[]
   activeUserSettings UserSettings[]
 
   @@unique([userId, name])
   @@index([userId])
   @@index([gameAccountId])
+}
+
+model CharacterPerkLoadout {
+  id            String    @id @default(cuid())
+  characterId   String
+  slotIndex     Int       @default(0) // 0 to 5 for 6 Punch Card Machine slots
+  name          String    @default("Punch Card Loadout 1")
+  specials      Json      @default("{\"S\":1,\"P\":1,\"E\":1,\"C\":1,\"I\":1,\"A\":1,\"L\":1}")
+  equippedCards Json      @default("[]")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  character     Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, slotIndex])
+  @@index([characterId])
 }
 
 model UserProgress {

@@ -1,0 +1,472 @@
+[
+  {
+    "id": "heavy-gunner",
+    "name": "Heavy Gunner",
+    "special": "S",
+    "minLevel": 30,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Heavy_Gunner_Perk_Card.png/300px-FO76_Heavy_Gunner_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your non-explosive heavy guns deal +10% damage." },
+      { "rank": 2, "cost": 2, "description": "Your non-explosive heavy guns deal +15% damage." },
+      { "rank": 3, "cost": 3, "description": "Your non-explosive heavy guns deal +20% damage." }
+    ]
+  },
+  {
+    "id": "expert-heavy-gunner",
+    "name": "Expert Heavy Gunner",
+    "special": "S",
+    "minLevel": 40,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/8/87/FO76_Expert_Heavy_Gunner_Perk_Card.png/300px-FO76_Expert_Heavy_Gunner_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your non-explosive heavy guns deal +10% damage." },
+      { "rank": 2, "cost": 2, "description": "Your non-explosive heavy guns deal +15% damage." },
+      { "rank": 3, "cost": 3, "description": "Your non-explosive heavy guns deal +20% damage." }
+    ]
+  },
+  {
+    "id": "master-heavy-gunner",
+    "name": "Master Heavy Gunner",
+    "special": "S",
+    "minLevel": 50,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/6/64/FO76_Master_Heavy_Gunner_Perk_Card.png/300px-FO76_Master_Heavy_Gunner_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your non-explosive heavy guns deal +10% damage." },
+      { "rank": 2, "cost": 2, "description": "Your non-explosive heavy guns deal +15% damage." },
+      { "rank": 3, "cost": 3, "description": "Your non-explosive heavy guns deal +20% damage." }
+    ]
+  },
+  {
+    "id": "bandolier",
+    "name": "Bandolier",
+    "special": "S",
+    "minLevel": 22,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/b/b3/FO76_Bandolier_Perk_Card.png/300px-FO76_Bandolier_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Ballistic weapon ammo weight is reduced by 45%." },
+      { "rank": 2, "cost": 2, "description": "Ballistic weapon ammo weight is reduced by 90%." }
+    ]
+  },
+  {
+    "id": "ordnance-express",
+    "name": "Ordnance Express",
+    "special": "S",
+    "minLevel": 15,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/f/f9/FO76_Ordnance_Express_Perk_Card.png/300px-FO76_Ordnance_Express_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Explosive ammo weights 30% less." },
+      { "rank": 2, "cost": 2, "description": "Explosive ammo weights 60% less." },
+      { "rank": 3, "cost": 3, "description": "Explosive ammo weights 90% less." }
+    ]
+  },
+  {
+    "id": "incisor",
+    "name": "Incisor",
+    "special": "S",
+    "minLevel": 34,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/7/7b/FO76_Incisor_Perk_Card.png/300px-FO76_Incisor_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your melee and unarmed weapons ignore 25% of your target's armor." },
+      { "rank": 2, "cost": 2, "description": "Your melee and unarmed weapons ignore 50% of your target's armor." },
+      { "rank": 3, "cost": 3, "description": "Your melee and unarmed weapons ignore 75% of your target's armor." }
+    ]
+  },
+  {
+    "id": "blocker",
+    "name": "Blocker",
+    "special": "S",
+    "minLevel": 21,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/1/1b/FO76_Blocker_Perk_Card.png/300px-FO76_Blocker_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Take 15% less damage from opponents' melee attacks." },
+      { "rank": 2, "cost": 2, "description": "Take 30% less damage from opponents' melee attacks." },
+      { "rank": 3, "cost": 3, "description": "Take 45% less damage from opponents' melee attacks." }
+    ]
+  },
+  {
+    "id": "lock-and-load",
+    "name": "Lock and Load",
+    "special": "S",
+    "minLevel": 37,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/9/9b/FO76_Lock_and_Load_Perk_Card.png/300px-FO76_Lock_and_Load_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Heavy guns reload 10% faster." },
+      { "rank": 2, "cost": 2, "description": "Heavy guns reload 20% faster." },
+      { "rank": 3, "cost": 3, "description": "Heavy guns reload 30% faster." }
+    ]
+  },
+  {
+    "id": "concentrated-fire",
+    "name": "Concentrated Fire",
+    "special": "P",
+    "minLevel": 2,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/a/a1/FO76_Concentrated_Fire_Perk_Card.png/300px-FO76_Concentrated_Fire_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "V.A.T.S. targets limbs. Focus fire to gain accuracy and damage per shot." },
+      { "rank": 2, "cost": 2, "description": "V.A.T.S. targets limbs. Focus fire to gain more accuracy and damage per shot." },
+      { "rank": 3, "cost": 3, "description": "V.A.T.S. targets limbs. Focus fire to gain high accuracy and damage per shot." }
+    ]
+  },
+  {
+    "id": "commando",
+    "name": "Commando",
+    "special": "P",
+    "minLevel": 15,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/2/27/FO76_Commando_Perk_Card.png/300px-FO76_Commando_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your automatic rifles deal +10% damage." },
+      { "rank": 2, "cost": 2, "description": "Your automatic rifles deal +15% damage." },
+      { "rank": 3, "cost": 3, "description": "Your automatic rifles deal +20% damage." }
+    ]
+  },
+  {
+    "id": "expert-commando",
+    "name": "Expert Commando",
+    "special": "P",
+    "minLevel": 25,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/8/8b/FO76_Expert_Commando_Perk_Card.png/300px-FO76_Expert_Commando_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your automatic rifles deal +10% damage." },
+      { "rank": 2, "cost": 2, "description": "Your automatic rifles deal +15% damage." },
+      { "rank": 3, "cost": 3, "description": "Your automatic rifles deal +20% damage." }
+    ]
+  },
+  {
+    "id": "master-commando",
+    "name": "Master Commando",
+    "special": "P",
+    "minLevel": 45,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/4/4e/FO76_Master_Commando_Perk_Card.png/300px-FO76_Master_Commando_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your automatic rifles deal +10% damage." },
+      { "rank": 2, "cost": 2, "description": "Your automatic rifles deal +15% damage." },
+      { "rank": 3, "cost": 3, "description": "Your automatic rifles deal +20% damage." }
+    ]
+  },
+  {
+    "id": "tank-killer",
+    "name": "Tank Killer",
+    "special": "P",
+    "minLevel": 30,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e6/FO76_Tank_Killer_Perk_Card.png/300px-FO76_Tank_Killer_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your rifles and pistols ignore 12% armor and have a 3% chance to stagger." },
+      { "rank": 2, "cost": 2, "description": "Your rifles and pistols ignore 24% armor and have a 6% chance to stagger." },
+      { "rank": 3, "cost": 3, "description": "Your rifles and pistols ignore 36% armor and have a 9% chance to stagger." }
+    ]
+  },
+  {
+    "id": "fire-in-the-hole",
+    "name": "Fire in the Hole",
+    "special": "P",
+    "minLevel": 10,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/c/c5/FO76_Fire_in_the_Hole_Perk_Card.png/300px-FO76_Fire_in_the_Hole_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "See a throwing arc for thrown weapons, and they travel 15% farther." },
+      { "rank": 2, "cost": 2, "description": "See a throwing arc for thrown weapons, and they travel 30% farther." },
+      { "rank": 3, "cost": 3, "description": "See a throwing arc for thrown weapons, and they travel 50% farther." }
+    ]
+  },
+  {
+    "id": "fireproof",
+    "name": "Fireproof",
+    "special": "E",
+    "minLevel": 27,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/d/d4/FO76_Fireproof_Perk_Card.png/300px-FO76_Fireproof_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Take 15% less damage from explosions and flame attacks." },
+      { "rank": 2, "cost": 2, "description": "Take 30% less damage from explosions and flame attacks." },
+      { "rank": 3, "cost": 3, "description": "Take 45% less damage from explosions and flame attacks." }
+    ]
+  },
+  {
+    "id": "lifegiver",
+    "name": "Lifegiver",
+    "special": "E",
+    "minLevel": 50,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/5/53/FO76_Lifegiver_Perk_Card.png/300px-FO76_Lifegiver_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Gain +15 to your maximum Health." },
+      { "rank": 2, "cost": 2, "description": "Gain +30 to your maximum Health." },
+      { "rank": 3, "cost": 3, "description": "Gain +45 to your maximum Health." }
+    ]
+  },
+  {
+    "id": "radicool",
+    "name": "Radicool",
+    "special": "E",
+    "minLevel": 38,
+    "maxRank": 1,
+    "imageUrl": "https://fallout.wiki/images/thumb/1/14/FO76_Radicool_Perk_Card.png/300px-FO76_Radicool_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "The greater your Rads, the greater your Strength! (Max +5 STR)." }
+    ]
+  },
+  {
+    "id": "ironclad",
+    "name": "Ironclad",
+    "special": "E",
+    "minLevel": 30,
+    "maxRank": 5,
+    "imageUrl": "https://fallout.wiki/images/thumb/9/90/FO76_Ironclad_Perk_Card.png/300px-FO76_Ironclad_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Gain 10 Damage and Energy Resistance while not wearing Power Armor." },
+      { "rank": 2, "cost": 2, "description": "Gain 20 Damage and Energy Resistance while not wearing Power Armor." },
+      { "rank": 3, "cost": 3, "description": "Gain 30 Damage and Energy Resistance while not wearing Power Armor." },
+      { "rank": 4, "cost": 4, "description": "Gain 40 Damage and Energy Resistance while not wearing Power Armor." },
+      { "rank": 5, "cost": 5, "description": "Gain 50 Damage and Energy Resistance while not wearing Power Armor." }
+    ]
+  },
+  {
+    "id": "tenderizer",
+    "name": "Tenderizer",
+    "special": "C",
+    "minLevel": 44,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/1/11/FO76_Tenderizer_Perk_Card.png/300px-FO76_Tenderizer_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Make your target receive 5% more damage for 5 seconds after you attack." },
+      { "rank": 2, "cost": 2, "description": "Make your target receive 7% more damage for 7 seconds after you attack." },
+      { "rank": 3, "cost": 3, "description": "Make your target receive 10% more damage for 10 seconds after you attack." }
+    ]
+  },
+  {
+    "id": "strange-in-numbers",
+    "name": "Strange in Numbers",
+    "special": "C",
+    "minLevel": 42,
+    "maxRank": 1,
+    "imageUrl": "https://fallout.wiki/images/thumb/9/94/FO76_Strange_in_Numbers_Perk_Card.png/300px-FO76_Strange_in_Numbers_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Positive Mutation effects are 25% stronger if teammates are mutated too." }
+    ]
+  },
+  {
+    "id": "inspirational",
+    "name": "Inspirational",
+    "special": "C",
+    "minLevel": 2,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/8/87/FO76_Inspirational_Perk_Card.png/300px-FO76_Inspirational_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Gain 5% more XP when you are on a team." },
+      { "rank": 2, "cost": 2, "description": "Gain 10% more XP when you are on a team." },
+      { "rank": 3, "cost": 3, "description": "Gain 15% more XP when you are on a team." }
+    ]
+  },
+  {
+    "id": "nerd-rage",
+    "name": "Nerd Rage!",
+    "special": "I",
+    "minLevel": 46,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/0/00/FO76_Nerd_Rage_Perk_Card.png/300px-FO76_Nerd_Rage_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "While below 20% Health, gain 20 Damage Resist, 10% damage and 15% AP regen." },
+      { "rank": 2, "cost": 2, "description": "While below 20% Health, gain 30 Damage Resist, 15% damage and 15% AP regen." },
+      { "rank": 3, "cost": 3, "description": "While below 20% Health, gain 40 Damage Resist, 20% damage and 15% AP regen." }
+    ]
+  },
+  {
+    "id": "demolition-expert",
+    "name": "Demolition Expert",
+    "special": "I",
+    "minLevel": 33,
+    "maxRank": 5,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e0/FO76_Demolition_Expert_Perk_Card.png/300px-FO76_Demolition_Expert_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your explosives deal +20% damage." },
+      { "rank": 2, "cost": 2, "description": "Your explosives deal +30% damage." },
+      { "rank": 3, "cost": 3, "description": "Your explosives deal +40% damage." },
+      { "rank": 4, "cost": 4, "description": "Your explosives deal +50% damage." },
+      { "rank": 5, "cost": 5, "description": "Your explosives deal +60% damage." }
+    ]
+  },
+  {
+    "id": "gunsmith",
+    "name": "Gunsmith",
+    "special": "I",
+    "minLevel": 23,
+    "maxRank": 5,
+    "imageUrl": "https://fallout.wiki/images/thumb/7/77/FO76_Gunsmith_Perk_Card.png/300px-FO76_Gunsmith_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Guns break 10% slower and you can craft Tier 1 gun mods." },
+      { "rank": 2, "cost": 2, "description": "Guns break 20% slower and you can craft Tier 2 gun mods." },
+      { "rank": 3, "cost": 3, "description": "Guns break 30% slower and you can craft Tier 3 gun mods." },
+      { "rank": 4, "cost": 4, "description": "Guns break 40% slower and you can craft Tier 4 gun mods." },
+      { "rank": 5, "cost": 5, "description": "Guns break 50% slower and you can craft Tier 5 gun mods." }
+    ]
+  },
+  {
+    "id": "batteries-included",
+    "name": "Batteries Included",
+    "special": "I",
+    "minLevel": 28,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/7/7b/FO76_Batteries_Included_Perk_Card.png/300px-FO76_Batteries_Included_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Energy weapon ammo weights 30% less." },
+      { "rank": 2, "cost": 2, "description": "Energy weapon ammo weights 60% less." },
+      { "rank": 3, "cost": 3, "description": "Energy weapon ammo weights 90% less." }
+    ]
+  },
+  {
+    "id": "adrenaline",
+    "name": "Adrenaline",
+    "special": "A",
+    "minLevel": 49,
+    "maxRank": 5,
+    "imageUrl": "https://fallout.wiki/images/thumb/d/d4/FO76_Adrenaline_Perk_Card.png/300px-FO76_Adrenaline_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Gain +6% (max 36%) damage for 30s per kill. Duration refreshes with kills." },
+      { "rank": 2, "cost": 2, "description": "Gain +7% (max 42%) damage for 30s per kill. Duration refreshes with kills." },
+      { "rank": 3, "cost": 3, "description": "Gain +8% (max 48%) damage for 30s per kill. Duration refreshes with kills." },
+      { "rank": 4, "cost": 4, "description": "Gain +9% (max 54%) damage for 30s per kill. Duration refreshes with kills." },
+      { "rank": 5, "cost": 5, "description": "Gain +10% (max 60%) damage for 30s per kill. Duration refreshes with kills." }
+    ]
+  },
+  {
+    "id": "action-boy",
+    "name": "Action Boy / Action Girl",
+    "special": "A",
+    "minLevel": 2,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Action_Boy_Perk_Card.png/300px-FO76_Action_Boy_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Action Points regenerate 15% faster." },
+      { "rank": 2, "cost": 2, "description": "Action Points regenerate 30% faster." },
+      { "rank": 3, "cost": 3, "description": "Action Points regenerate 45% faster." }
+    ]
+  },
+  {
+    "id": "cover-operative",
+    "name": "Covert Operative",
+    "special": "A",
+    "minLevel": 27,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/5/52/FO76_Covert_Operative_Perk_Card.png/300px-FO76_Covert_Operative_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Your ranged sneak attacks do 2.15x normal damage." },
+      { "rank": 2, "cost": 2, "description": "Your ranged sneak attacks do 2.3x normal damage." },
+      { "rank": 3, "cost": 3, "description": "Your ranged sneak attacks do 2.5x normal damage." }
+    ]
+  },
+  {
+    "id": "escape-artist",
+    "name": "Escape Artist",
+    "special": "A",
+    "minLevel": 35,
+    "maxRank": 1,
+    "imageUrl": "https://fallout.wiki/images/thumb/7/75/FO76_Escape_Artist_Perk_Card.png/300px-FO76_Escape_Artist_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Sneak to lose enemies, and running no longer affects stealth." }
+    ]
+  },
+  {
+    "id": "starched-genes",
+    "name": "Starched Genes",
+    "special": "L",
+    "minLevel": 30,
+    "maxRank": 2,
+    "imageUrl": "https://fallout.wiki/images/thumb/2/2b/FO76_Starched_Genes_Perk_Card.png/300px-FO76_Starched_Genes_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "Less chance to mutate from rads or cure mutations with RadAway." },
+      { "rank": 2, "cost": 2, "description": "You will never mutate from rads and RadAway will never cure mutations." }
+    ]
+  },
+  {
+    "id": "class-freak",
+    "name": "Class Freak",
+    "special": "L",
+    "minLevel": 46,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/b/b8/FO76_Class_Freak_Perk_Card.png/300px-FO76_Class_Freak_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "The negative effects of your mutations are reduced by 25%." },
+      { "rank": 2, "cost": 2, "description": "The negative effects of your mutations are reduced by 50%." },
+      { "rank": 3, "cost": 3, "description": "The negative effects of your mutations are reduced by 75%." }
+    ]
+  },
+  {
+    "id": "bloody-mess",
+    "name": "Bloody Mess",
+    "special": "L",
+    "minLevel": 42,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/3/30/FO76_Bloody_Mess_Perk_Card.png/300px-FO76_Bloody_Mess_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "+5% bonus damage means enemies may explode into a red paste." },
+      { "rank": 2, "cost": 2, "description": "+10% bonus damage means enemies may explode into a red paste." },
+      { "rank": 3, "cost": 3, "description": "+15% bonus damage means enemies may explode into a red paste." }
+    ]
+  },
+  {
+    "id": "serendipity",
+    "name": "Serendipity",
+    "special": "L",
+    "minLevel": 5,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e0/FO76_Serendipity_Perk_Card.png/300px-FO76_Serendipity_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "While below 30% Health, gain a 15% chance to avoid damage." },
+      { "rank": 2, "cost": 2, "description": "While below 30% Health, gain a 30% chance to avoid damage." },
+      { "rank": 3, "cost": 3, "description": "While below 30% Health, gain a 45% chance to avoid damage." }
+    ]
+  },
+  {
+    "id": "better-criticals",
+    "name": "Better Criticals",
+    "special": "L",
+    "minLevel": 47,
+    "maxRank": 3,
+    "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Better_Criticals_Perk_Card.png/300px-FO76_Better_Criticals_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "V.A.T.S. criticals now do +40% damage." },
+      { "rank": 2, "cost": 2, "description": "V.A.T.S. criticals now do +70% damage." },
+      { "rank": 3, "cost": 3, "description": "V.A.T.S. criticals now do +100% damage." }
+    ]
+  },
+  {
+    "id": "legendary-strength",
+    "name": "Legendary Strength",
+    "special": "LEGENDARY",
+    "minLevel": 50,
+    "maxRank": 4,
+    "imageUrl": "https://fallout.wiki/images/thumb/e/e3/FO76_Legendary_Strength_Perk_Card.png/300px-FO76_Legendary_Strength_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "+1 STR and +1 STR Perk Point capacity. (Cap at 15)." },
+      { "rank": 2, "cost": 2, "description": "+2 STR and +2 STR Perk Point capacity. (Cap at 15)." },
+      { "rank": 3, "cost": 3, "description": "+3 STR and +3 STR Perk Point capacity. (Cap at 15)." },
+      { "rank": 4, "cost": 4, "description": "+5 STR and +5 STR Perk Point capacity. (Cap at 15)." }
+    ]
+  },
+  {
+    "id": "legendary-luck",
+    "name": "Legendary Luck",
+    "special": "LEGENDARY",
+    "minLevel": 50,
+    "maxRank": 4,
+    "imageUrl": "https://fallout.wiki/images/thumb/a/a6/FO76_Legendary_Luck_Perk_Card.png/300px-FO76_Legendary_Luck_Perk_Card.png",
+    "ranks": [
+      { "rank": 1, "cost": 1, "description": "+1 LUK and +1 LUK Perk Point capacity. (Cap at 15)." },
+      { "rank": 2, "cost": 2, "description": "+2 LUK and +2 LUK Perk Point capacity. (Cap at 15)." },
+      { "rank": 3, "cost": 3, "description": "+3 LUK and +3 LUK Perk Point capacity. (Cap at 15)." },
+      { "rank": 4, "cost": 4, "description": "+5 LUK and +5 LUK Perk Point capacity. (Cap at 15)." }
+    ]
+  }
+]
