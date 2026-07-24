@@ -222,6 +222,12 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
     group: "hidden"
   },
   {
+    key: "discord_linked",
+    name: "Radio Signal Connected",
+    description: "Sign in with Discord or link your Discord account.",
+    group: "visible"
+  },
+  {
     key: "account_100",
     name: "Completionist Dynasty",
     description: "Reach 100% account-wide completion across all characters.",

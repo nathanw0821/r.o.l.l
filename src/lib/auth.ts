@@ -2,6 +2,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import DiscordProvider from "next-auth/providers/discord";
 import TwitchProvider from "next-auth/providers/twitch";
 
 import RedditProvider from "next-auth/providers/reddit";
@@ -9,7 +10,7 @@ import AzureADProvider from "next-auth/providers/azure-ad";
 import { cache } from "react";
 import { verifyPassword, hashPassword, isLegacyHash } from "@/lib/password-hash";
 import { z } from "zod";
-import { awardLoginAchievement, syncUserAchievements } from "@/lib/achievements";
+import { awardAchievements, awardLoginAchievement, syncUserAchievements } from "@/lib/achievements";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
@@ -78,14 +79,27 @@ export const authOptions: NextAuthOptions = {
     }
   },
   events: {
-    async signIn({ user }) {
+    async signIn({ user, account }) {
       if (!user.id) return;
       try {
         await awardLoginAchievement(user.id);
+        if (account?.provider === "discord") {
+          await awardAchievements(user.id, ["discord_linked"]);
+        }
         await syncUserAchievements(user.id);
       } catch (error) {
         console.error("Auth Event Error (Achievement Sync):", error);
         // Do not throw; we want the user to be able to sign in even if achievements fail.
+      }
+    },
+    async linkAccount({ user, account }) {
+      if (!user.id) return;
+      try {
+        if (account?.provider === "discord") {
+          await awardAchievements(user.id, ["discord_linked"]);
+        }
+      } catch (error) {
+        console.error("Auth Event Error (Link Account):", error);
       }
     }
   },
@@ -223,6 +237,15 @@ export const authOptions: NextAuthOptions = {
               jwks_endpoint: "https://www.googleapis.com/oauth2/v3/certs",
               issuer: "https://accounts.google.com"
             }
+          ]
+        : []),
+      ...(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET
+        ? [
+            DiscordProvider({
+              clientId: process.env.DISCORD_CLIENT_ID,
+              clientSecret: process.env.DISCORD_CLIENT_SECRET,
+              allowDangerousEmailAccountLinking: true
+            })
           ]
         : []),
       ...(process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET
