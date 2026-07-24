@@ -1820,12 +1820,12 @@
     ]
   },
   {
-    "id": "funky-dreads",
-    "name": "Funky Dreads",
+    "id": "funky-duds",
+    "name": "Funky Duds",
     "special": "LEGENDARY",
     "minLevel": 50,
     "maxRank": 4,
-    "imageUrl": "https://fallout.wiki/images/thumb/d/d4/FO76_Fireproof_Perk_Card.png/300px-FO76_Fireproof_Perk_Card.png",
+    "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Funky_Duds_Perk_Card.png/300px-FO76_Funky_Duds_Perk_Card.png",
     "ranks": [
       {
         "rank": 1,
@@ -1846,36 +1846,6 @@
         "rank": 4,
         "cost": 4,
         "description": "Gain +200 Poison Resistance when wearing a matching set of armor."
-      }
-    ]
-  },
-  {
-    "id": "funky-duds",
-    "name": "Funky Duds",
-    "special": "S",
-    "minLevel": 50,
-    "maxRank": 4,
-    "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Funky_Duds_Perk_Card.png/300px-FO76_Funky_Duds_Perk_Card.png",
-    "ranks": [
-      {
-        "rank": 1,
-        "cost": 1,
-        "description": "+50 Poison Damage Resist when wearing a matching set of armor."
-      },
-      {
-        "rank": 2,
-        "cost": 1,
-        "description": "+100 Poison Damage Resist when wearing a matching set of armor."
-      },
-      {
-        "rank": 3,
-        "cost": 1,
-        "description": "+150 Poison Damage Resist when wearing a matching set of armor."
-      },
-      {
-        "rank": 4,
-        "cost": 1,
-        "description": "+200 Poison Damage Resist when wearing a matching set of armor."
       }
     ]
   },
