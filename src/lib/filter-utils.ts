@@ -147,7 +147,7 @@ const ACRONYM_MAP: Record<string, Record<string, string[]>> = {
     "htd": ["harder to detect while sneaking", "sneak"]
   },
   "armor_minor": {
-    "wwr": ["weapon weight reduced", "arms keeper", "arms keeper's", "armskeepers"],
+    "wwr": ["weapon weight reduced", "arms keeper", "arms keeper's"],
     "armskeeper": ["arms keeper's", "arms keeper", "weapon weight reduced", "wwr"],
     "armskeepers": ["arms keeper's", "arms keeper", "weapon weight reduced", "wwr"],
     "awr": ["ammo weight reduced", "belted"],
@@ -183,13 +183,8 @@ export type QueryTokenExpansion = {
 };
 
 export function expandQueryTokens(query: string): QueryTokenExpansion[][] {
-  const cleanQuery = query.trim().toLowerCase();
-  const tokens = cleanQuery.split(/[\s/+,]+/).filter(Boolean);
-  
-  // Evaluate individual tokens and full multi-word query
-  const tokenList = tokens.length > 1 ? [...tokens, cleanQuery] : tokens;
-
-  return tokenList.map((token) => {
+  const tokens = query.toLowerCase().split(/[\s/+,]+/).filter(Boolean);
+  return tokens.map((token) => {
     const expansionsMap = new Map<string, boolean>();
 
     let isShorthand = false;
@@ -230,15 +225,19 @@ function matchTokenValue(haystack: string, value: string, isOriginalShorthand: b
   if (isOriginalShorthand && value.length <= 3) {
     const escaped = value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     const regex = new RegExp(`(?:^|[^a-zA-Z0-9])${escaped}(?:$|[^a-zA-Z0-9])`);
-    if (regex.test(haystack)) return true;
+    return regex.test(haystack);
   }
   
   if (haystack.includes(value)) return true;
 
-  // Punctuation-agnostic fuzzy matching (strips periods, apostrophes, hyphens, spaces)
-  const normHaystack = normalizeFuzzySearchString(haystack);
-  const normValue = normalizeFuzzySearchString(value);
-  return normValue.length > 0 && normHaystack.includes(normValue);
+  // Punctuation-agnostic fuzzy matching for multi-character terms (> 3 chars)
+  if (value.length > 3) {
+    const normHaystack = normalizeFuzzySearchString(haystack);
+    const normValue = normalizeFuzzySearchString(value);
+    if (normValue.length > 0 && normHaystack.includes(normValue)) return true;
+  }
+
+  return false;
 }
 
 export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterState) {
