@@ -18,7 +18,9 @@ export type PerkCard = {
   ranks: PerkRank[];
 };
 
-export const PERK_CATALOG: PerkCard[] = rawPerkCards as PerkCard[];
+export const PERK_CATALOG: PerkCard[] = (rawPerkCards as PerkCard[]).sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
 
 export function getPerkCardById(id: string): PerkCard | undefined {
   return PERK_CATALOG.find((card) => card.id === id);
@@ -34,11 +36,13 @@ export function searchPerkCards(query: string, rank?: number): PerkCard[] {
     const matchSpecial = card.special.toLowerCase() === norm;
     const matchRank = rank ? card.ranks.some((r) => r.rank === rank) : true;
     return (matchName || matchId || matchSpecial) && matchRank;
-  });
+  }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function filterPerksBySpecial(special: SpecialCategory): PerkCard[] {
-  return PERK_CATALOG.filter((card) => card.special === special);
+  return PERK_CATALOG.filter((card) => card.special === special).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 }
 
 export function calculateSpecialCapacity(equipped: Array<{ cardId: string; rank: number }>): Record<SpecialCategory, number> {
