@@ -107,8 +107,11 @@ const commands = [
 ];
 
 async function register() {
-  console.log(`🚀 Registering ${commands.length} slash commands for Client ID ${CLIENT_ID}...`);
-  const response = await fetch(`https://discord.com/api/v10/applications/${CLIENT_ID}/commands`, {
+  const guildId = process.env.DISCORD_GUILD_ID;
+  console.log(`🚀 Registering ${commands.length} slash commands for Application ID ${CLIENT_ID}...`);
+
+  // 1. Global Command Registration
+  const globalRes = await fetch(`https://discord.com/api/v10/applications/${CLIENT_ID}/commands`, {
     method: "PUT",
     headers: {
       Authorization: `Bot ${BOT_TOKEN}`,
@@ -117,13 +120,31 @@ async function register() {
     body: JSON.stringify(commands)
   });
 
-  if (response.ok) {
-    const data = await response.json();
-    console.log("✅ Successfully registered slash commands with Discord API!");
-    console.log(`Registered ${data.length} commands.`);
+  if (globalRes.ok) {
+    const data = await globalRes.json();
+    console.log(`✅ Global Commands Registered (${data.length} commands).`);
   } else {
-    const errorText = await response.text();
-    console.error("❌ Failed to register commands:", response.status, errorText);
+    console.error("❌ Global registration error:", await globalRes.text());
+  }
+
+  // 2. Guild-Specific Instant Registration (if DISCORD_GUILD_ID is set or passed as arg)
+  const targetGuild = guildId || process.argv[2];
+  if (targetGuild) {
+    console.log(`⚡ Instant Guild Registration for Server ID ${targetGuild}...`);
+    const guildRes = await fetch(`https://discord.com/api/v10/applications/${CLIENT_ID}/guilds/${targetGuild}/commands`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bot ${BOT_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(commands)
+    });
+    if (guildRes.ok) {
+      const data = await guildRes.json();
+      console.log(`⚡ Instant Server Commands Registered (${data.length} commands).`);
+    } else {
+      console.error("❌ Guild registration error:", await guildRes.text());
+    }
   }
 }
 

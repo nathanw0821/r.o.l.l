@@ -1,14 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { getProviders, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { unlinkAccount } from "@/actions/accounts";
-
-type ProviderInfo = {
-  id: string;
-  name: string;
-};
 
 const providerLabels: Record<string, string> = {
   google: "Google / YouTube",
@@ -20,16 +15,9 @@ const providerLabels: Record<string, string> = {
 };
 
 export default function AccountLinks() {
-  const [providers, setProviders] = React.useState<Record<string, ProviderInfo>>({});
   const [accounts, setAccounts] = React.useState<string[]>([]);
   const [error, setError] = React.useState<string | null>(null);
   const [pendingProvider, setPendingProvider] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    getProviders()
-      .then((result) => setProviders(result ?? {}))
-      .catch(() => setProviders({}));
-  }, []);
 
   React.useEffect(() => {
     fetch(`/api/account-links`)
@@ -53,24 +41,27 @@ export default function AccountLinks() {
     }
   }
 
-  const oauthProviders = Object.values(providers).filter((provider) => provider.id !== "credentials");
+  const availableOauthProviders = [
+    { id: "google", name: "Google / YouTube" },
+    { id: "discord", name: "Discord" }
+  ];
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <div className="text-xs text-foreground/60">Linked</div>
+        <div className="text-xs font-medium text-foreground/60">Linked Accounts</div>
         {accounts.length === 0 ? (
           <div className="text-xs text-foreground/50">No external accounts linked yet.</div>
         ) : (
           <div className="flex flex-wrap gap-2">
             {accounts.map((provider) => (
-              <div key={provider} className="rounded-full border border-border px-2 py-1 text-xs">
-                {providerLabels[provider] ?? provider}
+              <div key={provider} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1 text-xs">
+                <span>{providerLabels[provider] ?? provider}</span>
                 <button
                   type="button"
                   onClick={() => handleUnlink(provider)}
                   disabled={pendingProvider === provider}
-                  className="ml-2 text-[0.78rem] text-foreground/50 hover:text-foreground"
+                  className="ml-1 text-[0.75rem] text-foreground/50 hover:text-foreground hover:underline"
                 >
                   {pendingProvider === provider ? "..." : "Unlink"}
                 </button>
@@ -81,19 +72,20 @@ export default function AccountLinks() {
       </div>
 
       <div className="space-y-2">
-        <div className="text-xs text-foreground/60">Connect another account</div>
+        <div className="text-xs font-medium text-foreground/60">Connect Another Provider</div>
         <div className="flex flex-wrap gap-2">
-          {oauthProviders.map((provider) => {
+          {availableOauthProviders.map((provider) => {
             const isLinked = accounts.includes(provider.id);
             return (
               <Button
                 key={provider.id}
                 size="sm"
-                variant="outline"
-                onClick={() => signIn(provider.id)}
+                variant={isLinked ? "ghost" : "outline"}
+                onClick={() => !isLinked && signIn(provider.id)}
                 disabled={isLinked}
+                className={isLinked ? "opacity-60 cursor-default" : "hover:border-accent hover:text-accent"}
               >
-                {isLinked ? "Linked" : `Connect ${providerLabels[provider.id] ?? provider.name}`}
+                {isLinked ? `✓ ${provider.name} Linked` : `Connect ${provider.name}`}
               </Button>
             );
           })}
