@@ -8,6 +8,8 @@ import ProgressControls from "@/components/progress-controls";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+import AccountLinks from "@/components/account-links";
+
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
   const user =
@@ -21,6 +23,17 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Linked Accounts &amp; Radio Signal</CardTitle>
+          <CardDescription>
+            Link your Google, Discord, Twitch, or Xbox accounts to synchronize cloud saves and unlock the Radio Signal Connected achievement.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AccountLinks />
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Settings & Accessibility</CardTitle>
