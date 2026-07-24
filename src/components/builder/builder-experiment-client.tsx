@@ -1290,7 +1290,7 @@ export default function BuilderExperimentClient({
                               {BUILDER_SPECIAL_LABELS[key]}
                             </span>
                           </TooltipTrigger>
-                          <TooltipContent side="right" className="bg-background/95 border-border/70 p-2.5 font-mono text-[0.78rem] shadow-xl space-y-1.5 min-w-[200px]">
+                          <TooltipContent side="right" className="bg-[#0c1014] border-border/80 p-2.5 font-mono text-[0.78rem] shadow-2xl space-y-1.5 min-w-[200px] z-[10000] opacity-100">
                             <div className="font-black text-accent border-b border-border/20 pb-1 flex justify-between">
                               <span>{SPECIAL_FULL_NAMES[key] || key.toUpperCase()}</span>
                               <span>Total: {live}</span>
@@ -1419,7 +1419,7 @@ export default function BuilderExperimentClient({
                           </div>
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="bg-background/95 border-border/70 p-2.5 font-mono text-[0.78rem] shadow-xl space-y-1.5 min-w-[210px]">
+                      <TooltipContent side="top" className="bg-[#0c1014] border-border/80 p-2.5 font-mono text-[0.78rem] shadow-2xl space-y-1.5 min-w-[210px] z-[10000] opacity-100">
                         <div className="font-black text-accent border-b border-border/20 pb-1 flex justify-between">
                           <span>{RESIST_FULL_NAMES[k] || l}</span>
                           <span>Total: {live}</span>
