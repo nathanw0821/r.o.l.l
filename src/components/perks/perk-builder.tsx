@@ -163,8 +163,8 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
             <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-emerald-500/60 text-emerald-400 bg-emerald-950/30 hover:bg-emerald-900/50">
               📸 Export Deck PNG
             </Button>
-            <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs">
-              {saving ? "Saving..." : "Save Active Loadout"}
+            <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs disabled:opacity-60">
+              {saving ? "Saving..." : !characterId ? "Sign In to Save Loadout" : "Save Active Loadout"}
             </Button>
           </div>
         </div>
