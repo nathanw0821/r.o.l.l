@@ -34,6 +34,9 @@ export default function PrivacyPage() {
               <strong>Account Information:</strong> Your chosen username and email address, which are collected strictly for authentication and account recovery purposes.
             </li>
             <li>
+              <strong>Discord OAuth &amp; Bot Integration:</strong> When signing in or linking your account via Discord, we receive your basic public Discord profile (Discord User ID, username, and email) strictly to authenticate your account and award in-app achievements. The R.O.L.L. Discord Bot operates statelessly via webhook interactions to process slash commands (<code>/effect</code>, <code>/scrip</code>, <code>/build</code>); it does not read, store, or log Discord server messages, chat histories, or member lists. You can disconnect your Discord account at any time via Account Settings.
+            </li>
+            <li>
               <strong>Usage Logs &amp; Metrics:</strong> When enabled, we collect basic, anonymized session metrics and interaction logs strictly to debug system performance, optimize server latency, and improve database query efficiency.
             </li>
             <li>
