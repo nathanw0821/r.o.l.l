@@ -82,6 +82,13 @@ export default function TermsPage() {
           </p>
         </section>
 
+        <section className="space-y-3">
+          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">9. Third-Party Authentication &amp; Google API Policy</h2>
+          <p>
+            When utilizing Google OAuth2, Discord OAuth2, or other supported third-party identity providers to authenticate your account, you agree to comply with the respective terms of service and privacy policies of those providers. R.O.L.L.&apos;s use of information received from Google APIs strictly adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noreferrer" className="text-accent underline">Google API Services User Data Policy</a>, including the Limited Use requirements.
+          </p>
+        </section>
+
       </div>
 
       <div className="flex justify-between items-center text-xs font-mono text-foreground/40 px-2">

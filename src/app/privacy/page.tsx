@@ -34,6 +34,9 @@ export default function PrivacyPage() {
               <strong>Account Information:</strong> Your chosen username and email address, which are collected strictly for authentication and account recovery purposes.
             </li>
             <li>
+              <strong>Google OAuth Data &amp; Limited Use:</strong> When signing in or linking your account via Google, we collect your basic public profile information (name, email address, and profile image URL) solely for authentication, account management, and profile synchronization. R.O.L.L.&apos;s use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noreferrer" className="text-accent underline">Google API Services User Data Policy</a>, including the Limited Use requirements. We never sell your Google data to third parties, transfer it to data brokers, or use it for advertising, marketing, or surveillance.
+            </li>
+            <li>
               <strong>Discord OAuth &amp; Bot Integration:</strong> When signing in or linking your account via Discord, we receive your basic public Discord profile (Discord User ID, username, and email) strictly to authenticate your account and award in-app achievements. The R.O.L.L. Discord Bot operates statelessly via webhook interactions to process slash commands (<code>/effect</code>, <code>/scrip</code>, <code>/build</code>); it does not read, store, or log Discord server messages, chat histories, or member lists. You can disconnect your Discord account at any time via Account Settings.
             </li>
             <li>
