@@ -1029,6 +1029,10 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   border-color: color-mix(in srgb, #4285f4 45%, var(--sidebar-hover-border));
 }
 
+.app-sidebar__auth-button--discord {
+  border-color: color-mix(in srgb, #5865f2 45%, var(--sidebar-hover-border));
+}
+
 .app-sidebar__auth-status {
   border-radius: 10px;
   border: 1px solid color-mix(in srgb, var(--color-success) 55%, var(--sidebar-hover-border));
@@ -1038,6 +1042,12 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   font-weight: 600;
   text-align: center;
   padding: 0.42rem 0.65rem;
+}
+
+.app-sidebar__auth-status--discord {
+  border-color: color-mix(in srgb, #5865f2 55%, var(--sidebar-hover-border));
+  background: color-mix(in srgb, #5865f2 12%, var(--surface));
+  color: #7289da;
 }
 
 .app-nav__link {
