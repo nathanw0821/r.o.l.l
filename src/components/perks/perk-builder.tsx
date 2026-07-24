@@ -23,15 +23,15 @@ interface PerkBuilderProps {
   characterName?: string | null;
 }
 
-const SPECIAL_LABELS: Record<SpecialCategory, { name: string; color: string; bg: string }> = {
-  S: { name: "Strength", color: "text-red-400", bg: "bg-red-950/40 border-red-500/30" },
-  P: { name: "Perception", color: "text-amber-400", bg: "bg-amber-950/40 border-amber-500/30" },
-  E: { name: "Endurance", color: "text-emerald-400", bg: "bg-emerald-950/40 border-emerald-500/30" },
-  C: { name: "Charisma", color: "text-purple-400", bg: "bg-purple-950/40 border-purple-500/30" },
-  I: { name: "Intelligence", color: "text-blue-400", bg: "bg-blue-950/40 border-blue-500/30" },
-  A: { name: "Agility", color: "text-cyan-400", bg: "bg-cyan-950/40 border-cyan-500/30" },
-  L: { name: "Luck", color: "text-yellow-400", bg: "bg-yellow-950/40 border-yellow-500/30" },
-  LEGENDARY: { name: "Legendary", color: "text-amber-300", bg: "bg-amber-900/30 border-amber-400/40" }
+const SPECIAL_THEMES: Record<SpecialCategory, { name: string; border: string; text: string; badge: string; glow: string }> = {
+  S: { name: "Strength", border: "border-red-500/50 hover:border-red-500", text: "text-red-400", badge: "bg-red-500/20 text-red-300 border-red-500/40", glow: "shadow-red-950/40" },
+  P: { name: "Perception", border: "border-amber-500/50 hover:border-amber-500", text: "text-amber-400", badge: "bg-amber-500/20 text-amber-300 border-amber-500/40", glow: "shadow-amber-950/40" },
+  E: { name: "Endurance", border: "border-emerald-500/50 hover:border-emerald-500", text: "text-emerald-400", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40", glow: "shadow-emerald-950/40" },
+  C: { name: "Charisma", border: "border-purple-500/50 hover:border-purple-500", text: "text-purple-400", badge: "bg-purple-500/20 text-purple-300 border-purple-500/40", glow: "shadow-purple-950/40" },
+  I: { name: "Intelligence", border: "border-blue-500/50 hover:border-blue-500", text: "text-blue-400", badge: "bg-blue-500/20 text-blue-300 border-blue-500/40", glow: "shadow-blue-950/40" },
+  A: { name: "Agility", border: "border-cyan-500/50 hover:border-cyan-500", text: "text-cyan-400", badge: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40", glow: "shadow-cyan-950/40" },
+  L: { name: "Luck", border: "border-yellow-500/50 hover:border-yellow-500", text: "text-yellow-400", badge: "bg-yellow-500/20 text-yellow-300 border-yellow-500/40", glow: "shadow-yellow-950/40" },
+  LEGENDARY: { name: "Legendary", border: "border-amber-400/80 hover:border-amber-300", text: "text-amber-300", badge: "bg-amber-400/20 text-amber-200 border-amber-400/50", glow: "shadow-amber-900/50" }
 };
 
 export default function PerkBuilder({ characterId, characterName }: PerkBuilderProps) {
@@ -125,14 +125,6 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
     }
   };
 
-  const filteredCards = React.useMemo(() => {
-    let result = searchPerkCards(searchQuery);
-    if (selectedCategory !== "ALL") {
-      result = result.filter((c) => c.special === selectedCategory);
-    }
-    return result;
-  }, [searchQuery, selectedCategory]);
-
   const handleExportDeckPng = () => {
     exportPerkDeckCard({
       characterName: characterName || "Vault Dweller",
@@ -142,33 +134,45 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
     });
   };
 
+  const filteredCards = React.useMemo(() => {
+    let result = searchPerkCards(searchQuery);
+    if (selectedCategory !== "ALL") {
+      result = result.filter((c) => c.special === selectedCategory);
+    }
+    return result;
+  }, [searchQuery, selectedCategory]);
+
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="rounded-[var(--radius-lg)] border border-border bg-panel p-6 shadow-md relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-[3px] bg-accent" />
+      <div className="rounded-[var(--radius-lg)] border border-emerald-500/40 bg-slate-950 p-6 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-accent font-bold">PUNCH CARD MACHINE // BETA</span>
-            <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono">P.E.R.K. Loadout Manager</h1>
-            <p className="text-sm text-foreground/60 mt-1 font-mono">
-              Perk Equipment &amp; Reconfiguration Kit for {characterName ? <strong>{characterName}</strong> : "Selected Character"}
+            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-emerald-400 font-bold">
+              VAULT-TEC PUNCH CARD MACHINE // P.E.R.K. SYSTEM ({PERK_CATALOG.length} CARDS)
+            </span>
+            <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono text-white">
+              P.E.R.K. Loadout Manager
+            </h1>
+            <p className="text-sm text-slate-300 mt-1 font-mono">
+              Perk Equipment &amp; Reconfiguration Kit for {characterName ? <strong className="text-emerald-400">{characterName}</strong> : "Selected Character"}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-accent text-accent">
+            <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-emerald-500/60 text-emerald-400 bg-emerald-950/30 hover:bg-emerald-900/50">
               📸 Export Deck PNG
             </Button>
-            <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-accent text-accent-foreground font-mono text-xs">
+            <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs">
               {saving ? "Saving..." : "Save Active Loadout"}
             </Button>
           </div>
         </div>
-        {saveMessage ? <div className="mt-3 text-xs font-mono text-emerald-400">{saveMessage}</div> : null}
+        {saveMessage ? <div className="mt-3 text-xs font-mono text-emerald-400 font-bold">{saveMessage}</div> : null}
       </div>
 
       {/* 6 Loadout Slot Selection Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+      <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-3">
         {[0, 1, 2, 3, 4, 5].map((slot) => (
           <button
             key={slot}
@@ -176,8 +180,8 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
             onClick={() => setActiveSlot(slot)}
             className={`px-4 py-2 rounded-t-md text-xs font-mono font-bold transition-all border ${
               activeSlot === slot
-                ? "border-accent bg-accent/15 text-accent border-b-transparent"
-                : "border-border bg-card/40 text-foreground/60 hover:text-foreground hover:bg-card"
+                ? "border-emerald-500 bg-emerald-950/60 text-emerald-300 border-b-transparent shadow-md"
+                : "border-slate-800 bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800"
             }`}
           >
             🕹️ Slot {slot + 1}
@@ -186,46 +190,46 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
       </div>
 
       {/* SPECIAL Stat Allocation Sliders */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-mono flex justify-between items-center">
+      <Card className="bg-slate-950 border-slate-800 shadow-xl">
+        <CardHeader className="pb-3 border-b border-slate-900">
+          <CardTitle className="text-base font-mono flex justify-between items-center text-slate-100">
             <span>S.P.E.C.I.A.L. Base Point Allocation</span>
-            <span className="text-xs font-mono text-accent">Total Points: {totalAllocatedSpecial} / 56</span>
+            <span className="text-xs font-mono text-amber-400 font-bold">Total Points: {totalAllocatedSpecial} / 56</span>
           </CardTitle>
-          <CardDescription className="text-xs">
-            Allocate up to 15 points per S.P.E.C.I.A.L. stat. Points expand your card slot capacity per category.
+          <CardDescription className="text-xs text-slate-400">
+            Allocate up to 15 points per S.P.E.C.I.A.L. stat to expand your perk card slot capacity.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <div className="grid grid-cols-2 md:grid-cols-7 gap-3">
             {(["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).map((stat) => {
-              const meta = SPECIAL_LABELS[stat];
+              const theme = SPECIAL_THEMES[stat];
               const used = usedSpecialCapacity[stat] || 0;
               const max = specials[stat];
               const isOver = used > max;
 
               return (
-                <div key={stat} className={`rounded-lg border p-3 flex flex-col items-center justify-between space-y-2 ${meta.bg}`}>
-                  <span className={`text-lg font-black font-mono ${meta.color}`}>{stat}</span>
-                  <span className="text-[0.68rem] font-mono text-foreground/70 uppercase tracking-wider">{meta.name}</span>
-                  <div className="flex items-center gap-2 font-mono text-sm font-bold">
+                <div key={stat} className={`rounded-lg border bg-slate-900/90 p-3 flex flex-col items-center justify-between space-y-2 ${theme.border}`}>
+                  <span className={`text-xl font-black font-mono ${theme.text}`}>{stat}</span>
+                  <span className="text-[0.65rem] font-mono text-slate-300 uppercase tracking-widest font-semibold">{theme.name}</span>
+                  <div className="flex items-center gap-2 font-mono text-sm font-bold text-white">
                     <button
                       type="button"
                       onClick={() => handleSpecialChange(stat, -1)}
-                      className="px-2 py-0.5 rounded bg-panel border border-border hover:bg-card text-xs"
+                      className="px-2.5 py-0.5 rounded bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs text-slate-200"
                     >
                       -
                     </button>
-                    <span>{specials[stat]}</span>
+                    <span className="w-5 text-center">{specials[stat]}</span>
                     <button
                       type="button"
                       onClick={() => handleSpecialChange(stat, 1)}
-                      className="px-2 py-0.5 rounded bg-panel border border-border hover:bg-card text-xs"
+                      className="px-2.5 py-0.5 rounded bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs text-slate-200"
                     >
                       +
                     </button>
                   </div>
-                  <span className={`text-[0.7rem] font-mono font-semibold ${isOver ? "text-red-400 font-bold" : "text-foreground/50"}`}>
+                  <span className={`text-[0.68rem] font-mono font-bold px-2 py-0.5 rounded ${isOver ? "bg-red-950 text-red-400 border border-red-500/50" : "bg-slate-950 text-slate-300 border border-slate-800"}`}>
                     Cards: {used} / {max}
                   </span>
                 </div>
@@ -236,42 +240,48 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
       </Card>
 
       {/* Equipped Perk Cards Deck */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-mono">Equipped Perk Deck ({equippedCards.length} Cards)</CardTitle>
-          <CardDescription className="text-xs">Active perk cards slotted in Punch Card Loadout {activeSlot + 1}.</CardDescription>
+      <Card className="bg-slate-950 border-slate-800 shadow-xl">
+        <CardHeader className="pb-3 border-b border-slate-900">
+          <CardTitle className="text-base font-mono text-slate-100 flex items-center justify-between">
+            <span>Equipped Perk Deck ({equippedCards.length} Cards)</span>
+            <span className="text-xs text-emerald-400 font-normal">Punch Card Loadout {activeSlot + 1}</span>
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-400">Active perk cards slotted in this loadout.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           {equippedCards.length === 0 ? (
-            <div className="py-8 text-center text-xs font-mono text-foreground/40 border border-dashed border-border rounded-lg">
-              No perk cards equipped in this loadout yet. Select cards below to slot into your deck!
+            <div className="py-10 text-center text-xs font-mono text-slate-500 border border-dashed border-slate-800 rounded-lg">
+              No perk cards equipped in this loadout yet. Select cards below from the Vault-Tec catalog!
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {equippedCards.map((item) => {
                 const card = PERK_CATALOG.find((c) => c.id === item.cardId);
                 if (!card) return null;
-                const meta = SPECIAL_LABELS[card.special];
+                const theme = SPECIAL_THEMES[card.special];
                 const activeRankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];
 
                 return (
-                  <div key={card.id} className={`rounded-lg border p-3 space-y-2 relative overflow-hidden bg-panel ${meta.bg}`}>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-xs font-bold font-mono ${meta.color}`}>[{card.special}] {card.name}</span>
+                  <div key={card.id} className={`rounded-lg border bg-slate-900/95 p-3.5 space-y-2.5 relative overflow-hidden shadow-lg ${theme.border}`}>
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className={`text-[0.7rem] font-bold font-mono px-1.5 py-0.5 rounded border ${theme.badge}`}>{card.special}</span>
+                        <span className="text-xs font-bold font-mono text-white truncate">{card.name}</span>
+                      </div>
                       <button
                         type="button"
                         onClick={() => handleUnequipCard(card.id)}
-                        className="text-[0.7rem] text-foreground/50 hover:text-red-400 font-mono"
+                        className="text-[0.68rem] text-slate-400 hover:text-red-400 font-mono font-semibold"
                       >
                         Unequip
                       </button>
                     </div>
-                    <div className="text-[0.75rem] font-mono text-foreground/80 leading-snug">
+                    <p className="text-[0.75rem] font-mono text-slate-200 leading-relaxed min-h-[40px]">
                       {activeRankObj?.description}
-                    </div>
-                    <div className="flex items-center justify-between text-[0.7rem] font-mono pt-1 border-t border-border/50">
-                      <span className="text-accent">Cost: {activeRankObj?.cost} pts</span>
-                      <span className="text-amber-400">{"★".repeat(item.rank)}</span>
+                    </p>
+                    <div className="flex items-center justify-between text-[0.7rem] font-mono pt-2 border-t border-slate-800/80">
+                      <span className="text-emerald-400 font-bold">Cost: {activeRankObj?.cost || item.rank} pts</span>
+                      <span className="text-amber-400 font-bold">{"★".repeat(item.rank)}</span>
                     </div>
                   </div>
                 );
@@ -282,19 +292,24 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
       </Card>
 
       {/* Perk Cards Catalog Selection */}
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="bg-slate-950 border-slate-800 shadow-xl">
+        <CardHeader className="pb-3 border-b border-slate-900">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-base font-mono">Vault-Tec Perk Card Catalog</CardTitle>
-              <CardDescription className="text-xs">Browse all Fallout 76 perk cards across S.P.E.C.I.A.L. categories.</CardDescription>
+              <CardTitle className="text-base font-mono text-slate-100 flex items-center gap-2">
+                <span>Vault-Tec Perk Card Catalog</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono">
+                  {filteredCards.length} Cards
+                </span>
+              </CardTitle>
+              <CardDescription className="text-xs text-slate-400">Browse all Fallout 76 perk cards across S.P.E.C.I.A.L. categories.</CardDescription>
             </div>
             <input
               type="text"
               placeholder="Search perk cards..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-1.5 rounded-md border border-border bg-background text-xs font-mono text-foreground w-full md:w-64 focus:outline-none focus:border-accent"
+              className="px-3 py-1.5 rounded-md border border-slate-800 bg-slate-900 text-xs font-mono text-white placeholder:text-slate-500 w-full md:w-64 focus:outline-none focus:border-emerald-500"
             />
           </div>
           {/* Category Filter Pills */}
@@ -302,69 +317,71 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
             <button
               type="button"
               onClick={() => setSelectedCategory("ALL")}
-              className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all border ${
-                selectedCategory === "ALL" ? "bg-accent text-accent-foreground border-accent" : "border-border bg-panel text-foreground/60"
+              className={`px-3 py-1 rounded text-xs font-mono font-bold transition-all border ${
+                selectedCategory === "ALL" ? "bg-emerald-500 text-slate-950 border-emerald-500 shadow-md" : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
               }`}
             >
-              ALL
+              ALL ({PERK_CATALOG.length})
             </button>
-            {(["S", "P", "E", "C", "I", "A", "L", "LEGENDARY"] as SpecialCategory[]).map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all border ${
-                  selectedCategory === cat ? "bg-accent text-accent-foreground border-accent" : "border-border bg-panel text-foreground/60"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {(["S", "P", "E", "C", "I", "A", "L", "LEGENDARY"] as SpecialCategory[]).map((cat) => {
+              const theme = SPECIAL_THEMES[cat];
+              const count = PERK_CATALOG.filter((c) => c.special === cat).length;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all border ${
+                    selectedCategory === cat ? `${theme.badge} border-current shadow-md` : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  {cat} ({count})
+                </button>
+              );
+            })}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredCards.map((card) => {
               const equippedItem = equippedCards.find((item) => item.cardId === card.id);
-              const meta = SPECIAL_LABELS[card.special];
+              const theme = SPECIAL_THEMES[card.special];
 
               return (
                 <div
                   key={card.id}
-                  className={`rounded-lg border p-4 flex flex-col justify-between space-y-3 bg-panel transition-all ${
-                    equippedItem ? "border-accent bg-accent/5 shadow-md" : "border-border hover:border-accent/40"
+                  className={`rounded-lg border p-4 flex flex-col justify-between space-y-3 bg-slate-900/90 transition-all ${
+                    equippedItem
+                      ? "border-emerald-500 bg-emerald-950/20 shadow-lg ring-1 ring-emerald-500/50"
+                      : `${theme.border} hover:bg-slate-900`
                   }`}
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className={`text-xs font-bold font-mono ${meta.color}`}>[{card.special}] {card.name}</span>
-                      <span className="text-[0.65rem] font-mono px-1.5 py-0.5 rounded bg-background border border-border text-foreground/60">
+                  <div className="space-y-2.5">
+                    <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className={`text-[0.68rem] font-bold font-mono px-1.5 py-0.5 rounded border ${theme.badge}`}>{card.special}</span>
+                        <span className="text-xs font-bold font-mono text-white leading-tight">{card.name}</span>
+                      </div>
+                      <span className="text-[0.65rem] font-mono px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400 font-semibold whitespace-nowrap">
                         Lvl {card.minLevel}
                       </span>
                     </div>
 
-                    {/* Card Illustration Image */}
-                    {card.imageUrl ? (
-                      <div className="relative w-full h-32 rounded bg-background/60 border border-border flex items-center justify-center p-2 overflow-hidden">
-                        {/* eslint-disable-next-html-element-suppression */}
-                        <img
-                          src={card.imageUrl}
-                          alt={card.name}
-                          className="max-h-full max-w-full object-contain filter drop-shadow"
-                          loading="lazy"
-                        />
-                      </div>
-                    ) : null}
-
-                    <div className="text-[0.75rem] font-mono text-foreground/80 leading-relaxed">
+                    {/* High-contrast Card Description */}
+                    <div className="text-[0.75rem] font-mono text-slate-200 leading-relaxed bg-slate-950/60 p-2.5 rounded border border-slate-800/80 min-h-[54px]">
                       {card.ranks[0]?.description}
                     </div>
                   </div>
 
                   {/* Equip & Rank Buttons */}
-                  <div className="space-y-2 pt-2 border-t border-border">
+                  <div className="space-y-2 pt-2 border-t border-slate-800/80">
                     <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="text-foreground/50">Max Rank: {"★".repeat(card.maxRank)}</span>
+                      <span className="text-slate-400 text-[0.7rem]">Max: {"★".repeat(card.maxRank)}</span>
+                      {equippedItem ? (
+                        <span className="text-[0.68rem] font-bold font-mono text-emerald-400 flex items-center gap-1">
+                          ✓ Equipped ({equippedItem.rank}★)
+                        </span>
+                      ) : null}
                     </div>
 
                     <div className="flex items-center gap-1">
@@ -373,10 +390,10 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
                           key={r.rank}
                           type="button"
                           onClick={() => handleEquipCard(card, r.rank)}
-                          className={`flex-1 py-1 text-[0.68rem] font-mono font-bold rounded border ${
+                          className={`flex-1 py-1 text-[0.7rem] font-mono font-bold rounded border transition-all ${
                             equippedItem?.rank === r.rank
-                              ? "bg-accent text-accent-foreground border-accent"
-                              : "bg-background border-border text-foreground/70 hover:border-accent"
+                              ? "bg-emerald-500 text-slate-950 border-emerald-400 font-black shadow-md"
+                              : "bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-600 hover:text-white"
                           }`}
                         >
                           {r.rank}★
