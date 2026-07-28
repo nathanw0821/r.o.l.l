@@ -13,6 +13,8 @@ import { updateUserSettings } from "@/actions/settings";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { formatTierStars } from "@/lib/tier-format";
 
+import { searchPerkCards } from "@/lib/perks/catalog";
+
 type CommandHubProps = {
   summary: { total: number; unlocked: number; percent: number };
   tierProgress: {
@@ -32,6 +34,7 @@ type CommandHubProps = {
 
 export default function CommandHub({ summary, tierProgress, isAdmin = false, dataset }: CommandHubProps) {
   const hubRef = React.useRef<HTMLDivElement | null>(null);
+  const [searchScope, setSearchScope] = React.useState<"all" | "perks" | "effects">("all");
   const { data: session } = useSession();
   const {
     query,
@@ -110,6 +113,11 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
       }),
     [isSignedIn, localProgress, tierProgress]
   );
+
+  const matchingPerks = React.useMemo(() => {
+    if (!query.trim()) return [];
+    return searchPerkCards(query).slice(0, 6);
+  }, [query]);
 
   React.useEffect(() => {
     setAnimateBars(true);
@@ -190,8 +198,14 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <input
             ref={searchInputRef}
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search effects, tiers, origins"
+            onChange={(event) => {
+              const val = event.target.value;
+              setQuery(val);
+              if (val.trim().length > 0 && !expanded) {
+                setExpanded(true);
+              }
+            }}
+            placeholder="Search effects, perks, tiers, origins..."
             className="w-full bg-transparent text-sm text-foreground placeholder:text-foreground/40 focus:outline-none pr-6"
           />
           {query.length > 0 && (
@@ -233,6 +247,85 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               <span>Close</span>
             </button>
           </div>
+          {/* Scope Selector Bar */}
+          <div className="flex flex-wrap items-center gap-1.5 pb-3 border-b border-border/40 font-mono text-xs mb-3">
+            <span className="text-[0.68rem] text-foreground/50 uppercase tracking-wider font-bold mr-1">Search Domain:</span>
+            <button
+              type="button"
+              onClick={() => setSearchScope("all")}
+              className={cn(
+                "px-2.5 py-1 rounded text-[0.72rem] font-bold border transition-all cursor-pointer",
+                searchScope === "all"
+                  ? "bg-accent/20 text-accent border-accent/60"
+                  : "bg-background/40 border-border/50 text-foreground/60 hover:text-foreground"
+              )}
+            >
+              🌐 ALL DOMAINS
+            </button>
+            <button
+              type="button"
+              onClick={() => setSearchScope("perks")}
+              className={cn(
+                "px-2.5 py-1 rounded text-[0.72rem] font-bold border transition-all cursor-pointer",
+                searchScope === "perks"
+                  ? "bg-emerald-950 text-emerald-300 border-emerald-500/60"
+                  : "bg-background/40 border-border/50 text-foreground/60 hover:text-emerald-400"
+              )}
+            >
+              🃏 P.E.R.K. CARDS
+            </button>
+            <button
+              type="button"
+              onClick={() => setSearchScope("effects")}
+              className={cn(
+                "px-2.5 py-1 rounded text-[0.72rem] font-bold border transition-all cursor-pointer",
+                searchScope === "effects"
+                  ? "bg-amber-950 text-amber-300 border-amber-500/60"
+                  : "bg-background/40 border-border/50 text-foreground/60 hover:text-amber-400"
+              )}
+            >
+              ⚡ LEGENDARY MODS
+            </button>
+          </div>
+
+          {/* P.E.R.K. Card Matches */}
+          {(searchScope === "all" || searchScope === "perks") && matchingPerks.length > 0 && (
+            <section className="hub-zone mb-3 border-b border-border/40 pb-3">
+              <div className="hub-zone__title text-emerald-400 font-mono flex items-center justify-between">
+                <span>🃏 P.E.R.K. Card Matches ({matchingPerks.length})</span>
+                <Link
+                  href={`/perks?q=${encodeURIComponent(query)}`}
+                  onClick={() => setExpanded(false)}
+                  className="text-[0.7rem] text-emerald-400 hover:underline uppercase tracking-wider"
+                >
+                  View All in P.E.R.K. →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
+                {matchingPerks.map((card) => (
+                  <Link
+                    key={card.id}
+                    href={`/perks?q=${encodeURIComponent(card.name)}`}
+                    onClick={() => setExpanded(false)}
+                    className="flex items-start gap-2.5 p-2 rounded-lg border border-slate-800 bg-slate-950/90 hover:bg-slate-900/90 hover:border-emerald-500/50 transition-all group"
+                  >
+                    <span className="text-[0.65rem] font-bold font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/40 shrink-0">
+                      [{card.special}]
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-xs font-bold font-mono text-white group-hover:text-emerald-400 truncate">{card.name}</span>
+                        <span className="text-[0.65rem] font-mono text-amber-400 font-bold shrink-0">{card.maxRank}★</span>
+                      </div>
+                      <p className="text-[0.68rem] font-mono text-slate-400 line-clamp-1 mt-0.5">
+                        {card.ranks[0]?.description}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         <section className="hub-zone">
           <div className="hub-zone__title">
             <Zap className="h-4 w-4" />
@@ -296,11 +389,11 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           >
             <span className="inline-flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4" />
-              Interaction
+              Legendary Effects Filters
             </span>
             {hubZonesOpen.interaction ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
-          {hubZonesOpen.interaction ? (
+          {hubZonesOpen.interaction && (searchScope === "all" || searchScope === "effects") ? (
             <>
           <div className="hub-group">
             <button

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, searchPerkCards } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,9 +36,19 @@ const SPECIAL_THEMES: Record<SpecialCategory, { name: string; border: string; te
 };
 
 export default function PerkBuilder({ characterId, characterName }: PerkBuilderProps) {
+  const searchParams = useSearchParams();
+  const urlQuery = searchParams.get("q") || searchParams.get("card") || "";
+
   const [activeSlot, setActiveSlot] = React.useState<number>(0);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState(urlQuery);
   const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL">("ALL");
+
+  // Sync searchQuery with URL params if provided
+  React.useEffect(() => {
+    if (urlQuery) {
+      setSearchQuery(urlQuery);
+    }
+  }, [urlQuery]);
 
   const [specials, setSpecials] = React.useState<SpecialsState>({
     S: 1,
