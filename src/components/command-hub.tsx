@@ -13,6 +13,7 @@ import { updateUserSettings } from "@/actions/settings";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { formatTierStars } from "@/lib/tier-format";
 
+import { usePathname } from "next/navigation";
 import { searchPerkCards } from "@/lib/perks/catalog";
 
 type CommandHubProps = {
@@ -34,6 +35,16 @@ type CommandHubProps = {
 
 export default function CommandHub({ summary, tierProgress, isAdmin = false, dataset }: CommandHubProps) {
   const hubRef = React.useRef<HTMLDivElement | null>(null);
+  const pathname = usePathname();
+  const isPerksPage = Boolean(pathname?.startsWith("/perks"));
+  const isGearPage = Boolean(
+    pathname?.startsWith("/build") ||
+    pathname?.startsWith("/1-star") ||
+    pathname?.startsWith("/2-star") ||
+    pathname?.startsWith("/3-star") ||
+    pathname?.startsWith("/4-star") ||
+    pathname?.startsWith("/all-effects")
+  );
   const { data: session } = useSession();
   const {
     query,
@@ -114,9 +125,9 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   );
 
   const matchingPerks = React.useMemo(() => {
-    if (!query.trim()) return [];
+    if (!query.trim() || isGearPage) return [];
     return searchPerkCards(query).slice(0, 6);
-  }, [query]);
+  }, [query, isGearPage]);
 
   React.useEffect(() => {
     setAnimateBars(true);
@@ -204,7 +215,13 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 setExpanded(true);
               }
             }}
-            placeholder="Search effects, perks, tiers, origins..."
+            placeholder={
+              isPerksPage
+                ? "Search perk cards..."
+                : isGearPage
+                ? "Search legendary effects, tiers, origins..."
+                : "Search perks, legendary effects, origins..."
+            }
             className="w-full bg-transparent text-sm text-foreground placeholder:text-foreground/40 focus:outline-none pr-6"
           />
           {query.length > 0 && (
@@ -338,6 +355,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           </div>
         </section>
 
+        {!isPerksPage && (
         <section className="hub-zone">
           <button
             type="button"
@@ -522,6 +540,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             </>
           ) : null}
         </section>
+        )}
 
         <section className="hub-zone">
           <button
