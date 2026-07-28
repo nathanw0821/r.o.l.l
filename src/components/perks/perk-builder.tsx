@@ -87,6 +87,26 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   const usedSpecialCapacity = React.useMemo(() => calculateSpecialCapacity(equippedCards), [equippedCards]);
   const totalAllocatedSpecial = Object.values(specials).reduce((acc, val) => acc + val, 0);
 
+  const overCapacityStats = React.useMemo(() => {
+    const over: Array<{ stat: keyof SpecialsState; used: number; max: number }> = [];
+    (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
+      const used = usedSpecialCapacity[stat] || 0;
+      const max = specials[stat];
+      if (used > max) over.push({ stat, used, max });
+    });
+    return over;
+  }, [usedSpecialCapacity, specials]);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && searchQuery) {
+        setSearchQuery("");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [searchQuery]);
+
   const handleSpecialChange = (stat: keyof SpecialsState, delta: number) => {
     setSpecials((prev) => {
       const current = prev[stat];
@@ -249,6 +269,24 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
           </div>
         </CardContent>
       </Card>
+
+      {/* Capacity Overflow Warning Banner */}
+      {overCapacityStats.length > 0 && (
+        <div className="rounded-lg border border-red-500/50 bg-red-950/80 p-3.5 text-xs font-mono text-red-200 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xl animate-in fade-in duration-200">
+          <div className="flex items-center gap-2.5">
+            <span className="text-base">⚠️</span>
+            <div>
+              <span className="font-bold uppercase tracking-wider text-red-400">Capacity Overflow Warning: </span>
+              <span className="text-red-200">
+                {overCapacityStats.map((item) => `${SPECIAL_THEMES[item.stat].name} (${item.used}/${item.max} pts)`).join(", ")}
+              </span>
+            </div>
+          </div>
+          <span className="text-[0.68rem] px-2.5 py-1 rounded bg-red-900 border border-red-500/40 text-red-300 font-bold shrink-0">
+            Increase Base S.P.E.C.I.A.L. or Unequip Cards
+          </span>
+        </div>
+      )}
 
       {/* Equipped Perk Cards Deck */}
       <Card className="bg-slate-950 border-slate-800 shadow-xl">
