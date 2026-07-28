@@ -679,7 +679,6 @@ export default function SummaryClient({
                     const isUnlocked = row.unlocked;
                     const symbol = isUnlocked ? "✓" : "✗";
                     const symbolColor = isUnlocked ? "text-emerald-400 font-bold" : "text-rose-400/60 font-mono";
-                    const countText = row.modCount > 0 ? `x${row.modCount}` : "";
 
                     return (
                       <div
@@ -690,22 +689,59 @@ export default function SummaryClient({
                         onPointerLeave={handlePointerCancel}
                         onPointerCancel={handlePointerCancel}
                         className={cn(
-                          "flex items-center justify-between px-2.5 py-1 rounded border text-left transition-all cursor-pointer select-none font-mono",
+                          "flex items-center justify-between px-2 py-1 rounded border text-left transition-all cursor-pointer select-none font-mono",
                           isUnlocked
                             ? "bg-slate-900/90 border-emerald-500/40 text-foreground"
                             : "bg-slate-950/60 border-border/30 text-foreground/60 hover:text-foreground hover:border-border",
                           pendingId === row.id && "opacity-60"
                         )}
                       >
-                        <span className="font-semibold truncate pr-2 text-[0.78rem]">{row.effect.name}</span>
-                        <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                          {countText && (
-                            <span className="font-bold text-accent text-[0.72rem]">{countText}</span>
-                          )}
+                        <span className="font-semibold truncate pr-2 text-[0.76rem]">{row.effect.name}</span>
+                        <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          {/* Seeking Tick Mark */}
                           <button
                             type="button"
+                            title={row.isSeeking ? "Remove from Seeking wishlist" : "Add to Seeking wishlist"}
+                            onClick={() => updateSeeking(row, !row.isSeeking)}
+                            className={cn(
+                              "p-0.5 rounded transition-all",
+                              row.isSeeking
+                                ? "text-amber-400 bg-amber-950/60 border border-amber-500/50 shadow-[0_0_6px_rgba(245,158,11,0.4)]"
+                                : "text-foreground/30 hover:text-amber-400/80"
+                            )}
+                          >
+                            <Target className="h-3 w-3" />
+                          </button>
+
+                          {/* Owned Inventory Counter */}
+                          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-background/60 border border-border/40 text-[0.68rem]">
+                            <button
+                              type="button"
+                              title="Decrease owned inventory count"
+                              onClick={() => updateCount(row, row.modCount - 1)}
+                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem]"
+                            >
+                              -
+                            </button>
+                            <span className={cn("font-bold text-center min-w-[1rem]", row.modCount > 0 ? "text-accent" : "text-foreground/40")}>
+                              {row.modCount > 0 ? `📦${row.modCount}` : "0"}
+                            </span>
+                            <button
+                              type="button"
+                              title="Increase owned inventory count"
+                              onClick={() => updateCount(row, row.modCount + 1)}
+                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem]"
+                            >
+                              +
+                            </button>
+                          </div>
+
+                          {/* Status Checkmark */}
+                          <button
+                            type="button"
+                            title={isUnlocked ? "Unlocked (click to toggle)" : "Locked (click to toggle)"}
                             onClick={() => toggleRow(row)}
-                            className={cn("w-4 text-center font-mono text-[0.85rem]", symbolColor)}
+                            className={cn("w-4 text-center font-mono text-[0.85rem] cursor-pointer", symbolColor)}
                           >
                             {symbol}
                           </button>
