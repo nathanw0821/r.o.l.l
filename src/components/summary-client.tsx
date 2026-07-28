@@ -15,6 +15,7 @@ import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
 import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 import { InfoTooltip } from "@/components/ui/tooltip";
+import { useThemeSettings } from "@/components/theme-provider";
 
 export type SummaryRow = {
   id: string;
@@ -105,6 +106,8 @@ export default function SummaryClient({
   initialTab?: "summary" | "seeking" | "owned" | "still-need";
 }) {
   const router = useRouter();
+  const { density } = useThemeSettings();
+  const isCompact = density === "compact";
   const {
     query,
     sourceFilters,
@@ -650,11 +653,71 @@ export default function SummaryClient({
         </div>
       </div>
 
-      <div ref={gridRef} className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div
+        ref={gridRef}
+        className={cn(
+          "grid gap-4",
+          isCompact
+            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+            : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+        )}
+      >
         {tierOrder.map((tierLabel) => {
           const items = filteredRows.filter((row) => row.tier?.label === tierLabel);
           if (items.length === 0) return null;
           const tierDisplay = formatTierStarsWithLabel(tierLabel);
+
+          if (isCompact) {
+            return (
+              <div key={tierLabel} className="rounded-[var(--radius)] border border-border/70 bg-panel/90 p-3 flex flex-col font-mono text-xs shadow-md">
+                <div className="flex items-center justify-between border-b-2 border-accent pb-1.5 mb-2 font-bold">
+                  <span className="text-accent tracking-wider font-mono text-xs">{tierDisplay.stars || tierLabel}</span>
+                  <span className="text-[0.68rem] text-foreground/50">{items.length} MODS</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {items.map((row) => {
+                    const isUnlocked = row.unlocked;
+                    const symbol = isUnlocked ? "✓" : "✗";
+                    const symbolColor = isUnlocked ? "text-emerald-400 font-bold" : "text-rose-400/60 font-mono";
+                    const countText = row.modCount > 0 ? `x${row.modCount}` : "";
+
+                    return (
+                      <div
+                        key={row.id}
+                        onClick={() => handleSummaryRowClick(row)}
+                        onPointerDown={() => handlePointerDown(row)}
+                        onPointerUp={handlePointerUp}
+                        onPointerLeave={handlePointerCancel}
+                        onPointerCancel={handlePointerCancel}
+                        className={cn(
+                          "flex items-center justify-between px-2.5 py-1 rounded border text-left transition-all cursor-pointer select-none font-mono",
+                          isUnlocked
+                            ? "bg-slate-900/90 border-emerald-500/40 text-foreground"
+                            : "bg-slate-950/60 border-border/30 text-foreground/60 hover:text-foreground hover:border-border",
+                          pendingId === row.id && "opacity-60"
+                        )}
+                      >
+                        <span className="font-semibold truncate pr-2 text-[0.78rem]">{row.effect.name}</span>
+                        <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          {countText && (
+                            <span className="font-bold text-accent text-[0.72rem]">{countText}</span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => toggleRow(row)}
+                            className={cn("w-4 text-center font-mono text-[0.85rem]", symbolColor)}
+                          >
+                            {symbol}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div key={tierLabel} className="rounded-[var(--radius)] border border-border bg-panel p-4">
               <div className="star-tier-header flex items-center justify-between text-sm font-semibold mb-3">
