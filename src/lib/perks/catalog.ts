@@ -22,8 +22,12 @@ export const PERK_CATALOG: PerkCard[] = (rawPerkCards as PerkCard[]).sort((a, b)
   a.name.localeCompare(b.name)
 );
 
+const PERK_MAP = new Map<string, PerkCard>(
+  PERK_CATALOG.map((card) => [card.id, card])
+);
+
 export function getPerkCardById(id: string): PerkCard | undefined {
-  return PERK_CATALOG.find((card) => card.id === id);
+  return PERK_MAP.get(id);
 }
 
 export function searchPerkCards(query: string, rank?: number): PerkCard[] {
