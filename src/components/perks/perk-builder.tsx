@@ -165,13 +165,23 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
     });
   };
 
+  const searchedAllCards = React.useMemo(() => searchPerkCards(searchQuery), [searchQuery]);
+
   const filteredCards = React.useMemo(() => {
-    let result = searchPerkCards(searchQuery);
+    let result = searchedAllCards;
     if (selectedCategory !== "ALL") {
       result = result.filter((c) => c.special === selectedCategory);
     }
     return result.sort((a, b) => a.name.localeCompare(b.name));
-  }, [searchQuery, selectedCategory]);
+  }, [searchedAllCards, selectedCategory]);
+
+  const handleClearDeck = () => {
+    setEquippedCards([]);
+  };
+
+  const handleResetSpecials = () => {
+    setSpecials({ S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 });
+  };
 
   return (
     <div className="space-y-6">
@@ -225,7 +235,16 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
         <CardHeader className="pb-3 border-b border-slate-900">
           <CardTitle className="text-base font-mono flex justify-between items-center text-slate-100">
             <span>S.P.E.C.I.A.L. Base Point Allocation</span>
-            <span className="text-xs font-mono text-amber-400 font-bold">Total Points: {totalAllocatedSpecial} / 56</span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-amber-400 font-bold">Total Points: {totalAllocatedSpecial} / 56</span>
+              <button
+                type="button"
+                onClick={handleResetSpecials}
+                className="text-[0.68rem] px-2 py-0.5 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition-all font-mono"
+              >
+                Reset (1-1-1-1-1-1-1)
+              </button>
+            </div>
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">
             Allocate up to 15 points per S.P.E.C.I.A.L. stat to expand your perk card slot capacity.
@@ -292,7 +311,18 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
       <Card className="bg-slate-950 border-slate-800 shadow-xl">
         <CardHeader className="pb-3 border-b border-slate-900">
           <CardTitle className="text-base font-mono text-slate-100 flex items-center justify-between">
-            <span>Equipped Perk Deck ({equippedCards.length} Cards)</span>
+            <div className="flex items-center gap-3">
+              <span>Equipped Perk Deck ({equippedCards.length} Cards)</span>
+              {equippedCards.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleClearDeck}
+                  className="text-[0.68rem] px-2 py-0.5 rounded bg-red-950/60 border border-red-500/40 hover:border-red-400 text-red-300 hover:text-white transition-all font-mono"
+                >
+                  🧹 Clear Deck
+                </button>
+              )}
+            </div>
             <span className="text-xs text-emerald-400 font-normal">Punch Card Loadout {activeSlot + 1}</span>
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">Active perk cards slotted in this loadout.</CardDescription>
@@ -309,9 +339,17 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
                 if (!card) return null;
                 const theme = SPECIAL_THEMES[card.special];
                 const activeRankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];
+                const isOverflowStat = overCapacityStats.some((o) => o.stat === card.special);
 
                 return (
-                  <div key={card.id} className={`rounded-lg border bg-slate-900/95 p-3.5 space-y-2.5 relative overflow-hidden shadow-lg ${theme.border}`}>
+                  <div
+                    key={card.id}
+                    className={`rounded-lg border p-3.5 space-y-2.5 relative overflow-hidden shadow-lg transition-all ${
+                      isOverflowStat
+                        ? "border-red-500/80 bg-red-950/30 ring-1 ring-red-500/50"
+                        : `bg-slate-900/95 ${theme.border}`
+                    }`}
+                  >
                     <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <span className={`text-[0.7rem] font-bold font-mono px-1.5 py-0.5 rounded border ${theme.badge}`}>{card.special}</span>
@@ -370,18 +408,23 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
                 selectedCategory === "ALL" ? "bg-emerald-500 text-slate-950 border-emerald-500 shadow-md" : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
               }`}
             >
-              ALL ({PERK_CATALOG.length})
+              ALL ({searchedAllCards.length})
             </button>
             {(["S", "P", "E", "C", "I", "A", "L", "LEGENDARY"] as SpecialCategory[]).map((cat) => {
               const theme = SPECIAL_THEMES[cat];
-              const count = PERK_CATALOG.filter((c) => c.special === cat).length;
+              const count = searchedAllCards.filter((c) => c.special === cat).length;
+              const hasMatches = searchQuery.trim().length > 0 && count > 0;
               return (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all border ${
-                    selectedCategory === cat ? `${theme.badge} border-current shadow-md` : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
+                    selectedCategory === cat
+                      ? `${theme.badge} border-current shadow-md`
+                      : hasMatches
+                      ? `${theme.badge} border-emerald-500/60 ring-1 ring-emerald-500/50`
+                      : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
                   }`}
                 >
                   {cat} ({count})
