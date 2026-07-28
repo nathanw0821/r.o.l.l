@@ -34,7 +34,6 @@ type CommandHubProps = {
 
 export default function CommandHub({ summary, tierProgress, isAdmin = false, dataset }: CommandHubProps) {
   const hubRef = React.useRef<HTMLDivElement | null>(null);
-  const [searchScope, setSearchScope] = React.useState<"all" | "perks" | "effects">("all");
   const { data: session } = useSession();
   const {
     query,
@@ -247,49 +246,8 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               <span>Close</span>
             </button>
           </div>
-          {/* Scope Selector Bar */}
-          <div className="flex flex-wrap items-center gap-1.5 pb-3 border-b border-border/40 font-mono text-xs mb-3">
-            <span className="text-[0.68rem] text-foreground/50 uppercase tracking-wider font-bold mr-1">Search Domain:</span>
-            <button
-              type="button"
-              onClick={() => setSearchScope("all")}
-              className={cn(
-                "px-2.5 py-1 rounded text-[0.72rem] font-bold border transition-all cursor-pointer",
-                searchScope === "all"
-                  ? "bg-accent/20 text-accent border-accent/60"
-                  : "bg-background/40 border-border/50 text-foreground/60 hover:text-foreground"
-              )}
-            >
-              🌐 ALL DOMAINS
-            </button>
-            <button
-              type="button"
-              onClick={() => setSearchScope("perks")}
-              className={cn(
-                "px-2.5 py-1 rounded text-[0.72rem] font-bold border transition-all cursor-pointer",
-                searchScope === "perks"
-                  ? "bg-emerald-950 text-emerald-300 border-emerald-500/60"
-                  : "bg-background/40 border-border/50 text-foreground/60 hover:text-emerald-400"
-              )}
-            >
-              🃏 P.E.R.K. CARDS
-            </button>
-            <button
-              type="button"
-              onClick={() => setSearchScope("effects")}
-              className={cn(
-                "px-2.5 py-1 rounded text-[0.72rem] font-bold border transition-all cursor-pointer",
-                searchScope === "effects"
-                  ? "bg-amber-950 text-amber-300 border-amber-500/60"
-                  : "bg-background/40 border-border/50 text-foreground/60 hover:text-amber-400"
-              )}
-            >
-              ⚡ LEGENDARY MODS
-            </button>
-          </div>
-
           {/* P.E.R.K. Card Matches */}
-          {(searchScope === "all" || searchScope === "perks") && matchingPerks.length > 0 && (
+          {matchingPerks.length > 0 && (
             <section className="hub-zone mb-3 border-b border-border/40 pb-3">
               <div className="hub-zone__title text-emerald-400 font-mono flex items-center justify-between">
                 <span>🃏 P.E.R.K. Card Matches ({matchingPerks.length})</span>
@@ -393,7 +351,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             </span>
             {hubZonesOpen.interaction ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
-          {hubZonesOpen.interaction && (searchScope === "all" || searchScope === "effects") ? (
+          {hubZonesOpen.interaction ? (
             <>
           <div className="hub-group">
             <button
