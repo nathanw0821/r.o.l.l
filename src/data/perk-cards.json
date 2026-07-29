@@ -1242,36 +1242,6 @@
   {
     "id": "detonation-contagion",
     "name": "Detonation Contagion",
-    "special": "S",
-    "minLevel": 50,
-    "maxRank": 4,
-    "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Detonation_Contagion_Perk_Card.png/300px-FO76_Detonation_Contagion_Perk_Card.png",
-    "ranks": [
-      {
-        "rank": 1,
-        "cost": 1,
-        "description": "Enemies killed with a thrown explosive have a 20% chance to explode."
-      },
-      {
-        "rank": 2,
-        "cost": 1,
-        "description": "Enemies killed with a thrown explosive have a 30% chance to explode."
-      },
-      {
-        "rank": 3,
-        "cost": 1,
-        "description": "Enemies killed with a thrown explosive have a 40% chance to explode."
-      },
-      {
-        "rank": 4,
-        "cost": 1,
-        "description": "Enemies killed with a thrown explosive have a 50% chance to explode."
-      }
-    ]
-  },
-  {
-    "id": "detonation-contagion",
-    "name": "Detonation Contagion",
     "special": "LEGENDARY",
     "minLevel": 50,
     "maxRank": 4,

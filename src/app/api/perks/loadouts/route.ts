@@ -38,14 +38,31 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { characterId, slotIndex, name, specials, equippedCards } = body;
+    let targetCharacterId = characterId;
 
-    if (!characterId || typeof slotIndex !== "number" || slotIndex < 0 || slotIndex > 5) {
+    if (typeof slotIndex !== "number" || slotIndex < 0 || slotIndex > 5) {
       return badRequest("Invalid loadout parameters (slotIndex 0-5 required)");
+    }
+
+    if (!targetCharacterId) {
+      let char = await prisma.character.findFirst({
+        where: { userId: auth.session.user.id }
+      });
+
+      if (!char) {
+        char = await prisma.character.create({
+          data: {
+            userId: auth.session.user.id,
+            name: "Vault Dweller 1"
+          }
+        });
+      }
+      targetCharacterId = char.id;
     }
 
     // Ensure character belongs to user
     const character = await prisma.character.findFirst({
-      where: { id: characterId, userId: auth.session.user.id }
+      where: { id: targetCharacterId, userId: auth.session.user.id }
     });
 
     if (!character) {
@@ -54,7 +71,7 @@ export async function POST(request: Request) {
 
     const loadout = await prisma.characterPerkLoadout.upsert({
       where: {
-        characterId_slotIndex: { characterId, slotIndex }
+        characterId_slotIndex: { characterId: targetCharacterId, slotIndex }
       },
       update: {
         name: name || `Punch Card Loadout ${slotIndex + 1}`,
@@ -62,7 +79,7 @@ export async function POST(request: Request) {
         equippedCards: equippedCards || []
       },
       create: {
-        characterId,
+        characterId: targetCharacterId,
         slotIndex,
         name: name || `Punch Card Loadout ${slotIndex + 1}`,
         specials: specials || { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 },

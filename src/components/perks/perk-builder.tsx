@@ -127,7 +127,11 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   };
 
   const handleSaveLoadout = async () => {
-    if (!characterId) return;
+    if (!characterId) {
+      setSaveMessage("⚠️ Please sign in to save loadouts to your account.");
+      setTimeout(() => setSaveMessage(null), 3500);
+      return;
+    }
     setSaving(true);
     setSaveMessage(null);
     try {
@@ -146,13 +150,13 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
       if (payload?.success) {
         setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved!`);
       } else {
-        setSaveMessage("❌ Failed to save loadout.");
+        setSaveMessage(`❌ ${payload?.error || "Failed to save loadout."}`);
       }
     } catch {
       setSaveMessage("❌ Error saving loadout.");
     } finally {
       setSaving(false);
-      setTimeout(() => setSaveMessage(null), 3000);
+      setTimeout(() => setSaveMessage(null), 3500);
     }
   };
 
