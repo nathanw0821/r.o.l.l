@@ -4,6 +4,7 @@ import { getLegendaryScripCost } from "@/lib/builder/crafting-costs";
 import { normalizeFuzzySearchString, applyFilters, type FilterableRow } from "@/lib/filter-utils";
 import { prisma } from "@/lib/prisma";
 import { searchPerkCards } from "@/lib/perks/catalog";
+import { getProgressSummary } from "@/lib/data";
 import type { BuilderPayload } from "@/lib/builder/types";
 
 // Web Crypto Ed25519 signature verification for Discord Webhooks
@@ -591,11 +592,15 @@ export async function POST(req: Request) {
         });
       }
 
-      const unlockedCount = user.progress.filter((p) => p.unlocked).length;
-      const totalCatalog = catalog.length || 148;
-      const pct = Math.round((unlockedCount / totalCatalog) * 100);
+      const summary = await getProgressSummary(user.id);
+      const unlockedCount = summary.unlocked;
+      const totalCatalog = summary.total;
+      const pct = summary.percent;
 
       const badge = pct >= 90 ? "🏆 Wasteland Master" : pct >= 50 ? "🛠️ Expert Armorer" : pct >= 25 ? "⚡ Veteran Craftsman" : "📻 Wasteland Novice";
+      const profileUrl = user.username
+        ? `https://fallout76.wiki/u/${user.username}`
+        : "https://fallout76.wiki/summary";
 
       return NextResponse.json({
         type: 4,
@@ -607,7 +612,7 @@ export async function POST(req: Request) {
               fields: [
                 { name: "Account Rank Badge", value: badge, inline: true },
                 { name: "Mods Unlocked", value: `**${unlockedCount}** / ${totalCatalog} (${pct}%)`, inline: true },
-                { name: "Tracker Profile Link", value: `[View Full Matrix Tracker](https://fallout76.wiki/summary)`, inline: false }
+                { name: "Verified Crafting Resume", value: `[View Full Profile](${profileUrl})`, inline: false }
               ],
               footer: {
                 text: "R.O.L.L. Vault Network",
