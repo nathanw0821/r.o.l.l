@@ -72,7 +72,3 @@ R.O.L.L. is built for the Fallout 76 community with reference data from:
 * **Nukes & Dragons** · Character build math & SPECIAL mechanics
 * **The Duchess Flame** · Registry guides and crafting component maps
 * **Fallout Wiki** · Base item assets and lore reference
-
----
-
-Licensed under [MIT](LICENSE) © R.O.L.L. Team

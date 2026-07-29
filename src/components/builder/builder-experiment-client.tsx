@@ -440,12 +440,17 @@ export default function BuilderExperimentClient({
       if (saved) {
         const parsed = JSON.parse(saved);
         const norm = normalizeBuilderPayload(parsed) || parsed;
-        if (norm?.basePieceId) setPayload(norm as BuilderPayload);
+        if (norm && typeof norm === "object" && (norm.basePieceId || norm.equipmentKind)) {
+          setPayload(norm as BuilderPayload);
+        }
       }
 
       const savedSlots = localStorage.getItem("roll-builder-saves");
       if (savedSlots) {
-        setSavedLoadouts(JSON.parse(savedSlots));
+        const parsedSlots = JSON.parse(savedSlots);
+        if (Array.isArray(parsedSlots)) {
+          setSavedLoadouts(parsedSlots);
+        }
       }
 
       if (!isAdmin && !hasBuilderAccess) {

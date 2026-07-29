@@ -209,7 +209,14 @@ export function torsoPieceIdForHelmetPieceId(helmetId: string): string | null {
 export function canonicalBasePieceId(id: string): string | null {
   if (getBaseGearPiece(id)) return id;
   const torso = torsoPieceIdForHelmetPieceId(id);
-  return torso && getBaseGearPiece(torso) ? torso : null;
+  if (torso && getBaseGearPiece(torso)) return torso;
+  try {
+    const setPieceId = basePieceIdForArmorSet(id);
+    if (setPieceId && getBaseGearPiece(setPieceId)) return setPieceId;
+  } catch {
+    // Ignore invalid armor set key lookup
+  }
+  return null;
 }
 
 export function pairedPowerArmorHelmetId(torsoId: string): string | null {
