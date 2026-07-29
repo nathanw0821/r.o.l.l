@@ -24,13 +24,27 @@ export default async function PerksPage() {
       activeCharacterId = userSettings.activeCharacter.id;
       activeCharacterName = userSettings.activeCharacter.name;
     } else {
-      const firstChar = await prisma.character.findFirst({
+      let firstChar = await prisma.character.findFirst({
         where: { userId: session.user.id }
       });
-      if (firstChar) {
-        activeCharacterId = firstChar.id;
-        activeCharacterName = firstChar.name;
+
+      if (!firstChar) {
+        firstChar = await prisma.character.create({
+          data: {
+            userId: session.user.id,
+            name: "Vault Dweller 1"
+          }
+        });
+
+        await prisma.userSettings.upsert({
+          where: { userId: session.user.id },
+          update: { activeCharacterId: firstChar.id },
+          create: { userId: session.user.id, activeCharacterId: firstChar.id }
+        });
       }
+
+      activeCharacterId = firstChar.id;
+      activeCharacterName = firstChar.name;
     }
   }
 
