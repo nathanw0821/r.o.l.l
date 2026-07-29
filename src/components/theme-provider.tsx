@@ -108,7 +108,6 @@ export function ThemeProvider({
   defaultAccent = "ember",
   defaultColorBlind = "none",
   defaultDensity = "compact",
-  preferDefaults = false
 }: {
   children: React.ReactNode;
   defaultTheme?: ThemeMode;
@@ -118,9 +117,13 @@ export function ThemeProvider({
   preferDefaults?: boolean;
 }) {
   const [theme, setThemeState] = React.useState<ThemeMode>(() => readStoredTheme(defaultTheme));
-  const [accent, setAccentState] = React.useState<string>(() => readStoredValue(ACCENT_KEY) ?? readRootAttribute("data-accent") ?? defaultAccent);
+  const [accent, setAccentState] = React.useState<string>(
+    () => readStoredValue(ACCENT_KEY) ?? readRootAttribute("data-accent") ?? defaultAccent
+  );
   const [colorBlind, setColorBlindState] = React.useState<ColorBlindMode>(() => readStoredColorBlind(defaultColorBlind));
-  const [density, setDensityState] = React.useState<"comfortable" | "compact">(() => readStoredDensity(defaultDensity));
+  const [density, setDensityState] = React.useState<"comfortable" | "compact">(
+    () => readStoredDensity(defaultDensity)
+  );
   const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>(() => readStoredScanline());
   const [uiTone, setUiToneState] = React.useState<UiTone>(() => readStoredUiTone());
   const [fontScale, setFontScaleState] = React.useState<number>(() => {
@@ -128,57 +131,127 @@ export function ThemeProvider({
     return stored ? parseFloat(stored) : 1.0;
   });
 
+  const isMounted = React.useRef(false);
+
+  // Sync state on client mount from local storage / DOM attributes safely
   React.useEffect(() => {
-    if (!preferDefaults) return;
+    const storedAccent = readStoredValue(ACCENT_KEY) ?? readRootAttribute("data-accent");
+    if (storedAccent && storedAccent !== accent) {
+      setAccentState(storedAccent);
+      document.documentElement.setAttribute("data-accent", storedAccent);
+    }
+    const storedTheme = readStoredTheme(defaultTheme);
+    if (storedTheme !== theme) setThemeState(storedTheme);
 
-    setThemeState(defaultTheme);
-    setAccentState(defaultAccent);
-    setColorBlindState(defaultColorBlind);
-    setDensityState(defaultDensity);
-    setScanlineModeState("balanced");
-    setUiToneState("neutral");
-    window.localStorage.setItem(THEME_KEY, defaultTheme);
-    window.localStorage.setItem(ACCENT_KEY, defaultAccent);
-    window.localStorage.setItem(COLORBLIND_KEY, defaultColorBlind);
-    window.localStorage.setItem(DENSITY_KEY, defaultDensity);
-    window.localStorage.setItem(SCANLINE_KEY, "balanced");
-    window.localStorage.setItem(UI_TONE_KEY, "neutral");
-  }, [defaultAccent, defaultColorBlind, defaultDensity, defaultTheme, preferDefaults]);
+    const storedColorBlind = readStoredColorBlind(defaultColorBlind);
+    if (storedColorBlind !== colorBlind) setColorBlindState(storedColorBlind);
 
+    const storedDensity = readStoredDensity(defaultDensity);
+    if (storedDensity !== density) setDensityState(storedDensity);
+
+    const storedScanline = readStoredScanline();
+    if (storedScanline !== scanlineMode) setScanlineModeState(storedScanline);
+
+    const storedUiTone = readStoredUiTone();
+    if (storedUiTone !== uiTone) setUiToneState(storedUiTone);
+
+    isMounted.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Multi-window / Multi-tab storage sync listener
+  React.useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (!e.key) return;
+      if (e.key === ACCENT_KEY && e.newValue) {
+        setAccentState(e.newValue);
+        document.documentElement.setAttribute("data-accent", e.newValue);
+      }
+      if (e.key === THEME_KEY && e.newValue) {
+        const nextTheme = e.newValue as ThemeMode;
+        setThemeState(nextTheme);
+        document.documentElement.setAttribute("data-theme", resolveTheme(nextTheme));
+      }
+      if (e.key === COLORBLIND_KEY && e.newValue) {
+        const nextColorBlind = e.newValue as ColorBlindMode;
+        setColorBlindState(nextColorBlind);
+        document.documentElement.setAttribute("data-colorblind", nextColorBlind);
+      }
+      if (e.key === DENSITY_KEY && e.newValue) {
+        const nextDensity = e.newValue as "comfortable" | "compact";
+        setDensityState(nextDensity);
+        document.documentElement.setAttribute("data-density", nextDensity);
+      }
+      if (e.key === SCANLINE_KEY && e.newValue) {
+        const nextScanline = e.newValue as ScanlineMode;
+        setScanlineModeState(nextScanline);
+        document.documentElement.setAttribute("data-scanlines", nextScanline);
+      }
+      if (e.key === UI_TONE_KEY && e.newValue) {
+        const nextUiTone = e.newValue as UiTone;
+        setUiToneState(nextUiTone);
+        document.documentElement.setAttribute("data-ui-tone", nextUiTone);
+      }
+      if (e.key === FONT_SCALE_KEY && e.newValue) {
+        const nextScale = parseFloat(e.newValue) || 1.0;
+        setFontScaleState(nextScale);
+        document.documentElement.style.setProperty("--base-font-scale", String(nextScale));
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  // Persistence Effects (only write to localStorage when mounted and state changes)
   React.useEffect(() => {
     const resolved = resolveTheme(theme);
     document.documentElement.setAttribute("data-theme", resolved);
-    window.localStorage.setItem(THEME_KEY, theme);
+    if (isMounted.current) {
+      window.localStorage.setItem(THEME_KEY, theme);
+    }
   }, [theme]);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-accent", accent);
-    window.localStorage.setItem(ACCENT_KEY, accent);
+    if (isMounted.current) {
+      window.localStorage.setItem(ACCENT_KEY, accent);
+    }
   }, [accent]);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-colorblind", colorBlind);
-    window.localStorage.setItem(COLORBLIND_KEY, colorBlind);
+    if (isMounted.current) {
+      window.localStorage.setItem(COLORBLIND_KEY, colorBlind);
+    }
   }, [colorBlind]);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-density", density);
-    window.localStorage.setItem(DENSITY_KEY, density);
+    if (isMounted.current) {
+      window.localStorage.setItem(DENSITY_KEY, density);
+    }
   }, [density]);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-scanlines", scanlineMode);
-    window.localStorage.setItem(SCANLINE_KEY, scanlineMode);
+    if (isMounted.current) {
+      window.localStorage.setItem(SCANLINE_KEY, scanlineMode);
+    }
   }, [scanlineMode]);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-ui-tone", uiTone);
-    window.localStorage.setItem(UI_TONE_KEY, uiTone);
+    if (isMounted.current) {
+      window.localStorage.setItem(UI_TONE_KEY, uiTone);
+    }
   }, [uiTone]);
 
   React.useEffect(() => {
     document.documentElement.style.setProperty("--base-font-scale", String(fontScale));
-    window.localStorage.setItem(FONT_SCALE_KEY, String(fontScale));
+    if (isMounted.current) {
+      window.localStorage.setItem(FONT_SCALE_KEY, String(fontScale));
+    }
   }, [fontScale]);
 
   const value = React.useMemo(
