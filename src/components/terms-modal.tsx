@@ -227,9 +227,10 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                         <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">1. Information We Collect</h4>
                         <p>We collect only the bare minimum information required to operate your account and save your legendary loadouts:</p>
                         <ul className="list-disc pl-4 space-y-1 mt-1 text-[0.7rem] text-foreground/75">
-                          <li><strong>Account Information:</strong> Your chosen username and email address, which are collected strictly for authentication and account recovery purposes.</li>
-                          <li><strong>Usage Logs &amp; Metrics:</strong> When enabled, we collect basic, anonymized session metrics and interaction logs strictly to debug system performance, optimize server latency, and improve database query efficiency.</li>
-                          <li><strong>Unique Visit Tracking:</strong> To display aggregate site traffic stats inside the web UI, the application utilizes local client-side storage (<code>localStorage</code>) to record a stateless daily visit indicator. This is used solely to prevent duplicate counting during a 24-hour period, is automatically reset daily, and does not collect, process, or store IP addresses, cookies, or any personal data on our servers.</li>
+                          <li><strong>Account Information:</strong> Username and email address strictly for authentication.</li>
+                          <li><strong>Google/Discord OAuth:</strong> Basic profile info for sign-in and account linking. Never sold or shared.</li>
+                          <li><strong>Usage Logs &amp; Metrics:</strong> Anonymized session metrics for debugging and server optimization.</li>
+                          <li><strong>Unique Visit Tracking:</strong> To calculate aggregate daily site traffic metrics for system diagnostics and capacity planning, the application utilizes local client-side storage (<code>localStorage</code>) to record a stateless daily visit indicator. This is used solely to prevent duplicate counting during a 24-hour period, is automatically reset daily, and does not collect, process, or store IP addresses, cookies, or any personal data on our servers.</li>
                         </ul>
                       </div>
                       <div>

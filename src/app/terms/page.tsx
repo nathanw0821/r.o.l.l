@@ -78,7 +78,7 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-bold text-accent border-b border-border pb-1">8. Public Visitor Metrics</h2>
           <p>
-            R.O.L.L. tracks and displays aggregate, anonymized unique visitor traffic counts in the public web UI. By using this service, you acknowledge and agree that a temporary, browser-cached indicator (via localStorage) will be utilized daily to report unique visits to the server without transmitting or storing any personal data or IP addresses, as detailed in our Privacy Policy.
+            R.O.L.L. tracks aggregate, anonymized unique visitor traffic counts for system diagnostics and capacity planning. By using this service, you acknowledge and agree that a temporary, browser-cached indicator (via localStorage) will be utilized daily to report unique visits to the server without transmitting or storing any personal data or IP addresses, as detailed in our Privacy Policy.
           </p>
         </section>
 

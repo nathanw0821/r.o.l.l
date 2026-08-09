@@ -310,6 +310,7 @@ async function migrateProgress(previousVersionId: string, newVersionId: string) 
     newEffectTiers.map((row) => [`${row.tier.label}||${row.effect.name}`, row.id])
   );
 
+  // 1. Migrate UserProgress overrides
   const oldProgress = await prisma.userProgress.findMany({
     where: { effectTierId: { in: Array.from(oldKeyById.keys()) } }
   });
@@ -339,6 +340,38 @@ async function migrateProgress(previousVersionId: string, newVersionId: string) 
       const batch = migrated.slice(i, i + BATCH_SIZE);
       await prisma.userProgress.createMany({ data: batch, skipDuplicates: true });
     }
+  }
+
+  // 2. Migrate UserImportBaseline imported recipe data
+  const oldBaselines = await prisma.userImportBaseline.findMany({
+    where: { effectTierId: { in: Array.from(oldKeyById.keys()) } }
+  });
+
+  for (const b of oldBaselines) {
+    const key = oldKeyById.get(b.effectTierId);
+    if (!key) continue;
+    const newEffectTierId = newMap.get(key);
+    if (!newEffectTierId) continue;
+
+    await prisma.userImportBaseline.upsert({
+      where: {
+        characterId_effectTierId: {
+          characterId: b.characterId,
+          effectTierId: newEffectTierId
+        }
+      },
+      update: {
+        datasetVersionId: newVersionId,
+        unlocked: b.unlocked
+      },
+      create: {
+        userId: b.userId,
+        characterId: b.characterId,
+        datasetVersionId: newVersionId,
+        effectTierId: newEffectTierId,
+        unlocked: b.unlocked
+      }
+    });
   }
 }
 

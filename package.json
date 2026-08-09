@@ -28,12 +28,16 @@
     "seed": "tsx src/seed.ts"
   },
   "overrides": {
-    "@hono/node-server": "1.19.13",
-    "hono": "4.12.19",
-    "lodash": "4.17.23",
-    "fast-uri": "3.1.2",
-    "defu": "6.1.5",
-    "ip-address": "10.1.1",
+    "@hono/node-server": "^2.0.5",
+    "hono": "^4.12.34",
+    "lodash": "^4.17.23",
+    "fast-uri": "^3.1.4",
+    "defu": "^6.1.5",
+    "ip-address": "^10.3.0",
+    "nanoid": "^3.3.17",
+    "undici": "^7.28.0",
+    "uuid": "^11.1.1",
+    "esbuild": "^0.28.1",
     "postcss": "$postcss",
     "ws": "$ws"
   },
