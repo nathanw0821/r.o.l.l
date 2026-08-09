@@ -84,6 +84,7 @@ const DeferredLocalProgressSync = dynamic(() => import("@/components/local-progr
 const DeferredUsernameCompletion = dynamic(() => import("@/components/username-completion"), { ssr: false });
 const DeferredFeedbackWidget = dynamic(() => import("@/components/feedback-widget"), { ssr: false });
 const DeferredTermsModal = dynamic(() => import("@/components/terms-modal"), { ssr: false });
+const DeferredGuestSignupBanner = dynamic(() => import("@/components/guest-signup-banner"), { ssr: false });
 
 function isNavLinkActive(pathname: string, link: AppNavLink) {
   if (link.activePaths?.includes(pathname)) {
@@ -513,6 +514,7 @@ export default function AppShell({
             <DeferredCommandHubShell authKey={authKey} isSignedIn={isSignedIn} />
             <DeferredFeedbackWidget />
             <main id="main-content" className="content-panel">
+              <DeferredGuestSignupBanner />
               {children}
             </main>
             <DeferredUsernameCompletion />
