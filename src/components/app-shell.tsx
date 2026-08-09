@@ -9,6 +9,7 @@ import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import {
   ArrowLeft,
   Boxes,
+  FlaskConical,
   ListChecks,
   PanelLeftClose,
   PanelLeftOpen,
@@ -51,6 +52,7 @@ const trackingLinks: AppNavLink[] = [
 
 const experimentalLinks: AppNavLink[] = [
   { href: "/perks", label: "P.E.R.K.", icon: Boxes, activePrefixes: ["/perks"] },
+  { href: "/pts", label: "P.T.S.", icon: FlaskConical, activePrefixes: ["/pts"] },
   { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles }
 ];
 
