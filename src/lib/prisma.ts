@@ -69,7 +69,7 @@ function createPrismaClient(connectionString?: string): PrismaClient {
   // Pass the pool configuration object to PrismaNeon (complying with Prisma 7's PoolConfig requirement)
   const adapter = new PrismaNeon({
     connectionString: activeConnectionString,
-    connectionTimeoutMillis: 5000,
+    connectionTimeoutMillis: 15000,
   });
 
   return new PrismaClient({
