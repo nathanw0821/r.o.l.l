@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import { getAllEffectTiers } from "@/lib/data";
+import { getActiveDatasetVersion, effectTierCatalogSelect } from "@/lib/data";
 
 /**
  * Fetches a public profile (Crafting Resume) by username.
- * Shows verified learned mods across all characters without exposing private names.
+ * Aggregates verified learned mods across imported baselines & progress overrides.
  */
 export async function getPublicCraftingResume(username: string) {
   const user = await prisma.user.findUnique({
@@ -19,9 +19,37 @@ export async function getPublicCraftingResume(username: string) {
 
   if (!user) return null;
 
-  // Get full merged catalog including imported baseline + user progress edits
-  const allTiers = await getAllEffectTiers(user.id);
-  const learnedMods = allTiers.filter((t) => t.unlocked);
+  const activeDataset = await getActiveDatasetVersion();
+  if (!activeDataset) return null;
+
+  const catalog = await prisma.effectTier.findMany({
+    where: { datasetVersionId: activeDataset.id },
+    select: effectTierCatalogSelect,
+    orderBy: [{ tierId: "asc" }, { effect: { name: "asc" } }]
+  });
+
+  const [baselines, userProgress] = await Promise.all([
+    prisma.userImportBaseline.findMany({
+      where: { userId: user.id, datasetVersionId: activeDataset.id, unlocked: true },
+      select: { effectTierId: true }
+    }),
+    prisma.userProgress.findMany({
+      where: { userId: user.id, effectTier: { datasetVersionId: activeDataset.id } },
+      select: { effectTierId: true, unlocked: true }
+    })
+  ]);
+
+  const unlockedSet = new Set<string>();
+  for (const b of baselines) {
+    unlockedSet.add(b.effectTierId);
+  }
+  for (const p of userProgress) {
+    if (p.unlocked) {
+      unlockedSet.add(p.effectTierId);
+    }
+  }
+
+  const learnedMods = catalog.filter((item) => unlockedSet.has(item.id));
 
   return {
     user: {
@@ -29,9 +57,9 @@ export async function getPublicCraftingResume(username: string) {
       displayName: user.name || user.username
     },
     stats: {
-      total: allTiers.length,
+      total: catalog.length,
       unlocked: learnedMods.length,
-      percent: allTiers.length > 0 ? Math.round((learnedMods.length / allTiers.length) * 100) : 0
+      percent: catalog.length > 0 ? Math.round((learnedMods.length / catalog.length) * 100) : 0
     },
     learnedMods
   };
