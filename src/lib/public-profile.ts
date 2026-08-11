@@ -46,6 +46,8 @@ export async function getPublicCraftingResume(username: string) {
   for (const p of userProgress) {
     if (p.unlocked) {
       unlockedSet.add(p.effectTierId);
+    } else {
+      unlockedSet.delete(p.effectTierId);
     }
   }
 
