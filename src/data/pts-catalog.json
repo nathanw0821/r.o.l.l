@@ -11,8 +11,8 @@
     "scripCost": 100,
     "status": "PTS Testing",
     "notes": "Datamined from Patch 70 Infestation Event tables. Subject to change before live release.",
-    "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/"
+    "sourceName": "NukaKnights Datamines",
+    "sourceUrl": "https://nukaknights.com/articles/datamining/"
   },
   {
     "id": "pts-uniques-modding",
@@ -26,8 +26,8 @@
     "scripCost": 50,
     "status": "PTS Testing",
     "notes": "Enables full legendary customization of iconic unique quest rewards and boss drops.",
-    "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/"
+    "sourceName": "NukaKnights Patch Notes",
+    "sourceUrl": "https://nukaknights.com/articles/patch-notes/"
   },
   {
     "id": "pts-scrip-normalization",
@@ -41,8 +41,8 @@
     "scripCost": 50,
     "status": "PTS Testing",
     "notes": "Removes escalating Scrip penalties, making iterative mod testing significantly cheaper.",
-    "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/"
+    "sourceName": "NukaKnights Patch Notes",
+    "sourceUrl": "https://nukaknights.com/articles/patch-notes/"
   },
   {
     "id": "pts-mod-psychophant",
@@ -56,8 +56,8 @@
     "scripCost": 100,
     "status": "PTS Testing",
     "notes": "New 4-star effect introduced in Patch 70 'Psychophants Of Appalachia'.",
-    "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/"
+    "sourceName": "NukaKnights Datamines",
+    "sourceUrl": "https://nukaknights.com/articles/datamining/"
   },
   {
     "id": "pts-mod-radioactive-surge",
@@ -71,8 +71,8 @@
     "scripCost": 100,
     "status": "PTS Testing",
     "notes": "Experimental 4th star defensive effect for Bloodied and Nuke Zone builds.",
-    "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/"
+    "sourceName": "NukaKnights Datamines",
+    "sourceUrl": "https://nukaknights.com/articles/datamining/"
   },
   {
     "id": "pts-infestation-event-drops",
@@ -86,7 +86,7 @@
     "scripCost": 0,
     "status": "PTS Testing",
     "notes": "High-difficulty endgame loop designed for Level 300+ players.",
-    "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/"
+    "sourceName": "NukaKnights Datamines",
+    "sourceUrl": "https://nukaknights.com/articles/datamining/"
   }
 ]
