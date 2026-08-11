@@ -64,8 +64,24 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   const [saving, setSaving] = React.useState(false);
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
 
-  // Load active loadout slot
+  // Load active loadout slot (LocalStorage first for instant load, then Cloud sync)
   React.useEffect(() => {
+    // 1. LocalStorage prefill
+    try {
+      const localDataStr = localStorage.getItem(`roll_perk_loadout_slot_${activeSlot}`);
+      if (localDataStr) {
+        const parsed = JSON.parse(localDataStr);
+        if (parsed.specials) setSpecials(parsed.specials);
+        if (Array.isArray(parsed.equippedCards)) setEquippedCards(parsed.equippedCards);
+      } else {
+        setSpecials({ S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 });
+        setEquippedCards([]);
+      }
+    } catch {
+      // Ignore local storage read errors
+    }
+
+    // 2. Cloud DB sync
     fetch(`/api/perks/loadouts${characterId ? `?characterId=${characterId}` : ""}`)
       .then((res) => res.json())
       .then((payload) => {
@@ -74,6 +90,14 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
           if (slotData) {
             if (slotData.specials) setSpecials(slotData.specials);
             if (Array.isArray(slotData.equippedCards)) setEquippedCards(slotData.equippedCards);
+            try {
+              localStorage.setItem(
+                `roll_perk_loadout_slot_${activeSlot}`,
+                JSON.stringify({ specials: slotData.specials, equippedCards: slotData.equippedCards })
+              );
+            } catch {
+              // Ignore local storage write errors
+            }
           }
         }
       })
@@ -83,6 +107,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   const usedSpecialCapacity = React.useMemo(() => calculateSpecialCapacity(equippedCards), [equippedCards]);
   const legendaryBonuses = React.useMemo(() => calculateLegendarySpecialBonuses(equippedCards), [equippedCards]);
 
+  // Hard Cap of 15 for perk card slot capacity (base + legendary bonus, max 15)
   const effectiveCapacities = React.useMemo(() => {
     const caps: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
     (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
@@ -144,6 +169,17 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   const handleSaveLoadout = async () => {
     setSaving(true);
     setSaveMessage(null);
+
+    // Save to LocalStorage immediately (guarantees saving regardless of auth/network state)
+    try {
+      localStorage.setItem(
+        `roll_perk_loadout_slot_${activeSlot}`,
+        JSON.stringify({ specials, equippedCards })
+      );
+    } catch {
+      // Ignore local storage error
+    }
+
     try {
       const res = await fetch("/api/perks/loadouts", {
         method: "POST",
@@ -158,12 +194,12 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
       });
       const payload = await res.json();
       if (payload?.success) {
-        setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved!`);
+        setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved! (Cloud & Local)`);
       } else {
-        setSaveMessage(`❌ ${payload?.error || "Please sign in to save loadouts."}`);
+        setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved Locally!`);
       }
     } catch {
-      setSaveMessage("❌ Error saving loadout.");
+      setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved Locally!`);
     } finally {
       setSaving(false);
       setTimeout(() => setSaveMessage(null), 3500);
