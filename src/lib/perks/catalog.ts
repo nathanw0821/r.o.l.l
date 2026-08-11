@@ -71,3 +71,42 @@ export function calculateSpecialCapacity(equipped: Array<{ cardId: string; rank:
 
   return capacity;
 }
+
+export const LEGENDARY_SPECIAL_CARD_MAP: Record<string, "S" | "P" | "E" | "C" | "I" | "A" | "L"> = {
+  "legendary-strength": "S",
+  "legendary-perception": "P",
+  "legendary-endurance": "E",
+  "legendary-charisma": "C",
+  "legendary-intelligence": "I",
+  "legendary-agility": "A",
+  "legendary-luck": "L"
+};
+
+/**
+ * Calculates the extra S.P.E.C.I.A.L. points provided by equipped Legendary S.P.E.C.I.A.L. perk cards.
+ * Ranks 1, 2, 3 give +1, +2, +3; Rank 4 gives +5 points.
+ */
+export function calculateLegendarySpecialBonuses(
+  equipped: Array<{ cardId: string; rank: number }>
+): Record<"S" | "P" | "E" | "C" | "I" | "A" | "L", number> {
+  const bonuses: Record<"S" | "P" | "E" | "C" | "I" | "A" | "L", number> = {
+    S: 0,
+    P: 0,
+    E: 0,
+    C: 0,
+    I: 0,
+    A: 0,
+    L: 0
+  };
+
+  for (const item of equipped) {
+    const targetStat = LEGENDARY_SPECIAL_CARD_MAP[item.cardId];
+    if (targetStat) {
+      const bonus = item.rank === 4 ? 5 : item.rank;
+      bonuses[targetStat] += bonus;
+    }
+  }
+
+  return bonuses;
+}
+

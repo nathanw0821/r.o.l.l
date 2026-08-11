@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
-import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, searchPerkCards } from "@/lib/perks/catalog";
+import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, searchPerkCards } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
@@ -85,17 +85,36 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   }, [characterId, activeSlot]);
 
   const usedSpecialCapacity = React.useMemo(() => calculateSpecialCapacity(equippedCards), [equippedCards]);
+  const legendaryBonuses = React.useMemo(() => calculateLegendarySpecialBonuses(equippedCards), [equippedCards]);
+
+  const effectiveCapacities = React.useMemo(() => {
+    const caps: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
+    (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
+      caps[stat] = Math.min(15, specials[stat] + (legendaryBonuses[stat] || 0));
+    });
+    return caps;
+  }, [specials, legendaryBonuses]);
+
+  const totalEffectiveSpecials = React.useMemo(() => {
+    const totals: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
+    (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
+      totals[stat] = specials[stat] + (legendaryBonuses[stat] || 0);
+    });
+    return totals;
+  }, [specials, legendaryBonuses]);
+
   const totalAllocatedSpecial = Object.values(specials).reduce((acc, val) => acc + val, 0);
+  const totalLegendaryBonusSpecial = Object.values(legendaryBonuses).reduce((acc, val) => acc + val, 0);
 
   const overCapacityStats = React.useMemo(() => {
     const over: Array<{ stat: keyof SpecialsState; used: number; max: number }> = [];
     (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
       const used = usedSpecialCapacity[stat] || 0;
-      const max = specials[stat];
+      const max = effectiveCapacities[stat];
       if (used > max) over.push({ stat, used, max });
     });
     return over;
-  }, [usedSpecialCapacity, specials]);
+  }, [usedSpecialCapacity, effectiveCapacities]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -240,7 +259,12 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
           <CardTitle className="text-base font-mono flex justify-between items-center text-slate-100">
             <span>S.P.E.C.I.A.L. Base Point Allocation</span>
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-amber-400 font-bold">Total Points: {totalAllocatedSpecial} / 56</span>
+              <span className="text-xs font-mono text-amber-400 font-bold">
+                Total Base: {totalAllocatedSpecial} / 56
+                {totalLegendaryBonusSpecial > 0 ? (
+                  <span className="ml-1.5 text-amber-300 font-normal">(+{totalLegendaryBonusSpecial} Legendary)</span>
+                ) : null}
+              </span>
               <button
                 type="button"
                 onClick={handleResetSpecials}
@@ -251,7 +275,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
             </div>
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">
-            Allocate up to 15 points per S.P.E.C.I.A.L. stat to expand your perk card slot capacity.
+            Allocate up to 15 points per S.P.E.C.I.A.L. stat. Equipped Legendary S.P.E.C.I.A.L. perks automatically add extra points &amp; expand perk card capacity (capped at 15 per category).
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
@@ -259,12 +283,21 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
             {(["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).map((stat) => {
               const theme = SPECIAL_THEMES[stat];
               const used = usedSpecialCapacity[stat] || 0;
-              const max = specials[stat];
-              const isOver = used > max;
+              const legBonus = legendaryBonuses[stat] || 0;
+              const effectiveCap = effectiveCapacities[stat];
+              const effectiveTotal = totalEffectiveSpecials[stat];
+              const isOver = used > effectiveCap;
 
               return (
                 <div key={stat} className={`rounded-lg border bg-slate-900/90 p-3 flex flex-col items-center justify-between space-y-2 ${theme.border}`}>
-                  <span className={`text-xl font-black font-mono ${theme.text}`}>{stat}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-xl font-black font-mono ${theme.text}`}>{stat}</span>
+                    {legBonus > 0 ? (
+                      <span className="text-[0.65rem] font-mono px-1.5 py-0.2 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded font-bold">
+                        +{legBonus}⭐
+                      </span>
+                    ) : null}
+                  </div>
                   <span className="text-[0.65rem] font-mono text-slate-300 uppercase tracking-widest font-semibold">{theme.name}</span>
                   <div className="flex items-center gap-2 font-mono text-sm font-bold text-white">
                     <button
@@ -283,8 +316,13 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
                       +
                     </button>
                   </div>
+                  {legBonus > 0 ? (
+                    <span className="text-[0.62rem] font-mono text-amber-300/90 font-medium">
+                      Total Stat: {effectiveTotal}
+                    </span>
+                  ) : null}
                   <span className={`text-[0.68rem] font-mono font-bold px-2 py-0.5 rounded ${isOver ? "bg-red-950 text-red-400 border border-red-500/50" : "bg-slate-950 text-slate-300 border border-slate-800"}`}>
-                    Cards: {used} / {max}
+                    Cards: {used} / {effectiveCap}
                   </span>
                 </div>
               );

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity } from "./catalog";
+import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses } from "./catalog";
 
 describe("Perk Catalog Utilities", () => {
   it("should fetch perk card by ID", () => {
@@ -32,4 +32,16 @@ describe("Perk Catalog Utilities", () => {
     expect(capacity.S).toBe(5); // 3 (Blocker rank 3) + 2 (Bandolier rank 2)
     expect(capacity.A).toBe(1); // 1 (Action Boy rank 1)
   });
+
+  it("should calculate legendary SPECIAL perk card bonuses accurately", () => {
+    const equipped = [
+      { cardId: "legendary-strength", rank: 4 }, // +5 STR
+      { cardId: "legendary-luck", rank: 2 } // +2 LUK
+    ];
+    const bonuses = calculateLegendarySpecialBonuses(equipped);
+    expect(bonuses.S).toBe(5);
+    expect(bonuses.L).toBe(2);
+    expect(bonuses.P).toBe(0);
+  });
 });
+
