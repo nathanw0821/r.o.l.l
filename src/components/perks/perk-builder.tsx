@@ -66,8 +66,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
 
   // Load active loadout slot
   React.useEffect(() => {
-    if (!characterId) return;
-    fetch(`/api/perks/loadouts?characterId=${characterId}`)
+    fetch(`/api/perks/loadouts${characterId ? `?characterId=${characterId}` : ""}`)
       .then((res) => res.json())
       .then((payload) => {
         if (payload?.success && Array.isArray(payload.data?.loadouts)) {
@@ -75,9 +74,6 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
           if (slotData) {
             if (slotData.specials) setSpecials(slotData.specials);
             if (Array.isArray(slotData.equippedCards)) setEquippedCards(slotData.equippedCards);
-          } else {
-            setSpecials({ S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 });
-            setEquippedCards([]);
           }
         }
       })
@@ -146,11 +142,6 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   };
 
   const handleSaveLoadout = async () => {
-    if (!characterId) {
-      setSaveMessage("⚠️ Please sign in to save loadouts to your account.");
-      setTimeout(() => setSaveMessage(null), 3500);
-      return;
-    }
     setSaving(true);
     setSaveMessage(null);
     try {
@@ -158,7 +149,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          characterId,
+          characterId: characterId || undefined,
           slotIndex: activeSlot,
           name: `Punch Card Loadout ${activeSlot + 1}`,
           specials,
@@ -169,7 +160,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
       if (payload?.success) {
         setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved!`);
       } else {
-        setSaveMessage(`❌ ${payload?.error || "Failed to save loadout."}`);
+        setSaveMessage(`❌ ${payload?.error || "Please sign in to save loadouts."}`);
       }
     } catch {
       setSaveMessage("❌ Error saving loadout.");

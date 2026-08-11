@@ -8,19 +8,27 @@ export async function GET(request: Request) {
   if ("response" in auth) return auth.response;
 
   const { searchParams } = new URL(request.url);
-  const characterId = searchParams.get("characterId");
+  let characterId = searchParams.get("characterId");
 
   if (!characterId) {
-    return badRequest("characterId param is required");
-  }
-
-  // Ensure character belongs to user
-  const character = await prisma.character.findFirst({
-    where: { id: characterId, userId: auth.session.user.id }
-  });
-
-  if (!character) {
-    return badRequest("Character not found");
+    const char = await prisma.character.findFirst({
+      where: { userId: auth.session.user.id }
+    });
+    if (!char) {
+      return ok({ loadouts: [] });
+    }
+    characterId = char.id;
+  } else {
+    const char = await prisma.character.findFirst({
+      where: { id: characterId, userId: auth.session.user.id }
+    });
+    if (!char) {
+      const fallback = await prisma.character.findFirst({
+        where: { userId: auth.session.user.id }
+      });
+      if (!fallback) return ok({ loadouts: [] });
+      characterId = fallback.id;
+    }
   }
 
   const loadouts = await prisma.characterPerkLoadout.findMany({
@@ -28,7 +36,7 @@ export async function GET(request: Request) {
     orderBy: { slotIndex: "asc" }
   });
 
-  return ok({ loadouts });
+  return ok({ loadouts, characterId });
 }
 
 export async function POST(request: Request) {
@@ -38,36 +46,34 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { characterId, slotIndex, name, specials, equippedCards } = body;
-    let targetCharacterId = characterId;
 
     if (typeof slotIndex !== "number" || slotIndex < 0 || slotIndex > 5) {
       return badRequest("Invalid loadout parameters (slotIndex 0-5 required)");
     }
 
-    if (!targetCharacterId) {
-      let char = await prisma.character.findFirst({
+    let targetCharacter: { id: string } | null = null;
+    if (characterId) {
+      targetCharacter = await prisma.character.findFirst({
+        where: { id: characterId, userId: auth.session.user.id }
+      });
+    }
+
+    if (!targetCharacter) {
+      targetCharacter = await prisma.character.findFirst({
         where: { userId: auth.session.user.id }
       });
 
-      if (!char) {
-        char = await prisma.character.create({
+      if (!targetCharacter) {
+        targetCharacter = await prisma.character.create({
           data: {
             userId: auth.session.user.id,
             name: "Vault Dweller 1"
           }
         });
       }
-      targetCharacterId = char.id;
     }
 
-    // Ensure character belongs to user
-    const character = await prisma.character.findFirst({
-      where: { id: targetCharacterId, userId: auth.session.user.id }
-    });
-
-    if (!character) {
-      return badRequest("Character not found");
-    }
+    const targetCharacterId = targetCharacter.id;
 
     const loadout = await prisma.characterPerkLoadout.upsert({
       where: {
@@ -87,7 +93,7 @@ export async function POST(request: Request) {
       }
     });
 
-    return ok({ loadout });
+    return ok({ loadout, characterId: targetCharacterId });
   } catch (error) {
     console.error("[PERK Loadouts Error]", error);
     return NextResponse.json({ success: false, error: "Failed to save perk loadout" }, { status: 500 });
