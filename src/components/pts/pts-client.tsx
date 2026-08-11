@@ -170,16 +170,22 @@ function PtsCard({ item }: { item: PtsItem }) {
             </span>
           </div>
 
-          <a
-            href={item.sourceUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-[0.65rem] text-foreground/50 hover:text-accent flex items-center gap-1 transition"
-            title="View source article"
-          >
-            <span>{item.sourceName}</span>
-            <ExternalLink className="h-2.5 w-2.5" />
-          </a>
+          {item.sourceUrl ? (
+            <a
+              href={item.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[0.65rem] text-foreground/50 hover:text-accent flex items-center gap-1 transition font-mono"
+              title="View source on NukaKnights"
+            >
+              <span>{item.sourceName}</span>
+              <ExternalLink className="h-2.5 w-2.5" />
+            </a>
+          ) : (
+            <span className="text-[0.65rem] text-foreground/50 font-mono">
+              {item.sourceName}
+            </span>
+          )}
         </div>
 
         {/* Item Name */}

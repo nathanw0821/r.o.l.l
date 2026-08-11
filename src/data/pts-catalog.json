@@ -12,7 +12,7 @@
     "status": "PTS Testing",
     "notes": "Datamined from Patch 70 Infestation Event tables. Subject to change before live release.",
     "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/articles/new-4-star-mods-infestation-map.html"
+    "sourceUrl": "https://nukaknights.com/"
   },
   {
     "id": "pts-uniques-modding",
@@ -27,7 +27,7 @@
     "status": "PTS Testing",
     "notes": "Enables full legendary customization of iconic unique quest rewards and boss drops.",
     "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/articles/pts-patchnotes-psychophants-of-appalachia-patch-70.html"
+    "sourceUrl": "https://nukaknights.com/"
   },
   {
     "id": "pts-scrip-normalization",
@@ -42,7 +42,7 @@
     "status": "PTS Testing",
     "notes": "Removes escalating Scrip penalties, making iterative mod testing significantly cheaper.",
     "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/articles/pts-patchnotes-psychophants-of-appalachia-patch-70.html"
+    "sourceUrl": "https://nukaknights.com/"
   },
   {
     "id": "pts-mod-psychophant",
@@ -57,7 +57,7 @@
     "status": "PTS Testing",
     "notes": "New 4-star effect introduced in Patch 70 'Psychophants Of Appalachia'.",
     "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/articles/pts-patchnotes-psychophants-of-appalachia-patch-70.html"
+    "sourceUrl": "https://nukaknights.com/"
   },
   {
     "id": "pts-mod-radioactive-surge",
@@ -72,7 +72,7 @@
     "status": "PTS Testing",
     "notes": "Experimental 4th star defensive effect for Bloodied and Nuke Zone builds.",
     "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/articles/new-4-star-mods-infestation-map.html"
+    "sourceUrl": "https://nukaknights.com/"
   },
   {
     "id": "pts-infestation-event-drops",
@@ -87,6 +87,6 @@
     "status": "PTS Testing",
     "notes": "High-difficulty endgame loop designed for Level 300+ players.",
     "sourceName": "NukaKnights Datamine",
-    "sourceUrl": "https://nukaknights.com/articles/new-4-star-mods-infestation-map.html"
+    "sourceUrl": "https://nukaknights.com/"
   }
 ]
