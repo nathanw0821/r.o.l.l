@@ -228,6 +228,12 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
     group: "visible"
   },
   {
+    key: "button_masher",
+    name: "Tactile Temptation",
+    description: "Curiosity didn't kill the Vault Dweller! You just couldn't resist giving this switch a press.",
+    group: "easterEgg"
+  },
+  {
     key: "account_100",
     name: "Completionist Dynasty",
     description: "Reach 100% account-wide completion across all characters.",
