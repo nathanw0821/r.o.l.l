@@ -165,39 +165,59 @@ const getTierByLabelCached = unstable_cache(
   { tags: [TIER_CACHE_TAG] }
 );
 
+import { FALLBACK_LEGENDARY_EFFECTS, type StaticEffectRow } from "@/lib/static-fallback-catalog";
+
 async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string): Promise<MergedEffectTierRow[]> {
-  await ensureProfileApplied(userId);
-  const [dataset, characterId, tier] = await Promise.all([
-    getActiveDatasetVersion(),
-    getActiveCharacterId(userId),
-    tierLabel === undefined
-      ? Promise.resolve(null)
-      : getTierByLabelCached(tierLabel)
-  ]);
+  try {
+    await ensureProfileApplied(userId);
+    const [dataset, characterId, tier] = await Promise.all([
+      getActiveDatasetVersion().catch(() => null),
+      getActiveCharacterId(userId).catch(() => undefined),
+      tierLabel === undefined
+        ? Promise.resolve(null)
+        : getTierByLabelCached(tierLabel).catch(() => null)
+    ]);
 
-  if (!dataset) return [];
-  if (tierLabel !== undefined && !tier) return [];
+    if (!dataset) {
+      const fallbackList = tierLabel
+        ? FALLBACK_LEGENDARY_EFFECTS.filter((r) => r.tierLabel === tierLabel)
+        : FALLBACK_LEGENDARY_EFFECTS;
+      return fallbackList as unknown as MergedEffectTierRow[];
+    }
 
-  const [baselineMap, catalog] = await Promise.all([
-    characterId ? getImportedBaselineMap(dataset.id, characterId) : Promise.resolve(new Map<string, boolean>()),
-    getCatalogEffectTiersCached(dataset.id)
-  ]);
+    const [baselineMap, catalog] = await Promise.all([
+      characterId ? getImportedBaselineMap(dataset.id, characterId).catch(() => new Map()) : Promise.resolve(new Map<string, boolean>()),
+      getCatalogEffectTiersCached(dataset.id).catch(() => [])
+    ]);
 
-  const scoped =
-    tierLabel === undefined || !tier
-      ? catalog
-      : catalog.filter((row) => row.tier?.label === tier.label);
+    if (!catalog || catalog.length === 0) {
+      const fallbackList = tierLabel
+        ? FALLBACK_LEGENDARY_EFFECTS.filter((r) => r.tierLabel === tierLabel)
+        : FALLBACK_LEGENDARY_EFFECTS;
+      return fallbackList as unknown as MergedEffectTierRow[];
+    }
 
-  const [progressMap, globalProgressMap] = await Promise.all([
-    characterId && scoped.length > 0
-      ? fetchUserProgressMap(characterId, dataset.id)
-      : Promise.resolve(new Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>()),
-    userId
-      ? fetchGlobalProgressMap(userId, dataset.id)
-      : Promise.resolve(new Map<string, string[]>())
-  ]);
+    const scoped =
+      tierLabel === undefined || !tier
+        ? catalog
+        : catalog.filter((row) => row.tier?.label === tier.label);
 
-  return mergeCatalogWithUserState(scoped, characterId, baselineMap, progressMap, globalProgressMap);
+    const [progressMap, globalProgressMap] = await Promise.all([
+      characterId && scoped.length > 0
+        ? fetchUserProgressMap(characterId, dataset.id).catch(() => new Map())
+        : Promise.resolve(new Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>()),
+      userId
+        ? fetchGlobalProgressMap(userId, dataset.id).catch(() => new Map())
+        : Promise.resolve(new Map<string, string[]>())
+    ]);
+
+    return mergeCatalogWithUserState(scoped, characterId, baselineMap, progressMap, globalProgressMap);
+  } catch {
+    const fallbackList = tierLabel
+      ? FALLBACK_LEGENDARY_EFFECTS.filter((r) => r.tierLabel === tierLabel)
+      : FALLBACK_LEGENDARY_EFFECTS;
+    return fallbackList as unknown as MergedEffectTierRow[];
+  }
 }
 
 /** One merged catalog load per request per `(userId, tierLabel)` — dedupes e.g. `getStillNeed` + `getTierProgressSummary`. */
