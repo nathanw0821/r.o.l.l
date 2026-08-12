@@ -30,13 +30,13 @@ export async function GET(req: Request) {
         return NextResponse.json(data);
       }
     }
-  } catch (err) {
+  } catch {
     // Local server fallback to Prisma
   }
 
   // 2. Query Prisma database (Neon / Postgres)
   try {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     // Category filter
     if (category && category.toLowerCase() !== "all") {
@@ -45,7 +45,7 @@ export async function GET(req: Request) {
     }
 
     // Search query filter
-    const conditions: any[] = [];
+    const conditions: Record<string, unknown>[] = [];
     if (q && q.trim().length > 0) {
       conditions.push(
         { title: { contains: q, mode: "insensitive" } },
@@ -76,7 +76,7 @@ export async function GET(req: Request) {
     }
 
     if (conditions.length > 0) {
-      if (where.AND) {
+      if (Array.isArray(where.AND)) {
         where.AND.push({ OR: conditions });
       } else {
         where.OR = conditions;
@@ -84,7 +84,7 @@ export async function GET(req: Request) {
     }
 
     // Ordering logic
-    let orderBy: any = { id: "desc" };
+    let orderBy: Record<string, string> = { id: "desc" };
     if (sort === "oldest") {
       orderBy = { id: "asc" };
     } else if (sort === "title-asc") {
@@ -114,7 +114,7 @@ export async function GET(req: Request) {
     }));
 
     return NextResponse.json(formatted);
-  } catch (dbErr) {
+  } catch {
     return NextResponse.json([]);
   }
 }

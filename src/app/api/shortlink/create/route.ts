@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(result);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Shortlink creation error:", err);
     return NextResponse.json(
       { success: false, error: "Failed to create shortlink" },
