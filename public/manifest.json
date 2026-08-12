@@ -1,0 +1,17 @@
+{
+  "name": "R.O.L.L · Record of Legendary Loadouts",
+  "short_name": "R.O.L.L",
+  "description": "Fallout 76 Legendary Mod Tracker, B.U.I.L.D. Sandbox, and Logistics Companion",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1113",
+  "theme_color": "#f3a24d",
+  "icons": [
+    {
+      "src": "/favicon-v3.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
