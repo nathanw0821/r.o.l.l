@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
-import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, searchPerkCards } from "@/lib/perks/catalog";
+import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
@@ -107,6 +107,13 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   const usedSpecialCapacity = React.useMemo(() => calculateSpecialCapacity(equippedCards), [equippedCards]);
   const legendaryBonuses = React.useMemo(() => calculateLegendarySpecialBonuses(equippedCards), [equippedCards]);
 
+  const equippedLegendaryCards = React.useMemo(() => {
+    return equippedCards.filter((item) => {
+      const card = getPerkCardById(item.cardId);
+      return card?.special === "LEGENDARY";
+    });
+  }, [equippedCards]);
+
   // Hard Cap of 15 for perk card slot capacity (base + legendary bonus, max 15)
   const effectiveCapacities = React.useMemo(() => {
     const caps: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
@@ -156,6 +163,15 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   };
 
   const handleEquipCard = (card: PerkCard, rank = 1) => {
+    if (card.special === "LEGENDARY") {
+      const isAlreadyEquipped = equippedCards.some((item) => item.cardId === card.id);
+      if (!isAlreadyEquipped && equippedLegendaryCards.length >= 6) {
+        setSaveMessage("⚠️ Level 300 Limit: Maximum 6 Legendary Perk Cards can be equipped total.");
+        setTimeout(() => setSaveMessage(null), 3500);
+        return;
+      }
+    }
+
     setEquippedCards((prev) => {
       const filtered = prev.filter((item) => item.cardId !== card.id);
       return [...filtered, { cardId: card.id, rank }];
@@ -376,12 +392,33 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
         </div>
       )}
 
+      {/* Legendary Perk Slot Overflow Banner */}
+      {equippedLegendaryCards.length > 6 && (
+        <div className="rounded-lg border border-amber-500/50 bg-amber-950/80 p-3.5 text-xs font-mono text-amber-200 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xl animate-in fade-in duration-200">
+          <div className="flex items-center gap-2.5">
+            <span className="text-base">⚠️</span>
+            <div>
+              <span className="font-bold uppercase tracking-wider text-amber-400">Legendary Slot Overflow Warning: </span>
+              <span className="text-amber-200">
+                {equippedLegendaryCards.length} / 6 Legendary Perk Cards equipped. Maximum 6 Legendary slots unlocked at Level 300.
+              </span>
+            </div>
+          </div>
+          <span className="text-[0.68rem] px-2.5 py-1 rounded bg-amber-900 border border-amber-500/40 text-amber-300 font-bold shrink-0">
+            Unequip {equippedLegendaryCards.length - 6} Legendary Perk Card{equippedLegendaryCards.length - 6 > 1 ? "s" : ""}
+          </span>
+        </div>
+      )}
+
       {/* Equipped Perk Cards Deck */}
       <Card className="bg-slate-950 border-slate-800 shadow-xl">
         <CardHeader className="pb-3 border-b border-slate-900">
           <CardTitle className="text-base font-mono text-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span>Equipped Perk Deck ({equippedCards.length} Cards)</span>
+              <span className="text-xs px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                ⭐ Legendary Perks: {equippedLegendaryCards.length} / 6 Slots
+              </span>
               {equippedCards.length > 0 && (
                 <button
                   type="button"
@@ -496,7 +533,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
                       : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
                   }`}
                 >
-                  {cat} ({count})
+                  {cat === "LEGENDARY" ? `LEGENDARY (${count}) [${equippedLegendaryCards.length}/6]` : `${cat} (${count})`}
                 </button>
               );
             })}
