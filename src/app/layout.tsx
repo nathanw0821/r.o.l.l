@@ -31,8 +31,8 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
-  title: "R.O.L.L | Record Of Legendary Loadouts",
-  description: "Record of legendary effects, components, and acquisition paths for Fallout 76.",
+  title: "R.O.L.L | Reconfiguration, Optimization & Logistics Laboratory",
+  description: "Fallout 76 Vault-Tec Master Hub: B.U.I.L.D. Sandbox, P.E.R.K. Matrix, and Truth Bible Knowledge Base.",
   manifest: "/manifest.json",
   icons: {
     icon: "/icon.png",
