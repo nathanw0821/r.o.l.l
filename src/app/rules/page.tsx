@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Community Rules & Guidelines | R.O.L.L.",
-  description: "Vault-Tec Community Rules & Guidelines for R.O.L.L. and Fallout 76 Discord servers."
+  description: "Vault-Tec Community Rules & Guidelines for R.O.L.L."
 };
 
 export default function RulesPage() {
@@ -17,7 +17,7 @@ export default function RulesPage() {
             <span className="text-[0.7rem] uppercase font-mono tracking-widest text-accent font-bold">SYSTEM PROTOCOL // DOCUMENT 104</span>
             <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono">Vault-Tec Community Rules &amp; Guidelines</h1>
             <p className="text-sm text-foreground/50 mt-1 font-mono">
-              Code of Conduct for R.O.L.L. and Partnered Fallout 76 Discord Communities
+              Code of Conduct for R.O.L.L. Vault Dwellers
             </p>
           </div>
           <BrandStack />
