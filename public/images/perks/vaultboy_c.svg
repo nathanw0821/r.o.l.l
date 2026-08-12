@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <radialGradient id="c-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#eab308" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="200" rx="16" fill="#090d16"/>
+  <circle cx="100" cy="100" r="90" fill="url(#c-glow)"/>
+  <!-- Vault Boy Thumbs Up Silhouette -->
+  <circle cx="100" cy="65" r="22" fill="#facc15"/>
+  <path d="M80 60 C 85 48, 115 48, 120 62 Z" fill="#fef08a"/>
+  <!-- Smile -->
+  <path d="M92 72 Q 100 80, 108 72" fill="none" stroke="#090d16" stroke-width="3" stroke-linecap="round"/>
+  <!-- Thumbs Up Hand -->
+  <path d="M115 90 L 135 70 Q 142 65, 140 75 L 130 95 L 125 125 Z" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+  <path d="M75 140 C 75 110, 85 95, 100 95 C 115 95, 125 110, 125 140 Z" fill="#facc15"/>
+  <text x="100" y="175" text-anchor="middle" fill="#eab308" font-family="monospace" font-size="14" font-weight="900" letter-spacing="2">CHARISMA</text>
+</svg>
