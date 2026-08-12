@@ -63,10 +63,24 @@ Provide a precise 2-sentence Vault-Tec tactical recommendation for optimizing pe
       success: true,
       advice,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("[Build Advisor AI Error]", error);
+    const errString = String(error);
+    const isQuotaExceeded = errString.includes("429") || errString.includes("RESOURCE_EXHAUSTED") || errString.includes("quota");
+
+    if (isQuotaExceeded) {
+      return NextResponse.json(
+        {
+          success: false,
+          quotaExceeded: true,
+          error: "Vault-Tec AI Advisor is at daily capacity limit. Standard loadouts and perk decks remain 100% functional.",
+        },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
-      { success: false, error: "Failed to generate Vault-Tec build advice." },
+      { success: false, error: "Vault-Tec Advisor is currently offline. Your loadout tools remain 100% functional." },
       { status: 500 }
     );
   }

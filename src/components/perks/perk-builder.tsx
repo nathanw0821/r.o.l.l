@@ -24,16 +24,7 @@ interface PerkBuilderProps {
   characterName?: string | null;
 }
 
-const SPECIAL_THEMES: Record<SpecialCategory, { name: string; border: string; text: string; badge: string; glow: string }> = {
-  S: { name: "Strength", border: "border-red-500/50 hover:border-red-500", text: "text-red-400", badge: "bg-red-500/20 text-red-300 border-red-500/40", glow: "shadow-red-950/40" },
-  P: { name: "Perception", border: "border-amber-500/50 hover:border-amber-500", text: "text-amber-400", badge: "bg-amber-500/20 text-amber-300 border-amber-500/40", glow: "shadow-amber-950/40" },
-  E: { name: "Endurance", border: "border-emerald-500/50 hover:border-emerald-500", text: "text-emerald-400", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40", glow: "shadow-emerald-950/40" },
-  C: { name: "Charisma", border: "border-purple-500/50 hover:border-purple-500", text: "text-purple-400", badge: "bg-purple-500/20 text-purple-300 border-purple-500/40", glow: "shadow-purple-950/40" },
-  I: { name: "Intelligence", border: "border-blue-500/50 hover:border-blue-500", text: "text-blue-400", badge: "bg-blue-500/20 text-blue-300 border-blue-500/40", glow: "shadow-blue-950/40" },
-  A: { name: "Agility", border: "border-cyan-500/50 hover:border-cyan-500", text: "text-cyan-400", badge: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40", glow: "shadow-cyan-950/40" },
-  L: { name: "Luck", border: "border-yellow-500/50 hover:border-yellow-500", text: "text-yellow-400", badge: "bg-yellow-500/20 text-yellow-300 border-yellow-500/40", glow: "shadow-yellow-950/40" },
-  LEGENDARY: { name: "Legendary", border: "border-amber-400/80 hover:border-amber-300", text: "text-amber-300", badge: "bg-amber-400/20 text-amber-200 border-amber-400/50", glow: "shadow-amber-900/50" }
-};
+import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
 
 export default function PerkBuilder({ characterId, characterName }: PerkBuilderProps) {
   const searchParams = useSearchParams();
