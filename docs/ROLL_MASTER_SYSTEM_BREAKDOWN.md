@@ -20,6 +20,7 @@
 - **Styling**: Vanilla CSS tokens, HSL curated palettes, glassmorphic dark mode, solid 100% opaque tooltips.
 - **Database & ORM**: Prisma ORM with serverless Neon PostgreSQL.
 - **Edge Deployment**: Cloudflare Workers / OpenNext Edge with sub-15ms response times.
+- **Perk Card Assets Policy (MANDATORY)**: ALWAYS use the 319 official datamined Fallout 76 Vault Boy & Vault Girl SVG vector card assets (`public/images/perks_official/*.svg`). NEVER attempt to web-scrape, delete, or replace them with generic icons, third-party images, or fallback star icons.
 
 ### Core Page Hierarchy
 1. **Central Matrix (`/` & `/summary`)**:
