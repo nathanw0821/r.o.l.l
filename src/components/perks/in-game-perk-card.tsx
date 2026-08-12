@@ -212,39 +212,30 @@ export default function InGamePerkCard({
         }}
         title="Click to equip • Hold mouse over for 1s to inflate all ranks • Right-click for Fallout Wiki"
       >
-        {!imgError ? (
-          <img
-            src={artworkUrl}
-            alt={name}
-            className="w-full h-full object-cover object-center rounded-xl block drop-shadow-xl transform-none"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div className={`w-full h-full p-3 rounded-xl border-2 ${theme.border} ${theme.cardBg} flex flex-col justify-between`}>
-            {/* Header Stamp Bar */}
-            <div className="flex items-center justify-between gap-1.5 border-b border-slate-700/80 pb-1.5">
-              <span className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}>
-                {cost}
-              </span>
-              <span className="text-[0.68rem] font-black uppercase tracking-wider text-slate-100 truncate">
-                {name}
-              </span>
-              <span className={`text-[0.58rem] font-black px-1.5 py-0.5 rounded border uppercase ${theme.stampBg}`}>
-                {special}
-              </span>
-            </div>
-
-            {/* Central Vault Boy Graphic */}
-            <div className="my-2 flex-1 flex items-center justify-center min-h-0 overflow-hidden">
-              <PipBoyCardArt special={special} name={name} className="w-full h-full max-h-[140px]" />
-            </div>
-
-            {/* Description Text Box */}
-            <p className="text-[0.62rem] font-mono text-slate-200 leading-tight bg-slate-950/90 p-2 rounded border border-slate-800 shrink-0 line-clamp-3">
-              {description}
-            </p>
+        <div className={`w-full h-full p-3 rounded-xl border-2 ${theme.border} ${theme.cardBg} flex flex-col justify-between`}>
+          {/* Header Stamp Bar */}
+          <div className="flex items-center justify-between gap-1.5 border-b border-slate-700/80 pb-1.5">
+            <span className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}>
+              {cost}
+            </span>
+            <span className="text-[0.68rem] font-black uppercase tracking-wider text-slate-100 truncate">
+              {name}
+            </span>
+            <span className={`text-[0.58rem] font-black px-1.5 py-0.5 rounded border uppercase ${theme.stampBg}`}>
+              {special}
+            </span>
           </div>
-        )}
+
+          {/* Central Vault Boy Graphic */}
+          <div className="my-2 flex-1 flex items-center justify-center min-h-0 overflow-hidden">
+            <PipBoyCardArt special={special} name={name} className="w-full h-full max-h-[140px]" />
+          </div>
+
+          {/* Description Text Box */}
+          <p className="text-[0.62rem] font-mono text-slate-200 leading-tight bg-slate-950/90 p-2 rounded border border-slate-800 shrink-0 line-clamp-3">
+            {description}
+          </p>
+        </div>
 
         {/* Legendary Badge Crest Banner */}
         {isLegendary && (
