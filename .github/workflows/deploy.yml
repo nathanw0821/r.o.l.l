@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, preview]
   pull_request:
-    branches: [main]
+    branches: [main, preview]
   workflow_dispatch:
 
 concurrency:
@@ -49,13 +49,21 @@ jobs:
       - name: Build Next.js with OpenNext
         run: npm run build:cf
 
-      - name: Deploy to Cloudflare Workers
+      - name: Deploy to Cloudflare Workers (Production)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --minify
+
+      - name: Deploy to Cloudflare Workers (Preview Environment)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/preview'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --env preview --minify
 
       - name: Upload Wrangler Log on Failure
         if: failure()
