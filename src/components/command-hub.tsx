@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap, X } from "lucide-react";
+import { BookOpen, ChevronDown, ChevronUp, Compass, Palette, Search, Settings, Shield, SlidersHorizontal, Trophy, User, Wrench, Zap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
 import { cn } from "@/lib/utils";
@@ -45,6 +45,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     pathname?.startsWith("/all-effects")
   );
   const { data: session } = useSession();
+  const isUserAdmin = Boolean(session?.user && ((session.user as { role?: string }).role === "ADMIN" || (session.user as { isAdmin?: boolean }).isAdmin)) || isAdmin;
   const {
     query,
     setQuery,
@@ -169,7 +170,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const [activeTab, setActiveTab] = React.useState<"filters" | "progress" | "appearance">("filters");
+  const [activeTab, setActiveTab] = React.useState<"filters" | "progress" | "appearance" | "nav">("filters");
 
   return (
     <>
@@ -237,12 +238,12 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           </div>
 
           {/* Segmented Tab Switcher */}
-          <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-panel/80 border border-border/40 mb-4 font-mono">
+          <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-panel/80 border border-border/40 mb-4 font-mono">
             <button
               type="button"
               onClick={() => setActiveTab("filters")}
               className={cn(
-                "py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+                "py-2 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer",
                 activeTab === "filters"
                   ? "bg-accent text-accent-foreground shadow-md"
                   : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
@@ -257,7 +258,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               type="button"
               onClick={() => setActiveTab("progress")}
               className={cn(
-                "py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+                "py-2 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer",
                 activeTab === "progress"
                   ? "bg-accent text-accent-foreground shadow-md"
                   : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
@@ -271,14 +272,28 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               type="button"
               onClick={() => setActiveTab("appearance")}
               className={cn(
-                "py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+                "py-2 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer",
                 activeTab === "appearance"
                   ? "bg-accent text-accent-foreground shadow-md"
                   : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
               )}
             >
-              <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
+              <Palette className="h-3.5 w-3.5 shrink-0" />
               <span>Theme</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("nav")}
+              className={cn(
+                "py-2 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer",
+                activeTab === "nav"
+                  ? "bg-accent text-accent-foreground shadow-md"
+                  : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+              )}
+            >
+              <Compass className="h-3.5 w-3.5 shrink-0" />
+              <span>Nav</span>
             </button>
           </div>
 
@@ -568,12 +583,106 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <Button type="button" variant="outline" size="sm" asChild className="font-mono text-xs border-border text-foreground/80 hover:text-foreground">
                     <Link href="/settings" onClick={() => setExpanded(false)}>⚙️ Settings</Link>
                   </Button>
-                  {isAdmin && (
+                  {isUserAdmin && (
                     <Button type="button" variant="outline" size="sm" asChild className="col-span-2 font-mono text-xs border-amber-500/40 text-amber-400 hover:bg-amber-950/40">
                       <Link href="/admin-import" onClick={() => setExpanded(false)}>🛠️ Admin Tools</Link>
                     </Button>
                   )}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: QUICK NAVIGATION */}
+          {activeTab === "nav" && (
+            <div className="space-y-3 font-mono">
+              <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Navigation & Account</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <Link
+                  href="/overview/general"
+                  onClick={() => setExpanded(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-accent/40 bg-accent/10 hover:bg-accent/20 hover:border-accent transition-all group"
+                >
+                  <User className="h-4 w-4 text-accent shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground group-hover:text-accent">Account & Profile</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">Manage account baseline & data</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/overview/achievements"
+                  onClick={() => setExpanded(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-emerald-500/30 bg-emerald-950/10 hover:bg-emerald-950/30 hover:border-emerald-500 transition-all group"
+                >
+                  <Trophy className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground group-hover:text-emerald-400">Achievements</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">Milestones & Wasteland easter eggs</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/settings"
+                  onClick={() => setExpanded(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-panel/60 hover:bg-panel hover:border-border transition-all group"
+                >
+                  <Settings className="h-4 w-4 text-foreground/70 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground group-hover:text-accent">App Settings</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">General preferences & backups</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/overview/security"
+                  onClick={() => setExpanded(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-panel/60 hover:bg-panel hover:border-border transition-all group"
+                >
+                  <Shield className="h-4 w-4 text-foreground/70 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground group-hover:text-accent">Password & Security</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">Account credentials & safety</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/overview/appearance"
+                  onClick={() => setExpanded(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-panel/60 hover:bg-panel hover:border-border transition-all group"
+                >
+                  <Palette className="h-4 w-4 text-foreground/70 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground group-hover:text-accent">Theme & Appearance</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">Custom colors, density & scanlines</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/overview/readme"
+                  onClick={() => setExpanded(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-panel/60 hover:bg-panel hover:border-border transition-all group"
+                >
+                  <BookOpen className="h-4 w-4 text-foreground/70 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground group-hover:text-accent">Readme & Docs</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">Features guide & documentation</div>
+                  </div>
+                </Link>
+
+                {isUserAdmin && (
+                  <Link
+                    href="/admin-import"
+                    onClick={() => setExpanded(false)}
+                    className="col-span-1 md:col-span-2 flex items-center gap-3 p-3 rounded-lg border border-amber-500/40 bg-amber-950/20 hover:bg-amber-950/40 hover:border-amber-400 transition-all group"
+                  >
+                    <Wrench className="h-4 w-4 text-amber-400 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-amber-300">Admin Tools & System Import</div>
+                      <div className="text-[0.68rem] text-amber-400/60 truncate">Database management & dataset updates</div>
+                    </div>
+                  </Link>
+                )}
               </div>
             </div>
           )}
