@@ -487,16 +487,22 @@ export default function EffectTable({
           const isPending = pendingId === row.id;
           const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
           return (
-            <button
+            <div
               key={`tile-${row.id}`}
               id={`effect-${row.id}-tile`}
               data-effect-id={row.id}
-              type="button"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toggleRow(row);
+                }
+              }}
               onClick={() => toggleRow(row)}
-              disabled={isPending}
               aria-pressed={row.unlocked}
               data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
-              className={cn("effect-tile effect-tile--button summary-status-card", isPending && "opacity-60")}
+              className={cn("effect-tile effect-tile--button summary-status-card cursor-pointer", isPending && "opacity-60 pointer-events-none")}
             >
               <div className="effect-tile__header">
                 <div className="min-w-0 flex-1">
@@ -521,6 +527,7 @@ export default function EffectTable({
               <div className="summary-status-card__controls summary-status-card__controls--inline summary-status-card__controls--tile" onClick={(e) => e.stopPropagation()}>
                 <div className="summary-status-card__count">
                   <button
+                    type="button"
                     onClick={() => updateCount(row, row.modCount - 1)}
                     className="summary-status-card__count-btn shrink-0"
                   >
@@ -535,6 +542,7 @@ export default function EffectTable({
                     className="min-w-[1.8rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <button
+                    type="button"
                     onClick={() => updateCount(row, row.modCount + 1)}
                     className="summary-status-card__count-btn shrink-0"
                   >
@@ -542,6 +550,7 @@ export default function EffectTable({
                   </button>
                 </div>
                 <button
+                  type="button"
                   title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
                   onClick={() => updateSeeking(row, !row.isSeeking)}
                   data-active={row.isSeeking}
@@ -579,7 +588,7 @@ export default function EffectTable({
               <div className="effect-tile__notes">
                 {renderInlineMarkdown(row.notes)}
               </div>
-            </button>
+            </div>
           );
         })}
       </div>
