@@ -1607,12 +1607,12 @@ export default function BuilderExperimentClient({
                 </select>
               </div>
 
-              <div className="flex flex-col gap-1 sm:mt-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:mt-4">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-9 w-full text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
+                  className="h-9 w-full sm:w-1/2 text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
                   onClick={() =>
                     exportBuilderLoadoutCard({
                       piece,
@@ -1633,8 +1633,14 @@ export default function BuilderExperimentClient({
                     })
                   }
                 >
-                  Export Build Card (PNG)
+                  Export Card (PNG)
                 </Button>
+                <Link
+                  href={`/wiki?q=${encodeURIComponent(piece.label.replace(/\(full set\)|\(underarmor\)|\(shell\)/gi, "").trim())}`}
+                  className="h-9 w-full sm:w-1/2 flex items-center justify-center gap-1.5 text-xs font-mono uppercase font-bold text-amber-400 border border-amber-500/40 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 rounded px-2 transition-all shadow-sm"
+                >
+                  📖 Read Vault Guide ↗
+                </Link>
               </div>
 
               {isTrackableBasePieceId(piece.id) ? (
