@@ -249,6 +249,42 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
     setSpecials({ S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 });
   };
 
+  const [aiAdvice, setAiAdvice] = React.useState<string | null>(null);
+  const [loadingAi, setLoadingAi] = React.useState(false);
+
+  const handleGetAiAdvice = async () => {
+    setLoadingAi(true);
+    try {
+      const equippedDetails = equippedCards.map((item) => {
+        const card = getPerkCardById(item.cardId);
+        return {
+          name: card?.name || item.cardId,
+          rank: item.rank,
+          special: card?.special || "S",
+        };
+      });
+
+      const res = await fetch("/api/ai/build-advisor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          special: specials,
+          perks: equippedDetails,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.advice) {
+        setAiAdvice(data.advice);
+      } else {
+        setAiAdvice(data.error || "Vault-Tec Advisor is currently offline.");
+      }
+    } catch {
+      setAiAdvice("Failed to contact Vault-Tec AI Advisor.");
+    } finally {
+      setLoadingAi(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Banner */}
@@ -267,6 +303,9 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <Button onClick={handleGetAiAdvice} disabled={loadingAi} variant="outline" className="font-mono text-xs border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50">
+              {loadingAi ? "🤖 Analyzing Build..." : "🤖 Vault-Tec AI Advice"}
+            </Button>
             <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-emerald-500/60 text-emerald-400 bg-emerald-950/30 hover:bg-emerald-900/50">
               📸 Export Deck PNG
             </Button>
@@ -276,6 +315,18 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
           </div>
         </div>
         {saveMessage ? <div className="mt-3 text-xs font-mono text-emerald-400 font-bold">{saveMessage}</div> : null}
+        {aiAdvice && (
+          <div className="mt-3 p-3.5 rounded-lg border border-amber-500/50 bg-amber-950/30 text-xs font-mono text-amber-200 flex items-start justify-between gap-3 shadow-md animate-in fade-in duration-200">
+            <div className="flex items-start gap-2.5">
+              <span className="text-base shrink-0">🤖</span>
+              <div>
+                <span className="font-bold text-amber-400 block uppercase tracking-wider text-[0.7rem] mb-0.5">[ VAULT-TEC TACTICAL ADVISORY ]</span>
+                <p className="leading-relaxed text-amber-100">{aiAdvice}</p>
+              </div>
+            </div>
+            <button type="button" onClick={() => setAiAdvice(null)} className="text-amber-400/60 hover:text-amber-300 text-sm font-bold shrink-0">×</button>
+          </div>
+        )}
       </div>
 
       {/* 6 Loadout Slot Selection Tabs */}

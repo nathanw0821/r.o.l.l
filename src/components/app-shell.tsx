@@ -49,11 +49,11 @@ const trackingLinks: AppNavLink[] = [
   { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
   { href: "/all-effects", label: "All Effects", icon: ListChecks },
   { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false, isBuildTab: true },
+  { href: "/perks", label: "P.E.R.K.", icon: Boxes, activePrefixes: ["/perks"] },
   { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] }
 ];
 
 const experimentalLinks: AppNavLink[] = [
-  { href: "/perks", label: "P.E.R.K.", icon: Boxes, activePrefixes: ["/perks"] },
   { href: "/pts", label: "P.T.S.", icon: FlaskConical, activePrefixes: ["/pts"] },
   { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles }
 ];
