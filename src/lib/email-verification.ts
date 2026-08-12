@@ -65,48 +65,31 @@ async function sendVerificationWebhook(params: {
   }
 }
 
+import { sendTransactionalEmail } from "@/lib/cloudflare-email";
+
 async function sendVerificationEmailViaResend(params: {
   email: string;
   username?: string | null;
   verificationUrl: string | null;
 }) {
-  const apiKey = process.env.RESEND_API_KEY?.trim();
-  const from = process.env.EMAIL_FROM?.trim();
-  if (!apiKey || !from || !params.verificationUrl) {
-    return { delivered: false } as const;
-  }
+  if (!params.verificationUrl) return { delivered: false } as const;
 
   const appName = "R.O.L.L";
   const displayName = params.username?.trim() || params.email;
-  const replyTo = process.env.EMAIL_REPLY_TO?.trim();
 
-  try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        from,
-        to: [params.email],
-        ...(replyTo ? { reply_to: replyTo } : {}),
-        subject: `${appName}: Verify your email`,
-        html: `
-          <div style="font-family:Arial,sans-serif;line-height:1.45;color:#111;">
-            <p>Hi ${displayName},</p>
-            <p>Please verify your email to finish setting up your account.</p>
-            <p><a href="${params.verificationUrl}">Verify email</a></p>
-          </div>
-        `
-      }),
-      signal: AbortSignal.timeout(10000)
-    });
+  const result = await sendTransactionalEmail({
+    to: params.email,
+    subject: `${appName}: Verify your email`,
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.45;color:#111;">
+        <p>Hi ${displayName},</p>
+        <p>Please verify your email to finish setting up your account.</p>
+        <p><a href="${params.verificationUrl}">Verify email</a></p>
+      </div>
+    `
+  });
 
-    return { delivered: response.ok } as const;
-  } catch {
-    return { delivered: false } as const;
-  }
+  return { delivered: result.delivered } as const;
 }
 
 export async function issueEmailVerification(user: VerificationUser) {
