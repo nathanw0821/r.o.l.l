@@ -26,4 +26,6 @@ tsconfig.tsbuildinfo
 dist-worker/
 .wrangler/
 wrangler.log
+*.db
+pasted_image_*.png
 
