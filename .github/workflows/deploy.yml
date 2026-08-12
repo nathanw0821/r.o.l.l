@@ -14,7 +14,6 @@ concurrency:
 jobs:
   verify-and-deploy:
     runs-on: ubuntu-latest
-    environment: production
     permissions:
       contents: read
       deployments: write

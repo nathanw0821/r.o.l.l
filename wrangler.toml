@@ -39,6 +39,7 @@ id = "916a6d603bc7470586b217fb9bcb3297"
 
 [env.preview]
 name = "r-o-l-l-preview"
+workers_dev = true
 routes = [
   { pattern = "preview.fallout76.wiki", custom_domain = true }
 ]
