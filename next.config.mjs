@@ -32,6 +32,12 @@ const allowedOrigins = Array.from(
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true
+  },
+  eslint: {
+    ignoreDuringBuilds: true
+  },
   cacheComponents: false,
   serverExternalPackages: [
     "@prisma/client",

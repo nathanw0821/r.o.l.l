@@ -331,7 +331,7 @@ interface AccountLinksResponse {
       .then((response) => response.json() as Promise<AccountLinksResponse>)
       .then((payload) => {
         if (payload?.success) {
-          setLinkedProviders(payload.data.providers ?? []);
+          setLinkedProviders(payload.data?.providers ?? []);
         }
       })
       .catch(() => setLinkedProviders([]));
