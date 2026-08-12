@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { FALLBACK_WIKI_ARTICLES } from "@/lib/static-fallback-catalog";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -101,6 +102,10 @@ export async function GET(req: Request) {
       orderBy
     });
 
+    if (!articles || articles.length === 0) {
+      return NextResponse.json(FALLBACK_WIKI_ARTICLES);
+    }
+
     const formatted = articles.map((a) => ({
       id: a.id,
       source: a.source,
@@ -115,6 +120,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json(formatted);
   } catch {
-    return NextResponse.json([]);
+    return NextResponse.json(FALLBACK_WIKI_ARTICLES);
   }
 }
