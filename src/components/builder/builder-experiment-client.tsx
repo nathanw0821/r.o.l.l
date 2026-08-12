@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   Terminal,
 } from "lucide-react";
+import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
 import { Button } from "@/components/ui/button";
@@ -1220,36 +1221,39 @@ export default function BuilderExperimentClient({
         }
       `}</style>
 
-      {/* Main Terminal Shell Title Header */}
-      <div className="pip-terminal-panel p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <div className="text-xs font-bold uppercase tracking-widest text-accent flex items-center gap-2">
-            <Terminal className="h-4 w-4 animate-pulse" /> SYSTEM DIAGNOSTICS: ACTIVE TERMINAL MODE
+      {/* Main Terminal Shell Title Header (Visually aligned with P.E.R.K.) */}
+      <div className="rounded-[var(--radius-lg)] border border-emerald-500/40 bg-slate-950 p-6 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-emerald-400 font-bold flex items-center gap-1.5">
+              <Terminal className="h-3.5 w-3.5 animate-pulse" /> VAULT-TEC PUNCH CARD MACHINE // B.U.I.L.D. SANDBOX
+            </span>
+            <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono text-white">
+              B.U.I.L.D. Loadout Manager
+            </h1>
+            <p className="text-sm text-slate-300 mt-1 font-mono">
+              Battle Utility &amp; Inventory Logistics Diagnostic System
+            </p>
           </div>
-          <h1 className="text-xl font-black font-mono tracking-tight text-foreground mt-1">
-            B.U.I.L.D. SANDBOX TERMINAL
-          </h1>
-          <p className="text-[0.84rem] font-mono text-foreground/50 uppercase mt-0.5 tracking-wider">
-            Battle Utility &amp; Inventory Logistics Diagnostic
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 font-mono text-[0.78rem]">
-          <a
-            className="rounded border border-accent/25 bg-accent/5 px-2.5 py-1 text-accent font-bold hover:bg-accent/15 transition-all"
-            href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Resist Matrix Notes
-          </a>
-          <a
-            className="rounded border border-accent/25 bg-accent/5 px-2.5 py-1 text-accent font-bold hover:bg-accent/15 transition-all"
-            href="https://nukesdragons.com/fallout-76/character"
-            target="_blank"
-            rel="noreferrer"
-          >
-            N&amp;D Overlay Spec
-          </a>
+          <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+            <a
+              className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-1.5 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all"
+              href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Resist Matrix Notes
+            </a>
+            <a
+              className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-1.5 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all"
+              href="https://nukesdragons.com/fallout-76/character"
+              target="_blank"
+              rel="noreferrer"
+            >
+              N&amp;D Overlay Spec
+            </a>
+          </div>
         </div>
       </div>
 
@@ -1308,17 +1312,28 @@ export default function BuilderExperimentClient({
                     bLines.push({ source: "Ghoul Biology", val: "-10" });
                   }
                   
+                  const STAT_TO_SPECIAL_CAT: Record<string, "S" | "P" | "E" | "C" | "I" | "A" | "L"> = {
+                    str: "S",
+                    per: "P",
+                    end: "E",
+                    cha: "C",
+                    int: "I",
+                    agi: "A",
+                    lck: "L",
+                  };
+                  const specTheme = OFFICIAL_SPECIAL_THEMES[STAT_TO_SPECIAL_CAT[key] || "S"];
+
                   return (
                     <div key={key} className="space-y-1 font-mono">
                       <div className="flex items-center justify-between text-xs">
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span className="font-bold text-accent/90 cursor-help hover:underline decoration-accent/40 decoration-dashed underline-offset-2">
+                            <span className={cn("font-bold cursor-help hover:underline decoration-dashed underline-offset-2", specTheme.text)}>
                               {BUILDER_SPECIAL_LABELS[key]}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent side="right" className="bg-[#0c1014] border-border/80 p-2.5 font-mono text-[0.78rem] shadow-2xl space-y-1.5 min-w-[200px] z-[10000] opacity-100">
-                            <div className="font-black text-accent border-b border-border/20 pb-1 flex justify-between">
+                            <div className={cn("font-black border-b border-border/20 pb-1 flex justify-between", specTheme.text)}>
                               <span>{SPECIAL_FULL_NAMES[key] || key.toUpperCase()}</span>
                               <span>Total: {live}</span>
                             </div>
@@ -1326,7 +1341,7 @@ export default function BuilderExperimentClient({
                               {bLines.map((b, i) => (
                                 <div key={i} className="flex justify-between gap-3">
                                   <span className="text-foreground/60">{b.source}</span>
-                                  <span className="font-bold text-accent">{b.val}</span>
+                                  <span className={cn("font-bold", specTheme.text)}>{b.val}</span>
                                 </div>
                               ))}
                             </div>
@@ -1345,11 +1360,15 @@ export default function BuilderExperimentClient({
                           )}
                         </div>
                       </div>
-                      {/* Progress track */}
+                      {/* Progress track with official SPECIAL color */}
                       <div className="h-1.5 w-full bg-background/60 rounded border border-border/15 overflow-hidden relative">
                         <div 
-                          className="h-full bg-accent shadow-[0_0_6px_var(--color-accent)] transition-all duration-200"
-                          style={{ width: `${percent}%` }}
+                          className="h-full transition-all duration-200"
+                          style={{ 
+                            width: `${percent}%`, 
+                            backgroundColor: specTheme.hex, 
+                            boxShadow: `0 0 6px ${specTheme.hex}` 
+                          }}
                         />
                       </div>
                       {/* Mini inline baseline increment/decrement */}

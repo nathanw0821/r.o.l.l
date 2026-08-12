@@ -81,10 +81,24 @@ Output ONLY valid raw JSON with no markdown formatting.`;
       armorType: parsed.armorType || null,
       special: parsed.special || {},
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("[Gemini Scan Vision AI Error]", error);
+    const errString = String(error);
+    const isQuotaExceeded = errString.includes("429") || errString.includes("RESOURCE_EXHAUSTED") || errString.includes("quota");
+
+    if (isQuotaExceeded) {
+      return NextResponse.json(
+        {
+          success: false,
+          quotaExceeded: true,
+          error: "Gemini Vision OCR is at daily capacity limit. Local Tesseract OCR remains 100% functional.",
+        },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
-      { success: false, error: "Failed to process screenshot with Gemini Vision." },
+      { success: false, error: "Failed to process screenshot with Gemini Vision. Local OCR remains available." },
       { status: 500 }
     );
   }
