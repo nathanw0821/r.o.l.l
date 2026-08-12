@@ -62,6 +62,34 @@ export const POWER_ARMOR_HELMET_PIECES: BaseGearPiece[] = [
   { id: "vulcan-helm", label: "Vulcan helmet (Gleaming Depths raid)", kind: "powerArmor", powerArmorSlot: "helmet" }
 ];
 
+export const WEAPON_BASE_PIECES: BaseGearPiece[] = [
+  { id: "fixer", label: "The Fixer", kind: "weapon", weaponSub: "ranged" },
+  { id: "handmade", label: "Handmade Rifle", kind: "weapon", weaponSub: "ranged" },
+  { id: "railway", label: "Railway Rifle", kind: "weapon", weaponSub: "ranged" },
+  { id: "cremator", label: "Cremator", kind: "weapon", weaponSub: "heavy" },
+  { id: "holy-fire", label: "Holy Fire / Flamer", kind: "weapon", weaponSub: "heavy" },
+  { id: "gatling-plasma", label: "Gatling Plasma", kind: "weapon", weaponSub: "heavy" },
+  { id: "cal50", label: ".50 Cal Machine Gun", kind: "weapon", weaponSub: "heavy" },
+  { id: "minigun", label: "Minigun", kind: "weapon", weaponSub: "heavy" },
+  { id: "pepper-shaker", label: "Pepper Shaker", kind: "weapon", weaponSub: "heavy" },
+  { id: "gauss-minigun", label: "Gauss Minigun", kind: "weapon", weaponSub: "heavy" },
+  { id: "plasma-caster", label: "Plasma Caster", kind: "weapon", weaponSub: "heavy" },
+  { id: "lever-action", label: "Lever Action Rifle", kind: "weapon", weaponSub: "ranged" },
+  { id: "gauss-rifle", label: "Gauss Rifle", kind: "weapon", weaponSub: "ranged" },
+  { id: "gauss-shotgun", label: "Gauss Shotgun", kind: "weapon", weaponSub: "ranged" },
+  { id: "alien-disintegrator", label: "Alien Disintegrator", kind: "weapon", weaponSub: "energy" },
+  { id: "enclave-plasma", label: "Enclave Plasma Gun", kind: "weapon", weaponSub: "energy" },
+  { id: "plasma-flamer", label: "Plasma Flamer", kind: "weapon", weaponSub: "energy" },
+  { id: "tesla", label: "Tesla Rifle", kind: "weapon", weaponSub: "energy" },
+  { id: "gamma-gun", label: "Gamma Gun", kind: "weapon", weaponSub: "energy" },
+  { id: "chainsaw", label: "Chainsaw", kind: "weapon", weaponSub: "melee" },
+  { id: "auto-axe", label: "Auto Axe", kind: "weapon", weaponSub: "melee" },
+  { id: "power-fist", label: "Power Fist", kind: "weapon", weaponSub: "melee" },
+  { id: "dc-gauntlet", label: "Deathclaw Gauntlet", kind: "weapon", weaponSub: "melee" },
+  { id: "war-glaive", label: "War Glaive", kind: "weapon", weaponSub: "melee" },
+  { id: "plasma-cutter", label: "Plasma Cutter", kind: "weapon", weaponSub: "melee" },
+];
+
 /** @deprecated Use `POWER_ARMOR_TORSO_PIECES` — helmets are paired, not separate base rows. */
 export const POWER_ARMOR_BASE_PIECES: BaseGearPiece[] = [...POWER_ARMOR_TORSO_PIECES];
 
@@ -79,20 +107,7 @@ export const BASE_GEAR_PIECES: BaseGearPiece[] = [
 
   ...POWER_ARMOR_TORSO_PIECES,
 
-  /*
-  { id: "fixer", label: "The Fixer", kind: "weapon", weaponSub: "ranged" },
-  { id: "handmade", label: "Handmade", kind: "weapon", weaponSub: "ranged" },
-  { id: "railway", label: "Railway Rifle", kind: "weapon", weaponSub: "ranged" },
-  { id: "lever-action", label: "Lever Action", kind: "weapon", weaponSub: "ranged" },
-  { id: "minigun", label: "Minigun", kind: "weapon", weaponSub: "ranged" },
-  { id: "chainsaw", label: "Chainsaw", kind: "weapon", weaponSub: "melee" },
-  { id: "power-fist", label: "Power Fist", kind: "weapon", weaponSub: "melee" },
-  { id: "dc-gauntlet", label: "Deathclaw Gauntlet", kind: "weapon", weaponSub: "melee" },
-  { id: "plasma-flamer", label: "Plasma Flamer", kind: "weapon", weaponSub: "energy" },
-  { id: "tesla", label: "Tesla Rifle", kind: "weapon", weaponSub: "energy" },
-  { id: "enclave-plasma", label: "Enclave Plasma Gun", kind: "weapon", weaponSub: "energy" },
-  { id: "gamma-gun", label: "Gamma Gun", kind: "weapon", weaponSub: "energy" },
-  */
+  ...WEAPON_BASE_PIECES,
 
   {
     id: "ua-casual",
@@ -150,98 +165,43 @@ export const BASE_GEAR_PIECES: BaseGearPiece[] = [
   }
 ];
 
-export const BASE_GEAR_GROUP_ORDER: BuilderEquipmentKind[] = ["armor", "powerArmor", /* "weapon", */ "underarmor"];
-
-export const BASE_GEAR_GROUP_LABEL: Record<BuilderEquipmentKind, string> = {
-  armor: "Armor (full set)",
-  powerArmor: "Power armor (full set)",
-  weapon: "Weapons",
-  underarmor: "Underarmor"
+export const BASE_GEAR_GROUP_LABEL: Record<string, string> = {
+  armor: "Armor Sets (5-piece)",
+  powerArmor: "Power Armor (Frame + 5 pieces)",
+  weapon: "Weapons (Sandbox)",
+  underarmor: "Underarmor (Lining / Stats)"
 };
 
-/** Bases that can be marked “learned” in the tracker (excludes weapons). */
-export const TRACKABLE_BASE_GEAR_KINDS: BuilderEquipmentKind[] = ["armor", "powerArmor", "underarmor"];
+export const BASE_GEAR_GROUP_ORDER = [
+  "armor",
+  "powerArmor",
+  "weapon",
+  "underarmor"
+] as const;
 
-/** Torso + helmet ids: server may persist learned on either row for a frame. */
-export const TRACKABLE_BASE_PIECE_IDS: ReadonlySet<string> = new Set(
-  [
-    ...BASE_GEAR_PIECES.filter((p) => TRACKABLE_BASE_GEAR_KINDS.includes(p.kind)).map((p) => p.id),
-    ...POWER_ARMOR_HELMET_PIECES.map((p) => p.id)
-  ]
-);
-
-export function listTrackableBaseGearByGroup(): { kind: BuilderEquipmentKind; label: string; pieces: BaseGearPiece[] }[] {
-  const out: { kind: BuilderEquipmentKind; label: string; pieces: BaseGearPiece[] }[] = [];
-  for (const kind of BASE_GEAR_GROUP_ORDER) {
-    if (!TRACKABLE_BASE_GEAR_KINDS.includes(kind)) continue;
-    if (kind === "powerArmor") {
-      out.push({
-        kind: "powerArmor",
-        label: BASE_GEAR_GROUP_LABEL.powerArmor,
-        pieces: POWER_ARMOR_TORSO_PIECES
-      });
-      continue;
-    }
-    out.push({
-      kind,
-      label: BASE_GEAR_GROUP_LABEL[kind],
-      pieces: BASE_GEAR_PIECES.filter((p) => p.kind === kind)
-    });
-  }
-  return out;
+export function getBaseGearPiece(id: string): BaseGearPiece | undefined {
+  return BASE_GEAR_PIECES.find((p) => p.id === id);
 }
 
 export function isTrackableBasePieceId(id: string): boolean {
-  return TRACKABLE_BASE_PIECE_IDS.has(id);
+  return BASE_GEAR_PIECES.some((p) => p.id === id);
 }
 
-export function getBaseGearPiece(id: string): BaseGearPiece | undefined {
-  return BASE_GEAR_PIECES.find((piece) => piece.id === id);
+export function pairedPowerArmorHelmetId(torsoBaseId: string): string | null {
+  return defaultHelmetIdForTorsoPieceId(torsoBaseId);
 }
 
-/** Legacy shares used `*-helm` as `basePieceId`; map to the paired torso row. */
-export function torsoPieceIdForHelmetPieceId(helmetId: string): string | null {
-  const i = POWER_ARMOR_HELMET_PIECES.findIndex((h) => h.id === helmetId);
-  if (i < 0) return null;
-  return POWER_ARMOR_TORSO_PIECES[i]?.id ?? null;
+export function isPowerArmorTorsoRowLearned(
+  torsoPieceId: string,
+  learnedSet: Set<string>
+): boolean {
+  if (!learnedSet.has(torsoPieceId)) return false;
+  const helmId = pairedPowerArmorHelmetId(torsoPieceId);
+  return helmId ? learnedSet.has(helmId) : true;
 }
 
-export function canonicalBasePieceId(id: string): string | null {
-  if (getBaseGearPiece(id)) return id;
-  const torso = torsoPieceIdForHelmetPieceId(id);
-  if (torso && getBaseGearPiece(torso)) return torso;
-  try {
-    const setPieceId = basePieceIdForArmorSet(id);
-    if (setPieceId && getBaseGearPiece(setPieceId)) return setPieceId;
-  } catch {
-    // Ignore invalid armor set key lookup
-  }
-  return null;
-}
-
-export function pairedPowerArmorHelmetId(torsoId: string): string | null {
-  return defaultHelmetIdForTorsoPieceId(torsoId);
-}
-
-export function isPowerArmorTorsoRowLearned(learnedIds: ReadonlySet<string>, torsoId: string): boolean {
-  if (learnedIds.has(torsoId)) return true;
-  const helm = pairedPowerArmorHelmetId(torsoId);
-  return Boolean(helm && learnedIds.has(helm));
-}
-
-export function trackableBaseRowCount(): number {
-  return listTrackableBaseGearByGroup().reduce((acc, g) => acc + g.pieces.length, 0);
-}
-
-export function countLearnedTrackableBases(learnedIds: ReadonlySet<string>): number {
-  let n = 0;
-  for (const p of BASE_GEAR_PIECES) {
-    if (!TRACKABLE_BASE_GEAR_KINDS.includes(p.kind)) continue;
-    if (p.kind === "powerArmor" && isPowerArmorTorsoBasePiece(p)) {
-      if (isPowerArmorTorsoRowLearned(learnedIds, p.id)) n += 1;
-    } else if (p.kind !== "powerArmor") {
-      if (learnedIds.has(p.id)) n += 1;
-    }
-  }
-  return n;
+export function canonicalBasePieceId(id: string | null | undefined): string {
+  if (!id) return "armor-set-civil-engineer";
+  const piece = getBaseGearPiece(id);
+  return piece ? piece.id : id;
 }

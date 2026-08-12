@@ -1,7 +1,7 @@
 /** Client ↔ API payload for the sandbox builder and shared `/l/[slug]` pages. */
 export type BuilderEquipmentKind = "armor" | "powerArmor" | "weapon" | "underarmor";
 
-export type BuilderWeaponSub = "melee" | "ranged" | "energy";
+export type BuilderWeaponSub = "melee" | "ranged" | "energy" | "heavy";
 
 export type BuilderUnderarmor = {
   shellId: string;
