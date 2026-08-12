@@ -32,6 +32,9 @@ export const SPECIFIC_PERK_CARD_ARTWORK: Record<string, string> = {
   "iron-fist": "https://static.wikia.nocookie.net/fallout/images/2/2a/Iron_Fist_FO76_perk.png",
 };
 
+import exactArtMap from "./exact-268-art-map.json";
+import wikiArtMap from "./wiki-268-art-map.json";
+
 export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, isFemale = false): string {
   if (!cardId) return SPECIAL_VAULT_BOY_ARTWORK[special] || SPECIAL_VAULT_BOY_ARTWORK.S;
   
@@ -44,7 +47,18 @@ export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, 
     else if (raw === "lady-killer" || raw === "lady killer") raw = "black-widow";
   }
 
+  const kebab = raw.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
   const clean = raw.replace(/[^a-z0-9]/g, "");
+
+  const wikiLookup = (wikiArtMap as Record<string, string>)[kebab] || (wikiArtMap as Record<string, string>)[raw] || (wikiArtMap as Record<string, string>)[clean];
+  if (wikiLookup) {
+    return wikiLookup;
+  }
+
+  const exactLookup = (exactArtMap as Record<string, string>)[kebab] || (exactArtMap as Record<string, string>)[raw] || (exactArtMap as Record<string, string>)[clean];
+  if (exactLookup) {
+    return exactLookup;
+  }
 
   if (clean) {
     return `/images/perks_official/${clean}.svg`;
