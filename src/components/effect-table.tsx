@@ -32,11 +32,10 @@ export type EffectTierRow = {
   origins?: string[];
 };
 
+import { sanitizeTitle } from "@/lib/utils/clean-formatting";
+
 function cleanEffectName(name: string): string {
-  if (!name) return "";
-  let clean = name.replace(/\.html?$/i, "").replace(/\.php$/i, "");
-  clean = clean.replace(/_/g, " ");
-  return clean.trim();
+  return sanitizeTitle(name);
 }
 
 function renderInlineMarkdown(text: string | null | undefined): React.ReactNode {

@@ -31,8 +31,10 @@ export const PTS_SECTIONS: { id: PtsSectionId; label: string; icon: string; desc
   { id: "event-datamines", label: "Event Datamines", icon: "🗺️", description: "Infestation faction bosses & endgame reward tables" }
 ];
 
+import { sortAlphanumerically } from "@/lib/utils/alphanumeric-sort";
+
 export function getPtsCatalog(): PtsItem[] {
-  return ptsData as PtsItem[];
+  return sortAlphanumerically(ptsData as PtsItem[], (item) => item.name);
 }
 
 export function filterPtsCatalog(params?: {
@@ -56,5 +58,5 @@ export function filterPtsCatalog(params?: {
     );
   }
 
-  return items;
+  return sortAlphanumerically(items, (item) => item.name);
 }

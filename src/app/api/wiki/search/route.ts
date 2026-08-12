@@ -56,11 +56,14 @@ export async function GET(req: Request) {
     // Update / Patch filter keywords
     if (updateFilter && updateFilter.toLowerCase() !== "all") {
       let kw = updateFilter.replace(/-/g, " ");
-      if (kw.includes("burning")) kw = "Burning Springs";
-      if (kw.includes("backwood")) kw = "Backwoods";
-      if (kw.includes("milepost")) kw = "Milepost Zero";
+      if (kw.includes("pitt")) kw = "The Pitt";
       if (kw.includes("atlantic")) kw = "Atlantic City";
       if (kw.includes("skyline")) kw = "Skyline Valley";
+      if (kw.includes("milepost")) kw = "Milepost Zero";
+      if (kw.includes("backwood")) kw = "Backwoods";
+      if (kw.includes("burning")) kw = "Burning Springs";
+      if (kw.includes("nuka")) kw = "Nuka World";
+      if (kw.includes("invader")) kw = "Invaders";
 
       where.AND = [
         {

@@ -78,6 +78,30 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
     group: "visible"
   },
   {
+    key: "ghoulification_explorer",
+    name: "Ghoulification Protocol",
+    description: "Explored Playable Ghoul 20 S.P.E.C.I.A.L. Cap scaling in the PTS Experimental Lab.",
+    group: "visible"
+  },
+  {
+    key: "formula_auditor",
+    name: "Quaker Mathematician",
+    description: "Audited step-by-step logarithmic damage calculations in the Formula Inspector.",
+    group: "visible"
+  },
+  {
+    key: "expedition_scholar",
+    name: "Pittsburgh & Boardwalk Scholar",
+    description: "Explored The Pitt & Atlantic City Expedition drop tables.",
+    group: "visible"
+  },
+  {
+    key: "binary_dataminer",
+    name: "Creation Engine Data Miner",
+    description: "Inspected official SeventySix.esm direct binary verified records.",
+    group: "visible"
+  },
+  {
     key: "progress_100",
     name: "Registry Complete",
     description: "Reach 100% completion.",

@@ -33,11 +33,10 @@ export type SummaryRow = {
   extraComponent?: string | null;
 };
 
+import { sanitizeTitle } from "@/lib/utils/clean-formatting";
+
 function cleanEffectName(name: string): string {
-  if (!name) return "";
-  let clean = name.replace(/\.html?$/i, "").replace(/\.php$/i, "");
-  clean = clean.replace(/_/g, " ");
-  return clean.trim();
+  return sanitizeTitle(name);
 }
 
 const tierOrder = ["1 Star", "2 Star", "3 Star", "4 Star"] as const;

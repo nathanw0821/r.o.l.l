@@ -77,7 +77,7 @@ export function dedupeNoteSegments(note: string | null): string | null {
   if (!note) return null;
   const parts = note
     .replace(/\r?\n/g, " ")
-    .split(/[|•â€¢,;]/g)
+    .split(/[|•,;]/g)
     .map((part) => part.trim())
     .filter((part) => part.length > 0);
   if (parts.length <= 1) return note;
@@ -114,7 +114,7 @@ export function stripOriginsFromNotes(note: string | null | undefined, origins: 
 
   const cleaned = note
     .replace(/\r?\n/g, " ")
-    .replace(/â€¢|•/g, "|")
+    .replace(/•/g, "|")
     .replace(/[/]/g, "|")
     .replace(/[;]/g, "|")
     .replace(/[,]/g, "|");
@@ -162,7 +162,7 @@ export function extractOriginsFromNotes(value: ImportCellValue): string[] {
 
   const cleaned = normalized
     .replace(/\r?\n/g, " ")
-    .replace(/â€¢|•/g, "|")
+    .replace(/•/g, "|")
     .replace(/[/]/g, "|")
     .replace(/[;]/g, "|")
     .replace(/[,]/g, "|");

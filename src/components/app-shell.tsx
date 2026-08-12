@@ -525,16 +525,58 @@ export default function AppShell({
             </main>
             <DeferredUsernameCompletion />
 
+            {/* Global Active Build Bar (Persistent Navigation Pill) */}
+            <div className="my-4 pip-terminal-panel p-3 rounded-xl border border-amber-500/30 bg-slate-950/90 flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-xs shadow-xl">
+              <div className="flex items-center gap-2.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div>
+                  <span className="font-bold text-amber-400 uppercase tracking-wider">ACTIVE VAULT LOADOUT: </span>
+                  <span className="text-slate-200">Civil Engineer / Fixer Build Stack</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/build"
+                  className="px-3 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:border-amber-400 font-bold uppercase transition-all"
+                >
+                  🛠️ B.U.I.L.D. Sandbox ↗
+                </Link>
+                <Link
+                  href="/perks"
+                  className="px-3 py-1 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 hover:border-emerald-400 font-bold uppercase transition-all"
+                >
+                  ⭐ P.E.R.K. Deck ↗
+                </Link>
+              </div>
+            </div>
+
             {/* Retro pip-boy styled footer */}
-            <footer className="mt-8 border-t border-border pt-6 pb-4 text-xs text-foreground/45 font-mono">
+            <footer className="mt-8 border-t border-border/40 pt-6 pb-6 text-xs text-slate-400 font-mono space-y-3">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <span>© 2026 R.O.L.L. ALL RIGHTS RESERVED.</span>
-                <div className="flex items-center justify-center gap-3 md:mr-36">
-                  <Link href="/rules" className="hover:text-accent transition-colors">&gt; COMMUNITY RULES</Link>
-                  <span className="text-foreground/20">|</span>
-                  <Link href="/terms" className="hover:text-accent transition-colors">&gt; TERMS OF SERVICE</Link>
-                  <span className="text-foreground/20">|</span>
-                  <Link href="/privacy" className="hover:text-accent transition-colors">&gt; PRIVACY POLICY</Link>
+                <span className="text-[0.70rem] text-slate-300 font-bold">© 2026 R.O.L.L. RECORD OF LEGENDARY LOADOUTS</span>
+                <div className="flex items-center gap-3 text-[0.68rem]">
+                  <Link href="/rules" className="hover:text-amber-400 transition-colors">&gt; COMMUNITY RULES</Link>
+                  <span className="text-slate-700">|</span>
+                  <Link href="/terms" className="hover:text-amber-400 transition-colors">&gt; TERMS OF SERVICE</Link>
+                  <span className="text-slate-700">|</span>
+                  <Link href="/privacy" className="hover:text-amber-400 transition-colors">&gt; PRIVACY POLICY</Link>
+                </div>
+              </div>
+
+              {/* Official Bethesda Fan Content & Legal Attribution Banner */}
+              <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 text-[0.62rem] text-slate-400 leading-relaxed font-sans space-y-1">
+                <div className="flex items-center justify-between text-[0.65rem] font-mono text-amber-400/90 font-bold uppercase tracking-wider">
+                  <span>⚖️ OFFICIAL BETHESDA FAN CONTENT DISCLAIMER</span>
+                  <span>100% NON-COMMERCIAL / FAIR USE</span>
+                </div>
+                <p>
+                  Fallout, Fallout 76, Vault-Tec, S.P.E.C.I.A.L., and related trademarks, logos, and game artwork are registered trademarks and copyrighted property of Bethesda Softworks LLC / ZeniMax Media Inc. R.O.L.L. is an independent community tool created under Fair Use (17 U.S.C. § 107) and Bethesda Fan Content guidelines.
+                </p>
+                <div className="pt-1 flex items-center gap-3 text-[0.62rem] font-mono text-slate-400">
+                  <span>Outbound Credits:</span>
+                  <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">NukaKnights Datamines</a>
+                  <span>•</span>
+                  <a href="https://fallout.fandom.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">Fallout Wiki</a>
                 </div>
               </div>
             </footer>

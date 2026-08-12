@@ -97,7 +97,7 @@ function normalizeName(value?: string): string | undefined {
 function splitCategories(raw?: string): string[] {
   if (!raw) return [];
   return raw
-    .split(/[|•â€¢,;]/g)
+    .split(/[|•,;]/g)
     .map((part) => part.trim())
     .filter((part) => part.length > 0);
 }
