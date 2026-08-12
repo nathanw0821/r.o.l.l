@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
 import { getGeminiClient, GEMINI_DEFAULT_MODEL } from "@/lib/ai/gemini-client";
+import { getLocalTacticalAdvice } from "@/lib/ai/local-tactics";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  try {
-    const ai = getGeminiClient();
-    if (!ai) {
-      return NextResponse.json(
-        { success: false, error: "Gemini API key is not configured on the server." },
-        { status: 503 }
-      );
-    }
+  let specialPayload: Record<string, number> = {};
+  let perksPayload: Array<{ name: string; rank: number; special: string }> = [];
 
+  try {
     const body = await req.json();
     const { special, perks } = body as {
       special?: Record<string, number>;
@@ -26,11 +22,24 @@ export async function POST(req: Request) {
       );
     }
 
-    const perkList = (perks || [])
+    specialPayload = special;
+    perksPayload = perks || [];
+
+    const ai = getGeminiClient();
+    if (!ai) {
+      const localAdvice = getLocalTacticalAdvice({ special: specialPayload, perks: perksPayload });
+      return NextResponse.json({
+        success: true,
+        advice: localAdvice || "Vault-Tec recommends continuing tactical experimentation in the Wasteland.",
+        source: "local-tactics",
+      });
+    }
+
+    const perkList = perksPayload
       .map((p) => `${p.name} (Rank ${p.rank}) [${p.special}]`)
       .join(", ");
 
-    const specialSummary = Object.entries(special)
+    const specialSummary = Object.entries(specialPayload)
       .map(([k, v]) => `${k.toUpperCase()}: ${v}`)
       .join(" | ");
 
@@ -57,26 +66,22 @@ Provide a precise 2-sentence Vault-Tec tactical recommendation for optimizing pe
       },
     });
 
-    const advice = response.text?.trim() || "Vault-Tec recommends continuing tactical experimentation in the Wasteland.";
+    const advice = response.text?.trim() || getLocalTacticalAdvice({ special: specialPayload, perks: perksPayload }) || "Vault-Tec recommends continuing tactical experimentation in the Wasteland.";
 
     return NextResponse.json({
       success: true,
       advice,
+      source: "gemini-ai",
     });
   } catch (error: unknown) {
     console.error("[Build Advisor AI Error]", error);
-    const errString = String(error);
-    const isQuotaExceeded = errString.includes("429") || errString.includes("RESOURCE_EXHAUSTED") || errString.includes("quota");
-
-    if (isQuotaExceeded) {
-      return NextResponse.json(
-        {
-          success: false,
-          quotaExceeded: true,
-          error: "Vault-Tec AI Advisor is at daily capacity limit. Standard loadouts and perk decks remain 100% functional.",
-        },
-        { status: 429 }
-      );
+    const localAdvice = getLocalTacticalAdvice({ special: specialPayload, perks: perksPayload });
+    if (localAdvice) {
+      return NextResponse.json({
+        success: true,
+        advice: localAdvice,
+        source: "local-tactics",
+      });
     }
 
     return NextResponse.json(
