@@ -23,13 +23,27 @@ export default function GlobalError({
           <p className="text-xs text-[#8ba6a0] leading-relaxed">
             The browser session was interrupted. Click to reload the active view.
           </p>
-          <button
-            type="button"
-            onClick={() => reset()}
-            className="px-6 py-2.5 rounded-lg bg-[#f3a24d] text-[#080b0e] font-bold text-xs uppercase tracking-wider hover:opacity-90 transition"
-          >
-            Reload Page
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") window.location.reload();
+                else reset();
+              }}
+              className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-[#f3a24d] text-[#080b0e] font-bold text-xs uppercase tracking-wider hover:opacity-90 transition cursor-pointer"
+            >
+              Reload Page
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") window.location.href = "/";
+              }}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-700 hover:text-white transition cursor-pointer"
+            >
+              Return Home
+            </button>
+          </div>
         </div>
       </body>
     </html>
