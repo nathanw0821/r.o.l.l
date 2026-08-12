@@ -4,7 +4,7 @@ import * as React from "react";
 import { type UserAchievementView } from "@/lib/achievements";
 import { emitAchievementUnlocked } from "@/lib/achievement-events";
 import { cn } from "@/lib/utils";
-import { Sparkles, Trophy, MousePointerClick } from "lucide-react";
+import { Sparkles, Trophy } from "lucide-react";
 
 const groups = [
   {
@@ -111,33 +111,27 @@ export function AchievementsClient({ initialAchievements }: { initialAchievement
                       achievement.unlocked
                         ? "border-accent/70 shadow-[0_0_12px_rgba(16,185,129,0.15)] bg-emerald-950/20"
                         : isInteractive
-                        ? "border-amber-500/60 hover:border-amber-400 cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:scale-[1.01] active:scale-[0.99] group ring-1 ring-amber-500/40"
+                        ? "border-amber-500/60 hover:border-amber-400 cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.25)] hover:scale-[1.01] active:scale-[0.99] group ring-1 ring-amber-500/40"
                         : "border-border"
                     )}
                   >
-                    {/* Witty interactive banner for button_masher */}
-                    {isInteractive && (
-                      <div className="absolute top-0 right-0 left-0 bg-gradient-to-r from-amber-500/20 via-amber-400/30 to-amber-500/20 text-[0.65rem] font-mono font-bold uppercase tracking-wider text-amber-300 py-0.5 px-3 flex items-center justify-between border-b border-amber-500/30">
-                        <span className="flex items-center gap-1">
-                          <MousePointerClick className="h-3 w-3 animate-bounce" />
-                          <span>VAULT-TEC SENSITIVE TERMINAL SWITCH</span>
-                        </span>
-                        <span className="text-[0.6rem] opacity-80">DONT PRESS</span>
-                      </div>
-                    )}
-
-                    <div className={cn("flex items-start justify-between gap-3", isInteractive && "pt-4")}>
+                    <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="text-sm font-semibold flex items-center gap-2">
-                          <span>{achievement.concealed ? "Hidden Achievement" : achievement.name}</span>
-                          {isInteractive && (
-                            <span className="text-[0.65rem] font-mono text-amber-400 bg-amber-950/80 px-1.5 py-0.5 rounded border border-amber-500/50 animate-pulse">
-                              Tempting...
-                            </span>
-                          )}
+                          <span>
+                            {isInteractive
+                              ? achievement.name
+                              : achievement.concealed
+                              ? "Hidden Achievement"
+                              : achievement.name}
+                          </span>
                         </div>
                         <div className="mt-1 text-xs text-foreground/60 leading-relaxed">
-                          {achievement.concealed ? "Keep exploring the registry." : achievement.description}
+                          {isInteractive
+                            ? "Vault-Tec explicitly warns against touching this terminal switch..."
+                            : achievement.concealed
+                            ? "Keep exploring the registry."
+                            : achievement.description}
                         </div>
                       </div>
 
@@ -147,17 +141,17 @@ export function AchievementsClient({ initialAchievements }: { initialAchievement
                           achievement.unlocked
                             ? "border-emerald-500/60 bg-emerald-950/50 text-emerald-400"
                             : isInteractive
-                            ? "border-amber-500 bg-amber-950 text-amber-300 animate-pulse"
+                            ? "border-amber-500 bg-amber-950 text-amber-300 animate-pulse group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors"
                             : "border-border text-foreground/50"
                         )}
                       >
-                        {achievement.unlocked ? "Unlocked" : isInteractive ? "Press?" : "Locked"}
+                        {achievement.unlocked ? "Unlocked" : isInteractive ? "DONT TOUCH" : "Locked"}
                       </div>
                     </div>
 
                     {achievement.unlockedAt && (
-                      <div className="mt-3 text-[0.8rem] text-emerald-400/80 font-mono">
-                        ✓ Earned {new Date(achievement.unlockedAt).toLocaleString()}
+                      <div className="mt-3 text-[0.8rem] text-emerald-400/80 font-mono flex items-center gap-1">
+                        <span>✓ Earned {new Date(achievement.unlockedAt).toLocaleString()}</span>
                       </div>
                     )}
                   </div>
