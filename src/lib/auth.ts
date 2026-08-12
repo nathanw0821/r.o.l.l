@@ -296,4 +296,11 @@ export const authOptions: NextAuthOptions = {
   debug: true
 };
 
-export const getAppSession = cache(() => getServerSession(authOptions));
+export const getAppSession = cache(async () => {
+  try {
+    return await getServerSession(authOptions);
+  } catch (err) {
+    console.error("[NextAuth Session Error]", err);
+    return null;
+  }
+});
