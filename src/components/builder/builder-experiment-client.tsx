@@ -457,6 +457,40 @@ export default function BuilderExperimentClient({
       if (!isAdmin && !hasBuilderAccess) {
         setShowBetaPrompt(true);
       }
+
+      // Auto-equip item passed via URL parameter e.g. /build?equip=civil-engineer or /build?equip=fixer
+      if (typeof window !== "undefined") {
+        const searchParams = new URLSearchParams(window.location.search);
+        const equipTarget = searchParams.get("equip") || searchParams.get("gear") || searchParams.get("base") || searchParams.get("q");
+
+        if (equipTarget) {
+          const normTarget = equipTarget.toLowerCase().trim();
+          const matchPiece = (query: string) => {
+            return BASE_GEAR_PIECES.find((p) => {
+              const pid = p.id.toLowerCase();
+              const pkey = (p.armorSetKey || "").toLowerCase();
+              const plabel = p.label.toLowerCase();
+              return (
+                pid === query ||
+                pkey === query ||
+                pid === `armor-set-${query}` ||
+                pid.includes(query) ||
+                plabel.includes(query)
+              );
+            });
+          };
+
+          const found = matchPiece(normTarget);
+          if (found) {
+            setPayload((prev) => ({
+              ...prev,
+              basePieceId: found.id,
+              equipmentKind: found.kind,
+              weaponSub: found.weaponSub ?? null
+            }));
+          }
+        }
+      }
     } catch {
       // ignore
     }
@@ -642,7 +676,7 @@ export default function BuilderExperimentClient({
   const currentBaseLearned =
     isTrackableBasePieceId(piece.id) &&
     (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
-      ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, piece.id)
+      ? isPowerArmorTorsoRowLearned(piece.id, learnedBasePieceIds)
       : learnedBasePieceIds.has(piece.id));
 
   async function toggleLearnedBasePiece(pieceId: string, learned: boolean) {
@@ -1557,7 +1591,7 @@ export default function BuilderExperimentClient({
                         const learnedHint =
                           isTrackableBasePieceId(g.id) &&
                           (g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)
-                            ? isPowerArmorTorsoRowLearned(learnedBasePieceIds, g.id)
+                            ? isPowerArmorTorsoRowLearned(g.id, learnedBasePieceIds)
                             : learnedBasePieceIds.has(g.id))
                             ? " [LEARNED]"
                             : "";

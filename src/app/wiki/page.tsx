@@ -317,6 +317,62 @@ function parseCleanArticleContent(content: string) {
   });
 }
 
+function getEquipmentKeyFromTitle(title: string, content: string): string {
+  const text = (title + " " + content).toLowerCase();
+  
+  if (text.includes("civil engineer")) return "civil-engineer";
+  if (text.includes("secret service")) return "secret-service";
+  if (text.includes("brotherhood recon") || text.includes("bos recon")) return "bos-recon";
+  if (text.includes("covert scout")) return "covert-scout";
+  if (text.includes("urban scout")) return "urban-scout";
+  if (text.includes("forest scout")) return "forest-scout";
+  if (text.includes("arctic marine")) return "arctic-marine";
+  if (text.includes("marine")) return "marine";
+  if (text.includes("heavy combat") || text.includes("combat armor") || text.includes("combat armour")) return "heavy-combat";
+  if (text.includes("thorn")) return "thorn";
+  if (text.includes("solar")) return "solar";
+  if (text.includes("trapper")) return "trapper";
+  if (text.includes("wood")) return "wood";
+  if (text.includes("heavy metal") || text.includes("metal armor")) return "heavy-metal";
+  if (text.includes("heavy leather") || text.includes("leather armor")) return "heavy-leather";
+  if (text.includes("heavy robot") || text.includes("robot armor")) return "heavy-robot";
+  if (text.includes("botsmith")) return "botsmith";
+  
+  // Power Armor
+  if (text.includes("t-65") || text.includes("t65")) return "t65-torso";
+  if (text.includes("t-60") || text.includes("t60")) return "t60-torso";
+  if (text.includes("t-51") || text.includes("t51")) return "t51-torso";
+  if (text.includes("t-45") || text.includes("t45")) return "t45-torso";
+  if (text.includes("excavator")) return "excavator-torso";
+  if (text.includes("x-01") || text.includes("x01")) return "x01-torso";
+  if (text.includes("ultracite")) return "ultracite-torso";
+  if (text.includes("strangler heart")) return "strangler-heart-chest";
+  if (text.includes("hellcat")) return "hellcat-torso";
+  if (text.includes("union power") || text.includes("union pa")) return "union-pa-torso";
+  if (text.includes("vulcan")) return "vulcan-torso";
+
+  // Weapons
+  if (text.includes("fixer")) return "fixer";
+  if (text.includes("handmade")) return "handmade";
+  if (text.includes("railway")) return "railway";
+  if (text.includes("cremator")) return "cremator";
+  if (text.includes("flamer") || text.includes("holy fire")) return "holy-fire";
+  if (text.includes("gatling plasma")) return "gatling-plasma";
+  if (text.includes("50 cal")) return "cal50";
+  if (text.includes("minigun")) return "minigun";
+  if (text.includes("pepper shaker")) return "pepper-shaker";
+  if (text.includes("gauss minigun")) return "gauss-minigun";
+  if (text.includes("plasma caster")) return "plasma-caster";
+  if (text.includes("chainsaw")) return "chainsaw";
+  if (text.includes("auto axe")) return "auto-axe";
+  if (text.includes("power fist")) return "power-fist";
+  if (text.includes("deathclaw gauntlet")) return "dc-gauntlet";
+  if (text.includes("war glaive")) return "war-glaive";
+  if (text.includes("plasma cutter")) return "plasma-cutter";
+
+  return cleanTitle(title);
+}
+
 export default function TruthWikiPage() {
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState("all");
@@ -466,14 +522,14 @@ export default function TruthWikiPage() {
 
                 <div className="pt-2 flex flex-col gap-2.5">
                   <Link
-                    href="/build"
-                    className="w-full py-2.5 px-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-mono font-bold text-center transition-all shadow-sm"
+                    href={`/build?equip=${encodeURIComponent(getEquipmentKeyFromTitle(selectedArticle.title, selectedArticle.content))}`}
+                    className="w-full py-2.5 px-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-mono font-bold text-center transition-all shadow-sm flex items-center justify-center gap-1.5"
                   >
                     🛠️ Test in B.U.I.L.D. Sandbox
                   </Link>
                   <Link
                     href="/perks"
-                    className="w-full py-2.5 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-bold text-center transition-all shadow-sm"
+                    className="w-full py-2.5 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-bold text-center transition-all shadow-sm flex items-center justify-center gap-1.5"
                   >
                     🃏 View in P.E.R.K. Matrix
                   </Link>
