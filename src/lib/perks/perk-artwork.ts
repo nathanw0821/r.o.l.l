@@ -50,18 +50,21 @@ export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, 
   const kebab = raw.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
   const clean = raw.replace(/[^a-z0-9]/g, "");
 
+  // 1. Primary Check: 1:1 In-Game Texture Map
   const wikiLookup = (wikiArtMap as Record<string, string>)[kebab] || (wikiArtMap as Record<string, string>)[raw] || (wikiArtMap as Record<string, string>)[clean];
-  if (wikiLookup) {
+  if (wikiLookup && !raw.includes("legendary")) {
     return wikiLookup;
   }
 
   const exactLookup = (exactArtMap as Record<string, string>)[kebab] || (exactArtMap as Record<string, string>)[raw] || (exactArtMap as Record<string, string>)[clean];
-  if (exactLookup) {
+  if (exactLookup && !raw.includes("legendary")) {
     return exactLookup;
   }
 
+  // 2. Official SVG Asset Fallback (Covers Legendary Perks & Datamined Vectors)
   if (clean) {
     return `/images/perks_official/${clean}.svg`;
   }
+
   return SPECIAL_VAULT_BOY_ARTWORK[special] || SPECIAL_VAULT_BOY_ARTWORK.S;
 }
