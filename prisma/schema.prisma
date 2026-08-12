@@ -466,3 +466,30 @@ model VisitorStats {
 
   @@index([date])
 }
+
+model Article {
+  id        Int            @id @default(autoincrement())
+  source    String
+  category  String         @default("General")
+  title     String
+  url       String         @unique
+  content   String
+  mainImage String?        @map("main_image")
+  updatedAt DateTime       @default(now()) @map("updated_at")
+  images    ArticleImage[]
+
+  @@index([category])
+  @@index([source])
+}
+
+model ArticleImage {
+  id         Int      @id @default(autoincrement())
+  articleUrl String?  @map("article_url")
+  remoteUrl  String   @unique @map("remote_url")
+  localPath  String   @map("local_path")
+  createdAt  DateTime @default(now()) @map("created_at")
+  article    Article? @relation(fields: [articleUrl], references: [url], onDelete: Cascade)
+
+  @@index([articleUrl])
+}
+
