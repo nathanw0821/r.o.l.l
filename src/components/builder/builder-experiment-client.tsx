@@ -30,6 +30,7 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import ProgressToggle from "@/components/progress-toggle";
 import {
   ARMOR_SET_SLOT_LABELS,
+  ARMOR_SET_ROWS,
   getArmorSetRow,
 } from "@/lib/builder/armor-sets";
 import {
@@ -848,6 +849,7 @@ export default function BuilderExperimentClient({
           ...(mutationLayer ? [mutationLayer] : []),
         ],
         baseArmorStats,
+        armorPieceSetKeys: payload.armorPieceSetKeys,
         baseSpecial: payload.baseSpecial,
         legendaryPerkIds: payload.legendaryPerkIds,
       }),
@@ -859,6 +861,7 @@ export default function BuilderExperimentClient({
       powerArmorFrameIntrinsicLayer,
       mutationLayer,
       baseArmorStats,
+      payload.armorPieceSetKeys,
       payload.baseSpecial,
       payload.legendaryPerkIds,
       piece.kind,
@@ -1105,6 +1108,34 @@ export default function BuilderExperimentClient({
               </button>
             )}
           </div>
+
+          {/* Per-Slot Armor Piece Selector for Mixed Sets */}
+          {!isPA && payloadIndex !== null && (
+            <div className="mb-1.5">
+              <select
+                className="w-full text-[0.68rem] bg-background/90 border border-border/40 rounded px-1 py-0.5 font-mono uppercase text-accent font-bold cursor-pointer hover:border-accent"
+                value={payload.armorPieceSetKeys?.[payloadIndex] || piece.armorSetKey || "civil-engineer"}
+                onChange={(e) => {
+                  const currentKeys = payload.armorPieceSetKeys || [
+                    piece.armorSetKey || "civil-engineer",
+                    piece.armorSetKey || "civil-engineer",
+                    piece.armorSetKey || "civil-engineer",
+                    piece.armorSetKey || "civil-engineer",
+                    piece.armorSetKey || "civil-engineer"
+                  ];
+                  const nextKeys = [...currentKeys];
+                  nextKeys[payloadIndex] = e.target.value;
+                  setPayload(p => ({ ...p, armorPieceSetKeys: nextKeys }));
+                }}
+              >
+                {ARMOR_SET_ROWS.map((row) => (
+                  <option key={row.key} value={row.key} className="bg-background text-foreground">
+                    {row.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {isEquipped ? (
             <div className="space-y-2">

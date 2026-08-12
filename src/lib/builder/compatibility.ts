@@ -1,6 +1,7 @@
 import {
   ARMOR_SET_SLOT_LABELS,
   armorSetKeyFromBasePieceId,
+  getArmorSetRow,
   type ArmorSetStats
 } from "@/lib/builder/armor-sets";
 import { type BaseGearPiece, getBaseGearPiece } from "@/lib/builder/base-gear";
@@ -251,6 +252,7 @@ export function aggregateEffectMath(
     extraLayers: Record<string, number>[];
     /** Full-set armor table (Nuka Knights Backwoods article). */
     baseArmorStats?: ArmorSetStats | null;
+    armorPieceSetKeys?: (string | null)[];
     baseSpecial?: Record<string, number>;
     legendaryPerkIds?: string[];
   }
@@ -276,7 +278,21 @@ export function aggregateEffectMath(
     carryWeight: 0,
   };
 
-  if (opts.baseArmorStats) {
+  if (opts.armorPieceSetKeys && opts.armorPieceSetKeys.length > 0) {
+    for (const key of opts.armorPieceSetKeys) {
+      if (key) {
+        const row = getArmorSetRow(key);
+        if (row?.stats) {
+          acc.dr += Math.round(row.stats.dr / 5);
+          acc.er += Math.round(row.stats.er / 5);
+          acc.fr += Math.round(row.stats.fr / 5);
+          acc.cr += Math.round(row.stats.cr / 5);
+          acc.pr += Math.round(row.stats.pr / 5);
+          acc.rr += Math.round(row.stats.rr / 5);
+        }
+      }
+    }
+  } else if (opts.baseArmorStats) {
     acc.dr += opts.baseArmorStats.dr;
     acc.er += opts.baseArmorStats.er;
     acc.fr += opts.baseArmorStats.fr;
