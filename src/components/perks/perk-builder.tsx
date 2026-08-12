@@ -640,6 +640,15 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
                         </button>
                       ))}
                     </div>
+
+                    <a
+                      href={`/wiki?q=${encodeURIComponent(card.name)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[0.68rem] font-mono text-amber-400 hover:text-amber-300 font-bold flex items-center justify-center gap-1 py-1 bg-amber-500/10 rounded border border-amber-500/30 hover:border-amber-400 transition-all"
+                    >
+                      📖 Read Vault Guide in Truth Bible ↗
+                    </a>
                   </div>
                 </div>
               );
