@@ -531,6 +531,63 @@ export default function ScreenshotAssistClient({
     );
   }
 
+  async function requestGeminiVisionAnalysis() {
+    if (imageQueue.length === 0) {
+      setAiMessage("Add at least one screenshot first.");
+      return;
+    }
+
+    setOcrPending(true);
+    setAiMessage(null);
+
+    try {
+      const allSuggestedIds = new Set<string>();
+      const allReasons: Record<string, string> = {};
+      let totalMatches = 0;
+
+      for (const imageDataUrl of imageQueue) {
+        const res = await fetch("/api/ai/scan-vision", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageBase64: imageDataUrl }),
+        });
+        const data = await res.json();
+        if (data.success && Array.isArray(data.matchedMods)) {
+          for (const matchName of data.matchedMods) {
+            const normMatch = matchName.toLowerCase();
+            const matchingRows = localRows.filter((r) =>
+              r.effect.name.toLowerCase().includes(normMatch) ||
+              normMatch.includes(r.effect.name.toLowerCase())
+            );
+            for (const row of matchingRows) {
+              allSuggestedIds.add(row.id);
+              allReasons[row.id] = "Matched by Gemini 2.5 Vision AI";
+              totalMatches++;
+            }
+          }
+        }
+      }
+
+      const suggestedIdsArray = Array.from(allSuggestedIds);
+      setAiSuggestedIds(suggestedIdsArray);
+      setAiReasonById(allReasons);
+
+      if (autoSelectAiRef.current) {
+        setSelectedIds((current) => Array.from(new Set([...current, ...suggestedIdsArray])));
+      }
+
+      setAiMessage(
+        totalMatches > 0
+          ? `🤖 Gemini Vision matched ${totalMatches} mods across ${imageQueue.length} screenshots!`
+          : "No legendary mods recognized by Gemini Vision."
+      );
+    } catch (err) {
+      setAiMessage(err instanceof Error ? err.message : "Gemini Vision OCR failed.");
+    } finally {
+      setOcrPending(false);
+    }
+  }
+
   return (
     <div className={cn("space-y-6", isWindow ? "space-y-4" : "grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]")}>
       <style>{`
@@ -741,9 +798,9 @@ export default function ScreenshotAssistClient({
           <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border/40 pb-2.5">
             <div>
               <div className="text-sm font-semibold uppercase font-mono text-foreground/90 tracking-wide flex items-center gap-2">
-                <span className="text-accent">03.</span> {preset === "build" ? "Holographic Build Diagnostic" : "Tesseract Scan Engine"}
+                <span className="text-accent">03.</span> {preset === "build" ? "Holographic Build Diagnostic" : "Tesseract & Gemini Vision Engine"}
               </div>
-              <div className="mt-0.5 text-xs text-foreground/50">{preset === "build" ? "Resolving full SPECIAL & legendary stat arrays." : "Local-first OCR character recognition."}</div>
+              <div className="mt-0.5 text-xs text-foreground/50">{preset === "build" ? "Resolving full SPECIAL & legendary stat arrays." : "Hybrid Local OCR + Gemini 2.5 Vision recognition."}</div>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
@@ -768,6 +825,19 @@ export default function ScreenshotAssistClient({
             <div className="flex flex-wrap gap-2.5">
               <Button 
                 type="button" 
+                variant="outline" 
+                size="sm" 
+                onClick={requestGeminiVisionAnalysis} 
+                disabled={ocrPending || imageQueue.length === 0}
+                className={cn(
+                  "font-mono uppercase text-xs tracking-wider border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50 transition-all duration-200",
+                  (ocrPending || imageQueue.length === 0) ? "opacity-50 cursor-not-allowed" : "shadow-[0_0_12px_rgba(245,158,11,0.2)]"
+                )}
+              >
+                {ocrPending ? "🤖 GEMINI VISION..." : "🤖 Gemini Vision OCR"}
+              </Button>
+              <Button 
+                type="button" 
                 variant={preset === "build" ? "default" : "outline"} 
                 size="sm" 
                 onClick={requestTesseractAnalysis} 
@@ -779,7 +849,7 @@ export default function ScreenshotAssistClient({
                     : "hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_14px_rgba(var(--color-accent),0.25)]"
                 )}
               >
-                {ocrPending ? "SCANNING..." : (preset === "build" ? "Analyze Build Specs" : "Engage OCR Scanner")}
+                {ocrPending ? "SCANNING..." : (preset === "build" ? "Analyze Build Specs" : "Engage Local OCR")}
               </Button>
               {preset !== "build" && (
                 <Button
