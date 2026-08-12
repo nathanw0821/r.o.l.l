@@ -86,6 +86,13 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
 
   const { slug } = await params;
   const row = await getCachedPublishedSharedBuild(slug);
+
+  // Instant 307 Redirect for URL Shortlinks
+  if (row?.payload && typeof row.payload === "object" && (row.payload as any).redirectUrl) {
+    const { redirect } = await import("next/navigation");
+    redirect((row.payload as any).redirectUrl);
+  }
+
   const payload = normalizeBuilderPayload(row?.payload);
   if (!row || !payload) {
     notFound();
