@@ -9,17 +9,6 @@
       },
       "envFile": "${workspaceFolder}/.env.mcp.local"
     },
-    "roll-vercel": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["${workspaceFolder}/scripts/mcp/vercel-mcp.mjs"],
-      "env": {
-        "VERCEL_TOKEN": "${env:VERCEL_TOKEN}",
-        "VERCEL_TEAM_ID": "${env:VERCEL_TEAM_ID}",
-        "MCP_MODE": "${env:MCP_MODE}"
-      },
-      "envFile": "${workspaceFolder}/.env.mcp.local"
-    },
     "roll-git": {
       "type": "stdio",
       "command": "npx",
