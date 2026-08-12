@@ -1,32 +1,20 @@
+# Build outputs & caches
 node_modules
 .next
 .open-next
 .vercel
+dist-worker
+.wrangler
+tsconfig.tsbuildinfo
 
-# Local-only static files (Next serves from public/ when present). Favicon is src/app/icon.png.
-public/*
-!public/images/
-!public/.well-known/
-!public/security.txt
-!public/favicon-v3.png
-!public/favicon.png
-
+# Environment secrets, credentials & logs
 .env
-.env.local
-.env.development.local
-.env.production.local
+.env*.local
 *.sql
 !prisma/migrations/**/*.sql
 *.backup
-tsconfig.tsbuildinfo
-.continue/
-.env.mcp.local
-
-.vercel
-.env*.local
-dist-worker/
-.wrangler/
-wrangler.log
 *.db
+wrangler.log
+.continue
 pasted_image_*.png
 
