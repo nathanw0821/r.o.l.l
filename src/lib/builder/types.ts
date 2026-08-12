@@ -52,11 +52,12 @@ export type BuilderPayload = {
   legendaryModIds: (string | null)[];
   /** Five (armor) or six (power armor) body slots × four stars — full set only. */
   armorLegendaryModIds: (string | null)[][];
-  /**
-   * Material + misc craft choice per body slot (full set).
+  /** Material + misc craft choice per body slot (full set).
    * 5 slots for armor sets, 6 slots for power armor (including helmet).
    */
   armorPieceCrafting: BuilderArmorPieceCrafting[];
+  /** Optional individual armor set key per slot for mixed-set builds e.g. ["civil-engineer", "secret-service", "heavy-raider", "botsmith", "civil-engineer"]. */
+  armorPieceSetKeys?: (string | null)[];
   /**
    * When base is a PA torso/chest, optional helmet row for sandbox resists + helmet crafting.
    * Null when no helmet selected or when base is not a PA torso.
