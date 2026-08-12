@@ -52,12 +52,12 @@ export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, 
 
   // 1. Primary Check: 1:1 In-Game Texture Map
   const wikiLookup = (wikiArtMap as Record<string, string>)[kebab] || (wikiArtMap as Record<string, string>)[raw] || (wikiArtMap as Record<string, string>)[clean];
-  if (wikiLookup && !raw.includes("legendary")) {
+  if (wikiLookup) {
     return wikiLookup;
   }
 
   const exactLookup = (exactArtMap as Record<string, string>)[kebab] || (exactArtMap as Record<string, string>)[raw] || (exactArtMap as Record<string, string>)[clean];
-  if (exactLookup && !raw.includes("legendary")) {
+  if (exactLookup) {
     return exactLookup;
   }
 
