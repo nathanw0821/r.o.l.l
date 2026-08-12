@@ -59,3 +59,7 @@ DISCORD_PUBLIC_KEY = "fedb0644caf356455e981c9f7935aaa7cb4e38ecb67a6f80c6476926ce
 binding = "KV_LIMITER"
 id = "916a6d603bc7470586b217fb9bcb3297"
 
+[env.preview.assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
