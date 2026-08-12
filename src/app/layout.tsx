@@ -81,15 +81,24 @@ function buildUiBootstrapScript() {
 }
 
 async function DynamicShell({ children }: { children: ReactNode }) {
-  const session = await getAppSession();
+  let session = null;
+  try {
+    session = await getAppSession();
+  } catch {
+    // Graceful fallback if NextAuth session check fails
+  }
   
   let mainCharacterId: string | null = null;
   if (session?.user?.id) {
-    const mainChar = await prisma.character.findFirst({
-      where: { userId: session.user.id, name: "Main Character" }
-    });
-    if (mainChar) {
-      mainCharacterId = mainChar.id;
+    try {
+      const mainChar = await prisma.character.findFirst({
+        where: { userId: session.user.id, name: "Main Character" }
+      });
+      if (mainChar) {
+        mainCharacterId = mainChar.id;
+      }
+    } catch {
+      // Graceful fallback if database is unready
     }
   }
 
