@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <radialGradient id="p-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="200" rx="16" fill="#090d16"/>
+  <circle cx="100" cy="100" r="90" fill="url(#p-glow)"/>
+  <circle cx="100" cy="85" r="42" fill="#06b6d4" opacity="0.15" stroke="#06b6d4" stroke-width="2"/>
+  <!-- Vault Boy Eye & Target Reticle -->
+  <circle cx="100" cy="85" r="30" fill="none" stroke="#22d3ee" stroke-width="3" stroke-dasharray="4,4"/>
+  <circle cx="100" cy="85" r="12" fill="#06b6d4"/>
+  <circle cx="100" cy="85" r="4" fill="#ecfeff"/>
+  <path d="M70 145 C 70 120, 85 105, 100 105 C 115 105, 130 120, 130 145 Z" fill="#22d3ee" opacity="0.8"/>
+  <text x="100" y="175" text-anchor="middle" fill="#06b6d4" font-family="monospace" font-size="14" font-weight="900" letter-spacing="2">PERCEPTION</text>
+</svg>

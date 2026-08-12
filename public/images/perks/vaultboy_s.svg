@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <radialGradient id="s-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="200" rx="16" fill="#090d16"/>
+  <circle cx="100" cy="100" r="90" fill="url(#s-glow)"/>
+  <circle cx="100" cy="90" r="40" fill="#f59e0b" opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+  <!-- Vault Boy Flexing Arm & Torso Silhouette -->
+  <path d="M70 140 C 70 110, 85 95, 100 95 C 115 95, 130 110, 130 140 Z" fill="#fbbf24"/>
+  <circle cx="100" cy="70" r="22" fill="#fbbf24"/>
+  <!-- Hair swoop -->
+  <path d="M82 62 C 85 50, 115 50, 118 64 C 110 58, 90 58, 82 62 Z" fill="#fef08a"/>
+  <!-- Flex Bicep -->
+  <path d="M125 105 Q 150 80, 140 60 Q 125 70, 120 90 Z" fill="#fbbf24" stroke="#f59e0b" stroke-width="3"/>
+  <text x="100" y="175" text-anchor="middle" fill="#f59e0b" font-family="monospace" font-size="14" font-weight="900" letter-spacing="2">STRENGTH</text>
+</svg>

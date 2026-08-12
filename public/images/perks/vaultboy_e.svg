@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <radialGradient id="e-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="200" rx="16" fill="#090d16"/>
+  <circle cx="100" cy="100" r="90" fill="url(#e-glow)"/>
+  <!-- Shield & Heart Silhouette -->
+  <path d="M100 40 L145 60 V105 C145 135, 100 155, 100 155 C100 155, 55 135, 55 105 V60 Z" fill="#10b981" opacity="0.2" stroke="#10b981" stroke-width="3"/>
+  <path d="M100 70 C90 55, 65 65, 75 90 C85 110, 100 125, 100 125 C100 125, 115 110, 125 90 C135 65, 110 55, 100 70 Z" fill="#34d399"/>
+  <text x="100" y="178" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="14" font-weight="900" letter-spacing="2">ENDURANCE</text>
+</svg>

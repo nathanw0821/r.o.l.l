@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <radialGradient id="leg-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="200" rx="16" fill="#090d16"/>
+  <circle cx="100" cy="100" r="90" fill="url(#leg-glow)"/>
+  <polygon points="100,25 120,70 170,70 130,100 145,150 100,120 55,150 70,100 30,70 80,70" fill="#fbbf24" stroke="#d97706" stroke-width="4"/>
+  <text x="100" y="178" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="14" font-weight="900" letter-spacing="2">LEGENDARY</text>
+</svg>
