@@ -33,6 +33,13 @@ export type SummaryRow = {
   extraComponent?: string | null;
 };
 
+function cleanEffectName(name: string): string {
+  if (!name) return "";
+  let clean = name.replace(/\.html?$/i, "").replace(/\.php$/i, "");
+  clean = clean.replace(/_/g, " ");
+  return clean.trim();
+}
+
 const tierOrder = ["1 Star", "2 Star", "3 Star", "4 Star"] as const;
 const SUMMARY_LOCK_KEY = "roll.summary.locked";
 const MOBILE_SIDEBAR_SUPPRESS_KEY = "roll.mobile.sidebar.suppress";
@@ -696,7 +703,7 @@ export default function SummaryClient({
                           pendingId === row.id && "opacity-60"
                         )}
                       >
-                        <span className="font-semibold truncate pr-2 text-[0.76rem]">{row.effect.name}</span>
+                        <span className="font-semibold truncate pr-2 text-[0.76rem]">{cleanEffectName(row.effect.name)}</span>
                         <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
                           {/* Seeking Tick Mark */}
                           <button
@@ -777,7 +784,7 @@ export default function SummaryClient({
                     )}
                   >
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold truncate pr-6">{row.effect.name}</div>
+                      <div className="text-sm font-semibold truncate pr-6">{cleanEffectName(row.effect.name)}</div>
                       <div className="mt-1 text-[0.84rem] font-semibold uppercase tracking-[0.12em]">
                         {pendingId === row.id
                           ? "Saving..."

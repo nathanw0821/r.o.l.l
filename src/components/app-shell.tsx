@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import {
   ArrowLeft,
+  BookOpen,
   Boxes,
   FlaskConical,
   ListChecks,
@@ -42,6 +43,7 @@ interface AppNavLink {
 }
 
 const trackingLinks: AppNavLink[] = [
+  { href: "/wiki", label: "Truth Wiki", icon: BookOpen, activePaths: ["/wiki"] },
   { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
   { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
   { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },

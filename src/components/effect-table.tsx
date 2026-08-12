@@ -32,6 +32,41 @@ export type EffectTierRow = {
   origins?: string[];
 };
 
+function cleanEffectName(name: string): string {
+  if (!name) return "";
+  let clean = name.replace(/\.html?$/i, "").replace(/\.php$/i, "");
+  clean = clean.replace(/_/g, " ");
+  return clean.trim();
+}
+
+function renderInlineMarkdown(text: string | null | undefined): React.ReactNode {
+  if (!text) return "-";
+  const parts: React.ReactNode[] = [];
+  let keyIdx = 0;
+  const pattern = /(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/g;
+  let match;
+  let lastIndex = 0;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const matchedStr = match[0];
+    if (matchedStr.startsWith("***") && matchedStr.endsWith("***")) {
+      parts.push(<strong key={keyIdx++} className="font-bold italic text-amber-300">{matchedStr.slice(3, -3)}</strong>);
+    } else if (matchedStr.startsWith("**") && matchedStr.endsWith("**")) {
+      parts.push(<strong key={keyIdx++} className="font-bold text-amber-300">{matchedStr.slice(2, -2)}</strong>);
+    } else if (matchedStr.startsWith("*") && matchedStr.endsWith("*")) {
+      parts.push(<em key={keyIdx++} className="italic text-emerald-300">{matchedStr.slice(1, -1)}</em>);
+    }
+    lastIndex = pattern.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  return parts.length > 0 ? parts : text;
+}
+
 export default function EffectTable({
   rows,
   canEdit,
@@ -343,7 +378,7 @@ export default function EffectTable({
             >
               <div className="min-w-0">
                 <div className="font-semibold flex items-center gap-1.5 flex-wrap min-w-0 w-full">
-                  <span className="break-words" style={{ overflowWrap: "anywhere" }}>{row.effect.name}</span>
+                  <span className="break-words" style={{ overflowWrap: "anywhere" }}>{cleanEffectName(row.effect.name)}</span>
                   {isNewMod(row.effect.name) && (
                     <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
                       New
@@ -372,7 +407,7 @@ export default function EffectTable({
                   </div>
                 )}
               </div>
-              <div className="min-w-0 text-sm text-foreground/80">{row.description || "-"}</div>
+              <div className="min-w-0 text-sm text-foreground/80">{renderInlineMarkdown(row.description)}</div>
               <div className="min-w-0 text-sm text-foreground/80">{renderComponent(row.extraComponent)}</div>
               <div className="min-w-0 text-sm text-foreground/80 tabular-nums">
                 {renderModules(row.legendaryModules)}
@@ -429,7 +464,7 @@ export default function EffectTable({
                   </div>
                 </div>
               </div>
-              <div className="min-w-0 text-sm text-foreground/80 break-words">{row.notes || "-"}</div>
+              <div className="min-w-0 text-sm text-foreground/80 break-words">{renderInlineMarkdown(row.notes)}</div>
             </div>
           );
         })}
@@ -467,7 +502,7 @@ export default function EffectTable({
               <div className="effect-tile__header">
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold flex items-center gap-1.5 flex-wrap min-w-0 w-full">
-                    <span className="break-words" style={{ overflowWrap: "anywhere" }}>{row.effect.name}</span>
+                    <span className="break-words" style={{ overflowWrap: "anywhere" }}>{cleanEffectName(row.effect.name)}</span>
                     {isNewMod(row.effect.name) && (
                       <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
                         New
@@ -543,7 +578,7 @@ export default function EffectTable({
                 </div>
               )}
               <div className="effect-tile__notes">
-                {row.notes || "No notes"}
+                {renderInlineMarkdown(row.notes)}
               </div>
             </button>
           );
