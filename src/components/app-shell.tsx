@@ -29,6 +29,13 @@ import { CharacterSelector } from "@/components/character-selector";
 import MigrationNotice from "@/components/migration-notice";
 import { useVisitorTracking } from "@/lib/hooks/use-visitor-tracking";
 
+interface AppSubLink {
+  href: string;
+  label: string;
+  ariaLabel?: string;
+  tierLabel?: string;
+}
+
 interface AppNavLink {
   href: string;
   label: string;
@@ -40,16 +47,25 @@ interface AppNavLink {
   tierLabel?: string;
   isBuildTab?: boolean;
   requiresAuth?: boolean;
+  subLinks?: AppSubLink[];
 }
 
 const trackingLinks: AppNavLink[] = [
   { href: "/wiki", label: "Truth Wiki", icon: BookOpen, activePaths: ["/wiki"] },
   { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
-  { href: "/1-star", label: "\u2606", ariaLabel: "1 Star", icon: Star, tierLabel: "1 Star" },
-  { href: "/2-star", label: "\u2606\u2606", ariaLabel: "2 Star", icon: Star, tierLabel: "2 Star" },
-  { href: "/3-star", label: "\u2606\u2606\u2606", ariaLabel: "3 Star", icon: Star, tierLabel: "3 Star" },
-  { href: "/4-star", label: "\u2606\u2606\u2606\u2606", ariaLabel: "4 Star", icon: Star, tierLabel: "4 Star" },
-  { href: "/all-effects", label: "All Effects", icon: ListChecks },
+  {
+    href: "/all-effects",
+    label: "Legendary Tracking",
+    icon: ListChecks,
+    activePrefixes: ["/1-star", "/2-star", "/3-star", "/4-star", "/all-effects"],
+    subLinks: [
+      { href: "/1-star", label: "★ 1 Star Mods", tierLabel: "1 Star" },
+      { href: "/2-star", label: "★★ 2 Star Mods", tierLabel: "2 Star" },
+      { href: "/3-star", label: "★★★ 3 Star Mods", tierLabel: "3 Star" },
+      { href: "/4-star", label: "★★★★ 4 Star Mods", tierLabel: "4 Star" },
+      { href: "/all-effects", label: "All Mod Effects" }
+    ]
+  },
   { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false, isBuildTab: true },
   { href: "/perks", label: "P.E.R.K.", icon: Boxes, activePrefixes: ["/perks"] },
   { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] }
@@ -155,13 +171,27 @@ export default function AppShell({
     [isSignedIn]
   );
 
+interface TierProgressResponse {
+  success?: boolean;
+  data?: {
+    tierProgress?: TierProgressSummary[];
+  };
+}
+
+interface AccountLinksResponse {
+  success?: boolean;
+  data?: {
+    providers?: string[];
+  };
+}
+
   React.useEffect(() => {
     const controller = new AbortController();
     fetch(`/api/tier-progress?auth=${encodeURIComponent(authKey)}`, {
       signal: controller.signal,
       cache: isSignedIn ? "no-store" : "force-cache"
     })
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<TierProgressResponse>)
       .then((payload) => {
         if (!payload?.success || !Array.isArray(payload.data?.tierProgress)) return;
         setTierProgress(payload.data.tierProgress);
@@ -298,7 +328,7 @@ export default function AppShell({
       return;
     }
     fetch("/api/account-links")
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<AccountLinksResponse>)
       .then((payload) => {
         if (payload?.success) {
           setLinkedProviders(payload.data.providers ?? []);
@@ -435,6 +465,34 @@ export default function AppShell({
                     <Icon className="h-4 w-4" />
                     <span>{linkLabel}</span>
                   </Link>
+                  {/* Render Subcategory Tier Links when main Legendary Tracking category is active */}
+                  {link.subLinks && (active || link.subLinks.some((sub) => pathname === sub.href)) && !sidebarCollapsed && (
+                    <div className="pl-6 space-y-0.5 my-1 border-l-2 border-amber-500/40 ml-4 font-mono text-xs">
+                      {link.subLinks.map((sub) => {
+                        const subActive = pathname === sub.href;
+                        const subTier = sub.tierLabel ? tierLookup.get(sub.tierLabel) : null;
+                        return (
+                          <Link
+                            key={sub.href}
+                            href={sub.href}
+                            className={cn(
+                              "flex items-center justify-between px-2.5 py-1 rounded transition-all text-[0.72rem]",
+                              subActive
+                                ? "bg-amber-950/80 text-amber-300 font-bold border border-amber-500/50 shadow-sm"
+                                : "text-slate-400 hover:text-white hover:bg-slate-900"
+                            )}
+                          >
+                            <span>{sub.label}</span>
+                            {subTier && (
+                              <span className="text-[0.62rem] px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-amber-400">
+                                {subTier.percent}%
+                              </span>
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
                 </React.Fragment>
               );
             })}
