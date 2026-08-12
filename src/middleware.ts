@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const proto = request.headers.get("x-forwarded-proto") || "";
 
-  if (proto === "http") {
+  if (proto === "http" && !host.includes("localhost") && !host.includes("127.0.0.1")) {
     const url = request.nextUrl.clone();
     url.protocol = "https:";
     url.port = "";
@@ -25,5 +25,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/:path*",
+  matcher: [
+    "/((?!_next/static|_next/image|images/|favicon.ico|manifest.json).*)",
+  ],
 };
