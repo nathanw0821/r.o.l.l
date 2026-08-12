@@ -138,7 +138,6 @@ export default function InGamePerkCard({
   footerExtra,
 }: InGamePerkCardProps) {
   const theme = INGAME_SPECIAL_THEMES[special] || INGAME_SPECIAL_THEMES.S;
-  const [imgError, setImgError] = React.useState(false);
   const [showInspector, setShowInspector] = React.useState(false);
   const artworkUrl = getPerkCardArtworkUrl(cardId || name, special, isFemale);
   const isLegendary = special === "LEGENDARY" || cardId?.includes("legendary");
