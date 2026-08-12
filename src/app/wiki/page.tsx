@@ -22,18 +22,21 @@ const CATEGORY_CARDS = [
   { id: "Armor & Power Armor", label: "Armor & Power Armor", count: "680 Guides", icon: "🛡️", desc: "Resist values, set bonuses & PA schematics.", color: "from-blue-500/20 to-blue-600/5 border-blue-500/40" },
   { id: "Perks & Mutations", label: "Perks & Mutations", count: "310 Guides", icon: "🃏", desc: "S.P.E.C.I.A.L. card ranks & serum effects.", color: "from-purple-500/20 to-purple-600/5 border-purple-500/40" },
   { id: "Vendors & Minerva", label: "Vendors & Minerva Sales", count: "190 Guides", icon: "🛒", desc: "Minerva inventory schedules & Gold Bullion.", color: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/40" },
-  { id: "Events & Expeditions", label: "Events & Expeditions", count: "420 Guides", icon: "🛸", desc: "Public event drop rates & Atlantic City.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
+  { id: "Events & Expeditions", label: "Events & Expeditions", count: "420 Guides", icon: "🛸", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
   { id: "Builds & Mechanics", label: "Build Mechanics & Damage", count: "350 Guides", icon: "🎯", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
   { id: "Crafting & Resources", label: "Crafting & Materials", count: "209 Guides", icon: "🛠️", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
 ];
 
 const UPDATE_PATCHES = [
-  { id: "all", label: "🌐 All Updates" },
-  { id: "burning-springs", label: "🔥 Burning Springs" },
-  { id: "backwoods", label: "🌲 Backwoods 2026" },
-  { id: "milepost-zero", label: "⚡ Milepost Zero" },
-  { id: "atlantic-city", label: "🎲 Atlantic City" },
+  { id: "all", label: "🌐 All Major Updates" },
+  { id: "the-pitt", label: "🧱 The Pitt (Expedition 1)" },
+  { id: "atlantic-city", label: "🎲 Atlantic City (Expedition 2)" },
   { id: "skyline-valley", label: "⛰️ Skyline Valley" },
+  { id: "milepost-zero", label: "⚡ Milepost Zero" },
+  { id: "backwoods", label: "🌲 Backwoods 2026" },
+  { id: "burning-springs", label: "🔥 Burning Springs" },
+  { id: "nuka-world", label: "☢️ Nuka-World on Tour" },
+  { id: "invaders", label: "🛸 Invaders from Beyond" },
 ];
 
 function toHighResImageUrl(url: string | null): string {
@@ -52,11 +55,10 @@ function toHighResImageUrl(url: string | null): string {
   return clean;
 }
 
+import { sanitizeTitle } from "@/lib/utils/clean-formatting";
+
 function cleanTitle(title: string): string {
-  if (!title) return "";
-  let t = title.replace(/\.html?$/i, "").replace(/\.php$/i, "");
-  t = t.replace(/_/g, " ");
-  return t.trim();
+  return sanitizeTitle(title);
 }
 
 function renderFormattedInlineText(text: string): React.ReactNode[] {

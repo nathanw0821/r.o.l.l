@@ -28,6 +28,11 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import ProgressToggle from "@/components/progress-toggle";
+import BuilderCombatSwitchboard, { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
+import { calculateAggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
+import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
+import { getEquipmentSynergies } from "@/lib/builder/synergy-engine";
+import RollHelperTooltip from "@/components/roll-helper-tooltip";
 import {
   ARMOR_SET_SLOT_LABELS,
   ARMOR_SET_ROWS,
@@ -430,7 +435,23 @@ export default function BuilderExperimentClient({
   const [legendaryPerkCategory, setLegendaryPerkCategory] = React.useState<
     "special" | "combat" | "utility"
   >("special");
+  const [isComparisonOpen, setIsComparisonOpen] = React.useState(false);
   const internalUpdateRef = React.useRef(false);
+  const [switchboardState, setSwitchboardState] = React.useState<CombatSwitchboardState | null>(null);
+
+  const buffSpecial = React.useMemo(() => {
+    if (!switchboardState) return { totals: { str: 0, per: 0, end: 0, cha: 0, int: 0, agi: 0, lck: 0 }, breakdown: [] };
+    return calculateAggregatedBuffSpecial({
+      activeCampBuffs: switchboardState.activeCampBuffs,
+      activeDrug: switchboardState.activeDrug,
+      activeFood: switchboardState.activeFood,
+      activeBobblehead: switchboardState.activeBobblehead,
+      activeMagazine: switchboardState.activeMagazine,
+      activeAlcohol: switchboardState.activeAlcohol,
+      activeNukaCola: switchboardState.activeNukaCola,
+      activeCompanion: switchboardState.activeCompanion,
+    });
+  }, [switchboardState]);
 
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } =
     useBuilderBetaAccess(isAdmin);
@@ -1343,7 +1364,8 @@ export default function BuilderExperimentClient({
             <TooltipProvider delayDuration={150}>
               <div className="space-y-3">
                 {BUILDER_SPECIAL_KEYS.map((key) => {
-                  const live = totals[key];
+                  const bBonus = buffSpecial.totals[key] || 0;
+                  const live = totals[key] + bBonus;
                   const base = payload.baseSpecial[key] || 1;
                   const delta = live - base;
                   const percent = Math.min(100, Math.max(5, (live / 20) * 100));
@@ -1352,6 +1374,13 @@ export default function BuilderExperimentClient({
                   const bLines: { source: string; val: string }[] = [
                     { source: "Base S.P.E.C.I.A.L.", val: `${base}` }
                   ];
+
+                  // Add active Buffs & CAMP Furniture (Deduplicated)
+                  buffSpecial.breakdown
+                    .filter((item) => item.stat === key)
+                    .forEach((item) => {
+                      bLines.push({ source: item.source, val: `+${item.val}` });
+                    });
 
                   const style = findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId);
                   if (style?.effectMath && style.effectMath[key]) {
@@ -1636,6 +1665,30 @@ export default function BuilderExperimentClient({
                     </optgroup>
                   ))}
                 </select>
+
+                {/* Active Selected Base Gear Render Card */}
+                {piece && (
+                  <div className="mt-2.5 p-3 rounded-xl bg-slate-900/90 border border-emerald-500/40 shadow-lg flex items-center justify-between gap-3 font-mono">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-xl shrink-0">
+                        {piece.kind === "weapon" ? "🎯" : piece.kind === "powerArmor" ? "🦾" : piece.kind === "armor" ? "🛡️" : "👕"}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-black uppercase text-slate-100 truncate">
+                          {piece.label}
+                        </div>
+                        <div className="text-[0.65rem] text-emerald-400 font-bold uppercase tracking-wide truncate">
+                          {piece.kind} {piece.weaponSub ? `· ${piece.weaponSub}` : ""}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="text-[0.62rem] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                        ACTIVE BASE
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2 sm:mt-4">
@@ -1674,6 +1727,35 @@ export default function BuilderExperimentClient({
                 </Link>
               </div>
 
+              <div className="pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-full text-xs font-mono uppercase font-bold text-cyan-400 border-cyan-500/40 hover:border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20"
+                  onClick={() => setIsComparisonOpen(true)}
+                >
+                  📊 Compare All Gear & Armor Sets (Matrix View)
+                </Button>
+              </div>
+
+              {/* Smart Synergy Recommendation Panel */}
+              <div className="pt-2 border-t border-border/20 space-y-2 font-mono">
+                <div className="text-[0.72rem] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkle className="h-3.5 w-3.5" />
+                  <span>⚡ Smart Synergy Recommendations for {piece.label}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {getEquipmentSynergies(piece.id).map((syn) => (
+                    <RollHelperTooltip key={syn.id} title={syn.name} kind="perk" cardId={syn.id}>
+                      <span className="text-[0.68rem] px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-1">
+                        {syn.name} ({syn.boostLabel})
+                      </span>
+                    </RollHelperTooltip>
+                  ))}
+                </div>
+              </div>
+
               {isTrackableBasePieceId(piece.id) ? (
                 <div className={cn(
                   "flex items-center justify-between gap-3 border rounded px-3 py-2.5 mt-4 sm:mt-0 font-mono",
@@ -1705,6 +1787,14 @@ export default function BuilderExperimentClient({
               </p>
             ) : null}
           </div>
+
+          {/* CHARACTER COMBAT SWITCHBOARD */}
+          <BuilderCombatSwitchboard
+            rawDamage={piece.kind === "weapon" ? 110 : 0}
+            activeMutations={payload.mutationIds}
+            ignoreMutationPenalties={payload.ignoreMutationPenalties}
+            onStateChange={setSwitchboardState}
+          />
 
           {/* Interactive Silhouette Repair Frame */}
           <div className="pip-terminal-panel p-4 rounded-xl space-y-4 font-mono relative min-h-[500px] flex flex-col justify-between">
@@ -2377,6 +2467,12 @@ export default function BuilderExperimentClient({
         onCancel={() => {
           window.location.href = "/";
         }}
+      />
+
+      {/* GEAR COMPARISON MATRIX MODAL */}
+      <BuilderGearComparisonModal
+        isOpen={isComparisonOpen}
+        onClose={() => setIsComparisonOpen(false)}
       />
     </div>
   );

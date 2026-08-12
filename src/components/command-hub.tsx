@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { BookOpen, ChevronDown, ChevronUp, Compass, Palette, Search, Settings, Shield, SlidersHorizontal, Trophy, User, Wrench, Zap, X } from "lucide-react";
+import { BookOpen, ChevronDown, ChevronUp, Compass, FlaskConical, Palette, Search, Settings, Shield, SlidersHorizontal, Trophy, User, Wrench, Zap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
 import { cn } from "@/lib/utils";
@@ -619,6 +619,18 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-emerald-400">Achievements</div>
                     <div className="text-[0.68rem] text-foreground/50 truncate">Milestones & Wasteland easter eggs</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/pts"
+                  onClick={() => setExpanded(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-amber-500/30 bg-amber-950/10 hover:bg-amber-950/30 hover:border-amber-500 transition-all group col-span-1 md:col-span-2"
+                >
+                  <FlaskConical className="h-4 w-4 text-amber-400 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground group-hover:text-amber-400">🧪 PTS Experimental Lab</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">Ghoul 20-Cap Sandbox, The Pitt & Atlantic City drop tables</div>
                   </div>
                 </Link>
 

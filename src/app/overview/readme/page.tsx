@@ -59,11 +59,21 @@ export default async function OverviewReadmePage() {
 
         <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
           <div className="flex items-center gap-2.5 text-accent">
-            <RefreshCw className="h-5 w-5" />
-            <h3 className="text-sm font-black uppercase tracking-wider">Live Auto-Pull Sync</h3>
+            <Zap className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">🧟 Ghoul Mode (20 Cap) &amp; Combat Math</h3>
           </div>
-          <p className="text-xs text-foreground/70 leading-relaxed">
-            Daily 1:00 PM EST automated patch scraping from NukaKnights. Imports dataset changes with atomic DB cutover &amp; Discord alerts.
+          <p className="text-xs text-foreground/70 leading-relaxed font-sans">
+            Simulate Playable Ghoul perk card capacity (up to 20 S.P.E.C.I.A.L. points). Use the 🔍 Formula Audit Inspector to audit step-by-step raw damage, drug multipliers, and enemy armor reduction formulas.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-border/30 bg-panel p-5 space-y-2 relative overflow-hidden">
+          <div className="flex items-center gap-2.5 text-accent">
+            <ShieldCheck className="h-5 w-5" />
+            <h3 className="text-sm font-black uppercase tracking-wider">🔬 Direct Binary Datamines</h3>
+          </div>
+          <p className="text-xs text-foreground/70 leading-relaxed font-sans">
+            Direct Creation Engine binary extraction (`SeventySix.esm`) for 100% FormID parity and instant Day 1 PTS datamines alongside preserved community source attribution links.
           </p>
         </div>
 

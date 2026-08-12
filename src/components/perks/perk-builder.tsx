@@ -6,6 +6,8 @@ import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
+import PerkLevelingRoadmap from "@/components/perks/perk-leveling-roadmap";
+import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
 
 type EquippedItem = { cardId: string; rank: number };
 
@@ -22,17 +24,20 @@ type SpecialsState = {
 interface PerkBuilderProps {
   characterId?: string | null;
   characterName?: string | null;
+  mode?: "live" | "pts";
 }
 
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
 
-export default function PerkBuilder({ characterId, characterName }: PerkBuilderProps) {
+export default function PerkBuilder({ characterId, characterName, mode = "live" }: PerkBuilderProps) {
   const searchParams = useSearchParams();
   const urlQuery = searchParams.get("q") || searchParams.get("card") || "";
 
   const [activeSlot, setActiveSlot] = React.useState<number>(0);
   const [searchQuery, setSearchQuery] = React.useState(urlQuery);
   const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL">("ALL");
+  const [showRoadmap, setShowRoadmap] = React.useState(false);
+  const [isGhoul, setIsGhoul] = React.useState(mode === "pts");
 
   // Sync searchQuery with URL params if provided
   React.useEffect(() => {
@@ -54,6 +59,7 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
   const [equippedCards, setEquippedCards] = React.useState<EquippedItem[]>([]);
   const [saving, setSaving] = React.useState(false);
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
+  const [isFemale, setIsFemale] = React.useState(false);
 
   // Load active loadout slot (LocalStorage first for instant load, then Cloud sync)
   React.useEffect(() => {
@@ -105,14 +111,15 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
     });
   }, [equippedCards]);
 
-  // Hard Cap of 15 for perk card slot capacity (base + legendary bonus, max 15)
+  // Hard Cap of 15 (Human) or 20 (Ghoul) for perk card slot capacity
   const effectiveCapacities = React.useMemo(() => {
+    const maxCap = isGhoul ? 20 : 15;
     const caps: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
     (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
-      caps[stat] = Math.min(15, specials[stat] + (legendaryBonuses[stat] || 0));
+      caps[stat] = Math.min(maxCap, specials[stat] + (legendaryBonuses[stat] || 0));
     });
     return caps;
-  }, [specials, legendaryBonuses]);
+  }, [specials, legendaryBonuses, isGhoul]);
 
   const totalEffectiveSpecials = React.useMemo(() => {
     const totals: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
@@ -470,55 +477,69 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
                   🧹 Clear Deck
                 </button>
               )}
+              <button
+                type="button"
+                onClick={() => setShowRoadmap((prev) => !prev)}
+                className={`text-[0.68rem] px-2.5 py-0.5 rounded border font-mono font-bold transition-all ${
+                  showRoadmap
+                    ? "bg-emerald-500 text-slate-950 border-emerald-400 font-black"
+                    : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
+                }`}
+              >
+                📅 {showRoadmap ? "Hide Leveling Roadmap" : "View Leveling Roadmap (Lvl 2–50)"}
+              </button>
+              {mode === "pts" ? (
+                <button
+                  type="button"
+                  onClick={() => setIsGhoul((prev) => !prev)}
+                  className={`text-[0.68rem] px-2.5 py-0.5 rounded border font-mono font-bold transition-all ${
+                    isGhoul
+                      ? "bg-lime-500 text-slate-950 border-lime-400 font-black"
+                      : "bg-lime-500/20 text-lime-300 border-lime-500/40 hover:bg-lime-500/30"
+                  }`}
+                >
+                  🧟 {isGhoul ? "PTS Ghoul Mode (20 Max Cap)" : "PTS Human Mode (15 Max Cap)"}
+                </button>
+              ) : (
+                <span className="text-[0.68rem] px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
+                  🟢 LIVE GAME RULES (15 MAX CAP)
+                </span>
+              )}
             </div>
             <span className="text-xs text-emerald-400 font-normal">Punch Card Loadout {activeSlot + 1}</span>
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">Active perk cards slotted in this loadout.</CardDescription>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent className="pt-4 space-y-4">
+          {showRoadmap && <PerkLevelingRoadmap equippedCards={equippedCards} />}
           {equippedCards.length === 0 ? (
             <div className="py-10 text-center text-xs font-mono text-slate-500 border border-dashed border-slate-800 rounded-lg">
               No perk cards equipped in this loadout yet. Select cards below from the Vault-Tec catalog!
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
               {equippedCards.map((item) => {
                 const card = PERK_CATALOG.find((c) => c.id === item.cardId);
                 if (!card) return null;
-                const theme = SPECIAL_THEMES[card.special];
                 const activeRankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];
                 const isOverflowStat = overCapacityStats.some((o) => o.stat === card.special);
 
                 return (
-                  <div
+                  <PipBoyPerkCard
                     key={card.id}
-                    className={`rounded-lg border p-3.5 space-y-2.5 relative overflow-hidden shadow-lg transition-all ${
-                      isOverflowStat
-                        ? "border-red-500/80 bg-red-950/30 ring-1 ring-red-500/50"
-                        : `bg-slate-900/95 ${theme.border}`
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className={`text-[0.7rem] font-bold font-mono px-1.5 py-0.5 rounded border ${theme.badge}`}>{card.special}</span>
-                        <span className="text-xs font-bold font-mono text-white truncate">{card.name}</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleUnequipCard(card.id)}
-                        className="text-[0.68rem] text-slate-400 hover:text-red-400 font-mono font-semibold"
-                      >
-                        Unequip
-                      </button>
-                    </div>
-                    <p className="text-[0.75rem] font-mono text-slate-200 leading-relaxed min-h-[40px]">
-                      {activeRankObj?.description}
-                    </p>
-                    <div className="flex items-center justify-between text-[0.7rem] font-mono pt-2 border-t border-slate-800/80">
-                      <span className="text-emerald-400 font-bold">Cost: {activeRankObj?.cost || item.rank} pts</span>
-                      <span className="text-amber-400 font-bold">{"★".repeat(item.rank)}</span>
-                    </div>
-                  </div>
+                    cardId={card.id}
+                    name={card.name}
+                    special={card.special}
+                    cost={activeRankObj?.cost || item.rank}
+                    rank={item.rank}
+                    maxRank={card.ranks.length}
+                    description={activeRankObj?.description || ""}
+                    isEquipped={true}
+                    isOverflow={isOverflowStat}
+                    isFemale={isFemale}
+                    onUnequip={() => handleUnequipCard(card.id)}
+                    onRankChange={(newRank) => handleEquipCard(card, newRank)}
+                  />
                 );
               })}
             </div>
@@ -539,13 +560,27 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
               </CardTitle>
               <CardDescription className="text-xs text-slate-400">Browse all Fallout 76 perk cards across S.P.E.C.I.A.L. categories.</CardDescription>
             </div>
-            <input
-              type="text"
-              placeholder="Search perk cards..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-1.5 rounded-md border border-slate-800 bg-slate-900 text-xs font-mono text-white placeholder:text-slate-500 w-full md:w-64 focus:outline-none focus:border-emerald-500"
-            />
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <button
+                type="button"
+                onClick={() => setIsFemale((prev) => !prev)}
+                className={`px-3 py-1.5 rounded-md border text-xs font-mono font-bold transition-all shrink-0 ${
+                  isFemale
+                    ? "bg-pink-950/80 border-pink-500 text-pink-300 shadow-md shadow-pink-900/30"
+                    : "bg-blue-950/80 border-blue-500 text-blue-300 shadow-md shadow-blue-900/30"
+                }`}
+                title="Toggle Vault Boy / Vault Girl card variant artwork"
+              >
+                {isFemale ? "♀ Vault Girl Art" : "♂ Vault Boy Art"}
+              </button>
+              <input
+                type="text"
+                placeholder="Search perk cards..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-3 py-1.5 rounded-md border border-slate-800 bg-slate-900 text-xs font-mono text-white placeholder:text-slate-500 w-full md:w-64 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
           </div>
           {/* Category Filter Pills */}
           <div className="flex flex-wrap gap-1.5 pt-3">
@@ -582,75 +617,26 @@ export default function PerkBuilder({ characterId, characterName }: PerkBuilderP
           </div>
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
             {filteredCards.map((card) => {
               const equippedItem = equippedCards.find((item) => item.cardId === card.id);
-              const theme = SPECIAL_THEMES[card.special];
-
-              return (
-                <div
+                return (
+                <PipBoyPerkCard
                   key={card.id}
-                  className={`rounded-lg border p-4 flex flex-col justify-between space-y-3 bg-slate-900/90 transition-all ${
-                    equippedItem
-                      ? "border-emerald-500 bg-emerald-950/20 shadow-lg ring-1 ring-emerald-500/50"
-                      : `${theme.border} hover:bg-slate-900`
-                  }`}
-                >
-                  <div className="space-y-2.5">
-                    <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className={`text-[0.68rem] font-bold font-mono px-1.5 py-0.5 rounded border ${theme.badge}`}>{card.special}</span>
-                        <span className="text-xs font-bold font-mono text-white leading-tight">{card.name}</span>
-                      </div>
-                      <span className="text-[0.65rem] font-mono px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400 font-semibold whitespace-nowrap">
-                        Lvl {card.minLevel}
-                      </span>
-                    </div>
-
-                    {/* High-contrast Card Description */}
-                    <div className="text-[0.75rem] font-mono text-slate-200 leading-relaxed bg-slate-950/60 p-2.5 rounded border border-slate-800/80 min-h-[54px]">
-                      {card.ranks[0]?.description}
-                    </div>
-                  </div>
-
-                  {/* Equip & Rank Buttons */}
-                  <div className="space-y-2 pt-2 border-t border-slate-800/80">
-                    <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="text-slate-400 text-[0.7rem]">Max: {"★".repeat(card.maxRank)}</span>
-                      {equippedItem ? (
-                        <span className="text-[0.68rem] font-bold font-mono text-emerald-400 flex items-center gap-1">
-                          ✓ Equipped ({equippedItem.rank}★)
-                        </span>
-                      ) : null}
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      {card.ranks.map((r) => (
-                        <button
-                          key={r.rank}
-                          type="button"
-                          onClick={() => handleEquipCard(card, r.rank)}
-                          className={`flex-1 py-1 text-[0.7rem] font-mono font-bold rounded border transition-all ${
-                            equippedItem?.rank === r.rank
-                              ? "bg-emerald-500 text-slate-950 border-emerald-400 font-black shadow-md"
-                              : "bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-600 hover:text-white"
-                          }`}
-                        >
-                          {r.rank}★
-                        </button>
-                      ))}
-                    </div>
-
-                    <a
-                      href={`/wiki?q=${encodeURIComponent(card.name)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[0.68rem] font-mono text-amber-400 hover:text-amber-300 font-bold flex items-center justify-center gap-1 py-1 bg-amber-500/10 rounded border border-amber-500/30 hover:border-amber-400 transition-all"
-                    >
-                      📖 Read Vault Guide in Truth Bible ↗
-                    </a>
-                  </div>
-                </div>
+                  cardId={card.id}
+                  name={card.name}
+                  special={card.special}
+                  cost={card.ranks[0]?.cost || 1}
+                  rank={equippedItem ? equippedItem.rank : 1}
+                  maxRank={card.maxRank}
+                  minLevel={card.minLevel}
+                  description={card.ranks[0]?.description || ""}
+                  isEquipped={!!equippedItem}
+                  isFemale={isFemale}
+                  onEquip={() => handleEquipCard(card, 1)}
+                  onUnequip={() => handleUnequipCard(card.id)}
+                  onRankChange={(newRank) => handleEquipCard(card, newRank)}
+                />
               );
             })}
           </div>
