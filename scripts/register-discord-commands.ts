@@ -136,6 +136,19 @@ const commands = [
         ]
       }
     ]
+  },
+  {
+    name: "wiki",
+    description: "Search 3,300+ Fallout 76 Truth Wiki articles, items, weak spots & mechanics",
+    options: [
+      {
+        name: "query",
+        description: "Article name, weapon, perk, vendor or mechanic (e.g. Secret Service, Minerva, Bloodied)",
+        type: 3,
+        required: true,
+        autocomplete: true
+      }
+    ]
   }
 ];
 
