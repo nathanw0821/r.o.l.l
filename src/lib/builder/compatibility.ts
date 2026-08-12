@@ -296,25 +296,35 @@ export function aggregateEffectMath(
   }
 
   if (opts.legendaryPerkIds) {
-    for (const id of opts.legendaryPerkIds) {
+    for (const rawEntry of opts.legendaryPerkIds) {
+      let id = rawEntry;
+      let rank = 4;
+      if (rawEntry.includes(":")) {
+        const [parsedId, parsedRank] = rawEntry.split(":");
+        id = parsedId;
+        rank = parseInt(parsedRank, 10) || 4;
+      }
+      const bonus = rank === 4 ? 5 : Math.max(1, Math.min(3, rank));
+
       const perk = LEGENDARY_PERK_CARDS[id];
       if (perk) {
         if (perk.specialBonus) {
-          acc.str += perk.specialBonus.str || 0;
-          acc.per += perk.specialBonus.per || 0;
-          acc.end += perk.specialBonus.end || 0;
-          acc.cha += perk.specialBonus.cha || 0;
-          acc.int += perk.specialBonus.int || 0;
-          acc.agi += perk.specialBonus.agi || 0;
-          acc.lck += perk.specialBonus.lck || 0;
+          if (perk.specialBonus.str) acc.str += bonus;
+          if (perk.specialBonus.per) acc.per += bonus;
+          if (perk.specialBonus.end) acc.end += bonus;
+          if (perk.specialBonus.cha) acc.cha += bonus;
+          if (perk.specialBonus.int) acc.int += bonus;
+          if (perk.specialBonus.agi) acc.agi += bonus;
+          if (perk.specialBonus.lck) acc.lck += bonus;
         }
         if (perk.resBonus) {
-          if (perk.resBonus.dr) acc.dr += perk.resBonus.dr;
-          if (perk.resBonus.er) acc.er += perk.resBonus.er;
-          if (perk.resBonus.fr) acc.fr += perk.resBonus.fr;
-          if (perk.resBonus.cr) acc.cr += perk.resBonus.cr;
-          if (perk.resBonus.pr) acc.pr += perk.resBonus.pr;
-          if (perk.resBonus.rr) acc.rr += perk.resBonus.rr;
+          const resScale = rank / 4;
+          if (perk.resBonus.dr) acc.dr += Math.round((perk.resBonus.dr || 0) * resScale);
+          if (perk.resBonus.er) acc.er += Math.round((perk.resBonus.er || 0) * resScale);
+          if (perk.resBonus.fr) acc.fr += Math.round((perk.resBonus.fr || 0) * resScale);
+          if (perk.resBonus.cr) acc.cr += Math.round((perk.resBonus.cr || 0) * resScale);
+          if (perk.resBonus.pr) acc.pr += Math.round((perk.resBonus.pr || 0) * resScale);
+          if (perk.resBonus.rr) acc.rr += Math.round((perk.resBonus.rr || 0) * resScale);
         }
       }
     }
