@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAppSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import PerkBuilder from "@/components/perks/perk-builder";
 
@@ -9,42 +8,28 @@ export const metadata = {
 };
 
 export default async function PerksPage() {
-  const session = await getServerSession(authOptions);
+  let session = null;
+  try {
+    session = await getAppSession();
+  } catch {
+    // Session fallback
+  }
 
   let activeCharacterId: string | null = null;
   let activeCharacterName: string | null = null;
 
   if (session?.user?.id) {
-    const userSettings = await prisma.userSettings.findUnique({
-      where: { userId: session.user.id },
-      include: { activeCharacter: true }
-    });
-
-    if (userSettings?.activeCharacter) {
-      activeCharacterId = userSettings.activeCharacter.id;
-      activeCharacterName = userSettings.activeCharacter.name;
-    } else {
-      let firstChar = await prisma.character.findFirst({
-        where: { userId: session.user.id }
+    try {
+      const userSettings = await prisma.userSettings.findUnique({
+        where: { userId: session.user.id },
+        include: { activeCharacter: true }
       });
-
-      if (!firstChar) {
-        firstChar = await prisma.character.create({
-          data: {
-            userId: session.user.id,
-            name: "Vault Dweller 1"
-          }
-        });
-
-        await prisma.userSettings.upsert({
-          where: { userId: session.user.id },
-          update: { activeCharacterId: firstChar.id },
-          create: { userId: session.user.id, activeCharacterId: firstChar.id }
-        });
+      if (userSettings?.activeCharacter) {
+        activeCharacterId = userSettings.activeCharacter.id;
+        activeCharacterName = userSettings.activeCharacter.name;
       }
-
-      activeCharacterId = firstChar.id;
-      activeCharacterName = firstChar.name;
+    } catch {
+      // Database fallback
     }
   }
 

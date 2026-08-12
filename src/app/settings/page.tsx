@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAppSession } from "@/lib/auth";
 import { isAdminUser } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 import AdminImportForm from "@/components/admin-import-form";
@@ -11,7 +10,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import AccountLinks from "@/components/account-links";
 
 export default async function SettingsPage() {
-  const session = await getServerSession(authOptions);
+  let session = null;
+  try {
+    session = await getAppSession();
+  } catch {
+    // Session fallback
+  }
   const user =
     session?.user?.id
       ? await prisma.user.findUnique({

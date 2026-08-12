@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAppSession } from "@/lib/auth";
 import { getLearnedBasePieceIdsForUser } from "@/lib/base-gear-learned";
 
 const BuilderExperimentClient = dynamic(
@@ -21,7 +20,12 @@ export const metadata: Metadata = {
 };
 
 export default async function BuildPage() {
-  const session = await getServerSession(authOptions);
+  let session = null;
+  try {
+    session = await getAppSession();
+  } catch {
+    // Fallback session
+  }
   const isAdmin = isAdminUser(session?.user);
 
   const initialLearnedBasePieceIds = await getLearnedBasePieceIdsForUser(session?.user?.id);
