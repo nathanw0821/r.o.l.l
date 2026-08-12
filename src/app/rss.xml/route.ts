@@ -13,8 +13,8 @@ export async function GET(req: Request) {
 
     const baseUrl = process.env.NEXTAUTH_URL || "https://fallout76.wiki";
 
-    const itemsXml = articles
-      .map((a: any) => `
+    const itemsXml = (articles as Array<{ id: string; title: string; category?: string; updated_at?: string; snippet?: string; url?: string; source?: string }>)
+      .map((a) => `
     <item>
       <title><![CDATA[${a.title}]]></title>
       <link>${baseUrl}/wiki?id=${a.id}</link>

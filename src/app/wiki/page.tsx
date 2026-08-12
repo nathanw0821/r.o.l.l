@@ -172,7 +172,7 @@ function parseCleanArticleContent(content: string) {
     const imgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
     if (imgMatch) {
       const altText = imgMatch[1] || "";
-      let rawImgUrl = imgMatch[2];
+      const rawImgUrl = imgMatch[2];
       const hdUrl = toHighResImageUrl(rawImgUrl);
 
       const imgKey = hdUrl.toLowerCase();
@@ -564,7 +564,7 @@ export default function TruthWikiPage() {
               <span className="text-slate-400 text-[11px]">SORT:</span>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as "newest" | "oldest" | "title-asc" | "title-desc")}
                 className="bg-transparent font-bold focus:outline-none cursor-pointer text-amber-400"
               >
                 <option value="newest" className="bg-[#0b121e] text-slate-200">🕒 Newest Record</option>

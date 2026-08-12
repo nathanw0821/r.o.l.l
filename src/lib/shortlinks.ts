@@ -13,7 +13,7 @@ export function generateShortSlug(length = 6): string {
 // Create or fetch clean shortlink in Neon Postgres (100% pure direct redirect, zero affiliate tracking)
 export async function createShortlink(options: {
   targetUrl?: string;
-  payload?: any;
+  payload?: unknown;
   title?: string;
   vanitySlug?: string;
   userId?: string;
@@ -29,7 +29,7 @@ export async function createShortlink(options: {
         slug,
         title: finalTitle,
         description: targetUrl ? `Redirect to: ${targetUrl}` : "Shared Fallout 76 Build",
-        payload: payload || { redirectUrl: targetUrl },
+        payload: (payload as object) || { redirectUrl: targetUrl },
         userId: userId || null,
         published: true
       }
@@ -40,9 +40,9 @@ export async function createShortlink(options: {
       slug: sharedBuild.slug,
       shortUrl: `${process.env.NEXTAUTH_URL || "https://fallout76.wiki"}/l/${sharedBuild.slug}`
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     // If slug collision, retry with nanoid fallback
-    if (err.code === "P2002") {
+    if (typeof err === "object" && err !== null && "code" in err && (err as { code: string }).code === "P2002") {
       const fallbackSlug = `${slug}-${generateShortSlug(4)}`;
       const sharedBuild = await prisma.sharedBuild.create({
         data: {
