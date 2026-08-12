@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import { ChevronDown, ChevronUp, Search, SlidersHorizontal, Zap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
-import SupportLink from "@/components/support-link";
 import { cn } from "@/lib/utils";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
@@ -64,33 +63,12 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   const [animateBars, setAnimateBars] = React.useState(false);
   const [hydrated, setHydrated] = React.useState(false);
   const {
-    theme,
     accent,
-    colorBlind,
     density,
-    scanlineMode,
-    uiTone,
-    fontScale,
-    setTheme,
     setAccent,
-    setColorBlind,
     setDensity,
-    setScanlineMode,
-    setUiTone,
-    setFontScale
   } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
-  const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL ?? null;
-  const [interactionSections, setInteractionSections] = React.useState({
-    source: true,
-    status: true,
-    origins: true,
-    categories: true
-  });
-  const [hubZonesOpen, setHubZonesOpen] = React.useState({
-    interaction: true,
-    system: true
-  });
   const isSignedIn = hydrated && Boolean(session);
   const hasActiveFilters =
     query.trim().length > 0 ||
@@ -176,14 +154,6 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     });
   }
 
-  function toggleInteractionSection(key: keyof typeof interactionSections) {
-    setInteractionSections((current) => ({ ...current, [key]: !current[key] }));
-  }
-
-  function toggleHubZone(key: keyof typeof hubZonesOpen) {
-    setHubZonesOpen((current) => ({ ...current, [key]: !current[key] }));
-  }
-
   const searchInputRef = React.useRef<HTMLInputElement | null>(null);
 
   React.useEffect(() => {
@@ -198,6 +168,8 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  const [activeTab, setActiveTab] = React.useState<"filters" | "progress" | "appearance">("filters");
 
   return (
     <>
@@ -253,7 +225,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
         <div className="command-hub__body">
           {/* Mobile close header */}
           <div className="xl:hidden flex items-center justify-between border-b border-border/30 pb-2 mb-2 w-full font-mono">
-            <span className="text-xs font-black uppercase text-accent tracking-widest">[ COMMAND CENTER FILTERS ]</span>
+            <span className="text-xs font-black uppercase text-accent tracking-widest">[ COMMAND CENTER ]</span>
             <button
               type="button"
               onClick={() => setExpanded(false)}
@@ -263,6 +235,53 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               <span>Close</span>
             </button>
           </div>
+
+          {/* Segmented Tab Switcher */}
+          <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-panel/80 border border-border/40 mb-4 font-mono">
+            <button
+              type="button"
+              onClick={() => setActiveTab("filters")}
+              className={cn(
+                "py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+                activeTab === "filters"
+                  ? "bg-accent text-accent-foreground shadow-md"
+                  : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+              )}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
+              <span>Filters</span>
+              {hasActiveFilters && <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("progress")}
+              className={cn(
+                "py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+                activeTab === "progress"
+                  ? "bg-accent text-accent-foreground shadow-md"
+                  : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+              )}
+            >
+              <Zap className="h-3.5 w-3.5 shrink-0" />
+              <span>Progress</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("appearance")}
+              className={cn(
+                "py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+                activeTab === "appearance"
+                  ? "bg-accent text-accent-foreground shadow-md"
+                  : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+              )}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
+              <span>Theme</span>
+            </button>
+          </div>
+
           {/* P.E.R.K. Card Matches */}
           {matchingPerks.length > 0 && (
             <section className="hub-zone mb-3 border-b border-border/40 pb-3">
@@ -301,474 +320,263 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               </div>
             </section>
           )}
-        <section className="hub-zone">
-          <div className="hub-zone__title">
-            <Zap className="h-4 w-4" />
-            Data Overview
-          </div>
-          <div className="hub-metric">
-            <div className="flex items-center justify-between text-xs text-foreground/60">
-              <span>Unlocked</span>
-              <span>{displayUnlocked} / {summary.total}</span>
-            </div>
-            <div className="hub-bar">
-              <div
-                className="hub-bar__fill hub-bar__fill--success"
-                style={{ width: animateBars ? `${unlockedPercent}%` : "0%" }}
-              />
-            </div>
-          </div>
-          <div className="hub-metric">
-            <div className="flex items-center justify-between text-xs text-foreground/60">
-              <span>Locked</span>
-              <span>{locked}</span>
-            </div>
-            <div className="hub-bar">
-              <div
-                className="hub-bar__fill hub-bar__fill--warning"
-                style={{ width: animateBars ? `${lockedPercent}%` : "0%" }}
-              />
-            </div>
-          </div>
-          {dataset ? (
-            <div className="mt-3 rounded-[var(--radius)] border border-border bg-panel/80 px-3 py-2 text-xs text-foreground/60">
-              Data source: {dataset.sourceName ?? dataset.sourceType ?? "Unknown"}
-              <div>Last synced: {displayLastSynced}</div>
-            </div>
-          ) : null}
-          <div className="mt-4 space-y-2">
-            <div className="text-xs uppercase tracking-[0.08em] text-foreground/50">Per Tier</div>
-            {displayTierProgress.map((tier) => (
-              <div key={tier.tierLabel} className="hub-metric">
-                <div className="flex items-center justify-between text-xs text-foreground/60">
-                  <span>{formatTierStars(tier.tierLabel) || tier.tierLabel}</span>
-                  <span>{tier.percent}%</span>
-                </div>
-                <div className="hub-bar">
-                  <div
-                    className="hub-bar__fill hub-bar__fill--success"
-                    style={{ width: animateBars ? `${tier.percent}%` : "0%" }}
-                  />
+
+          {/* TAB 1: FILTERS */}
+          {activeTab === "filters" && (
+            <div className="space-y-4 font-mono">
+              {/* Status Filter */}
+              <div className="space-y-1.5">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Status</span>
+                <div className="flex flex-wrap gap-2">
+                  {(["unlocked", "locked"] as const).map((status) => {
+                    const active = statusFilters.includes(status);
+                    return (
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => toggleStatus(status)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer capitalize",
+                          active
+                            ? "bg-accent/20 border-accent text-accent shadow-sm"
+                            : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground hover:border-accent/40"
+                        )}
+                      >
+                        {status === "unlocked" ? "✓ Learned" : "🔒 Locked"}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
 
-        {!isPerksPage && (
-        <section className="hub-zone">
-          <button
-            type="button"
-            className="hub-zone__title hub-zone__title--toggle"
-            onClick={() => toggleHubZone("interaction")}
-            aria-expanded={hubZonesOpen.interaction}
-          >
-            <span className="inline-flex items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4" />
-              Legendary Effects Filters
-            </span>
-            {hubZonesOpen.interaction ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
-          {hubZonesOpen.interaction ? (
-            <>
-          <div className="hub-group">
-            <button
-              type="button"
-              className="hub-group__toggle"
-              onClick={() => toggleInteractionSection("source")}
-              aria-expanded={interactionSections.source}
-            >
-              <span>Source</span>
-              {interactionSections.source ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-            </button>
-            {interactionSections.source ? (
-              <div className="hub-options mt-2">
-                {(["default", "imported", "edited"] as const).map((source) => (
-                  <label key={source} className="hub-option">
-                    <input
-                      type="checkbox"
-                      checked={sourceFilters.includes(source)}
-                      onChange={() => toggleSource(source)}
-                      className="h-4 w-4 accent-[var(--accent)]"
-                    />
-                    <span>{source}</span>
-                  </label>
-                ))}
+              {/* Source Filter */}
+              <div className="space-y-1.5">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Source</span>
+                <div className="flex flex-wrap gap-2">
+                  {(["default", "imported", "edited"] as const).map((source) => {
+                    const active = sourceFilters.includes(source);
+                    return (
+                      <button
+                        key={source}
+                        type="button"
+                        onClick={() => toggleSource(source)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer capitalize",
+                          active
+                            ? "bg-accent/20 border-accent text-accent shadow-sm"
+                            : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground hover:border-accent/40"
+                        )}
+                      >
+                        {source}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            ) : null}
-          </div>
-          <div className="hub-group">
-            <button
-              type="button"
-              className="hub-group__toggle"
-              onClick={() => toggleInteractionSection("status")}
-              aria-expanded={interactionSections.status}
-            >
-              <span>Status</span>
-              {interactionSections.status ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-            </button>
-            {interactionSections.status ? (
-              <div className="hub-options mt-2">
-                {(["unlocked", "locked"] as const).map((status) => (
-                  <label key={status} className="hub-option">
-                    <input
-                      type="checkbox"
-                      checked={statusFilters.includes(status)}
-                      onChange={() => toggleStatus(status)}
-                      className="h-4 w-4 accent-[var(--accent)]"
-                    />
-                    <span>{status}</span>
-                  </label>
-                ))}
-              </div>
-            ) : null}
-          </div>
-          <div className="hub-group">
-            <button
-              type="button"
-              className="hub-group__toggle"
-              onClick={() => toggleInteractionSection("origins")}
-              aria-expanded={interactionSections.origins}
-            >
-              <span>Origins</span>
-              {interactionSections.origins ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-            </button>
-            {interactionSections.origins ? (
-              <div className="hub-options hub-options--scroll mt-2">
-                {originOptions.length === 0 ? (
-                  <div className="text-xs text-foreground/40">No origins detected.</div>
-                ) : (
-                  originOptions.map((origin) => (
-                    <label key={origin} className="hub-option">
-                      <input
-                        type="checkbox"
-                        checked={originFilters.includes(origin)}
-                        onChange={() => toggleOrigin(origin)}
-                        className="h-4 w-4 accent-[var(--accent)]"
-                      />
-                      <span>{origin}</span>
-                    </label>
-                  ))
-                )}
-              </div>
-            ) : null}
-          </div>
-          <div className="hub-group">
-            <button
-              type="button"
-              className="hub-group__toggle"
-              onClick={() => toggleInteractionSection("categories")}
-              aria-expanded={interactionSections.categories}
-            >
-              <span>Categories</span>
-              {interactionSections.categories ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-            </button>
-            {interactionSections.categories ? (
-              <div className="hub-options mt-2">
-                {categoryOptions.map((category) => (
-                  <label key={category} className="hub-option">
-                    <input
-                      type="checkbox"
-                      checked={categoryFilters.includes(category)}
-                      onChange={() => toggleCategory(category)}
-                      className="h-4 w-4 accent-[var(--accent)]"
-                    />
-                    <span>{category}</span>
-                  </label>
-                ))}
-              </div>
-            ) : null}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={clearFilters}>
-              Clear filters
-            </Button>
-          </div>
-          {hasActiveFilters ? (
-            <div className="mt-2 flex flex-wrap gap-2 text-[0.84rem] text-foreground/60">
-              {query.trim().length > 0 ? (
-                <button
-                  type="button"
-                  onClick={() => setQuery("")}
-                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
-                >
-                  Search: {query} x
-                </button>
-              ) : null}
-              {sourceFilters.map((source) => (
-                <button
-                  key={`source-${source}`}
-                  type="button"
-                  onClick={() => toggleSource(source)}
-                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
-                >
-                  Source: {source} x
-                </button>
-              ))}
-              {statusFilters.map((status) => (
-                <button
-                  key={`status-${status}`}
-                  type="button"
-                  onClick={() => toggleStatus(status)}
-                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
-                >
-                  Status: {status} x
-                </button>
-              ))}
-              {categoryFilters.map((category) => (
-                <button
-                  key={`category-${category}`}
-                  type="button"
-                  onClick={() => toggleCategory(category)}
-                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
-                >
-                  Category: {category} x
-                </button>
-              ))}
-              {originFilters.map((origin) => (
-                <button
-                  key={`origin-${origin}`}
-                  type="button"
-                  onClick={() => toggleOrigin(origin)}
-                  className="rounded-full border border-border px-2 py-0.5 hover:border-accent"
-                >
-                  Origin: {origin} x
-                </button>
-              ))}
-            </div>
-          ) : null}
-            </>
-          ) : null}
-        </section>
-        )}
 
-        <section className="hub-zone">
-          <button
-            type="button"
-            className="hub-zone__title hub-zone__title--toggle"
-            onClick={() => toggleHubZone("system")}
-            aria-expanded={hubZonesOpen.system}
-          >
-            <span>System</span>
-            {hubZonesOpen.system ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
-          {hubZonesOpen.system ? (
-            <>
-          <div className="hub-section">
-            <div className="hub-section__title">View Density</div>
-            <div className="hub-section__copy">
-              {density === "compact"
-                ? "Compact tightens cards, rows, and spacing for faster scanning."
-                : "Comfortable adds breathing room for easier reading."}
-            </div>
-            <div className="hub-choice-grid hub-choice-grid--two">
-              {([
-                {
-                  value: "comfortable",
-                  label: "Comfortable",
-                  meta: "More spacing, clearer grouping"
-                },
-                {
-                  value: "compact",
-                  label: "Compact",
-                  meta: "Denser cards, tighter scanning"
-                }
-              ] as const).map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  data-active={density === option.value}
-                  className="hub-choice"
-                  onClick={() => {
-                    setDensity(option.value);
-                    persistSettings({ density: option.value });
-                  }}
-                >
-                  <span className="hub-choice__label">{option.label}</span>
-                  <span className="hub-choice__meta">{option.meta}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">Theme</div>
-            <div className="flex flex-wrap gap-2">
-              {(["dark", "light"] as const).map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => {
-                    setTheme(value);
-                    persistSettings({ theme: value });
-                  }}
-                  className={cn(
-                    "rounded-full border px-2 py-1 text-xs",
-                    theme === value
-                      ? "border-accent text-foreground"
-                      : "border-border text-foreground/60 hover:border-accent"
-                  )}
-                >
-                  {value}
-                </button>
-              ))}
-            </div>
-            {theme === "light" ? (
-              <div className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-[color:var(--color-warning)]">
-                Caution, bright
+              {/* Category Filter */}
+              <div className="space-y-1.5">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Categories</span>
+                <div className="flex flex-wrap gap-2">
+                  {categoryOptions.map((category) => {
+                    const active = categoryFilters.includes(category);
+                    return (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => toggleCategory(category)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer",
+                          active
+                            ? "bg-accent/20 border-accent text-accent shadow-sm"
+                            : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground hover:border-accent/40"
+                        )}
+                      >
+                        {category}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            ) : null}
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">Accent</div>
-            <div className="flex flex-wrap gap-2">
-              {([
-                "ember",
-                "vault",
-                "radburst",
-                "glow",
-                "brass",
-                "frost",
-                "sunset",
-                "mint",
-                "nightfall"
-              ] as const).map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => {
-                    setAccent(value);
-                    persistSettings({ accent: value });
-                  }}
-                  className={cn(
-                    "rounded-full border px-2 py-1 text-xs capitalize",
-                    accent === value
-                      ? "border-accent text-foreground"
-                      : "border-border text-foreground/60 hover:border-accent"
+
+              {/* Origins Filter (Only shown if origin options exist) */}
+              {originOptions.length > 0 && (
+                <div className="space-y-1.5">
+                  <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Origins</span>
+                  <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                    {originOptions.map((origin) => {
+                      const active = originFilters.includes(origin);
+                      return (
+                        <button
+                          key={origin}
+                          type="button"
+                          onClick={() => toggleOrigin(origin)}
+                          className={cn(
+                            "px-2.5 py-1 rounded-md text-[0.72rem] font-bold transition-all border cursor-pointer",
+                            active
+                              ? "bg-accent/20 border-accent text-accent"
+                              : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
+                          )}
+                        >
+                          {origin}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions & Active Filters */}
+              {hasActiveFilters && (
+                <div className="pt-3 border-t border-border/40 flex flex-col gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={clearFilters} className="w-full font-mono text-xs border-red-500/40 text-red-400 hover:bg-red-950/40">
+                    🧹 Clear All Filters
+                  </Button>
+                  <div className="flex flex-wrap gap-1.5 text-xs text-foreground/60">
+                    {query.trim().length > 0 && (
+                      <button type="button" onClick={() => setQuery("")} className="px-2 py-0.5 rounded bg-panel border border-border text-foreground/80 hover:border-accent">
+                        Query: &quot;{query}&quot; ×
+                      </button>
+                    )}
+                    {statusFilters.map((s) => (
+                      <button key={s} type="button" onClick={() => toggleStatus(s)} className="px-2 py-0.5 rounded bg-panel border border-border text-foreground/80 hover:border-accent capitalize">
+                        Status: {s} ×
+                      </button>
+                    ))}
+                    {sourceFilters.map((s) => (
+                      <button key={s} type="button" onClick={() => toggleSource(s)} className="px-2 py-0.5 rounded bg-panel border border-border text-foreground/80 hover:border-accent capitalize">
+                        Source: {s} ×
+                      </button>
+                    ))}
+                    {categoryFilters.map((c) => (
+                      <button key={c} type="button" onClick={() => toggleCategory(c)} className="px-2 py-0.5 rounded bg-panel border border-border text-foreground/80 hover:border-accent">
+                        {c} ×
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 2: PROGRESS */}
+          {activeTab === "progress" && (
+            <div className="space-y-4 font-mono">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg border border-emerald-500/40 bg-emerald-950/20">
+                  <div className="text-[0.7rem] uppercase text-emerald-400 font-bold">Unlocked</div>
+                  <div className="text-xl font-bold text-emerald-300 mt-0.5">{displayUnlocked} / {summary.total}</div>
+                  <div className="hub-bar mt-2">
+                    <div className="hub-bar__fill hub-bar__fill--success" style={{ width: animateBars ? `${unlockedPercent}%` : "0%" }} />
+                  </div>
+                </div>
+                <div className="p-3 rounded-lg border border-amber-500/40 bg-amber-950/20">
+                  <div className="text-[0.7rem] uppercase text-amber-400 font-bold">Remaining</div>
+                  <div className="text-xl font-bold text-amber-300 mt-0.5">{locked}</div>
+                  <div className="hub-bar mt-2">
+                    <div className="hub-bar__fill hub-bar__fill--warning" style={{ width: animateBars ? `${lockedPercent}%` : "0%" }} />
+                  </div>
+                </div>
+              </div>
+
+              {dataset && (
+                <div className="p-3 rounded-lg border border-border/60 bg-panel/60 text-xs text-foreground/70">
+                  <div className="font-bold text-foreground">Data Source: {dataset.sourceName ?? dataset.sourceType ?? "Unknown"}</div>
+                  <div className="text-foreground/50 mt-0.5">Last synced: {displayLastSynced}</div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Per Tier Breakdown</span>
+                <div className="space-y-2">
+                  {displayTierProgress.map((tier) => (
+                    <div key={tier.tierLabel} className="p-2.5 rounded-lg border border-border/40 bg-panel/40">
+                      <div className="flex items-center justify-between text-xs font-bold text-foreground mb-1.5">
+                        <span>{formatTierStars(tier.tierLabel) || tier.tierLabel}</span>
+                        <span className="text-emerald-400">{tier.percent}% ({tier.unlocked}/{tier.total})</span>
+                      </div>
+                      <div className="hub-bar">
+                        <div className="hub-bar__fill hub-bar__fill--success" style={{ width: animateBars ? `${tier.percent}%` : "0%" }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: APPEARANCE & SYSTEM */}
+          {activeTab === "appearance" && (
+            <div className="space-y-4 font-mono">
+              {/* Density */}
+              <div className="space-y-1.5">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">UI Density</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {(["comfortable", "compact"] as const).map((opt) => (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => {
+                        setDensity(opt);
+                        persistSettings({ density: opt });
+                      }}
+                      className={cn(
+                        "py-2 px-3 rounded-lg text-xs font-bold transition-all border cursor-pointer capitalize",
+                        density === opt
+                          ? "bg-accent/20 border-accent text-accent shadow-sm"
+                          : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
+                      )}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Theme & Accent */}
+              <div className="space-y-1.5">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Color Accent</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {(["ember", "vault", "radburst", "glow", "brass", "frost", "sunset", "mint", "nightfall"] as const).map((acc) => (
+                    <button
+                      key={acc}
+                      type="button"
+                      onClick={() => {
+                        setAccent(acc);
+                        persistSettings({ accent: acc });
+                      }}
+                      className={cn(
+                        "px-2.5 py-1 rounded-md text-[0.72rem] font-bold capitalize transition-all border cursor-pointer",
+                        accent === acc
+                          ? "bg-accent text-accent-foreground border-accent shadow-sm"
+                          : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
+                      )}
+                    >
+                      {acc}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick Navigation Links */}
+              <div className="pt-3 border-t border-border/40 space-y-2">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Quick Navigation</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button type="button" variant="outline" size="sm" asChild className="font-mono text-xs border-accent/40 text-accent hover:bg-accent/10">
+                    <Link href="/overview/achievements" onClick={() => setExpanded(false)}>🏆 Achievements</Link>
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" asChild className="font-mono text-xs border-border text-foreground/80 hover:text-foreground">
+                    <Link href="/settings" onClick={() => setExpanded(false)}>⚙️ Settings</Link>
+                  </Button>
+                  {isAdmin && (
+                    <Button type="button" variant="outline" size="sm" asChild className="col-span-2 font-mono text-xs border-amber-500/40 text-amber-400 hover:bg-amber-950/40">
+                      <Link href="/admin-import" onClick={() => setExpanded(false)}>🛠️ Admin Tools</Link>
+                    </Button>
                   )}
-                >
-                  {value}
-                </button>
-              ))}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">UI Tone</div>
-            <div className="flex flex-wrap gap-2">
-              {([
-                { value: "neutral", label: "Neutral" },
-                { value: "vault", label: "Vault" },
-                { value: "copper", label: "Copper" },
-                { value: "olive", label: "Olive" },
-                { value: "rose", label: "Rose" }
-              ] as const).map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setUiTone(option.value)}
-                  className={cn(
-                    "rounded-full border px-2 py-1 text-xs",
-                    uiTone === option.value
-                      ? "border-accent text-foreground"
-                      : "border-border text-foreground/60 hover:border-accent"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">Color Assistance</div>
-            <select
-              value={colorBlind}
-              onChange={(event) => {
-                setColorBlind(event.target.value as typeof colorBlind);
-                persistSettings({ colorBlind: event.target.value });
-              }}
-              className="w-full rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-xs"
-            >
-              <option value="none">Default</option>
-              <option value="deuteranopia">Deuteranopia</option>
-              <option value="protanopia">Protanopia</option>
-              <option value="tritanopia">Tritanopia</option>
-              <option value="high-contrast">High Contrast</option>
-            </select>
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">Scanlines</div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {([
-                { value: "off", label: "Off" },
-                { value: "soft", label: "Soft" },
-                { value: "balanced", label: "Balanced" },
-                { value: "strong", label: "Strong" }
-              ] as const).map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setScanlineMode(option.value)}
-                  className={cn(
-                    "rounded-full border px-2 py-1 text-xs",
-                    scanlineMode === option.value
-                      ? "border-accent text-foreground"
-                      : "border-border text-foreground/60 hover:border-accent"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="hub-group">
-            <div className="flex items-center justify-between text-xs text-foreground/60 mb-2">
-              <span>Font Scale</span>
-              <span className="font-mono text-accent">{Math.round((fontScale || 1) * 100)}%</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {([
-                { scale: 0.9, label: "90%" },
-                { scale: 1.0, label: "100% (Default)" },
-                { scale: 1.1, label: "110%" },
-                { scale: 1.2, label: "120%" }
-              ] as const).map((option) => (
-                <button
-                  key={option.scale}
-                  type="button"
-                  onClick={() => setFontScale(option.scale)}
-                  className={cn(
-                    "rounded-full border px-2.5 py-1 text-xs transition-all",
-                    Math.abs((fontScale || 1) - option.scale) < 0.01
-                      ? "border-accent text-accent bg-accent/10 font-bold"
-                      : "border-border text-foreground/60 hover:border-accent hover:text-foreground"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="hub-group">
-            <div className="text-xs text-foreground/60">Navigation</div>
-            <div className="flex flex-wrap gap-2">
-              {isAdmin ? (
-                <Button type="button" variant="outline" size="sm" asChild>
-                  <Link href="/admin-import">Admin Tools</Link>
-                </Button>
-              ) : null}
-              <Button type="button" variant="outline" size="sm" asChild>
-                <Link href="/settings">Settings</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="hub-section">
-            <div className="hub-section__title">Support</div>
-            <div className="mt-3">
-              <SupportLink href={supportUrl} label="Support this App ❤️" />
-            </div>
-          </div>
-            </>
-          ) : null}
-        </section>
+          )}
         </div>
       ) : null}
     </div>
