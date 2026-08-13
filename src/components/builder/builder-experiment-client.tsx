@@ -1358,7 +1358,7 @@ export default function BuilderExperimentClient({
           {/* SPECIAL Progress bars */}
           <div className="pip-terminal-panel p-4 rounded-xl space-y-4">
             <div className="text-xs font-black font-mono uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center gap-1.5">
-              <Activity className="h-3.5 w-3.5" /> [ S.P.E.C.I.A.L. TELEMETRY ]
+              <Activity className="h-3.5 w-3.5" /> [S.P.E.C.I.A.L. TELEMETRY]
             </div>
             
             <TooltipProvider delayDuration={150}>

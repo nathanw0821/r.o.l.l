@@ -207,7 +207,7 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
           {/* SPECIAL Telemetry */}
           <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
             <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-              [ S.P.E.C.I.A.L. TELEMETRY ]
+              [S.P.E.C.I.A.L. TELEMETRY]
             </div>
             <div className="space-y-2">
               {BUILDER_SPECIAL_KEYS.map((k) => {
