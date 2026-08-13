@@ -292,11 +292,19 @@ export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterSt
     if (query) {
       const tokenExpansions = expandQueryTokens(query);
       if (tokenExpansions.length > 0) {
-        const categories = row.categories.map((c) => c.category.name).join(" | ");
+        const categoriesStr = Array.isArray(row.categories)
+          ? row.categories.map((c) => c?.category?.name || "").filter(Boolean).join(" | ")
+          : typeof row.categories === "string"
+          ? (row.categories as string)
+          : "";
+
+        const effectName = row.effect?.name ?? (row as unknown as { effectName?: string }).effectName ?? "";
+        const tierLabel = row.tier?.label ?? (row as unknown as { tierLabel?: string }).tierLabel ?? "";
+
         const haystack = [
-          row.effect.name,
-          row.tier?.label ?? "",
-          categories,
+          effectName,
+          tierLabel,
+          categoriesStr,
           row.description ?? "",
           row.extraComponent ?? "",
           row.notes ?? "",

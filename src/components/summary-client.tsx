@@ -669,7 +669,7 @@ export default function SummaryClient({
         )}
       >
         {tierOrder.map((tierLabel) => {
-          const items = filteredRows.filter((row) => row.tier?.label === tierLabel);
+          const items = filteredRows.filter((row) => (row.tier?.label ?? (row as unknown as { tierLabel?: string }).tierLabel) === tierLabel);
           if (items.length === 0) return null;
           const tierDisplay = formatTierStarsWithLabel(tierLabel);
 
