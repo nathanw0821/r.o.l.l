@@ -104,15 +104,28 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
       .catch(() => undefined);
   }, [characterId, activeSlot]);
 
-  const usedSpecialCapacity = React.useMemo(() => calculateSpecialCapacity(equippedCards), [equippedCards]);
-  const legendaryBonuses = React.useMemo(() => calculateLegendarySpecialBonuses(equippedCards), [equippedCards]);
+  const safeEquippedCards = React.useMemo(() => {
+    if (!Array.isArray(equippedCards)) return [];
+    return equippedCards
+      .map((item) => {
+        if (typeof item === "string") return { cardId: item, rank: 1 };
+        if (item && typeof item === "object" && typeof (item as { cardId?: unknown }).cardId === "string") {
+          return { cardId: (item as { cardId: string }).cardId, rank: typeof (item as { rank?: unknown }).rank === "number" ? (item as { rank: number }).rank : 1 };
+        }
+        return null;
+      })
+      .filter((item): item is EquippedItem => item !== null);
+  }, [equippedCards]);
+
+  const usedSpecialCapacity = React.useMemo(() => calculateSpecialCapacity(safeEquippedCards), [safeEquippedCards]);
+  const legendaryBonuses = React.useMemo(() => calculateLegendarySpecialBonuses(safeEquippedCards), [safeEquippedCards]);
 
   const equippedLegendaryCards = React.useMemo(() => {
-    return equippedCards.filter((item) => {
+    return safeEquippedCards.filter((item) => {
       const card = getPerkCardById(item.cardId);
       return card?.special === "LEGENDARY";
     });
-  }, [equippedCards]);
+  }, [safeEquippedCards]);
 
   // Hard Cap of 15 (Human) or 20 (Ghoul) for perk card slot capacity
   const effectiveCapacities = React.useMemo(() => {
@@ -519,11 +532,11 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
         <CardHeader className="pb-3 border-b border-slate-900">
           <CardTitle className="text-base font-mono text-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span>Equipped Perk Deck ({equippedCards.length} Cards)</span>
+              <span>Equipped Perk Deck ({safeEquippedCards.length} Cards)</span>
               <span className="text-xs px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
                 ⭐ Legendary Perks: {equippedLegendaryCards.length} / 6 Slots
               </span>
-              {equippedCards.length > 0 && (
+              {safeEquippedCards.length > 0 && (
                 <button
                   type="button"
                   onClick={handleClearDeck}
@@ -566,14 +579,14 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           <CardDescription className="text-xs text-slate-400">Active perk cards slotted in this loadout.</CardDescription>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
-          {showRoadmap && <PerkLevelingRoadmap equippedCards={equippedCards} />}
-          {equippedCards.length === 0 ? (
+          {showRoadmap && <PerkLevelingRoadmap equippedCards={safeEquippedCards} />}
+          {safeEquippedCards.length === 0 ? (
             <div className="py-10 text-center text-xs font-mono text-slate-500 border border-dashed border-slate-800 rounded-lg">
               No perk cards equipped in this loadout yet. Select cards below from the Vault-Tec catalog!
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
-              {equippedCards.map((item) => {
+              {safeEquippedCards.map((item) => {
                 const card = PERK_CATALOG.find((c) => c.id === item.cardId);
                 if (!card) return null;
                 const activeRankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];

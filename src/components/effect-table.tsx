@@ -282,6 +282,19 @@ export default function EffectTable({
   const unlockedCount = localRows.filter((row) => row.unlocked).length;
   const percent = totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0;
 
+  const starTierStats = React.useMemo(() => {
+    const tiers = ["1 Star", "2 Star", "3 Star", "4 Star"];
+    return tiers
+      .map((tierLabel) => {
+        const tierRows = localRows.filter((r) => r.tier?.label === tierLabel);
+        const total = tierRows.length;
+        const unlocked = tierRows.filter((r) => r.unlocked).length;
+        const pct = total > 0 ? Math.round((unlocked / total) * 100) : 0;
+        return { tierLabel, total, unlocked, pct };
+      })
+      .filter((t) => t.total > 0);
+  }, [localRows]);
+
   return (
     <div className="space-y-6">
       {title && (
@@ -314,13 +327,33 @@ export default function EffectTable({
               </div>
               <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
                 <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Unlocked</span>
-                <span className="text-2xl font-mono font-bold text-foreground mt-1">{unlockedCount}</span>
+                <span className="text-2xl font-mono font-bold text-amber-400 mt-1">{unlockedCount}</span>
               </div>
               <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
                 <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Completion</span>
-                <span className="text-2xl font-mono font-bold text-foreground mt-1">{percent}%</span>
+                <span className="text-2xl font-mono font-bold text-emerald-400 mt-1">{percent}%</span>
               </div>
             </div>
+
+            {/* 4 Star Tier Breakdown Cards (When viewing all effects) */}
+            {starTierStats.length > 1 && (
+              <div className="pt-3 border-t border-border/20 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {starTierStats.map((st) => (
+                  <div key={st.tierLabel} className="rounded-lg border border-border/40 bg-slate-900/60 p-3 font-mono space-y-1">
+                    <div className="flex items-center justify-between text-xs font-bold text-amber-300">
+                      <span>{st.tierLabel}</span>
+                      <span>{st.pct}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-border/20">
+                      <div className="h-full bg-amber-400 rounded-full" style={{ width: `${st.pct}%` }} />
+                    </div>
+                    <div className="text-[0.68rem] text-slate-400 text-right">
+                      {st.unlocked} / {st.total} unlocked
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </Card>
       )}
