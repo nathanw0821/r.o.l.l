@@ -440,17 +440,17 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                   {/* Decorative vintage inner paper border */}
                   <div className="absolute inset-1 rounded-lg border border-[#e8dfc8]/20 pointer-events-none" />
 
-                  {/* Actual In-Game SPECIAL Card Image */}
+                  {/* Actual Official Fallout 76 WebP SPECIAL Letter Icon */}
                   <div className="flex flex-col items-center gap-1 z-10 pt-1">
-                    <div className="relative h-20 w-full flex items-center justify-center filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]">
+                    <div className="relative h-20 w-20 flex items-center justify-center filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={`/images/special/special_${stat}.webp`}
-                        alt={`In-game ${theme.name} SPECIAL Card`}
+                        alt={`Official Fallout 76 ${theme.name} SPECIAL Letter`}
                         onError={(e) => {
                           e.currentTarget.src = `/images/special/special_${stat}.png`;
                         }}
-                        className="max-h-20 w-auto object-contain transition-transform duration-200 hover:scale-105"
+                        className="h-20 w-20 object-contain transition-transform duration-200 hover:scale-105"
                       />
                     </div>
                     <span className="text-[0.72rem] font-mono text-[#f3efe0] uppercase tracking-widest font-bold drop-shadow mt-1">
