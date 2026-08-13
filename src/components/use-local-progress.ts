@@ -117,13 +117,6 @@ export function useLocalProgress(enabled = true) {
   }, [enabled]);
 
   React.useEffect(() => {
-    if (!enabled) return;
-    return subscribeLocalProgress((nextMap) => {
-      setMap(nextMap);
-    });
-  }, [enabled]);
-
-  React.useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
 
     const sync = () => setMap(readLocalProgress());
