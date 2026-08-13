@@ -74,9 +74,9 @@ function getCatalogEffectTiersCached(datasetVersionId: string) {
   return loader();
 }
 
-async function fetchUserProgressMap(userId: string, datasetVersionId: string) {
+async function fetchUserProgressMap(userId: string) {
   const rows = await prisma.userProgress.findMany({
-    where: { userId, effectTier: { datasetVersionId } },
+    where: { userId },
     select: { 
       effectTierId: true, 
       unlocked: true,
@@ -118,9 +118,9 @@ async function fetchUserProgressMap(userId: string, datasetVersionId: string) {
   return map;
 }
 
-async function fetchGlobalProgressMap(userId: string, datasetVersionId: string) {
+async function fetchGlobalProgressMap(userId: string) {
   const rows = await prisma.userProgress.findMany({
-    where: { userId, effectTier: { datasetVersionId }, unlocked: true },
+    where: { userId, unlocked: true },
     select: { 
       effectTierId: true, 
       character: { 
@@ -222,21 +222,17 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
   if (!userId) return normalized;
 
   try {
-    const characterId = await getActiveCharacterId(userId).catch(() => undefined);
-    const dataset = await getActiveDatasetVersion().catch(() => null);
-    if (!dataset) return normalized;
-
     const [progressMap, globalProgressMap, baselineMap] = await Promise.all([
-      fetchUserProgressMap(userId, dataset.id).catch(() => new Map()),
-      fetchGlobalProgressMap(userId, dataset.id).catch(() => new Map()),
-      getImportedBaselineMap(dataset.id, characterId).catch(() => new Map())
+      fetchUserProgressMap(userId).catch(() => new Map()),
+      fetchGlobalProgressMap(userId).catch(() => new Map()),
+      getImportedBaselineMap(userId).catch(() => new Map())
     ]);
 
     return normalized.map((item) => {
       const effectName = item.effect?.name?.toLowerCase().trim() || "";
       const cleanName = effectName.replace(/[^a-z0-9]/g, "");
       const progress = progressMap.get(item.id) || progressMap.get(effectName) || progressMap.get(cleanName);
-      const baselineUnlocked = baselineMap.get(item.id) || (effectName ? baselineMap.get(effectName) : undefined);
+      const baselineUnlocked = baselineMap.get(item.id) || (effectName ? baselineMap.get(effectName) : undefined) || (cleanName ? baselineMap.get(cleanName) : undefined);
       const unlockedBy = globalProgressMap.get(item.id) || globalProgressMap.get(effectName) || [];
       
       const isUnlocked = progress 
@@ -245,7 +241,7 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
 
       return {
         ...item,
-        unlocked: isUnlocked,
+        unlocked: Boolean(isUnlocked),
         isSeeking: progress ? progress.isSeeking : item.isSeeking,
         modCount: progress ? progress.modCount : item.modCount,
         unlockedBy
@@ -260,23 +256,10 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
 const loadMergedEffectTiers = cache(loadMergedEffectTiersUncached);
 
 export async function getGlobalProgressSummary(userId: string) {
-  const dataset = await getActiveDatasetVersion();
-  if (!dataset) return { total: 0, unlocked: 0, percent: 0 };
-
-  const total = await prisma.effectTier.count({
-    where: { datasetVersionId: dataset.id }
-  });
-
-  // Unique effect tiers unlocked by ANY character of the user
-  const unlockedRows = await prisma.userProgress.findMany({
-    where: { userId, effectTier: { datasetVersionId: dataset.id }, unlocked: true },
-    distinct: ['effectTierId'],
-    select: { effectTierId: true }
-  });
-
-  const unlocked = unlockedRows.length;
+  const all = await loadMergedEffectTiers(userId);
+  const total = all.length;
+  const unlocked = all.filter((r) => r.unlocked).length;
   const percent = total === 0 ? 0 : Math.round((unlocked / total) * 100);
-
   return { total, unlocked, percent };
 }
 
@@ -302,38 +285,17 @@ export type LightweightProgressRow = {
 };
 
 export async function getLightweightProgress(userId: string): Promise<LightweightProgressRow[]> {
-  const dataset = await getActiveDatasetVersion();
-  if (!dataset) return [];
-
-  const characterId = await getActiveCharacterId(userId);
-  if (!characterId) return [];
-
-  const [catalog, baselineRows, progressRows] = await Promise.all([
-    getCatalogEffectTiersCached(dataset.id),
-    prisma.userImportBaseline.findMany({
-      where: { characterId, datasetVersionId: dataset.id },
-      select: { effectTierId: true, unlocked: true }
-    }),
-    prisma.userProgress.findMany({
-      where: { characterId, effectTier: { datasetVersionId: dataset.id } },
-      select: { effectTierId: true, unlocked: true }
-    })
-  ]);
-
-  const baselineMap = new Map(baselineRows.map(r => [r.effectTierId, r.unlocked]));
-  const progressMap = new Map(progressRows.map(r => [r.effectTierId, r.unlocked]));
-
-  return catalog.map((item) => {
-    const baseline = baselineMap.get(item.id);
-    const progress = progressMap.get(item.id);
-    const unlocked = progress !== undefined ? progress : (baseline ?? false);
-    return {
-      id: item.id,
-      tierLabel: item.tier?.label ?? "Unknown",
-      categories: item.categories.map((c) => c.category.name),
-      unlocked
-    };
-  });
+  const all = await loadMergedEffectTiers(userId);
+  return all.map((item) => ({
+    id: item.id,
+    tierLabel: item.tier?.label ?? item.tierLabel ?? "Unknown",
+    categories: Array.isArray(item.categories)
+      ? (item.categories as Array<string | { category: { name: string } }>)
+          .map((c) => (typeof c === "string" ? c : c.category?.name))
+          .filter(Boolean) as string[]
+      : [],
+    unlocked: Boolean(item.unlocked)
+  }));
 }
 
 
@@ -368,7 +330,7 @@ export async function getTierProgressSummary(userId?: string) {
   const tierMap = new Map<string, TierProgressSummary>();
 
   for (const row of all) {
-    const tierLabel = row.tier?.label ?? "Unknown";
+    const tierLabel = row.tier?.label ?? row.tierLabel ?? "Unknown";
     const existing = tierMap.get(tierLabel);
 
     if (existing) {
@@ -387,19 +349,18 @@ export async function getTierProgressSummary(userId?: string) {
     });
   }
 
-  return Array.from(tierMap.values())
-    .map((tier) => ({
-      ...tier,
-      percent: tier.total > 0 ? Math.round((tier.unlocked / tier.total) * 100) : 0
-    }))
-    .sort((a, b) => {
-      const left = Number.parseInt(a.tierLabel, 10);
-      const right = Number.parseInt(b.tierLabel, 10);
-      if (Number.isNaN(left) && Number.isNaN(right)) return a.tierLabel.localeCompare(b.tierLabel);
-      if (Number.isNaN(left)) return 1;
-      if (Number.isNaN(right)) return -1;
-      return left - right;
-    });
+  return Array.from(tierMap.values()).map((summary) => ({
+    ...summary,
+    percent: summary.total === 0 ? 0 : Math.round((summary.unlocked / summary.total) * 100)
+  }));
+}
+
+export async function getUserProgressSummary(userId?: string) {
+  if (!userId) {
+    const total = FALLBACK_LEGENDARY_EFFECTS.length;
+    return { total, unlocked: 0, percent: 0 };
+  }
+  return getGlobalProgressSummary(userId);
 }
 
 const getGuestProgressSummaryCached = unstable_cache(
@@ -414,48 +375,9 @@ const getGuestProgressSummaryCached = unstable_cache(
 );
 
 export async function getProgressSummary(userId?: string) {
-  await ensureProfileApplied(userId);
-  const dataset = await getActiveDatasetVersion().catch(() => null);
-  if (!dataset) {
-    const total = FALLBACK_LEGENDARY_EFFECTS.length; // 148 total effects
+  if (!userId) {
+    const total = FALLBACK_LEGENDARY_EFFECTS.length;
     return { total, unlocked: 0, percent: 0 };
   }
-
-  const [total, characterId] = await Promise.all([
-    prisma.effectTier.count({ where: { datasetVersionId: dataset.id } }).catch(() => FALLBACK_LEGENDARY_EFFECTS.length),
-    getActiveCharacterId(userId).catch(() => undefined)
-  ]);
-
-  if (!userId || !characterId) {
-    const totalCount = total || FALLBACK_LEGENDARY_EFFECTS.length;
-    return { total: totalCount, unlocked: 0, percent: 0 };
-  }
-
-  const [baselineMap, progressRows] = await Promise.all([
-    getImportedBaselineMap(dataset.id, characterId),
-    prisma.userProgress.findMany({
-      where: { characterId, effectTier: { datasetVersionId: dataset.id } },
-      select: { effectTierId: true, unlocked: true }
-    })
-  ]);
-
-  let unlocked = 0;
-  for (const value of baselineMap.values()) {
-    if (value) unlocked += 1;
-  }
-
-  const baselineById = baselineMap;
-  for (const row of progressRows) {
-    const baseline = baselineById.get(row.effectTierId);
-    if (baseline === undefined) {
-      if (row.unlocked) unlocked += 1;
-      continue;
-    }
-    if (baseline === true && row.unlocked === false) unlocked -= 1;
-    if (baseline === false && row.unlocked === true) unlocked += 1;
-  }
-
-  const percent = total === 0 ? 0 : Math.round((unlocked / total) * 100);
-
-  return { total, unlocked, percent };
+  return getGlobalProgressSummary(userId);
 }
