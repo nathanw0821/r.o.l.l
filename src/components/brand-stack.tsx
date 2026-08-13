@@ -32,7 +32,7 @@ export default function BrandStack({
         <div className="brand-stack__title">{titleSlot ?? "R.O.L.L"}</div>
       )}
       <div className="brand-stack__subtitle">{subtitleSlot ?? "Reconfiguration, Optimization & Logistics Laboratory"}</div>
-      <div className="brand-stack__support">{supportSlot ?? "B.U.I.L.D. Sandbox · P.E.R.K. Matrix · Truth Bible"}</div>
+      {supportSlot ? <div className="brand-stack__support">{supportSlot}</div> : null}
     </div>
   );
 }
