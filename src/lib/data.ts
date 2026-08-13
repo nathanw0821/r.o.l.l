@@ -222,22 +222,30 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
   if (!userId) return normalized;
 
   try {
+    const characterId = await getActiveCharacterId(userId).catch(() => undefined);
     const dataset = await getActiveDatasetVersion().catch(() => null);
     if (!dataset) return normalized;
 
-    const [progressMap, globalProgressMap] = await Promise.all([
+    const [progressMap, globalProgressMap, baselineMap] = await Promise.all([
       fetchUserProgressMap(userId, dataset.id).catch(() => new Map()),
-      fetchGlobalProgressMap(userId, dataset.id).catch(() => new Map())
+      fetchGlobalProgressMap(userId, dataset.id).catch(() => new Map()),
+      getImportedBaselineMap(dataset.id, characterId).catch(() => new Map())
     ]);
 
     return normalized.map((item) => {
       const effectName = item.effect?.name?.toLowerCase().trim() || "";
       const cleanName = effectName.replace(/[^a-z0-9]/g, "");
       const progress = progressMap.get(item.id) || progressMap.get(effectName) || progressMap.get(cleanName);
+      const baselineUnlocked = baselineMap.get(item.id) || (effectName ? baselineMap.get(effectName) : undefined);
       const unlockedBy = globalProgressMap.get(item.id) || globalProgressMap.get(effectName) || [];
+      
+      const isUnlocked = progress 
+        ? progress.unlocked 
+        : (baselineUnlocked ?? item.unlocked);
+
       return {
         ...item,
-        unlocked: progress ? progress.unlocked : item.unlocked,
+        unlocked: isUnlocked,
         isSeeking: progress ? progress.isSeeking : item.isSeeking,
         modCount: progress ? progress.modCount : item.modCount,
         unlockedBy

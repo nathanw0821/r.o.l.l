@@ -37,14 +37,27 @@ export function findLocalProgressEntry(
     cleanName,
     rawClean,
     strippedId,
+    // Hyphen star formats
     `${starNum}star-${slugName}`,
     `${starNum}-star-${slugName}`,
     `effect-${starNum}star-${slugName}`,
     `effect-${starNum}-star-${slugName}`,
     `${slugName}-${starNum}star`,
     `${slugName}-${starNum}-star`,
+    // Underscore star formats
+    `${starNum}star_${slugName}`,
+    `${starNum}_star_${slugName}`,
+    `effect_${starNum}star_${slugName}`,
+    `effect_${starNum}_star_${slugName}`,
     `${slugName}_${starNum}star`,
-    `${slugName}_${starNum}_star`
+    `${slugName}_${starNum}_star`,
+    // Direct concatenated formats
+    `${starNum}star_${cleanName}`,
+    `${starNum}_star_${cleanName}`,
+    `${cleanName}_${starNum}star`,
+    `${cleanName}_${starNum}_star`,
+    `${starNum}star${cleanName}`,
+    `${cleanName}${starNum}star`
   ];
 
   for (const key of candidateKeys) {
