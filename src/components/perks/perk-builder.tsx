@@ -425,19 +425,22 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
 
                   {/* Actual In-Game SPECIAL Card Image */}
                   <div className="flex flex-col items-center gap-1 z-10 pt-1">
-                    <div className="relative h-16 w-full flex items-center justify-center filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+                    <div className="relative h-20 w-full flex items-center justify-center filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={`/images/special/special_${stat}.webp`}
                         alt={`In-game ${theme.name} SPECIAL Card`}
-                        className="max-h-16 w-auto object-contain transition-transform duration-200 hover:scale-105"
+                        onError={(e) => {
+                          e.currentTarget.src = `/images/special/special_${stat}.png`;
+                        }}
+                        className="max-h-20 w-auto object-contain transition-transform duration-200 hover:scale-105"
                       />
                     </div>
-                    <span className="text-[0.68rem] font-mono text-[#f3efe0] uppercase tracking-widest font-bold drop-shadow mt-0.5">
+                    <span className="text-[0.72rem] font-mono text-[#f3efe0] uppercase tracking-widest font-bold drop-shadow mt-1">
                       {theme.name}
                     </span>
                     {legBonus > 0 ? (
-                      <span className="mt-0.5 text-[0.62rem] font-mono px-2 py-0.5 bg-amber-950/80 text-amber-300 border border-amber-500/60 rounded-full font-bold shadow">
+                      <span className="mt-0.5 text-[0.62rem] font-mono px-2 py-0.5 bg-amber-950/90 text-amber-300 border border-amber-500/60 rounded-full font-bold shadow">
                         +{legBonus}⭐ Legendary
                       </span>
                     ) : null}
