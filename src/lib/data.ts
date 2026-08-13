@@ -74,9 +74,9 @@ function getCatalogEffectTiersCached(datasetVersionId: string) {
   return loader();
 }
 
-async function fetchUserProgressMap(characterId: string, datasetVersionId: string) {
+async function fetchUserProgressMap(userId: string, datasetVersionId: string) {
   const rows = await prisma.userProgress.findMany({
-    where: { characterId, effectTier: { datasetVersionId } },
+    where: { userId, effectTier: { datasetVersionId } },
     select: { 
       effectTierId: true, 
       unlocked: true,
@@ -84,11 +84,17 @@ async function fetchUserProgressMap(characterId: string, datasetVersionId: strin
       modCount: true
     }
   });
-  return new Map(rows.map((row) => [row.effectTierId, { 
-    unlocked: row.unlocked, 
-    isSeeking: row.isSeeking, 
-    modCount: row.modCount 
-  }]));
+  
+  const map = new Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>();
+  for (const row of rows) {
+    const existing = map.get(row.effectTierId);
+    map.set(row.effectTierId, { 
+      unlocked: Boolean(existing?.unlocked || row.unlocked), 
+      isSeeking: Boolean(existing?.isSeeking || row.isSeeking), 
+      modCount: Math.max(existing?.modCount || 0, row.modCount || 0)
+    });
+  }
+  return map;
 }
 
 async function fetchGlobalProgressMap(userId: string, datasetVersionId: string) {
@@ -128,8 +134,8 @@ function mergeCatalogWithUserState(
 ): MergedEffectTierRow[] {
   return catalog.map((item) => {
     const baseline = characterId ? baselineMap.get(item.id) : undefined;
-    const progress = characterId ? progressMap.get(item.id) : undefined;
-    const unlocked = characterId ? (progress ? progress.unlocked : baseline ?? false) : false;
+    const progress = progressMap.get(item.id);
+    const unlocked = progress ? progress.unlocked : (baseline ?? false);
     const isSeeking = progress?.isSeeking ?? false;
     const modCount = progress?.modCount ?? 0;
     const unlockedBy = globalProgressMap.get(item.id) || [];
@@ -195,14 +201,11 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
   if (!userId) return normalized;
 
   try {
-    const characterId = await getActiveCharacterId(userId).catch(() => undefined);
-    if (!characterId) return normalized;
-
     const dataset = await getActiveDatasetVersion().catch(() => null);
     if (!dataset) return normalized;
 
     const [progressMap, globalProgressMap] = await Promise.all([
-      fetchUserProgressMap(characterId, dataset.id).catch(() => new Map()),
+      fetchUserProgressMap(userId, dataset.id).catch(() => new Map()),
       fetchGlobalProgressMap(userId, dataset.id).catch(() => new Map())
     ]);
 
