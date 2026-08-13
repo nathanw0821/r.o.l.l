@@ -125,7 +125,7 @@ export default function SummaryClient({
   } = useFilters();
   const [localRows, setLocalRows] = React.useState(rows);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
-  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!isSignedIn);
+  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(true);
   const { commitEntries } = useProgressHistory();
   const [exportMode, setExportMode] = React.useState<"filtered" | "all">("filtered");
   const [summaryLocked, setSummaryLocked] = React.useState(false);
@@ -148,7 +148,19 @@ export default function SummaryClient({
 
   React.useEffect(() => {
     const merged = rows.map((row) => {
-      const entry = localProgress[row.id];
+      const effectName = row.effect?.name || (row as unknown as { effectName?: string }).effectName || "";
+      const lowerName = effectName.toLowerCase().trim();
+      const slugName = lowerName.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      const cleanName = cleanEffectName(effectName).toLowerCase();
+      const strippedId = row.id.replace(/^effect-\dstar-/, "");
+
+      const entry = localProgress[row.id]
+        || localProgress[effectName]
+        || localProgress[lowerName]
+        || localProgress[slugName]
+        || localProgress[cleanName]
+        || localProgress[strippedId];
+
       if (entry === undefined) return row;
       return {
         ...row,
@@ -220,10 +232,9 @@ export default function SummaryClient({
           : item
       )
     );
+    setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: nextSeeking, modCount: row.modCount });
     if (isSignedIn) {
-      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
-    } else {
-      setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: nextSeeking });
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }).catch(() => {});
     }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }]);
   }
@@ -237,10 +248,9 @@ export default function SummaryClient({
           : item
       )
     );
+    setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: row.isSeeking, modCount: clamped });
     if (isSignedIn) {
-      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
-    } else {
-      setLocalEntry(row.id, { unlocked: row.unlocked, modCount: clamped });
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }).catch(() => {});
     }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }]);
   }
@@ -256,6 +266,7 @@ export default function SummaryClient({
           : item
       )
     );
+    setLocalEntry(row.id, { unlocked: nextUnlocked, isSeeking: row.isSeeking, modCount: row.modCount });
     const saved = await commitEntries([
       {
         effectTierId: row.id,
@@ -269,14 +280,6 @@ export default function SummaryClient({
     ]);
     if (saved) {
       emitProgressChange([{ effectTierId: row.id, unlocked: nextUnlocked, selectionSource: "edited" }]);
-    } else {
-      setLocalRows((prev) =>
-        prev.map((item) =>
-          item.id === row.id
-            ? { ...item, unlocked: row.unlocked, selectionSource: row.selectionSource }
-            : item
-        )
-      );
     }
     setPendingId(null);
   }
