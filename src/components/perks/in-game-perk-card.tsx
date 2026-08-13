@@ -171,19 +171,7 @@ export default function InGamePerkCard({
     }
   };
 
-  // PC Mouse 1-Second Hover Hold to Inflate Center-Screen Card Inspector
-  const handleMouseEnter = () => {
-    hoverTimerRef.current = setTimeout(() => {
-      setShowInspector(true);
-    }, 1000);
-  };
 
-  const handleMouseLeave = () => {
-    if (hoverTimerRef.current) {
-      clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = null;
-    }
-  };
 
   return (
     <div
@@ -200,13 +188,11 @@ export default function InGamePerkCard({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchEnd}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         onContextMenu={(e) => {
           e.preventDefault();
-          openWikiSource();
+          setShowInspector(true);
         }}
-        title="Click to equip • Hold mouse over for 1s to inflate all ranks • Right-click for Fallout Wiki"
+        title="Click to equip • Right-click for perk details & Truth Wiki"
       >
         {!imgError ? (
           <img
@@ -450,14 +436,15 @@ export default function InGamePerkCard({
 
             {/* Modal Footer Actions */}
             <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={openWikiSource}
+              <a
+                href={`/wiki?q=${encodeURIComponent(name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-3.5 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-all"
               >
-                <span>📖 Open Fallout Wiki Guide</span>
+                <span>📖 Open Truth Wiki Codex</span>
                 <ExternalLink className="h-3.5 w-3.5" />
-              </button>
+              </a>
 
               <button
                 type="button"
