@@ -2,18 +2,36 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { FALLBACK_WIKI_ARTICLES } from "@/lib/static-fallback-catalog";
 
+function filterFallbackArticles(q: string, category: string, limit: number) {
+  let list = FALLBACK_WIKI_ARTICLES;
+  if (category && category.toLowerCase() !== "all") {
+    const normCat = category.toLowerCase().split(" ")[0];
+    list = list.filter((a) => a.category.toLowerCase().includes(normCat));
+  }
+  if (q && q.trim().length > 0) {
+    const normQ = q.toLowerCase().trim();
+    list = list.filter(
+      (a) =>
+        a.title.toLowerCase().includes(normQ) ||
+        a.content.toLowerCase().includes(normQ) ||
+        a.snippet.toLowerCase().includes(normQ)
+    );
+  }
+  return list.slice(0, limit);
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q") || "";
   const category = searchParams.get("category") || "all";
   const sort = searchParams.get("sort") || "newest";
   const updateFilter = searchParams.get("update") || "all";
-  const limit = parseInt(searchParams.get("limit") || "60", 10);
+  const limit = parseInt(searchParams.get("limit") || "500", 10);
 
   // 1. Try local Python Truth Bible REST server if available
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 1500);
 
     const localResp = await fetch(
       `http://127.0.0.1:8076/api/search?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&update=${encodeURIComponent(updateFilter)}&limit=${limit}`,
@@ -103,7 +121,7 @@ export async function GET(req: Request) {
     });
 
     if (!articles || articles.length === 0) {
-      return NextResponse.json(FALLBACK_WIKI_ARTICLES);
+      return NextResponse.json(filterFallbackArticles(q, category, limit));
     }
 
     const formatted = articles.map((a) => ({
@@ -120,6 +138,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json(formatted);
   } catch {
-    return NextResponse.json(FALLBACK_WIKI_ARTICLES);
+    return NextResponse.json(filterFallbackArticles(q, category, limit));
   }
 }
