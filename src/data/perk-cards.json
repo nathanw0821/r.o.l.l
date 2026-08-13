@@ -27,7 +27,7 @@
   {
     "id": "action-diet",
     "name": "Action Diet",
-    "special": "S",
+    "special": "LEGENDARY",
     "minLevel": 50,
     "maxRank": 4,
     "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Action_Diet_Perk_Card.png/300px-FO76_Action_Diet_Perk_Card.png",
@@ -467,7 +467,7 @@
   {
     "id": "blood-luster",
     "name": "Blood Luster",
-    "special": "S",
+    "special": "LEGENDARY",
     "minLevel": 35,
     "maxRank": 1,
     "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Blood_Luster_Perk_Card.png/300px-FO76_Blood_Luster_Perk_Card.png",
@@ -1632,7 +1632,7 @@
   {
     "id": "feral-rage",
     "name": "Feral Rage",
-    "special": "S",
+    "special": "LEGENDARY",
     "minLevel": 50,
     "maxRank": 4,
     "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Feral_Rage_Perk_Card.png/300px-FO76_Feral_Rage_Perk_Card.png",
