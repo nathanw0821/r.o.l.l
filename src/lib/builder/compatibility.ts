@@ -237,7 +237,7 @@ export const LEGENDARY_PERK_CARDS: Record<string, LegendaryPerkDef> = {
   "electric-absorption": { id: "electric-absorption", label: "Electric Absorption", category: "utility", desc: "20% chance energy attacks recharge PA Fusion Core & heal HP" },
   "funky-duds": { id: "funky-duds", label: "Funky Duds (+200 PR)", category: "utility", desc: "+200 Poison Resistance with matching armor set", resBonus: { pr: 200 } },
   "master-infiltrator": { id: "master-infiltrator", label: "Master Infiltrator", category: "utility", desc: "Auto-unlock lvl 3 locks & terminals (+3 Lockpick & Hack)" },
-  "nuclear-prolificator": { id: "nuclear-prolificator", label: "Nuclear Prolificator", category: "utility", desc: "Generates 1 Mini Nuke every 60 seconds" },
+  "what-rads": { id: "what-rads", label: "What Rads? (+300 RR)", category: "utility", desc: "+300 Radiation Resistance and restore +6 Rads per second", resBonus: { rr: 300 } },
   "power-armor-reboot": { id: "power-armor-reboot", label: "Power Armor Reboot", category: "utility", desc: "40% chance to auto-revive with full health in PA" },
   "power-sprinter": { id: "power-sprinter", label: "Power Sprinter", category: "utility", desc: "Sprinting in PA consumes 50% less AP" },
   "sizzling-style": { id: "sizzling-style", label: "Sizzling Style (+200 FR)", category: "utility", desc: "+200 Fire Resistance with matching armor set", resBonus: { fr: 200 } },
