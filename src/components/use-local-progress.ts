@@ -16,8 +16,12 @@ export type LocalProgressMap = Record<string, LocalProgressEntry>;
 
 function readCookieValue(name: string) {
   if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
+  try {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
+  }
 }
 
 function writeCookieValue(name: string, value: string) {
@@ -63,11 +67,15 @@ export function readLocalProgress(): LocalProgressMap {
   parseAndMerge(readCookieValue(COOKIE_NAME));
 
   // 2. Read from LocalStorage fallback keys
-  if (typeof window !== "undefined" && window.localStorage) {
-    parseAndMerge(window.localStorage.getItem("roll_local_progress"));
-    parseAndMerge(window.localStorage.getItem("roll_user_progress"));
-    parseAndMerge(window.localStorage.getItem("roll_progress"));
-    parseAndMerge(window.localStorage.getItem("roll_progress_map"));
+  if (typeof window !== "undefined") {
+    try {
+      parseAndMerge(window.localStorage.getItem("roll_local_progress"));
+      parseAndMerge(window.localStorage.getItem("roll_user_progress"));
+      parseAndMerge(window.localStorage.getItem("roll_progress"));
+      parseAndMerge(window.localStorage.getItem("roll_progress_map"));
+    } catch {
+      // Ignore localStorage read restrictions
+    }
   }
 
   return merged;
