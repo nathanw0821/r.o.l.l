@@ -1,0 +1,74 @@
+import { sanitizeTitle } from "@/lib/utils/clean-formatting";
+
+export type LocalProgressEntry = {
+  unlocked: boolean;
+  isSeeking?: boolean;
+  modCount?: number;
+};
+
+export type LocalProgressMap = Record<string, LocalProgressEntry>;
+
+export function findLocalProgressEntry(
+  localProgress: LocalProgressMap | null | undefined,
+  rowId: string,
+  effectName: string,
+  tierLabel?: string | null
+): LocalProgressEntry | undefined {
+  if (!localProgress) return undefined;
+
+  // 1. Exact match on rowId
+  if (localProgress[rowId] !== undefined) {
+    return localProgress[rowId];
+  }
+
+  const lowerName = effectName.toLowerCase().trim();
+  const slugName = lowerName.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const cleanName = sanitizeTitle(effectName).toLowerCase().replace(/[^a-z0-9]/g, "");
+  const rawClean = lowerName.replace(/[^a-z0-9]/g, "");
+  const strippedId = rowId.replace(/^effect-\dstar-/, "").replace(/^effect-/, "");
+  const starNum = tierLabel ? tierLabel.replace(/[^0-9]/g, "") : (rowId.match(/\d/) || [""])[0];
+
+  const candidateKeys = [
+    rowId,
+    effectName,
+    lowerName,
+    slugName,
+    cleanName,
+    rawClean,
+    strippedId,
+    `${starNum}star-${slugName}`,
+    `${starNum}-star-${slugName}`,
+    `effect-${starNum}star-${slugName}`,
+    `effect-${starNum}-star-${slugName}`,
+    `${slugName}-${starNum}star`,
+    `${slugName}-${starNum}-star`,
+    `${slugName}_${starNum}star`,
+    `${slugName}_${starNum}_star`
+  ];
+
+  for (const key of candidateKeys) {
+    if (localProgress[key] !== undefined) {
+      return localProgress[key];
+    }
+  }
+
+  // 2. Fallback fuzzy search across all entries in localProgress
+  const entries = Object.entries(localProgress);
+  for (const [key, val] of entries) {
+    const kLower = key.toLowerCase();
+    const kClean = kLower.replace(/[^a-z0-9]/g, "");
+
+    if (kClean === cleanName || kClean === rawClean || (cleanName.length >= 4 && kClean.includes(cleanName))) {
+      // If tier number is present in key, enforce matching star tier
+      if (starNum && (kLower.includes("star") || kLower.includes("tier"))) {
+        if (kLower.includes(starNum)) {
+          return val;
+        }
+      } else {
+        return val;
+      }
+    }
+  }
+
+  return undefined;
+}
