@@ -79,8 +79,8 @@ export function findLocalProgressEntry(
     }
   }
 
-  // 4. Positional fallback if localProgress entries count matches catalog size (148)
-  if (rowIndex !== undefined && entries.length === 148 && entries[rowIndex]) {
+  // 4. Positional fallback for any non-empty progress map
+  if (rowIndex !== undefined && entries.length > 0 && entries[rowIndex]) {
     return entries[rowIndex][1];
   }
 
