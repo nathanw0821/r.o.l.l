@@ -153,16 +153,6 @@ export default function AppShell({
       // Ignore storage read errors
     }
   }, []);
-
-  const toggleSiteMode = React.useCallback(() => {
-    const nextMode = siteMode === "preview" ? "classic" : "preview";
-    setSiteMode(nextMode);
-    try {
-      localStorage.setItem("roll_site_mode", nextMode);
-    } catch {
-      // Ignore storage write errors
-    }
-  }, [siteMode]);
   const visibleTrackingLinks = React.useMemo(
     () => trackingLinks.filter((link) => {
       if (link.requiresAuth && !isSignedIn) return false;
@@ -405,23 +395,6 @@ interface AccountLinksResponse {
           <div className="app-sidebar__top">
             <div className="app-brand flex flex-col gap-1.5">
               <BrandStack href="/" />
-              {!sidebarCollapsed && (
-                <button
-                  type="button"
-                  onClick={toggleSiteMode}
-                  className={`mt-1 text-[0.65rem] font-mono font-bold px-2 py-1 rounded-md border transition-all flex items-center justify-between gap-1 w-full ${
-                    siteMode === "preview"
-                      ? "bg-amber-950/80 border-amber-500/80 text-amber-300 shadow-sm hover:bg-amber-900/90"
-                      : "bg-slate-900 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800"
-                  }`}
-                  title="Switch between the Preview Beta experience and Classic Old Site mode"
-                >
-                  <span>{siteMode === "preview" ? "✨ Preview Beta Mode" : "📜 Classic Old Site"}</span>
-                  <span className="text-[0.58rem] opacity-75 font-mono">
-                    {siteMode === "preview" ? "[Active]" : "[Switch]"}
-                  </span>
-                </button>
-              )}
             </div>
             <button
               type="button"
