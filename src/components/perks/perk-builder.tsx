@@ -30,14 +30,15 @@ interface PerkBuilderProps {
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
 
 function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => void }) {
-  const searchParams = useSearchParams();
-  const urlQuery = searchParams ? (searchParams.get("q") || searchParams.get("card") || "") : "";
-
   React.useEffect(() => {
-    if (urlQuery) {
-      onQueryChange(urlQuery);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlQuery = params.get("q") || params.get("card") || "";
+      if (urlQuery) {
+        onQueryChange(urlQuery);
+      }
     }
-  }, [urlQuery, onQueryChange]);
+  }, [onQueryChange]);
 
   return null;
 }
