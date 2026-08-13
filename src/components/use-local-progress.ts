@@ -41,30 +41,61 @@ function broadcastLocalProgress(map: LocalProgressMap) {
 }
 
 export function readLocalProgress(): LocalProgressMap {
-  const raw = readCookieValue(COOKIE_NAME);
-  if (!raw) return {};
-  try {
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    const normalized: LocalProgressMap = {};
-    for (const [key, value] of Object.entries(parsed)) {
-      if (typeof value === "boolean") {
-        normalized[key] = { unlocked: value };
-      } else if (value && typeof value === "object" && "unlocked" in value) {
-        normalized[key] = value as LocalProgressEntry;
+  const merged: LocalProgressMap = {};
+
+  const parseAndMerge = (rawStr: string | null) => {
+    if (!rawStr) return;
+    try {
+      const parsed = JSON.parse(rawStr) as Record<string, unknown>;
+      for (const [key, value] of Object.entries(parsed)) {
+        if (typeof value === "boolean") {
+          merged[key] = { ...merged[key], unlocked: value };
+        } else if (value && typeof value === "object" && "unlocked" in value) {
+          merged[key] = { ...merged[key], ...(value as LocalProgressEntry) };
+        }
       }
+    } catch {
+      // Ignore JSON parse error
     }
-    return normalized;
-  } catch {
-    return {};
+  };
+
+  // 1. Read from Cookie
+  parseAndMerge(readCookieValue(COOKIE_NAME));
+
+  // 2. Read from LocalStorage fallback keys
+  if (typeof window !== "undefined" && window.localStorage) {
+    parseAndMerge(window.localStorage.getItem("roll_local_progress"));
+    parseAndMerge(window.localStorage.getItem("roll_user_progress"));
+    parseAndMerge(window.localStorage.getItem("roll_progress"));
+    parseAndMerge(window.localStorage.getItem("roll_progress_map"));
   }
+
+  return merged;
 }
 
 export function writeLocalProgress(map: LocalProgressMap) {
-  writeCookieValue(COOKIE_NAME, JSON.stringify(map));
+  const jsonStr = JSON.stringify(map);
+  writeCookieValue(COOKIE_NAME, jsonStr);
+  if (typeof window !== "undefined" && window.localStorage) {
+    try {
+      window.localStorage.setItem("roll_local_progress", jsonStr);
+    } catch {
+      // Ignore localStorage write error
+    }
+  }
 }
 
 export function clearLocalProgress() {
   clearCookieValue(COOKIE_NAME);
+  if (typeof window !== "undefined" && window.localStorage) {
+    try {
+      window.localStorage.removeItem("roll_local_progress");
+      window.localStorage.removeItem("roll_user_progress");
+      window.localStorage.removeItem("roll_progress");
+    } catch {
+      // Ignore error
+    }
+  }
 }
 
 export function useLocalProgress(enabled = true) {
