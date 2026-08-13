@@ -604,24 +604,35 @@ export default function TruthWikiPage() {
             return (
               <button
                 key={card.id}
+                type="button"
                 onClick={() => {
                   setCategory(card.id);
                   setQuery("");
                 }}
-                className={`text-left p-5 rounded-2xl border transition-all flex flex-col justify-between gap-4 group ${
+                className={`text-left p-5 rounded-2xl border transition-all flex flex-col justify-between gap-5 group select-none ${
                   isSelected
-                    ? "bg-amber-500/15 border-amber-400 shadow-xl scale-[1.02]"
-                    : "bg-[#0f172a] border-slate-700 hover:border-amber-500/50 hover:bg-[#131e36]"
+                    ? "bg-amber-500/10 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/50 scale-[1.01]"
+                    : "bg-[#0b121f] border-slate-800/90 hover:border-slate-600 hover:bg-[#10192c]"
                 }`}
               >
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl">{card.icon}</span>
-                    <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${isSelected ? "bg-amber-500 text-slate-950 border-amber-400" : "bg-slate-900 text-slate-400 border-slate-700"}`}>
+                    <span className="text-2xl filter drop-shadow">{card.icon}</span>
+                    <span
+                      className={`text-[11px] font-mono font-bold px-3 py-0.5 rounded-full border shadow-sm ${
+                        isSelected
+                          ? "bg-amber-400 text-slate-950 border-amber-300 font-black"
+                          : "bg-slate-900/90 text-slate-300 border-slate-700/80"
+                      }`}
+                    >
                       {card.count}
                     </span>
                   </div>
-                  <h3 className={`font-bold font-mono text-sm leading-snug transition-colors ${isSelected ? "text-amber-300" : "text-slate-100 group-hover:text-amber-300"}`}>
+                  <h3
+                    className={`font-mono font-bold text-sm tracking-wide uppercase leading-snug transition-colors ${
+                      isSelected ? "text-amber-400" : "text-slate-100 group-hover:text-amber-300"
+                    }`}
+                  >
                     {card.label}
                   </h3>
                   <p className="text-xs text-slate-400 font-sans leading-relaxed">
@@ -629,7 +640,7 @@ export default function TruthWikiPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] font-mono font-bold text-amber-400 group-hover:text-amber-300 pt-2 border-t border-slate-800">
+                <div className="flex items-center justify-between text-[11px] font-mono font-bold text-amber-400 group-hover:text-amber-300 pt-3 border-t border-slate-800/60">
                   <span>Explore Guides</span>
                   <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
