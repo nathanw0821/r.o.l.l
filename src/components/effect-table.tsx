@@ -87,7 +87,7 @@ export default function EffectTable({
   const [isCompactDensity, setIsCompactDensity] = React.useState(false);
   const handledFocusRef = React.useRef<string | null>(null);
   const { query, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters } = useFilters();
-  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(!canEdit);
+  const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(true);
   const { commitEntries } = useProgressHistory();
 
   React.useEffect(() => {
@@ -203,6 +203,9 @@ export default function EffectTable({
           : item
       )
     );
+    // Instant Local Storage & Cookie persistence
+    setLocalEntry(row.id, { unlocked: nextUnlocked, isSeeking: row.isSeeking, modCount: row.modCount });
+    
     const saved = await commitEntries([
       {
         effectTierId: row.id,
@@ -216,14 +219,6 @@ export default function EffectTable({
     ]);
     if (saved) {
       emitProgressChange([{ effectTierId: row.id, unlocked: nextUnlocked, selectionSource: "edited" }]);
-    } else {
-      setLocalRows((prev) =>
-        prev.map((item) =>
-          item.id === row.id
-            ? { ...item, unlocked: row.unlocked, selectionSource: row.selectionSource }
-            : item
-        )
-      );
     }
     setPendingId(null);
   }
@@ -236,10 +231,9 @@ export default function EffectTable({
           : item
       )
     );
+    setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: nextSeeking, modCount: row.modCount });
     if (canEdit) {
-      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking });
-    } else {
-      setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: nextSeeking });
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }).catch(() => {});
     }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, isSeeking: nextSeeking }]);
   }
@@ -253,10 +247,9 @@ export default function EffectTable({
           : item
       )
     );
+    setLocalEntry(row.id, { unlocked: row.unlocked, isSeeking: row.isSeeking, modCount: clamped });
     if (canEdit) {
-      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped });
-    } else {
-      setLocalEntry(row.id, { unlocked: row.unlocked, modCount: clamped });
+      await updateProgress({ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }).catch(() => {});
     }
     emitProgressChange([{ effectTierId: row.id, unlocked: row.unlocked, modCount: clamped }]);
   }

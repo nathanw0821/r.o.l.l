@@ -104,6 +104,18 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
       .catch(() => undefined);
   }, [characterId, activeSlot]);
 
+  // Auto-save to LocalStorage on every change so perk deck is never lost
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(
+        `roll_perk_loadout_slot_${activeSlot}`,
+        JSON.stringify({ specials, equippedCards })
+      );
+    } catch {
+      // Ignore write error
+    }
+  }, [activeSlot, specials, equippedCards]);
+
   const safeEquippedCards = React.useMemo(() => {
     if (!Array.isArray(equippedCards)) return [];
     return equippedCards
