@@ -35,10 +35,13 @@ export default function ErrorBoundary({
           <Button
             type="button"
             onClick={() => {
+              try {
+                reset();
+              } catch {
+                /* ignore reset failure */
+              }
               if (typeof window !== "undefined") {
                 window.location.reload();
-              } else {
-                reset();
               }
             }}
             className="w-full sm:w-auto bg-accent text-white hover:bg-accent/90 font-bold uppercase text-xs px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer"
