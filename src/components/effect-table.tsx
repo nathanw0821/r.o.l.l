@@ -92,7 +92,19 @@ export default function EffectTable({
 
   React.useEffect(() => {
     const merged: EffectTierRow[] = rows.map((row) => {
-      const entry = localProgress[row.id];
+      const effectName = row.effect?.name || (row as unknown as { effectName?: string }).effectName || "";
+      const lowerName = effectName.toLowerCase().trim();
+      const slugName = lowerName.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      const cleanName = cleanEffectName(effectName).toLowerCase();
+      const strippedId = row.id.replace(/^effect-\dstar-/, "");
+
+      const entry = localProgress[row.id]
+        || localProgress[effectName]
+        || localProgress[lowerName]
+        || localProgress[slugName]
+        || localProgress[cleanName]
+        || localProgress[strippedId];
+
       if (entry === undefined) return row;
       return {
         ...row,
@@ -388,7 +400,13 @@ export default function EffectTable({
           </div>
         ) : null}
         {filteredRows.map((row) => {
-          const categoryList = row.categories.map((c) => c.category.name).filter(Boolean);
+          let rawCats: string[] = [];
+          if (Array.isArray(row.categories)) {
+            rawCats = row.categories.map((c: unknown) => (typeof c === "string" ? c : (c as { category?: { name?: string } })?.category?.name || "")).filter(Boolean);
+          } else if (typeof row.categories === "string") {
+            rawCats = (row.categories as string).split("•").map((s) => s.trim()).filter(Boolean);
+          }
+          const categoryList = rawCats.length > 0 ? rawCats : ((row as unknown as { categoriesRel?: { category?: { name?: string } }[] }).categoriesRel?.map((c) => c?.category?.name || "").filter(Boolean) || []);
           const isPending = pendingId === row.id;
           const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
           const sourceLabel =

@@ -27,7 +27,21 @@ const PERK_MAP = new Map<string, PerkCard>(
 );
 
 export function getPerkCardById(id: string): PerkCard | undefined {
-  return PERK_MAP.get(id);
+  if (!id) return undefined;
+  const direct = PERK_MAP.get(id);
+  if (direct) return direct;
+
+  const lower = id.toLowerCase().trim();
+  const slug = lower.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const clean = lower.replace(/[^a-z0-9]/g, "");
+
+  return PERK_CATALOG.find((card) => {
+    const cId = card.id.toLowerCase();
+    const cSlug = cId.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    const cClean = cId.replace(/[^a-z0-9]/g, "");
+    const cName = card.name.toLowerCase();
+    return cId === lower || cSlug === slug || cClean === clean || cName === lower;
+  });
 }
 
 export function searchPerkCards(query: string, rank?: number): PerkCard[] {
