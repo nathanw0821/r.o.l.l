@@ -274,10 +274,10 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
       if (data.success && data.advice) {
         setAiAdvice(data.advice);
       } else {
-        setAiAdvice(data.error || "Vault-Tec Advisor is currently offline.");
+        setAiAdvice(data.error || "Vault-Tec Build Calculations currently offline.");
       }
     } catch {
-      setAiAdvice("Failed to contact Vault-Tec AI Advisor.");
+      setAiAdvice("Unable to compute build synergies right now.");
     } finally {
       setLoadingAi(false);
     }
