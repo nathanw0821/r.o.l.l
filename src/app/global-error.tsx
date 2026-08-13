@@ -11,9 +11,26 @@ export default function GlobalError({
 }) {
   React.useEffect(() => {
     if (error?.message && !error.message.includes("aborted")) {
-      console.error("[Global Error]", error);
+      console.error("[Global Error Caught]", error);
     }
   }, [error]);
+
+  const handleClearAndReload = () => {
+    if (typeof window !== "undefined") {
+      try {
+        // Clear potential corrupted storage keys
+        window.localStorage.removeItem("roll_local_progress");
+        window.localStorage.removeItem("roll_user_progress");
+        window.localStorage.removeItem("roll_progress");
+        document.cookie = "roll_local_progress=; path=/; max-age=0";
+      } catch {
+        // ignore storage clear errors
+      }
+      window.location.href = "/";
+    } else {
+      reset();
+    }
+  };
 
   return (
     <html lang="en">
@@ -21,18 +38,15 @@ export default function GlobalError({
         <div className="max-w-md w-full rounded-2xl border border-[#2b3945] bg-[#12181d] p-8 text-center space-y-5 shadow-2xl">
           <h2 className="text-xl font-bold uppercase text-[#f3a24d]">System Notice</h2>
           <p className="text-xs text-[#8ba6a0] leading-relaxed">
-            The browser session was interrupted. Click to reload the active view.
+            The browser session encountered a layout sync issue. Click below to clear temporary state and reload.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <button
               type="button"
-              onClick={() => {
-                if (typeof window !== "undefined") window.location.reload();
-                else reset();
-              }}
+              onClick={handleClearAndReload}
               className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-[#f3a24d] text-[#080b0e] font-bold text-xs uppercase tracking-wider hover:opacity-90 transition cursor-pointer"
             >
-              Reload Page
+              Reset Cache &amp; Reload
             </button>
             <button
               type="button"
