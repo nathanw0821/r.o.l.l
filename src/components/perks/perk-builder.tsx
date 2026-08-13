@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "@/lib/utils";
 import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
