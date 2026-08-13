@@ -140,19 +140,9 @@ export default function AppShell({
   const [isMobile, setIsMobile] = React.useState(false);
   const [mobileSidebarReveal, setMobileSidebarReveal] = React.useState(1);
   const mobileSidebarRevealRef = React.useRef(1);
-  const [siteMode, setSiteMode] = React.useState<"preview" | "classic">("preview");
   const { map: localProgress } = useLocalProgress(!isSignedIn);
   useBuilderBetaAccess(isAdmin);
   const [tierProgress, setTierProgress] = React.useState<TierProgressSummary[]>([]);
-
-  React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem("roll_site_mode") as "preview" | "classic" | null;
-      if (saved) setSiteMode(saved);
-    } catch {
-      // Ignore storage read errors
-    }
-  }, []);
   const visibleTrackingLinks = React.useMemo(
     () => trackingLinks.filter((link) => {
       if (link.requiresAuth && !isSignedIn) return false;
@@ -473,7 +463,7 @@ interface AccountLinksResponse {
             <div className="mt-6 pt-4 border-t border-border/20 space-y-1">
               {!sidebarCollapsed && (
                 <div className="px-3 mb-1 text-[0.6875rem] font-black uppercase tracking-widest text-foreground/40 font-mono">
-                  BETA &amp; EXPERIMENTAL
+                  P.T.S. &amp; S.C.A.N.
                 </div>
               )}
               {experimentalLinks.map((link) => {
@@ -489,9 +479,6 @@ interface AccountLinksResponse {
                   >
                     <Icon className="h-4 w-4" />
                     <span>{link.label}</span>
-                    <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[0.6875rem] font-bold tracking-wider text-accent">
-                      BETA
-                    </span>
                   </Link>
                 );
               })}
