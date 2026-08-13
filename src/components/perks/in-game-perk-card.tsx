@@ -446,13 +446,34 @@ export default function InGamePerkCard({
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
 
-              <button
-                type="button"
-                onClick={() => setShowInspector(false)}
-                className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-bold text-xs transition-all"
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isEquipped) {
+                      onUnequip?.();
+                    } else {
+                      onEquip?.();
+                    }
+                    setShowInspector(false);
+                  }}
+                  className={`px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all border ${
+                    isEquipped
+                      ? "bg-red-950/80 border-red-500/80 text-red-300 hover:bg-red-900"
+                      : "bg-emerald-950/80 border-emerald-500/80 text-emerald-300 hover:bg-emerald-900"
+                  }`}
+                >
+                  {isEquipped ? "❌ Unequip Card" : "➕ Equip Card"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowInspector(false)}
+                  className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-bold text-xs transition-all"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
