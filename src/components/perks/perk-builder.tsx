@@ -371,7 +371,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="grid grid-cols-2 md:grid-cols-7 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
             {(["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).map((stat) => {
               const theme = SPECIAL_THEMES[stat];
               const used = usedSpecialCapacity[stat] || 0;
@@ -380,42 +380,86 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
               const effectiveTotal = totalEffectiveSpecials[stat];
               const isOver = used > effectiveCap;
 
+              const styleMap: Record<keyof SpecialsState, { bg: string; rotation: string }> = {
+                S: { bg: "bg-[#2b473b]", rotation: "-rotate-1.5" },
+                P: { bg: "bg-[#423c28]", rotation: "rotate-1" },
+                E: { bg: "bg-[#15576c]", rotation: "-rotate-1" },
+                C: { bg: "bg-[#823f18]", rotation: "rotate-1.5" },
+                I: { bg: "bg-[#4e5844]", rotation: "-rotate-1" },
+                A: { bg: "bg-[#8b4f40]", rotation: "rotate-1" },
+                L: { bg: "bg-[#484459]", rotation: "-rotate-1.5" }
+              };
+
+              const cardStyle = styleMap[stat];
+
               return (
-                <div key={stat} className={`rounded-lg border bg-slate-900/90 p-3 flex flex-col items-center justify-between space-y-2 ${theme.border}`}>
-                  <div className="flex items-center gap-1.5">
-                    <span className={`text-xl font-black font-mono ${theme.text}`}>{stat}</span>
+                <div
+                  key={stat}
+                  className={cn(
+                    "relative rounded-xl border-[2.5px] border-[#e8dfc8]/70 p-3 flex flex-col items-center justify-between space-y-2.5 shadow-[0_6px_16px_rgba(0,0,0,0.5)] transition-all duration-200 hover:rotate-0 hover:scale-[1.03] select-none",
+                    cardStyle.bg,
+                    cardStyle.rotation
+                  )}
+                >
+                  {/* Decorative vintage inner paper border */}
+                  <div className="absolute inset-1 rounded-lg border border-[#e8dfc8]/20 pointer-events-none" />
+
+                  {/* Letter & Legendary Badge */}
+                  <div className="flex flex-col items-center gap-0.5 z-10 pt-1">
+                    <span className="text-3xl font-black font-serif tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] text-[#f8f5ea]">
+                      {stat}
+                    </span>
+                    <span className="text-[0.65rem] font-mono text-[#f3efe0]/90 uppercase tracking-widest font-bold drop-shadow">
+                      {theme.name}
+                    </span>
                     {legBonus > 0 ? (
-                      <span className="text-[0.65rem] font-mono px-1.5 py-0.2 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded font-bold">
-                        +{legBonus}⭐
+                      <span className="mt-1 text-[0.62rem] font-mono px-2 py-0.5 bg-amber-950/80 text-amber-300 border border-amber-500/60 rounded-full font-bold shadow">
+                        +{legBonus}⭐ Legendary
                       </span>
                     ) : null}
                   </div>
-                  <span className="text-[0.65rem] font-mono text-slate-300 uppercase tracking-widest font-semibold">{theme.name}</span>
-                  <div className="flex items-center gap-2 font-mono text-sm font-bold text-white">
+
+                  {/* Point Adjuster */}
+                  <div className="flex items-center gap-1.5 z-10 my-1">
                     <button
                       type="button"
+                      title={`Decrease ${theme.name} base points`}
                       onClick={() => handleSpecialChange(stat, -1)}
-                      className="px-2.5 py-0.5 rounded bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs text-slate-200"
+                      className="w-7 h-7 rounded-md bg-[#121619]/80 hover:bg-[#121619] border border-[#e8dfc8]/40 text-[#f8f5ea] font-mono font-bold text-sm transition-all shadow active:scale-95 flex items-center justify-center"
                     >
                       -
                     </button>
-                    <span className="w-5 text-center">{specials[stat]}</span>
+                    <span className="text-base font-mono font-bold text-[#fffdf5] w-6 text-center drop-shadow">
+                      {specials[stat]}
+                    </span>
                     <button
                       type="button"
+                      title={`Increase ${theme.name} base points`}
                       onClick={() => handleSpecialChange(stat, 1)}
-                      className="px-2.5 py-0.5 rounded bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs text-slate-200"
+                      className="w-7 h-7 rounded-md bg-[#121619]/80 hover:bg-[#121619] border border-[#e8dfc8]/40 text-[#f8f5ea] font-mono font-bold text-sm transition-all shadow active:scale-95 flex items-center justify-center"
                     >
                       +
                     </button>
                   </div>
-                  {legBonus > 0 ? (
-                    <span className="text-[0.62rem] font-mono text-amber-300/90 font-medium">
-                      Total Stat: {effectiveTotal}
+
+                  {/* Stat Total & Card Capacity Badge */}
+                  <div className="flex flex-col items-center gap-1 z-10 pb-0.5">
+                    {legBonus > 0 ? (
+                      <span className="text-[0.6rem] font-mono text-amber-200/90 font-semibold drop-shadow">
+                        Total Stat: {effectiveTotal}
+                      </span>
+                    ) : null}
+                    <span
+                      className={cn(
+                        "text-[0.66rem] font-mono font-bold px-2 py-0.5 rounded-full border shadow-sm",
+                        isOver
+                          ? "bg-red-950/90 text-red-300 border-red-500/80 animate-pulse"
+                          : "bg-[#121619]/80 text-[#f3efe0] border-[#e8dfc8]/30"
+                      )}
+                    >
+                      Cards: {used} / {effectiveCap}
                     </span>
-                  ) : null}
-                  <span className={`text-[0.68rem] font-mono font-bold px-2 py-0.5 rounded ${isOver ? "bg-red-950 text-red-400 border border-red-500/50" : "bg-slate-950 text-slate-300 border border-slate-800"}`}>
-                    Cards: {used} / {effectiveCap}
-                  </span>
+                  </div>
                 </div>
               );
             })}
