@@ -291,7 +291,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <span className="text-[0.7rem] uppercase font-mono tracking-widest text-emerald-400 font-bold">
-              VAULT-TEC PUNCH CARD MACHINE // P.E.R.K. SYSTEM ({PERK_CATALOG.length} CARDS)
+              PUNCH CARD MACHINE ({PERK_CATALOG.length} CARDS)
             </span>
             <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono text-white">
               P.E.R.K. Loadout Manager
@@ -302,7 +302,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button onClick={handleGetAiAdvice} disabled={loadingAi} variant="outline" className="font-mono text-xs border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50">
-              {loadingAi ? "🤖 Analyzing Build..." : "🤖 Vault-Tec AI Advice"}
+              {loadingAi ? "Analyzing Build..." : "Build Tactics"}
             </Button>
             <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-emerald-500/60 text-emerald-400 bg-emerald-950/30 hover:bg-emerald-900/50">
               📸 Export Deck PNG
@@ -316,9 +316,9 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
         {aiAdvice && (
           <div className="mt-3 p-3.5 rounded-lg border border-amber-500/50 bg-amber-950/30 text-xs font-mono text-amber-200 flex items-start justify-between gap-3 shadow-md animate-in fade-in duration-200">
             <div className="flex items-start gap-2.5">
-              <span className="text-base shrink-0">🤖</span>
+              <span className="text-base shrink-0">💡</span>
               <div>
-                <span className="font-bold text-amber-400 block uppercase tracking-wider text-[0.7rem] mb-0.5">[ VAULT-TEC TACTICAL ADVISORY ]</span>
+                <span className="font-bold text-amber-400 block uppercase tracking-wider text-[0.7rem] mb-0.5">[ BUILD TACTICS ]</span>
                 <p className="leading-relaxed text-amber-100">{aiAdvice}</p>
               </div>
             </div>

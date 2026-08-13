@@ -3,100 +3,62 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Terms of Service | R.O.L.L.",
-  description: "Terms of Service for R.O.L.L. (Record Of Legendary Loadouts)"
+  description: "Terms of Service for R.O.L.L."
 };
 
 export default function TermsPage() {
   return (
-    <div className="mx-auto max-w-4xl space-y-8 py-6 px-4 animate-in fade-in duration-200">
-      {/* Retro terminal title header */}
-      <div className="rounded-[var(--radius-lg)] border border-border bg-panel p-6 shadow-md relative overflow-hidden">
+    <div className="mx-auto max-w-3xl space-y-6 py-6 px-4 animate-in fade-in duration-200">
+      <div className="rounded-xl border border-border bg-panel p-6 shadow-md relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[3px] bg-accent" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-accent font-bold">SYSTEM PROTOCOL // DOCUMENT 101</span>
-            <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono">Terms of Service for R.O.L.L.</h1>
-            <p className="text-sm text-foreground/50 mt-1 font-mono">
-              Last Updated: July 12, 2026
-            </p>
+            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-accent font-bold">TERMS OF SERVICE</span>
+            <h1 className="text-2xl font-bold tracking-tight mt-1 font-mono">Terms of Service</h1>
+            <p className="text-xs text-foreground/50 mt-1 font-mono">Updated: August 2026</p>
           </div>
           <BrandStack />
         </div>
       </div>
 
-      {/* Styled Text body */}
-      <div className="rounded-[var(--radius-lg)] border border-border bg-panel p-8 space-y-6 shadow-sm font-mono text-sm leading-relaxed text-foreground/80">
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">1. Acceptance of Terms</h2>
-          <p>
-            By creating an account and using R.O.L.L. (Record Of Legendary Loadouts), you agree to be bound by these Terms of Service. If you do not agree, you may not access or use the application.
-          </p>
+      <div className="rounded-xl border border-border bg-panel p-6 space-y-5 font-mono text-xs leading-relaxed text-foreground/80">
+        <section className="space-y-2">
+          <h2 className="text-sm font-bold text-accent border-b border-border/60 pb-1 uppercase">1. Acceptance</h2>
+          <p>By creating an account or using R.O.L.L., you agree to these Terms. If you disagree, do not use the app.</p>
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">2. Purpose of Service</h2>
-          <p>
-            R.O.L.L. is an independent, hobbyist utility built strictly for tracking legendary video game items, gear loadouts, and performance analytics. This application is a personal passion project and is not affiliated with, endorsed by, or partnered with any game development studio or publishing entity.
-          </p>
+        <section className="space-y-2">
+          <h2 className="text-sm font-bold text-accent border-b border-border/60 pb-1 uppercase">2. Purpose</h2>
+          <p>R.O.L.L. is an independent community tool for tracking Fallout 76 legendary loadouts and perks. It is not affiliated with, endorsed by, or partnered with Bethesda Game Studios or ZeniMax Media.</p>
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">3. User Accounts</h2>
-          <p>
-            You are responsible for safeguarding the credentials you use to access R.O.L.L. You agree to notify the administrator immediately upon becoming aware of any breach of security or unauthorized use of your account.
-          </p>
+        <section className="space-y-2">
+          <h2 className="text-sm font-bold text-accent border-b border-border/60 pb-1 uppercase">3. User Accounts</h2>
+          <p>Keep your login credentials secure. You are responsible for any activity under your account.</p>
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">4. Intellectual Property</h2>
-          <p>
-            The underlying software framework, design orchestration, custom scripts, and system architecture of R.O.L.L. are the exclusive property of the application creator.
-          </p>
+        <section className="space-y-2">
+          <h2 className="text-sm font-bold text-accent border-b border-border/60 pb-1 uppercase">4. Disclaimer &amp; Liability</h2>
+          <p>R.O.L.L. is provided &quot;as is&quot; without warranties. The developer is not liable for data loss, downtime, or service interruptions.</p>
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">5. Limitation of Liability</h2>
-          <p>
-            R.O.L.L. is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without warranties of any kind, either express or implied. To the maximum extent permitted by law, the developer of R.O.L.L. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of data, profile corruption, system downtime, server malfunction, or unauthorized data exposure resulting from your use of the application.
-          </p>
+        <section className="space-y-2">
+          <h2 className="text-sm font-bold text-accent border-b border-border/60 pb-1 uppercase">5. Termination</h2>
+          <p>We reserve the right to suspend or delete accounts that abuse the platform, spam APIs, or violate community standards.</p>
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">6. Termination</h2>
-          <p>
-            The administrator reserves the right to terminate or suspend access to your account at any time, without prior notice, for conduct that violates these Terms or is otherwise harmful to the service or other users.
-          </p>
+        <section className="space-y-2">
+          <h2 className="text-sm font-bold text-accent border-b border-border/60 pb-1 uppercase">6. Third-Party Auth</h2>
+          <p>Google and Discord sign-ins follow their respective terms and privacy policies. Google user data strictly follows the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noreferrer" className="text-accent underline">Google API Limited Use Policy</a>.</p>
         </section>
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">7. Changes to Terms</h2>
-          <p>
-            We reserve the right to modify these Terms at any time. If a revision is material, we will provide a mandatory notice upon your next login. Your continued use of the service after changes go into effect constitutes acceptance of the new terms.
-          </p>
-        </section>
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">8. Public Visitor Metrics</h2>
-          <p>
-            R.O.L.L. tracks aggregate, anonymized unique visitor traffic counts for system diagnostics and capacity planning. By using this service, you acknowledge and agree that a temporary, browser-cached indicator (via localStorage) will be utilized daily to report unique visits to the server without transmitting or storing any personal data or IP addresses, as detailed in our Privacy Policy.
-          </p>
-        </section>
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-accent border-b border-border pb-1">9. Third-Party Authentication &amp; Google API Policy</h2>
-          <p>
-            When utilizing Google OAuth2, Discord OAuth2, or other supported third-party identity providers to authenticate your account, you agree to comply with the respective terms of service and privacy policies of those providers. R.O.L.L.&apos;s use of information received from Google APIs strictly adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noreferrer" className="text-accent underline">Google API Services User Data Policy</a>, including the Limited Use requirements.
-          </p>
-        </section>
-
       </div>
 
-      <div className="flex justify-between items-center text-xs font-mono text-foreground/40 px-2">
+      <div className="flex justify-between items-center text-xs font-mono text-foreground/50 px-2">
         <Link href="/privacy" className="hover:text-accent transition-colors">
-          &gt; VIEW PRIVACY POLICY
+          &gt; PRIVACY POLICY
         </Link>
         <Link href="/" className="hover:text-accent transition-colors">
-          &gt; RETURN TO SUMMARY
+          &gt; HOME
         </Link>
       </div>
     </div>
