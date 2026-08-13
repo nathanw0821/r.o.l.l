@@ -154,8 +154,8 @@ export default function InGamePerkCard({
   const wikiSlug = name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
 
   const openWikiSource = React.useCallback(() => {
-    window.open(`https://fallout.wiki/wiki/${encodeURIComponent(wikiSlug)}`, "_blank", "noopener,noreferrer");
-  }, [wikiSlug]);
+    window.open(`/wiki?q=${encodeURIComponent(name)}`, "_blank", "noopener,noreferrer");
+  }, [name]);
 
   // Mobile-only touch long press
   const handleTouchStart = (e: React.TouchEvent) => {

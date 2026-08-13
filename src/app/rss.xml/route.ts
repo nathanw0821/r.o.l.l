@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
+import { FALLBACK_WIKI_ARTICLES } from "@/lib/static-fallback-catalog";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const limit = parseInt(searchParams.get("limit") || "100", 10);
 
-  // Fetch recent articles from local Python REST server or Neon Postgres
+  // Fetch recent articles from Prisma database or static catalog fallback
   try {
-    const res = await fetch(`http://127.0.0.1:8076/api/search?q=&category=all&limit=${limit}`, {
-      cache: "no-store"
-    });
-    const articles = res.ok ? await res.json() : [];
-
+    const articles = FALLBACK_WIKI_ARTICLES.slice(0, limit);
     const baseUrl = process.env.NEXTAUTH_URL || "https://fallout76.wiki";
 
     const itemsXml = (articles as Array<{ id: string; title: string; category?: string; updated_at?: string; snippet?: string; url?: string; source?: string }>)

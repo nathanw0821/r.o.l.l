@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Target, Plus, Minus } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
@@ -272,9 +273,15 @@ export default function EffectTable({
   function renderComponent(value?: string | null) {
     if (!value) return "-";
     return (
-      <span className="craft-badge" data-kind={getCraftComponentKind(value)}>
-        {value}
-      </span>
+      <Link
+        href={`/wiki?q=${encodeURIComponent(value)}`}
+        className="craft-badge hover:border-amber-400 hover:text-amber-300 transition-all font-mono inline-flex items-center gap-1 group/comp"
+        data-kind={getCraftComponentKind(value)}
+        title={`Search ${value} in Truth Wiki Codex`}
+      >
+        <span>{value}</span>
+        <span className="text-[0.65rem] opacity-70 group-hover/comp:opacity-100">↗</span>
+      </Link>
     );
   }
 
@@ -410,7 +417,14 @@ export default function EffectTable({
             >
               <div className="min-w-0">
                 <div className="font-semibold flex items-center gap-1.5 flex-wrap min-w-0 w-full">
-                  <span className="break-words" style={{ overflowWrap: "anywhere" }}>{cleanEffectName(row.effect.name)}</span>
+                  <Link
+                    href={`/wiki?q=${encodeURIComponent(cleanEffectName(row.effect.name))}`}
+                    className="hover:text-amber-400 hover:underline transition-colors flex items-center gap-1 group/effectlink"
+                    title={`Search ${cleanEffectName(row.effect.name)} in Truth Wiki Codex`}
+                  >
+                    <span className="break-words" style={{ overflowWrap: "anywhere" }}>{cleanEffectName(row.effect.name)}</span>
+                    <span className="text-[0.65rem] text-amber-400/80 group-hover/effectlink:text-amber-300 font-mono">↗</span>
+                  </Link>
                   {isNewMod(row.effect.name) && (
                     <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
                       New

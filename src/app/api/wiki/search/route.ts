@@ -28,31 +28,6 @@ export async function GET(req: Request) {
   const updateFilter = searchParams.get("update") || "all";
   const limit = parseInt(searchParams.get("limit") || "500", 10);
 
-  // 1. Try local Python Truth Bible REST server if available
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
-
-    const localResp = await fetch(
-      `http://127.0.0.1:8076/api/search?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&update=${encodeURIComponent(updateFilter)}&limit=${limit}`,
-      {
-        signal: controller.signal,
-        cache: "no-store",
-        headers: { Accept: "application/json" }
-      }
-    );
-    clearTimeout(timeoutId);
-
-    if (localResp.ok) {
-      const data = await localResp.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return NextResponse.json(data);
-      }
-    }
-  } catch {
-    // Local server fallback to Prisma
-  }
-
   // 2. Query Prisma database (Neon / Postgres)
   try {
     const where: Record<string, unknown> = {};
