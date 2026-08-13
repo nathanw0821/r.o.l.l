@@ -3,7 +3,7 @@ import { createShortlink } from "@/lib/shortlinks";
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json()) as { targetUrl?: string; payload?: any; title?: string; vanitySlug?: string; userId?: string };
+    const body = (await req.json()) as { targetUrl?: string; payload?: unknown; title?: string; vanitySlug?: string; userId?: string };
     const { targetUrl, payload, title, vanitySlug, userId } = body;
 
     if (!targetUrl && !payload) {

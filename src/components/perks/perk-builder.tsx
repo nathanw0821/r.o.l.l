@@ -91,7 +91,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
 
     // 2. Cloud DB sync
     fetch(`/api/perks/loadouts${characterId ? `?characterId=${characterId}` : ""}`)
-      .then((res) => res.json() as Promise<{ success?: boolean; data?: { loadouts?: Array<{ slotIndex: number; specials?: any; equippedCards?: any }> } }>)
+      .then((res) => res.json() as Promise<{ success?: boolean; data?: { loadouts?: Array<{ slotIndex: number; specials?: SpecialsState; equippedCards?: EquippedItem[] }> } }>)
       .then((payload) => {
         if (payload?.success && Array.isArray(payload.data?.loadouts)) {
           const slotData = payload.data.loadouts.find((l: { slotIndex: number }) => l.slotIndex === activeSlot);

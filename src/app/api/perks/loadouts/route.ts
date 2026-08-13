@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { requireUser } from "@/lib/api/auth";
 import { badRequest, ok } from "@/lib/api/responses";
 import { prisma } from "@/lib/prisma";
@@ -44,7 +45,13 @@ export async function POST(request: Request) {
   if ("response" in auth) return auth.response;
 
   try {
-    const body = (await request.json()) as { characterId?: string; slotIndex?: number; name?: string; specials?: any; equippedCards?: any };
+    const body = (await request.json()) as {
+      characterId?: string;
+      slotIndex?: number;
+      name?: string;
+      specials?: Prisma.InputJsonObject;
+      equippedCards?: Prisma.InputJsonArray;
+    };
     const { characterId, slotIndex, name, specials, equippedCards } = body;
 
     if (typeof slotIndex !== "number" || slotIndex < 0 || slotIndex > 5) {
