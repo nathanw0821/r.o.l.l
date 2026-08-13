@@ -213,7 +213,7 @@ export async function exportBuilderLoadoutCard(params: {
         <!-- COLUMN 1: TELEMETRY & STATS & MATRICES -->
         <div style="display: flex; flex-direction: column; gap: 12px; min-height: 0;">
           <div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 10px; padding: 12px;">
-            <div style="font-size: 11px; font-weight: 900; color: #4cc38a; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">[ S.P.E.C.I.A.L. TELEMETRY ]</div>
+            <div style="font-size: 11px; font-weight: 900; color: #4cc38a; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">[S.P.E.C.I.A.L. TELEMETRY]</div>
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
               ${specialHtml}
             </div>
