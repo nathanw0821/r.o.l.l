@@ -96,15 +96,11 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
         if (payload?.success && Array.isArray(payload.data?.loadouts)) {
           const slotData = payload.data.loadouts.find((l: { slotIndex: number }) => l.slotIndex === activeSlot);
           if (slotData) {
-            if (slotData.specials) setSpecials(slotData.specials);
-            if (Array.isArray(slotData.equippedCards)) setEquippedCards(slotData.equippedCards);
-            try {
-              localStorage.setItem(
-                `roll_perk_loadout_slot_${activeSlot}`,
-                JSON.stringify({ specials: slotData.specials, equippedCards: slotData.equippedCards })
-              );
-            } catch {
-              // Ignore local storage write errors
+            if (slotData.specials && Object.keys(slotData.specials).length > 0) {
+              setSpecials(slotData.specials);
+            }
+            if (Array.isArray(slotData.equippedCards) && slotData.equippedCards.length > 0) {
+              setEquippedCards(slotData.equippedCards);
             }
           }
         }

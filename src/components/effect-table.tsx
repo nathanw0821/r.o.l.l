@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { findLocalProgressEntry } from "@/lib/progress-lookup";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Target, Plus, Minus } from "lucide-react";
@@ -93,17 +94,8 @@ export default function EffectTable({
   React.useEffect(() => {
     const merged: EffectTierRow[] = rows.map((row) => {
       const effectName = row.effect?.name || (row as unknown as { effectName?: string }).effectName || "";
-      const lowerName = effectName.toLowerCase().trim();
-      const slugName = lowerName.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-      const cleanName = cleanEffectName(effectName).toLowerCase();
-      const strippedId = row.id.replace(/^effect-\dstar-/, "");
-
-      const entry = localProgress[row.id]
-        || localProgress[effectName]
-        || localProgress[lowerName]
-        || localProgress[slugName]
-        || localProgress[cleanName]
-        || localProgress[strippedId];
+      const tierLabel = (row as unknown as { tierLabel?: string; starTier?: string }).tierLabel || (row as unknown as { starTier?: string }).starTier || "";
+      const entry = findLocalProgressEntry(localProgress, row.id, effectName, tierLabel);
 
       if (entry === undefined) return row;
       return {
