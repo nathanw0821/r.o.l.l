@@ -25,7 +25,7 @@ export default function LocalProgressSync() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ entries })
     })
-      .then((res) => res.json())
+      .then((res) => res.json() as Promise<{ success?: boolean }>)
       .then((payload) => {
         if (payload?.success) {
           router.refresh();

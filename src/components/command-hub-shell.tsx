@@ -42,10 +42,10 @@ export default function CommandHubShell({
       fetch(`/api/command-hub?auth=${encodeURIComponent(authKey)}&t=${Date.now()}`, {
         cache: isSignedIn ? "no-store" : "force-cache"
       })
-        .then((response) => response.json())
+        .then((response) => response.json() as Promise<{ success?: boolean; data?: HubPayload }>)
         .then((body) => {
           if (!active || !body?.success || !body?.data) return;
-          setPayload(body.data as HubPayload);
+          setPayload(body.data);
         })
         .catch(() => undefined);
     }, 220);

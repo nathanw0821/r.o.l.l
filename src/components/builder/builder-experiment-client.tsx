@@ -654,12 +654,12 @@ export default function BuilderExperimentClient({
     }
 
     fetch("/api/builder/mods")
-      .then((r) => r.json())
+      .then((r) => r.json() as Promise<{ success?: boolean; data?: { mods?: BuilderModDTO[] } }>)
       .then((body) => {
         if (!body?.success || !Array.isArray(body.data?.mods)) {
           throw new Error("Could not load builder catalog.");
         }
-        const catalog = body.data.mods as BuilderModDTO[];
+        const catalog = body.data.mods;
         setMods(catalog);
         setLoadError(null);
         try {
@@ -1063,11 +1063,11 @@ export default function BuilderExperimentClient({
           payload,
         }),
       });
-      const body = await response.json();
+      const body = (await response.json()) as { success?: boolean; data?: { path?: string }; error?: { message?: string } };
       if (!response.ok || !body?.success) {
         throw new Error(body?.error?.message ?? "Share failed.");
       }
-      const path = body.data?.path as string;
+      const path = body.data?.path;
       setShareResult(path ?? "");
     } catch (e) {
       setShareResult(e instanceof Error ? e.message : "Share failed.");

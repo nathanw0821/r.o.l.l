@@ -24,7 +24,7 @@ export default function UsernameSettingsForm({
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ username })
     });
-    const payload = await response.json().catch(() => null);
+    const payload = (await response.json().catch(() => null)) as { data?: { username?: string }; error?: { message?: string } } | null;
 
     if (!response.ok) {
       setError(payload?.error?.message ?? "Unable to update username.");

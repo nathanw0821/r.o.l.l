@@ -24,8 +24,8 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
       try {
         const res = await fetch("/api/user/terms-status");
         if (res.ok) {
-          const payload = await res.json();
-          if (payload.success && payload.data.agreedToTerms === false) {
+          const payload = (await res.json()) as { success?: boolean; data?: { agreedToTerms?: boolean } };
+          if (payload.success && payload.data?.agreedToTerms === false) {
             setIsOpen(true);
           }
         }
@@ -46,7 +46,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
         method: "POST",
       });
       if (res.ok) {
-        const payload = await res.json();
+        const payload = (await res.json()) as { success?: boolean; error?: { message?: string } };
         if (payload.success) {
           setIsOpen(false);
         } else {
@@ -109,7 +109,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
       });
 
       if (res.ok) {
-        const payload = await res.json();
+        const payload = (await res.json()) as { success?: boolean; error?: { message?: string } };
         if (payload.success) {
           // Sign out immediately and redirect home
           await signOut({ callbackUrl: "/" });

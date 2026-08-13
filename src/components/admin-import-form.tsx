@@ -28,7 +28,7 @@ export default function AdminImportForm() {
   React.useEffect(() => {
     let active = true;
     fetch("/api/admin/import/status")
-      .then((res) => res.json())
+      .then((res) => res.json() as Promise<{ success?: boolean; data?: { libreOffice?: any; fallbackAvailable?: boolean } }>)
       .then((payload) => {
         if (!active || !payload?.success) return;
         setLibreOfficeStatus(payload.data?.libreOffice ?? null);

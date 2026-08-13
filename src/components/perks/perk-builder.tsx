@@ -91,7 +91,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
 
     // 2. Cloud DB sync
     fetch(`/api/perks/loadouts${characterId ? `?characterId=${characterId}` : ""}`)
-      .then((res) => res.json())
+      .then((res) => res.json() as Promise<{ success?: boolean; data?: { loadouts?: Array<{ slotIndex: number; specials?: any; equippedCards?: any }> } }>)
       .then((payload) => {
         if (payload?.success && Array.isArray(payload.data?.loadouts)) {
           const slotData = payload.data.loadouts.find((l: { slotIndex: number }) => l.slotIndex === activeSlot);
@@ -239,7 +239,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           equippedCards
         })
       });
-      const payload = await res.json();
+      const payload = (await res.json()) as { success?: boolean };
       if (payload?.success) {
         setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved! (Cloud & Local)`);
       } else {
@@ -303,7 +303,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           perks: equippedDetails,
         }),
       });
-      const data = await res.json();
+      const data = (await res.json()) as { success?: boolean; advice?: string; error?: string };
       if (data.success && data.advice) {
         setAiAdvice(data.advice);
       } else {

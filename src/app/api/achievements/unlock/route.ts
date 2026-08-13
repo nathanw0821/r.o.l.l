@@ -9,8 +9,9 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { key } = await req.json();
-    if (!key || typeof key !== "string") {
+    const body = (await req.json()) as { key?: unknown };
+    const key = typeof body?.key === "string" ? body.key : null;
+    if (!key) {
       return NextResponse.json({ error: "Invalid achievement key" }, { status: 400 });
     }
 

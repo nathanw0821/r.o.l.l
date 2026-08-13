@@ -551,7 +551,7 @@ export default function ScreenshotAssistClient({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ imageBase64: imageDataUrl }),
         });
-        const data = await res.json();
+        const data = (await res.json()) as { success?: boolean; matchedMods?: string[] };
         if (data.success && Array.isArray(data.matchedMods)) {
           for (const matchName of data.matchedMods) {
             const normMatch = matchName.toLowerCase();

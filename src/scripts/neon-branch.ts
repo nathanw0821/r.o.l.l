@@ -30,7 +30,7 @@ async function createBranch(branchName: string) {
     process.exit(1);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as { branch: { id: string }; connection_uris: Array<{ connection_uri: string }> };
   const branchId = data.branch.id;
   const connectionString = data.connection_uris[0].connection_uri;
 

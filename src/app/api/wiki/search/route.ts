@@ -68,14 +68,14 @@ export async function GET(req: Request) {
 
   // 4. Sorting
   if (sort === "oldest") {
-    list.sort((a, b) => a.id - b.id);
+    list.sort((a, b) => String(a.id).localeCompare(String(b.id)));
   } else if (sort === "title-asc") {
     list.sort((a, b) => a.title.localeCompare(b.title));
   } else if (sort === "title-desc") {
     list.sort((a, b) => b.title.localeCompare(a.title));
   } else {
     // "newest" or default
-    list.sort((a, b) => b.id - a.id);
+    list.sort((a, b) => String(b.id).localeCompare(String(a.id)));
   }
 
   return NextResponse.json(list.slice(0, limit));

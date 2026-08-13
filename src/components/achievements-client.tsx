@@ -40,8 +40,7 @@ export function AchievementsClient({ initialAchievements }: { initialAchievement
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key: achievement.key })
       });
-      const data = await res.json();
-
+      const data = (await res.json()) as { success?: boolean };
       if (data.success) {
         // Update local state to show as unlocked immediately
         const now = new Date();
