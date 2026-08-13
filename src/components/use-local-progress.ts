@@ -50,12 +50,20 @@ export function readLocalProgress(): LocalProgressMap {
   const parseAndMerge = (rawStr: string | null) => {
     if (!rawStr) return;
     try {
-      const parsed = JSON.parse(rawStr) as Record<string, unknown>;
-      for (const [key, value] of Object.entries(parsed)) {
-        if (typeof value === "boolean") {
-          merged[key] = { ...merged[key], unlocked: value };
-        } else if (value && typeof value === "object" && "unlocked" in value) {
-          merged[key] = { ...merged[key], ...(value as LocalProgressEntry) };
+      const parsed = JSON.parse(rawStr);
+      if (Array.isArray(parsed)) {
+        for (const item of parsed) {
+          if (typeof item === "string") {
+            merged[item] = { ...merged[item], unlocked: true };
+          }
+        }
+      } else if (parsed && typeof parsed === "object") {
+        for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
+          if (typeof value === "boolean") {
+            merged[key] = { ...merged[key], unlocked: value };
+          } else if (value && typeof value === "object" && "unlocked" in value) {
+            merged[key] = { ...merged[key], ...(value as LocalProgressEntry) };
+          }
         }
       }
     } catch {
@@ -63,10 +71,7 @@ export function readLocalProgress(): LocalProgressMap {
     }
   };
 
-  // 1. Read from Cookie
-  parseAndMerge(readCookieValue(COOKIE_NAME));
-
-  // 2. Read from LocalStorage fallback keys
+  // 1. Read from LocalStorage FIRST (5MB capacity)
   if (typeof window !== "undefined") {
     try {
       parseAndMerge(window.localStorage.getItem("roll_local_progress"));
@@ -78,18 +83,28 @@ export function readLocalProgress(): LocalProgressMap {
     }
   }
 
+  // 2. Read from Cookie fallback
+  parseAndMerge(readCookieValue(COOKIE_NAME));
+
   return merged;
 }
 
 export function writeLocalProgress(map: LocalProgressMap) {
-  const jsonStr = JSON.stringify(map);
-  writeCookieValue(COOKIE_NAME, jsonStr);
+  // 1. Write full progress to LocalStorage (5MB capacity)
   if (typeof window !== "undefined" && window.localStorage) {
     try {
-      window.localStorage.setItem("roll_local_progress", jsonStr);
+      window.localStorage.setItem("roll_local_progress", JSON.stringify(map));
     } catch {
       // Ignore localStorage write error
     }
+  }
+
+  // 2. Write ultra-compact unlocked keys array to cookie to fit under 4KB limit
+  try {
+    const compactUnlockedKeys = Object.keys(map).filter((key) => map[key]?.unlocked);
+    writeCookieValue(COOKIE_NAME, JSON.stringify(compactUnlockedKeys));
+  } catch {
+    // Ignore cookie write error
   }
 }
 
