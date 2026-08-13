@@ -92,10 +92,10 @@ export default function EffectTable({
   const { commitEntries } = useProgressHistory();
 
   React.useEffect(() => {
-    const merged: EffectTierRow[] = rows.map((row) => {
+    const merged: EffectTierRow[] = rows.map((row, index) => {
       const effectName = row.effect?.name || (row as unknown as { effectName?: string }).effectName || "";
       const tierLabel = (row as unknown as { tierLabel?: string; starTier?: string }).tierLabel || (row as unknown as { starTier?: string }).starTier || "";
-      const entry = findLocalProgressEntry(localProgress, row.id, effectName, tierLabel);
+      const entry = findLocalProgressEntry(localProgress, row.id, effectName, tierLabel, index);
 
       if (entry === undefined) return row;
       return {

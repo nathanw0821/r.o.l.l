@@ -12,11 +12,12 @@ export function findLocalProgressEntry(
   localProgress: LocalProgressMap | null | undefined,
   rowId: string,
   effectName: string,
-  tierLabel?: string | null
+  tierLabel?: string | null,
+  rowIndex?: number
 ): LocalProgressEntry | undefined {
   if (!localProgress) return undefined;
 
-  // 1. Exact match on rowId
+  // 1. Direct candidate key lookups
   if (localProgress[rowId] !== undefined) {
     return localProgress[rowId];
   }
@@ -52,7 +53,15 @@ export function findLocalProgressEntry(
     }
   }
 
-  // 2. Fallback fuzzy search across all entries in localProgress
+  // 2. Numeric index position lookup
+  if (rowIndex !== undefined) {
+    const idxStr = String(rowIndex);
+    if (localProgress[idxStr] !== undefined) return localProgress[idxStr];
+    if (localProgress[`item_${idxStr}`] !== undefined) return localProgress[`item_${idxStr}`];
+    if (localProgress[`idx_${idxStr}`] !== undefined) return localProgress[`idx_${idxStr}`];
+  }
+
+  // 3. Fallback fuzzy search across all entries in localProgress
   const entries = Object.entries(localProgress);
   for (const [key, val] of entries) {
     const kLower = key.toLowerCase();
@@ -68,6 +77,11 @@ export function findLocalProgressEntry(
         return val;
       }
     }
+  }
+
+  // 4. Positional fallback if localProgress entries count matches catalog size (148)
+  if (rowIndex !== undefined && entries.length === 148 && entries[rowIndex]) {
+    return entries[rowIndex][1];
   }
 
   return undefined;
