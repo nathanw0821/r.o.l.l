@@ -81,18 +81,39 @@ async function fetchUserProgressMap(userId: string, datasetVersionId: string) {
       effectTierId: true, 
       unlocked: true,
       isSeeking: true,
-      modCount: true
+      modCount: true,
+      effectTier: {
+        select: {
+          effect: { select: { name: true } },
+          tier: { select: { label: true } }
+        }
+      }
     }
   });
   
   const map = new Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>();
   for (const row of rows) {
-    const existing = map.get(row.effectTierId);
-    map.set(row.effectTierId, { 
-      unlocked: Boolean(existing?.unlocked || row.unlocked), 
-      isSeeking: Boolean(existing?.isSeeking || row.isSeeking), 
-      modCount: Math.max(existing?.modCount || 0, row.modCount || 0)
-    });
+    const data = {
+      unlocked: row.unlocked,
+      isSeeking: row.isSeeking,
+      modCount: row.modCount
+    };
+    map.set(row.effectTierId, data);
+    
+    const effectName = row.effectTier?.effect?.name?.toLowerCase().trim();
+    if (effectName) {
+      map.set(effectName, data);
+      const cleanName = effectName.replace(/[^a-z0-9]/g, "");
+      map.set(cleanName, data);
+    }
+    
+    const tierLabel = row.effectTier?.tier?.label || "";
+    const starNum = (tierLabel.match(/\d/) || [""])[0];
+    if (effectName && starNum) {
+      const slugName = effectName.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      map.set(`effect-${starNum}star-${slugName}`, data);
+      map.set(`${starNum}star-${slugName}`, data);
+    }
   }
   return map;
 }
@@ -210,8 +231,10 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
     ]);
 
     return normalized.map((item) => {
-      const progress = progressMap.get(item.id);
-      const unlockedBy = globalProgressMap.get(item.id) || [];
+      const effectName = item.effect?.name?.toLowerCase().trim() || "";
+      const cleanName = effectName.replace(/[^a-z0-9]/g, "");
+      const progress = progressMap.get(item.id) || progressMap.get(effectName) || progressMap.get(cleanName);
+      const unlockedBy = globalProgressMap.get(item.id) || globalProgressMap.get(effectName) || [];
       return {
         ...item,
         unlocked: progress ? progress.unlocked : item.unlocked,
