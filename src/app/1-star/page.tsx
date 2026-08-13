@@ -12,7 +12,7 @@ export default async function TierOnePage() {
   return (
     <EffectTable
       rows={rows}
-      canEdit={Boolean(session)}
+      canEdit={true}
       title={`${formatTierStars(tierLabel)} 1-Star Legendaries`}
       description="Browse all 1-Star Legendaries."
     />

@@ -12,7 +12,7 @@ export default async function TierThreePage() {
   return (
     <EffectTable
       rows={rows}
-      canEdit={Boolean(session)}
+      canEdit={true}
       title={`${formatTierStars(tierLabel)} 3-Star Legendaries`}
       description="Browse all 3-Star Legendaries."
     />

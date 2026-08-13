@@ -12,7 +12,7 @@ export default async function TierFourPage() {
   return (
     <EffectTable
       rows={rows}
-      canEdit={Boolean(session)}
+      canEdit={true}
       title={`${formatTierStars(tierLabel)} 4-Star Legendaries`}
       description="Browse all 4-Star Legendaries."
     />

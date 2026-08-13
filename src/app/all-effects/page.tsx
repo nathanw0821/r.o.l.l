@@ -24,7 +24,7 @@ async function AllEffectsRegistry({
   return (
     <EffectTable
       rows={rows}
-      canEdit={Boolean(session?.user?.id)}
+      canEdit={true}
       focusId={focusId}
       title="ALL LEGENDARY EFFECTS"
       description="Complete directory of all Fallout 76 legendary effects across all star tiers."
