@@ -5393,3 +5393,56 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
     ]
   }
 ];
+
+export const FALLBACK_WIKI_ARTICLES = [
+  {
+    "id": 1,
+    "source": "Vault Codex",
+    "title": "Complete Legendary Crafting & Scrapping Guide",
+    "url": "https://fallout76.wiki/wiki/legendary-crafting",
+    "category": "Weapons & Legendary Mods",
+    "snippet": "Learn how to scrap legendary weapons and armor for a 1% chance to unlock permanent crafting recipes and 1.5% chance to obtain legendary mod boxes.",
+    "content": "### Legendary Crafting Overview\n\nIn Fallout 76, players can scrap legendary weapons and armor at any Armor or Weapon Workbench.\n\n* **Recipe Unlock Chance**: 1.0% per scrapped item.\n* **Mod Box Drop Chance**: 1.5% per scrapped item.\n* **Module Crafting Costs**: 1-Star (15 Modules), 2-Star (30 Modules), 3-Star (60 Modules), 4-Star (120 Modules).\n\nTrade mod boxes with other players or apply them directly to your favorite gear at the Workbench.",
+    "main_image": null
+  },
+  {
+    "id": 2,
+    "source": "Vault Codex",
+    "title": "Minerva Schedule & Gold Bullion Inventory",
+    "url": "https://fallout76.wiki/wiki/minerva",
+    "category": "Vendors & Minerva",
+    "snippet": "Minerva is a traveling Gold Bullion merchant who sells rare plans at a 25% discount compared to Foundation and Crater vendors.",
+    "content": "### Minerva Schedule & Rotations\n\nMinerva rotates weekly between Foundation, Crater, and Fort Atlas. Her Big Sale occurs once a month featuring items from the previous 3 weeks combined.",
+    "main_image": null
+  },
+  {
+    "id": 3,
+    "source": "Vault Codex",
+    "title": "S.P.E.C.I.A.L. & Punch Card Machine Mechanics",
+    "url": "https://fallout76.wiki/wiki/perks",
+    "category": "Perks & Mutations",
+    "snippet": "Punch Card Machines allow players level 25+ to respec SPECIAL stats and save up to 6 distinct loadouts for free.",
+    "content": "### Punch Card Machines\n\nLocated at Train Stations and C.A.M.P.s. Equip Legendary SPECIAL perks to boost your effective attribute cap beyond 15 up to 30 points.",
+    "main_image": null
+  },
+  {
+    "id": 4,
+    "source": "Vault Codex",
+    "title": "Playable Ghoul Overhaul & 20 SPECIAL Cap",
+    "url": "https://fallout76.wiki/wiki/ghoul-mode",
+    "category": "Builds & Mechanics",
+    "snippet": "Playable Ghouls expand S.P.E.C.I.A.L. perk capacity up to 20 points per attribute, replacing bloodied mechanics with feral rage meters.",
+    "content": "### Playable Ghoul Mechanics\n\n* **Feral Gauge**: Fills as toxic radiation is absorbed.\n* **Perk Capacity**: 20 perk points per SPECIAL stat.\n* **Feral Perk Cards**: Exclusive ghoul combat cards like Feral Rage, Radiation Power, and Chemist.",
+    "main_image": null
+  },
+  {
+    "id": 5,
+    "source": "Vault Codex",
+    "title": "Armor Resistances & Damage Reduction Math",
+    "url": "https://fallout76.wiki/wiki/armor-math",
+    "category": "Armor & Power Armor",
+    "snippet": "Understanding DR, ER, RR, and flat percentage Damage Reduction (Overeaters, Sentinels, Power Armor chassis).",
+    "content": "### Damage Reduction Formula\n\nFlat percentage Damage Reduction (Power Armor -42%, Overeaters -30%, Sentinels -75%) is applied BEFORE numerical DR armor math.",
+    "main_image": null
+  }
+];

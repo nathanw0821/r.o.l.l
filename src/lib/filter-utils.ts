@@ -336,8 +336,18 @@ export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterSt
     }
 
     if (originSet.size > 0) {
-      const rowOrigins = (row.origins ?? []).map((origin) => origin.toLowerCase());
-      if (!rowOrigins.some((origin) => originSet.has(origin))) return false;
+      const isAnywhereSelected = originSet.has("anywhere");
+      const cleanOrigins = (row.origins ?? []).filter((o) => !o.toLowerCase().startsWith("scrapping"));
+      const hasMatchingLocation = cleanOrigins.some((origin) => originSet.has(origin.toLowerCase().trim()));
+      const isAnywhereRow = !rowHasDirectLocation(row.origins);
+
+      if (isAnywhereSelected && isAnywhereRow) {
+        /* ok */
+      } else if (hasMatchingLocation) {
+        /* ok */
+      } else {
+        return false;
+      }
     }
 
     return true;
@@ -353,13 +363,42 @@ export function normalizeCategory(value: string) {
     .trim();
 }
 
+const DIRECT_LOCATION_KEYWORDS = [
+  "burning springs", "infestation", "milepost", "bounty", "head hunt", "grunt hunt",
+  "purveyor", "murmrgh", "event", "expedition", "pitt", "atlantic city", "daily ops",
+  "minerva", "titan", "ultracite titan", "neurological warfare", "skyline valley"
+];
+
+export function rowHasDirectLocation(origins?: string[]): boolean {
+  if (!origins || origins.length === 0) return false;
+  return origins.some((orig) => {
+    const lower = orig.toLowerCase().trim();
+    if (lower.startsWith("scrapping")) return false;
+    return DIRECT_LOCATION_KEYWORDS.some((kw) => lower.includes(kw));
+  });
+}
+
 export function collectOriginOptions(rows: FilterableRow[]) {
   const set = new Set<string>();
+  let hasAnywhereRows = false;
+
   for (const row of rows) {
-    for (const origin of row.origins ?? []) {
-      if (origin) set.add(origin);
+    const origins = row.origins ?? [];
+    if (!rowHasDirectLocation(origins)) {
+      hasAnywhereRows = true;
+    }
+    for (const origin of origins) {
+      if (!origin) continue;
+      const lower = origin.toLowerCase().trim();
+      if (lower.startsWith("scrapping")) continue;
+      set.add(origin.trim());
     }
   }
+
+  if (hasAnywhereRows) {
+    set.add("Anywhere");
+  }
+
   return Array.from(set).sort((a, b) => a.localeCompare(b));
 }
 
