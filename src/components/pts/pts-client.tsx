@@ -40,17 +40,17 @@ export default function PtsClient() {
             <div className="flex items-center gap-2">
               <span className="text-[0.7rem] uppercase tracking-widest text-amber-500 font-bold flex items-center gap-1.5">
                 <FlaskConical className="h-3.5 w-3.5" />
-                <span>SYSTEM PROTOCOL // EXPERIMENTAL V.A.U.L.T.</span>
+                <span>P.T.S. DATAMINES</span>
               </span>
             </div>
             <h1 className="text-3xl font-bold tracking-tight mt-1 flex items-center gap-2">
               <span>P.T.S.</span>
               <span className="text-sm text-foreground/50 font-normal">
-                (Provisional Testing System)
+                (Public Test Server)
               </span>
             </h1>
             <p className="text-xs text-foreground/60 mt-1 max-w-2xl leading-relaxed">
-              Track experimental test server builds, 4-star legendary mods, crafting overhauls, and NukaKnights datamines before they hit live Fallout 76 servers.
+              Track test server updates, 4-star legendary mods, and datamined balance changes.
             </p>
           </div>
           <BrandStack />
