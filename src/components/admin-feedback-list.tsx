@@ -37,10 +37,10 @@ export default function AdminFeedbackList({
         adminNotes: item.adminNotes ?? ""
       })
     });
-    const payload = await response.json().catch(() => null);
+    const payload = (await response.json().catch(() => null)) as { data?: { feedback?: FeedbackEntry } } | null;
 
     if (response.ok && payload?.data?.feedback) {
-      const updated = payload.data.feedback as FeedbackEntry;
+      const updated = payload.data.feedback;
       setFeedback((current) => current.map((row) => (row.id === item.id ? { ...item, ...updated } : row)));
     }
     setPendingId(null);
@@ -56,10 +56,10 @@ export default function AdminFeedbackList({
         adminNotes: notes
       })
     });
-    const payload = await response.json().catch(() => null);
+    const payload = (await response.json().catch(() => null)) as { data?: { feedback?: FeedbackEntry } } | null;
 
     if (response.ok && payload?.data?.feedback) {
-      const updated = payload.data.feedback as FeedbackEntry;
+      const updated = payload.data.feedback;
       setFeedback((current) => current.map((row) => (row.id === item.id ? { ...row, ...updated } : row)));
     }
     setPendingId(null);

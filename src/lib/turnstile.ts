@@ -40,7 +40,7 @@ export async function verifyTurnstileToken(token: string | null | undefined): Pr
       }
     });
 
-    const data = await res.json();
+    const data = (await res.json()) as { success?: boolean; "error-codes"?: string[] };
     return {
       success: Boolean(data.success),
       errorCodes: data["error-codes"] ?? []

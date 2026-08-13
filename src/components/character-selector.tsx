@@ -38,8 +38,15 @@ export function CharacterSelector({
   const fetchData = React.useCallback(async () => {
     try {
       const res = await fetch("/api/character-selection");
-      const json = await res.json();
-      if (json.success) {
+      const json = (await res.json()) as {
+        success?: boolean;
+        data?: {
+          characters: Character[];
+          gameAccounts: GameAccount[];
+          activeCharacterId: string | null;
+        };
+      };
+      if (json.success && json.data) {
         setData(json.data);
       }
     } catch (err) {

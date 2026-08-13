@@ -58,6 +58,7 @@ export type MergedEffectTierRow = Omit<EffectTierCatalogRow, "notes"> & {
   modCount: number;
   unlockedBy: string[];
   selectionSource: SelectionSource;
+  tierLabel?: string;
 };
 
 function getCatalogEffectTiersCached(datasetVersionId: string) {

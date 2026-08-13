@@ -35,7 +35,7 @@ export default function ProfilePasswordSettingsForm({
         newPassword: nextPassword
       })
     });
-    const payload = await response.json().catch(() => null);
+    const payload = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
 
     if (!response.ok) {
       setError(payload?.error?.message ?? "Unable to update password.");

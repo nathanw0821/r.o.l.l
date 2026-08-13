@@ -23,9 +23,9 @@ export default function UsernameCompletion() {
     if (status !== "authenticated" || !session?.user?.id) return;
 
     fetch("/api/profile/username", { cache: "no-store" })
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<{ data?: UsernameStatus }>)
       .then((payload) => {
-        const data = payload?.data as UsernameStatus | undefined;
+        const data = payload?.data;
         setOpen(Boolean(data?.needsUsername));
       })
       .catch(() => setOpen(false));
@@ -41,7 +41,7 @@ export default function UsernameCompletion() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body)
     });
-    const payload = await response.json().catch(() => null);
+    const payload = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
 
     if (!response.ok) {
       setError(payload?.error?.message ?? "Unable to set username.");

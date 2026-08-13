@@ -30,8 +30,8 @@ export default function AdminSyncPanel() {
   async function loadSources() {
     try {
       const response = await fetch("/api/admin/sync");
-      const payload = await response.json();
-      if (payload?.success) {
+      const payload = (await response.json()) as { success?: boolean; data?: { sources?: SyncSource[] } };
+      if (payload?.success && payload.data) {
         setSources(payload.data.sources ?? []);
       }
     } catch {
@@ -49,7 +49,7 @@ export default function AdminSyncPanel() {
     setMessage(null);
     try {
       const response = await fetch("/api/admin/sync", { method: "POST" });
-      const payload = await response.json();
+      const payload = (await response.json()) as { success?: boolean; error?: { message?: string } };
       if (!response.ok || !payload?.success) {
         setError(payload?.error?.message ?? "Sync failed.");
       } else {
@@ -69,7 +69,7 @@ export default function AdminSyncPanel() {
     setMessage(null);
     try {
       const response = await fetch("/api/admin/sync/check", { method: "POST" });
-      const payload = await response.json();
+      const payload = (await response.json()) as { success?: boolean; data?: { changedCount?: number }; error?: { message?: string } };
       if (!response.ok || !payload?.success) {
         setError(payload?.error?.message ?? "Change check failed.");
       } else {
@@ -95,7 +95,7 @@ export default function AdminSyncPanel() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id: sourceId, ...patch })
       });
-      const payload = await response.json();
+      const payload = (await response.json()) as { success?: boolean; error?: { message?: string } };
       if (!response.ok || !payload?.success) {
         setError(payload?.error?.message ?? "Update failed.");
       } else {

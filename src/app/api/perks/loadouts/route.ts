@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   if ("response" in auth) return auth.response;
 
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { characterId?: string; slotIndex?: number; name?: string; specials?: any; equippedCards?: any };
     const { characterId, slotIndex, name, specials, equippedCards } = body;
 
     if (typeof slotIndex !== "number" || slotIndex < 0 || slotIndex > 5) {

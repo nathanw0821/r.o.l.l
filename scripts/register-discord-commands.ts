@@ -167,7 +167,7 @@ async function register() {
   });
 
   if (globalRes.ok) {
-    const data = await globalRes.json();
+    const data = (await globalRes.json()) as Array<unknown>;
     console.log(`✅ Global Commands Registered (${data.length} commands).`);
   } else {
     console.error("❌ Global registration error:", await globalRes.text());
@@ -186,8 +186,8 @@ async function register() {
       body: JSON.stringify(commands)
     });
     if (guildRes.ok) {
-      const data = await guildRes.json();
-      console.log(`⚡ Instant Server Commands Registered (${data.length} commands).`);
+      const data = (await guildRes.json()) as Array<unknown>;
+      console.log(`✅ Instant Guild Commands Registered (${data.length} commands).`);
     } else {
       console.error("❌ Guild registration error:", await guildRes.text());
     }

@@ -21,9 +21,9 @@ export default function AccountLinks() {
 
   React.useEffect(() => {
     fetch(`/api/account-links`)
-      .then((res) => res.json())
+      .then((res) => res.json() as Promise<{ success?: boolean; data?: { providers?: string[] } }>)
       .then((payload) => {
-        if (payload?.success) setAccounts(payload.data.providers ?? []);
+        if (payload?.success && payload.data) setAccounts(payload.data.providers ?? []);
       })
       .catch(() => {});
   }, []);
