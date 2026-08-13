@@ -774,11 +774,16 @@ export default function SummaryClient({
                     className={cn(
                       "summary-status-card summary-status-card--grid rounded-[var(--radius)] border text-left transition cursor-pointer select-none",
                       "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                      row.unlocked && "bg-emerald-500/15 border-emerald-500/60 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.15)]",
+                      row.isSeeking && !row.unlocked && "bg-amber-500/15 border-amber-500/60 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.15)]",
                       pendingId === row.id && "opacity-60"
                     )}
                   >
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold truncate pr-6">{cleanEffectName(row.effect.name)}</div>
+                      <div className="text-sm font-semibold truncate pr-6 flex items-center gap-1.5">
+                        {row.unlocked && <span className="text-emerald-400 text-xs font-bold">✓</span>}
+                        <span>{cleanEffectName(row.effect.name)}</span>
+                      </div>
                       <div className="mt-1 text-[0.84rem] font-semibold uppercase tracking-[0.12em]">
                         {pendingId === row.id
                           ? "Saving..."
@@ -787,7 +792,7 @@ export default function SummaryClient({
                             : row.isSeeking && !row.unlocked
                               ? "Seeking"
                               : row.unlocked
-                                ? "Unlocked"
+                                ? "✓ Unlocked"
                                 : "Locked"}
                       </div>
                       {!isExportingImage && row.unlockedBy.length > 0 && (
