@@ -22,97 +22,61 @@ function filterFallbackArticles(q: string, category: string, limit: number) {
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const q = searchParams.get("q") || "";
+  const q = (searchParams.get("q") || "").trim().toLowerCase();
   const category = searchParams.get("category") || "all";
   const sort = searchParams.get("sort") || "newest";
   const updateFilter = searchParams.get("update") || "all";
   const limit = parseInt(searchParams.get("limit") || "500", 10);
 
-  // 2. Query Prisma database (Neon / Postgres)
-  try {
-    const where: Record<string, unknown> = {};
+  let list = [...FALLBACK_WIKI_ARTICLES];
 
-    // Category filter
-    if (category && category.toLowerCase() !== "all") {
-      const prefix = category.split(" ")[0].split("&")[0].trim();
-      where.category = { contains: prefix, mode: "insensitive" };
-    }
-
-    // Search query filter
-    const conditions: Record<string, unknown>[] = [];
-    if (q && q.trim().length > 0) {
-      conditions.push(
-        { title: { contains: q, mode: "insensitive" } },
-        { content: { contains: q, mode: "insensitive" } }
-      );
-    }
-
-    // Update / Patch filter keywords
-    if (updateFilter && updateFilter.toLowerCase() !== "all") {
-      let kw = updateFilter.replace(/-/g, " ");
-      if (kw.includes("pitt")) kw = "The Pitt";
-      if (kw.includes("atlantic")) kw = "Atlantic City";
-      if (kw.includes("skyline")) kw = "Skyline Valley";
-      if (kw.includes("milepost")) kw = "Milepost Zero";
-      if (kw.includes("backwood")) kw = "Backwoods";
-      if (kw.includes("burning")) kw = "Burning Springs";
-      if (kw.includes("nuka")) kw = "Nuka World";
-      if (kw.includes("invader")) kw = "Invaders";
-
-      where.AND = [
-        {
-          OR: [
-            { title: { contains: kw, mode: "insensitive" } },
-            { content: { contains: kw, mode: "insensitive" } }
-          ]
-        }
-      ];
-    }
-
-    if (conditions.length > 0) {
-      if (Array.isArray(where.AND)) {
-        where.AND.push({ OR: conditions });
-      } else {
-        where.OR = conditions;
-      }
-    }
-
-    // Ordering logic
-    let orderBy: Record<string, string> = { id: "desc" };
-    if (sort === "oldest") {
-      orderBy = { id: "asc" };
-    } else if (sort === "title-asc") {
-      orderBy = { title: "asc" };
-    } else if (sort === "title-desc") {
-      orderBy = { title: "desc" };
-    } else if (sort === "updated") {
-      orderBy = { updatedAt: "desc" };
-    }
-
-    const articles = await prisma.article.findMany({
-      where,
-      take: limit,
-      orderBy
-    });
-
-    if (!articles || articles.length === 0) {
-      return NextResponse.json(filterFallbackArticles(q, category, limit));
-    }
-
-    const formatted = articles.map((a) => ({
-      id: a.id,
-      source: a.source,
-      title: a.title,
-      url: a.url,
-      content: a.content,
-      main_image: a.mainImage,
-      category: a.category,
-      updatedAt: a.updatedAt,
-      snippet: a.content ? a.content.substring(0, 150) + "..." : ""
-    }));
-
-    return NextResponse.json(formatted);
-  } catch {
-    return NextResponse.json(filterFallbackArticles(q, category, limit));
+  // 1. Category Filter
+  if (category && category.toLowerCase() !== "all") {
+    const prefix = category.toLowerCase().split(" ")[0].split("&")[0].trim();
+    list = list.filter((a) => (a.category || "").toLowerCase().includes(prefix));
   }
+
+  // 2. Query Search Filter
+  if (q.length > 0) {
+    list = list.filter(
+      (a) =>
+        a.title.toLowerCase().includes(q) ||
+        a.content.toLowerCase().includes(q) ||
+        a.snippet.toLowerCase().includes(q)
+    );
+  }
+
+  // 3. Patch / Update Keyword Filter
+  if (updateFilter && updateFilter.toLowerCase() !== "all") {
+    let kw = updateFilter.toLowerCase().replace(/-/g, " ");
+    if (kw.includes("pitt")) kw = "pitt";
+    if (kw.includes("atlantic")) kw = "atlantic";
+    if (kw.includes("skyline")) kw = "skyline";
+    if (kw.includes("milepost")) kw = "milepost";
+    if (kw.includes("backwood")) kw = "backwood";
+    if (kw.includes("burning")) kw = "burning";
+    if (kw.includes("nuka")) kw = "nuka";
+    if (kw.includes("invader")) kw = "invader";
+
+    list = list.filter(
+      (a) =>
+        a.title.toLowerCase().includes(kw) ||
+        a.content.toLowerCase().includes(kw) ||
+        (a.category || "").toLowerCase().includes(kw)
+    );
+  }
+
+  // 4. Sorting
+  if (sort === "oldest") {
+    list.sort((a, b) => a.id - b.id);
+  } else if (sort === "title-asc") {
+    list.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sort === "title-desc") {
+    list.sort((a, b) => b.title.localeCompare(a.title));
+  } else {
+    // "newest" or default
+    list.sort((a, b) => b.id - a.id);
+  }
+
+  return NextResponse.json(list.slice(0, limit));
 }
