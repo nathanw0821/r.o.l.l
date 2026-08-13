@@ -71,13 +71,22 @@ export function readLocalProgress(): LocalProgressMap {
     }
   };
 
-  // 1. Read from LocalStorage FIRST (5MB capacity)
-  if (typeof window !== "undefined") {
+  // 1. Read from ALL LocalStorage keys matching roll/progress/effect/user FIRST (5MB capacity)
+  if (typeof window !== "undefined" && window.localStorage) {
     try {
+      // Direct explicit fallback keys
       parseAndMerge(window.localStorage.getItem("roll_local_progress"));
       parseAndMerge(window.localStorage.getItem("roll_user_progress"));
       parseAndMerge(window.localStorage.getItem("roll_progress"));
       parseAndMerge(window.localStorage.getItem("roll_progress_map"));
+
+      // Deep scan across all storage keys
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i);
+        if (key && (key.includes("roll") || key.includes("progress") || key.includes("effect") || key.includes("user"))) {
+          parseAndMerge(window.localStorage.getItem(key));
+        }
+      }
     } catch {
       // Ignore localStorage read restrictions
     }

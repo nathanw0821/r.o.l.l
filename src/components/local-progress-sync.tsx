@@ -28,7 +28,6 @@ export default function LocalProgressSync() {
       .then((res) => res.json())
       .then((payload) => {
         if (payload?.success) {
-          clear();
           router.refresh();
         }
       })
