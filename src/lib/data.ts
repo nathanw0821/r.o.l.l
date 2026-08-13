@@ -398,19 +398,20 @@ const getGuestProgressSummaryCached = unstable_cache(
 
 export async function getProgressSummary(userId?: string) {
   await ensureProfileApplied(userId);
-  const dataset = await getActiveDatasetVersion();
+  const dataset = await getActiveDatasetVersion().catch(() => null);
   if (!dataset) {
-    return { total: 0, unlocked: 0, percent: 0 };
+    const total = FALLBACK_LEGENDARY_EFFECTS.length; // 148 total effects
+    return { total, unlocked: 0, percent: 0 };
   }
 
   const [total, characterId] = await Promise.all([
-    prisma.effectTier.count({ where: { datasetVersionId: dataset.id } }),
-    getActiveCharacterId(userId)
+    prisma.effectTier.count({ where: { datasetVersionId: dataset.id } }).catch(() => FALLBACK_LEGENDARY_EFFECTS.length),
+    getActiveCharacterId(userId).catch(() => undefined)
   ]);
 
   if (!userId || !characterId) {
-    if (!userId) return getGuestProgressSummaryCached(dataset.id);
-    return { total, unlocked: 0, percent: 0 };
+    const totalCount = total || FALLBACK_LEGENDARY_EFFECTS.length;
+    return { total: totalCount, unlocked: 0, percent: 0 };
   }
 
   const [baselineMap, progressRows] = await Promise.all([
