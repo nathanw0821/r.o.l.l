@@ -29,22 +29,25 @@ interface PerkBuilderProps {
 
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
 
-export default function PerkBuilder({ characterId, characterName, mode = "live" }: PerkBuilderProps) {
+function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => void }) {
   const searchParams = useSearchParams();
-  const urlQuery = searchParams.get("q") || searchParams.get("card") || "";
+  const urlQuery = searchParams ? (searchParams.get("q") || searchParams.get("card") || "") : "";
 
+  React.useEffect(() => {
+    if (urlQuery) {
+      onQueryChange(urlQuery);
+    }
+  }, [urlQuery, onQueryChange]);
+
+  return null;
+}
+
+export default function PerkBuilder({ characterId, characterName, mode = "live" }: PerkBuilderProps) {
   const [activeSlot, setActiveSlot] = React.useState<number>(0);
-  const [searchQuery, setSearchQuery] = React.useState(urlQuery);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL">("ALL");
   const [showRoadmap, setShowRoadmap] = React.useState(false);
   const [isGhoul, setIsGhoul] = React.useState(mode === "pts");
-
-  // Sync searchQuery with URL params if provided
-  React.useEffect(() => {
-    if (urlQuery) {
-      setSearchQuery(urlQuery);
-    }
-  }, [urlQuery]);
 
   const [specials, setSpecials] = React.useState<SpecialsState>({
     S: 1,
@@ -285,6 +288,9 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
 
   return (
     <div className="space-y-6">
+      <React.Suspense fallback={null}>
+        <PerkBuilderUrlSync onQueryChange={setSearchQuery} />
+      </React.Suspense>
       {/* Header Banner */}
       <div className="rounded-[var(--radius-lg)] border border-emerald-500/40 bg-slate-950 p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />

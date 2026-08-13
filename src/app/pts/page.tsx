@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import PtsClient from "@/components/pts/pts-client";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function PtsPage() {
-  return <PtsClient />;
+  return (
+    <Suspense fallback={<div className="p-6 text-sm font-mono text-foreground/60 animate-pulse">Loading P.T.S. Testing System...</div>}>
+      <PtsClient />
+    </Suspense>
+  );
 }
