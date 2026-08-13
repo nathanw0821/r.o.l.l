@@ -114,7 +114,9 @@ export function calculateLegendarySpecialBonuses(
   };
 
   for (const item of equipped) {
-    const targetStat = LEGENDARY_SPECIAL_CARD_MAP[item.cardId];
+    const card = getPerkCardById(item.cardId);
+    if (!card || card.special !== "LEGENDARY") continue;
+    const targetStat = LEGENDARY_SPECIAL_CARD_MAP[card.id] || LEGENDARY_SPECIAL_CARD_MAP[card.id.toLowerCase()];
     if (targetStat) {
       const bonus = item.rank === 4 ? 5 : item.rank;
       bonuses[targetStat] += bonus;
