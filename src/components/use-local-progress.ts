@@ -99,11 +99,20 @@ export function clearLocalProgress() {
 }
 
 export function useLocalProgress(enabled = true) {
-  const [map, setMap] = React.useState<LocalProgressMap>({});
+  const [map, setMap] = React.useState<LocalProgressMap>(() => (typeof window !== "undefined" ? readLocalProgress() : {}));
+
+  // Ensure client hydration reads real local progress immediately on mount
+  React.useEffect(() => {
+    if (enabled && typeof window !== "undefined") {
+      setMap(readLocalProgress());
+    }
+  }, [enabled]);
 
   React.useEffect(() => {
     if (!enabled) return;
-    setMap(readLocalProgress());
+    return subscribeLocalProgress((nextMap) => {
+      setMap(nextMap);
+    });
   }, [enabled]);
 
   React.useEffect(() => {

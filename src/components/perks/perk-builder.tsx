@@ -64,8 +64,11 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
   const [isFemale, setIsFemale] = React.useState(false);
 
+  const isInitialLoadedRef = React.useRef(false);
+
   // Load active loadout slot (LocalStorage first for instant load, then Cloud sync)
   React.useEffect(() => {
+    isInitialLoadedRef.current = false;
     // 1. LocalStorage prefill
     try {
       const localDataStr = localStorage.getItem(`roll_perk_loadout_slot_${activeSlot}`);
@@ -80,6 +83,10 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
     } catch {
       // Ignore local storage read errors
     }
+
+    setTimeout(() => {
+      isInitialLoadedRef.current = true;
+    }, 100);
 
     // 2. Cloud DB sync
     fetch(`/api/perks/loadouts${characterId ? `?characterId=${characterId}` : ""}`)
@@ -104,8 +111,9 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
       .catch(() => undefined);
   }, [characterId, activeSlot]);
 
-  // Auto-save to LocalStorage on every change so perk deck is never lost
+  // Auto-save to LocalStorage on change ONLY after initial load is complete
   React.useEffect(() => {
+    if (!isInitialLoadedRef.current) return;
     try {
       localStorage.setItem(
         `roll_perk_loadout_slot_${activeSlot}`,
@@ -602,7 +610,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
               {safeEquippedCards.map((item) => {
-                const card = PERK_CATALOG.find((c) => c.id === item.cardId);
+                const card = getPerkCardById(item.cardId);
                 if (!card) return null;
                 const activeRankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];
                 const isOverflowStat = overCapacityStats.some((o) => o.stat === card.special);
