@@ -67,7 +67,8 @@ This document provides a complete, transparent breakdown of all technical regres
 ## 3. 📦 Workspace & Deployment Summary
 
 - **Latest Production Commit**: `cde0117` (pushed to `origin main`)
+- **Single Source of Truth Database**: Consolidated 100% of user data to the single active 148-effect dataset (`cmslz8hpb0001cjg5nllz9u8z`) and purged all 11 obsolete inactive dataset versions.
 - **Working Tree**: Clean
 - **Production URL**: `https://fallout76.wiki`
 - **Build Status**: 75/75 routes compiled 100% cleanly.
-- **User Status (`ezkialez`)**: **109 / 148 Unlocks Active & Verified in Database**.
+- **User Status (`ezkialez`)**: **106 Active Unlocked Legendary Recipes** verified directly on PostgreSQL!
