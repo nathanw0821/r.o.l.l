@@ -167,6 +167,25 @@ const getTierByLabelCached = unstable_cache(
 
 import { FALLBACK_LEGENDARY_EFFECTS, type StaticEffectRow } from "@/lib/static-fallback-catalog";
 
+function normalizeFallbackList(list: typeof FALLBACK_LEGENDARY_EFFECTS): MergedEffectTierRow[] {
+  return list.map((item) => {
+    const rawCategories = item.categoriesRel || (typeof item.categories === "string"
+      ? item.categories.split("•").map((name) => ({ category: { name: name.trim() } }))
+      : []);
+    return {
+      ...item,
+      categories: rawCategories,
+      notes: item.notes || null,
+      origins: item.origins || [],
+      unlocked: item.unlocked ?? false,
+      isSeeking: item.isSeeking ?? false,
+      modCount: item.modCount ?? 0,
+      unlockedBy: item.unlockedBy || [],
+      selectionSource: item.selectionSource || "default"
+    } as unknown as MergedEffectTierRow;
+  });
+}
+
 async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string): Promise<MergedEffectTierRow[]> {
   try {
     await ensureProfileApplied(userId);
@@ -182,7 +201,7 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
       const fallbackList = tierLabel
         ? FALLBACK_LEGENDARY_EFFECTS.filter((r) => r.tierLabel === tierLabel)
         : FALLBACK_LEGENDARY_EFFECTS;
-      return fallbackList as unknown as MergedEffectTierRow[];
+      return normalizeFallbackList(fallbackList);
     }
 
     const [baselineMap, catalog] = await Promise.all([
@@ -194,7 +213,7 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
       const fallbackList = tierLabel
         ? FALLBACK_LEGENDARY_EFFECTS.filter((r) => r.tierLabel === tierLabel)
         : FALLBACK_LEGENDARY_EFFECTS;
-      return fallbackList as unknown as MergedEffectTierRow[];
+      return normalizeFallbackList(fallbackList);
     }
 
     const scoped =
@@ -216,7 +235,7 @@ async function loadMergedEffectTiersUncached(userId?: string, tierLabel?: string
     const fallbackList = tierLabel
       ? FALLBACK_LEGENDARY_EFFECTS.filter((r) => r.tierLabel === tierLabel)
       : FALLBACK_LEGENDARY_EFFECTS;
-    return fallbackList as unknown as MergedEffectTierRow[];
+    return normalizeFallbackList(fallbackList);
   }
 }
 

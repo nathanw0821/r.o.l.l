@@ -259,8 +259,34 @@ export function applyFilters<T extends FilterableRow>(rows: T[], state: FilterSt
 
   return rows.filter((row) => {
     if (categorySet.size > 0) {
-      const rowCategories = row.categories.map((c) => normalizeCategory(c.category.name));
-      if (!rowCategories.some((category) => categorySet.has(category))) return false;
+      const rawCategories = Array.isArray(row.categories)
+        ? row.categories
+        : typeof row.categories === "string"
+        ? (row.categories as string).split("•").map((name) => ({ category: { name: name.trim() } }))
+        : [];
+
+      const rowCategoryTokens = new Set<string>();
+      for (const c of rawCategories) {
+        const catName = c?.category?.name || "";
+        if (!catName) continue;
+        const norm = normalizeCategory(catName);
+        if (norm) rowCategoryTokens.add(norm);
+        const tokens = catName.toLowerCase().split(/[:\/\-•\s]+/).filter(Boolean);
+        for (const t of tokens) {
+          const normToken = normalizeCategory(t);
+          if (normToken) rowCategoryTokens.add(normToken);
+        }
+      }
+
+      const matchesCategory = Array.from(categorySet).some((filterCat) => {
+        if (rowCategoryTokens.has(filterCat)) return true;
+        for (const rowCat of rowCategoryTokens) {
+          if (rowCat.startsWith(filterCat) || filterCat.startsWith(rowCat)) return true;
+        }
+        return false;
+      });
+
+      if (!matchesCategory) return false;
     }
 
     if (query) {
