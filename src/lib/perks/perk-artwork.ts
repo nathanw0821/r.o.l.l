@@ -11,9 +11,10 @@ export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, 
 
   // Female Vault Girl Card Variant Swapping
   if (isFemale) {
-    if (raw === "action-boy" || raw === "action boy") raw = "action-girl";
-    else if (raw === "party-boy" || raw === "party boy") raw = "party-girl";
-    else if (raw === "lady-killer" || raw === "lady killer") raw = "black-widow";
+    if (raw === "action-boy" || raw === "action boy" || raw === "actionboy") raw = "action-girl";
+    else if (raw === "party-boy" || raw === "party boy" || raw === "partyboy") raw = "party-girl";
+    else if (raw === "lady-killer" || raw === "lady killer" || raw === "ladykiller") raw = "black-widow";
+    else if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment") raw = "aquagirl";
   }
 
   const kebab = raw.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
