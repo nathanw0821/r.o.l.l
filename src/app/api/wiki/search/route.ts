@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { FALLBACK_WIKI_ARTICLES } from "@/lib/static-fallback-catalog";
+import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
 
 function filterFallbackArticles(q: string, category: string, limit: number) {
   let list = FALLBACK_WIKI_ARTICLES;

@@ -8,12 +8,13 @@ interface PipBoyCardArtProps {
   special: SpecialCategory;
   name: string;
   className?: string;
+  isFemale?: boolean;
 }
 
 import { getPerkCardArtworkUrl } from "@/lib/perks/perk-artwork";
 
-export default function PipBoyCardArt({ special, name, className = "" }: PipBoyCardArtProps) {
-  const artworkUrl = getPerkCardArtworkUrl(name, special);
+export default function PipBoyCardArt({ special, name, className = "", isFemale = false }: PipBoyCardArtProps) {
+  const artworkUrl = getPerkCardArtworkUrl(name, special, isFemale);
 
   return (
     <div className={`relative w-full h-full rounded-lg bg-slate-950/90 border border-slate-800 flex flex-col items-center justify-center p-2 overflow-hidden ${className}`}>

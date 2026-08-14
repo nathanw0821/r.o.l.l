@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { FALLBACK_WIKI_ARTICLES } from "@/lib/static-fallback-catalog";
+import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
