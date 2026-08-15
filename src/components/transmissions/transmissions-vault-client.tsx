@@ -12,7 +12,7 @@ import {
   ChevronRight,
   User as UserIcon,
 } from "lucide-react";
-import type { TransmissionSummary } from "@/app/api/builder/transmissions/route";
+import type { TransmissionSummary } from "@/lib/builder/transmissions-engine";
 
 const ARCHETYPE_TAGS = [
   "All",

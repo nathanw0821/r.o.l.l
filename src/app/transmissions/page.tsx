@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import type { BuilderPayload } from "@/lib/builder/types";
 import TransmissionsVaultClient from "@/components/transmissions/transmissions-vault-client";
-import { deriveArchetypeTags, type TransmissionSummary } from "@/app/api/builder/transmissions/route";
+import { deriveArchetypeTags, type TransmissionSummary } from "@/lib/builder/transmissions-engine";
 
 export const dynamic = "force-dynamic";
 
