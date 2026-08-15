@@ -95,14 +95,14 @@ export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
             variant={uiMode === "tactical" ? "default" : "outline"}
             onClick={() => setUiMode("tactical")}
           >
-            ⚡ Tactical Armory (High-Density)
+            Tactical Armory (High-Density)
           </Button>
           <Button
             size="sm"
             variant={uiMode === "retro" ? "default" : "outline"}
             onClick={() => setUiMode("retro")}
           >
-            📻 Classic Retro (Pip-Boy)
+            Classic Retro (Pip-Boy)
           </Button>
         </div>
         <p className="mt-2 text-xs text-foreground/60">

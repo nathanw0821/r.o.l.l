@@ -1,0 +1,27 @@
+{
+  "category": "Currencies, Economy, and Global Vendor Refresh Timers",
+  "patchVersion": "54.0.0 Live",
+  "walletHardCaps": {
+    "legendaryScrip": 11000,
+    "caps": 40000,
+    "goldBullion": 10000,
+    "stashBoxWeightLbs": 1200,
+    "perkCoins": 9999,
+    "stamps": 10000,
+    "overseersTickets": 9999
+  },
+  "dailyExchangeMachineLimits": {
+    "legendaryExchangeMachineScrip": 500,
+    "robotVendorCapsPool": 1400,
+    "goldPressMachineBullion": 400,
+    "smileyGoldBullionWeeklyCap": 300,
+    "smileyCapsCostFor300Gold": 6000
+  },
+  "globalServerTimers": {
+    "dailyResetTimeUTC": "17:00:00Z (12:00 PM EST / 1:00 PM EDT)",
+    "dailyOpsResetTimeUTC": "17:00:00Z",
+    "vendorCapsAndScripResetMode": "Shared account-wide pool refreshing globally every 20 hours or at global daily reset.",
+    "weeklyScoreboardResetUTC": "Every Tuesday at 17:00:00Z",
+    "minervaScheduleResetUTC": "Every Monday at 17:00:00Z (Departs Wednesday at 17:00:00Z for regular lists; Super Sale departs Monday at 17:00:00Z)."
+  }
+}

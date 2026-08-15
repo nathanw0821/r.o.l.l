@@ -1,0 +1,53 @@
+{
+  "category": "Magazines and Bobbleheads",
+  "patchVersion": "54.0.0 Live",
+  "curatorPerkMultiplier": 2.0,
+  "defaultDurationMinutes": 60,
+  "curatorDurationMinutes": 120,
+  "importantPatchNotes": [
+    "REBALANCE: Live & Love 3 now exclusively grants +50% Healing/HP restoration from plant-based foods/drinks. It NO LONGER increases stat, XP, or critical damage buff magnitudes.",
+    "REBALANCE: Backwoodsman 6 now exclusively grants +50% Healing/HP restoration from cooked meat dishes. It NO LONGER increases stat or damage buff magnitudes."
+  ],
+  "bobbleheads": [
+    { "id": "bobblehead-leader", "name": "Leader", "effect": "+5% Experience Points (XP) gained.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-small-guns", "name": "Small Guns", "effect": "+20% Ballistic gun damage (Rifles, Pistols, Shotguns).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-big-guns", "name": "Big Guns", "effect": "+20% Heavy weapon damage (Ballistic, Energy & Explosive heavy weapons).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-energy-weapons", "name": "Energy Weapons", "effect": "+20% Energy weapon damage.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-explosive", "name": "Explosive", "effect": "+20% Explosive damage (Grenades, Launchers, Explosive legendary bullets).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-melee", "name": "Melee", "effect": "+20% Melee weapon damage.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-unarmed", "name": "Unarmed", "effect": "+20% Unarmed weapon damage (Fists, Gauntlets, Power Fists).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-intelligence", "name": "Intelligence", "effect": "+2 Intelligence (+6.2% XP passive bonus).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-strength", "name": "Strength", "effect": "+2 Strength (+10 Max Carry Weight, +10% Melee Damage).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-perception", "name": "Perception", "effect": "+2 Perception (+VATS weapon accuracy).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-endurance", "name": "Endurance", "effect": "+2 Endurance (+10 Max HP, reduced sprint AP drain).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-charisma", "name": "Charisma", "effect": "+2 Charisma (+Better vendor buying/selling prices).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-agility", "name": "Agility", "effect": "+2 Agility (+20 Max Action Points, +Sneak detection bonus).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-luck", "name": "Luck", "effect": "+2 Luck (+Faster critical meter recharge rate).", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-caps", "name": "Caps", "effect": "Chance to find higher quantity Cap Stashes across Appalachia.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-lock-picking", "name": "Lock Picking", "effect": "+Sweet spot size when picking locks.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-medicine", "name": "Medicine", "effect": "Stimpaks heal +30% more Health.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-repair", "name": "Repair", "effect": "Fusion Cores last +30% longer.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-science", "name": "Science", "effect": "+1 additional guess when hacking terminals.", "durationMinutes": 60, "stackable": false },
+    { "id": "bobblehead-sneak", "name": "Sneak", "effect": "30% harder to detect while sneaking.", "durationMinutes": 60, "stackable": false }
+  ],
+  "magazines": [
+    { "series": "Live & Love", "issue": 3, "name": "Live & Love 3", "effect": "+50% Health (HP) restoration from eating fruits and vegetables (No effect on stat/XP buffs).", "durationMinutes": 60 },
+    { "series": "Live & Love", "issue": 8, "name": "Live & Love 8", "effect": "+5% Experience Points (XP) gained when in a team.", "durationMinutes": 60 },
+    { "series": "Live & Love", "issue": 4, "name": "Live & Love 4", "effect": "+10% AP regeneration when in a team.", "durationMinutes": 60 },
+    { "series": "Guns and Bullets", "issue": 3, "name": "Guns and Bullets 3", "effect": "+100% Ballistic Gun Critical Damage.", "durationMinutes": 60 },
+    { "series": "Guns and Bullets", "issue": 7, "name": "Guns and Bullets 7", "effect": "+10% Unscoped gun damage.", "durationMinutes": 60 },
+    { "series": "Guns and Bullets", "issue": 9, "name": "Guns and Bullets 9", "effect": "+100% Plasma Gun Critical Damage.", "durationMinutes": 60 },
+    { "series": "Tesla Science", "issue": 3, "name": "Tesla Science 3", "effect": "-30% Heavy Gun Ammo Consumption.", "durationMinutes": 60 },
+    { "series": "Tesla Science", "issue": 7, "name": "Tesla Science 7", "effect": "+100% Energy Gun Critical Damage.", "durationMinutes": 60 },
+    { "series": "Tesla Science", "issue": 8, "name": "Tesla Science 8", "effect": "+50% Critical Damage with Energy Weapons.", "durationMinutes": 60 },
+    { "series": "Tesla Science", "issue": 9, "name": "Tesla Science 9", "effect": "+100% Heavy Gun Critical Damage.", "durationMinutes": 60 },
+    { "series": "Backwoodsman", "issue": 6, "name": "Backwoodsman 6", "effect": "+50% Health (HP) restoration from cooked meat dishes (No effect on stat/XP buffs).", "durationMinutes": 60 },
+    { "series": "Backwoodsman", "issue": 4, "name": "Backwoodsman 4", "effect": "Gain double yields when harvesting plants.", "durationMinutes": 60 },
+    { "series": "Grognak the Barbarian", "issue": 1, "name": "Grognak the Barbarian 1", "effect": "+15% Melee Damage.", "durationMinutes": 60 },
+    { "series": "Grognak the Barbarian", "issue": 4, "name": "Grognak the Barbarian 4", "effect": "+240 Maximum Critical Meter.", "durationMinutes": 60 },
+    { "series": "Covert Operations Manual", "issue": 8, "name": "Covert Operations Manual 8", "effect": "+25% Unarmed and Knife Damage.", "durationMinutes": 60 },
+    { "series": "Covert Operations Manual", "issue": 9, "name": "Covert Operations Manual 9", "effect": "+50% Stealth Boy duration.", "durationMinutes": 60 },
+    { "series": "Scouts Life", "issue": 6, "name": "Scouts Life 6", "effect": "-30% Food and Water drain rate.", "durationMinutes": 60 },
+    { "series": "Unstoppables", "issue": 1, "name": "Unstoppables 1", "effect": "+5% chance to avoid all damage from an attack.", "durationMinutes": 60 }
+  ]
+}

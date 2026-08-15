@@ -1,0 +1,78 @@
+{
+  "category": "Armor, Power Armor, and Inherent Damage Reduction Formulas",
+  "patchVersion": "54.0.0 Live",
+  "powerArmorInherentBonuses": {
+    "flatDamageReduction": "42% flat damage reduction applied before all armor resistance calculations (7% per individual piece on a full chassis).",
+    "flatRadiationReduction": "90% flat incoming radiation reduction applied before all Rad Resistance calculations (15% per individual piece).",
+    "fallDamageImmunity": "100% immunity to fall damage when inside any Power Armor chassis."
+  },
+  "powerArmorSets": [
+    {
+      "name": "Hellcat Power Armor",
+      "inherentSetBonus": "+12% additional flat Ballistic Damage Reduction (2% per piece, stacking with the baseline 42% PA reduction to 54% total ballistic reduction).",
+      "acquisition": "Steel Reign questline completion / Gold Bullion (Regs at Vault 79 / Mortimer).",
+      "idealBuilds": "Maximum Ballistic Survivability, Heavy Gunner Tanks"
+    },
+    {
+      "name": "Union Power Armor",
+      "inherentSetBonus": "Full set grants +150 Poison Resistance and +75 Maximum Carry Weight.",
+      "acquisition": "Giuseppe (Whitespring Refuge) for Expeditions Stamps.",
+      "idealBuilds": "Daily Ops Poison Hazards, Moonshine Jamboree, Heavy Carry Weight Builds"
+    },
+    {
+      "name": "Strangler Heart Power Armor",
+      "inherentSetBonus": "Adds acid damage to all armed attacks and emits an acidic aura damaging nearby enemies.",
+      "acquisition": "Vault 79 Gold Bullion (Regs) / Vault 94 Legacy Plans.",
+      "idealBuilds": "High Fire-Rate Heavy Weapons, Melee Close Quarters"
+    },
+    {
+      "name": "T-65 Power Armor",
+      "inherentSetBonus": "Highest raw Damage Resistance (565 DR), Energy Resistance (470 ER), and Radiation Resistance (470 RR) of all traditional frames.",
+      "acquisition": "Vault 79 Gold Bullion (Regs).",
+      "idealBuilds": "Raw Defense Pure DR/ER"
+    },
+    {
+      "name": "Excavator Power Armor",
+      "inherentSetBonus": "Full set grants +100 Maximum Carry Weight (+200 with Calibrated Shocks) and 4x Ore Mining Yields.",
+      "acquisition": "Miner Miracles questline.",
+      "idealBuilds": "Resource Farming, Hoarders, Weight Capacity"
+    }
+  ],
+  "regularBodyArmorSets": [
+    {
+      "name": "Civil Engineer Armor",
+      "inherentSetBonus": "Full set grants +35% Weapon Durability bonus and a 10% chance to reflect 150 Fire Damage back to melee attackers.",
+      "isTradeable": true,
+      "acquisition": "Atlantic City Expeditions & Giuseppe Stamps.",
+      "idealBuilds": "Low-Durability Weapons (Railway Rifle, Plasma Flamer, Cremator, Alien Blaster)"
+    },
+    {
+      "name": "Secret Service Armor",
+      "inherentSetBonus": "Highest balanced raw resistances across DR (250), ER (220), and RR (220) with Jet Pack chest mod compatibility.",
+      "isTradeable": false,
+      "acquisition": "Vault 79 Gold Bullion (Regs).",
+      "idealBuilds": "All-Around Daily Endgame Defense"
+    },
+    {
+      "name": "Brotherhood Recon Armor",
+      "inherentSetBonus": "High physical ballistic resistance (DR 377) with Jet Pack compatibility.",
+      "isTradeable": false,
+      "acquisition": "Daily Ops rare drops / Minerva Sales.",
+      "idealBuilds": "Ballistic Combat Specialization"
+    },
+    {
+      "name": "Solar Armor",
+      "inherentSetBonus": "Heals the wearer and all nearby teammates by 4 HP/second when the wearer's Health is at or above 60%.",
+      "isTradeable": false,
+      "acquisition": "Vault 79 Gold Bullion (Regs).",
+      "idealBuilds": "Full-Health Support, Overeater's Tank"
+    },
+    {
+      "name": "Thorn Armor",
+      "inherentSetBonus": "Melee attackers suffer 250 Bleed Damage over 10 seconds; wearer's melee strikes inflict 250 Bleed Damage.",
+      "isTradeable": false,
+      "acquisition": "Vault 79 Gold Bullion (Regs).",
+      "idealBuilds": "Unarmed and Melee Bleed Stacking"
+    }
+  ]
+}

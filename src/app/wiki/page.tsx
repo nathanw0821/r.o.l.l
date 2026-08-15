@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Search, BookOpen, ExternalLink, Shield, Zap, Sparkles, LayoutGrid, List, ChevronRight, ArrowUpDown, Calendar, Filter, Terminal, Bookmark, FileText, ArrowLeft, Layers, Compass, Star } from "lucide-react";
+import { Search, BookOpen, ExternalLink, Shield, Zap, Sparkles, LayoutGrid, List, ChevronRight, ArrowUpDown, Calendar, Filter, Terminal, Bookmark, FileText, ArrowLeft, Layers, Compass, Crosshair, Coins, Activity, Wrench } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 interface ArticleItem {
   id: number;
@@ -17,26 +18,26 @@ interface ArticleItem {
 }
 
 const CATEGORY_CARDS = [
-  { id: "all", label: "All Vault Records", count: "3,399 Entries", icon: "🌐", desc: "Complete Fallout 76 Vault-Tec database.", color: "from-amber-500/20 to-amber-600/5 border-amber-500/40" },
-  { id: "Weapons & Mods", label: "Weapons & Legendary Mods", count: "1,240 Guides", icon: "⚔️", desc: "Drop odds, crafting costs & mod matrices.", color: "from-red-500/20 to-red-600/5 border-red-500/40" },
-  { id: "Armor & Power Armor", label: "Armor & Power Armor", count: "680 Guides", icon: "🛡️", desc: "Resist values, set bonuses & PA schematics.", color: "from-blue-500/20 to-blue-600/5 border-blue-500/40" },
-  { id: "Perks & Mutations", label: "Perks & Mutations", count: "310 Guides", icon: "🃏", desc: "S.P.E.C.I.A.L. card ranks & serum effects.", color: "from-purple-500/20 to-purple-600/5 border-purple-500/40" },
-  { id: "Vendors & Minerva", label: "Vendors & Minerva Sales", count: "190 Guides", icon: "🛒", desc: "Minerva inventory schedules & Gold Bullion.", color: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/40" },
-  { id: "Events & Expeditions", label: "Events & Expeditions", count: "420 Guides", icon: "🛸", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
-  { id: "Builds & Mechanics", label: "Build Mechanics & Damage", count: "350 Guides", icon: "🎯", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
-  { id: "Crafting & Resources", label: "Crafting & Materials", count: "209 Guides", icon: "🛠️", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
+  { id: "all", label: "All Vault Records", count: "3,399 Entries", iconName: "book", desc: "Complete Fallout 76 Vault-Tec database.", color: "from-amber-500/20 to-amber-600/5 border-amber-500/40" },
+  { id: "Weapons & Mods", label: "Weapons & Legendary Mods", count: "1,240 Guides", iconName: "crosshair", desc: "Drop odds, crafting costs & mod matrices.", color: "from-red-500/20 to-red-600/5 border-red-500/40" },
+  { id: "Armor & Power Armor", label: "Armor & Power Armor", count: "680 Guides", iconName: "shield", desc: "Resist values, set bonuses & PA schematics.", color: "from-blue-500/20 to-blue-600/5 border-blue-500/40" },
+  { id: "Perks & Mutations", label: "Perks & Mutations", count: "310 Guides", iconName: "layers", desc: "S.P.E.C.I.A.L. card ranks & serum effects.", color: "from-purple-500/20 to-purple-600/5 border-purple-500/40" },
+  { id: "Vendors & Minerva", label: "Vendors & Minerva Sales", count: "190 Guides", iconName: "coins", desc: "Minerva inventory schedules & Gold Bullion.", color: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/40" },
+  { id: "Events & Expeditions", label: "Events & Expeditions", count: "420 Guides", iconName: "compass", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
+  { id: "Builds & Mechanics", label: "Build Mechanics & Damage", count: "350 Guides", iconName: "activity", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
+  { id: "Crafting & Resources", label: "Crafting & Materials", count: "209 Guides", iconName: "wrench", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
 ];
 
 const UPDATE_PATCHES = [
-  { id: "all", label: "🌐 All Major Updates" },
-  { id: "the-pitt", label: "🧱 The Pitt (Expedition 1)" },
-  { id: "atlantic-city", label: "🎲 Atlantic City (Expedition 2)" },
-  { id: "skyline-valley", label: "⛰️ Skyline Valley" },
-  { id: "milepost-zero", label: "⚡ Milepost Zero" },
-  { id: "backwoods", label: "🌲 Backwoods 2026" },
-  { id: "burning-springs", label: "🔥 Burning Springs" },
-  { id: "nuka-world", label: "☢️ Nuka-World on Tour" },
-  { id: "invaders", label: "🛸 Invaders from Beyond" },
+  { id: "all", label: "All Major Updates" },
+  { id: "the-pitt", label: "The Pitt (Expedition 1)" },
+  { id: "atlantic-city", label: "Atlantic City (Expedition 2)" },
+  { id: "skyline-valley", label: "Skyline Valley" },
+  { id: "milepost-zero", label: "Milepost Zero" },
+  { id: "backwoods", label: "Backwoods 2026" },
+  { id: "burning-springs", label: "Burning Springs" },
+  { id: "nuka-world", label: "Nuka-World on Tour" },
+  { id: "invaders", label: "Invaders from Beyond" },
 ];
 
 function toHighResImageUrl(url: string | null): string {
@@ -375,14 +376,27 @@ function getEquipmentKeyFromTitle(title: string, content: string): string {
   return cleanTitle(title);
 }
 
-export default function TruthWikiPage() {
-  const [query, setQuery] = React.useState("");
+function TruthWikiContent() {
+  const searchParams = useSearchParams();
+  const initialQ = searchParams?.get("q") || searchParams?.get("query") || "";
+  const initialArticleId = searchParams?.get("id") || searchParams?.get("article") || "";
+
+  const [query, setQuery] = React.useState(initialQ);
   const [category, setCategory] = React.useState("all");
   const [sortBy, setSortBy] = React.useState<"newest" | "oldest" | "title-asc" | "title-desc">("newest");
   const [updateFilter, setUpdateFilter] = React.useState("all");
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const hasAutoOpenedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    const q = searchParams?.get("q") || searchParams?.get("query");
+    if (q !== null && q !== undefined && q !== query) {
+      setQuery(q);
+      hasAutoOpenedRef.current = false;
+    }
+  }, [searchParams]);
 
   const searchArticles = React.useCallback(async (q: string, cat: string, sort: string, upd: string) => {
     setLoading(true);
@@ -424,13 +438,32 @@ export default function TruthWikiPage() {
       }
 
       setArticles(list);
+
+      // Auto-open reader if navigating directly via specific search or article ID
+      if ((initialArticleId || q) && list.length > 0 && !hasAutoOpenedRef.current) {
+        let bestMatch: ArticleItem | undefined;
+        if (initialArticleId) {
+          bestMatch = list.find((a) => String(a.id) === String(initialArticleId));
+        }
+        if (!bestMatch && q.trim().length > 1) {
+          const cleanQ = q.toLowerCase().trim();
+          bestMatch = list.find((a) => a.title.toLowerCase() === cleanQ) ||
+                      list.find((a) => a.title.toLowerCase().startsWith(cleanQ)) ||
+                      list.find((a) => a.title.toLowerCase().includes(cleanQ)) ||
+                      list[0];
+        }
+        if (bestMatch) {
+          setSelectedArticle(bestMatch);
+          hasAutoOpenedRef.current = true;
+        }
+      }
     } catch (err) {
       console.error("Failed to fetch category articles:", err);
       setArticles([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [initialArticleId]);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -609,15 +642,24 @@ export default function TruthWikiPage() {
                   setCategory(card.id);
                   setQuery("");
                 }}
-                className={`text-left p-5 rounded-2xl border transition-all flex flex-col justify-between gap-5 group select-none ${
+                className={`text-left p-5 rounded-xl border transition-all flex flex-col justify-between gap-5 group select-none ${
                   isSelected
-                    ? "bg-amber-500/10 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/50 scale-[1.01]"
+                    ? "bg-amber-500/10 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/50"
                     : "bg-[#0b121f] border-slate-800/90 hover:border-slate-600 hover:bg-[#10192c]"
                 }`}
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl filter drop-shadow">{card.icon}</span>
+                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center">
+                      {card.iconName === "book" && <BookOpen className="h-5 w-5 text-amber-400" />}
+                      {card.iconName === "crosshair" && <Crosshair className="h-5 w-5 text-red-400" />}
+                      {card.iconName === "shield" && <Shield className="h-5 w-5 text-blue-400" />}
+                      {card.iconName === "layers" && <Layers className="h-5 w-5 text-purple-400" />}
+                      {card.iconName === "coins" && <Coins className="h-5 w-5 text-emerald-400" />}
+                      {card.iconName === "compass" && <Compass className="h-5 w-5 text-cyan-400" />}
+                      {card.iconName === "activity" && <Activity className="h-5 w-5 text-amber-400" />}
+                      {card.iconName === "wrench" && <Wrench className="h-5 w-5 text-teal-400" />}
+                    </div>
                     <span
                       className={`text-[11px] font-mono font-bold px-3 py-0.5 rounded-full border shadow-sm ${
                         isSelected
@@ -736,3 +778,12 @@ export default function TruthWikiPage() {
     </div>
   );
 }
+
+export default function TruthWikiPage() {
+  return (
+    <React.Suspense fallback={<div className="p-8 text-center font-mono text-xs text-amber-400">Loading Vault Codex...</div>}>
+      <TruthWikiContent />
+    </React.Suspense>
+  );
+}
+

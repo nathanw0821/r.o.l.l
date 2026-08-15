@@ -1,0 +1,37 @@
+{
+  "category": "PTS Experimental 4-Star Legendary Effects & Catalysts",
+  "disclaimer": "UNRELEASED PTS EXPERIMENTAL DATA. NOT VALID ON LIVE ADVENTURE SERVERS.",
+  "moduleCraftingCostTier4": 120,
+  "experimental4StarEffects": [
+    {
+      "id": "pts-mod-conductor",
+      "name": "Conductor's",
+      "tier": "4★",
+      "slot": "Weapon: Energy",
+      "effect": "Consecutive critical hits release an electrical shock wave inflicting 250 Energy damage to nearby hostiles.",
+      "requiredModules": 120,
+      "catalystComponent": "1 Radiant Depths Core",
+      "status": "PTS_TESTING"
+    },
+    {
+      "id": "pts-mod-battle-scarred",
+      "name": "Battle-Scarred",
+      "tier": "4★",
+      "slot": "Armor & Power Armor",
+      "effect": "Gain +15% damage mitigation while your Health is below 20%.",
+      "requiredModules": 120,
+      "catalystComponent": "1 Corrupted Bio-Fluid",
+      "status": "PTS_TESTING"
+    },
+    {
+      "id": "pts-mod-executioner-prime",
+      "name": "Vindicator's",
+      "tier": "4★",
+      "slot": "Weapon: All",
+      "effect": "Instantly kill non-boss enemies when hitting them while their health is below 10%.",
+      "requiredModules": 120,
+      "catalystComponent": "1 Vault 63 Ultracite Core",
+      "status": "PTS_TESTING"
+    }
+  ]
+}

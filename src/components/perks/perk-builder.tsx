@@ -6,6 +6,7 @@ import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
+import { Sparkles } from "lucide-react";
 import PerkLevelingRoadmap from "@/components/perks/perk-leveling-roadmap";
 import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
 
@@ -340,7 +341,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
               {loadingAi ? "Analyzing Build..." : "Build Tactics"}
             </Button>
             <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-emerald-500/60 text-emerald-400 bg-emerald-950/30 hover:bg-emerald-900/50">
-              📸 Export Deck PNG
+              Export Deck PNG
             </Button>
             <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs disabled:opacity-60">
               {saving ? "Saving..." : !characterId ? "Sign In to Save Loadout" : "Save Active Loadout"}
@@ -351,7 +352,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
         {aiAdvice && (
           <div className="mt-3 p-3 border border-amber-500/50 bg-[#111720] text-xs text-amber-200 flex items-start justify-between gap-3 shadow-md">
             <div className="flex items-start gap-2.5">
-              <span className="text-base shrink-0">💡</span>
+              <Sparkles className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold text-amber-400 block uppercase tracking-wider text-[0.7rem] mb-0.5">[ BUILD TACTICS ]</span>
                 <p className="leading-relaxed text-amber-100">{aiAdvice}</p>
@@ -553,7 +554,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
             <div className="flex items-center gap-3">
               <span>Equipped Perk Deck ({safeEquippedCards.length} Cards)</span>
               <span className="text-xs px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                ⭐ Legendary Perks: {equippedLegendaryCards.length} / 6 Slots
+                Legendary Perks: {equippedLegendaryCards.length} / 6 Slots
               </span>
               {safeEquippedCards.length > 0 && (
                 <button
@@ -561,7 +562,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                   onClick={handleClearDeck}
                   className="text-[0.68rem] px-2 py-0.5 rounded bg-red-950/60 border border-red-500/40 hover:border-red-400 text-red-300 hover:text-white transition-all font-mono"
                 >
-                  🧹 Clear Deck
+                  Clear Deck
                 </button>
               )}
               <button
@@ -573,7 +574,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                     : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
                 }`}
               >
-                📅 {showRoadmap ? "Hide Leveling Roadmap" : "View Leveling Roadmap (Lvl 2–50)"}
+                {showRoadmap ? "Hide Leveling Roadmap" : "View Leveling Roadmap (Lvl 2–50)"}
               </button>
               {mode === "pts" ? (
                 <button
@@ -585,11 +586,11 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                       : "bg-lime-500/20 text-lime-300 border-lime-500/40 hover:bg-lime-500/30"
                   }`}
                 >
-                  🧟 {isGhoul ? "PTS Ghoul Mode (20 Max Cap)" : "PTS Human Mode (15 Max Cap)"}
+                  {isGhoul ? "PTS Ghoul Mode (20 Max Cap)" : "PTS Human Mode (15 Max Cap)"}
                 </button>
               ) : (
                 <span className="text-[0.68rem] px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
-                  🟢 LIVE GAME RULES (15 MAX CAP)
+                  [LIVE GAME RULES - 15 CAP]
                 </span>
               )}
             </div>

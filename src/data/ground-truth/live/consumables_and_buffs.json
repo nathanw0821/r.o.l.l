@@ -1,0 +1,138 @@
+{
+  "category": "Consumables, Cooked Foods, Chems, and Mutated Buffs",
+  "patchVersion": "54.0.0 Live",
+  "rules": {
+    "foodStacking": "Only ONE food buff can be active per primary stat or effect type. Consuming a food of the same type overwrites the previous buff.",
+    "chemStacking": "Only ONE primary chem buff can be active at a time (e.g. Berry Mentats, Psychotats, Overdrive). Consuming another chem immediately replaces the active chem buff.",
+    "alcoholStacking": "Only ONE alcohol buff can be active at a time. Overwritten upon drinking another alcohol.",
+    "mutationMultipliers": {
+      "base": 1.0,
+      "herbivoreOnly": 2.0,
+      "herbivoreStrangeInNumbers": 2.5,
+      "carnivoreOnly": 2.0,
+      "carnivoreStrangeInNumbers": 2.5
+    }
+  },
+  "plantBasedFoods": [
+    {
+      "name": "Brain Bombs",
+      "durationMinutes": 90,
+      "baseBuff": "+3 Intelligence",
+      "herbivoreBuff": "+6 Intelligence",
+      "herbivoreStrangeInNumbers": "+8 Intelligence (+24.8% XP)",
+      "primaryBenefit": "Maximum Intelligence / Fast Leveling",
+      "recipeIngredients": "3 Brain Fungus, 2 Sugar, 2 Purified Water, 3 Mothman Egg, 1 Wood"
+    },
+    {
+      "name": "Cranberry Relish",
+      "durationMinutes": 60,
+      "baseBuff": "+10% XP",
+      "herbivoreBuff": "+20% XP",
+      "herbivoreStrangeInNumbers": "+25% XP",
+      "primaryBenefit": "Flat Experience Point Multiplier",
+      "recipeIngredients": "2 Cranberries, 2 Sugar, 2 Gourd, 2 Boiled Water, 1 Wood"
+    },
+    {
+      "name": "Blight Soup",
+      "durationMinutes": 30,
+      "baseBuff": "+50% Critical Damage",
+      "herbivoreBuff": "+100% Critical Damage",
+      "herbivoreStrangeInNumbers": "+125% Critical Damage",
+      "primaryBenefit": "VATS Critical Damage Multiplier",
+      "recipeIngredients": "1 Blight, 1 Boiled Water, 1 Wood"
+    },
+    {
+      "name": "Company Tea",
+      "durationMinutes": 60,
+      "baseBuff": "+10% AP Regen, +20% Disease Resistance",
+      "herbivoreBuff": "+20% AP Regen, +40% Disease Resistance",
+      "herbivoreStrangeInNumbers": "+25% AP Regen, +50% Disease Resistance",
+      "primaryBenefit": "Sustained Action Point Regeneration",
+      "recipeIngredients": "2 Sweet Mutfruit, 2 Whiskey, 2 Starlight Berries, 2 Purified Water, 1 Cream, 1 Wood"
+    },
+    {
+      "name": "Sweet Mutfruit Tea",
+      "durationMinutes": 60,
+      "baseBuff": "+50% Critical Damage",
+      "herbivoreBuff": "+100% Critical Damage",
+      "herbivoreStrangeInNumbers": "+125% Critical Damage",
+      "primaryBenefit": "Extended VATS Critical Buff",
+      "recipeIngredients": "3 Sweet Mutfruit, 2 Starlight Berries, 2 Sugar, 1 Purified Water, 1 Wood"
+    },
+    {
+      "name": "Corn Soup",
+      "durationMinutes": 30,
+      "baseBuff": "+3 AP Regen",
+      "herbivoreBuff": "+6 AP Regen",
+      "herbivoreStrangeInNumbers": "+8 AP Regen",
+      "primaryBenefit": "Budget AP Regeneration",
+      "recipeIngredients": "1 Corn, 1 Boiled Water, 1 Wood"
+    }
+  ],
+  "meatBasedFoods": [
+    {
+      "name": "Smoked Mirelurk Fillets",
+      "durationMinutes": 90,
+      "baseBuff": "+30 Max Carry Weight, Breathe Underwater",
+      "carnivoreBuff": "+60 Max Carry Weight",
+      "carnivoreStrangeInNumbers": "+75 Max Carry Weight",
+      "primaryBenefit": "Maximum Carry Weight Capacity",
+      "recipeIngredients": "2 Mirelurk Meat, 2 Wood, 1 Spices, 1 Purified Water"
+    },
+    {
+      "name": "Tasty Squirrel Stew",
+      "durationMinutes": 60,
+      "baseBuff": "+10% XP",
+      "carnivoreBuff": "+20% XP",
+      "carnivoreStrangeInNumbers": "+25% XP",
+      "primaryBenefit": "Carnivore Flat XP Multiplier",
+      "recipeIngredients": "2 Squirrel Meat, 2 Tatos, 1 Salt, 2 Boiled Water, 1 Wood"
+    },
+    {
+      "name": "Deathclaw Wellington",
+      "durationMinutes": 90,
+      "baseBuff": "+3 Strength (+15 Carry Weight, +15% Melee Dmg)",
+      "carnivoreBuff": "+6 Strength (+30 Carry Weight, +30% Melee Dmg)",
+      "carnivoreStrangeInNumbers": "+8 Strength (+40 Carry Weight, +40% Melee Dmg)",
+      "primaryBenefit": "Maximum Strength / Melee Buff",
+      "recipeIngredients": "2 Deathclaw Meat, 2 Razorgrain Flour, 1 Spices, 1 Wood"
+    },
+    {
+      "name": "Scorchbeast Brain (Cooked/Broiled)",
+      "durationMinutes": 90,
+      "baseBuff": "+3 Intelligence",
+      "carnivoreBuff": "+6 Intelligence",
+      "carnivoreStrangeInNumbers": "+8 Intelligence (+24.8% XP)",
+      "primaryBenefit": "Carnivore Intelligence / XP Buff",
+      "recipeIngredients": "1 Scorchbeast Brain, 1 Purified Water, 1 Wood"
+    }
+  ],
+  "specialConsumables": [
+    {
+      "name": "Canned Coffee",
+      "durationSeconds": 25,
+      "effect": "+12 AP/sec (Total +300 AP over 25 seconds). Multiple coffees stack multiplicatively for infinite VATS burst.",
+      "isStackable": true
+    },
+    {
+      "name": "Perfect Bubblegum",
+      "durationHours": 1,
+      "effect": "Prevents Hunger and Thirst meters from dropping for 60 minutes (Maintains 100% Overeater's 30% damage reduction).",
+      "isStackable": false
+    },
+    {
+      "name": "Lunchbox (x4 Cap)",
+      "durationHours": 1,
+      "effect": "+25% XP per Lunchbox opened (Capped at 4 Lunchboxes for +100% Bonus XP) + Random party buff.",
+      "isStackable": true
+    }
+  ],
+  "chems": [
+    { "name": "Berry Mentats", "durationMinutes": 5, "effect": "+5 Intelligence (+15.5% XP), Highlights living targets with a pink aura." },
+    { "name": "Psychotats", "durationMinutes": 3, "effect": "+25% Damage, +15% Damage Resistance, +3 Perception." },
+    { "name": "Psychobuff", "durationMinutes": 3, "effect": "+25% Damage, +3 Strength, +3 Endurance, +65 Max HP." },
+    { "name": "Overdrive", "durationMinutes": 3, "effect": "+15% Damage, +15% Critical Damage (Stacks with Psychotats in legacy calculation if taken in specific order)." },
+    { "name": "Formula P", "durationMinutes": 5, "effect": "+5 Charisma, +3 Luck, drastically tightens gun hip-fire spread cone." },
+    { "name": "X-Cell", "durationMinutes": 2, "effect": "+2 to all SPECIAL attributes (STR, PER, END, CHA, INT, AGI, LCK)." }
+  ]
+}

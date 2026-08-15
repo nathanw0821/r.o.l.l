@@ -303,7 +303,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           {matchingPerks.length > 0 && (
             <section className="hub-zone mb-3 border-b border-border/40 pb-3">
               <div className="hub-zone__title text-emerald-400 font-mono flex items-center justify-between">
-                <span>🃏 P.E.R.K. Card Matches ({matchingPerks.length})</span>
+                <span>P.E.R.K. Card Matches ({matchingPerks.length})</span>
                 <Link
                   href={`/perks?q=${encodeURIComponent(query)}`}
                   onClick={() => setExpanded(false)}
@@ -539,7 +539,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                         : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
                     )}
                   >
-                    <span>⚡ Tactical Armory</span>
+                    <span>Tactical Armory</span>
                   </button>
                   <button
                     type="button"
@@ -551,7 +551,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                         : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
                     )}
                   >
-                    <span>📻 Classic Retro</span>
+                    <span>Classic Retro</span>
                   </button>
                 </div>
               </div>
@@ -611,14 +611,14 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Quick Navigation</span>
                 <div className="grid grid-cols-2 gap-2">
                   <Button type="button" variant="outline" size="sm" asChild className="font-mono text-xs border-accent/40 text-accent hover:bg-accent/10">
-                    <Link href="/overview/achievements" onClick={() => setExpanded(false)}>🏆 Achievements</Link>
+                    <Link href="/overview/achievements" onClick={() => setExpanded(false)}>Achievements</Link>
                   </Button>
                   <Button type="button" variant="outline" size="sm" asChild className="font-mono text-xs border-border text-foreground/80 hover:text-foreground">
-                    <Link href="/settings" onClick={() => setExpanded(false)}>⚙️ Settings</Link>
+                    <Link href="/settings" onClick={() => setExpanded(false)}>Settings</Link>
                   </Button>
                   {isUserAdmin && (
                     <Button type="button" variant="outline" size="sm" asChild className="col-span-2 font-mono text-xs border-amber-500/40 text-amber-400 hover:bg-amber-950/40">
-                      <Link href="/admin-import" onClick={() => setExpanded(false)}>🛠️ Admin Tools</Link>
+                      <Link href="/admin-import" onClick={() => setExpanded(false)}>Admin Tools</Link>
                     </Button>
                   )}
                 </div>
@@ -662,7 +662,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 >
                   <FlaskConical className="h-4 w-4 text-amber-400 shrink-0" />
                   <div className="min-w-0">
-                    <div className="text-xs font-bold text-foreground group-hover:text-amber-400">🧪 PTS Experimental Lab</div>
+                    <div className="text-xs font-bold text-foreground group-hover:text-amber-400">PTS Experimental Lab</div>
                     <div className="text-[0.68rem] text-foreground/50 truncate">Ghoul 20-Cap Sandbox, The Pitt & Atlantic City drop tables</div>
                   </div>
                 </Link>

@@ -1,0 +1,11 @@
+{
+  "environment": "PUBLIC_TEST_SERVER_ONLY (EXPERIMENTAL)",
+  "cycle": "Appalachia Under Siege / Raids Cycle",
+  "isLiveServer": false,
+  "disclaimer": "All statistics, 4-star legendary costs, and raid rewards in this directory are experimental and subject to change by Bethesda prior to live deployment. These items MUST remain quarantined from live wiki guides.",
+  "experimentalFeatures": [
+    "4-Star Legendary Modification Crafting Tier",
+    "Gleaming Depths / Radiant Depths Raid Dungeon",
+    "Ghoul Race Transformation & Perks"
+  ]
+}
