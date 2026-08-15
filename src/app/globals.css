@@ -71,53 +71,85 @@ html {
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --ui-tone-color: #48515a;
-  --background-primary: #0f1113;
-  --background-secondary: #13171b;
+  --ui-tone-color: #1e293b;
+  --background-primary: #070a0f;
+  --background-secondary: #0b1017;
+  --surface: #0c121a;
+  --surface-secondary: #111720;
+  --surface-overlay: #0c121a;
+  --surface-overlay-strong: #070a0f;
+  --border: #1e293b;
+  --border-strong: #334155;
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-soft: #64748b;
+  --color-accent: #f59e0b;
+  --color-accent-muted: #78350f;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --shadow-panel: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-raised: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --shadow-floating: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --hub-shell-bg: #070a0f;
+  --hub-shell-border: #1e293b;
+  --hub-shell-shadow: var(--shadow-floating);
+  --hub-panel-bg: #0c121a;
+  --hub-panel-bg-strong: #111720;
+  --hub-panel-border: #1e293b;
+  --hub-muted-text: #94a3b8;
+  --hub-soft-text: #64748b;
+  --sidebar-bg: #0b1017;
+  --sidebar-border: #1e293b;
+  --sidebar-muted-text: #94a3b8;
+  --sidebar-soft-text: #64748b;
+  --sidebar-hover-bg: #16202c;
+  --sidebar-hover-border: #334155;
+  --sidebar-active-bg: #16202c;
+  --sidebar-active-border: #f59e0b;
+  --shell-glow-a: transparent;
+  --shell-glow-b: transparent;
+  --shell-scanline: transparent;
+  --shell-vignette: transparent;
+  --control-hover: #16202c;
+  --control-active: #1e293b;
+  --control-soft: #0c121a;
+  --color-bg: #070a0f;
+  --color-fg: #f8fafc;
+  --color-panel: #0c121a;
+  --color-border: #1e293b;
+}
+
+[data-ui-mode="tactical"] {
+  --radius: 4px;
+  --surface: #0c121a;
+  --surface-secondary: #111720;
+  --surface-overlay: #0c121a;
+  --surface-overlay-strong: #070a0f;
+  --border: #1e293b;
+  --border-strong: #334155;
+  --hub-shell-bg: #070a0f;
+  --hub-panel-bg: #0c121a;
+  --sidebar-bg: #0b1017;
+  --color-bg: #070a0f;
+  --color-panel: #0c121a;
+  --color-border: #1e293b;
+}
+
+[data-ui-mode="retro"] {
+  --radius: 12px;
   --surface: #171a1d;
   --surface-secondary: #1e2328;
   --surface-overlay: rgba(20, 24, 27, 0.88);
   --surface-overlay-strong: rgba(22, 26, 30, 0.96);
   --border: #2d3339;
   --border-strong: #434a52;
-  --text-primary: #f0ece7;
-  --text-muted: #c0b7ad;
-  --text-soft: #9d948a;
-  --color-accent: #f3a24d;
-  --color-accent-muted: #4d2f14;
-  --color-success: #4cc38a;
-  --color-warning: #d9a441;
-  --color-danger: #e07c6f;
-  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.02), 0 10px 24px rgba(0, 0, 0, 0.24);
-  --shadow-raised: 0 8px 22px rgba(0, 0, 0, 0.24);
-  --shadow-floating: 0 16px 40px rgba(0, 0, 0, 0.32);
   --hub-shell-bg: var(--surface-overlay);
-  --hub-shell-border: color-mix(in srgb, var(--border-strong) 50%, transparent);
-  --hub-shell-shadow: var(--shadow-floating);
-  --hub-panel-bg: color-mix(in srgb, var(--surface-secondary) 86%, var(--ui-tone-color) 14%);
-  --hub-panel-bg-strong: color-mix(in srgb, var(--surface-overlay-strong) 92%, var(--ui-tone-color) 8%);
-  --hub-panel-border: color-mix(in srgb, var(--border) 88%, transparent);
-  --hub-muted-text: var(--text-muted);
-  --hub-soft-text: var(--text-soft);
-  --sidebar-bg: color-mix(in srgb, var(--surface) 84%, var(--ui-tone-color) 16%);
-  --sidebar-border: color-mix(in srgb, var(--border) 88%, transparent);
-  --sidebar-muted-text: var(--text-muted);
-  --sidebar-soft-text: var(--text-soft);
-  --sidebar-hover-bg: color-mix(in srgb, var(--surface-secondary) 82%, var(--ui-tone-color) 18%);
-  --sidebar-hover-border: color-mix(in srgb, var(--border-strong) 50%, transparent);
-  --sidebar-active-bg: color-mix(in srgb, var(--color-accent) 14%, var(--surface));
-  --sidebar-active-border: color-mix(in srgb, var(--color-accent) 34%, var(--border));
-  --shell-glow-a: color-mix(in srgb, var(--color-accent) 16%, transparent);
-  --shell-glow-b: color-mix(in srgb, var(--color-success) 12%, transparent);
-  --shell-scanline: rgba(255, 255, 255, 0.03);
-  --shell-vignette: rgba(0, 0, 0, 0.46);
-  --control-hover: color-mix(in srgb, var(--color-accent) 12%, var(--surface));
-  --control-active: color-mix(in srgb, var(--color-accent) 18%, var(--surface));
-  --control-soft: color-mix(in srgb, var(--text-primary) 6%, var(--surface));
-  --color-bg: var(--background-primary);
-  --color-fg: var(--text-primary);
-  --color-panel: var(--surface);
-  --color-border: var(--border);
+  --hub-panel-bg: #171a1d;
+  --sidebar-bg: #14181c;
+  --color-bg: #0f1113;
+  --color-panel: #171a1d;
+  --color-border: #2d3339;
 }
 
 [data-accent="ember"] {

@@ -322,17 +322,16 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
         <PerkBuilderUrlSync onQueryChange={setSearchQuery} />
       </React.Suspense>
       {/* Header Banner */}
-      <div className="rounded-[var(--radius-lg)] border border-emerald-500/40 bg-slate-950 p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
+      <div className="bg-[#0c121a] border border-slate-800 p-5 shadow-xl font-mono relative">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-emerald-400 font-bold">
-              PUNCH CARD MACHINE ({PERK_CATALOG.length} CARDS)
+            <span className="text-[10px] uppercase tracking-widest text-amber-400 font-bold">
+              PUNCH CARD MACHINE // {PERK_CATALOG.length} REGISTERED CARDS
             </span>
-            <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono text-white">
+            <h1 className="text-2xl font-black tracking-tight mt-0.5 text-white uppercase">
               P.E.R.K. Loadout Manager
             </h1>
-            <p className="text-sm text-slate-300 mt-1 font-mono">
+            <p className="text-xs text-slate-400 mt-0.5">
               Perk Equipment &amp; Reconfiguration Kit for {characterName ? <strong className="text-emerald-400">{characterName}</strong> : "Selected Character"}
             </p>
           </div>
@@ -348,9 +347,9 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
             </Button>
           </div>
         </div>
-        {saveMessage ? <div className="mt-3 text-xs font-mono text-emerald-400 font-bold">{saveMessage}</div> : null}
+        {saveMessage ? <div className="mt-3 text-xs text-emerald-400 font-bold">{saveMessage}</div> : null}
         {aiAdvice && (
-          <div className="mt-3 p-3.5 rounded-lg border border-amber-500/50 bg-amber-950/30 text-xs font-mono text-amber-200 flex items-start justify-between gap-3 shadow-md animate-in fade-in duration-200">
+          <div className="mt-3 p-3 border border-amber-500/50 bg-[#111720] text-xs text-amber-200 flex items-start justify-between gap-3 shadow-md">
             <div className="flex items-start gap-2.5">
               <span className="text-base shrink-0">💡</span>
               <div>
@@ -364,19 +363,19 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
       </div>
 
       {/* 6 Loadout Slot Selection Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-3">
+      <div className="flex flex-wrap gap-1.5 border-b border-slate-800 pb-2.5 font-mono text-xs">
         {[0, 1, 2, 3, 4, 5].map((slot) => (
           <button
             key={slot}
             type="button"
             onClick={() => setActiveSlot(slot)}
-            className={`px-4 py-2 rounded-t-md text-xs font-mono font-bold transition-all border ${
+            className={`px-3 py-1.5 border transition-all ${
               activeSlot === slot
-                ? "border-emerald-500 bg-emerald-950/60 text-emerald-300 border-b-transparent shadow-md"
-                : "border-slate-800 bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+                ? "border-amber-400 bg-amber-500/10 text-amber-300 font-black shadow-sm"
+                : "border-slate-800 bg-[#0c121a] text-slate-400 hover:text-white hover:border-slate-600"
             }`}
           >
-            🕹️ Slot {slot + 1}
+            SLOT {slot + 1}
           </button>
         ))}
       </div>

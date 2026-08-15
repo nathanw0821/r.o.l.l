@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "prisma:validate": "prisma validate",
+    "patch:check": "tsx scripts/patch-sync.ts",
     "release:check": "npm run lint && npm run prisma:validate && npm run test && npm run build && npm run typecheck",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

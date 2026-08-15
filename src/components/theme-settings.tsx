@@ -88,6 +88,28 @@ export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
         </div>
       </div>
       <div>
+        <label className="text-sm font-semibold">UI Architecture & Layout</label>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant={useThemeSettings().uiMode === "tactical" ? "default" : "outline"}
+            onClick={() => useThemeSettings().setUiMode("tactical")}
+          >
+            ⚡ Tactical Armory (High-Density)
+          </Button>
+          <Button
+            size="sm"
+            variant={useThemeSettings().uiMode === "retro" ? "default" : "outline"}
+            onClick={() => useThemeSettings().setUiMode("retro")}
+          >
+            📻 Classic Retro (Pip-Boy)
+          </Button>
+        </div>
+        <p className="mt-2 text-xs text-foreground/60">
+          Switch between the new high-density Tactical Armory layout and the original Classic Retro Pip-Boy theme.
+        </p>
+      </div>
+      <div>
         <label className="text-sm font-semibold">Color-Blind Preset</label>
         <div className="mt-2 flex flex-wrap gap-2">
           {[

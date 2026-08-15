@@ -302,64 +302,84 @@ export default function EffectTable({
   return (
     <div className="space-y-6">
       {title && (
-        <Card className="primary-page-header border border-border/30 bg-panel shadow-sm font-mono overflow-hidden">
-          <div className="p-6 space-y-4">
-            <div className="space-y-1">
-              <h2 className="text-xl font-mono font-bold uppercase tracking-wider text-foreground">
+        <div className="bg-[#0c121a] border border-slate-800 p-4 space-y-4 shadow-xl font-mono">
+          {/* Header Row: Title & Telemetry */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-3.5">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-amber-400">
+                Tactical Modification Registry
+              </div>
+              <h2 className="text-lg md:text-xl font-black text-white uppercase tracking-tight">
                 {title}
               </h2>
-              {description && <p className="text-sm font-mono text-foreground/60 leading-relaxed">{description}</p>}
+              {description && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
             </div>
 
-            <div className="space-y-1.5 pt-1">
-              <div className="flex items-center justify-between text-xs font-mono font-bold uppercase tracking-wider text-foreground/70">
-                <span>Tier Completion Progress</span>
-                <span className="text-accent font-mono">{percent}% ({unlockedCount}/{totalCount})</span>
+            {/* Quick Stat Counters */}
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="px-3 py-1.5 bg-[#080d13] border border-slate-800 text-left">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Total Mods</div>
+                <div className="text-sm font-black text-white">{totalCount}</div>
               </div>
-              <div className="h-2.5 w-full bg-background/50 rounded-full overflow-hidden border border-border/30 p-0.5">
-                <div 
-                  className="h-full bg-accent transition-all duration-500 rounded-full shadow-[0_0_8px_color-mix(in_srgb,var(--color-accent)_40%,transparent)]" 
-                  style={{ width: `${percent}%` }}
-                />
+              <div className="px-3 py-1.5 bg-[#080d13] border border-slate-800 text-left">
+                <div className="text-[10px] text-emerald-400 font-bold uppercase">Learned</div>
+                <div className="text-sm font-black text-emerald-400">{unlockedCount}</div>
               </div>
-            </div>
-            
-            <div className="pt-3 border-t border-border/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-                <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Total Effects</span>
-                <span className="text-2xl font-mono font-bold text-foreground mt-1">{totalCount}</span>
-              </div>
-              <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-                <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Unlocked</span>
-                <span className="text-2xl font-mono font-bold text-amber-400 mt-1">{unlockedCount}</span>
-              </div>
-              <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-                <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Completion</span>
-                <span className="text-2xl font-mono font-bold text-emerald-400 mt-1">{percent}%</span>
+              <div className="px-3 py-1.5 bg-[#080d13] border border-slate-800 text-left">
+                <div className="text-[10px] text-amber-400 font-bold uppercase">Completion</div>
+                <div className="text-sm font-black text-amber-400">{percent}%</div>
               </div>
             </div>
-
-            {/* 4 Star Tier Breakdown Cards (When viewing all effects) */}
-            {starTierStats.length > 1 && (
-              <div className="pt-3 border-t border-border/20 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {starTierStats.map((st) => (
-                  <div key={st.tierLabel} className="rounded-lg border border-border/40 bg-slate-900/60 p-3 font-mono space-y-1">
-                    <div className="flex items-center justify-between text-xs font-bold text-amber-300">
-                      <span>{st.tierLabel}</span>
-                      <span>{st.pct}%</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-border/20">
-                      <div className="h-full bg-amber-400 rounded-full" style={{ width: `${st.pct}%` }} />
-                    </div>
-                    <div className="text-[0.68rem] text-slate-400 text-right">
-                      {st.unlocked} / {st.total} unlocked
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
-        </Card>
+
+          {/* Master Segmented Progress Bar */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-[11px] text-slate-400">
+              <span className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-emerald-500 inline-block rounded-xs" /> Learned ({percent}%)
+                <span className="w-2.5 h-2.5 bg-slate-700 inline-block rounded-xs ml-2" /> Locked ({100 - percent}%)
+              </span>
+              <span className="text-slate-300 font-bold">{unlockedCount}/{totalCount} Unlocked</span>
+            </div>
+
+            <div className="h-2.5 w-full bg-[#070a0e] border border-slate-800 flex overflow-hidden">
+              <div 
+                className="bg-emerald-500 transition-all duration-300" 
+                style={{ width: `${percent}%` }}
+                title={`Learned: ${unlockedCount} recipes (${percent}%)`}
+              />
+              <div 
+                className="bg-slate-800 flex-1 transition-all duration-300" 
+                title={`Locked: ${totalCount - unlockedCount} recipes`}
+              />
+            </div>
+          </div>
+
+          {/* Tier-by-Tier Interactive Micro-Progress Bars */}
+          {starTierStats.length > 1 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+              {starTierStats.map((st) => (
+                <div
+                  key={st.tierLabel}
+                  className="p-2 bg-[#090e15] border border-slate-800/90 text-left font-mono"
+                >
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="font-bold text-amber-400">{st.tierLabel}</span>
+                    <span className="text-slate-300 text-[11px] font-bold">
+                      {st.unlocked}/{st.total} <span className="text-slate-500">({st.pct}%)</span>
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-black border border-slate-800 overflow-hidden">
+                    <div 
+                      className="h-full bg-emerald-400 transition-all"
+                      style={{ width: `${st.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       )}
 
       <div className="space-y-2">

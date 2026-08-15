@@ -66,8 +66,10 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   const {
     accent,
     density,
+    uiMode,
     setAccent,
     setDensity,
+    setUiMode
   } = useThemeSettings();
   const categoryOptions = ["Armor", "Power Armor", "Weapon: Ranged", "Weapon: Melee"];
   const isSignedIn = hydrated && Boolean(session);
@@ -523,6 +525,37 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           {/* TAB 3: APPEARANCE & SYSTEM */}
           {activeTab === "appearance" && (
             <div className="space-y-4 font-mono">
+              {/* Architecture Mode */}
+              <div className="space-y-1.5">
+                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">UI Architecture</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setUiMode("tactical")}
+                    className={cn(
+                      "py-2 px-3 rounded-lg text-xs font-bold transition-all border cursor-pointer flex items-center justify-center gap-1.5",
+                      uiMode === "tactical"
+                        ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-sm"
+                        : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
+                    )}
+                  >
+                    <span>⚡ Tactical Armory</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUiMode("retro")}
+                    className={cn(
+                      "py-2 px-3 rounded-lg text-xs font-bold transition-all border cursor-pointer flex items-center justify-center gap-1.5",
+                      uiMode === "retro"
+                        ? "bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-sm"
+                        : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
+                    )}
+                  >
+                    <span>📻 Classic Retro</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Density */}
               <div className="space-y-1.5">
                 <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">UI Density</span>

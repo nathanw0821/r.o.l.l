@@ -6,12 +6,14 @@ type ThemeMode = "light" | "dark" | "system";
 type ColorBlindMode = "none" | "deuteranopia" | "protanopia" | "tritanopia" | "high-contrast";
 type ScanlineMode = "off" | "soft" | "balanced" | "strong";
 type UiTone = "neutral" | "vault" | "copper" | "olive" | "rose";
+type UiMode = "tactical" | "retro";
 
 type ThemeContextValue = {
   theme: ThemeMode;
   accent: string;
   colorBlind: ColorBlindMode;
   density: "comfortable" | "compact";
+  uiMode: UiMode;
   scanlineMode: ScanlineMode;
   uiTone: UiTone;
   fontScale: number;
@@ -19,6 +21,7 @@ type ThemeContextValue = {
   setAccent: (accent: string) => void;
   setColorBlind: (mode: ColorBlindMode) => void;
   setDensity: (density: "comfortable" | "compact") => void;
+  setUiMode: (mode: UiMode) => void;
   setScanlineMode: (mode: ScanlineMode) => void;
   setUiTone: (tone: UiTone) => void;
   setFontScale: (scale: number) => void;
@@ -30,6 +33,7 @@ const THEME_KEY = "roll-theme";
 const ACCENT_KEY = "roll-accent";
 const COLORBLIND_KEY = "roll-colorblind";
 const DENSITY_KEY = "roll-density";
+const UI_MODE_KEY = "roll-ui-mode";
 const SCANLINE_KEY = "roll-scanline-mode";
 const UI_TONE_KEY = "roll-ui-tone";
 const FONT_SCALE_KEY = "roll-font-scale";
@@ -74,6 +78,14 @@ function readStoredDensity(defaultDensity: "comfortable" | "compact") {
   return defaultDensity;
 }
 
+function readStoredUiMode(defaultMode: UiMode = "tactical"): UiMode {
+  const storedMode = readStoredValue(UI_MODE_KEY) ?? readRootAttribute("data-ui-mode");
+  if (storedMode === "tactical" || storedMode === "retro") {
+    return storedMode;
+  }
+  return defaultMode;
+}
+
 function readStoredScanline() {
   const storedScanline = readStoredValue(SCANLINE_KEY) ?? readRootAttribute("data-scanlines");
   if (storedScanline === "off" || storedScanline === "soft" || storedScanline === "balanced" || storedScanline === "strong") {
@@ -108,12 +120,14 @@ export function ThemeProvider({
   defaultAccent = "ember",
   defaultColorBlind = "none",
   defaultDensity = "compact",
+  defaultUiMode = "tactical",
 }: {
   children: React.ReactNode;
   defaultTheme?: ThemeMode;
   defaultAccent?: string;
   defaultColorBlind?: ColorBlindMode;
   defaultDensity?: "comfortable" | "compact";
+  defaultUiMode?: UiMode;
   preferDefaults?: boolean;
 }) {
   const [theme, setThemeState] = React.useState<ThemeMode>(() => readStoredTheme(defaultTheme));
@@ -123,6 +137,9 @@ export function ThemeProvider({
   const [colorBlind, setColorBlindState] = React.useState<ColorBlindMode>(() => readStoredColorBlind(defaultColorBlind));
   const [density, setDensityState] = React.useState<"comfortable" | "compact">(
     () => readStoredDensity(defaultDensity)
+  );
+  const [uiMode, setUiModeState] = React.useState<UiMode>(
+    () => readStoredUiMode(defaultUiMode)
   );
   const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>(() => readStoredScanline());
   const [uiTone, setUiToneState] = React.useState<UiTone>(() => readStoredUiTone());
@@ -148,6 +165,9 @@ export function ThemeProvider({
 
     const storedDensity = readStoredDensity(defaultDensity);
     if (storedDensity !== density) setDensityState(storedDensity);
+
+    const storedUiMode = readStoredUiMode(defaultUiMode);
+    if (storedUiMode !== uiMode) setUiModeState(storedUiMode);
 
     const storedScanline = readStoredScanline();
     if (storedScanline !== scanlineMode) setScanlineModeState(storedScanline);
@@ -182,6 +202,11 @@ export function ThemeProvider({
         setDensityState(nextDensity);
         document.documentElement.setAttribute("data-density", nextDensity);
       }
+      if (e.key === UI_MODE_KEY && e.newValue) {
+        const nextMode = e.newValue as UiMode;
+        setUiModeState(nextMode);
+        document.documentElement.setAttribute("data-ui-mode", nextMode);
+      }
       if (e.key === SCANLINE_KEY && e.newValue) {
         const nextScanline = e.newValue as ScanlineMode;
         setScanlineModeState(nextScanline);
@@ -203,7 +228,7 @@ export function ThemeProvider({
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // Persistence Effects (only write to localStorage when mounted and state changes)
+  // Persistence Effects
   React.useEffect(() => {
     const resolved = resolveTheme(theme);
     document.documentElement.setAttribute("data-theme", resolved);
@@ -234,6 +259,13 @@ export function ThemeProvider({
   }, [density]);
 
   React.useEffect(() => {
+    document.documentElement.setAttribute("data-ui-mode", uiMode);
+    if (isMounted.current) {
+      window.localStorage.setItem(UI_MODE_KEY, uiMode);
+    }
+  }, [uiMode]);
+
+  React.useEffect(() => {
     document.documentElement.setAttribute("data-scanlines", scanlineMode);
     if (isMounted.current) {
       window.localStorage.setItem(SCANLINE_KEY, scanlineMode);
@@ -260,6 +292,7 @@ export function ThemeProvider({
       accent,
       colorBlind,
       density,
+      uiMode,
       scanlineMode,
       uiTone,
       fontScale,
@@ -267,11 +300,12 @@ export function ThemeProvider({
       setAccent: setAccentState,
       setColorBlind: setColorBlindState,
       setDensity: setDensityState,
+      setUiMode: setUiModeState,
       setScanlineMode: setScanlineModeState,
       setUiTone: setUiToneState,
       setFontScale: setFontScaleState
     }),
-    [theme, accent, colorBlind, density, scanlineMode, uiTone, fontScale]
+    [theme, accent, colorBlind, density, uiMode, scanlineMode, uiTone, fontScale]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
