@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deriveArchetypeTags } from "@/app/api/builder/transmissions/route";
+import { deriveArchetypeTags } from "@/lib/builder/transmissions-engine";
 import type { BuilderPayload } from "@/lib/builder/types";
 
 describe("deriveArchetypeTags", () => {

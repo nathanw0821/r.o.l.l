@@ -68,10 +68,10 @@ const trackingLinks: AppNavLink[] = [
   },
   { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false, isBuildTab: true },
   { href: "/perks", label: "P.E.R.K.", icon: Boxes, activePrefixes: ["/perks"] },
-  { href: "/transmissions", label: "Transmissions", icon: Radio, activePrefixes: ["/transmissions"] },
-  { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] },
   { href: "/pts", label: "P.T.S.", icon: FlaskConical, activePrefixes: ["/pts"] },
-  { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles }
+  { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles },
+  { href: "/transmissions", label: "Transmissions", icon: Radio, activePrefixes: ["/transmissions"] },
+  { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] }
 ];
 
 type TierProgressSummary = {
