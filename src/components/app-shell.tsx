@@ -15,7 +15,6 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Sparkles,
-  Star,
   Trophy
 } from "lucide-react";
 import { cn } from "@/lib/utils";

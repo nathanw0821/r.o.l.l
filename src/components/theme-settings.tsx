@@ -17,7 +17,7 @@ const accents = [
 ] as const;
 
 export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
-  const { theme, accent, colorBlind, setTheme, setAccent, setColorBlind } = useThemeSettings();
+  const { theme, accent, colorBlind, uiMode, setTheme, setAccent, setColorBlind, setUiMode } = useThemeSettings();
 
   async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
     if (!canPersist) return;
@@ -92,15 +92,15 @@ export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
         <div className="mt-2 flex flex-wrap gap-2">
           <Button
             size="sm"
-            variant={useThemeSettings().uiMode === "tactical" ? "default" : "outline"}
-            onClick={() => useThemeSettings().setUiMode("tactical")}
+            variant={uiMode === "tactical" ? "default" : "outline"}
+            onClick={() => setUiMode("tactical")}
           >
             ⚡ Tactical Armory (High-Density)
           </Button>
           <Button
             size="sm"
-            variant={useThemeSettings().uiMode === "retro" ? "default" : "outline"}
-            onClick={() => useThemeSettings().setUiMode("retro")}
+            variant={uiMode === "retro" ? "default" : "outline"}
+            onClick={() => setUiMode("retro")}
           >
             📻 Classic Retro (Pip-Boy)
           </Button>

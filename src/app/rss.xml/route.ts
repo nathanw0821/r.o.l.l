@@ -42,7 +42,7 @@ export async function GET(req: Request) {
         "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
       }
     });
-  } catch (err) {
+  } catch {
     return new NextResponse("<rss version='2.0'><channel><title>Error</title></channel></rss>", {
       headers: { "Content-Type": "application/xml" }
     });

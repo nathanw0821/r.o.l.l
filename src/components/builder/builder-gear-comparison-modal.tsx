@@ -4,7 +4,7 @@ import * as React from "react";
 import { ARMOR_SET_ROWS } from "@/lib/builder/armor-sets";
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
 import { Button } from "@/components/ui/button";
-import { BarChart3, X, Check } from "lucide-react";
+import { BarChart3, X } from "lucide-react";
 
 interface BuilderGearComparisonModalProps {
   isOpen: boolean;
