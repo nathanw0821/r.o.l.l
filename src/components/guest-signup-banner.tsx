@@ -56,7 +56,7 @@ export default function GuestSignupBanner() {
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-bold uppercase tracking-wider text-accent flex items-center gap-1">
-                <span>💡 Free Cloud Backup</span>
+                <span>Free Cloud Backup</span>
               </span>
               <span className="text-[0.7rem] bg-accent/10 border border-accent/20 px-2 py-0.5 rounded text-accent/90">
                 IGN &amp; Privacy Protected

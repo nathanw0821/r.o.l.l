@@ -593,13 +593,13 @@ interface AccountLinksResponse {
                   href="/build"
                   className="px-3 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:border-amber-400 font-bold uppercase transition-all"
                 >
-                  🛠️ B.U.I.L.D. Sandbox ↗
+                  B.U.I.L.D. Sandbox ↗
                 </Link>
                 <Link
                   href="/perks"
                   className="px-3 py-1 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 hover:border-emerald-400 font-bold uppercase transition-all"
                 >
-                  ⭐ P.E.R.K. Deck ↗
+                  P.E.R.K. Deck ↗
                 </Link>
               </div>
             </div>
@@ -620,7 +620,7 @@ interface AccountLinksResponse {
               {/* Official Bethesda Fan Content & Legal Attribution Banner */}
               <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 text-[0.62rem] text-slate-400 leading-relaxed font-sans space-y-1">
                 <div className="flex items-center justify-between text-[0.65rem] font-mono text-amber-400/90 font-bold uppercase tracking-wider">
-                  <span>⚖️ OFFICIAL BETHESDA FAN CONTENT DISCLAIMER</span>
+                  <span>OFFICIAL BETHESDA FAN CONTENT DISCLAIMER</span>
                   <span>100% NON-COMMERCIAL / FAIR USE</span>
                 </div>
                 <p>

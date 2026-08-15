@@ -1,0 +1,32 @@
+{
+  "patchVersion": "54.0.0 (Milepost Zero / Current Live Update)",
+  "environment": "LIVE_ADVENTURE_SERVERS",
+  "lastVerified": "2026-08-14T20:28:00Z",
+  "authoritativeSources": [
+    "Bethesda Game Studios Live Manifest",
+    "SeventySix.esm ESM/BA2 FormID Dumps",
+    "NukaKnights Verified Live Datamining Database"
+  ],
+  "globalRules": {
+    "isPts": false,
+    "legendaryModuleCraftingCost": {
+      "1_star": 15,
+      "2_star": 30,
+      "3_star": 60
+    },
+    "scrappingUnlockChance": {
+      "permanentPlan": 0.01,
+      "looseBoxMod": 0.015
+    },
+    "currencyCaps": {
+      "maxScrip": 11000,
+      "dailyScripExchange": 500,
+      "maxCaps": 40000,
+      "dailyVendorCaps": 1400,
+      "maxGoldBullion": 10000,
+      "dailyGoldPress": 400,
+      "maxStashWeightLbs": 1200
+    },
+    "globalDailyResetTimeUTC": "17:00:00Z"
+  }
+}

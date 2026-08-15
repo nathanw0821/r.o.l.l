@@ -1,0 +1,26 @@
+{
+  "category": "Combat, V.A.T.S., Action Points, and Damage Calculation Engine",
+  "patchVersion": "54.0.0 Live",
+  "actionPointMechanics": {
+    "baseRecoveryRate": "6.0% of total Action Point pool per second when not sprinting, jumping, or in V.A.T.S.",
+    "recoveryDelay": "1.0 second delay after stopping AP consumption before passive regeneration begins.",
+    "agilityScaling": "Each point of Agility adds +10 Maximum Action Points.",
+    "armorModPowered": "+5.0 AP/second flat regeneration per piece (Up to +25.0 AP/second across 5 armor pieces).",
+    "perkActionBoyGirl": {
+      "rank1": "+15% AP regeneration rate",
+      "rank2": "+30% AP regeneration rate",
+      "rank3": "+45% AP regeneration rate"
+    },
+    "cannedCoffeeBurst": "+12.0 AP/second for 25 seconds per can. Consuming multiple cans stacks multiplicatively, allowing continuous firing in V.A.T.S. without dropping out."
+  },
+  "vatsMechanics": {
+    "maximumHitChanceCap": "95% (Hit chance in V.A.T.S. can never exceed 95%, regardless of Perception or weapon accuracy buffs).",
+    "minimumHitChanceFloor": "0% (Unless line-of-sight is established, minimum floor is 0%).",
+    "rangeFalloff": "Accuracy scales down dramatically past the weapon's listed effective range stat. Concentrated Fire perk increases hit chance by 10% / 15% / 20% on consecutive shots per target limb.",
+    "criticalHitFormula": "V.A.T.S. criticals guarantee a 100% hit (ignoring accuracy falloff) and bypass non-boss flat damage reductions. Critical meter fills based on Luck: at 33 Luck with Critical Savvy Rank 3 (55% fill cost), a critical hit can be executed on every alternate shot (1 normal shot -> 1 crit -> 1 normal shot -> 1 crit)."
+  },
+  "damageMitigationAndPenetration": {
+    "antiArmorCalculation": "Anti-Armor reduces target's Armor and Energy Resistance by 50%. Combined with Tank Killer (+36% armor penetration) or Stabilized (+45% in PA), effective target resistance drops by up to ~68%–72.5%.",
+    "damageAdditiveVsMultiplicative": "Standard perks (Commando, Rifleman, Heavy Gunner) apply additive bonuses to weapon base damage. Vulnerability effects (Follow Through, Taking One for the Team) apply multiplicative final damage increases."
+  }
+}

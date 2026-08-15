@@ -47,8 +47,17 @@ export async function GET(req: Request) {
     );
   }
 
-  // 4. Sorting
-  if (sort === "oldest") {
+  // 4. Sorting & Relevance Ranking
+  if (q.length > 0 && (!sort || sort === "newest" || sort === "relevance")) {
+    list.sort((a, b) => {
+      const aTitle = a.title.toLowerCase();
+      const bTitle = b.title.toLowerCase();
+      const aScore = aTitle === q ? 100 : aTitle.startsWith(q) ? 50 : aTitle.includes(q) ? 20 : 5;
+      const bScore = bTitle === q ? 100 : bTitle.startsWith(q) ? 50 : bTitle.includes(q) ? 20 : 5;
+      if (aScore !== bScore) return bScore - aScore;
+      return String(b.id).localeCompare(String(a.id));
+    });
+  } else if (sort === "oldest") {
     list.sort((a, b) => String(a.id).localeCompare(String(b.id)));
   } else if (sort === "title-asc") {
     list.sort((a, b) => a.title.localeCompare(b.title));

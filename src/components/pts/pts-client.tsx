@@ -64,7 +64,7 @@ export default function PtsClient() {
             }`}
           >
             <FlaskConical className="h-3.5 w-3.5" />
-            <span>🔬 PTS Datamines Catalog</span>
+            <span>PTS Datamines Catalog</span>
           </button>
           <button
             type="button"
@@ -75,7 +75,7 @@ export default function PtsClient() {
                 : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
-            <span>🧟 PTS Ghoul B.U.I.L.D. Sandbox</span>
+            <span>PTS Ghoul Sandbox</span>
           </button>
           <button
             type="button"
@@ -86,7 +86,7 @@ export default function PtsClient() {
                 : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
-            <span>🃏 PTS 20-Cap P.E.R.K. Matrix</span>
+            <span>PTS 20-Cap Perk Matrix</span>
           </button>
         </div>
       </div>
