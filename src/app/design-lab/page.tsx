@@ -182,7 +182,7 @@ export default function VisualOverhaulStudioPage() {
                 />
               </div>
               <p className="text-[11px] font-mono text-slate-400 text-center">
-                Permanently shows 2018 text: <em className="text-slate-300">"Shotguns now weigh 30% less..."</em>
+                Permanently shows 2018 text: <em className="text-slate-300">&quot;Shotguns now weigh 30% less...&quot;</em>
               </p>
             </div>
 
