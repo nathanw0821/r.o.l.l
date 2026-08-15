@@ -1,24 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
-
-function filterFallbackArticles(q: string, category: string, limit: number) {
-  let list = FALLBACK_WIKI_ARTICLES;
-  if (category && category.toLowerCase() !== "all") {
-    const normCat = category.toLowerCase().split(" ")[0];
-    list = list.filter((a) => a.category.toLowerCase().includes(normCat));
-  }
-  if (q && q.trim().length > 0) {
-    const normQ = q.toLowerCase().trim();
-    list = list.filter(
-      (a) =>
-        a.title.toLowerCase().includes(normQ) ||
-        a.content.toLowerCase().includes(normQ) ||
-        a.snippet.toLowerCase().includes(normQ)
-    );
-  }
-  return list.slice(0, limit);
-}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

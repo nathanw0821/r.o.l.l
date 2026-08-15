@@ -15,7 +15,6 @@ import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-even
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
 import { InfoTooltip } from "@/components/ui/tooltip";
-import { Card } from "@/components/ui/card";
 
 export type EffectTierRow = {
   id: string;

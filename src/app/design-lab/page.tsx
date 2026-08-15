@@ -3,29 +3,11 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { 
-  Shield, 
-  Zap, 
-  Star, 
   Search, 
-  Filter, 
   Check, 
-  ExternalLink,
-  ChevronRight,
-  Sliders,
-  Layers,
-  Terminal,
-  Grid,
-  List,
-  Flame,
-  Crosshair,
-  Award,
-  Cpu,
   ArrowUpRight,
   Bookmark,
-  CheckCircle2,
-  BarChart3,
   TrendingUp,
-  Boxes,
   Database
 } from "lucide-react";
 
