@@ -25,7 +25,6 @@ import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import ProgressToggle from "@/components/progress-toggle";
 import BuilderCombatSwitchboard, { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
@@ -106,7 +105,6 @@ import {
 } from "@/components/builder/builder-beta-gate";
 
 import {
-  SANDBOX_MUTATIONS,
   sandboxMutationMathLayer,
   getSortedMutationLabels,
 } from "@/lib/builder/sandbox-mutations";
@@ -1630,148 +1628,7 @@ export default function BuilderExperimentClient({
         {/* COLUMN 2: CENTER PANEL - REPAIR BAY SILHOUETTE */}
         <div className="space-y-4">
           
-          {/* Base selector panel dropdown */}
-          <div className="pip-terminal-panel p-4 rounded-xl space-y-3.5 font-mono">
-            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center justify-between">
-              <span>&gt; CHASSIS &amp; GEAR ARMORY MATRIX</span>
-              <span className="text-[0.68rem] text-foreground/45 font-normal">Active: {piece?.label}</span>
-            </div>
-            
-            {/* Categorized Tactical Gear Armory Picker */}
-            <BuilderGearSelector
-              selectedBaseId={payload.basePieceId}
-              onSelectBase={(newBaseId) => setBase(newBaseId)}
-              learnedBasePieceIds={learnedBasePieceIds}
-              isPowerArmorTorsoLearned={isPowerArmorTorsoRowLearned}
-            />
-
-            {/* Active Selected Base Gear Render Card */}
-            {piece && (
-              <div className="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/40 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-xl shrink-0">
-                    {piece.kind === "weapon" ? "🎯" : piece.kind === "powerArmor" ? "🦾" : piece.kind === "armor" ? "🛡️" : "👕"}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-black uppercase text-slate-100 truncate">
-                      {piece.label}
-                    </div>
-                    <div className="text-[0.65rem] text-emerald-400 font-bold uppercase tracking-wide truncate">
-                      {piece.kind === "powerArmor" ? "Power Armor Frame" : piece.kind === "armor" ? "5-Piece Armor Set" : piece.kind === "weapon" ? `Weapon · ${piece.weaponSub || "Tactical"}` : "Underarmor Shell"}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[0.62rem] px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
-                    ✓ ACTIVE LOADOUT BASE
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons Toolbar */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-9 text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
-                onClick={() =>
-                  exportBuilderLoadoutCard({
-                    piece,
-                    payload,
-                    totals,
-                    groupedEffects: groupedLegendaryEffects,
-                    modRows: mods,
-                    shoppingLines: shopping.lines,
-                    underarmorLabels: {
-                      shell: findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label ?? "Standard",
-                      lining: findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label ?? "None",
-                      style: findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId)?.label ?? "None"
-                    },
-                    mutationSummary:
-                      payload.mutationIds.length > 0
-                        ? getSortedMutationLabels(payload.mutationIds).join(" · ")
-                        : null
-                  })
-                }
-              >
-                Export Card (PNG)
-              </Button>
-              <Link
-                href={`/wiki?q=${encodeURIComponent(piece.label.replace(/\(full set\)|\(underarmor\)|\(shell\)/gi, "").trim())}`}
-                className="h-9 flex items-center justify-center gap-1.5 text-xs font-mono uppercase font-bold text-amber-400 border border-amber-500/40 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 rounded px-2 transition-all shadow-sm"
-              >
-                📖 Read Vault Guide ↗
-              </Link>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-9 text-xs font-mono uppercase font-bold text-cyan-400 border-cyan-500/40 hover:border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20"
-                onClick={() => setIsComparisonOpen(true)}
-              >
-                📊 Gear &amp; PA Matrix
-              </Button>
-            </div>
-
-              {/* Smart Synergy Recommendation Panel */}
-              <div className="pt-2 border-t border-border/20 space-y-2 font-mono">
-                <div className="text-[0.72rem] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkle className="h-3.5 w-3.5" />
-                  <span>⚡ Smart Synergy Recommendations for {piece.label}</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {getEquipmentSynergies(piece.id).map((syn) => (
-                    <RollHelperTooltip key={syn.id} title={syn.name} kind="perk" cardId={syn.id}>
-                      <span className="text-[0.68rem] px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-1">
-                        {syn.name} ({syn.boostLabel})
-                      </span>
-                    </RollHelperTooltip>
-                  ))}
-                </div>
-              </div>
-
-              {isTrackableBasePieceId(piece.id) ? (
-                <div className={cn(
-                  "flex items-center justify-between gap-3 border rounded px-3 py-2.5 mt-4 sm:mt-0 font-mono",
-                  currentBaseLearned
-                    ? "border-accent/40 bg-accent/5"
-                    : "border-border/20 bg-background/25"
-                )}>
-                  <div className="min-w-0">
-                    <div className="text-[0.72rem] font-black uppercase text-accent tracking-wider">Plan Registry Sync</div>
-                    <div className="text-[0.72rem] text-foreground/45 mt-0.5 uppercase">
-                      {isSignedIn ? "Database persistent" : "Offline draft"}
-                    </div>
-                  </div>
-                  <ProgressToggle
-                    unlocked={currentBaseLearned}
-                    disabled={!isSignedIn || pendingLearnedPieceId === piece.id}
-                    onToggle={() =>
-                      void toggleLearnedBasePiece(piece.id, !currentBaseLearned)
-                    }
-                    className="shrink-0"
-                  />
-                </div>
-              ) : null}
-
-            {learnedToggleError ? (
-              <p className="text-[0.78rem] text-danger font-bold">
-                &gt;&gt; ERROR: {learnedToggleError}
-              </p>
-            ) : null}
-          </div>
-
-          {/* CHARACTER COMBAT SWITCHBOARD */}
-          <BuilderCombatSwitchboard
-            rawDamage={piece.kind === "weapon" ? 110 : 0}
-            activeMutations={payload.mutationIds}
-            ignoreMutationPenalties={payload.ignoreMutationPenalties}
-            onStateChange={setSwitchboardState}
-          />
-
-          {/* Interactive Silhouette Repair Frame */}
+          {/* 1. TOP: Interactive Silhouette Repair Frame / Chassis Bay schematic */}
           <div className="pip-terminal-panel p-4 rounded-xl space-y-4 font-mono relative min-h-[500px] flex flex-col justify-between">
             <div className="crt-scanline" />
             
@@ -1893,24 +1750,20 @@ export default function BuilderExperimentClient({
               </div>
             )}
 
-            <div className="text-[0.72rem] text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
-              Telemetric calculations updated instant client-side. Cloudflare 0ms CPU load.
-            </div>
-          </div>
-
-          {/* Sub-Grid Below Chassis Schematic: Underarmor & Mutations */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Underarmor configurations details */}
+            {/* Integrated Underarmor Sub-systems (When not inside a sealed PA frame) */}
             {piece.kind !== "powerArmor" && (
-              <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
-                <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-                  [ UNDERARMOR SUB-SYSTEMS ]
+              <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 space-y-2.5 font-mono">
+                <div className="text-xs font-black uppercase tracking-widest text-accent flex items-center justify-between border-b border-border/20 pb-1.5">
+                  <span>[ 👕 UNDERARMOR SUB-SYSTEMS ]</span>
+                  <span className="text-[0.62rem] text-emerald-400 font-bold">
+                    {findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label || "No Lining"}
+                  </span>
                 </div>
-                <div className="grid gap-2.5 text-[0.78rem] w-full max-w-full overflow-hidden">
-                  <label className="flex flex-col min-w-0 max-w-full">
-                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Cosmetic Base</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[0.72rem]">
+                  <label className="flex flex-col min-w-0">
+                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-1">Cosmetic Shell</span>
                     <select
-                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full max-w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
+                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
                       value={payload.underarmor.shellId}
                       onChange={(e) =>
                         setPayload((p) => ({
@@ -1926,10 +1779,11 @@ export default function BuilderExperimentClient({
                       ))}
                     </select>
                   </label>
-                  <label className="flex flex-col min-w-0 max-w-full">
-                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Lining Mod (Resistances)</span>
+
+                  <label className="flex flex-col min-w-0">
+                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-1">Lining Mod (Resists)</span>
                     <select
-                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full max-w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
+                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
                       value={payload.underarmor.liningId ?? "none"}
                       onChange={(e) =>
                         setPayload((p) => ({
@@ -1948,10 +1802,11 @@ export default function BuilderExperimentClient({
                       ))}
                     </select>
                   </label>
-                  <label className="flex flex-col min-w-0 max-w-full">
-                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-0.5">Underarmor Style (S.P.E.C.I.A.L. Bonus)</span>
+
+                  <label className="flex flex-col min-w-0">
+                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-1">Underarmor Style (SPECIAL)</span>
                     <select
-                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full max-w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
+                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
                       value={payload.underarmor.styleId ?? "none"}
                       onChange={(e) =>
                         setPayload((p) => ({
@@ -1974,80 +1829,161 @@ export default function BuilderExperimentClient({
               </div>
             )}
 
-            {/* Mutations loader matrix */}
-            <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
-              <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-                [ MUTATION SERUM MATRIX ]
-              </div>
-              
-              <div className="max-h-36 space-y-1 overflow-y-auto pr-1 grid grid-cols-2 gap-1 text-[0.78rem] content-visibility-auto">
-                {SANDBOX_MUTATIONS.map((m) => {
-                  const on = payload.mutationIds.includes(m.id);
-                  return (
-                    <label
-                      key={m.id}
-                      className={cn(
-                        "flex cursor-pointer items-center gap-1.5 rounded p-1 transition-colors hover:bg-background/45 border",
-                        on ? "border-accent/30 bg-accent/5 text-accent" : "border-transparent text-foreground/75"
-                      )}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={on}
-                        onChange={() => {
-                          setPayload((p) => {
-                            const next = on
-                              ? p.mutationIds.filter((x) => x !== m.id)
-                              : [...p.mutationIds, m.id];
-                            return { ...p, mutationIds: next };
-                          });
-                        }}
-                        className="h-3 w-3 shrink-0 accent-[var(--accent)] cursor-pointer"
-                      />
-                      <span className="truncate">{m.label}</span>
-                    </label>
-                  );
-                })}
-              </div>
-
-              <div className="space-y-2 pt-2 border-t border-border/15 text-[0.78rem]">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="font-bold text-foreground">Strange in Numbers</div>
-                    <p className="text-[0.72rem] text-foreground/45 leading-tight">Teammate mutations amplify +25%.</p>
-                  </div>
-                  <Switch
-                    checked={payload.hasStrangeInNumbers}
-                    onCheckedChange={(checked) =>
-                      setPayload((p) => ({
-                        ...p,
-                        hasStrangeInNumbers: checked,
-                      }))
-                    }
-                    aria-label="Strange in Numbers"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between gap-3 pt-1">
-                  <div className="min-w-0">
-                    <div className="font-bold text-foreground">Ignore Serum penalties</div>
-                    <p className="text-[0.72rem] text-foreground/45 leading-tight">Filter mutation negatives.</p>
-                  </div>
-                  <Switch
-                    checked={payload.ignoreMutationPenalties}
-                    onCheckedChange={(checked) =>
-                      setPayload((p) => ({
-                        ...p,
-                        ignoreMutationPenalties: checked,
-                      }))
-                    }
-                    aria-label="Ignore mutation penalties"
-                  />
-                </div>
-              </div>
+            <div className="text-[0.72rem] text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
+              Telemetric calculations updated instant client-side. Cloudflare 0ms CPU load.
             </div>
           </div>
 
+          {/* 2. MIDDLE: Chassis & Gear Armory Matrix */}
+          <div className="pip-terminal-panel p-4 rounded-xl space-y-3.5 font-mono">
+            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center justify-between">
+              <span>&gt; CHASSIS &amp; GEAR ARMORY MATRIX</span>
+              <span className="text-[0.68rem] text-foreground/45 font-normal">Active: {piece?.label}</span>
+            </div>
+            
+            {/* Categorized Tactical Gear Armory Picker */}
+            <BuilderGearSelector
+              selectedBaseId={payload.basePieceId}
+              onSelectBase={(newBaseId) => setBase(newBaseId)}
+              learnedBasePieceIds={learnedBasePieceIds}
+              isPowerArmorTorsoLearned={isPowerArmorTorsoRowLearned}
+            />
+
+            {/* Active Selected Base Gear Render Card */}
+            {piece && (
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/40 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-xl shrink-0">
+                    {piece.kind === "weapon" ? "🎯" : piece.kind === "powerArmor" ? "🦾" : piece.kind === "armor" ? "🛡️" : "👕"}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-black uppercase text-slate-100 truncate">
+                      {piece.label}
+                    </div>
+                    <div className="text-[0.65rem] text-emerald-400 font-bold uppercase tracking-wide truncate">
+                      {piece.kind === "powerArmor" ? "Power Armor Frame" : piece.kind === "armor" ? "5-Piece Armor Set" : piece.kind === "weapon" ? `Weapon · ${piece.weaponSub || "Tactical"}` : "Underarmor Shell"}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[0.62rem] px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                    ✓ ACTIVE LOADOUT BASE
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons Toolbar */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9 text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
+                onClick={() =>
+                  exportBuilderLoadoutCard({
+                    piece,
+                    payload,
+                    totals,
+                    groupedEffects: groupedLegendaryEffects,
+                    modRows: mods,
+                    shoppingLines: shopping.lines,
+                    underarmorLabels: {
+                      shell: findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label ?? "Standard",
+                      lining: findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label ?? "None",
+                      style: findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId)?.label ?? "None"
+                    },
+                    mutationSummary:
+                      payload.mutationIds.length > 0
+                        ? getSortedMutationLabels(payload.mutationIds).join(" · ")
+                        : null
+                  })
+                }
+              >
+                Export Card (PNG)
+              </Button>
+              <Link
+                href={`/wiki?q=${encodeURIComponent(piece.label.replace(/\(full set\)|\(underarmor\)|\(shell\)/gi, "").trim())}`}
+                className="h-9 flex items-center justify-center gap-1.5 text-xs font-mono uppercase font-bold text-amber-400 border border-amber-500/40 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 rounded px-2 transition-all shadow-sm"
+              >
+                📖 Read Vault Guide ↗
+              </Link>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9 text-xs font-mono uppercase font-bold text-cyan-400 border-cyan-500/40 hover:border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20"
+                onClick={() => setIsComparisonOpen(true)}
+              >
+                📊 Gear &amp; PA Matrix
+              </Button>
+            </div>
+
+            {/* Smart Synergy Recommendation Panel */}
+            <div className="pt-2 border-t border-border/20 space-y-2 font-mono">
+              <div className="text-[0.72rem] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkle className="h-3.5 w-3.5" />
+                <span>⚡ Smart Synergy Recommendations for {piece.label}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {getEquipmentSynergies(piece.id).map((syn) => (
+                  <RollHelperTooltip key={syn.id} title={syn.name} kind="perk" cardId={syn.id}>
+                    <span className="text-[0.68rem] px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-1">
+                      {syn.name} ({syn.boostLabel})
+                    </span>
+                  </RollHelperTooltip>
+                ))}
+              </div>
+            </div>
+
+            {isTrackableBasePieceId(piece.id) ? (
+              <div className={cn(
+                "flex items-center justify-between gap-3 border rounded px-3 py-2.5 mt-4 sm:mt-0 font-mono",
+                currentBaseLearned
+                  ? "border-accent/40 bg-accent/5"
+                  : "border-border/20 bg-background/25"
+              )}>
+                <div className="min-w-0">
+                  <div className="text-[0.72rem] font-black uppercase text-accent tracking-wider">Plan Registry Sync</div>
+                  <div className="text-[0.72rem] text-foreground/45 mt-0.5 uppercase">
+                    {isSignedIn ? "Database persistent" : "Offline draft"}
+                  </div>
+                </div>
+                <ProgressToggle
+                  unlocked={currentBaseLearned}
+                  disabled={!isSignedIn || pendingLearnedPieceId === piece.id}
+                  onToggle={() =>
+                    void toggleLearnedBasePiece(piece.id, !currentBaseLearned)
+                  }
+                  className="shrink-0"
+                />
+              </div>
+            ) : null}
+
+            {learnedToggleError ? (
+              <p className="text-[0.78rem] text-danger font-bold">
+                &gt;&gt; ERROR: {learnedToggleError}
+              </p>
+            ) : null}
+          </div>
+
+          {/* 3. BOTTOM: All-Inclusive Vault-Tec Buff & Consumable Registry / CHARACTER COMBAT SWITCHBOARD */}
+          <BuilderCombatSwitchboard
+            rawDamage={piece.kind === "weapon" ? 110 : 0}
+            activeMutations={payload.mutationIds}
+            onMutationsChange={(nextMutations) =>
+              setPayload((p) => ({ ...p, mutationIds: nextMutations }))
+            }
+            hasStrangeInNumbers={payload.hasStrangeInNumbers}
+            onStrangeInNumbersChange={(enabled) =>
+              setPayload((p) => ({ ...p, hasStrangeInNumbers: enabled }))
+            }
+            ignoreMutationPenalties={payload.ignoreMutationPenalties}
+            onIgnoreMutationPenaltiesChange={(enabled) =>
+              setPayload((p) => ({ ...p, ignoreMutationPenalties: enabled }))
+            }
+            onStateChange={setSwitchboardState}
+          />
         </div>
 
         {/* COLUMN 3: AUX LOGISTICS & PRESENTS */}

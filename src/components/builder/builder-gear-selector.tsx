@@ -52,12 +52,16 @@ export default function BuilderGearSelector({
   const [weaponSubFilter, setWeaponSubFilter] = React.useState<"all" | BuilderWeaponSub>("all");
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  // Keep category in sync if selectedBaseId changes externally
+  // Only sync category when selectedBaseId actually changes externally
+  const prevBaseIdRef = React.useRef(selectedBaseId);
   React.useEffect(() => {
-    if (currentPiece && currentPiece.kind !== activeCategory) {
-      setActiveCategory(currentPiece.kind);
+    if (prevBaseIdRef.current !== selectedBaseId) {
+      prevBaseIdRef.current = selectedBaseId;
+      if (currentPiece) {
+        setActiveCategory(currentPiece.kind);
+      }
     }
-  }, [selectedBaseId, currentPiece, activeCategory]);
+  }, [selectedBaseId, currentPiece]);
 
   const filteredPieces = React.useMemo(() => {
     return BASE_GEAR_PIECES.filter((piece) => {
