@@ -776,20 +776,23 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
             {filteredCards.map((card) => {
               const equippedItem = equippedCards.find((item) => item.cardId === card.id);
-                return (
+              const currentRank = equippedItem ? equippedItem.rank : 1;
+              const activeRankObj = card.ranks.find((r) => r.rank === currentRank) || card.ranks[0];
+
+              return (
                 <PipBoyPerkCard
                   key={card.id}
                   cardId={card.id}
                   name={card.name}
                   special={card.special}
-                  cost={card.ranks[0]?.cost || 1}
-                  rank={equippedItem ? equippedItem.rank : 1}
+                  cost={activeRankObj?.cost ?? (currentRank)}
+                  rank={currentRank}
                   maxRank={card.maxRank}
                   minLevel={card.minLevel}
-                  description={card.ranks[0]?.description || ""}
+                  description={activeRankObj?.description || ""}
                   isEquipped={!!equippedItem}
                   isFemale={isFemale}
-                  onEquip={() => handleEquipCard(card, 1)}
+                  onEquip={() => handleEquipCard(card, currentRank)}
                   onUnequip={() => handleUnequipCard(card.id)}
                   onRankChange={(newRank) => handleEquipCard(card, newRank)}
                 />
