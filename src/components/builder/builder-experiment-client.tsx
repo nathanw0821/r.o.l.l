@@ -35,6 +35,8 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import ProgressToggle from "@/components/progress-toggle";
 import BuilderCombatSwitchboard, { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { calculateAggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
+import { calculateCombatFirepower } from "@/lib/builder/combat-firepower-engine";
+import BuilderFirepowerMatrix from "@/components/builder/builder-firepower-matrix";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
 import BuilderGearSelector from "@/components/builder/builder-gear-selector";
 import { getEquipmentSynergies } from "@/lib/builder/synergy-engine";
@@ -996,6 +998,57 @@ export default function BuilderExperimentClient({
       piece.kind,
     ],
   );
+
+  const equippedPerkCards = React.useMemo(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
+      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
+      if (!perkSlotStr) return [];
+      const perkData = JSON.parse(perkSlotStr);
+      return Array.isArray(perkData.equippedCards) ? (perkData.equippedCards as { cardId: string; rank: number }[]) : [];
+    } catch {
+      return [];
+    }
+  }, []);
+
+  const weaponFirepowerResult = React.useMemo(() => {
+    if (piece.kind !== "weapon") return null;
+    return calculateCombatFirepower({
+      weaponId: piece.id,
+      equippedMods: equippedModsOrdered,
+      equippedPerks: equippedPerkCards,
+      activeBuffs: {
+        activeDrug: switchboardState?.activeDrug,
+        activeFood: switchboardState?.activeFood,
+        activeFoods: switchboardState?.activeFoods ? Object.values(switchboardState.activeFoods) : [],
+        activeBobblehead: switchboardState?.activeBobblehead,
+        activeMagazine: switchboardState?.activeMagazine,
+        activeAlcohol: switchboardState?.activeAlcohol,
+        activeMutations: payload.mutationIds,
+      },
+      playerStats: {
+        agility: totals.agi,
+        luck: totals.lck,
+        strength: totals.str,
+        healthPct: switchboardState?.healthPct ?? 0.2,
+        caps: 30000,
+        isPowerArmor: false,
+        hasStrangeInNumbers: payload.hasStrangeInNumbers,
+      },
+    });
+  }, [
+    piece.id,
+    piece.kind,
+    equippedModsOrdered,
+    equippedPerkCards,
+    switchboardState,
+    payload.mutationIds,
+    payload.hasStrangeInNumbers,
+    totals.agi,
+    totals.lck,
+    totals.str,
+  ]);
 
   const ghoulLegendarySandboxNotes = React.useMemo(() => {
     if (!payload.ghoul) return null;
@@ -2456,9 +2509,14 @@ export default function BuilderExperimentClient({
           ) : null}
         </div>
 
+        {/* Live Weapon Combat Firepower & VATS Simulation Matrix */}
+        {weaponFirepowerResult ? (
+          <BuilderFirepowerMatrix firepower={weaponFirepowerResult} />
+        ) : null}
+
         {/* Matrix 2: All-Inclusive Vault-Tec Buff & Consumable Registry / CHARACTER COMBAT SWITCHBOARD */}
         <BuilderCombatSwitchboard
-          rawDamage={piece.kind === "weapon" ? 110 : 0}
+          rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
           activeMutations={payload.mutationIds}
           onMutationsChange={(nextMutations) =>
             setPayload((p) => ({ ...p, mutationIds: nextMutations }))
