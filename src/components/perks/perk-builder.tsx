@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards } from "@/lib/perks/catalog";
+import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards, isGhoulPerkCard } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
@@ -47,7 +47,7 @@ function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => v
 export default function PerkBuilder({ characterId, characterName, mode = "live" }: PerkBuilderProps) {
   const [activeSlot, setActiveSlot] = React.useState<number>(0);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL">("ALL");
+  const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL" | "GHOUL">("ALL");
   const [showRoadmap, setShowRoadmap] = React.useState(false);
   const [isGhoul, setIsGhoul] = React.useState(mode === "pts");
 
@@ -267,7 +267,9 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
 
   const filteredCards = React.useMemo(() => {
     let result = searchedAllCards;
-    if (selectedCategory !== "ALL") {
+    if (selectedCategory === "GHOUL") {
+      result = result.filter((c) => isGhoulPerkCard(c.id || c.name));
+    } else if (selectedCategory !== "ALL") {
       result = result.filter((c) => c.special === selectedCategory);
     }
     return result.sort((a, b) => a.name.localeCompare(b.name));
@@ -702,6 +704,26 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                 </button>
               );
             })}
+
+            {/* Ghoul Perks Dedicated Filter Pill */}
+            {(() => {
+              const ghoulCount = searchedAllCards.filter((c) => isGhoulPerkCard(c.id || c.name)).length;
+              return (
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory("GHOUL")}
+                  className={`px-3 py-1 rounded text-xs font-mono font-bold transition-all border flex items-center gap-1.5 ${
+                    selectedCategory === "GHOUL"
+                      ? "bg-emerald-950/90 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.4)] ring-1 ring-emerald-400"
+                      : "border-emerald-800/40 bg-emerald-950/30 text-emerald-400/80 hover:text-emerald-300 hover:border-emerald-500/60"
+                  }`}
+                  title="Filter by Playable Ghoul & Feral synergy perk cards"
+                >
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  GHOUL ({ghoulCount})
+                </button>
+              );
+            })()}
           </div>
         </CardHeader>
         <CardContent className="pt-4">
