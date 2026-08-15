@@ -4,6 +4,7 @@ import * as React from "react";
 import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard } from "@/lib/perks/catalog";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
 import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
+import ProceduralPerkCard from "@/components/perks/procedural-perk-card";
 import { Sparkles, Star, Info, X, ExternalLink } from "lucide-react";
 
 export interface InGamePerkCardProps {
@@ -137,10 +138,8 @@ export default function InGamePerkCard({
   onRankChange,
   footerExtra,
 }: InGamePerkCardProps) {
-  const theme = INGAME_SPECIAL_THEMES[special] || INGAME_SPECIAL_THEMES.S;
-  const [imgError, setImgError] = React.useState(false);
   const [showInspector, setShowInspector] = React.useState(false);
-  const artworkUrl = getPerkCardArtworkUrl(cardId || name, special, isFemale);
+  const [inspectedRank, setInspectedRank] = React.useState(rank);
   const displayName = getGenderedPerkName(name, isFemale);
   const isLegendary = special === "LEGENDARY" || cardId?.includes("legendary");
   const isGhoul = isGhoulPerkCard(cardId || name);
@@ -148,13 +147,21 @@ export default function InGamePerkCard({
   const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
-    setImgError(false);
-  }, [artworkUrl]);
+    setInspectedRank(rank);
+  }, [rank, showInspector]);
 
   // Full Catalog Card for All Ranks Inspection
   const fullCard = React.useMemo(() => {
     return PERK_CATALOG.find((c) => c.id === cardId || c.name.toLowerCase() === name.toLowerCase());
   }, [cardId, name]);
+
+  const activeInspectedRankData = React.useMemo(() => {
+    if (!fullCard || !fullCard.ranks) {
+      return { rank: inspectedRank, cost, description };
+    }
+    const found = fullCard.ranks.find((r) => r.rank === inspectedRank);
+    return found || fullCard.ranks[0] || { rank: inspectedRank, cost, description };
+  }, [fullCard, inspectedRank, cost, description]);
 
   const openWikiSource = React.useCallback(() => {
     window.open(`/wiki?q=${encodeURIComponent(name)}`, "_blank", "noopener,noreferrer");
@@ -182,7 +189,7 @@ export default function InGamePerkCard({
     >
       {/* Style Bible Container: Aspect Ratio 3:4 Uniform Framing */}
       <div
-        className={`relative w-full aspect-[3/4.2] rounded-xl overflow-hidden shadow-xl transition-all duration-200 group-hover:scale-[1.03] cursor-pointer flex flex-col justify-between ${
+        className={`relative w-full aspect-[3/4.2] rounded-xl overflow-hidden transition-all duration-200 group-hover:scale-[1.03] cursor-pointer flex flex-col justify-between ${
           isEquipped
             ? "ring-2 ring-amber-400 shadow-amber-500/40"
             : isGhoul
@@ -199,39 +206,18 @@ export default function InGamePerkCard({
         }}
         title="Click to equip • Right-click for perk details & Truth Wiki"
       >
-        {!imgError ? (
-          <img
-            src={artworkUrl}
-            alt={displayName}
-            className="w-full h-full object-cover object-center rounded-xl block drop-shadow-xl transform-none"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div className={`w-full h-full p-3 rounded-xl border-2 ${isGhoul ? "border-emerald-500 bg-[#081210]" : `${theme.border} ${theme.cardBg}`} flex flex-col justify-between`}>
-            {/* Header Stamp Bar */}
-            <div className="flex items-center justify-between gap-1.5 border-b border-slate-700/80 pb-1.5">
-              <span className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}>
-                {cost}
-              </span>
-              <span className="text-[0.68rem] font-black uppercase tracking-wider text-slate-100 truncate">
-                {displayName}
-              </span>
-              <span className={`text-[0.58rem] font-black px-1.5 py-0.5 rounded border uppercase ${theme.stampBg}`}>
-                {special}
-              </span>
-            </div>
-
-            {/* Central Vault Boy Graphic */}
-            <div className="my-2 flex-1 flex items-center justify-center min-h-0 overflow-hidden">
-              <PipBoyCardArt special={special} name={name} isFemale={isFemale} className="w-full h-full max-h-[140px]" />
-            </div>
-
-            {/* Description Text Box */}
-            <p className="text-[0.62rem] font-mono text-slate-200 leading-tight bg-slate-950/90 p-2 rounded border border-slate-800 shrink-0 line-clamp-3">
-              {description}
-            </p>
-          </div>
-        )}
+        <ProceduralPerkCard
+          cardId={cardId}
+          name={name}
+          special={special}
+          cost={cost}
+          rank={rank}
+          maxRank={maxRank}
+          description={description}
+          isLegendary={isLegendary}
+          isGhoul={isGhoul}
+          isFemale={isFemale}
+        />
 
         {/* Legendary Badge Crest Banner */}
         {isLegendary && (
@@ -380,7 +366,7 @@ export default function InGamePerkCard({
                   <h3 className="text-lg sm:text-xl font-black uppercase text-amber-400 tracking-wider">
                     {name}
                   </h3>
-                  <span className={`text-xs font-black px-2 py-0.5 rounded border uppercase ${theme.stampBg}`}>
+                  <span className="text-xs font-black px-2 py-0.5 rounded border uppercase bg-slate-900 border-amber-500/80 text-amber-300 font-mono">
                     {special}
                   </span>
                 </div>
@@ -401,13 +387,20 @@ export default function InGamePerkCard({
 
             {/* Modal Body: Mobile Fluid Scaled Card & All Ranks Table */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
-              {/* Large Mobile-Fluid Crystal-Clear Card Preview */}
+              {/* Large Mobile-Fluid Dynamic 1:1 In-Game Card Preview */}
               <div className="sm:col-span-5 flex justify-center">
-                <div className="w-48 sm:w-56 aspect-[3/4.2] rounded-xl overflow-hidden shadow-2xl border-2 border-amber-400/70 ring-2 ring-amber-500/30">
-                  <img
-                    src={artworkUrl}
-                    alt={name}
-                    className="w-full h-full object-cover object-center rounded-xl"
+                <div className="w-48 sm:w-56 aspect-[3/4.2] rounded-xl overflow-hidden shadow-2xl">
+                  <ProceduralPerkCard
+                    cardId={cardId}
+                    name={name}
+                    special={special}
+                    cost={activeInspectedRankData.cost}
+                    rank={inspectedRank}
+                    maxRank={maxRank}
+                    description={activeInspectedRankData.description}
+                    isLegendary={isLegendary}
+                    isGhoul={isGhoul}
+                    isFemale={isFemale}
                   />
                 </div>
               </div>
@@ -418,15 +411,18 @@ export default function InGamePerkCard({
                   All Rank Stat Levels ({maxRank} Total Ranks):
                 </h4>
                 <div className="space-y-2 max-h-56 sm:max-h-72 overflow-y-auto pr-1">
-                  {(fullCard?.ranks || Array.from({ length: maxRank }, (_, i) => ({ rank: i + 1, cost: i + 1, description }))).map((r) => {
-                    const isSelected = r.rank === rank;
+                  {(fullCard?.ranks ||
+                    Array.from({ length: maxRank }, (_, i) => ({ rank: i + 1, cost: i + 1, description }))
+                  ).map((r) => {
+                    const isSelected = r.rank === inspectedRank;
                     return (
                       <div
                         key={r.rank}
-                        className={`p-2.5 rounded-lg border text-xs leading-relaxed transition-all ${
+                        onClick={() => setInspectedRank(r.rank)}
+                        className={`p-2.5 rounded-lg border text-xs leading-relaxed transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-amber-950/60 border-amber-500/80 text-amber-200 ring-1 ring-amber-400/30"
-                            : "bg-slate-900/80 border-slate-800 text-slate-300"
+                            ? "bg-amber-950/60 border-amber-500/80 text-amber-200 ring-1 ring-amber-400/30 shadow-md"
+                            : "bg-slate-900/80 border-slate-800 text-slate-300 hover:border-slate-700"
                         }`}
                       >
                         <div className="flex items-center justify-between font-bold mb-1">
@@ -463,6 +459,19 @@ export default function InGamePerkCard({
               </a>
 
               <div className="flex items-center gap-2">
+                {onRankChange && inspectedRank !== rank && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onRankChange(inspectedRank);
+                      setShowInspector(false);
+                    }}
+                    className="px-3 py-2 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400 shadow-sm cursor-pointer"
+                  >
+                    Apply Rank {inspectedRank}
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={() => {
@@ -473,7 +482,7 @@ export default function InGamePerkCard({
                     }
                     setShowInspector(false);
                   }}
-                  className={`px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all border ${
+                  className={`px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all border cursor-pointer ${
                     isEquipped
                       ? "bg-red-950/80 border-red-500/80 text-red-300 hover:bg-red-900"
                       : "bg-emerald-950/80 border-emerald-500/80 text-emerald-300 hover:bg-emerald-900"
