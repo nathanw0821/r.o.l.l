@@ -86,11 +86,6 @@ export default function VisualOverhaulStudioPage() {
     const percentLearned = total > 0 ? Math.round((learned / total) * 100) : 0;
     const percentSeeking = total > 0 ? Math.round((seeking / total) * 100) : 0;
 
-    // Total modules required for currently seeking mods
-    const modulesNeeded = modsState
-      .filter((m) => m.seeking)
-      .reduce((sum, m) => sum + m.modules, 0);
-
     // Tier-by-Tier progress
     const tierStats = [1, 2, 3, 4].map((star) => {
       const tierMods = modsState.filter((m) => m.stars === star);
@@ -100,7 +95,7 @@ export default function VisualOverhaulStudioPage() {
       return { star, learned: tierLearned, total: tierTotal, percent: tierPercent };
     });
 
-    return { total, learned, seeking, locked, percentLearned, percentSeeking, modulesNeeded, tierStats };
+    return { total, learned, seeking, locked, percentLearned, percentSeeking, tierStats };
   }, [modsState]);
 
   const filteredMods = useMemo(() => {
@@ -211,10 +206,15 @@ export default function VisualOverhaulStudioPage() {
                 <div className="text-sm font-black text-white">{stats.seeking}</div>
               </button>
 
-              <div className="px-3 py-1.5 bg-[#080d13] border border-slate-800 text-left">
-                <div className="text-[10px] text-sky-400 font-bold uppercase">Modules Req</div>
-                <div className="text-sm font-black text-white">{stats.modulesNeeded}</div>
-              </div>
+              <button 
+                onClick={() => setStatusFilter(statusFilter === "LOCKED" ? "ALL" : "LOCKED")}
+                className={`px-3 py-1.5 border text-left transition ${
+                  statusFilter === "LOCKED" ? "bg-slate-800 border-slate-500 text-slate-200" : "bg-[#080d13] border-slate-800 text-slate-400 hover:border-slate-600"
+                }`}
+              >
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Locked</div>
+                <div className="text-sm font-black text-white">{stats.locked}</div>
+              </button>
             </div>
           </div>
 
