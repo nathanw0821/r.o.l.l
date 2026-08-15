@@ -1,75 +1,57 @@
 ---
 name: frontend-designer
-description: Standard Operating Procedure & Aesthetic Guide for R.O.L.L. Frontend Design, Visual Theme Experimentation, and UI Component Prototyping.
+description: Standard Operating Procedure & Aesthetic Guide for R.O.L.L. Frontend Design, Visual Overhaul Prototypes, and Tactile Gaming Interface Architecture.
 ---
 
 # 🎨 Frontend Appearance Designer Skill (R.O.L.L.)
 
 ## Overview
-This skill provides design tokens, aesthetic principles, component guidelines, and interactive preview workflows for rapidly prototyping, styling, and testing visual appearances across the **R.O.L.L. (Resource Optimization & Legendary Loadouts)** web application.
+This skill governs the visual architecture, component design systems, and full-page aesthetic overhauls for **R.O.L.L. (Resource Optimization & Legendary Loadouts)**. It establishes authentic, diegetic, and high-utility design directions while strictly prohibiting generic AI web tropes.
 
 ---
 
-## 🌟 Core Aesthetic Directives for R.O.L.L.
+## 🚫 The Anti-AI Aesthetic Directives (Strict Rules)
 
-1. **Retro-Futuristic Tactical Utility**:
-   - Inspired by authentic in-universe terminals, Pip-Boy 2000 Mk VI/3000 interfaces, and RobCo industrial OS displays.
-   - High legibility, crisp contrast, functional information density, and subtle CRT scanlines.
+1. **NO Glassmorphism or Translucent Blurry Cards**:
+   - ❌ NEVER use `backdrop-blur`, semi-transparent gray glass boxes, or faint glowing gradient outlines that look like cookie-cutter crypto dashboards or AI templates.
+   - ✅ ALWAYS use solid, opaque, tactile surfaces with authentic material character (industrial matte, deep navy, brushed slate, stamped metal).
 
-2. **Forbidden Cliché Tropes (Strictly Prohibited)**:
-   - ❌ NO generic purple-on-dark themes.
-   - ❌ NO textureless flat cards without depth or subtle borders.
-   - ❌ NO decorative rainbow gradients on titles.
-   - ❌ NO generic icon-stuffed bento boxes without clear utility.
+2. **NO Low-Density Decorative Fluff**:
+   - ❌ Avoid oversized empty cards with centered icons and minimal text.
+   - ✅ Maximize data utility: players should instantly see star tiers, module costs, crafting catalysts, and damage deltas without endless scrolling.
 
-3. **Pixel-Perfect Fluid Responsiveness**:
-   - Every badge, table, modal, and perk card must adapt seamlessly from 320px mobile viewports to 4K ultra-wide monitors without overlapping or clipping text.
-
----
-
-## 🎨 Official Visual Themes
-
-### 1. 🟢 Pip-Boy Standard Green (Default Classic)
-* **Background**: `#080c09` (Deep Phosphor Black)
-* **Card Surface**: `#0e1811` (Dark Emerald Glass)
-* **Primary Accent / Glow**: `#10b981` / `#00ff66`
-* **Text / Headers**: `#ecfdf5` / `#34d399`
-* **Border Color**: `rgba(16, 185, 129, 0.25)`
-
-### 2. 🟠 New Vegas Amber (Warm Tungsten Phosphor)
-* **Background**: `#0c0906` (Deep Obsidian Ochre)
-* **Card Surface**: `#1a130b` (Warm Amber Glass)
-* **Primary Accent / Glow**: `#f59e0b` / `#ffb000`
-* **Text / Headers**: `#fffbeb` / `#fbbf24`
-* **Border Color**: `rgba(245, 158, 11, 0.25)`
-
-### 3. 🔵 Vault-Tec Pre-War Corporate (Cobalt & Goldenrod)
-* **Background**: `#060b14` (Deep Vault Navy)
-* **Card Surface**: `#0b172a` (Pre-War Steel Glass)
-* **Primary Accent / Glow**: `#0284c7` (Vault Blue) & `#facc15` (Vault Gold)
-* **Text / Headers**: `#f0f9ff` / `#38bdf8`
-* **Border Color**: `rgba(56, 189, 248, 0.3)`
-
-### 4. ⚪ Pip-Boy 2000 Mk VI Monochrome (Appalachian Terminal)
-* **Background**: `#09090b` (Matte Carbon)
-* **Card Surface**: `#18181b` (High-Contrast Slate)
-* **Primary Accent / Glow**: `#e2e8f0` / `#ffffff`
-* **Text / Headers**: `#fafafa` / `#a1a1aa`
-* **Border Color**: `rgba(255, 255, 255, 0.2)`
-
-### 5. 🌑 Tactical Stealth / Slate Minimal
-* **Background**: `#020617` (Void Slate)
-* **Card Surface**: `#0f172a` (Brushed Metal)
-* **Primary Accent / Glow**: `#64748b` / `#94a3b8`
-* **Text / Headers**: `#f8fafc` / `#cbd5e1`
-* **Border Color**: `rgba(148, 163, 184, 0.15)`
+3. **NO Floating Rainbow Gradient Text**:
+   - ❌ Never apply multi-color CSS text gradients to headlines.
+   - ✅ Use crisp, bold typography with deliberate tracking, uppercase hierarchy, and authentic Vault-Tec or tactical styling.
 
 ---
 
-## 🎛️ Interactive Theme Testing Workflow
+## 🏆 Official Design Archetypes for Evaluation
 
-When developing or proposing new UI layouts:
-1. **Use `/design-lab`**: Test components in the dedicated Theme Preview Lab.
-2. **Inspect Interactive States**: Verify `:hover`, `:active`, `:focus-visible`, and disabled states.
-3. **Verify CRT Effects**: Test scanlines, phosphor bloom, and grid overlays with adjustable opacity sliders.
-4. **Mobile & Viewport Verification**: Ensure fluid stacking and legible font sizes across breakpoints.
+### Concept 3: 🏢 Vault-Tec Overseer Operating System (Mid-Century Atomic Corporate)
+* **Design Philosophy**: 1950s/60s World's Fair Atomic-Age corporate minimalism. The official operating system of Vault-Tec administration.
+* **Surface Materials**:
+  * Solid Deep Vault Navy (`#0b1320`), Steel Grey (`#121d30`), and crisp high-contrast off-whites (`#f8fafc`).
+  * Signature **Vault-Tec Yellow** (`#fbbf24`) top-border stripes and bold architectural dividers.
+* **Badges & Indicators**:
+  * Stamped official approval badges (`[ VAULT-TEC APPROVED ]`, `[ LEARNED ]`, `[ SEEKING ]`).
+* **Typography**:
+  * Bold grotesk sans-serif with wide uppercase tracking and prominent tabular numerals.
+* **Interactive Sandbox**: Accessible at `/design-lab` (Concept 3 mode).
+
+### Concept 4: ⚡ High-Density Tactical Armory (Elite Theorycrafter Utility)
+* **Design Philosophy**: Inspired by top-tier gaming theorycrafting tools (Path of Building, Tarkov Market, RaidBots). Pure performance, razor-sharp precision, and maximum information density.
+* **Surface Materials**:
+  * Solid Charcoal and Obsidian (`#070b10`, `#0a0e14`, `#111720`).
+  * Razor-sharp 1px dividers (`#1e293b`) with zero rounded fluff.
+* **Data Presentation**:
+  * Multi-column compact data grid displaying Tier, Name, Equipment Slot, Mechanism, Stat Delta (`+95% DMG`, `-25% AP`), Module Costs, and Craft Catalysts on a single screen.
+* **Interactive Sandbox**: Accessible at `/design-lab` (Concept 4 mode).
+
+---
+
+## 🛠️ Testing & Prototyping Protocol
+
+1. **Test in `/design-lab`**: View live, working prototypes of both design archetypes with active search, star filters, and category toggles.
+2. **Review Tactile Feel**: Evaluate readability, column alignment, button affordance, and overall distinct visual character.
+3. **Commit & Deploy**: Once a design archetype is finalized, roll out the design language across all production routes (`/mods`, `/perks`, `/build`, `/wiki`).
