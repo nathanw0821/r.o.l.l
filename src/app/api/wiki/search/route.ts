@@ -59,5 +59,9 @@ export async function GET(req: Request) {
     list.sort((a, b) => String(b.id).localeCompare(String(a.id)));
   }
 
-  return NextResponse.json(list.slice(0, limit));
+  return NextResponse.json(list.slice(0, limit), {
+    headers: {
+      "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800"
+    }
+  });
 }

@@ -27,6 +27,8 @@ export default function PipBoyCardArt({ special, name, className = "", isFemale 
         <img
           src={artworkUrl}
           alt={name}
+          loading="lazy"
+          decoding="async"
           className="max-h-[110px] max-w-[130px] object-contain drop-shadow-[0_4px_10px_rgba(245,158,11,0.25)]"
         />
       </div>
