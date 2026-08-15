@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { SpecialCategory, PERK_CATALOG, PerkCard } from "@/lib/perks/catalog";
+import { SpecialCategory, PERK_CATALOG, PerkCard, isGhoulPerkCard } from "@/lib/perks/catalog";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
-import { getPerkCardArtworkUrl } from "@/lib/perks/perk-artwork";
+import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
 import { Sparkles, Star, Info, X, ExternalLink } from "lucide-react";
 
 export interface InGamePerkCardProps {
@@ -110,12 +110,12 @@ const INGAME_SPECIAL_THEMES: Record<
   },
   LEGENDARY: {
     cardBg: "bg-gradient-to-b from-[#3f2005] via-[#261303] to-[#120901]",
-    border: "border-yellow-400 hover:border-yellow-200 ring-2 ring-yellow-400/50 shadow-yellow-500/20",
-    bgHeader: "bg-gradient-to-r from-amber-900 via-yellow-800 to-amber-900 text-yellow-100 border-yellow-400/90",
+    border: "border-amber-400/90 hover:border-amber-200 ring-2 ring-amber-400/50 shadow-amber-500/20",
+    bgHeader: "bg-gradient-to-r from-amber-900 via-yellow-800 to-amber-900 text-yellow-100 border-amber-400/90",
     textHeader: "text-yellow-100 font-black",
-    badgeBg: "bg-yellow-950 border-yellow-400 text-yellow-100 font-black",
-    stampBg: "bg-yellow-900 border-yellow-400 text-yellow-100 font-black",
-    artWindowBg: "from-yellow-400/30 via-[#261303] to-[#120901]",
+    badgeBg: "bg-amber-950 border-amber-400 text-yellow-100 font-black",
+    stampBg: "bg-amber-900 border-amber-400 text-yellow-100 font-black",
+    artWindowBg: "from-amber-400/30 via-[#261303] to-[#120901]",
     glowColor: "#f59e0b",
   },
 };
@@ -141,24 +141,27 @@ export default function InGamePerkCard({
   const [imgError, setImgError] = React.useState(false);
   const [showInspector, setShowInspector] = React.useState(false);
   const artworkUrl = getPerkCardArtworkUrl(cardId || name, special, isFemale);
+  const displayName = getGenderedPerkName(name, isFemale);
   const isLegendary = special === "LEGENDARY" || cardId?.includes("legendary");
+  const isGhoul = isGhoulPerkCard(cardId || name);
 
   const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
-  const hoverTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    setImgError(false);
+  }, [artworkUrl]);
 
   // Full Catalog Card for All Ranks Inspection
   const fullCard = React.useMemo(() => {
     return PERK_CATALOG.find((c) => c.id === cardId || c.name.toLowerCase() === name.toLowerCase());
   }, [cardId, name]);
 
-  const wikiSlug = name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
-
   const openWikiSource = React.useCallback(() => {
     window.open(`/wiki?q=${encodeURIComponent(name)}`, "_blank", "noopener,noreferrer");
   }, [name]);
 
   // Mobile-only touch long press
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleTouchStart = () => {
     longPressTimerRef.current = setTimeout(() => {
       openWikiSource();
     }, 550);
@@ -171,8 +174,6 @@ export default function InGamePerkCard({
     }
   };
 
-
-
   return (
     <div
       className={`group relative w-full flex flex-col items-center justify-between transition-all duration-200 font-mono ${
@@ -182,7 +183,11 @@ export default function InGamePerkCard({
       {/* Style Bible Container: Aspect Ratio 3:4 Uniform Framing */}
       <div
         className={`relative w-full aspect-[3/4.2] rounded-xl overflow-hidden shadow-xl transition-all duration-200 group-hover:scale-[1.03] cursor-pointer flex flex-col justify-between ${
-          isEquipped ? "ring-2 ring-amber-400 shadow-amber-500/40" : "opacity-95 group-hover:opacity-100"
+          isEquipped
+            ? "ring-2 ring-amber-400 shadow-amber-500/40"
+            : isGhoul
+            ? "ring-2 ring-emerald-500/80 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
+            : "opacity-95 group-hover:opacity-100"
         }`}
         onClick={() => (isEquipped ? onUnequip?.() : onEquip?.())}
         onTouchStart={handleTouchStart}
@@ -197,19 +202,19 @@ export default function InGamePerkCard({
         {!imgError ? (
           <img
             src={artworkUrl}
-            alt={name}
+            alt={displayName}
             className="w-full h-full object-cover object-center rounded-xl block drop-shadow-xl transform-none"
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className={`w-full h-full p-3 rounded-xl border-2 ${theme.border} ${theme.cardBg} flex flex-col justify-between`}>
+          <div className={`w-full h-full p-3 rounded-xl border-2 ${isGhoul ? "border-emerald-500 bg-[#081210]" : `${theme.border} ${theme.cardBg}`} flex flex-col justify-between`}>
             {/* Header Stamp Bar */}
             <div className="flex items-center justify-between gap-1.5 border-b border-slate-700/80 pb-1.5">
               <span className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}>
                 {cost}
               </span>
               <span className="text-[0.68rem] font-black uppercase tracking-wider text-slate-100 truncate">
-                {name}
+                {displayName}
               </span>
               <span className={`text-[0.58rem] font-black px-1.5 py-0.5 rounded border uppercase ${theme.stampBg}`}>
                 {special}
@@ -218,7 +223,7 @@ export default function InGamePerkCard({
 
             {/* Central Vault Boy Graphic */}
             <div className="my-2 flex-1 flex items-center justify-center min-h-0 overflow-hidden">
-              <PipBoyCardArt special={special} name={name} className="w-full h-full max-h-[140px]" />
+              <PipBoyCardArt special={special} name={name} isFemale={isFemale} className="w-full h-full max-h-[140px]" />
             </div>
 
             {/* Description Text Box */}
@@ -232,6 +237,13 @@ export default function InGamePerkCard({
         {isLegendary && (
           <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[0.58rem] px-2 py-0.5 rounded-md shadow-lg border border-yellow-300 tracking-wider flex items-center gap-1">
             <Sparkles className="h-3 w-3 fill-slate-950" /> LEGENDARY
+          </div>
+        )}
+
+        {/* Ghoul Specific Badge Banner */}
+        {isGhoul && !isLegendary && (
+          <div className="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-500 text-emerald-300 font-mono font-black text-[0.55rem] px-1.5 py-0.5 rounded shadow-md tracking-wider">
+            GHOUL
           </div>
         )}
 

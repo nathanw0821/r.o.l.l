@@ -18,6 +18,37 @@ export type PerkCard = {
   ranks: PerkRank[];
 };
 
+export const GHOUL_PERK_IDS = new Set([
+  "action-ghoul",
+  "action-diet",
+  "feral-presence",
+  "feral-rage",
+  "ghoulish",
+  "glowing-criticals",
+  "glowing-gut",
+  "glowing-hunter",
+  "glowing-one",
+  "moral-support",
+  "rad-resistant",
+  "rad-specialist",
+  "rad-sponge",
+  "rad-reaver",
+  "radiation-power",
+  "radicool",
+  "radioactive-strength",
+  "united-ordeal",
+  "cannibal",
+  "chem-diet",
+  "what-rads"
+]);
+
+export function isGhoulPerkCard(cardIdOrName?: string): boolean {
+  if (!cardIdOrName) return false;
+  const clean = cardIdOrName.toLowerCase().trim().replace(/[^a-z0-9-]/g, "");
+  if (GHOUL_PERK_IDS.has(clean)) return true;
+  return clean.includes("ghoul") || clean.includes("feral") || clean.includes("glowing") || clean.includes("radiation") || clean.includes("rad-") || clean.includes("radicool");
+}
+
 export const PERK_CATALOG: PerkCard[] = (rawPerkCards as PerkCard[]).sort((a, b) =>
   a.name.localeCompare(b.name)
 );
@@ -45,8 +76,14 @@ export function getPerkCardById(id: string): PerkCard | undefined {
 }
 
 export function searchPerkCards(query: string, rank?: number): PerkCard[] {
-  const norm = query.toLowerCase().trim();
+  let norm = query.toLowerCase().trim();
   if (!norm) return PERK_CATALOG;
+
+  // Resolve female variant query aliases to find parent perk cards
+  if (norm.includes("action girl") || norm === "actiongirl" || norm === "action-girl") norm = "action boy";
+  else if (norm.includes("aquagirl") || norm === "aqua girl" || norm === "aqua-girl") norm = "aquaboy";
+  else if (norm.includes("party girl") || norm === "partygirl" || norm === "party-girl") norm = "party boy";
+  else if (norm.includes("black widow") || norm === "blackwidow" || norm === "black-widow") norm = "lady killer";
 
   return PERK_CATALOG.filter((card) => {
     const matchName = card.name.toLowerCase().includes(norm);
