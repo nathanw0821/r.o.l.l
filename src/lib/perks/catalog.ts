@@ -21,32 +21,26 @@ export type PerkCard = {
 export const GHOUL_PERK_IDS = new Set([
   "action-ghoul",
   "action-diet",
+  "chem-diet",
   "feral-presence",
   "feral-rage",
-  "ghoulish",
   "glowing-criticals",
   "glowing-gut",
   "glowing-hunter",
   "glowing-one",
   "moral-support",
-  "rad-resistant",
   "rad-specialist",
-  "rad-sponge",
   "rad-reaver",
   "radiation-power",
-  "radicool",
   "radioactive-strength",
-  "united-ordeal",
-  "cannibal",
-  "chem-diet",
-  "what-rads"
+  "united-ordeal"
 ]);
 
 export function isGhoulPerkCard(cardIdOrName?: string): boolean {
   if (!cardIdOrName) return false;
-  const clean = cardIdOrName.toLowerCase().trim().replace(/[^a-z0-9-]/g, "");
-  if (GHOUL_PERK_IDS.has(clean)) return true;
-  return clean.includes("ghoul") || clean.includes("feral") || clean.includes("glowing") || clean.includes("radiation") || clean.includes("rad-") || clean.includes("radicool");
+  const clean = cardIdOrName.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const unhyphenated = clean.replace(/-/g, "");
+  return GHOUL_PERK_IDS.has(clean) || GHOUL_PERK_IDS.has(unhyphenated);
 }
 
 export const PERK_CATALOG: PerkCard[] = (rawPerkCards as PerkCard[]).sort((a, b) =>
