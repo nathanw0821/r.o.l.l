@@ -442,6 +442,7 @@ export default function BuilderExperimentClient({
       activeCampBuffs: switchboardState.activeCampBuffs,
       activeDrug: switchboardState.activeDrug,
       activeFood: switchboardState.activeFood,
+      activeFoods: switchboardState.activeFoods,
       activeBobblehead: switchboardState.activeBobblehead,
       activeMagazine: switchboardState.activeMagazine,
       activeAlcohol: switchboardState.activeAlcohol,
@@ -471,6 +472,50 @@ export default function BuilderExperimentClient({
         if (Array.isArray(parsedSlots)) {
           setSavedLoadouts(parsedSlots);
         }
+      }
+
+      // Sync P.E.R.K. punch card machine loadout into B.U.I.L.D.
+      try {
+        const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
+        const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
+        if (perkSlotStr) {
+          const perkData = JSON.parse(perkSlotStr);
+          if (perkData) {
+            setPayload((prev) => {
+              const next = { ...prev };
+              if (perkData.specials && Object.keys(perkData.specials).length > 0) {
+                const s = perkData.specials;
+                if (!next.baseSpecial || Object.keys(next.baseSpecial).length === 0) {
+                  next.baseSpecial = {
+                    str: s.S ?? 1,
+                    per: s.P ?? 1,
+                    end: s.E ?? 1,
+                    cha: s.C ?? 1,
+                    int: s.I ?? 1,
+                    agi: s.A ?? 1,
+                    lck: s.L ?? 1,
+                  };
+                }
+              }
+              if (Array.isArray(perkData.equippedCards) && perkData.equippedCards.length > 0) {
+                const legendaryEntries: string[] = [];
+                for (const item of perkData.equippedCards) {
+                  const cardId = item.cardId;
+                  const rank = item.rank || 4;
+                  if (cardId in LEGENDARY_PERK_CARDS || cardId.startsWith("legendary-") || ["sizzling-style", "funky-duds", "what-rads", "electric-absorption", "master-infiltrator", "taking-one-for-the-team", "follow-through", "ammo-factory", "brawling-chemist", "hack-and-slash", "far-flung-fireworks", "exploding-palm", "detonation-contagion", "collateral-damage", "blood-sacrifice", "retribution", "power-armor-reboot", "power-sprinter", "survival-shortcut"].includes(cardId)) {
+                    legendaryEntries.push(`${cardId}:${rank}`);
+                  }
+                }
+                if (legendaryEntries.length > 0) {
+                  next.legendaryPerkIds = Array.from(new Set([...(next.legendaryPerkIds || []), ...legendaryEntries]));
+                }
+              }
+              return next;
+            });
+          }
+        }
+      } catch {
+        // Ignore perk loadout sync error
       }
 
       if (!isAdmin && !hasBuilderAccess) {
@@ -832,6 +877,62 @@ export default function BuilderExperimentClient({
     ],
   );
 
+  const perkDeckDefensiveLayer = React.useMemo(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
+      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
+      if (!perkSlotStr) return null;
+      const perkData = JSON.parse(perkSlotStr);
+      if (!Array.isArray(perkData.equippedCards)) return null;
+
+      let dr = 0;
+      let er = 0;
+      let fr = 0;
+      const pr = 0;
+      let rr = 0;
+
+      const isPowerArmor = piece.kind === "powerArmor";
+      const strVal = payload.baseSpecial?.str || 1;
+      const agiVal = payload.baseSpecial?.agi || 1;
+
+      for (const card of perkData.equippedCards) {
+        const id = (card.cardId || "").toLowerCase();
+        const rank = card.rank || 1;
+
+        if (id === "ironclad" && !isPowerArmor) {
+          dr += rank * 10;
+          er += rank * 10;
+        } else if (id === "barbarian" && !isPowerArmor) {
+          const mult = rank === 1 ? 2 : rank === 2 ? 3 : 4;
+          dr += Math.min(80, strVal * mult);
+        } else if (id === "evasive" && !isPowerArmor) {
+          const mult = rank === 1 ? 1 : rank === 2 ? 2 : 3;
+          const bonus = Math.min(45, agiVal * mult);
+          dr += bonus;
+          er += bonus;
+        } else if (id === "refractor") {
+          er += rank * 10;
+        } else if (id === "fireproof") {
+          fr += rank * 15;
+        } else if (id === "rad-resistant" || id === "radresistant") {
+          rr += rank * 10;
+        } else if (id === "junk-shield" && !isPowerArmor) {
+          dr += rank * 10;
+          er += rank * 10;
+        } else if (id === "bodyguards") {
+          const perMember = rank === 1 ? 6 : rank === 2 ? 8 : rank === 3 ? 10 : 12;
+          dr += perMember * 3;
+          er += perMember * 3;
+        }
+      }
+
+      return { dr, er, fr, pr, rr };
+    } catch {
+      return null;
+    }
+  }, [piece.kind, payload.baseSpecial]);
+
   const intrinsicBenchTotals = React.useMemo(
     () =>
       aggregateEffectMath([], {
@@ -865,6 +966,7 @@ export default function BuilderExperimentClient({
             ? [powerArmorFrameIntrinsicLayer]
             : []),
           ...(mutationLayer ? [mutationLayer] : []),
+          ...(perkDeckDefensiveLayer ? [perkDeckDefensiveLayer] : []),
         ],
         baseArmorStats,
         armorPieceSetKeys: payload.armorPieceSetKeys,
@@ -878,6 +980,7 @@ export default function BuilderExperimentClient({
       armorCraftingLayers,
       powerArmorFrameIntrinsicLayer,
       mutationLayer,
+      perkDeckDefensiveLayer,
       baseArmorStats,
       payload.armorPieceSetKeys,
       payload.baseSpecial,
@@ -1384,10 +1487,13 @@ export default function BuilderExperimentClient({
                     bLines.push({ source: `${style.label.split(" (")[0]}`, val: `+${style.effectMath[key]}` });
                   }
 
-                  payload.legendaryPerkIds.forEach((id) => {
+                  payload.legendaryPerkIds.forEach((rawEntry) => {
+                    const [id, rankStr] = rawEntry.split(":");
+                    const rank = parseInt(rankStr, 10) || 4;
+                    const bonus = rank === 4 ? 5 : Math.max(1, Math.min(3, rank));
                     const perk = LEGENDARY_PERK_CARDS[id];
                     if (perk?.specialBonus && perk.specialBonus[key]) {
-                      bLines.push({ source: perk.label.split(" (")[0], val: `+${perk.specialBonus[key]}` });
+                      bLines.push({ source: `Legendary: ${perk.label.split(" (")[0]}`, val: `+${bonus}` });
                     }
                   });
 
@@ -1530,6 +1636,22 @@ export default function BuilderExperimentClient({
                     rLines.push({ source: `${lining.label.split(" (")[0]}`, val: `+${lining.effectMath[k]}` });
                   }
 
+                  payload.legendaryPerkIds.forEach((rawEntry) => {
+                    const [id, rankStr] = rawEntry.split(":");
+                    const rank = parseInt(rankStr, 10) || 4;
+                    const perk = LEGENDARY_PERK_CARDS[id];
+                    if (perk?.resBonus && perk.resBonus[k as keyof typeof perk.resBonus]) {
+                      const val = Math.round((perk.resBonus[k as keyof typeof perk.resBonus] || 0) * (rank / 4));
+                      if (val > 0) {
+                        rLines.push({ source: `Legendary: ${perk.label.split(" (")[0]}`, val: `+${val}` });
+                      }
+                    }
+                  });
+
+                  if (perkDeckDefensiveLayer && perkDeckDefensiveLayer[k as keyof typeof perkDeckDefensiveLayer] > 0) {
+                    rLines.push({ source: "Equipped Perk Deck", val: `+${perkDeckDefensiveLayer[k as keyof typeof perkDeckDefensiveLayer]}` });
+                  }
+
                   payload.legendaryModIds.forEach((id, idx) => {
                     if (!id) return;
                     const mod = mods.find((m) => m.id === id);
@@ -1581,38 +1703,41 @@ export default function BuilderExperimentClient({
             </TooltipProvider>
           </div>
 
-          {/* Active Effects Summarizer rollup list */}
-          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
-            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-              [ ACTIVE LEGENDARY MATRICES ]
+          {/* Active Effects Summarizer rollup list (Compact High-Density Matrix) */}
+          <div className="pip-terminal-panel p-3 rounded-xl space-y-2 font-mono">
+            <div className="flex items-center justify-between border-b border-border/20 pb-1.5 text-xs font-black uppercase tracking-widest text-accent">
+              <span>[ ACTIVE LEGENDARY MATRICES ]</span>
+              <span className="text-[0.65rem] px-1.5 py-0.2 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
+                {groupedLegendaryEffects.length} ACTIVE
+              </span>
             </div>
             
             {groupedLegendaryEffects.length === 0 ? (
-              <p className="text-[0.78rem] text-foreground/35 italic uppercase">
+              <p className="text-[0.72rem] text-foreground/35 italic uppercase py-1">
                 &gt; no legendary effects currently loaded.
               </p>
             ) : (
-              <ul className="space-y-3 max-h-56 overflow-y-auto pr-1">
+              <ul className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                 {groupedLegendaryEffects.map(({ mod, count, benchLabels }) => {
                   const descRaw = mod.description?.trim() ?? "";
                   const desc = sandboxLegendaryDescription(descRaw, piece) || descRaw;
                   return (
-                    <li key={mod.id} className="text-[0.78rem] leading-snug border-b border-border/10 pb-2">
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-black text-accent/90 uppercase tracking-wide">
+                    <li key={mod.id} className="text-[0.72rem] leading-tight bg-background/30 p-1.5 rounded border border-border/20 hover:border-accent/30 transition-colors">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-bold text-accent truncate">
                           {mod.starRank}★ {mod.name}
                         </span>
                         {count > 1 && (
-                          <span className="rounded-full bg-accent/10 px-1.5 py-0.2 text-[0.84rem] font-black text-accent border border-accent/20">
+                          <span className="rounded bg-accent/20 px-1 py-0.2 text-[0.65rem] font-black text-accent border border-accent/40 shrink-0">
                             ×{count}
                           </span>
                         )}
                       </div>
-                      <div className="text-[0.84rem] text-foreground/45 mt-0.5 font-bold uppercase tracking-wider">
+                      <div className="text-[0.62rem] text-foreground/45 truncate mt-0.5 uppercase">
                         {benchLabels.join(" · ")}
                       </div>
                       {desc ? (
-                        <p className="mt-1 text-foreground/70 font-sans italic text-[0.75rem]">
+                        <p className="mt-0.5 text-foreground/70 text-[0.65rem] line-clamp-1 font-sans italic" title={desc}>
                           {desc}
                         </p>
                       ) : null}
@@ -2046,29 +2171,34 @@ export default function BuilderExperimentClient({
             </div>
           </div>
 
-          {/* Shopping list of modules required */}
-          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
-            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-              [ BENCH MATERIALS LIST ]
-            </div>
-            
-            <div className="flex flex-wrap gap-1.5">
-              {shopping.lines.length === 0 ? (
-                <p className="text-[0.78rem] text-foreground/30 italic uppercase">
-                  &gt; legendary bench is idle. no modules required.
-                </p>
-              ) : (
-                shopping.lines.map((line) => (
-                  <div
-                    key={line.label}
-                    className="flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/5 px-2.5 py-0.5 text-[0.72rem] font-black text-accent uppercase tracking-widest"
-                  >
-                    <span>{line.count}×</span>
-                    <span>{line.label}</span>
-                  </div>
-                ))
+          {/* Shopping list of modules required (Compact High-Density Matrix) */}
+          <div className="pip-terminal-panel p-3 rounded-xl space-y-2 font-mono">
+            <div className="flex items-center justify-between border-b border-border/20 pb-1.5 text-xs font-black uppercase tracking-widest text-accent">
+              <span>[ BENCH MATERIALS LIST ]</span>
+              {shopping.modules > 0 && (
+                <span className="text-[0.65rem] px-1.5 py-0.2 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
+                  {shopping.modules} MODS TOTAL
+                </span>
               )}
             </div>
+            
+            {shopping.lines.length === 0 ? (
+              <p className="text-[0.72rem] text-foreground/30 italic uppercase py-1">
+                &gt; legendary bench is idle. no modules required.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-36 overflow-y-auto pr-1">
+                {shopping.lines.map((line) => (
+                  <div
+                    key={line.label}
+                    className="flex items-center justify-between gap-1 rounded border border-border/20 bg-background/30 px-2 py-1 text-[0.68rem] font-bold text-foreground/80 hover:border-accent/30 transition-colors"
+                  >
+                    <span className="truncate">{line.label}</span>
+                    <span className="text-accent font-black shrink-0">×{line.count}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Share links inputs and logs */}

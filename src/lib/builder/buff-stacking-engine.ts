@@ -26,7 +26,8 @@ export type AggregatedBuffSpecial = {
 export function calculateAggregatedBuffSpecial(params: {
   activeCampBuffs: string[];
   activeDrug: string | null;
-  activeFood: string | null;
+  activeFood?: string | null;
+  activeFoods?: Record<string, string>;
   activeBobblehead: string | null;
   activeMagazine: string | null;
   activeAlcohol: string | null;
@@ -37,6 +38,7 @@ export function calculateAggregatedBuffSpecial(params: {
     activeCampBuffs,
     activeDrug,
     activeFood,
+    activeFoods,
     activeBobblehead,
     activeMagazine,
     activeAlcohol,
@@ -95,9 +97,13 @@ export function calculateAggregatedBuffSpecial(params: {
   const chemDef = ALL_CHEMS.find((c) => c.id === activeDrug);
   addBuffDef(chemDef, "Chem");
 
-  // 3. Active Food
-  const foodDef = ALL_PLANT_FOODS.find((f) => f.id === activeFood) || ALL_MEAT_FOODS.find((f) => f.id === activeFood);
-  addBuffDef(foodDef, "Food/Tea");
+  // 3. Active Foods (Multi-category stacked foods)
+  const allFoods = [...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS];
+  const foodIds = activeFoods ? Object.values(activeFoods) : activeFood ? [activeFood] : [];
+  foodIds.forEach((fid) => {
+    const fDef = allFoods.find((f) => f.id === fid);
+    addBuffDef(fDef, "Food/Tea");
+  });
 
   // 4. Active Bobblehead
   const bobbleDef = ALL_BOBBLEHEADS.find((b) => b.id === activeBobblehead);

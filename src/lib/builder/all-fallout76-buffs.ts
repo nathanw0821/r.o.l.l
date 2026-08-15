@@ -17,6 +17,7 @@ export type Fallout76BuffDef = {
   label: string;
   category: BuffCategory;
   description: string;
+  foodBuffType?: "crit_damage" | "ap_regen" | "max_ap" | "int" | "xp" | "str" | "per" | "end" | "cha" | "agi" | "lck" | "melee_damage" | "carry_weight" | "dr_er" | "max_hp";
   damageMultiplier?: number;
   xpBonusPct?: number;
   specialBonus?: Partial<Record<"str" | "per" | "end" | "cha" | "int" | "agi" | "lck", number>>;
@@ -80,33 +81,33 @@ export const ALL_CHEMS: Fallout76BuffDef[] = sortAlphanumerically([
 
 // 4. ALL STEEPED TEAS & PLANT FOODS (Herbivore 2.5x - Alphanumerically Sorted)
 export const ALL_PLANT_FOODS: Fallout76BuffDef[] = sortAlphanumerically([
-  { id: "plant-blight-soup", label: "Blight Soup", category: "food_plant", description: "+50% VATS Crit Dmg (+125% Herbivore)", damageMultiplier: 1.0 },
-  { id: "plant-brain-bombs", label: "Brain Bombs", category: "food_plant", description: "+4 INT (+8 INT Herbivore = +24% XP)", specialBonus: { int: 8 }, xpBonusPct: 24 },
-  { id: "plant-company-tea", label: "Company Tea", category: "food_plant", description: "+10 AP Regen/sec (+25 Herbivore)", damageMultiplier: 1.0 },
-  { id: "plant-corn-soup", label: "Corn Soup", category: "food_plant", description: "+6 AP Regen (+15 Herbivore)" },
-  { id: "plant-cranberry-relish", label: "Cranberry Relish", category: "food_plant", description: "+10% XP (+25% Herbivore)", xpBonusPct: 25 },
-  { id: "plant-mutfruit-juice", label: "Mutfruit Juice", category: "food_plant", description: "+2 Agility (+5 Herbivore)", specialBonus: { agi: 5 } },
-  { id: "plant-steeped-ash-rose", label: "Steeped Ash Rose Tea", category: "food_plant", description: "+2 Strength (+5 Herbivore)", specialBonus: { str: 5 }, damageMultiplier: 1.04 },
-  { id: "plant-steeped-fever-blossom", label: "Steeped Fever Blossom Tea", category: "food_plant", description: "+20 AP Regen (+50 Herbivore)", damageMultiplier: 1.0 },
-  { id: "plant-steeped-melon", label: "Steeped Melon Blossom Tea", category: "food_plant", description: "+2 Agility (+5 Herbivore)", specialBonus: { agi: 5 } },
-  { id: "plant-steeped-strangler", label: "Steeped Strangler Bloom Tea", category: "food_plant", description: "+2 Luck (+5 Herbivore)", specialBonus: { lck: 5 } },
-  { id: "plant-steeped-tattoo", label: "Steeped Tattoo Flower Tea", category: "food_plant", description: "+2 Perception (+5 Herbivore)", specialBonus: { per: 5 } },
-  { id: "plant-steeped-thistle", label: "Steeped Thistle Tea", category: "food_plant", description: "+20% VATS Crit Dmg (+50% Herbivore)", damageMultiplier: 1.0 },
-  { id: "plant-sweet-mutfruit-tea", label: "Sweet Mutfruit Tea", category: "food_plant", description: "+20% VATS Crit Dmg (+50% Herbivore)", damageMultiplier: 1.0 },
-  { id: "plant-tato-juice", label: "Tato Juice", category: "food_plant", description: "+10 Max AP (+25 Herbivore)" },
+  { id: "plant-blight-soup", label: "Blight Soup", category: "food_plant", foodBuffType: "crit_damage", description: "+50% VATS Crit Dmg (+125% Herbivore)", damageMultiplier: 1.0 },
+  { id: "plant-brain-bombs", label: "Brain Bombs", category: "food_plant", foodBuffType: "int", description: "+4 INT (+8 INT Herbivore = +24% XP)", specialBonus: { int: 8 }, xpBonusPct: 24 },
+  { id: "plant-company-tea", label: "Company Tea", category: "food_plant", foodBuffType: "ap_regen", description: "+10 AP Regen/sec (+25 Herbivore)", damageMultiplier: 1.0 },
+  { id: "plant-corn-soup", label: "Corn Soup", category: "food_plant", foodBuffType: "ap_regen", description: "+6 AP Regen (+15 Herbivore)" },
+  { id: "plant-cranberry-relish", label: "Cranberry Relish", category: "food_plant", foodBuffType: "xp", description: "+10% XP (+25% Herbivore)", xpBonusPct: 25 },
+  { id: "plant-mutfruit-juice", label: "Mutfruit Juice", category: "food_plant", foodBuffType: "agi", description: "+2 Agility (+5 Herbivore)", specialBonus: { agi: 5 } },
+  { id: "plant-steeped-ash-rose", label: "Steeped Ash Rose Tea", category: "food_plant", foodBuffType: "str", description: "+2 Strength (+5 Herbivore)", specialBonus: { str: 5 }, damageMultiplier: 1.04 },
+  { id: "plant-steeped-fever-blossom", label: "Steeped Fever Blossom Tea", category: "food_plant", foodBuffType: "ap_regen", description: "+20 AP Regen (+50 Herbivore)", damageMultiplier: 1.0 },
+  { id: "plant-steeped-melon", label: "Steeped Melon Blossom Tea", category: "food_plant", foodBuffType: "agi", description: "+2 Agility (+5 Herbivore)", specialBonus: { agi: 5 } },
+  { id: "plant-steeped-strangler", label: "Steeped Strangler Bloom Tea", category: "food_plant", foodBuffType: "lck", description: "+2 Luck (+5 Herbivore)", specialBonus: { lck: 5 } },
+  { id: "plant-steeped-tattoo", label: "Steeped Tattoo Flower Tea", category: "food_plant", foodBuffType: "per", description: "+2 Perception (+5 Herbivore)", specialBonus: { per: 5 } },
+  { id: "plant-steeped-thistle", label: "Steeped Thistle Tea", category: "food_plant", foodBuffType: "crit_damage", description: "+20% VATS Crit Dmg (+50% Herbivore)", damageMultiplier: 1.0 },
+  { id: "plant-sweet-mutfruit-tea", label: "Sweet Mutfruit Tea", category: "food_plant", foodBuffType: "crit_damage", description: "+20% VATS Crit Dmg (+50% Herbivore)", damageMultiplier: 1.0 },
+  { id: "plant-tato-juice", label: "Tato Juice", category: "food_plant", foodBuffType: "max_ap", description: "+10 Max AP (+25 Herbivore)" },
 ], (f) => f.label);
 
 // 5. ALL MEATS & SCORCHBEAST ORGANS (Carnivore 2.5x - Alphanumerically Sorted)
 export const ALL_MEAT_FOODS: Fallout76BuffDef[] = sortAlphanumerically([
-  { id: "meat-scorchbeast-brain", label: "Broiled Scorchbeast Brain", category: "food_meat", description: "+3 INT (+7.5 INT Carnivore = +22.5% XP)", specialBonus: { int: 7 }, xpBonusPct: 22.5 },
-  { id: "meat-softshell", label: "Cooked Softshell Meat", category: "food_meat", description: "+25 Max AP (+62.5 Carnivore)" },
-  { id: "meat-deathclaw-steak", label: "Deathclaw Steak", category: "food_meat", description: "+2.5 STR (+5 STR Carnivore)", specialBonus: { str: 5 }, damageMultiplier: 1.05 },
-  { id: "meat-glowing-steak", label: "Glowing Meat Steak", category: "food_meat", description: "+20% Melee Dmg (+50% Carnivore)", damageMultiplier: 1.20 },
-  { id: "meat-scorchbeast-liver", label: "Scorchbeast Liver", category: "food_meat", description: "+3 LCK (+7.5 LCK Carnivore)", specialBonus: { lck: 7 } },
-  { id: "meat-scorchbeast-steak", label: "Scorchbeast Steak", category: "food_meat", description: "+3 STR (+7.5 STR Carnivore)", specialBonus: { str: 7 }, damageMultiplier: 1.08 },
-  { id: "meat-smoked-mirelurk", label: "Smoked Mirelurk Fillet", category: "food_meat", description: "+30 Carry Wt (+60 Carnivore)" },
-  { id: "meat-tasty-squirrel", label: "Tasty Squirrel Stew", category: "food_meat", description: "+10% XP (+25% Carnivore)", xpBonusPct: 25 },
-  { id: "meat-yao-guai-roast", label: "Yao Guai Roast", category: "food_meat", description: "+15% Melee Dmg (+37.5% Carnivore)", damageMultiplier: 1.15 },
+  { id: "meat-scorchbeast-brain", label: "Broiled Scorchbeast Brain", category: "food_meat", foodBuffType: "int", description: "+3 INT (+7.5 INT Carnivore = +22.5% XP)", specialBonus: { int: 7 }, xpBonusPct: 22.5 },
+  { id: "meat-softshell", label: "Cooked Softshell Meat", category: "food_meat", foodBuffType: "max_ap", description: "+25 Max AP (+62.5 Carnivore)" },
+  { id: "meat-deathclaw-steak", label: "Deathclaw Steak", category: "food_meat", foodBuffType: "str", description: "+2.5 STR (+5 STR Carnivore)", specialBonus: { str: 5 }, damageMultiplier: 1.05 },
+  { id: "meat-glowing-steak", label: "Glowing Meat Steak", category: "food_meat", foodBuffType: "melee_damage", description: "+20% Melee Dmg (+50% Carnivore)", damageMultiplier: 1.20 },
+  { id: "meat-scorchbeast-liver", label: "Scorchbeast Liver", category: "food_meat", foodBuffType: "lck", description: "+3 LCK (+7.5 LCK Carnivore)", specialBonus: { lck: 7 } },
+  { id: "meat-scorchbeast-steak", label: "Scorchbeast Steak", category: "food_meat", foodBuffType: "str", description: "+3 STR (+7.5 STR Carnivore)", specialBonus: { str: 7 }, damageMultiplier: 1.08 },
+  { id: "meat-smoked-mirelurk", label: "Smoked Mirelurk Fillet", category: "food_meat", foodBuffType: "carry_weight", description: "+30 Carry Wt (+60 Carnivore)" },
+  { id: "meat-tasty-squirrel", label: "Tasty Squirrel Stew", category: "food_meat", foodBuffType: "xp", description: "+10% XP (+25% Carnivore)", xpBonusPct: 25 },
+  { id: "meat-yao-guai-roast", label: "Yao Guai Roast", category: "food_meat", foodBuffType: "melee_damage", description: "+15% Melee Dmg (+37.5% Carnivore)", damageMultiplier: 1.15 },
 ], (f) => f.label);
 
 // 6. ALL ALCOHOL & BREWS (Alphanumerically Sorted)
