@@ -33,38 +33,34 @@ export default function PtsClient() {
   return (
     <div className="space-y-6 font-mono animate-in fade-in duration-200">
       {/* Page Header */}
-      <div className="rounded-[var(--radius-lg)] border border-border bg-panel p-6 shadow-md relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-[3px] bg-amber-500" />
+      <div className="bg-[#0c121a] border border-slate-800 p-5 shadow-xl font-mono relative">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[0.7rem] uppercase tracking-widest text-amber-500 font-bold flex items-center gap-1.5">
+              <span className="text-[10px] uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1.5">
                 <FlaskConical className="h-3.5 w-3.5" />
-                <span>P.T.S. DATAMINES</span>
+                <span>P.T.S. TEST SERVER // EXPERIMENTAL DATAMINE</span>
               </span>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight mt-1 flex items-center gap-2">
-              <span>P.T.S.</span>
-              <span className="text-sm text-foreground/50 font-normal">
-                (Public Test Server)
-              </span>
+            <h1 className="text-2xl font-black tracking-tight mt-0.5 text-white uppercase flex items-center gap-2">
+              <span>Provisional Testing System</span>
             </h1>
-            <p className="text-xs text-foreground/60 mt-1 max-w-2xl leading-relaxed">
-              Track test server updates, 4-star legendary mods, and datamined balance changes.
+            <p className="text-xs text-slate-400 mt-0.5 max-w-2xl leading-relaxed">
+              Track upcoming 4-star legendary mods, raid catalyst recipes, and datamined test balance changes.
             </p>
           </div>
           <BrandStack />
         </div>
 
         {/* Top-Level Experimental Navigation Tabs */}
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/40">
+        <div className="flex items-center gap-1.5 mt-4 pt-4 border-t border-slate-800/80">
           <button
             type="button"
             onClick={() => setPtsTab("catalog")}
-            className={`px-3 py-1.5 rounded text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all border flex items-center gap-1.5 ${
               ptsTab === "catalog"
-                ? "bg-amber-500 text-slate-950 font-black shadow"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-amber-500 text-black border-amber-400 font-black shadow-sm"
+                : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
             <FlaskConical className="h-3.5 w-3.5" />
@@ -73,10 +69,10 @@ export default function PtsClient() {
           <button
             type="button"
             onClick={() => setPtsTab("sandbox")}
-            className={`px-3 py-1.5 rounded text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all border flex items-center gap-1.5 ${
               ptsTab === "sandbox"
-                ? "bg-amber-500 text-slate-950 font-black shadow"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-amber-500 text-black border-amber-400 font-black shadow-sm"
+                : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
             <span>🧟 PTS Ghoul B.U.I.L.D. Sandbox</span>
@@ -84,10 +80,10 @@ export default function PtsClient() {
           <button
             type="button"
             onClick={() => setPtsTab("perks")}
-            className={`px-3 py-1.5 rounded text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all border flex items-center gap-1.5 ${
               ptsTab === "perks"
-                ? "bg-amber-500 text-slate-950 font-black shadow"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-amber-500 text-black border-amber-400 font-black shadow-sm"
+                : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
             <span>🃏 PTS 20-Cap P.E.R.K. Matrix</span>
@@ -96,21 +92,21 @@ export default function PtsClient() {
       </div>
 
       {/* Volatile Data Warning Banner */}
-      <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 shadow-sm relative overflow-hidden backdrop-blur-sm">
+      <div className="border border-amber-500/40 bg-[#121924] p-4 shadow-sm relative font-mono">
         <div className="flex items-start gap-3">
-          <div className="h-9 w-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0 text-amber-500 mt-0.5">
+          <div className="h-9 w-9 bg-amber-500/10 border border-amber-500/40 flex items-center justify-center shrink-0 text-amber-400 mt-0.5">
             <AlertTriangle className="h-5 w-5" />
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-500">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
                 ⚠️ PROVISIONAL DATA NOTICE
               </span>
-              <span className="text-[0.65rem] bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 rounded text-amber-400 font-bold">
-                VOLATILE / UNRELEASED
+              <span className="text-[10px] bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 text-amber-300 font-bold">
+                VOLATILE / UNRELEASED TEST SERVER
               </span>
             </div>
-            <p className="text-xs text-foreground/80 leading-relaxed max-w-3xl">
+            <p className="text-xs text-slate-300 leading-relaxed max-w-3xl">
               The data presented on this tab is scraped from active Bethesda PTS test builds and datamined files. Stats, Scrip costs, module crafting requirements, and legendary mod effects are experimental and subject to tuning, balance changes, or removal before official live deployment.
             </p>
           </div>
