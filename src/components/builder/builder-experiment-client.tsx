@@ -22,7 +22,10 @@ import {
   Share2,
   Copy,
   Check,
+  Link2,
 } from "lucide-react";
+import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
+import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
@@ -420,6 +423,7 @@ export default function BuilderExperimentClient({
   const [shareBusy, setShareBusy] = React.useState(false);
   const [shareResult, setShareResult] = React.useState<string | null>(null);
   const [shareCopied, setShareCopied] = React.useState(false);
+  const [isNdImportOpen, setIsNdImportOpen] = React.useState(false);
   const [learnedBasePieceIds, setLearnedBasePieceIds] = React.useState(
     () => new Set(initialLearnedBasePieceIds),
   );
@@ -1180,6 +1184,45 @@ export default function BuilderExperimentClient({
     }
   }
 
+  const handleApplyNdBuild = (build: NukesDragonsParsedBuild) => {
+    setPayload((prev) => ({
+      ...prev,
+      baseSpecial: { ...build.specials },
+      legendaryPerkIds: build.legendaryPerks.map((p) => p.id),
+      ghoul: build.isGhoul ? true : prev.ghoul,
+    }));
+
+    try {
+      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
+      localStorage.setItem(
+        `roll_perk_loadout_slot_${activePerkSlot}`,
+        JSON.stringify({
+          specials: {
+            S: build.specials.str,
+            P: build.specials.per,
+            E: build.specials.end,
+            C: build.specials.cha,
+            I: build.specials.int,
+            A: build.specials.agi,
+            L: build.specials.lck,
+          },
+          equippedCards: build.equippedCards,
+        })
+      );
+      if (build.legendaryPerks.length > 0) {
+        localStorage.setItem(
+          "roll_legendary_perk_ids",
+          JSON.stringify(build.legendaryPerks.map((lp) => lp.id))
+        );
+      }
+    } catch {
+      // Ignore local storage write errors
+    }
+
+    triggerBuilderAchievement("build_specials");
+    triggerBuilderAchievement("build_perks");
+  };
+
   const starsDisabled = piece.kind === "underarmor";
 
 
@@ -1448,6 +1491,16 @@ export default function BuilderExperimentClient({
                   {shareBusy ? "PUBLISHING..." : "PUBLISH"}
                 </Button>
               </div>
+
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsNdImportOpen(true)}
+                className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+              >
+                <Link2 className="h-3.5 w-3.5" />
+                Import N&amp;D Spec
+              </Button>
 
               <a
                 className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-2 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all flex items-center gap-1"
@@ -2548,6 +2601,13 @@ export default function BuilderExperimentClient({
       <BuilderGearComparisonModal
         isOpen={isComparisonOpen}
         onClose={() => setIsComparisonOpen(false)}
+      />
+
+      {/* NUKES & DRAGONS IMPORT MODAL */}
+      <NukesDragonsImportModal
+        isOpen={isNdImportOpen}
+        onClose={() => setIsNdImportOpen(false)}
+        onApplyBuild={handleApplyNdBuild}
       />
     </div>
   );
