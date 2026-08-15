@@ -6,9 +6,11 @@ import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Link2 } from "lucide-react";
 import PerkLevelingRoadmap from "@/components/perks/perk-leveling-roadmap";
 import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
+import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
+import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 
 type EquippedItem = { cardId: string; rank: number };
 
@@ -65,6 +67,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
   const [saving, setSaving] = React.useState(false);
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
   const [isFemale, setIsFemale] = React.useState(false);
+  const [isNdImportOpen, setIsNdImportOpen] = React.useState(false);
 
   const isInitialLoadedRef = React.useRef(false);
 
@@ -252,6 +255,41 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
       setSaving(false);
       setTimeout(() => setSaveMessage(null), 3500);
     }
+  };
+
+  const handleApplyNdBuild = (build: NukesDragonsParsedBuild) => {
+    const newSpecials: SpecialsState = {
+      S: build.specials.str,
+      P: build.specials.per,
+      E: build.specials.end,
+      C: build.specials.cha,
+      I: build.specials.int,
+      A: build.specials.agi,
+      L: build.specials.lck,
+    };
+    setSpecials(newSpecials);
+    setEquippedCards(build.equippedCards);
+    if (build.isGhoul && mode === "pts") {
+      setIsGhoul(true);
+    }
+
+    try {
+      localStorage.setItem(
+        `roll_perk_loadout_slot_${activeSlot}`,
+        JSON.stringify({ specials: newSpecials, equippedCards: build.equippedCards })
+      );
+      if (build.legendaryPerks.length > 0) {
+        localStorage.setItem(
+          "roll_legendary_perk_ids",
+          JSON.stringify(build.legendaryPerks.map((lp) => lp.id))
+        );
+      }
+    } catch {
+      // Ignore local storage write errors
+    }
+
+    setSaveMessage(`✅ N&D Build imported successfully into Loadout ${activeSlot + 1}!`);
+    setTimeout(() => setSaveMessage(null), 4000);
   };
 
   const handleExportDeckPng = () => {
@@ -569,6 +607,14 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
               )}
               <button
                 type="button"
+                onClick={() => setIsNdImportOpen(true)}
+                className="text-[0.68rem] px-2.5 py-0.5 rounded border border-emerald-500/50 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 font-mono font-bold transition-all flex items-center gap-1"
+              >
+                <Link2 className="h-3 w-3" />
+                Import N&amp;D Spec
+              </button>
+              <button
+                type="button"
                 onClick={() => setShowRoadmap((prev) => !prev)}
                 className={`text-[0.68rem] px-2.5 py-0.5 rounded border font-mono font-bold transition-all ${
                   showRoadmap
@@ -576,7 +622,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                     : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
                 }`}
               >
-                {showRoadmap ? "Hide Leveling Roadmap" : "View Leveling Roadmap (Lvl 2–50)"}
+                {showRoadmap ? "Hide Leveling Roadmap" : "View Leveling Roadmap (Lvl 2–100+)"}
               </button>
               {mode === "pts" ? (
                 <button
@@ -752,6 +798,12 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
           </div>
         </CardContent>
       </Card>
+
+      <NukesDragonsImportModal
+        isOpen={isNdImportOpen}
+        onClose={() => setIsNdImportOpen(false)}
+        onApplyBuild={handleApplyNdBuild}
+      />
     </div>
   );
 }
