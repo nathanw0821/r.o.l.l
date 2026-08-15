@@ -4,15 +4,13 @@ export const dynamic = "force-dynamic";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import PureSvgPerkCard from "@/components/perks/pure-svg-perk-card";
 import { 
   Search, 
   Check, 
   ArrowUpRight,
   Bookmark,
   TrendingUp,
-  Database,
-  Sparkles
+  Database
 } from "lucide-react";
 
 // Sample live data for testing
@@ -142,73 +140,8 @@ export default function VisualOverhaulStudioPage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 space-y-4">
         
-        {/* =========================================================================
-            1:1 PURE VECTOR PERK CARD PROTOTYPE SHOWCASE
-            Side-by-side comparison: Old 2018 Launch Screenshot vs New 1:1 Pure Vector Card
-           ========================================================================= */}
-        <section className="bg-[#0b1018] border-2 border-amber-500/60 rounded-xl p-5 shadow-2xl space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-            <div className="flex items-center gap-2.5">
-              <span className="p-1.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40">
-                <Sparkles className="w-5 h-5" />
-              </span>
-              <div>
-                <h2 className="text-base font-black text-amber-400 uppercase tracking-wider font-mono">
-                  1:1 Pure Vector Perk Card Prototype (Zero Overlays)
-                </h2>
-                <p className="text-xs text-slate-400">
-                  Direct side-by-side comparison: Old Launch Screenshot vs. New 1:1 Scaleform-Accurate Pure Vector Card
-                </p>
-              </div>
-            </div>
-            <div className="text-xs font-mono px-2.5 py-1 rounded bg-amber-950 border border-amber-500/80 text-amber-200">
-              Live Patch Test Engine
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-items-center py-2">
-            {/* Left: Old 2018 Launch Screenshot */}
-            <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-              <div className="text-xs font-mono font-black uppercase text-red-400 tracking-wider bg-red-950/80 border border-red-700/60 px-3 py-1 rounded">
-                ❌ Old 2018 Launch Screenshot (Baked-in Cost 1 & 3 Stars)
-              </div>
-              <div className="w-64 aspect-[3/4.2] rounded-xl overflow-hidden shadow-2xl border-2 border-slate-800 bg-slate-950">
-                <img
-                  src="/images/perks_official_wiki/fo76-perk-scattershot.webp"
-                  alt="Old Scattershot 2018"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="text-[11px] font-mono text-slate-400 text-center">
-                Permanently shows 2018 text: <em className="text-slate-300">&quot;Shotguns now weigh 30% less...&quot;</em>
-              </p>
-            </div>
-
-            {/* Right: New 1:1 Pure Vector Card */}
-            <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-              <div className="text-xs font-mono font-black uppercase text-emerald-400 tracking-wider bg-emerald-950/80 border border-emerald-500/60 px-3 py-1 rounded">
-                ✅ New 1:1 Pure Vector Card (Live Cost 2, 1 Star, No Underlay)
-              </div>
-              <div className="w-64 aspect-[320/440]">
-                <PureSvgPerkCard
-                  displayName="SCATTERSHOT"
-                  special="S"
-                  cost={2}
-                  rank={1}
-                  maxRank={1}
-                  description="20% of the damage dealt to a limb is applied to all limbs on your target."
-                  artImagePath="/images/perks/scattershot_art_exact.png"
-                />
-              </div>
-              <p className="text-[11px] font-mono text-emerald-300 text-center">
-                Clean single graphic: exact live cost <strong>2</strong>, <strong>1 star</strong>, and current limb damage text.
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* =========================================================================
             TACTICAL PROGRESS & TELEMETRY HUD
             - Global Segmented Progress Bar (Learned vs Seeking vs Locked)
