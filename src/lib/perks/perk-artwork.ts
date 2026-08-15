@@ -49,7 +49,7 @@ export function getPerkVectorArtUrl(cardId: string, special: SpecialCategory, is
     return `/images/perks_official/bloodymess.svg`;
   }
 
-  let raw = cardId.toLowerCase().trim();
+  const raw = cardId.toLowerCase().trim();
 
   if (isFemale) {
     if (raw === "action-boy" || raw === "action boy" || raw === "actionboy") return "/images/perks_official/actiongirl.svg";

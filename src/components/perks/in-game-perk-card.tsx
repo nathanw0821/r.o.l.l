@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { SpecialCategory, PERK_CATALOG, PerkCard, isGhoulPerkCard } from "@/lib/perks/catalog";
+import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard } from "@/lib/perks/catalog";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
 import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
 import { Sparkles, Star, Info, X, ExternalLink } from "lucide-react";
@@ -342,7 +342,11 @@ export default function InGamePerkCard({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              isEquipped ? onUnequip?.() : onEquip?.();
+              if (isEquipped) {
+                onUnequip?.();
+              } else {
+                onEquip?.();
+              }
             }}
             className={`text-[0.60rem] font-black uppercase px-2 py-1.5 rounded border transition-all shadow-sm ${
               isEquipped

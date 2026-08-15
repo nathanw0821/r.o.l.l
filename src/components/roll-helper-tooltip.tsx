@@ -63,7 +63,7 @@ export default function RollHelperTooltip({
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 bg-slate-950 border border-amber-500/40 rounded-xl p-3 shadow-2xl font-mono text-left animate-in fade-in duration-150">
           <div className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-400 border-b border-slate-800 pb-1.5 mb-2">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>MINI R.O.L.L. HELPER</span>
+            <span>MINI R.O.L.L. HELPER // {kind}</span>
           </div>
 
           <div className="text-xs font-bold text-slate-100 mb-2 truncate">

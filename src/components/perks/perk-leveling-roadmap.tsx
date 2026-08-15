@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { PERK_CATALOG, getPerkCardById, isGhoulPerkCard } from "@/lib/perks/catalog";
+import { getPerkCardById, isGhoulPerkCard } from "@/lib/perks/catalog";
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
-import { Calendar, CheckCircle2, Award, Zap, Shield, Sparkles } from "lucide-react";
+import { Calendar, CheckCircle2, Sparkles } from "lucide-react";
 
 type EquippedItem = { cardId: string; rank: number };
 

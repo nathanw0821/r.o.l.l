@@ -1,5 +1,3 @@
-import { getPerkCardById } from "@/lib/perks/catalog";
-
 export type BuildAdvicePayload = {
   special: Record<string, number>;
   perks: Array<{ name: string; rank: number; special: string }>;
@@ -21,7 +19,12 @@ export function getLocalTacticalAdvice(payload: BuildAdvicePayload): string | nu
   const agi = special.A || special.agi || 1;
   const lck = special.L || special.lck || 1;
 
-  // 1. High Strength without Barbarian
+  // 1. High Charisma without Strange in Numbers / Tenderizer
+  if (cha >= 4 && !perkNames.has("tenderizer")) {
+    return "Vault-Tec Tip: With your Charisma investment, equipping Tenderizer makes targets receive up to +10% more damage from all sources for 10 seconds.";
+  }
+
+  // 2. High Strength without Barbarian
   if (str >= 10 && !perkNames.has("barbarian")) {
     return `Vault-Tec Tip: With ${str} Strength allocated, equipping Rank 3 Barbarian will grant +${Math.min(80, str * 4)} extra Damage Resistance for your build.`;
   }
