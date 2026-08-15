@@ -617,7 +617,7 @@ export default function EffectTable({
                             value={row.modCount === 0 ? "" : row.modCount}
                             onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
                             placeholder="0"
-                            className="w-5 text-center text-[10px] font-bold bg-transparent border-none p-0 focus:outline-none text-slate-200"
+                            className="w-5 text-center text-[10px] font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-slate-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                           <button
                             type="button"
