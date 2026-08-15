@@ -82,7 +82,6 @@ export default function EffectTable({
 }) {
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
-  const [isCompactDensity, setIsCompactDensity] = React.useState(false);
   const handledFocusRef = React.useRef<string | null>(null);
   const { query, setQuery, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters } = useFilters();
   const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(true);
@@ -138,17 +137,6 @@ export default function EffectTable({
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [localRows, setOriginOptions]);
-
-  React.useEffect(() => {
-    const root = document.documentElement;
-    const apply = () => {
-      setIsCompactDensity(root.getAttribute("data-density") === "compact");
-    };
-    apply();
-    const observer = new MutationObserver(apply);
-    observer.observe(root, { attributes: true, attributeFilter: ["data-density"] });
-    return () => observer.disconnect();
-  }, []);
 
   const filteredRows = React.useMemo(() => {
     let list = applyFilters(localRows, {
@@ -487,7 +475,7 @@ export default function EffectTable({
       {/* =========================================================================
           TACTICAL ARMORY HIGH-DENSITY TABLE (CONCEPT 4)
          ========================================================================= */}
-      {uiMode === "tactical" && !isCompactDensity ? (
+      {uiMode === "tactical" ? (
         <div className="bg-[#090d12] border border-slate-800 overflow-x-auto shadow-2xl">
           <table className="w-full text-left border-collapse font-mono text-xs">
             <thead>

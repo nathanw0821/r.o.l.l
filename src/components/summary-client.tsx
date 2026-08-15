@@ -16,7 +16,6 @@ import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
 import { BuilderBetaGate, useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 import { InfoTooltip } from "@/components/ui/tooltip";
-import { useThemeSettings } from "@/components/theme-provider";
 
 export type SummaryRow = {
   id: string;
@@ -113,8 +112,6 @@ export default function SummaryClient({
   initialTab?: "summary" | "seeking" | "owned" | "still-need";
 }) {
   const router = useRouter();
-  const { density } = useThemeSettings();
-  const isCompact = density === "compact";
   const {
     query,
     sourceFilters,
@@ -656,112 +653,20 @@ export default function SummaryClient({
 
       <div
         ref={gridRef}
-        className={cn(
-          "grid gap-4",
-          isCompact
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-            : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
-        )}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5"
       >
         {tierOrder.map((tierLabel) => {
           const items = filteredRows.filter((row) => (row.tier?.label ?? (row as unknown as { tierLabel?: string }).tierLabel) === tierLabel);
           if (items.length === 0) return null;
           const tierDisplay = formatTierStarsWithLabel(tierLabel);
 
-          if (isCompact) {
-            return (
-              <div key={tierLabel} className="rounded-[var(--radius)] border border-border/70 bg-panel/90 p-3 flex flex-col font-mono text-xs shadow-md">
-                <div className="flex items-center justify-between border-b-2 border-accent pb-1.5 mb-2 font-bold">
-                  <span className="text-accent tracking-wider font-mono text-xs">{tierDisplay.stars || tierLabel}</span>
-                  <span className="text-[0.68rem] text-foreground/50">{items.length} MODS</span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  {items.map((row) => {
-                    const isUnlocked = row.unlocked;
-                    const symbol = isUnlocked ? "✓" : "✗";
-                    const symbolColor = isUnlocked ? "text-emerald-400 font-bold" : "text-rose-400/60 font-mono";
-
-                    return (
-                      <div
-                        key={row.id}
-                        onClick={() => handleSummaryRowClick(row)}
-                        onPointerDown={() => handlePointerDown(row)}
-                        onPointerUp={handlePointerUp}
-                        onPointerLeave={handlePointerCancel}
-                        onPointerCancel={handlePointerCancel}
-                        className={cn(
-                          "flex items-center justify-between px-2 py-1 rounded border text-left transition-all cursor-pointer select-none font-mono",
-                          isUnlocked
-                            ? "bg-slate-900/90 border-emerald-500/40 text-foreground"
-                            : "bg-slate-950/60 border-border/30 text-foreground/60 hover:text-foreground hover:border-border",
-                          pendingId === row.id && "opacity-60"
-                        )}
-                      >
-                        <span className="font-semibold truncate pr-2 text-[0.76rem]">{cleanEffectName(row.effect.name)}</span>
-                        <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-                          {/* Seeking Tick Mark */}
-                          <button
-                            type="button"
-                            title={row.isSeeking ? "Remove from Seeking wishlist" : "Add to Seeking wishlist"}
-                            onClick={() => updateSeeking(row, !row.isSeeking)}
-                            className={cn(
-                              "p-0.5 rounded transition-all",
-                              row.isSeeking
-                                ? "text-amber-400 bg-amber-950/60 border border-amber-500/50 shadow-[0_0_6px_rgba(245,158,11,0.4)]"
-                                : "text-foreground/30 hover:text-amber-400/80"
-                            )}
-                          >
-                            <Target className="h-3 w-3" />
-                          </button>
-
-                          {/* Owned Inventory Counter */}
-                          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-background/60 border border-border/40 text-[0.68rem]">
-                            <button
-                              type="button"
-                              title="Decrease owned inventory count"
-                              onClick={() => updateCount(row, row.modCount - 1)}
-                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem]"
-                            >
-                              -
-                            </button>
-                            <span className={cn("font-bold text-center min-w-[1rem]", row.modCount > 0 ? "text-accent" : "text-foreground/40")}>
-                              {row.modCount > 0 ? `📦${row.modCount}` : "0"}
-                            </span>
-                            <button
-                              type="button"
-                              title="Increase owned inventory count"
-                              onClick={() => updateCount(row, row.modCount + 1)}
-                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem]"
-                            >
-                              +
-                            </button>
-                          </div>
-
-                          {/* Status Checkmark */}
-                          <button
-                            type="button"
-                            title={isUnlocked ? "Unlocked (click to toggle)" : "Locked (click to toggle)"}
-                            onClick={() => toggleRow(row)}
-                            className={cn("w-4 text-center font-mono text-[0.85rem] cursor-pointer", symbolColor)}
-                          >
-                            {symbol}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          }
-
           return (
-            <div key={tierLabel} className="rounded-[var(--radius)] border border-border bg-panel p-4">
-              <div className="star-tier-header flex items-center justify-between text-sm font-semibold mb-3">
-                <span title={tierDisplay.label}>{tierDisplay.stars || tierLabel}</span>
-                <span className="text-[0.78rem] uppercase tracking-widest text-foreground/40">{items.length} items</span>
+            <div key={tierLabel} className="rounded-lg border border-border/70 bg-panel/90 p-3.5 flex flex-col font-mono text-xs shadow-md">
+              <div className="star-tier-header flex items-center justify-between text-sm font-semibold border-b border-border/40 pb-2 mb-3">
+                <span className="text-accent font-bold tracking-wider" title={tierDisplay.label}>{tierDisplay.stars || tierLabel}</span>
+                <span className="text-[0.72rem] uppercase tracking-widest text-foreground/50">{items.length} MODS</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col gap-2">
                 {items.map((row) => (
                   <div
                     key={row.id}
@@ -772,19 +677,20 @@ export default function SummaryClient({
                     onPointerCancel={handlePointerCancel}
                     data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
                     className={cn(
-                      "summary-status-card summary-status-card--grid rounded-[var(--radius)] border text-left transition cursor-pointer select-none",
-                      "hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                      row.unlocked && "bg-emerald-500/15 border-emerald-500/60 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.15)]",
-                      row.isSeeking && !row.unlocked && "bg-amber-500/15 border-amber-500/60 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.15)]",
+                      "summary-status-card summary-status-card--grid rounded-md border text-left transition cursor-pointer select-none font-mono p-2.5",
+                      "hover:border-accent/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
+                      row.unlocked && "bg-emerald-950/30 border-emerald-500/60 text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.12)]",
+                      row.isSeeking && !row.unlocked && "bg-amber-950/30 border-amber-500/60 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.12)]",
+                      !row.unlocked && !row.isSeeking && "bg-[#0a0f16]/90 border-slate-800/80 text-foreground/70 hover:border-slate-700",
                       pendingId === row.id && "opacity-60"
                     )}
                   >
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold truncate pr-6 flex items-center gap-1.5">
-                        {row.unlocked && <span className="text-emerald-400 text-xs font-bold">✓</span>}
-                        <span>{cleanEffectName(row.effect.name)}</span>
+                    <div className="min-w-0 pr-1">
+                      <div className="text-xs font-bold truncate flex items-center gap-1.5 text-white">
+                        {row.unlocked && <span className="text-emerald-400 text-xs font-black">✓</span>}
+                        <span className="truncate">{cleanEffectName(row.effect.name)}</span>
                       </div>
-                      <div className="mt-1 text-[0.84rem] font-semibold uppercase tracking-[0.12em]">
+                      <div className="mt-0.5 text-[0.7rem] font-bold uppercase tracking-wider">
                         {pendingId === row.id
                           ? "Saving..."
                           : summaryLocked
@@ -796,36 +702,43 @@ export default function SummaryClient({
                                 : "Locked"}
                       </div>
                       {!isExportingImage && row.unlockedBy.length > 0 && (
-                        <div className="mt-1 text-[0.72rem] text-foreground/40 leading-tight">
-                          Unlocked by: {row.unlockedBy.join(", ")}
+                        <div className="mt-0.5 text-[0.68rem] text-foreground/40 leading-tight truncate" title={row.unlockedBy.join(", ")}>
+                          Recipe: {row.unlockedBy.join(", ")}
                         </div>
                       )}
                     </div>
-                    <div className="summary-status-card__controls" onClick={(e) => e.stopPropagation()}>
+                    <div className="summary-status-card__controls shrink-0" onClick={(e) => e.stopPropagation()}>
                       {!isExportingImage && (
                         <button
-                          title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+                          title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking wishlist"}
                           onClick={() => updateSeeking(row, !row.isSeeking)}
                           data-active={row.isSeeking}
-                          className="summary-status-card__seeking-btn"
+                          className={cn(
+                            "summary-status-card__seeking-btn",
+                            row.isSeeking
+                              ? "text-amber-400 bg-amber-950/60 border-amber-500/60"
+                              : "text-foreground/30 hover:text-amber-400"
+                          )}
                         >
-                          <Target className="h-4 w-4" />
+                          <Target className="h-3.5 w-3.5" />
                           <span className="sr-only">Seeking</span>
                         </button>
                       )}
                       <div className="summary-status-card__count">
                         {!isExportingImage && (
                           <button
+                            type="button"
+                            title="Decrease owned inventory"
                             onClick={() => updateCount(row, row.modCount - 1)}
-                            className="summary-status-card__count-btn"
+                            className="summary-status-card__count-btn text-[0.65rem] font-bold"
                           >
                             <Minus className="h-2.5 w-2.5" />
                           </button>
                         )}
                         
                         {isExportingImage ? (
-                          <span className="min-w-[1.2rem] w-8 text-center font-bold text-sm">
-                            {row.modCount > 0 ? row.modCount : ""}
+                          <span className="min-w-[1.2rem] text-center font-bold text-xs text-accent">
+                            {row.modCount > 0 ? `📦${row.modCount}` : ""}
                           </span>
                         ) : (
                           <input
@@ -834,14 +747,16 @@ export default function SummaryClient({
                             value={row.modCount === 0 ? "" : row.modCount}
                             onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
                             placeholder="0"
-                            className="min-w-[1.2rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="w-6 text-center font-bold text-xs bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-foreground"
                           />
                         )}
 
                         {!isExportingImage && (
                           <button
+                            type="button"
+                            title="Increase owned inventory"
                             onClick={() => updateCount(row, row.modCount + 1)}
-                            className="summary-status-card__count-btn"
+                            className="summary-status-card__count-btn text-[0.65rem] font-bold"
                           >
                             <Plus className="h-2.5 w-2.5" />
                           </button>
