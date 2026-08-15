@@ -78,6 +78,21 @@ const nextConfig = {
     }
   },
 
+  async redirects() {
+    return [
+      {
+        source: "/mods",
+        destination: "/all-effects",
+        permanent: true
+      },
+      {
+        source: "/legendary-mods",
+        destination: "/all-effects",
+        permanent: true
+      }
+    ];
+  },
+
   async headers() {
     return [
       {
