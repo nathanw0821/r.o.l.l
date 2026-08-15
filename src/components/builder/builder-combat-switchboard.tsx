@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Sliders, Utensils, Sparkles, Home, Pill, Book, Beer, Heart, Calculator, X } from "lucide-react";
+import { Sliders, Utensils, Sparkles, Home, Pill, Dna, Book, Beer, Heart, Calculator, X } from "lucide-react";
 import {
   ALL_BOBBLEHEADS,
   ALL_MAGAZINES,
@@ -12,6 +12,8 @@ import {
   ALL_CAMP_APPLIANCES,
   ALL_COMPANIONS,
 } from "@/lib/builder/all-fallout76-buffs";
+import { SANDBOX_MUTATIONS } from "@/lib/builder/sandbox-mutations";
+import { Switch } from "@/components/ui/switch";
 
 export type CombatSwitchboardState = {
   healthPct: number;
@@ -38,14 +40,22 @@ export const TARGET_ENEMIES: Record<string, { name: string; dr: number; pctReduc
 interface BuilderCombatSwitchboardProps {
   rawDamage: number;
   activeMutations?: string[];
+  onMutationsChange?: (mutations: string[]) => void;
+  hasStrangeInNumbers?: boolean;
+  onStrangeInNumbersChange?: (enabled: boolean) => void;
   ignoreMutationPenalties?: boolean;
+  onIgnoreMutationPenaltiesChange?: (enabled: boolean) => void;
   onStateChange?: (state: CombatSwitchboardState) => void;
 }
 
 export default function BuilderCombatSwitchboard({
   rawDamage,
   activeMutations = [],
+  onMutationsChange,
+  hasStrangeInNumbers = false,
+  onStrangeInNumbersChange,
   ignoreMutationPenalties = false,
+  onIgnoreMutationPenaltiesChange,
   onStateChange,
 }: BuilderCombatSwitchboardProps) {
   const isCarnivore = activeMutations.includes("carnivore");
@@ -451,6 +461,67 @@ export default function BuilderCombatSwitchboard({
               <Calculator className="h-3 w-3" /> 🔍 Audit Formula Steps
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Dedicated Mutation Serum Matrix */}
+      <div className="pt-3 border-t border-amber-500/20 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-emerald-400">
+            <Dna className="h-4 w-4 text-emerald-400" />
+            <span>[ 🧬 MUTATION SERUM MATRIX ] ({activeMutations.length} Active)</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 text-xs">
+            <label className="flex items-center gap-2 cursor-pointer bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800 hover:border-slate-700">
+              <span className="text-[0.68rem] font-bold text-slate-300 uppercase">Strange in Numbers (+25%)</span>
+              <Switch
+                checked={hasStrangeInNumbers}
+                onCheckedChange={(checked) => onStrangeInNumbersChange?.(checked)}
+                aria-label="Strange in Numbers"
+              />
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800 hover:border-slate-700">
+              <span className="text-[0.68rem] font-bold text-slate-300 uppercase">Ignore Serum Penalties</span>
+              <Switch
+                checked={ignoreMutationPenalties}
+                onCheckedChange={(checked) => onIgnoreMutationPenaltiesChange?.(checked)}
+                aria-label="Ignore mutation penalties"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Mutation Pills / Checkboxes Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1.5 max-h-40 overflow-y-auto pr-1 bg-slate-950 p-2 rounded-lg border border-slate-800/80">
+          {SANDBOX_MUTATIONS.map((m) => {
+            const on = activeMutations.includes(m.id);
+            return (
+              <label
+                key={m.id}
+                className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer text-[0.68rem] font-mono border transition-all select-none ${
+                  on
+                    ? "bg-emerald-950/70 border-emerald-500/50 text-emerald-300 font-bold shadow-sm"
+                    : "bg-slate-900/40 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={on}
+                  onChange={() => {
+                    if (!onMutationsChange) return;
+                    const next = on
+                      ? activeMutations.filter((x) => x !== m.id)
+                      : [...activeMutations, m.id];
+                    onMutationsChange(next);
+                  }}
+                  className="h-3 w-3 shrink-0 accent-emerald-500 cursor-pointer"
+                />
+                <span className="truncate">{m.label}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
 
