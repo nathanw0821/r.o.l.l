@@ -138,3 +138,183 @@ export const POWER_ARMOR_FRAME_PIECES: Record<string, PowerArmorFramePieces> = {
     leg: paResist(9, 9, 100)
   }
 };
+
+export type PowerArmorFrameComparisonRow = {
+  key: string;
+  label: string;
+  stats: ArmorSetStats;
+  setBonus: string;
+  notes?: string;
+};
+
+export const POWER_ARMOR_FRAME_COMPARISON_ROWS: PowerArmorFrameComparisonRow[] = [
+  {
+    key: "hellcat",
+    label: "Hellcat Power Armor",
+    setBonus: "+12% Flat Ballistic Damage Reduction (Stacks to 54% total Ballistic DR)",
+    notes: "Steel Reign questline reward. Best-in-slot for raw physical tanking.",
+    stats: {
+      dr: 6 + 7 + 10 + 7*2 + 7*2, // 51
+      er: 6 + 5 + 8 + 5*2 + 5*2,  // 39
+      rr: 6 + 120 + 180 + 120*2 + 120*2, // 786
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "union-pa",
+    label: "Union Power Armor",
+    setBonus: "+150 Poison Resistance & +75 Max Carry Weight",
+    notes: "Expeditions / Stamps reward. Complete immunity to poison clouds.",
+    stats: {
+      dr: 6 + 7 + 12 + 7*2 + 7*2, // 53
+      er: 6 + 4 + 8 + 4*2 + 4*2,  // 34
+      rr: 6 + 100 + 150 + 100*2 + 100*2, // 656
+      fr: 0,
+      cr: 0,
+      pr: 50 + 150 + 50*2 + 50*2 // 350
+    }
+  },
+  {
+    key: "excavator",
+    label: "Excavator Power Armor",
+    setBonus: "+100 Max Carry Weight & 4x Ore Mining Yield",
+    notes: "Miner Miracles quest. Standard utility & mining workhorse.",
+    stats: {
+      dr: 6 + 4 + 6 + 4*2 + 4*2, // 28
+      er: 6 + 4 + 6 + 4*2 + 4*2, // 28
+      rr: 6 + 300 + 500 + 300*2 + 300*2, // 2006
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "t65",
+    label: "T-65 Power Armor",
+    setBonus: "Highest Raw Ballistic & Energy Resists in the Game",
+    notes: "Vault 79 Gold Bullion. Secret Service heavy armor chassis.",
+    stats: {
+      dr: 6 + 44 + 73 + 44*2 + 44*2, // 299
+      er: 6 + 45 + 75 + 45*2 + 45*2, // 306
+      rr: 6 + 500 + 850 + 500*2 + 500*2, // 3356
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "strangler-heart",
+    label: "Strangler Heart Power Armor",
+    setBonus: "Acid Damage Aura on nearby targets & +Acid Poison to weapon attacks",
+    notes: "Vault 94 / Gold Bullion. Ultracite frame overgrown with Strangler flora.",
+    stats: {
+      dr: 6 + 6 + 12 + 7*2 + 7*2, // 50
+      er: 6 + 7 + 10 + 6*2 + 6*2, // 47
+      rr: 6 + 600 + 1000 + 600*2 + 600*2, // 4006
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "t51",
+    label: "T-51b Power Armor",
+    setBonus: "High Balanced Ballistic/Energy + 230 Cryo Resistance",
+    notes: "Classic pre-war military standard. Excellent cryo mitigation.",
+    stats: {
+      dr: 6 + 7 + 11 + 7*2 + 7*2, // 52
+      er: 6 + 7 + 11 + 7*2 + 7*2, // 52
+      rr: 6 + 100 + 150 + 100*2 + 100*2, // 656
+      fr: 0,
+      cr: 40 + 70 + 40*2 + 40*2, // 230
+      pr: 0
+    }
+  },
+  {
+    key: "x01",
+    label: "X-01 Power Armor",
+    setBonus: "Enclave Prototype: Exceptional Energy & Radiation Defense",
+    notes: "Whitespring Bunker Enclave terminal schematics.",
+    stats: {
+      dr: 6 + 31 + 50 + 31*2 + 31*2, // 211
+      er: 6 + 40 + 65 + 40*2 + 40*2, // 271
+      rr: 6 + 450 + 750 + 450*2 + 450*2, // 3006
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "ultracite",
+    label: "Ultracite Power Armor",
+    setBonus: "High Physical Protection against Scorchbeasts",
+    notes: "Brotherhood of Steel Fort Defiance reward.",
+    stats: {
+      dr: 6 + 7 + 11 + 7*2 + 7*2, // 52
+      er: 6 + 6 + 10 + 6*2 + 6*2, // 46
+      rr: 6 + 150 + 250 + 150*2 + 150*2, // 1006
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "t60",
+    label: "T-60 Power Armor",
+    setBonus: "Most Cost-Effective Power Armor to Repair & Maintain",
+    notes: "Brotherhood of Steel standard issue.",
+    stats: {
+      dr: 6 + 6 + 10 + 6*2 + 6*2, // 46
+      er: 6 + 6 + 10 + 6*2 + 6*2, // 46
+      rr: 6 + 150 + 250 + 150*2 + 150*2, // 1006
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "t45",
+    label: "T-45 Power Armor",
+    setBonus: "Standard Wasteland Frame: Readily Available",
+    notes: "First generation post-war military model.",
+    stats: {
+      dr: 6 + 5 + 9 + 5*2 + 5*2, // 40
+      er: 6 + 5 + 9 + 5*2 + 5*2, // 40
+      rr: 6 + 120 + 180 + 120*2 + 120*2, // 786
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "raider-pa",
+    label: "Raider Power Armor",
+    setBonus: "Lowest Level Requirement (Level 15)",
+    notes: "Salvaged scrap frame made by Appalachian raider gangs.",
+    stats: {
+      dr: 6 + 5 + 9 + 5*2 + 5*2, // 40
+      er: 6 + 5 + 9 + 5*2 + 5*2, // 40
+      rr: 6 + 100 + 150 + 100*2 + 100*2, // 656
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  },
+  {
+    key: "vulcan",
+    label: "Vulcan Power Armor",
+    setBonus: "Gleaming Depths Raid Exclusive PA Frame",
+    notes: "Top-tier end-game raid reward.",
+    stats: {
+      dr: 6 + 9 + 14 + 9*2 + 9*2, // 65
+      er: 6 + 9 + 15 + 9*2 + 9*2, // 66
+      rr: 6 + 100 + 150 + 100*2 + 100*2, // 656
+      fr: 0,
+      cr: 0,
+      pr: 0
+    }
+  }
+];
+
