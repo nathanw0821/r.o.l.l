@@ -1,502 +1,524 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { 
-  Palette, 
-  Sparkles, 
-  Sliders, 
-  Monitor, 
-  Layers, 
+  Shield, 
+  Zap, 
+  Star, 
+  Search, 
+  Filter, 
   Check, 
-  Copy, 
   ExternalLink,
-  Shield,
-  Zap,
-  Star,
-  RefreshCw,
-  Search
+  ChevronRight,
+  Sliders,
+  Layers,
+  Terminal,
+  Grid,
+  List,
+  Flame,
+  Crosshair,
+  Award,
+  Cpu,
+  ArrowUpRight,
+  Bookmark,
+  CheckCircle2
 } from "lucide-react";
 
-type ThemePreset = {
-  id: string;
-  name: string;
-  tagline: string;
-  primaryGlow: string;
-  accent: string;
-  accentHover: string;
-  bgDark: string;
-  cardBg: string;
-  border: string;
-  textPrimary: string;
-  textMuted: string;
-  badgeBg: string;
-};
+type PrototypeMode = "concept-3" | "concept-4";
 
-const THEMES: ThemePreset[] = [
-  {
-    id: "pipboy-green",
-    name: "Pip-Boy Green",
-    tagline: "Classic Vault-Tec Phosphor CRT",
-    primaryGlow: "#10b981",
-    accent: "#00ff66",
-    accentHover: "#34d399",
-    bgDark: "#080c09",
-    cardBg: "rgba(14, 24, 17, 0.85)",
-    border: "rgba(16, 185, 129, 0.3)",
-    textPrimary: "#ecfdf5",
-    textMuted: "#6ee7b7",
-    badgeBg: "rgba(16, 185, 129, 0.15)"
-  },
-  {
-    id: "new-vegas-amber",
-    name: "New Vegas Amber",
-    tagline: "Warm Wasteland Tungsten Glow",
-    primaryGlow: "#f59e0b",
-    accent: "#ffb000",
-    accentHover: "#fbbf24",
-    bgDark: "#0c0906",
-    cardBg: "rgba(26, 19, 11, 0.85)",
-    border: "rgba(245, 158, 11, 0.3)",
-    textPrimary: "#fffbeb",
-    textMuted: "#fcd34d",
-    badgeBg: "rgba(245, 158, 11, 0.15)"
-  },
-  {
-    id: "vault-tec-blue",
-    name: "Vault-Tec Corporate",
-    tagline: "Pre-War Cobalt & Goldenrod",
-    primaryGlow: "#0284c7",
-    accent: "#facc15",
-    accentHover: "#fde047",
-    bgDark: "#060b14",
-    cardBg: "rgba(11, 23, 42, 0.85)",
-    border: "rgba(56, 189, 248, 0.35)",
-    textPrimary: "#f0f9ff",
-    textMuted: "#93c5fd",
-    badgeBg: "rgba(2, 132, 199, 0.2)"
-  },
-  {
-    id: "pipboy-mono",
-    name: "Pip-Boy 2000 Mk VI",
-    tagline: "Appalachian Monochromatic High-Contrast",
-    primaryGlow: "#e2e8f0",
-    accent: "#ffffff",
-    accentHover: "#f8fafc",
-    bgDark: "#09090b",
-    cardBg: "rgba(24, 24, 27, 0.9)",
-    border: "rgba(255, 255, 255, 0.25)",
-    textPrimary: "#fafafa",
-    textMuted: "#a1a1aa",
-    badgeBg: "rgba(255, 255, 255, 0.1)"
-  },
-  {
-    id: "tactical-slate",
-    name: "Tactical Stealth",
-    tagline: "Matte Metal & Brushed Slate",
-    primaryGlow: "#64748b",
-    accent: "#94a3b8",
-    accentHover: "#cbd5e1",
-    bgDark: "#020617",
-    cardBg: "rgba(15, 23, 42, 0.9)",
-    border: "rgba(148, 163, 184, 0.2)",
-    textPrimary: "#f8fafc",
-    textMuted: "#94a3b8",
-    badgeBg: "rgba(148, 163, 184, 0.12)"
-  }
+// Sample live data for testing
+const SAMPLE_MODS = [
+  { id: "mod-1", name: "Bloodied", stars: 1, tier: "1★", category: "Weapon: All", effect: "Damage increases up to +95% as your Health decreases (<20% HP).", modules: 15, component: "1 Blood Pack", unlocked: true, seeking: false, dpsGain: "+95%" },
+  { id: "mod-2", name: "Anti-Armor", stars: 1, tier: "1★", category: "Weapon: All", effect: "Ignores 50% of your target's Armor and Energy Resistance.", modules: 15, component: "1 Black Titanium", unlocked: true, seeking: false, dpsGain: "+28%" },
+  { id: "mod-3", name: "Quad", stars: 1, tier: "1★", category: "Weapon: Ranged", effect: "+300% Ammo Capacity (4x base magazine size).", modules: 15, component: "1 Fusion Cell", unlocked: false, seeking: true, dpsGain: "+70% Sustained" },
+  { id: "mod-4", name: "Overeater's", stars: 1, tier: "1★", category: "Armor & Power Armor", effect: "Increases Damage Reduction up to +6% per piece as you fill your hunger and thirst meters (Max 30%).", modules: 15, component: "1 Perfect Bubblegum", unlocked: true, seeking: false, dpsGain: "+30% Mitig" },
+  { id: "mod-5", name: "Unyielding", stars: 1, tier: "1★", category: "Armor: Regular", effect: "Gain up to +3 to all SPECIAL stats (except END) per piece when at low health (Max +15).", modules: 15, component: "1 X-Cell", unlocked: false, seeking: true, dpsGain: "+15 SPECIAL" },
+  { id: "mod-6", name: "Explosive", stars: 2, tier: "2★", category: "Weapon: Ballistic", effect: "Bullets explode for +20% weapon damage on impact.", modules: 30, component: "1 Bobblehead: Explosive", unlocked: true, seeking: false, dpsGain: "+20% AoE" },
+  { id: "mod-7", name: "Rapid (25% Weapon Speed)", stars: 2, tier: "2★", category: "Weapon: All", effect: "+25% faster Fire Rate / +40% faster Melee Swing Speed.", modules: 30, component: "1 Bobblehead: Energy Weapons", unlocked: false, seeking: true, dpsGain: "+25% DPS" },
+  { id: "mod-8", name: "Powered (AP Refresh)", stars: 2, tier: "2★", category: "Armor & Power Armor", effect: "Increases Action Point refresh speed by +5 AP/sec per piece (Max +25 AP/sec).", modules: 30, component: "1 Canned Coffee", unlocked: true, seeking: false, dpsGain: "+25 AP/s" },
+  { id: "mod-9", name: "V.A.T.S. Enhanced (-25% AP)", stars: 3, tier: "3★", category: "Weapon: Ranged", effect: "-25% Action Point Cost for all V.A.T.S. attacks.", modules: 60, component: "1 Bobblehead: Small Guns", unlocked: true, seeking: false, dpsGain: "-25% AP" },
+  { id: "mod-10", name: "Swift (15% Reload)", stars: 3, tier: "3★", category: "Weapon: Ranged", effect: "+15% faster Reload Speed.", modules: 60, component: "1 Speed Demon Serum", unlocked: false, seeking: false, dpsGain: "+15% Reload" },
+  { id: "mod-11", name: "Sentinel's", stars: 3, tier: "3★", category: "Armor & Power Armor", effect: "75% chance to reduce incoming damage by 15% while standing still (Max 75%).", modules: 60, component: "1 Scrip Token", unlocked: false, seeking: true, dpsGain: "+75% Mitig" },
+  { id: "mod-12", name: "Conductor's", stars: 4, tier: "4★", category: "Weapon: Energy", effect: "Consecutive critical hits release an electrical shock wave inflicting 250 Energy damage to surrounding enemies.", modules: 120, component: "1 Radiant Depths Core", unlocked: false, seeking: true, dpsGain: "+250 Shock" }
 ];
 
-export default function ThemePreviewLabPage() {
-  const [selectedTheme, setSelectedTheme] = useState<ThemePreset>(THEMES[0]);
-  const [scanlinesOpacity, setScanlinesOpacity] = useState<number>(20);
-  const [glowIntensity, setGlowIntensity] = useState<number>(12);
-  const [borderRadius, setBorderRadius] = useState<number>(8);
-  const [copied, setCopied] = useState<boolean>(false);
+export default function VisualOverhaulStudioPage() {
+  const [activeConcept, setActiveConcept] = useState<PrototypeMode>("concept-3");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [selectedStar, setSelectedStar] = useState<number | "ALL">("ALL");
 
-  const copyTokens = () => {
-    const tokens = `/* ${selectedTheme.name} Theme CSS Tokens */
-:root {
-  --theme-bg: ${selectedTheme.bgDark};
-  --theme-card: ${selectedTheme.cardBg};
-  --theme-border: ${selectedTheme.border};
-  --theme-accent: ${selectedTheme.accent};
-  --theme-glow: ${selectedTheme.primaryGlow};
-  --theme-text-main: ${selectedTheme.textPrimary};
-  --theme-text-muted: ${selectedTheme.textMuted};
-  --theme-badge-bg: ${selectedTheme.badgeBg};
-  --theme-border-radius: ${borderRadius}px;
-  --theme-glow-size: ${glowIntensity}px;
-}`;
-    navigator.clipboard.writeText(tokens);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const filteredMods = useMemo(() => {
+    return SAMPLE_MODS.filter((mod) => {
+      const matchSearch = mod.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          mod.effect.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          mod.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchCategory = selectedCategory === "ALL" || mod.category.toUpperCase().includes(selectedCategory);
+      const matchStar = selectedStar === "ALL" || mod.stars === selectedStar;
+      return matchSearch && matchCategory && matchStar;
+    });
+  }, [searchQuery, selectedCategory, selectedStar]);
 
   return (
-    <div className="min-h-screen bg-[#050806] text-white p-4 md:p-8 font-sans">
-      {/* Top Header */}
-      <div className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-900/40 pb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Palette className="w-3.5 h-3.5" />
-              R.O.L.L. Appearance Studio
-            </span>
-            <span className="text-xs text-zinc-500 font-mono">Interactive Design Lab</span>
+    <div className="min-h-screen bg-[#070b10] text-slate-100 flex flex-col font-sans">
+      {/* Top Architecture Bar & Prototype Switcher */}
+      <div className="bg-[#0b1219] border-b border-slate-800 px-4 py-3 sticky top-0 z-50 shadow-2xl">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded bg-amber-500 flex items-center justify-center font-mono font-black text-black text-sm shadow-md">
+              RL
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold tracking-wider text-amber-400 uppercase">Visual Overhaul Lab</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Zero AI Tropes</span>
+              </div>
+              <h1 className="text-base font-bold text-white tracking-tight">Full Interface Redesign Options</h1>
+            </div>
           </div>
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white flex items-center gap-3 font-mono">
-            Site Appearance & Theme Visualizer
-          </h1>
-          <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
-            Test and preview live visual themes, CRT scanline intensity, and component styling in real-time.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={copyTokens}
-            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-mono font-bold bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 transition"
-          >
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-            {copied ? "Tokens Copied!" : "Export Theme Tokens"}
-          </button>
+          {/* Prototype Concept Switcher */}
+          <div className="flex items-center gap-2 bg-[#06090e] p-1.5 rounded-lg border border-slate-800">
+            <button
+              onClick={() => setActiveConcept("concept-3")}
+              className={`px-4 py-2 rounded text-xs font-bold transition flex items-center gap-2 ${
+                activeConcept === "concept-3"
+                  ? "bg-sky-600 text-white shadow-md ring-1 ring-sky-400"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+              }`}
+            >
+              <Award className="w-3.5 h-3.5" />
+              <span>Concept 3: Vault-Tec Overseer OS</span>
+            </button>
+            <button
+              onClick={() => setActiveConcept("concept-4")}
+              className={`px-4 py-2 rounded text-xs font-bold transition flex items-center gap-2 ${
+                activeConcept === "concept-4"
+                  ? "bg-amber-500 text-black shadow-md ring-1 ring-amber-300 font-black"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+              }`}
+            >
+              <Cpu className="w-3.5 h-3.5" />
+              <span>Concept 4: Tactical Armory</span>
+            </button>
+          </div>
+
           <Link
             href="/mods"
-            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-mono font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition"
+            className="hidden lg:flex items-center gap-1.5 text-xs font-mono text-slate-400 hover:text-white transition"
           >
-            Return to App
-            <ExternalLink className="w-3.5 h-3.5" />
+            Return to Live Site
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Control Panel */}
-        <div className="lg:col-span-4 space-y-6">
-          {/* Preset Selector */}
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-5 shadow-xl">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-400 font-mono mb-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              Theme Presets
-            </h2>
-            <div className="space-y-2.5">
-              {THEMES.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => setSelectedTheme(theme)}
-                  className={`w-full text-left p-3.5 rounded-lg border transition flex items-center justify-between ${
-                    selectedTheme.id === theme.id
-                      ? "border-white/40 bg-white/5 shadow-md ring-1 ring-white/20"
-                      : "border-zinc-800 hover:border-zinc-700 bg-zinc-950/40"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="w-4 h-4 rounded-full border border-white/20 shadow-sm"
-                      style={{ backgroundColor: theme.accent, boxShadow: `0 0 8px ${theme.primaryGlow}` }}
-                    />
-                    <div>
-                      <div className="text-sm font-bold text-white font-mono">{theme.name}</div>
-                      <div className="text-xs text-zinc-400">{theme.tagline}</div>
-                    </div>
-                  </div>
-                  {selectedTheme.id === theme.id && (
-                    <Check className="w-4 h-4 text-white" />
-                  )}
-                </button>
-              ))}
+      {/* Main Showcase Canvas */}
+      <div className="flex-1 p-4 md:p-8">
+        {activeConcept === "concept-3" ? (
+          <VaultTecOverseerPrototype
+            mods={filteredMods}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedStar={selectedStar}
+            setSelectedStar={setSelectedStar}
+          />
+        ) : (
+          <TacticalArmoryPrototype
+            mods={filteredMods}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedStar={selectedStar}
+            setSelectedStar={setSelectedStar}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   CONCEPT 3: VAULT-TEC OVERSEER OPERATING SYSTEM (MID-CENTURY ATOMIC MODERN)
+   - Solid high-contrast panels, zero blurry glassmorphism
+   - Bold corporate stripes, official stamped approval tags, punchy typography
+   ========================================================================= */
+function VaultTecOverseerPrototype({
+  mods,
+  searchQuery,
+  setSearchQuery,
+  selectedCategory,
+  setSelectedCategory,
+  selectedStar,
+  setSelectedStar
+}: {
+  mods: typeof SAMPLE_MODS;
+  searchQuery: string;
+  setSearchQuery: (q: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (c: string) => void;
+  selectedStar: number | "ALL";
+  setSelectedStar: (s: number | "ALL") => void;
+}) {
+  return (
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Design Concept Banner */}
+      <div className="bg-[#0e1726] border-2 border-sky-900/80 rounded-none p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span className="text-[11px] font-mono font-black tracking-widest text-sky-400 uppercase">
+            Aesthetic Architecture Option 3
+          </span>
+          <h2 className="text-xl font-black text-white tracking-tight uppercase">
+            Vault-Tec Corporation // Overseer Terminal v11.4
+          </h2>
+          <p className="text-xs text-slate-300 mt-0.5">
+            Solid mid-century atomic layout • Heavy typography • Stamped status seals • Zero transparent blur
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="px-3 py-1 bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider">
+            Official Clearance
+          </div>
+          <div className="px-3 py-1 bg-sky-950 text-sky-300 font-mono text-xs border border-sky-700">
+            Vault 76 Terminal
+          </div>
+        </div>
+      </div>
+
+      {/* Signature Vault-Tec Header Strip */}
+      <div className="bg-[#121d30] border-t-4 border-b-2 border-t-amber-400 border-b-sky-900 p-6 shadow-xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 bg-amber-400 inline-block" />
+              <span className="text-xs font-black tracking-widest text-amber-400 uppercase font-mono">
+                Legendary Modification Registry
+              </span>
             </div>
+            <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight uppercase">
+              Appalachian Armory & Crafting Directive
+            </h3>
+            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+              Authorized specifications for 1★ through 4★ legendary mod boxes, required catalyst reagents, and verified drop frequencies across all sectors.
+            </p>
           </div>
 
-          {/* Shader & FX Controls */}
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-5 shadow-xl space-y-5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-400 font-mono flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-emerald-400" />
-              Display & Shader Tuning
-            </h2>
-
-            <div>
-              <div className="flex justify-between text-xs font-mono mb-1.5">
-                <span className="text-zinc-400">CRT Scanline Opacity</span>
-                <span className="text-white font-bold">{scanlinesOpacity}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="60"
-                value={scanlinesOpacity}
-                onChange={(e) => setScanlinesOpacity(Number(e.target.value))}
-                className="w-full accent-emerald-500"
-              />
+          {/* Quick Metrics Stamped Boxes */}
+          <div className="grid grid-cols-3 gap-3 font-mono">
+            <div className="bg-[#090e17] border border-sky-800/80 p-3 text-center">
+              <div className="text-[10px] text-slate-400 uppercase font-bold">Total Recipes</div>
+              <div className="text-xl font-black text-amber-400">268</div>
             </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-mono mb-1.5">
-                <span className="text-zinc-400">Phosphor Glow Radius</span>
-                <span className="text-white font-bold">{glowIntensity}px</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="24"
-                value={glowIntensity}
-                onChange={(e) => setGlowIntensity(Number(e.target.value))}
-                className="w-full accent-emerald-500"
-              />
+            <div className="bg-[#090e17] border border-sky-800/80 p-3 text-center">
+              <div className="text-[10px] text-slate-400 uppercase font-bold">Learned</div>
+              <div className="text-xl font-black text-sky-400">184</div>
             </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-mono mb-1.5">
-                <span className="text-zinc-400">Corner Radius</span>
-                <span className="text-white font-bold">{borderRadius}px</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="20"
-                value={borderRadius}
-                onChange={(e) => setBorderRadius(Number(e.target.value))}
-                className="w-full accent-emerald-500"
-              />
+            <div className="bg-[#090e17] border border-sky-800/80 p-3 text-center">
+              <div className="text-[10px] text-slate-400 uppercase font-bold">Seeking</div>
+              <div className="text-xl font-black text-rose-400">12</div>
             </div>
           </div>
         </div>
 
-        {/* Right Sandbox Container */}
-        <div className="lg:col-span-8">
+        {/* Filter Controls Bar */}
+        <div className="mt-6 pt-5 border-t border-sky-900/60 flex flex-col md:flex-row gap-4 justify-between items-center">
+          {/* Search Box */}
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-sky-400" />
+            <input
+              type="text"
+              placeholder="FILTER REGISTRY..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-[#080d14] border border-sky-700 text-white placeholder-slate-500 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 uppercase"
+            />
+          </div>
+
+          {/* Star Buttons */}
+          <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+            {(["ALL", 1, 2, 3, 4] as const).map((star) => (
+              <button
+                key={star}
+                onClick={() => setSelectedStar(star)}
+                className={`px-3 py-1.5 text-xs font-black font-mono transition uppercase ${
+                  selectedStar === star
+                    ? "bg-amber-400 text-black shadow-md"
+                    : "bg-[#080d14] text-slate-300 border border-sky-800 hover:border-sky-500"
+                }`}
+              >
+                {star === "ALL" ? "All Stars" : `${star}★ Star`}
+              </button>
+            ))}
+          </div>
+
+          {/* Category Chips */}
+          <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto">
+            {["ALL", "WEAPON", "ARMOR"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 text-xs font-bold font-mono transition uppercase ${
+                  selectedCategory === cat
+                    ? "bg-sky-600 text-white"
+                    : "bg-[#080d14] text-slate-400 border border-slate-800 hover:text-white"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Registry Grid Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {mods.map((mod) => (
           <div
-            className="relative rounded-2xl border p-6 md:p-8 transition-all overflow-hidden shadow-2xl"
-            style={{
-              backgroundColor: selectedTheme.bgDark,
-              borderColor: selectedTheme.border,
-              boxShadow: `0 0 ${glowIntensity * 2}px ${selectedTheme.primaryGlow}22`
-            }}
+            key={mod.id}
+            className="bg-[#111a28] border-2 border-sky-950 hover:border-sky-700 transition flex flex-col justify-between shadow-lg"
           >
-            {/* Scanline Overlay */}
-            {scanlinesOpacity > 0 && (
-              <div
-                className="pointer-events-none absolute inset-0 z-10"
-                style={{
-                  opacity: scanlinesOpacity / 100,
-                  backgroundImage: "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.75) 50%)",
-                  backgroundSize: "100% 4px"
-                }}
-              />
-            )}
-
-            {/* Sandbox Content */}
-            <div className="relative z-20 space-y-8">
-              {/* Header Badge */}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4" style={{ borderColor: selectedTheme.border }}>
-                <div>
-                  <span
-                    className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold tracking-wider uppercase border"
-                    style={{
-                      backgroundColor: selectedTheme.badgeBg,
-                      borderColor: selectedTheme.border,
-                      color: selectedTheme.accent,
-                      borderRadius: `${borderRadius}px`
-                    }}
-                  >
-                    <Monitor className="w-3.5 h-3.5" />
-                    RobCo OS v4.2 // Active Terminal
-                  </span>
-                  <h3
-                    className="text-xl md:text-2xl font-black tracking-tight mt-2 font-mono"
-                    style={{
-                      color: selectedTheme.textPrimary,
-                      textShadow: `0 0 ${glowIntensity}px ${selectedTheme.primaryGlow}88`
-                    }}
-                  >
-                    Appalachian Catalog System
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div
-                    className="px-3 py-1.5 text-xs font-mono border"
-                    style={{
-                      backgroundColor: selectedTheme.cardBg,
-                      borderColor: selectedTheme.border,
-                      color: selectedTheme.textMuted,
-                      borderRadius: `${borderRadius}px`
-                    }}
-                  >
-                    Status: <span style={{ color: selectedTheme.accent }} className="font-bold">OPTIMIZED</span>
-                  </div>
-                </div>
+            {/* Card Header */}
+            <div className="bg-[#0a0f18] p-3.5 border-b border-sky-900/60 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 bg-amber-400 text-slate-950 font-black font-mono text-xs">
+                  {mod.tier}
+                </span>
+                <span className="text-xs font-mono font-bold text-slate-400 uppercase">
+                  {mod.category}
+                </span>
               </div>
+              {mod.unlocked ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 border border-emerald-800">
+                  <Check className="w-3 h-3" /> LEARNED
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300 bg-amber-950/80 px-2 py-0.5 border border-amber-800">
+                  <Bookmark className="w-3 h-3" /> SEEKING
+                </span>
+              )}
+            </div>
 
-              {/* Legendary Mod Badges Showcase */}
-              <div>
-                <h4 className="text-xs font-mono uppercase tracking-wider mb-3" style={{ color: selectedTheme.textMuted }}>
-                  Legendary Mod Tier Badges (1★–4★)
-                </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { stars: "1★", name: "Bloodied", desc: "+95% Dmg at low HP" },
-                    { stars: "2★", name: "Explosive", desc: "+20% Area Dmg" },
-                    { stars: "3★", name: "V.A.T.S. Enhanced", desc: "-25% AP Cost" },
-                    { stars: "4★", name: "Conductor's", desc: "+50% Cryo Burst" }
-                  ].map((mod, idx) => (
-                    <div
-                      key={idx}
-                      className="p-3.5 border transition-all"
-                      style={{
-                        backgroundColor: selectedTheme.cardBg,
-                        borderColor: selectedTheme.border,
-                        borderRadius: `${borderRadius}px`
-                      }}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span
-                          className="font-mono text-xs font-bold px-1.5 py-0.5"
-                          style={{
-                            backgroundColor: selectedTheme.badgeBg,
-                            color: selectedTheme.accent,
-                            borderRadius: `${borderRadius / 2}px`
-                          }}
-                        >
-                          {mod.stars}
-                        </span>
-                        <Star className="w-3.5 h-3.5" style={{ color: selectedTheme.accent }} />
-                      </div>
-                      <div className="font-bold text-sm" style={{ color: selectedTheme.textPrimary }}>
-                        {mod.name}
-                      </div>
-                      <div className="text-xs mt-1" style={{ color: selectedTheme.textMuted }}>
-                        {mod.desc}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            {/* Card Body */}
+            <div className="p-4 space-y-3">
+              <h4 className="text-base font-black text-white tracking-tight uppercase">
+                {mod.name}
+              </h4>
+              <p className="text-xs text-slate-300 leading-relaxed min-h-[48px]">
+                {mod.effect}
+              </p>
+            </div>
+
+            {/* Card Footer Info */}
+            <div className="bg-[#0a0f18] px-4 py-3 border-t border-sky-950/80 flex items-center justify-between text-xs font-mono">
+              <div className="text-slate-400">
+                Cost: <span className="font-bold text-amber-400">{mod.modules} Modules</span>
               </div>
-
-              {/* Perk Card & Table Row Showcase */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                {/* Simulated Perk Card */}
-                <div
-                  className="p-4 border space-y-3"
-                  style={{
-                    backgroundColor: selectedTheme.cardBg,
-                    borderColor: selectedTheme.border,
-                    borderRadius: `${borderRadius}px`
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold" style={{ color: selectedTheme.accent }}>
-                      LUCK // RANK 3/3
-                    </span>
-                    <span className="text-xs font-mono" style={{ color: selectedTheme.textMuted }}>
-                      COST: 3
-                    </span>
-                  </div>
-
-                  <div
-                    className="h-44 border flex items-center justify-center relative overflow-hidden"
-                    style={{
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      borderColor: selectedTheme.border,
-                      borderRadius: `${borderRadius}px`
-                    }}
-                  >
-                    <Image
-                      src="/images/perks_official/fo76-perk-class-freak.svg"
-                      alt="Class Freak"
-                      width={120}
-                      height={120}
-                      className="object-contain"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="font-bold text-base" style={{ color: selectedTheme.textPrimary }}>
-                      Class Freak
-                    </div>
-                    <p className="text-xs mt-1 leading-relaxed" style={{ color: selectedTheme.textMuted }}>
-                      The negative effects of your mutations are reduced by 75%.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Simulated Controls & Table */}
-                <div className="space-y-4">
-                  {/* Search Input */}
-                  <div className="relative">
-                    <Search className="absolute left-3 top-2.5 w-4 h-4" style={{ color: selectedTheme.textMuted }} />
-                    <input
-                      type="text"
-                      readOnly
-                      value="Search legendary effects or weapon mods..."
-                      className="w-full pl-9 pr-4 py-2 text-xs font-mono border bg-black/40 focus:outline-none"
-                      style={{
-                        borderColor: selectedTheme.border,
-                        color: selectedTheme.textPrimary,
-                        borderRadius: `${borderRadius}px`
-                      }}
-                    />
-                  </div>
-
-                  {/* Buttons Group */}
-                  <div className="flex flex-wrap gap-2.5">
-                    <button
-                      className="px-4 py-2 text-xs font-mono font-bold transition flex items-center gap-1.5 shadow-md"
-                      style={{
-                        backgroundColor: selectedTheme.accent,
-                        color: selectedTheme.bgDark,
-                        borderRadius: `${borderRadius}px`,
-                        boxShadow: `0 0 ${glowIntensity}px ${selectedTheme.primaryGlow}66`
-                      }}
-                    >
-                      <Zap className="w-3.5 h-3.5 fill-current" />
-                      Primary Action
-                    </button>
-                    <button
-                      className="px-4 py-2 text-xs font-mono font-bold border transition"
-                      style={{
-                        borderColor: selectedTheme.border,
-                        backgroundColor: selectedTheme.cardBg,
-                        color: selectedTheme.textPrimary,
-                        borderRadius: `${borderRadius}px`
-                      }}
-                    >
-                      Secondary Outline
-                    </button>
-                    <button
-                      className="px-4 py-2 text-xs font-mono font-bold border border-rose-500/40 text-rose-300 bg-rose-950/30 transition"
-                      style={{ borderRadius: `${borderRadius}px` }}
-                    >
-                      Danger Reset
-                    </button>
-                  </div>
-
-                  {/* Data Rows */}
-                  <div
-                    className="border p-3 space-y-2 font-mono text-xs"
-                    style={{
-                      backgroundColor: selectedTheme.cardBg,
-                      borderColor: selectedTheme.border,
-                      borderRadius: `${borderRadius}px`
-                    }}
-                  >
-                    <div className="flex justify-between border-b pb-1.5" style={{ borderColor: selectedTheme.border }}>
-                      <span style={{ color: selectedTheme.textMuted }}>Base Ballistic DPS</span>
-                      <span className="font-bold" style={{ color: selectedTheme.accent }}>428.5 / sec</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-1.5" style={{ borderColor: selectedTheme.border }}>
-                      <span style={{ color: selectedTheme.textMuted }}>V.A.T.S. Hit Probability</span>
-                      <span className="font-bold" style={{ color: selectedTheme.accent }}>95% (Max Cap)</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span style={{ color: selectedTheme.textMuted }}>Armor Penetration</span>
-                      <span className="font-bold" style={{ color: selectedTheme.accent }}>+50% (Anti-Armor)</span>
-                    </div>
-                  </div>
-                </div>
+              <div className="text-slate-400 truncate max-w-[140px]" title={mod.component}>
+                Req: <span className="text-slate-200">{mod.component}</span>
               </div>
             </div>
           </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   CONCEPT 4: HIGH-DENSITY TACTICAL ARMORY (ELITE THEORYCRAFTER UTILITY)
+   - Maximum screen information density, instant scanning
+   - Razor-sharp 1px border rules, inline stat deltas, compact multi-column table
+   ========================================================================= */
+function TacticalArmoryPrototype({
+  mods,
+  searchQuery,
+  setSearchQuery,
+  selectedCategory,
+  setSelectedCategory,
+  selectedStar,
+  setSelectedStar
+}: {
+  mods: typeof SAMPLE_MODS;
+  searchQuery: string;
+  setSearchQuery: (q: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (c: string) => void;
+  selectedStar: number | "ALL";
+  setSelectedStar: (s: number | "ALL") => void;
+}) {
+  return (
+    <div className="max-w-7xl mx-auto space-y-4">
+      {/* Design Concept Banner */}
+      <div className="bg-[#0d1218] border border-amber-500/30 p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 font-mono">
+        <div>
+          <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">
+            Aesthetic Architecture Option 4
+          </span>
+          <h2 className="text-lg font-black text-white uppercase tracking-tight">
+            Tactical Armory // Theorycrafting Grid
+          </h2>
+          <p className="text-xs text-slate-400">
+            High data density • 1px razor dividers • Compact list views • Instant DPS deltas • Zero fluff
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30">
+            PRO MODE ACTIVE
+          </span>
+          <span className="px-2 py-1 bg-slate-800 text-slate-300 border border-slate-700">
+            {mods.length} EFFECTS MATCHED
+          </span>
+        </div>
+      </div>
+
+      {/* High-Density Tactical Search & Matrix Filter Bar */}
+      <div className="bg-[#0a0e14] border border-slate-800 p-3 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+        <div className="flex items-center gap-2 flex-1 min-w-[260px]">
+          <Search className="w-4 h-4 text-amber-400" />
+          <input
+            type="text"
+            placeholder="Quick search effect, stat, or item..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-[#121820] border border-slate-700 px-3 py-1.5 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-400"
+          />
+        </div>
+
+        {/* Star Filter Bar */}
+        <div className="flex items-center gap-1">
+          <span className="text-slate-500 text-[11px] mr-1">TIER:</span>
+          {(["ALL", 1, 2, 3, 4] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setSelectedStar(s)}
+              className={`px-2.5 py-1 text-xs font-bold border transition ${
+                selectedStar === s
+                  ? "bg-amber-500 text-black border-amber-400 font-black"
+                  : "bg-[#121820] text-slate-300 border-slate-800 hover:border-slate-600"
+              }`}
+            >
+              {s === "ALL" ? "ALL" : `${s}★`}
+            </button>
+          ))}
+        </div>
+
+        {/* Category Filter Bar */}
+        <div className="flex items-center gap-1">
+          <span className="text-slate-500 text-[11px] mr-1">CAT:</span>
+          {["ALL", "WEAPON", "ARMOR"].map((c) => (
+            <button
+              key={c}
+              onClick={() => setSelectedCategory(c)}
+              className={`px-2.5 py-1 text-xs font-bold border transition ${
+                selectedCategory === c
+                  ? "bg-slate-200 text-black border-white"
+                  : "bg-[#121820] text-slate-400 border-slate-800 hover:text-white"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Master Compact Tactical Data Table */}
+      <div className="bg-[#090d12] border border-slate-800 overflow-x-auto shadow-2xl">
+        <table className="w-full text-left border-collapse font-mono text-xs">
+          <thead>
+            <tr className="bg-[#111720] border-b border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
+              <th className="py-2.5 px-3 w-12 text-center">Tier</th>
+              <th className="py-2.5 px-4 w-48">Mod Name</th>
+              <th className="py-2.5 px-3 w-36">Equipment Slot</th>
+              <th className="py-2.5 px-4">Tactical Effect & Mechanism</th>
+              <th className="py-2.5 px-3 w-28 text-center">Delta Impact</th>
+              <th className="py-2.5 px-3 w-24 text-center">Modules</th>
+              <th className="py-2.5 px-4 w-44">Craft Catalyst</th>
+              <th className="py-2.5 px-3 w-28 text-center">State</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-800/80">
+            {mods.map((mod) => (
+              <tr 
+                key={mod.id}
+                className="hover:bg-[#121a24] transition group"
+              >
+                {/* Tier */}
+                <td className="py-2 px-3 text-center">
+                  <span className="inline-block font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/30 text-[11px]">
+                    {mod.tier}
+                  </span>
+                </td>
+
+                {/* Name */}
+                <td className="py-2 px-4 font-bold text-white group-hover:text-amber-400 transition">
+                  {mod.name}
+                </td>
+
+                {/* Equipment Slot */}
+                <td className="py-2 px-3 text-slate-400 text-[11px]">
+                  {mod.category}
+                </td>
+
+                {/* Effect */}
+                <td className="py-2 px-4 text-slate-300 font-sans text-xs leading-snug">
+                  {mod.effect}
+                </td>
+
+                {/* Stat Delta */}
+                <td className="py-2 px-3 text-center">
+                  <span className="font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 border border-emerald-800/80 text-[11px]">
+                    {mod.dpsGain}
+                  </span>
+                </td>
+
+                {/* Modules Cost */}
+                <td className="py-2 px-3 text-center font-bold text-amber-300">
+                  {mod.modules}
+                </td>
+
+                {/* Component */}
+                <td className="py-2 px-4 text-slate-400 text-[11px] truncate max-w-[170px]" title={mod.component}>
+                  {mod.component}
+                </td>
+
+                {/* Status Toggle */}
+                <td className="py-2 px-3 text-center">
+                  {mod.unlocked ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 border border-emerald-700">
+                      <CheckCircle2 className="w-3 h-3" /> LEARNED
+                    </span>
+                  ) : (
+                    <button className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-400 bg-amber-950/80 px-2 py-0.5 border border-amber-700 hover:bg-amber-900 transition">
+                      <Bookmark className="w-3 h-3" /> SEEK
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Theorycrafting Summary Strip */}
+      <div className="bg-[#0a0e14] border border-slate-800 p-3.5 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-xs">
+        <div className="flex items-center gap-4 text-slate-400">
+          <span>Displaying <strong className="text-white">{mods.length}</strong> mod formulas</span>
+          <span>•</span>
+          <span>Scrap Unlock Chance: <strong className="text-emerald-400">1.0%</strong> (Plan) / <strong className="text-amber-400">1.5%</strong> (Box)</span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button className="px-3 py-1.5 bg-[#141b24] hover:bg-slate-800 border border-slate-700 text-white font-bold transition">
+            Export Loadout CSV
+          </button>
+          <button className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-black transition">
+            Apply to Build Simulator
+          </button>
         </div>
       </div>
     </div>
