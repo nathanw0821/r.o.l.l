@@ -69,18 +69,22 @@ export function getPerkCardById(id: string): PerkCard | undefined {
   });
 }
 
+export function getGenderedPerkName(name: string, isFemale = false): string {
+  if (!isFemale || !name) return name;
+  const lower = name.toLowerCase().trim();
+  if (lower === "action boy" || lower === "action-boy" || lower === "actionboy") return "Action Girl";
+  if (lower === "aquaboy" || lower === "aqua-boy" || lower === "aquaboy-aquagirl") return "Aquagirl";
+  if (lower === "party boy" || lower === "party-boy" || lower === "partyboy") return "Party Girl";
+  return name;
+}
+
 export function searchPerkCards(query: string, rank?: number): PerkCard[] {
-  let norm = query.toLowerCase().trim();
+  const norm = query.toLowerCase().trim();
   if (!norm) return PERK_CATALOG;
 
-  // Resolve female variant query aliases to find parent perk cards
-  if (norm.includes("action girl") || norm === "actiongirl" || norm === "action-girl") norm = "action boy";
-  else if (norm.includes("aquagirl") || norm === "aqua girl" || norm === "aqua-girl") norm = "aquaboy";
-  else if (norm.includes("party girl") || norm === "partygirl" || norm === "party-girl") norm = "party boy";
-  else if (norm.includes("black widow") || norm === "blackwidow" || norm === "black-widow") norm = "lady killer";
-
   return PERK_CATALOG.filter((card) => {
-    const matchName = card.name.toLowerCase().includes(norm);
+    const femaleName = getGenderedPerkName(card.name, true).toLowerCase();
+    const matchName = card.name.toLowerCase().includes(norm) || femaleName.includes(norm);
     const matchId = card.id.toLowerCase().includes(norm);
     const matchSpecial = card.special.toLowerCase() === norm;
     const matchRank = rank ? card.ranks.some((r) => r.rank === rank) : true;
