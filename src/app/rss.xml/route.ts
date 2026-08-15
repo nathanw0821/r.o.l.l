@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     const articles = FALLBACK_WIKI_ARTICLES.slice(0, limit);
     const baseUrl = process.env.NEXTAUTH_URL || "https://fallout76.wiki";
 
-    const itemsXml = (articles as Array<{ id: string; title: string; category?: string; updated_at?: string; snippet?: string; url?: string; source?: string }>)
+    const itemsXml = (articles as Array<{ id: string | number; title: string; category?: string; updated_at?: string; snippet?: string; url?: string; source?: string }>)
       .map((a) => `
     <item>
       <title><![CDATA[${a.title}]]></title>

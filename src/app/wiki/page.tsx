@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, BookOpen, ExternalLink, Shield, Zap, Sparkles, LayoutGrid, List, ChevronRight, ArrowUpDown, Calendar, Filter, Terminal, Bookmark, FileText, ArrowLeft, Layers, Compass, Crosshair, Coins, Activity, Wrench } from "lucide-react";
+import { Search, BookOpen, ExternalLink, Shield, ChevronRight, ArrowUpDown, Filter, Terminal, FileText, ArrowLeft, Layers, Compass, Crosshair, Coins, Activity, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -392,9 +392,14 @@ function TruthWikiContent() {
 
   React.useEffect(() => {
     const q = searchParams?.get("q") || searchParams?.get("query");
-    if (q !== null && q !== undefined && q !== query) {
-      setQuery(q);
-      hasAutoOpenedRef.current = false;
+    if (q !== null && q !== undefined) {
+      setQuery((prev) => {
+        if (prev !== q) {
+          hasAutoOpenedRef.current = false;
+          return q;
+        }
+        return prev;
+      });
     }
   }, [searchParams]);
 
