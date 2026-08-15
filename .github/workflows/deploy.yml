@@ -17,6 +17,9 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      url: https://fallout76.wiki
     env:
       # CI placeholders for Prisma and Next.js builds (no real secrets needed for build/check)
       DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5432/roll?schema=public' }}
