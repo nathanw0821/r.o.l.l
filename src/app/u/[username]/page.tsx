@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { username } = await params;
   return {
     title: `${username}'s Crafting Resume | R.O.L.L.`,
-    description: `Verified legendary crafting knowledge for ${username} in Fallout 76. View learned recipes and crafting stats.`,
+    description: `Legendary crafting knowledge for ${username} in Fallout 76. View learned recipes and crafting stats.`,
   };
 }
 
@@ -44,7 +44,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 space-y-8">
-      {/* Header / Brand Protection */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="h-16 w-16 rounded-full bg-accent/20 flex items-center justify-center border border-accent/40">
@@ -53,10 +53,10 @@ export default async function PublicProfilePage({ params }: PageProps) {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{user.displayName}</h1>
             <div className="flex items-center gap-2 text-foreground/60 text-sm">
-              <ShieldCheck className="h-4 w-4 text-green-500" />
-              <span>Verified Crafting Resume</span>
+              <ShieldCheck className="h-4 w-4 text-accent" />
+              <span>Crafting Resume</span>
               <span className="text-foreground/30">•</span>
-              <span>R.O.L.L. Certified</span>
+              <span>Public Profile</span>
             </div>
           </div>
         </div>
@@ -76,14 +76,14 @@ export default async function PublicProfilePage({ params }: PageProps) {
         </Card>
         <Card className="bg-panel/50">
           <CardContent className="pt-6">
-            <div className="text-xs text-foreground/50 uppercase mb-1">Reputation</div>
-            <div className="text-2xl font-bold">Market76 Verified</div>
+            <div className="text-xs text-foreground/50 uppercase mb-1">Coverage</div>
+            <div className="text-2xl font-bold">{stats.percent}% Unlocked</div>
           </CardContent>
         </Card>
         <Card className="bg-panel/50">
           <CardContent className="pt-6">
             <div className="text-xs text-foreground/50 uppercase mb-1">Status</div>
-            <Badge className="bg-green-500/20 text-green-500 border-green-500/30">Active Crafter</Badge>
+            <Badge className="bg-green-500/20 text-green-500 border-green-500/30">Active Profile</Badge>
           </CardContent>
         </Card>
       </div>
