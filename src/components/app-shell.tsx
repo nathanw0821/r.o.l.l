@@ -67,10 +67,7 @@ const trackingLinks: AppNavLink[] = [
   },
   { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false, isBuildTab: true },
   { href: "/perks", label: "P.E.R.K.", icon: Boxes, activePrefixes: ["/perks"] },
-  { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] }
-];
-
-const experimentalLinks: AppNavLink[] = [
+  { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] },
   { href: "/pts", label: "P.T.S.", icon: FlaskConical, activePrefixes: ["/pts"] },
   { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles }
 ];
@@ -458,32 +455,6 @@ interface AccountLinksResponse {
                 </React.Fragment>
               );
             })}
-
-            <div className="mt-6 pt-4 border-t border-border/20 space-y-1">
-              {!sidebarCollapsed && (
-                <div className="px-3 mb-1 text-[0.6875rem] font-black uppercase tracking-widest text-foreground/40 font-mono">
-                  P.T.S. &amp; S.C.A.N.
-                </div>
-              )}
-              {experimentalLinks.map((link) => {
-                const active = isNavLinkActive(pathname, link);
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    prefetch={false}
-                    aria-label={link.ariaLabel ?? link.label}
-                    className={cn("app-nav__link", active && "app-nav__link--active")}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{link.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-
-
           </nav>
           <div className="mt-auto flex flex-col gap-2">
             <div className="app-sidebar__auth space-y-2">
