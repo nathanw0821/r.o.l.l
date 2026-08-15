@@ -55,7 +55,7 @@ function buildUiBootstrapScript() {
       const root = document.documentElement;
       const storage = window.localStorage;
       const read = (key, fallback) => storage.getItem(key) ?? fallback;
-      const theme = read("roll-theme", "system");
+      const theme = read("roll-theme", "dark");
       const accent = read("roll-accent", "ember");
       const colorBlind = read("roll-colorblind", "none");
       const density = read("roll-density", "compact");
@@ -65,7 +65,7 @@ function buildUiBootstrapScript() {
       const resolvedTheme =
         theme === "light" || theme === "dark"
           ? theme
-          : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 
       root.setAttribute("data-theme", resolvedTheme);
       root.setAttribute("data-accent", accent);
@@ -103,7 +103,7 @@ async function DynamicShell({ children }: { children: ReactNode }) {
   }
 
   const isAdmin = isAdminUser(session?.user);
-  const initialTheme: ThemeMode = "system";
+  const initialTheme: ThemeMode = "dark";
   const initialAccent = "ember";
   const initialColorBlind: ColorBlindMode = "none";
   const initialDensity = "compact";
@@ -127,7 +127,7 @@ async function DynamicShell({ children }: { children: ReactNode }) {
 
 function ShellLoading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f4efe8] dark:bg-[#0f1113]">
+    <div className="flex min-h-screen items-center justify-center bg-[#0f1113]">
       <div className="text-sm font-mono text-foreground/40 animate-pulse">
         Initializing R.O.L.L. System...
       </div>
@@ -136,7 +136,7 @@ function ShellLoading() {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const resolvedTheme: "light" | "dark" | undefined = undefined;
+  const resolvedTheme: "light" | "dark" = "dark";
 
   return (
     <html

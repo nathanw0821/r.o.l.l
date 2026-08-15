@@ -109,14 +109,14 @@ function readStoredUiTone() {
 }
 
 function resolveTheme(theme: ThemeMode): "light" | "dark" {
-  if (theme !== "system") return theme;
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  if (theme === "light" || theme === "dark") return theme;
+  if (typeof window === "undefined") return "dark";
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "dark",
   defaultAccent = "ember",
   defaultColorBlind = "none",
   defaultDensity = "compact",
