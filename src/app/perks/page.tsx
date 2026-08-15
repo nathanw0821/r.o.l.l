@@ -1,13 +1,22 @@
-import { Suspense } from "react";
+import type { Metadata } from "next";
+import nextDynamic from "next/dynamic";
 import { getAppSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import PerkBuilder from "@/components/perks/perk-builder";
+import { getLearnedBasePieceIdsForUser } from "@/lib/base-gear-learned";
+import { isAdminUser } from "@/lib/app-config";
+
+const BuilderExperimentClient = nextDynamic(
+  () => import("@/components/builder/builder-experiment-client"),
+  {
+    ssr: true,
+    loading: () => <p className="text-sm text-foreground/60 font-mono p-6">Loading P.E.R.K. Command Suite…</p>
+  }
+);
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "P.E.R.K. Loadout Manager | R.O.L.L.",
-  description: "Fallout 76 Perk Equipment & Reconfiguration Kit (P.E.R.K.) with 6 Punch Card Machine loadout slots per character."
+export const metadata: Metadata = {
+  title: "P.E.R.K. & B.U.I.L.D. Unified Suite | R.O.L.L.",
+  description: "Fallout 76 Perk Equipment & Reconfiguration Kit (P.E.R.K.) with synchronized Punch Card Machine, 319 official Vault Boy SVG cards, and live Combat Matrix."
 };
 
 export default async function PerksPage() {
@@ -15,32 +24,18 @@ export default async function PerksPage() {
   try {
     session = await getAppSession();
   } catch {
-    // Session fallback
+    // Fallback session
   }
-
-  let activeCharacterId: string | null = null;
-  let activeCharacterName: string | null = null;
-
-  if (session?.user?.id) {
-    try {
-      const userSettings = await prisma.userSettings.findUnique({
-        where: { userId: session.user.id },
-        include: { activeCharacter: true }
-      });
-      if (userSettings?.activeCharacter) {
-        activeCharacterId = userSettings.activeCharacter.id;
-        activeCharacterName = userSettings.activeCharacter.name;
-      }
-    } catch {
-      // Database fallback
-    }
-  }
+  const isAdmin = isAdminUser(session?.user);
+  const initialLearnedBasePieceIds = await getLearnedBasePieceIdsForUser(session?.user?.id);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      <Suspense fallback={<div className="p-6 text-sm font-mono text-foreground/60 animate-pulse">Loading P.E.R.K. Loadout Manager...</div>}>
-        <PerkBuilder characterId={activeCharacterId} characterName={activeCharacterName} />
-      </Suspense>
+      <BuilderExperimentClient
+        initialLearnedBasePieceIds={initialLearnedBasePieceIds}
+        isAdmin={isAdmin}
+        initialTab="perks"
+      />
     </div>
   );
 }
