@@ -19,6 +19,9 @@ import {
   Sparkle,
   CheckCircle2,
   Terminal,
+  Share2,
+  Copy,
+  Check,
 } from "lucide-react";
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
@@ -416,6 +419,7 @@ export default function BuilderExperimentClient({
   const [shareTitle, setShareTitle] = React.useState("B.U.I.L.D. Loadout");
   const [shareBusy, setShareBusy] = React.useState(false);
   const [shareResult, setShareResult] = React.useState<string | null>(null);
+  const [shareCopied, setShareCopied] = React.useState(false);
   const [learnedBasePieceIds, setLearnedBasePieceIds] = React.useState(
     () => new Set(initialLearnedBasePieceIds),
   );
@@ -1410,7 +1414,7 @@ export default function BuilderExperimentClient({
       {/* Main Terminal Shell Title Header (Visually aligned with P.E.R.K.) */}
       <div className="rounded-[var(--radius-lg)] border border-emerald-500/40 bg-slate-950 p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <span className="text-[0.7rem] uppercase font-mono tracking-widest text-emerald-400 font-bold flex items-center gap-1.5">
               <Terminal className="h-3.5 w-3.5 animate-pulse" /> VAULT-TEC PUNCH CARD MACHINE // B.U.I.L.D. SANDBOX
@@ -1422,23 +1426,80 @@ export default function BuilderExperimentClient({
               Battle Utility &amp; Inventory Logistics Diagnostic System
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-            <a
-              className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-1.5 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all"
-              href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Resist Matrix Notes
-            </a>
-            <a
-              className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-1.5 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all"
-              href="https://nukesdragons.com/fallout-76/character"
-              target="_blank"
-              rel="noreferrer"
-            >
-              N&amp;D Overlay Spec
-            </a>
+          
+          <div className="flex flex-col items-start lg:items-end gap-2 font-mono text-xs">
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Publish Transmission Controls */}
+              <div className="flex items-center gap-1 rounded border border-emerald-500/50 bg-emerald-950/40 p-0.5">
+                <Input
+                  className="h-8 w-36 sm:w-44 text-xs bg-transparent border-0 font-mono text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2.5"
+                  value={shareTitle}
+                  onChange={(e) => setShareTitle(e.target.value)}
+                  placeholder="Loadout name..."
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  className="h-8 px-3 text-[0.72rem] font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5"
+                  onClick={shareBuild}
+                  disabled={shareBusy}
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  {shareBusy ? "PUBLISHING..." : "PUBLISH"}
+                </Button>
+              </div>
+
+              <a
+                className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-2 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all flex items-center gap-1"
+                href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Resist Matrix Notes
+              </a>
+              <a
+                className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-2 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all flex items-center gap-1"
+                href="https://nukesdragons.com/fallout-76/character"
+                target="_blank"
+                rel="noreferrer"
+              >
+                N&amp;D Overlay Spec
+              </a>
+            </div>
+
+            {/* Share Result Status Overlay */}
+            {shareResult?.startsWith("/") ? (
+              <div className="flex items-center gap-2 rounded border border-emerald-500/50 bg-emerald-950/80 px-2.5 py-1 text-xs text-emerald-300 font-bold animate-pulse">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <Link className="underline hover:text-white" href={shareResult}>
+                  OPEN TRANSMISSION
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const fullUrl = typeof window !== "undefined" ? `${window.location.origin}${shareResult}` : shareResult;
+                    navigator.clipboard.writeText(fullUrl);
+                    setShareCopied(true);
+                    setTimeout(() => setShareCopied(false), 2000);
+                  }}
+                  className="ml-1 flex items-center gap-1 text-[0.68rem] px-1.5 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 uppercase transition-colors"
+                >
+                  {shareCopied ? (
+                    <>
+                      <Check className="h-3 w-3 text-emerald-400" /> COPIED!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3" /> COPY LINK
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : shareResult ? (
+              <div className="rounded border border-red-500/40 bg-red-950/60 px-2.5 py-1 text-[0.72rem] text-red-300 font-bold">
+                &gt;&gt; ERROR: {shareResult}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -2201,38 +2262,6 @@ export default function BuilderExperimentClient({
             )}
           </div>
 
-          {/* Share links inputs and logs */}
-          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
-            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-              [ PUBLISH TRANSMISSION ]
-            </div>
-            <Input
-              className="h-8 text-xs bg-background/55 font-mono text-foreground border-border/30 focus-visible:ring-accent"
-              value={shareTitle}
-              onChange={(e) => setShareTitle(e.target.value)}
-              placeholder="Loadout name..."
-            />
-            <Button
-              type="button"
-              className="w-full h-8 text-[0.78rem] font-black uppercase tracking-widest bg-accent hover:bg-accent/80 text-accent-foreground shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
-              onClick={shareBuild}
-              disabled={shareBusy}
-            >
-              {shareBusy ? "UPLOADING TO ETHER..." : "PUBLISH ENCRYPTED URL"}
-            </Button>
-            
-            {shareResult?.startsWith(String.fromCharCode(47)) ? (
-              <div className="rounded border border-accent/30 bg-accent/5 p-2 text-center text-xs animate-pulse">
-                <Link className="text-accent font-black uppercase tracking-wider underline flex items-center justify-center gap-1" href={shareResult}>
-                  <CheckCircle2 className="h-3 w-3" /> OPEN SHARED SPEC
-                </Link>
-              </div>
-            ) : shareResult ? (
-              <div className="p-2 border border-danger/30 bg-danger/5 text-[0.72rem] rounded text-danger font-bold uppercase">
-                &gt;&gt; ERROR: {shareResult}
-              </div>
-            ) : null}
-          </div>
 
         </div>
 
