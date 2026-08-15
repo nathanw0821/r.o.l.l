@@ -31,6 +31,7 @@ describe("unified-builder-state", () => {
       characterState: {
         ...DEFAULT_UNIFIED_MASTER_BUILD.characterState,
         healthPct: 20,
+        glowPct: 60,
         feralPct: 75,
         foodState: "well_fed",
         timeOfDay: "night",
@@ -50,6 +51,7 @@ describe("unified-builder-state", () => {
     expect(decoded?.basePieceId).toBe("railway-rifle");
     expect(decoded?.isGhoul).toBe(true);
     expect(decoded?.characterState.healthPct).toBe(20);
+    expect(decoded?.characterState.glowPct).toBe(60);
     expect(decoded?.characterState.feralPct).toBe(75);
     expect(decoded?.characterState.combatStance.isSneaking).toBe(true);
     expect(decoded?.characterState.combatStance.isAiming).toBe(true);

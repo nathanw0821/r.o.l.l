@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
   Boxes,
@@ -402,7 +403,31 @@ export default function BuilderExperimentClient({
   const isSignedIn =
     sessionStatus === "authenticated" && Boolean(session?.user?.id);
 
-  const [masterTab, setMasterTab] = React.useState<"gear" | "perks" | "biometrics" | "combat">(initialTab);
+  const searchParams = useSearchParams();
+  const tabParam = searchParams?.get("tab");
+
+  const [masterTab, setMasterTab] = React.useState<"gear" | "perks" | "biometrics" | "combat">(
+    (tabParam === "gear" || tabParam === "perks" || tabParam === "biometrics" || tabParam === "combat")
+      ? tabParam
+      : initialTab
+  );
+
+  React.useEffect(() => {
+    if (tabParam === "gear" || tabParam === "perks" || tabParam === "biometrics" || tabParam === "combat") {
+      setMasterTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const switchTab = React.useCallback((newTab: "gear" | "perks" | "biometrics" | "combat") => {
+    setMasterTab(newTab);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.pathname = "/build";
+      url.searchParams.set("tab", newTab);
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
+
   const [mods, setMods] = React.useState<BuilderModDTO[]>([]);
   const [loadError, setLoadError] = React.useState<string | null>(null);
 
@@ -410,6 +435,16 @@ export default function BuilderExperimentClient({
   const [isMounted, setIsMounted] = React.useState(false);
   const [payload, setPayload] =
     React.useState<BuilderPayload>(defaultPayload());
+
+  const [activeWeaponId, setActiveWeaponId] = React.useState<string>(() => {
+    const defaultWeap = BASE_GEAR_PIECES.find(p => p.kind === "weapon")?.id || "the-fixer";
+    return defaultWeap;
+  });
+  const [activeChassisId, setActiveChassisId] = React.useState<string>(() => {
+    const defaultArm = BASE_GEAR_PIECES.find(p => p.kind === "armor")?.id || "civil-engineer";
+    return defaultArm;
+  });
+
   const [undoPayload, setUndoPayload] = React.useState<BuilderPayload | null>(
     null,
   );
@@ -745,14 +780,25 @@ export default function BuilderExperimentClient({
   }, [loadMods]);
 
   const piece = getBaseGearPiece(payload.basePieceId) ?? BASE_GEAR_PIECES[0]!;
-  const isPA = piece.kind === "powerArmor";
-  const isMultiPiece = isMultiPiecePayload(payload);
+  
+  const activeWeaponPiece = React.useMemo(
+    () => getBaseGearPiece(activeWeaponId) || BASE_GEAR_PIECES.find((p) => p.kind === "weapon") || BASE_GEAR_PIECES[0],
+    [activeWeaponId]
+  );
+
+  const activeChassisPiece = React.useMemo(
+    () => getBaseGearPiece(activeChassisId) || BASE_GEAR_PIECES.find((p) => p.kind === "armor") || BASE_GEAR_PIECES[0],
+    [activeChassisId]
+  );
+
+  const isPA = activeChassisPiece.kind === "powerArmor" || piece.kind === "powerArmor";
+  const isMultiPiece = true;
   const baseStarsContextLabel = React.useMemo(() => {
-    if (piece.kind === "armor" && piece.armorSetKey) {
-      return getArmorSetRow(piece.armorSetKey)?.label ?? piece.label;
+    if (activeChassisPiece.kind === "armor" && activeChassisPiece.armorSetKey) {
+      return getArmorSetRow(activeChassisPiece.armorSetKey)?.label ?? activeChassisPiece.label;
     }
-    return formatBaseOptionLabel(piece);
-  }, [piece]);
+    return formatBaseOptionLabel(activeChassisPiece);
+  }, [activeChassisPiece]);
 
   const currentBaseLearned =
     isTrackableBasePieceId(piece.id) &&
@@ -817,6 +863,8 @@ export default function BuilderExperimentClient({
   );
 
   const underLayers = React.useMemo(() => {
+    // Underarmor resistances (lining) and SPECIAL bonuses (style) are strictly SUPPRESSED when in Power Armor!
+    if (isPA || activeChassisPiece.kind === "powerArmor" || piece.kind === "powerArmor") return [];
     const layers: Record<string, number>[] = [];
     const shell = findUnderarmorOption(
       UNDERARMOR_SHELLS,
@@ -834,45 +882,38 @@ export default function BuilderExperimentClient({
     if (lining?.effectMath) layers.push(lining.effectMath);
     if (style?.effectMath) layers.push(style.effectMath);
     return layers;
-  }, [payload.underarmor]);
+  }, [payload.underarmor, isPA, activeChassisPiece.kind, piece.kind]);
 
   const armorCraftingLayers = React.useMemo(() => {
-    if (!isMultiPiece) return [];
     return armorCraftingEffectLayers(
       payload.armorPieceCrafting,
-      piece.kind === "powerArmor",
+      isPA,
     );
-  }, [isMultiPiece, piece.kind, payload.armorPieceCrafting]);
+  }, [isPA, payload.armorPieceCrafting]);
 
   const baseArmorStats = React.useMemo(() => {
-    if (piece.kind === "armor" && piece.armorSetKey) {
-      return getArmorSetRow(piece.armorSetKey)?.stats ?? null;
+    const chassis = activeChassisPiece;
+    if (chassis.kind === "armor" && chassis.armorSetKey) {
+      return getArmorSetRow(chassis.armorSetKey)?.stats ?? null;
     }
-    if (piece.kind === "powerArmor") {
-      if (isMultiPiece) {
-        return getPowerArmorEquippedFlatStats(
-          piece.id,
-          payload.powerArmorHelmetId,
-          payload.powerArmorPiecesEquipped,
-        );
-      }
-      if (isPowerArmorHelmetBasePiece(piece)) {
-        return getPowerArmorSlotBaseStats(piece.id, "helmet");
-      }
+    if (chassis.kind === "powerArmor") {
+      return getPowerArmorEquippedFlatStats(
+        chassis.id,
+        payload.powerArmorHelmetId,
+        payload.powerArmorPiecesEquipped,
+      );
     }
     return null;
   }, [
-    isMultiPiece,
-    piece,
+    activeChassisPiece,
     payload.powerArmorHelmetId,
     payload.powerArmorPiecesEquipped,
   ]);
 
   const powerArmorFrameIntrinsicLayer = React.useMemo(() => {
-    if (piece.kind !== "powerArmor" || !isPowerArmorTorsoBasePiece(piece))
-      return null;
+    if (!isPA) return null;
     return powerArmorFrameIntrinsicEffectMath();
-  }, [piece]);
+  }, [isPA]);
 
 
   const mutationLayer = React.useMemo(
@@ -1020,9 +1061,9 @@ export default function BuilderExperimentClient({
   }, []);
 
   const weaponFirepowerResult = React.useMemo(() => {
-    if (piece.kind !== "weapon") return null;
+    const targetWeapon = activeWeaponPiece;
     return calculateCombatFirepower({
-      weaponId: piece.id,
+      weaponId: targetWeapon.id,
       equippedMods: equippedModsOrdered,
       equippedPerks: equippedPerkCards,
       activeBuffs: {
@@ -1040,13 +1081,12 @@ export default function BuilderExperimentClient({
         strength: totals.str,
         healthPct: switchboardState?.healthPct ?? 0.2,
         caps: 30000,
-        isPowerArmor: false,
+        isPowerArmor: isPA,
         hasStrangeInNumbers: payload.hasStrangeInNumbers,
       },
     });
   }, [
-    piece.id,
-    piece.kind,
+    activeWeaponPiece,
     equippedModsOrdered,
     equippedPerkCards,
     switchboardState,
@@ -1055,6 +1095,7 @@ export default function BuilderExperimentClient({
     totals.agi,
     totals.lck,
     totals.str,
+    isPA,
   ]);
 
   const ghoulLegendarySandboxNotes = React.useMemo(() => {
@@ -1127,7 +1168,8 @@ export default function BuilderExperimentClient({
   const optionsForActivePick = React.useMemo(() => {
     if (!activePick) return [];
     const slotIndex = activePick.starIndex;
-    const filtered = filterModsForSlot(mods, piece, slotIndex, {
+    const targetPiece = activePick.scope === "single" ? activeWeaponPiece : activeChassisPiece;
+    const filtered = filterModsForSlot(mods, targetPiece, slotIndex, {
       ghoul: payload.ghoul,
     }).filter((m) => {
       const q = deferredSlotQuery.trim().toLowerCase();
@@ -1152,7 +1194,8 @@ export default function BuilderExperimentClient({
     });
   }, [
     mods,
-    piece,
+    activeWeaponPiece,
+    activeChassisPiece,
     activePick,
     deferredSlotQuery,
     payload.ghoul,
@@ -1162,23 +1205,36 @@ export default function BuilderExperimentClient({
   function setBase(id: string) {
     const next = getBaseGearPiece(id);
     if (!next) return;
-    const isPA = next.kind === "powerArmor";
-    setPayload((p) => ({
-      ...p,
-      basePieceId: id,
-      equipmentKind: next.kind,
-      weaponSub: next.kind === "weapon" ? (next.weaponSub ?? null) : null,
-      legendaryModIds: [null, null, null, null],
-      armorLegendaryModIds: emptyArmorLegendaryGrid(isPA),
-      armorPieceCrafting: defaultArmorPieceCrafting(isPA),
-      powerArmorHelmetId: null,
-      powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
-      powerArmorPiecesEquipped: DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
-      underarmor:
-        next.kind === "underarmor" && next.defaultUnderarmorShellId
-          ? { ...p.underarmor, shellId: next.defaultUnderarmorShellId }
-          : p.underarmor,
-    }));
+    if (next.kind === "weapon") {
+      setActiveWeaponId(id);
+      setPayload((p) => ({
+        ...p,
+        basePieceId: id,
+        weaponSub: next.weaponSub ?? null,
+      }));
+    } else if (next.kind === "armor" || next.kind === "powerArmor") {
+      setActiveChassisId(id);
+      const isNextPA = next.kind === "powerArmor";
+      setPayload((p) => ({
+        ...p,
+        basePieceId: id,
+        equipmentKind: next.kind,
+        armorLegendaryModIds: p.armorLegendaryModIds.length === (isNextPA ? 6 : 5) ? p.armorLegendaryModIds : emptyArmorLegendaryGrid(isNextPA),
+        armorPieceCrafting: p.armorPieceCrafting.length === (isNextPA ? 6 : 5) ? p.armorPieceCrafting : defaultArmorPieceCrafting(isNextPA),
+        powerArmorHelmetId: isNextPA ? p.powerArmorHelmetId : null,
+        powerArmorPiecesEquipped: isNextPA ? p.powerArmorPiecesEquipped : DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
+      }));
+    } else if (next.kind === "underarmor") {
+      if (next.defaultUnderarmorShellId) {
+        setPayload((p) => ({
+          ...p,
+          underarmor: {
+            ...p.underarmor,
+            shellId: next.defaultUnderarmorShellId!,
+          },
+        }));
+      }
+    }
     setActivePick(null);
   }
 
@@ -1532,6 +1588,42 @@ export default function BuilderExperimentClient({
           
           <div className="flex flex-col items-start lg:items-end gap-2 font-mono text-xs">
             <div className="flex flex-wrap items-center gap-2">
+              {/* Global Species Selector (Human vs Playable Ghoul) */}
+              <div className="flex items-center gap-1 rounded-lg border border-emerald-500/50 bg-slate-900/90 p-1 shadow-md">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPayload((p) => ({ ...p, ghoul: false }));
+                    triggerBuilderAchievement("build_biometrics");
+                  }}
+                  className={cn(
+                    "px-2.5 py-1 rounded text-xs font-bold uppercase transition-all flex items-center gap-1 cursor-pointer",
+                    !payload.ghoul
+                      ? "bg-emerald-500 text-slate-950 font-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                      : "text-slate-400 hover:text-slate-200"
+                  )}
+                >
+                  <span>👤</span>
+                  <span>HUMAN</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPayload((p) => ({ ...p, ghoul: true }));
+                    triggerBuilderAchievement("build_biometrics");
+                  }}
+                  className={cn(
+                    "px-2.5 py-1 rounded text-xs font-bold uppercase transition-all flex items-center gap-1 cursor-pointer",
+                    payload.ghoul
+                      ? "bg-lime-500 text-slate-950 font-black shadow-[0_0_15px_rgba(132,204,22,0.5)] animate-pulse"
+                      : "text-slate-400 hover:text-slate-200"
+                  )}
+                >
+                  <span>☣️</span>
+                  <span>PLAYABLE GHOUL</span>
+                </button>
+              </div>
+
               {/* Publish Transmission Controls */}
               <div className="flex items-center gap-1 rounded border border-emerald-500/50 bg-emerald-950/40 p-0.5">
                 <Input
@@ -1628,8 +1720,8 @@ export default function BuilderExperimentClient({
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
           <button
             type="button"
-            onClick={() => setMasterTab("gear")}
-            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+            onClick={() => switchTab("gear")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               masterTab === "gear"
                 ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                 : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
@@ -1640,8 +1732,8 @@ export default function BuilderExperimentClient({
           </button>
           <button
             type="button"
-            onClick={() => setMasterTab("perks")}
-            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+            onClick={() => switchTab("perks")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               masterTab === "perks"
                 ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                 : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
@@ -1652,8 +1744,8 @@ export default function BuilderExperimentClient({
           </button>
           <button
             type="button"
-            onClick={() => setMasterTab("biometrics")}
-            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+            onClick={() => switchTab("biometrics")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               masterTab === "biometrics"
                 ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                 : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
@@ -1664,8 +1756,8 @@ export default function BuilderExperimentClient({
           </button>
           <button
             type="button"
-            onClick={() => setMasterTab("combat")}
-            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+            onClick={() => switchTab("combat")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               masterTab === "combat"
                 ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                 : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
@@ -2035,22 +2127,90 @@ export default function BuilderExperimentClient({
               </ul>
             )}
           </div>
-
         </div>
 
-        {/* COLUMN 2: CENTER PANEL - REPAIR BAY SILHOUETTE */}
+        {/* COLUMN 2: CENTER PANEL - REPAIR BAY SILHOUETTE & FULL LOADOUT COMPILATION */}
         <div className="space-y-4">
           
-          {/* 1. TOP: Interactive Silhouette Repair Frame / Chassis Bay schematic */}
+          {/* Interactive Silhouette Repair Frame / Chassis Bay schematic */}
           <div className="pip-terminal-panel p-4 rounded-xl space-y-4 font-mono relative min-h-[500px] flex flex-col justify-between">
             <div className="crt-scanline" />
             
             <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 relative z-10">
               <span>[ Chassis Bay schematic ]</span>
-              <span className="text-[0.72rem] text-foreground/40 font-normal">Active frame: {piece.label}</span>
+              <span className="text-[0.72rem] text-foreground/40 font-normal">Active frame: {activeChassisPiece.label}</span>
             </div>
 
-            {isMultiPiece ? (
+            <div className="space-y-3 relative z-10">
+              {/* SECTION A: ACTIVE PRIMARY WEAPON BAY */}
+              <div className="rounded-lg border border-accent/30 bg-background/30 p-3 space-y-2">
+                <div className="flex items-center justify-between border-b border-border/20 pb-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">🎯</span>
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-wider text-accent">
+                        {activeWeaponPiece.label}
+                      </div>
+                      <div className="text-[0.62rem] text-foreground/45 uppercase">
+                        Primary Weapon · {activeWeaponPiece.weaponSub || "Tactical"}
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-[0.62rem] px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
+                    ACTIVE WEAPON
+                  </span>
+                </div>
+
+                {/* Weapon 4-Star Slots */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {SLOT_LABELS.map((starLabel, starIndex) => {
+                    const id = payload.legendaryModIds[starIndex];
+                    const mod = id ? mods.find((m) => m.id === id) : null;
+                    return (
+                      <div
+                        key={starIndex}
+                        className={cn(
+                          "flex items-center justify-between gap-1.5 rounded border px-2 py-1 text-[0.72rem] transition-all",
+                          mod
+                            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
+                            : "border-border/20 bg-background/20 text-foreground/50"
+                        )}
+                      >
+                        <div className="min-w-0 flex-1 truncate">
+                          <span className="font-bold mr-1">{starIndex + 1}★</span>
+                          <span className="text-foreground truncate">
+                            {mod ? mod.name : starLabel}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            className="h-5 px-1.5 text-[0.65rem] uppercase font-mono hover:text-accent cursor-pointer"
+                            onClick={() => setActivePick({ scope: "single", starIndex })}
+                          >
+                            Bench
+                          </Button>
+                          {mod && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              className="h-5 px-1 text-[0.65rem] uppercase font-mono hover:text-destructive text-foreground/40 cursor-pointer"
+                              onClick={() => clearStarSlot("single", undefined, starIndex)}
+                            >
+                              ✕
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SECTION B: CHASSIS FRAME SKELETAL BAY */}
               <div className="relative flex flex-col items-center justify-center bg-background/20 rounded-lg p-2 overflow-hidden border border-border/15 shadow-inner">
                 {/* Skeletal layout */}
                 <div className="w-full max-w-lg grid grid-cols-3 gap-2.5 relative z-10">
@@ -2058,7 +2218,7 @@ export default function BuilderExperimentClient({
                   {/* Row 1: Helmet (Center) */}
                   <div className="col-span-3 flex justify-center mb-1.5">
                     <div className="w-1/2 min-w-[130px]">
-                      {renderGearSlotCard("helmet", "Helmet", isPA ? 0 : null)}
+                      {renderGearSlotCard("helmet", isPA ? "PA Helmet" : "Helmet", isPA ? 0 : null)}
                     </div>
                   </div>
 
@@ -2089,158 +2249,34 @@ export default function BuilderExperimentClient({
 
                 </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-6 relative z-10 w-full">
-                <div className="flex flex-col items-center p-6 text-center border border-dashed border-accent/25 bg-accent/[0.01] rounded-xl w-full max-w-md mb-4 relative overflow-hidden">
-                  <Boxes className="h-10 w-10 text-accent/50 mb-2 animate-pulse" />
-                  <span className="text-sm font-black uppercase tracking-wider text-accent">{piece.label}</span>
-                  <span className="text-[0.72rem] text-foreground/45 mt-1 uppercase tracking-widest font-mono">
-                    {piece.kind === "weapon" ? `Weapon Matrix // ${piece.weaponSub || "Tactical"}` : "Core Stack Lining"}
-                  </span>
-                </div>
-                
-                {!starsDisabled ? (
-                  <div className="space-y-2 w-full max-w-md">
-                    {SLOT_LABELS.map((starLabel, starIndex) => {
-                      const id = payload.legendaryModIds[starIndex];
-                      const mod = id ? mods.find(m => m.id === id) : null;
-                      return (
-                        <div
-                          key={starIndex}
-                          className={cn(
-                            "pip-terminal-panel flex flex-col gap-2 rounded-lg border px-3 py-2.5 transition-all duration-200 sm:flex-row sm:items-center sm:justify-between",
-                            mod 
-                              ? "border-accent/40 bg-accent/[0.02]" 
-                              : "border-border/30 bg-background/25"
-                          )}
-                        >
-                          <div className="min-w-0 flex-1">
-                            <div className="text-[0.72rem] font-black uppercase text-foreground/45 tracking-widest">
-                              {starIndex + 1}★ {starLabel}
-                            </div>
-                            <div className="text-xs font-bold text-foreground mt-0.5 uppercase tracking-wide">
-                              {mod ? mod.name : "— Empty bench configuration —"}
-                            </div>
-                            {mod && (
-                              <LegendaryModDetailFootprint
-                                mod={mod}
-                                piece={piece}
-                              />
-                            )}
-                          </div>
-                          <div className="flex items-center gap-1.5 shrink-0 sm:mt-0 mt-2">
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              className="h-7 text-[0.72rem] uppercase font-mono hover:text-accent hover:border-accent"
-                              onClick={() => setActivePick({ scope: "single", starIndex })}
-                            >
-                              Bench
-                            </Button>
-                            {mod && (
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 text-[0.72rem] uppercase font-mono hover:text-destructive text-foreground/40"
-                                onClick={() => clearStarSlot("single", undefined, starIndex)}
-                              >
-                                Clear
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+
+              {/* SECTION C: ACTIVE UNDERARMOR SUBSYSTEM STATUS CHIP */}
+              <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-[0.72rem]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-sm">👕</span>
+                  <div className="min-w-0">
+                    <div className="font-bold text-slate-200 truncate">
+                      {findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label || "Underarmor"}
+                    </div>
+                    <div className="text-[0.62rem] text-slate-400 truncate">
+                      Lining: <span className="text-cyan-300 font-bold">{findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label?.split("(")[0]?.trim() || "None"}</span> · Style: <span className="text-amber-300 font-bold">{findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId)?.label?.split("(")[0]?.trim() || "None"}</span>
+                    </div>
                   </div>
-                ) : (
-                  <div className="text-center py-6 text-foreground/30 border border-dashed border-border/30 bg-background/10 rounded-xl w-full max-w-md">
-                    <div className="text-xs uppercase tracking-widest font-black">LEGENDARY STAR BENCH DISABLED</div>
-                    <div className="text-[0.72rem] text-foreground/40 mt-1">&gt; linings_applied_via_aux_logistics.exe</div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Integrated Underarmor Sub-systems (When not inside a sealed PA frame) */}
-            {piece.kind !== "powerArmor" && (
-              <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 space-y-2.5 font-mono">
-                <div className="text-xs font-black uppercase tracking-widest text-accent flex items-center justify-between border-b border-border/20 pb-1.5">
-                  <span>[ 👕 UNDERARMOR SUB-SYSTEMS ]</span>
-                  <span className="text-[0.62rem] text-emerald-400 font-bold">
-                    {findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label || "No Lining"}
-                  </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[0.72rem]">
-                  <label className="flex flex-col min-w-0">
-                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-1">Cosmetic Shell</span>
-                    <select
-                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
-                      value={payload.underarmor.shellId}
-                      onChange={(e) =>
-                        setPayload((p) => ({
-                          ...p,
-                          underarmor: { ...p.underarmor, shellId: e.target.value },
-                        }))
-                      }
-                    >
-                      {UNDERARMOR_SHELLS.map((o) => (
-                        <option key={o.id} value={o.id} className="bg-background text-foreground">
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
 
-                  <label className="flex flex-col min-w-0">
-                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-1">Lining Mod (Resists)</span>
-                    <select
-                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
-                      value={payload.underarmor.liningId ?? "none"}
-                      onChange={(e) =>
-                        setPayload((p) => ({
-                          ...p,
-                          underarmor: {
-                            ...p.underarmor,
-                            liningId: e.target.value === "none" ? null : e.target.value,
-                          },
-                        }))
-                      }
-                    >
-                      {UNDERARMOR_LININGS.map((o) => (
-                        <option key={o.id} value={o.id} className="bg-background text-foreground">
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="flex flex-col min-w-0">
-                    <span className="text-foreground/45 uppercase font-bold tracking-wider mb-1">Underarmor Style (SPECIAL)</span>
-                    <select
-                      className="h-8 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer w-full min-w-0 truncate pr-6 text-ellipsis focus:outline-none focus:border-accent"
-                      value={payload.underarmor.styleId ?? "none"}
-                      onChange={(e) =>
-                        setPayload((p) => ({
-                          ...p,
-                          underarmor: {
-                            ...p.underarmor,
-                            styleId: e.target.value === "none" ? null : e.target.value,
-                          },
-                        }))
-                      }
-                    >
-                      {UNDERARMOR_STYLES.map((o) => (
-                        <option key={o.id} value={o.id} className="bg-background text-foreground">
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                <div className="shrink-0">
+                  {isPA ? (
+                    <span className="text-[0.62rem] px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-500/30 font-bold">
+                      ⚠️ SUPPRESSED IN PA
+                    </span>
+                  ) : (
+                    <span className="text-[0.62rem] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 font-bold">
+                      ✓ ACTIVE WITH ARMOR
+                    </span>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
 
             <div className="text-[0.72rem] text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
               Telemetric calculations updated instant client-side. Cloudflare 0ms CPU load.
@@ -2249,7 +2285,7 @@ export default function BuilderExperimentClient({
 
         </div>
 
-        {/* COLUMN 3: AUX LOGISTICS & PRESENTS */}
+        {/* COLUMN 3: AUX LOGISTICS & PRESETS */}
         <div className="space-y-4">
           
           {/* Holotape presets compact dropdown saver */}
@@ -2309,7 +2345,7 @@ export default function BuilderExperimentClient({
             </div>
           </div>
 
-          {/* Character Species / Ghoul switch */}
+          {/* Character Species / Ghoul switch & Registry flush */}
           <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
             <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
               [ TELEMETRY MODS &amp; SPECIES ]
@@ -2376,89 +2412,6 @@ export default function BuilderExperimentClient({
             </div>
           </div>
 
-          {/* Legendary Perks selections */}
-          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
-            <div className="flex items-center justify-between border-b border-border/20 pb-2">
-              <div className="text-xs font-black uppercase tracking-widest text-accent">
-                [ LEGENDARY PERKS ]
-              </div>
-              <div className="text-[0.72rem] font-bold text-accent/90 uppercase tracking-wider bg-accent/10 px-2 py-0.5 rounded border border-accent/20">
-                {payload.legendaryPerkIds.length} / 6 SLOTS
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex gap-1 border-b border-border/15 pb-1.5 text-[0.72rem] uppercase font-bold">
-                <button
-                  type="button"
-                  onClick={() => setLegendaryPerkCategory("special")}
-                  className={cn(
-                    "px-2 py-0.5 rounded transition-all cursor-pointer",
-                    legendaryPerkCategory === "special" ? "bg-accent/20 text-accent border border-accent/40" : "text-foreground/50 hover:text-foreground"
-                  )}
-                >
-                  SPECIAL (7)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLegendaryPerkCategory("combat")}
-                  className={cn(
-                    "px-2 py-0.5 rounded transition-all cursor-pointer",
-                    legendaryPerkCategory === "combat" ? "bg-accent/20 text-accent border border-accent/40" : "text-foreground/50 hover:text-foreground"
-                  )}
-                >
-                  Combat (9)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLegendaryPerkCategory("utility")}
-                  className={cn(
-                    "px-2 py-0.5 rounded transition-all cursor-pointer",
-                    legendaryPerkCategory === "utility" ? "bg-accent/20 text-accent border border-accent/40" : "text-foreground/50 hover:text-foreground"
-                  )}
-                >
-                  Utility (10)
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto pr-1">
-                {Object.values(LEGENDARY_PERK_CARDS)
-                  .filter((perk) => perk.category === legendaryPerkCategory)
-                  .map((perk) => {
-                    const on = payload.legendaryPerkIds.includes(perk.id);
-                    return (
-                      <label
-                        key={perk.id}
-                        className={cn(
-                          "flex cursor-pointer items-start gap-2 rounded p-1.5 transition-colors hover:bg-background/45 border text-[0.78rem]",
-                          on ? "border-accent/40 bg-accent/10 text-accent font-semibold" : "border-border/15 text-foreground/75"
-                        )}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={on}
-                          onChange={() => {
-                            setPayload((p) => {
-                              const next = on
-                                ? p.legendaryPerkIds.filter((x) => x !== perk.id)
-                                : [...p.legendaryPerkIds, perk.id];
-                              return { ...p, legendaryPerkIds: next };
-                            });
-                            triggerBuilderAchievement("build_perks");
-                          }}
-                          className="h-3.5 w-3.5 mt-0.5 shrink-0 accent-accent cursor-pointer"
-                        />
-                        <div className="min-w-0">
-                          <div className="font-bold text-foreground truncate">{perk.label}</div>
-                          <div className="text-[0.72rem] text-foreground/50 leading-tight font-sans mt-0.5">{perk.desc}</div>
-                        </div>
-                      </label>
-                    );
-                  })}
-              </div>
-            </div>
-          </div>
-
           {/* Shopping list of modules required (Compact High-Density Matrix) */}
           <div className="pip-terminal-panel p-3 rounded-xl space-y-2 font-mono">
             <div className="flex items-center justify-between border-b border-border/20 pb-1.5 text-xs font-black uppercase tracking-widest text-accent">
@@ -2489,7 +2442,6 @@ export default function BuilderExperimentClient({
             )}
           </div>
 
-
         </div>
 
       </div>
@@ -2501,7 +2453,7 @@ export default function BuilderExperimentClient({
         <div className="pip-terminal-panel p-4 rounded-xl space-y-3.5 font-mono">
           <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center justify-between">
             <span>&gt; CHASSIS &amp; GEAR ARMORY MATRIX</span>
-            <span className="text-[0.68rem] text-foreground/45 font-normal">Active: {piece?.label}</span>
+            <span className="text-[0.68rem] text-foreground/45 font-normal">Active: {activeChassisPiece?.label}</span>
           </div>
           
           {/* Categorized Tactical Gear Armory Picker */}
@@ -2510,6 +2462,13 @@ export default function BuilderExperimentClient({
             onSelectBase={(newBaseId) => setBase(newBaseId)}
             learnedBasePieceIds={learnedBasePieceIds}
             isPowerArmorTorsoLearned={isPowerArmorTorsoRowLearned}
+            underarmor={payload.underarmor}
+            onUnderarmorChange={(nextUnderarmor) =>
+              setPayload((p) => ({ ...p, underarmor: nextUnderarmor }))
+            }
+            activeWeaponId={activeWeaponPiece.id}
+            activeArmorId={activeChassisPiece.id}
+            inPowerArmor={isPA}
           />
 
           {/* Active Selected Base Gear Render Card */}
@@ -2638,6 +2597,8 @@ export default function BuilderExperimentClient({
         {/* Matrix 2: All-Inclusive Vault-Tec Buff & Consumable Registry / CHARACTER COMBAT SWITCHBOARD */}
         <BuilderCombatSwitchboard
           rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
+          isGhoul={payload.ghoul}
+          onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
           activeMutations={payload.mutationIds}
           onMutationsChange={(nextMutations) =>
             setPayload((p) => ({ ...p, mutationIds: nextMutations }))
