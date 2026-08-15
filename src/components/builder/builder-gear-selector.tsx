@@ -4,16 +4,28 @@ import * as React from "react";
 import {
   BASE_GEAR_PIECES,
   isPowerArmorTorsoBasePiece,
-  isTrackableBasePieceId
+  isTrackableBasePieceId,
+  type BaseGearPiece
 } from "@/lib/builder/base-gear";
-import type { BuilderEquipmentKind, BuilderWeaponSub } from "@/lib/builder/types";
-import { Search, ChevronRight, CheckCircle2, X } from "lucide-react";
+import type { BuilderEquipmentKind, BuilderWeaponSub, BuilderUnderarmor } from "@/lib/builder/types";
+import {
+  UNDERARMOR_SHELLS,
+  UNDERARMOR_LININGS,
+  UNDERARMOR_STYLES,
+  findUnderarmorOption
+} from "@/lib/builder/underarmor";
+import { Search, ChevronRight, CheckCircle2, X, Sparkles, Shield, Shirt } from "lucide-react";
 
 interface BuilderGearSelectorProps {
   selectedBaseId: string;
   onSelectBase: (baseId: string) => void;
   learnedBasePieceIds: Set<string>;
   isPowerArmorTorsoLearned: (id: string, learnedSet: Set<string>) => boolean;
+  underarmor?: BuilderUnderarmor;
+  onUnderarmorChange?: (underarmor: BuilderUnderarmor) => void;
+  activeWeaponId?: string;
+  activeArmorId?: string;
+  inPowerArmor?: boolean;
 }
 
 const CATEGORY_TABS: Array<{
@@ -39,7 +51,12 @@ export default function BuilderGearSelector({
   selectedBaseId,
   onSelectBase,
   learnedBasePieceIds,
-  isPowerArmorTorsoLearned
+  isPowerArmorTorsoLearned,
+  underarmor,
+  onUnderarmorChange,
+  activeWeaponId,
+  activeArmorId,
+  inPowerArmor = false,
 }: BuilderGearSelectorProps) {
   const currentPiece = React.useMemo(
     () => BASE_GEAR_PIECES.find((p) => p.id === selectedBaseId) || BASE_GEAR_PIECES[0],
@@ -85,6 +102,9 @@ export default function BuilderGearSelector({
       return true;
     });
   }, [activeCategory, weaponSubFilter, searchQuery]);
+
+  const activeLining = findUnderarmorOption(UNDERARMOR_LININGS, underarmor?.liningId);
+  const activeStyle = findUnderarmorOption(UNDERARMOR_STYLES, underarmor?.styleId);
 
   return (
     <div className="space-y-3 font-mono">
@@ -165,6 +185,90 @@ export default function BuilderGearSelector({
         </div>
       </div>
 
+      {/* Underarmor Subsystems Configuration Controls (Lining Mod + Style) */}
+      {activeCategory === "underarmor" && underarmor && onUnderarmorChange && (
+        <div className="p-3.5 rounded-xl bg-slate-950/90 border border-emerald-500/40 shadow-md space-y-3 font-mono">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs font-black uppercase tracking-wider text-emerald-400">
+            <span className="flex items-center gap-1.5">
+              <Shirt className="h-4 w-4" /> [ UNDERARMOR SUBSYSTEMS CONFIGURATION ]
+            </span>
+            {inPowerArmor ? (
+              <span className="text-[0.65rem] px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-500/40 font-bold">
+                ⚠️ SUPPRESSED IN POWER ARMOR
+              </span>
+            ) : (
+              <span className="text-[0.65rem] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 font-bold">
+                ✓ ACTIVE WITH REGULAR ARMOR
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            {/* Lining Mod -> Resistances */}
+            <div className="space-y-1.5 rounded-lg bg-slate-900/80 border border-slate-800 p-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-300 font-bold uppercase flex items-center gap-1">
+                  <Shield className="h-3.5 w-3.5 text-cyan-400" /> Lining Mod (Resistances)
+                </span>
+                <span className="text-[0.62rem] text-cyan-400 font-bold">
+                  {activeLining?.label?.split("(")[0]?.trim() || "No Lining"}
+                </span>
+              </div>
+              <select
+                className="w-full h-8 rounded bg-slate-950 border border-slate-800 px-2 text-xs font-mono uppercase text-slate-200 focus:outline-none focus:border-cyan-400"
+                value={underarmor.liningId ?? "none"}
+                onChange={(e) =>
+                  onUnderarmorChange({
+                    ...underarmor,
+                    liningId: e.target.value === "none" ? null : e.target.value,
+                  })
+                }
+              >
+                {UNDERARMOR_LININGS.map((o) => (
+                  <option key={o.id} value={o.id} className="bg-slate-950 text-slate-200">
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+              <div className="text-[0.65rem] text-slate-400">
+                Determines flat damage resistance (DR), energy resistance (ER), and radiation resistance (RR).
+              </div>
+            </div>
+
+            {/* Underarmor Style -> S.P.E.C.I.A.L. */}
+            <div className="space-y-1.5 rounded-lg bg-slate-900/80 border border-slate-800 p-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-300 font-bold uppercase flex items-center gap-1">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-400" /> Underarmor Style (S.P.E.C.I.A.L.)
+                </span>
+                <span className="text-[0.62rem] text-amber-400 font-bold">
+                  {activeStyle?.label?.split("(")[0]?.trim() || "No Style"}
+                </span>
+              </div>
+              <select
+                className="w-full h-8 rounded bg-slate-950 border border-slate-800 px-2 text-xs font-mono uppercase text-slate-200 focus:outline-none focus:border-amber-400"
+                value={underarmor.styleId ?? "none"}
+                onChange={(e) =>
+                  onUnderarmorChange({
+                    ...underarmor,
+                    styleId: e.target.value === "none" ? null : e.target.value,
+                  })
+                }
+              >
+                {UNDERARMOR_STYLES.map((o) => (
+                  <option key={o.id} value={o.id} className="bg-slate-950 text-slate-200">
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+              <div className="text-[0.65rem] text-slate-400">
+                Determines character S.P.E.C.I.A.L. attribute bonuses from underarmor pattern tailoring.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Gear Grid Cards Selector */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto pr-1 border border-slate-800/80 rounded-lg p-2 bg-[#06090e]">
         {filteredPieces.length === 0 ? (
@@ -173,7 +277,12 @@ export default function BuilderGearSelector({
           </div>
         ) : (
           filteredPieces.map((g) => {
-            const isSelected = g.id === selectedBaseId;
+            const isSelected =
+              g.id === selectedBaseId ||
+              (g.kind === "weapon" && g.id === activeWeaponId) ||
+              ((g.kind === "armor" || g.kind === "powerArmor") && g.id === activeArmorId) ||
+              (g.kind === "underarmor" && g.defaultUnderarmorShellId === underarmor?.shellId);
+
             const isLearned =
               isTrackableBasePieceId(g.id) &&
               (g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)
@@ -184,7 +293,12 @@ export default function BuilderGearSelector({
               <button
                 key={g.id}
                 type="button"
-                onClick={() => onSelectBase(g.id)}
+                onClick={() => {
+                  onSelectBase(g.id);
+                  if (g.kind === "underarmor" && g.defaultUnderarmorShellId && onUnderarmorChange && underarmor) {
+                    onUnderarmorChange({ ...underarmor, shellId: g.defaultUnderarmorShellId });
+                  }
+                }}
                 className={`text-left p-2.5 rounded-lg border transition-all flex flex-col justify-between gap-1.5 group relative ${
                   isSelected
                     ? "bg-emerald-950/60 border-emerald-400 ring-1 ring-emerald-400 shadow-md shadow-emerald-950/40"
@@ -197,7 +311,7 @@ export default function BuilderGearSelector({
                       {g.label.replace(/\(full set\)|\(underarmor\)|\(shell\)/gi, "").trim()}
                     </div>
                     <div className="text-[0.62rem] text-slate-400 uppercase tracking-wider font-mono truncate">
-                      {g.weaponSub ? `Weapon · ${g.weaponSub}` : g.kind === "powerArmor" ? "Power Armor Frame" : g.kind === "armor" ? "5-Piece Armor Set" : "Underarmor"}
+                      {g.weaponSub ? `Weapon · ${g.weaponSub}` : g.kind === "powerArmor" ? "Power Armor Frame" : g.kind === "armor" ? "5-Piece Armor Set" : "Underarmor Shell"}
                     </div>
                   </div>
 
@@ -217,7 +331,7 @@ export default function BuilderGearSelector({
                   )}
 
                   <span className={`px-1.5 py-0.2 rounded font-bold uppercase ${isSelected ? "bg-emerald-400 text-slate-950 font-black" : "text-slate-400 group-hover:text-slate-200"}`}>
-                    {isSelected ? "ACTIVE" : "EQUIP"}
+                    {isSelected ? "EQUIPPED" : "EQUIP"}
                   </span>
                 </div>
               </button>

@@ -33,7 +33,8 @@ export type TeamCategory =
 export type BiometricsCharacterState = {
   healthPct: number; // 5% to 100%
   radsPct: number; // 0 to 100% (Human)
-  feralPct: number; // 0 to 100% (Ghoul)
+  glowPct: number; // 0 to 100% (Ghoul Radiation Overshield)
+  feralPct: number; // 0 to 100% (Ghoul Feralization Meter)
   foodState: FoodSurvivalState;
   thirstState: ThirstSurvivalState;
   teamState: TeamCategory;
@@ -101,7 +102,8 @@ export type UnifiedMasterBuildState = {
 export const DEFAULT_BIOMETRICS_CHARACTER_STATE: BiometricsCharacterState = {
   healthPct: 100,
   radsPct: 0,
-  feralPct: 0,
+  glowPct: 0,
+  feralPct: 100,
   foodState: "fully_fed",
   thirstState: "fully_hydrated",
   teamState: "casual",

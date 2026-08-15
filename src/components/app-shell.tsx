@@ -4,7 +4,7 @@ import * as React from "react";
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import {
   ArrowLeft,
@@ -66,8 +66,20 @@ const trackingLinks: AppNavLink[] = [
       { href: "/all-effects", label: "All Mod Effects" }
     ]
   },
-  { href: "/build", label: "B.U.I.L.D.", icon: Boxes, activePrefixes: ["/build"], prefetch: false, isBuildTab: true },
-  { href: "/perks", label: "P.E.R.K.", icon: Boxes, activePrefixes: ["/perks"] },
+  {
+    href: "/build",
+    label: "B.U.I.L.D.",
+    icon: Boxes,
+    activePrefixes: ["/build", "/perks"],
+    prefetch: false,
+    isBuildTab: true,
+    subLinks: [
+      { href: "/build?tab=gear", label: "🛡️ Gear & Armory" },
+      { href: "/build?tab=perks", label: "🎴 Perk Deck & SPECIAL" },
+      { href: "/build?tab=biometrics", label: "🧪 Biometrics & Stances" },
+      { href: "/build?tab=combat", label: "📊 Combat DPS & VATS" }
+    ]
+  },
   { href: "/pts", label: "P.T.S.", icon: FlaskConical, activePrefixes: ["/pts"] },
   { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles },
   { href: "/transmissions", label: "Transmissions", icon: Radio, activePrefixes: ["/transmissions"] },
@@ -126,6 +138,8 @@ export default function AppShell({
   isAdmin?: boolean;
 }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentTab = searchParams?.get("tab") || (pathname === "/perks" ? "perks" : "gear");
   const { canGoBack, goBack } = usePersistedAppNavigation();
   const { data: session } = useSession();
   useVisitorTracking();
@@ -426,11 +440,15 @@ interface AccountLinksResponse {
                     <Icon className="h-4 w-4" />
                     <span>{linkLabel}</span>
                   </Link>
-                  {/* Render Subcategory Tier Links when main Legendary Tracking category is active */}
-                  {link.subLinks && (active || link.subLinks.some((sub) => pathname === sub.href)) && !sidebarCollapsed && (
+                  {/* Render Subcategory Links (Legendary Tiers or BUILD Subsections) */}
+                  {link.subLinks && (active || link.subLinks.some((sub) => pathname === sub.href || (sub.href.startsWith(pathname) && pathname === "/build"))) && !sidebarCollapsed && (
                     <div className="pl-6 space-y-0.5 my-1 border-l-2 border-amber-500/40 ml-4 font-mono text-xs">
                       {link.subLinks.map((sub) => {
-                        const subActive = pathname === sub.href;
+                        const isTabSub = sub.href.includes("?tab=");
+                        const subTab = isTabSub ? sub.href.split("?tab=")[1] : null;
+                        const subActive = subTab
+                          ? (pathname === "/build" || pathname === "/perks") && currentTab === subTab
+                          : pathname === sub.href;
                         const subTier = sub.tierLabel ? tierLookup.get(sub.tierLabel) : null;
                         return (
                           <Link
