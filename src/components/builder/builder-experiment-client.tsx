@@ -23,7 +23,11 @@ import {
   Copy,
   Check,
   Link2,
+  Crosshair,
+  Sliders,
+  Sparkles,
 } from "lucide-react";
+import PerkBuilder from "@/components/perks/perk-builder";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
@@ -386,16 +390,19 @@ const ModPickerOption = React.memo(function ModPickerOption({
 type BuilderExperimentClientProps = {
   initialLearnedBasePieceIds?: string[];
   isAdmin?: boolean;
+  initialTab?: "gear" | "perks" | "biometrics" | "combat";
 };
 
 export default function BuilderExperimentClient({
   initialLearnedBasePieceIds = [],
   isAdmin = false,
+  initialTab = "gear",
 }: BuilderExperimentClientProps) {
   const { data: session, status: sessionStatus } = useSession();
   const isSignedIn =
     sessionStatus === "authenticated" && Boolean(session?.user?.id);
 
+  const [masterTab, setMasterTab] = React.useState<"gear" | "perks" | "biometrics" | "combat">(initialTab);
   const [mods, setMods] = React.useState<BuilderModDTO[]>([]);
   const [loadError, setLoadError] = React.useState<string | null>(null);
 
@@ -1616,8 +1623,122 @@ export default function BuilderExperimentClient({
         </div>
       ) : null}
 
-      {/* Three Pane Responsive Tactical Grid */}
-      <div className="grid gap-6 xl:grid-cols-[280px_1fr_325px] lg:grid-cols-[250px_1fr_280px] grid-cols-1">
+      {/* MASTER WORKSPACE NAVIGATION BAR */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-500/50 bg-slate-950/90 p-2.5 font-mono shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <button
+            type="button"
+            onClick={() => setMasterTab("gear")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+              masterTab === "gear"
+                ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+            }`}
+          >
+            <Shield className="h-3.5 w-3.5" />
+            <span>[ 1. GEAR &amp; ARMORY ]</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMasterTab("perks")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+              masterTab === "perks"
+                ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>[ 2. PERK DECK &amp; S.P.E.C.I.A.L. ]</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMasterTab("biometrics")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+              masterTab === "biometrics"
+                ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+            }`}
+          >
+            <Sliders className="h-3.5 w-3.5" />
+            <span>[ 3. BIOMETRICS &amp; STANCES ]</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMasterTab("combat")}
+            className={`px-3 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+              masterTab === "combat"
+                ? "bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+            }`}
+          >
+            <Crosshair className="h-3.5 w-3.5" />
+            <span>[ 4. COMBAT DPS &amp; VATS ]</span>
+          </button>
+        </div>
+
+        {/* Quick Live Telemetry Snapshot Badge */}
+        {weaponFirepowerResult && (
+          <div className="flex items-center gap-2 text-xs">
+            <div className="flex items-center gap-1.5 rounded bg-emerald-950 border border-emerald-500/40 px-2.5 py-0.5 text-emerald-300 font-bold">
+              <span>Shot: {weaponFirepowerResult.damagePerShot.normal}</span>
+              <span className="text-amber-400">/ Crit: {weaponFirepowerResult.damagePerShot.critical}</span>
+            </div>
+            <div className="flex items-center gap-1 rounded bg-cyan-950 border border-cyan-500/40 px-2 py-0.5 text-cyan-300 font-bold">
+              <span>Burst: {weaponFirepowerResult.dps.burstDPS.toLocaleString()} DPS</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* VIEWPORT: PERK DECK & SPECIAL (TAB 2) */}
+      {masterTab === "perks" && (
+        <div className="space-y-4 animate-in fade-in duration-200">
+          <PerkBuilder mode={payload.ghoul ? "pts" : "live"} />
+        </div>
+      )}
+
+      {/* VIEWPORT: BIOMETRICS & CHARACTER PANEL (TAB 3) */}
+      {masterTab === "biometrics" && (
+        <div className="space-y-4 animate-in fade-in duration-200">
+          <BuilderCombatSwitchboard
+            rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
+            isGhoul={payload.ghoul}
+            onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
+            activeMutations={payload.mutationIds}
+            onMutationsChange={(nextMutations) =>
+              setPayload((p) => ({ ...p, mutationIds: nextMutations }))
+            }
+            hasStrangeInNumbers={payload.hasStrangeInNumbers}
+            onStrangeInNumbersChange={(enabled) =>
+              setPayload((p) => ({ ...p, hasStrangeInNumbers: enabled }))
+            }
+            ignoreMutationPenalties={payload.ignoreMutationPenalties}
+            onIgnoreMutationPenaltiesChange={(enabled) =>
+              setPayload((p) => ({ ...p, ignoreMutationPenalties: enabled }))
+            }
+            onStateChange={setSwitchboardState}
+          />
+        </div>
+      )}
+
+      {/* VIEWPORT: COMBAT DPS & VATS (TAB 4) */}
+      {masterTab === "combat" && (
+        <div className="space-y-4 animate-in fade-in duration-200">
+          {weaponFirepowerResult ? (
+            <BuilderFirepowerMatrix firepower={weaponFirepowerResult} />
+          ) : (
+            <div className="rounded-xl border border-slate-800 bg-slate-950/90 p-8 text-center text-slate-400 font-mono">
+              &gt;&gt; NO WEAPON CONFIGURED. Switch to [ 1. GEAR &amp; ARMORY ] to select your weapon and mods.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}
+      {masterTab === "gear" && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          {/* Three Pane Responsive Tactical Grid */}
+          <div className="grid gap-6 xl:grid-cols-[280px_1fr_325px] lg:grid-cols-[250px_1fr_280px] grid-cols-1">
         
         {/* COLUMN 1: DIAGNOSTICS HUD */}
         <div className="space-y-4">
@@ -2532,6 +2653,8 @@ export default function BuilderExperimentClient({
           onStateChange={setSwitchboardState}
         />
       </div>
+    </div>
+  )}
 
       {/* Dialog Overlay Mod Picker with customized Fallout styling */}
       <Dialog
