@@ -19,6 +19,7 @@ export type CombatSwitchboardState = {
   healthPct: number;
   inPowerArmor: boolean;
   activeFood: string | null;
+  activeFoods: Record<string, string>; // Category -> Food ID
   activeDrug: string | null;
   activeBobblehead: string | null;
   activeMagazine: string | null;
@@ -73,23 +74,78 @@ export default function BuilderCombatSwitchboard({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showMathInspector]);
 
-  const [switchboard, setSwitchboard] = React.useState<CombatSwitchboardState>({
-    healthPct: 100,
-    inPowerArmor: false,
-    activeFood: isHerbivore ? "plant-company-tea" : isCarnivore ? "meat-scorchbeast-brain" : null,
-    activeDrug: "chem-psychotats",
-    activeBobblehead: "bobble-small-guns",
-    activeMagazine: "mag-gb3",
-    activeAlcohol: "brew-ballistic-bock",
-    activeNukaCola: "nuka-cranberry",
-    activeCompanion: "comp-adelaide",
-    activeCampBuffs: ["camp-phoropter", "camp-love-seat", "camp-mothman-tome", "camp-instrument"],
-    targetEnemy: "superMutant",
+  const [switchboard, setSwitchboard] = React.useState<CombatSwitchboardState>(() => {
+    const initialFoods: Record<string, string> = {};
+    if (isHerbivore) {
+      initialFoods["ap_regen"] = "plant-company-tea";
+      initialFoods["crit_damage"] = "plant-blight-soup";
+      initialFoods["int"] = "plant-brain-bombs";
+      initialFoods["xp"] = "plant-cranberry-relish";
+    } else if (isCarnivore) {
+      initialFoods["int"] = "meat-scorchbeast-brain";
+      initialFoods["melee_damage"] = "meat-glowing-steak";
+      initialFoods["str"] = "meat-deathclaw-steak";
+      initialFoods["xp"] = "meat-tasty-squirrel";
+    }
+    return {
+      healthPct: 100,
+      inPowerArmor: false,
+      activeFood: isHerbivore ? "plant-company-tea" : isCarnivore ? "meat-scorchbeast-brain" : null,
+      activeFoods: initialFoods,
+      activeDrug: "chem-psychotats",
+      activeBobblehead: "bobble-small-guns",
+      activeMagazine: "mag-gb3",
+      activeAlcohol: "brew-ballistic-bock",
+      activeNukaCola: "nuka-cranberry",
+      activeCompanion: "comp-adelaide",
+      activeCampBuffs: ["camp-phoropter", "camp-love-seat", "camp-mothman-tome", "camp-instrument"],
+      targetEnemy: "superMutant",
+    };
   });
 
   const updateField = <K extends keyof CombatSwitchboardState>(key: K, val: CombatSwitchboardState[K]) => {
     setSwitchboard((prev) => {
       const next = { ...prev, [key]: val };
+      onStateChange?.(next);
+      return next;
+    });
+  };
+
+  const handleSelectFood = (foodId: string) => {
+    if (!foodId || foodId === "none") return;
+    const allFoods = [...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS];
+    const food = allFoods.find((f) => f.id === foodId);
+    if (!food) return;
+
+    const categoryKey = food.foodBuffType || "general";
+    const nextFoods = { ...(switchboard.activeFoods || {}) };
+    // Category override: Replaces previous food of the SAME category, keeps all others!
+    nextFoods[categoryKey] = food.id;
+
+    setSwitchboard((prev) => {
+      const next = { ...prev, activeFoods: nextFoods, activeFood: food.id };
+      onStateChange?.(next);
+      return next;
+    });
+  };
+
+  const handleRemoveFoodCategory = (categoryKey: string) => {
+    const nextFoods = { ...(switchboard.activeFoods || {}) };
+    delete nextFoods[categoryKey];
+    setSwitchboard((prev) => {
+      const next = {
+        ...prev,
+        activeFoods: nextFoods,
+        activeFood: Object.values(nextFoods)[0] || null,
+      };
+      onStateChange?.(next);
+      return next;
+    });
+  };
+
+  const handleClearAllFoods = () => {
+    setSwitchboard((prev) => {
+      const next = { ...prev, activeFoods: {}, activeFood: null };
       onStateChange?.(next);
       return next;
     });
@@ -107,19 +163,19 @@ export default function BuilderCombatSwitchboard({
   const baseDamage = rawDamage > 0 ? rawDamage : 85;
   let buffedDamage = baseDamage;
 
-  // Apply Drug Buff
+  // Apply Drug Buff (Strict 1 Chem)
   const selectedChem = ALL_CHEMS.find((c) => c.id === switchboard.activeDrug);
   if (selectedChem?.damageMultiplier) buffedDamage *= selectedChem.damageMultiplier;
 
-  // Apply Bobblehead
+  // Apply Bobblehead (Strict 1 Bobblehead)
   const selectedBobble = ALL_BOBBLEHEADS.find((b) => b.id === switchboard.activeBobblehead);
   if (selectedBobble?.damageMultiplier) buffedDamage *= selectedBobble.damageMultiplier;
 
-  // Apply Magazine
+  // Apply Magazine (Strict 1 Magazine)
   const selectedMag = ALL_MAGAZINES.find((m) => m.id === switchboard.activeMagazine);
   if (selectedMag?.damageMultiplier) buffedDamage *= selectedMag.damageMultiplier;
 
-  // Apply Alcohol
+  // Apply Alcohol (Strict 1 Alcohol)
   const selectedAlcohol = ALL_ALCOHOL.find((a) => a.id === switchboard.activeAlcohol);
   if (selectedAlcohol?.damageMultiplier) buffedDamage *= selectedAlcohol.damageMultiplier;
 
@@ -134,15 +190,23 @@ export default function BuilderCombatSwitchboard({
     buffedDamage *= bloodiedMultiplier;
   }
 
-  // Apply Food Buff
+  // Apply Stacked Food Buffs (Distinct categories stacked simultaneously)
   const allFoods = [...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS];
-  const selectedFood = allFoods.find((f) => f.id === switchboard.activeFood);
-  if (selectedFood) {
-    const isMeatBlocked = selectedFood.category === "food_meat" && isHerbivore && !ignoreMutationPenalties;
-    const isPlantBlocked = selectedFood.category === "food_plant" && isCarnivore && !ignoreMutationPenalties;
+  const activeFoodList = Object.values(switchboard.activeFoods || {}).map((id) =>
+    allFoods.find((f) => f.id === id)
+  ).filter((f): f is (typeof allFoods)[0] => f !== undefined);
 
-    if (!isMeatBlocked && !isPlantBlocked && selectedFood.damageMultiplier) {
-      buffedDamage *= selectedFood.damageMultiplier;
+  if (activeFoodList.length === 0 && switchboard.activeFood) {
+    const single = allFoods.find((f) => f.id === switchboard.activeFood);
+    if (single) activeFoodList.push(single);
+  }
+
+  for (const food of activeFoodList) {
+    const isMeatBlocked = food.category === "food_meat" && isHerbivore && !ignoreMutationPenalties;
+    const isPlantBlocked = food.category === "food_plant" && isCarnivore && !ignoreMutationPenalties;
+
+    if (!isMeatBlocked && !isPlantBlocked && food.damageMultiplier) {
+      buffedDamage *= food.damageMultiplier;
     }
   }
 
@@ -222,23 +286,37 @@ export default function BuilderCombatSwitchboard({
           </div>
         </div>
 
-        {/* Column 2: Food & Steeped Teas */}
+        {/* Column 2: Food & Steeped Teas (Stackable by category, same-category override) */}
         <div className="space-y-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-          <div className="text-[0.70rem] uppercase font-bold text-slate-300 flex items-center gap-1">
-            <Utensils className="h-3 w-3" /> Food & Steeped Teas ({ALL_PLANT_FOODS.length + ALL_MEAT_FOODS.length})
+          <div className="text-[0.70rem] uppercase font-bold text-slate-300 flex items-center justify-between">
+            <span className="flex items-center gap-1">
+              <Utensils className="h-3 w-3" /> Stackable Foods ({activeFoodList.length})
+            </span>
+            {activeFoodList.length > 0 && (
+              <button
+                type="button"
+                onClick={handleClearAllFoods}
+                className="text-[0.58rem] text-rose-400 hover:underline uppercase"
+              >
+                Clear All
+              </button>
+            )}
           </div>
           <select
             className="w-full text-[0.65rem] font-mono uppercase bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 focus:outline-none"
-            value={switchboard.activeFood ?? "none"}
-            onChange={(e) => updateField("activeFood", e.target.value === "none" ? null : e.target.value)}
+            value=""
+            onChange={(e) => {
+              if (e.target.value) handleSelectFood(e.target.value);
+            }}
           >
-            <option value="none" className="bg-slate-950 text-slate-400">-- None --</option>
+            <option value="" className="bg-slate-950 text-slate-400">+ Add / Replace Food Buff...</option>
             <optgroup label="🍵 Steeped Teas & Plant Foods (Herbivore)" className="bg-slate-950 text-emerald-400 font-bold">
               {ALL_PLANT_FOODS.map((f) => {
                 const isBlocked = isCarnivore && !ignoreMutationPenalties;
+                const isEquipped = switchboard.activeFoods?.[f.foodBuffType || "general"] === f.id;
                 return (
                   <option key={f.id} value={f.id} disabled={isBlocked} className={isBlocked ? "bg-slate-950 text-slate-600 line-through" : "bg-slate-950 text-slate-200"}>
-                    {f.label} ({f.description}) {isBlocked ? "[BLOCKED]" : ""}
+                    {isEquipped ? "✓ " : ""}{f.label} [{f.foodBuffType?.toUpperCase()}] ({f.description})
                   </option>
                 );
               })}
@@ -246,32 +324,59 @@ export default function BuilderCombatSwitchboard({
             <optgroup label="🥩 Scorchbeast Organs & Meats (Carnivore)" className="bg-slate-950 text-red-400 font-bold">
               {ALL_MEAT_FOODS.map((f) => {
                 const isBlocked = isHerbivore && !ignoreMutationPenalties;
+                const isEquipped = switchboard.activeFoods?.[f.foodBuffType || "general"] === f.id;
                 return (
                   <option key={f.id} value={f.id} disabled={isBlocked} className={isBlocked ? "bg-slate-950 text-slate-600 line-through" : "bg-slate-950 text-slate-200"}>
-                    {f.label} ({f.description}) {isBlocked ? "[BLOCKED]" : ""}
+                    {isEquipped ? "✓ " : ""}{f.label} [{f.foodBuffType?.toUpperCase()}] ({f.description})
                   </option>
                 );
               })}
             </optgroup>
           </select>
-          {switchboard.activeFood && (
-            <div className="p-1.5 rounded bg-slate-950 border border-slate-800 text-[0.62rem] text-slate-300 flex items-center gap-1.5 mt-1 font-mono">
-              <span className="text-base shrink-0">
-                {isCarnivore ? "🥩" : isHerbivore ? "🍵" : "🍏"}
-              </span>
-              <div className="min-w-0">
-                <div className="font-bold text-amber-300 truncate">
-                  {[...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS].find((f) => f.id === switchboard.activeFood)?.label}
-                </div>
-                <div className="text-[0.58rem] text-slate-400 truncate">
-                  {[...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS].find((f) => f.id === switchboard.activeFood)?.description}
-                </div>
+
+          {/* Active Stacked Food Pills */}
+          <div className="space-y-1 max-h-28 overflow-y-auto pr-0.5">
+            {activeFoodList.length === 0 ? (
+              <div className="text-[0.60rem] text-slate-500 italic p-1 border border-dashed border-slate-800 rounded text-center">
+                No active food buffs. Select above to stack.
               </div>
-            </div>
-          )}
+            ) : (
+              activeFoodList.map((food) => {
+                const categoryKey = food.foodBuffType || "general";
+                return (
+                  <div
+                    key={food.id}
+                    className="p-1 rounded bg-slate-950 border border-slate-800 text-[0.62rem] text-slate-300 flex items-center justify-between gap-1 font-mono"
+                  >
+                    <div className="flex items-center gap-1 min-w-0">
+                      <span className="text-xs shrink-0">
+                        {food.category === "food_plant" ? "🍵" : "🥩"}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="font-bold text-amber-300 truncate text-[0.62rem]">
+                          {food.label}
+                        </div>
+                        <div className="text-[0.55rem] text-slate-400 truncate">
+                          [{categoryKey.toUpperCase()}] {food.description}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFoodCategory(categoryKey)}
+                      className="text-slate-500 hover:text-red-400 p-0.5 shrink-0"
+                      title="Remove buff"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
 
           <div className="text-[0.70rem] uppercase font-bold text-slate-300 flex items-center gap-1 pt-1 border-t border-slate-800">
-            <Pill className="h-3 w-3" /> Chems ({ALL_CHEMS.length})
+            <Pill className="h-3 w-3" /> Chems (1 Max)
           </div>
           <select
             className="w-full text-[0.65rem] font-mono uppercase bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 focus:outline-none"
