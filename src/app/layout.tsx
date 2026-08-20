@@ -152,6 +152,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${fontVT323.variable} ${fontShareTechMono.variable}`}
     >
       <head>
+        <link rel="preload" href="/images/special/special_S.webp" as="image" type="image/webp" fetchPriority="high" />
+        <link rel="preload" href="/images/special/special_P.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/images/special/special_E.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/images/special/special_C.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/images/special/special_I.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/images/special/special_A.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/images/special/special_L.webp" as="image" type="image/webp" />
         <Script
           id="ui-bootstrap"
           strategy="beforeInteractive"

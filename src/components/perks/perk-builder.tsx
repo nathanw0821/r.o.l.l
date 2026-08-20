@@ -485,10 +485,16 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                     <div className="relative h-20 w-20 flex items-center justify-center filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`/images/special/special_${stat}.webp`}
+                        src={`/images/special/special_${(["S","P","E","C","I","A","L"].includes(stat) ? stat : "S")}.webp`}
                         alt={`Official Fallout 76 ${theme.name} SPECIAL Letter`}
+                        width={80}
+                        height={80}
+                        fetchPriority="high"
+                        loading="eager"
+                        decoding="async"
                         onError={(e) => {
-                          e.currentTarget.src = `/images/special/special_${stat}.png`;
+                          const safeStat = ["S","P","E","C","I","A","L"].includes(stat) ? stat : "S";
+                          e.currentTarget.src = `/images/special/special_${safeStat}.png`;
                         }}
                         className="h-20 w-20 object-contain transition-transform duration-200 hover:scale-105"
                       />
