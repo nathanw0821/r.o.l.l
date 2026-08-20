@@ -559,12 +559,12 @@ interface AccountLinksResponse {
           </div>
         </aside>
         <div className="app-main">
-          <div className="content-canvas">
+          <div className="content-canvas min-h-screen flex flex-col justify-between">
             <div className="top-scroll-mask" />
             <DeferredLocalProgressSync />
             <DeferredCommandHubShell authKey={authKey} isSignedIn={isSignedIn} />
             <DeferredFeedbackWidget />
-            <main id="main-content" className="content-panel">
+            <main id="main-content" className="content-panel flex-1 min-h-[60vh]">
               <DeferredGuestSignupBanner />
               {children}
             </main>
@@ -596,7 +596,7 @@ interface AccountLinksResponse {
             </div>
 
             {/* Retro pip-boy styled footer */}
-            <footer className="mt-8 border-t border-border/40 pt-6 pb-6 text-xs text-slate-400 font-mono space-y-3">
+            <footer className="mt-auto border-t border-border/40 pt-6 pb-6 text-xs text-slate-400 font-mono space-y-3">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <span className="text-[0.70rem] text-slate-300 font-bold">© 2026 R.O.L.L. RECORD OF LEGENDARY LOADOUTS</span>
                 <div className="flex items-center gap-3 text-[0.68rem]">
