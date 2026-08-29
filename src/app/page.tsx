@@ -10,12 +10,31 @@ import { ExternalLink } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 async function HomeSummaryOverview() {
-  const session = await getAppSession();
-  const summary = await getProgressSummary(session?.user?.id);
+  let session = null;
+  try {
+    session = await getAppSession();
+  } catch {
+    // Graceful session fallback
+  }
 
-  const user = session?.user?.id 
-    ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { username: true } })
-    : null;
+  let summary = { percent: 0, unlocked: 0, total: 110 };
+  try {
+    summary = await getProgressSummary(session?.user?.id);
+  } catch (e) {
+    console.error("[HomeSummaryOverview] Failed to load progress summary:", e);
+  }
+
+  let user: { username: string | null } | null = null;
+  if (session?.user?.id) {
+    try {
+      user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { username: true }
+      });
+    } catch {
+      // Graceful DB fallback
+    }
+  }
 
   return (
     <Card className="primary-page-header border border-border/30 bg-panel shadow-sm font-mono overflow-hidden">
@@ -100,9 +119,20 @@ function HomeSummaryOverviewFallback() {
 }
 
 async function HomeSummaryTracker() {
-  const session = await getAppSession();
+  let session = null;
+  try {
+    session = await getAppSession();
+  } catch {
+    // Graceful session fallback
+  }
   const isAdmin = isAdminUser(session?.user);
-  const rows = await getAllEffectTiers(session?.user?.id);
+
+  let rows: any[] = [];
+  try {
+    rows = await getAllEffectTiers(session?.user?.id);
+  } catch (e) {
+    console.error("[HomeSummaryTracker] Failed to load effect tiers:", e);
+  }
 
   return <SummaryClient rows={rows} isSignedIn={Boolean(session?.user?.id)} isAdmin={isAdmin} />;
 }
