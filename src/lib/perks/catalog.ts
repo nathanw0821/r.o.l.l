@@ -21,19 +21,34 @@ export type PerkCard = {
 export const GHOUL_PERK_IDS = new Set([
   "action-ghoul",
   "action-diet",
+  "arms-of-steel",
+  "battle-genes",
+  "bomb-scientist",
+  "bone-shatterer",
+  "breathe-it-in",
+  "brick-wall",
   "chem-diet",
+  "eye-of-the-hunter",
+  "faulty-spots",
   "feral-presence",
   "feral-rage",
   "glowing-criticals",
   "glowing-gut",
   "glowing-hunter",
   "glowing-one",
+  "gun-tricks",
+  "hyper-reflexes",
+  "jaguar-speed",
+  "mad-scientist",
   "moral-support",
   "rad-specialist",
   "rad-reaver",
   "radiation-power",
   "radioactive-strength",
-  "united-ordeal"
+  "science-monster",
+  "thick-skin",
+  "united-ordeal",
+  "wild-west-hands"
 ]);
 
 export function isGhoulPerkCard(cardIdOrName?: string): boolean {

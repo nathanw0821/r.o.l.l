@@ -138,6 +138,16 @@ const commands = [
     ]
   },
   {
+    name: "nuke",
+    description: "Look up decrypted weekly nuclear silo launch codes (Alpha, Bravo, Charlie)",
+    options: []
+  },
+  {
+    name: "minerva",
+    description: "Track Minerva's live location, Gold Bullion discounts, schedule & sale inventory",
+    options: []
+  },
+  {
     name: "wiki",
     description: "Search 3,300+ Fallout 76 Truth Wiki articles, items, weak spots & mechanics",
     options: [

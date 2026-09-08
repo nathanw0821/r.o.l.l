@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import SummaryClient from "@/components/summary-client";
+import SummaryClient, { type SummaryRow } from "@/components/summary-client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
@@ -127,7 +127,7 @@ async function HomeSummaryTracker() {
   }
   const isAdmin = isAdminUser(session?.user);
 
-  let rows: any[] = [];
+  let rows: SummaryRow[] = [];
   try {
     rows = await getAllEffectTiers(session?.user?.id);
   } catch (e) {

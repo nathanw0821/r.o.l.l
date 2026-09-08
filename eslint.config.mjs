@@ -10,11 +10,17 @@ const config = [
       "dist-worker/**",
       ".vercel/**",
       ".wrangler/**",
-      "node_modules/**"
+      "node_modules/**",
+      "worker-configuration.d.ts"
     ]
   },
   ...nextVitals,
-  ...nextTypescript
+  ...nextTypescript,
+  {
+    rules: {
+      "@next/next/no-img-element": "off"
+    }
+  }
 ];
 
 export default config;

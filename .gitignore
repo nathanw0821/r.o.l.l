@@ -17,4 +17,12 @@ tsconfig.tsbuildinfo
 wrangler.log
 .continue
 pasted_image_*.png
+__pycache__/
+*.py[cod]
+
+# Raw Datamine Extraction Intermediates
+data/extracted_swfs/
+data/*.strings
+data/*.dlstrings
+data/*.ilstrings
 

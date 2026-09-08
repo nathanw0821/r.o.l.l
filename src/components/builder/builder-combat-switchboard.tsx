@@ -177,15 +177,11 @@ interface BuilderCombatSwitchboardProps {
 }
 
 export default function BuilderCombatSwitchboard({
-  rawDamage: _rawDamage,
   isGhoul = false,
   onSpeciesChange,
   activeMutations = [],
-  onMutationsChange: _onMutationsChange,
   hasStrangeInNumbers = false,
   onStrangeInNumbersChange,
-  ignoreMutationPenalties: _ignoreMutationPenalties = false,
-  onIgnoreMutationPenaltiesChange: _onIgnoreMutationPenaltiesChange,
   onStateChange,
 }: BuilderCombatSwitchboardProps) {
   const isCarnivore = activeMutations.includes("carnivore");
