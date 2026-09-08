@@ -49,8 +49,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "P.E.R.K. & B.U.I.L.D. Unified Suite | R.O.L.L.",
-  description: "Fallout 76 Perk Equipment & Reconfiguration Kit (P.E.R.K.) with synchronized Punch Card Machine, 319 official Vault Boy SVG cards, and live Combat Matrix."
+  description: "Fallout 76 Perk Equipment & Reconfiguration Kit (P.E.R.K.) with synchronized Punch Card Machine, 1:1 bitmapped Pip-Boy curved in-game perk cards with dynamic multi-rank progression, and live Combat Matrix."
 };
+
 
 export default async function PerksPage() {
   let session = null;

@@ -1,17 +1,12 @@
 # 📜 MANDATORY PROJECT RULES & DIRECTIVES FOR AGY (ANTIGRAVITY CLI)
 
-## 🎨 1:1 Static WebP In-Game Perk Card Policy
-- **STRICT RULE**: ALWAYS render 1:1 static colored WebP Fallout 76 perk card textures from `public/images/perks_official_wiki/*.webp` mapped via `src/lib/perks/wiki-268-art-map.json`.
-- **NO ANIMATED GIFS**: NEVER use `.gif` files or animated variants (e.g. `fo76-perk-contractor.gif` is FORBIDDEN). ALWAYS use static 1:1 `.webp` textures.
-- **NO OUTER BOX BORDERS**: Perk cards MUST render as purely `<img src={artworkUrl} />` without any outer container box borders, dark backgrounds, or outer rings in `in-game-perk-card.tsx`.
-- **NO WEB SCRAPING**: Do NOT run web scrapers. All 500+ static 1:1 perk card textures and 319 Vault Boy SVGs are stored locally in `public/images/`.
-- **TARGET CARD VERIFICATION**:
-  - `Guerrilla`: [`public/images/perks_official_wiki/fo76-perk-guerrilla.webp`](file:///home/nathanw/Creative%20Direction/R.O.L.L/public/images/perks_official_wiki/fo76-perk-guerrilla.webp)
-  - `Expert Guerrilla`: [`public/images/perks_official_wiki/fo76-perk-expert-guerrilla.webp`](file:///home/nathanw/Creative%20Direction/R.O.L.L/public/images/perks_official_wiki/fo76-perk-expert-guerrilla.webp)
-  - `Master Guerrilla`: [`public/images/perks_official_wiki/fo76-perk-master-guerrilla.webp`](file:///home/nathanw/Creative%20Direction/R.O.L.L/public/images/perks_official_wiki/fo76-perk-master-guerrilla.webp)
-  - `Ground Pounder`: [`public/images/perks_official_wiki/fo76-perk-ground-pounder.webp`](file:///home/nathanw/Creative%20Direction/R.O.L.L/public/images/perks_official_wiki/fo76-perk-ground-pounder.webp)
-  - `Friendly Fire`: [`public/images/perks_official_wiki/fo76-perk-friendly-fire.webp`](file:///home/nathanw/Creative%20Direction/R.O.L.L/public/images/perks_official_wiki/fo76-perk-friendly-fire.webp)
-  - `Contractor`: [`public/images/perks_official_wiki/fo76-perk-contractor.webp`](file:///home/nathanw/Creative%20Direction/R.O.L.L/public/images/perks_official_wiki/fo76-perk-contractor.webp)
+## 🎨 1:1 Primary In-Game Perk Card Policy
+- **MASTER DIRECTIVE**: See [`docs/AGY_PERK_CARDS_DIRECTIVE.md`](file:///home/nathanw/Creative%20Direction/R.O.L.L/docs/AGY_PERK_CARDS_DIRECTIVE.md) for full architectural specifications, catalog totals, and component hierarchies.
+- **STRICT RULE**: ALL perk cards rendered across the platform MUST use the 1:1 bitmapped Pip-Boy curved/slanted cards from `public/images/in_game_cards/*.png` resolved via `getInGamePerkCardImage()` in `src/lib/perks/clean-perk-assets.ts`.
+- **DYNAMIC MULTI-RANK PROGRESSION**: Ensure cards dynamically cycle ranks (e.g. `bullet_storm_r1.png`, `bullet_storm_r2.png`, `bullet_storm_r3.png`) with working star ribbons and flawless in-place cost badges.
+- **NO SYNTHETIC OVERLAY BOXES**: Never draw flat color rectangles over title banners or badges when native Bethesda assets exist.
+- **NO ANIMATED GIFS**: NEVER use `.gif` files.
+- **NO WEB SCRAPING**: All 274 perk cards (578 rank tiers, 868 PNGs) are pre-compiled locally in `public/images/in_game_cards/` and `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`.
 
 ## 🚀 Deployment Pipeline Pacing Policy
 - **STRICT RULE**: NEVER push a new commit or trigger a new deployment while a previous Cloudflare / GitHub Actions deployment workflow is still running or pending.

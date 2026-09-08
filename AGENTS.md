@@ -10,11 +10,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # 📜 MANDATORY PROJECT RULES & DIRECTIVES
 
-## 🎨 Official Datamined Perk Card Assets Policy
-- **STRICT RULE**: ALWAYS use the 319 official datamined Fallout 76 Vault Boy & Vault Girl SVG vector card assets stored in `public/images/perks_official/*.svg`.
-- **NO DELETIONS**: NEVER delete or remove any files from `public/images/perks_official/`.
-- **NO WEB SCRAPING**: Do NOT run web scrapers or attempt to download third-party wiki images.
-- **NO FALLBACK STAR ICONS**: `PipBoyCardArt` must ALWAYS render the authentic datamined Vault Boy vector artwork directly inside the Pip-Boy radar grid card frame without replacing it with generic star icons or full-card image overrides.
+## 🎨 1:1 Primary In-Game Perk Card Policy
+- **MASTER DIRECTIVE**: See [`docs/AGY_PERK_CARDS_DIRECTIVE.md`](file:///home/nathanw/Creative%20Direction/R.O.L.L/docs/AGY_PERK_CARDS_DIRECTIVE.md) for full architectural specifications, catalog totals, and component hierarchies.
+- **STRICT RULE**: ALL perk cards rendered across the platform MUST use the 1:1 bitmapped Pip-Boy curved/slanted cards from `public/images/in_game_cards/*.png` resolved via `getInGamePerkCardImage()` in `src/lib/perks/clean-perk-assets.ts`.
+- **DYNAMIC MULTI-RANK PROGRESSION**: Ensure cards dynamically cycle ranks (e.g. `bullet_storm_r1.png`, `bullet_storm_r2.png`, `bullet_storm_r3.png`) with working star ribbons and flawless in-place cost badges.
+- **NO SYNTHETIC OVERLAY BOXES**: Never draw flat color rectangles over title banners or badges when native Bethesda assets exist.
+- **NO WEB SCRAPING**: All 274 perk cards (578 rank tiers, 868 PNGs) are pre-compiled locally in `public/images/in_game_cards/` and `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`.
 
 ## 🚀 Deployment Pipeline Pacing Policy
 - **STRICT RULE**: NEVER push a new commit or trigger a new deployment while a previous Cloudflare / GitHub Actions deployment workflow is still running or pending.

@@ -6,6 +6,14 @@ import { prisma } from "@/lib/prisma";
 import { searchPerkCards } from "@/lib/perks/catalog";
 import { getProgressSummary } from "@/lib/data";
 import type { BuilderPayload } from "@/lib/builder/types";
+import {
+  fetchNukeCodes,
+  buildNukeDiscordEmbed,
+  getMinervaSchedule,
+  buildMinervaDiscordEmbed,
+  getDailyResetTimers,
+} from "@/lib/discord/vault-intel";
+import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
 
 // Web Crypto Ed25519 signature verification for Discord Webhooks
 async function verifyDiscordSignature(
@@ -114,6 +122,21 @@ export async function POST(req: Request) {
       });
     }
 
+    if (commandName === "wiki") {
+      const matches = FALLBACK_WIKI_ARTICLES.filter((a) =>
+        !query || a.title.toLowerCase().includes(query) || (a.category && a.category.toLowerCase().includes(query))
+      ).slice(0, 25);
+      return NextResponse.json({
+        type: 8,
+        data: {
+          choices: matches.map((m) => ({
+            name: `${m.title.slice(0, 95)}`,
+            value: m.title.slice(0, 100)
+          }))
+        }
+      });
+    }
+
     const catalog = await getCachedBuilderModCatalog();
     const normQuery = normalizeFuzzySearchString(query);
 
@@ -192,34 +215,8 @@ export async function POST(req: Request) {
 
     // Command: /daily
     if (name === "daily") {
-      const now = new Date();
-      
-      // 1. Next 16:00 UTC (12:00 PM EST) Economy & Vendor Reset
-      const nextNoonReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 16, 0, 0));
-      if (now.getTime() >= nextNoonReset.getTime()) {
-        nextNoonReset.setUTCDate(nextNoonReset.getUTCDate() + 1);
-      }
-      const noonResetUnix = Math.floor(nextNoonReset.getTime() / 1000);
-
-      // 2. Next 00:00 UTC (8:00 PM EST) Faction & Personal Daily Quests Reset
-      const nextEveningReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
-      if (now.getTime() >= nextEveningReset.getTime()) {
-        nextEveningReset.setUTCDate(nextEveningReset.getUTCDate() + 1);
-      }
-      const eveningResetUnix = Math.floor(nextEveningReset.getTime() / 1000);
-
-      const dayOfWeek = now.getUTCDay();
-      const locations = ["Fort Atlas", "Foundation", "Crater", "The Whitespring Resort"];
-      const location = locations[Math.floor(now.getUTCDate() / 7) % 4];
-
-      let minervaStatus = "";
-      if (dayOfWeek >= 1 && dayOfWeek <= 3) {
-        minervaStatus = `🟢 **Active Now at ${location}** (Standard Sale)`;
-      } else if (dayOfWeek >= 4 && dayOfWeek <= 5) {
-        minervaStatus = `🟡 **Arriving Thursday at 12:00 PM EST** (Big Sale at ${location})`;
-      } else {
-        minervaStatus = `🔴 **Resting & Preparing Next Inventory**`;
-      }
+      const { noonResetUnix, eveningResetUnix } = getDailyResetTimers();
+      const minerva = getMinervaSchedule();
 
       return NextResponse.json({
         type: 4,
@@ -241,8 +238,13 @@ export async function POST(req: Request) {
                   inline: false
                 },
                 {
-                  name: "🎪 Minerva Location & Status",
-                  value: minervaStatus,
+                  name: "🎪 Minerva Traveling Merchant",
+                  value: `${minerva.statusText} at **${minerva.location}**\n• **Sale**: ${minerva.saleType}\n• **${minerva.nextEventLabel}**: <t:${minerva.nextEventUnix}:R> (<t:${minerva.nextEventUnix}:F>)\n• Type \`/minerva\` for complete inventory & discount radar!`,
+                  inline: false
+                },
+                {
+                  name: "🚀 Nuclear Silo Encryption Clearance",
+                  value: "Decrypted Alpha, Bravo, and Charlie weekly launch codes available! Type `/nuke` for instant clearance.",
                   inline: false
                 },
                 {
@@ -253,6 +255,73 @@ export async function POST(req: Request) {
               ],
               footer: {
                 text: "R.O.L.L. Wasteland Network · fallout76.wiki",
+                icon_url: "https://fallout76.wiki/favicon-v3.png"
+              }
+            }
+          ]
+        }
+      });
+    }
+
+    // Command: /nuke
+    if (name === "nuke") {
+      const codes = await fetchNukeCodes();
+      return NextResponse.json({
+        type: 4,
+        data: {
+          embeds: [buildNukeDiscordEmbed(codes)]
+        }
+      });
+    }
+
+    // Command: /minerva
+    if (name === "minerva") {
+      const minerva = getMinervaSchedule();
+      return NextResponse.json({
+        type: 4,
+        data: {
+          embeds: [buildMinervaDiscordEmbed(minerva)]
+        }
+      });
+    }
+
+    // Command: /wiki <query>
+    if (name === "wiki") {
+      const queryOption = options?.find((o: { name: string; value: string }) => o.name === "query");
+      const query = queryOption?.value?.toLowerCase().trim() || "";
+      const match = FALLBACK_WIKI_ARTICLES.find(
+        (a) =>
+          a.title.toLowerCase().includes(query) ||
+          a.content.toLowerCase().includes(query) ||
+          (a.category && a.category.toLowerCase().includes(query))
+      );
+
+      if (!match) {
+        return NextResponse.json({
+          type: 4,
+          data: {
+            content: `🔍 No wiki article found matching **"${query}"**. Browse 3,300+ guides at **[fallout76.wiki/wiki](https://fallout76.wiki/wiki)**!`,
+            flags: 64
+          }
+        });
+      }
+
+      const snippet = (match.snippet || match.content.slice(0, 300)).replace(/\n+/g, " ").slice(0, 320) + "…";
+      return NextResponse.json({
+        type: 4,
+        data: {
+          embeds: [
+            {
+              title: `📖 ${match.title}`,
+              url: match.url || "https://fallout76.wiki/wiki",
+              description: `${snippet}\n\n🔗 **[Read Full Article on R.O.L.L. Truth Wiki](${match.url || "https://fallout76.wiki/wiki"})**`,
+              color: 0xf59e0b,
+              fields: [
+                { name: "Archive Section", value: match.category || "Fallout 76 Database", inline: true },
+                { name: "Source", value: match.source || "Vault-Tec Records", inline: true }
+              ],
+              footer: {
+                text: "R.O.L.L. Truth Wiki · fallout76.wiki/wiki",
                 icon_url: "https://fallout76.wiki/favicon-v3.png"
               }
             }

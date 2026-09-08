@@ -3,39 +3,10 @@ import { cache } from "react";
 import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import {
-  GUEST_PROGRESS_SUMMARY_TAG,
-  ROLL_CATALOG_CACHE_TAG,
-  ACTIVE_DATASET_VERSION_TAG,
-  TIER_CACHE_TAG
-} from "@/lib/cache-tags";
-import { extractOriginsFromNotes, normalizeDisplayNotes } from "@/lib/import-normalize";
-import { appendLegendaryModSourceNotes } from "@/lib/legendary-mod-sources";
-import { applyImportedProfileIfNeeded, getImportedBaselineMap } from "@/lib/profile";
-import { getActiveCharacterId } from "@/lib/character";
-
-async function ensureProfileApplied(userId?: string) {
-  if (!userId) return;
-  try {
-    await applyImportedProfileIfNeeded(userId);
-  } catch {
-    // Do not block data reads if profile application fails.
-  }
-}
+import { ACTIVE_DATASET_VERSION_TAG } from "@/lib/cache-tags";
+import { getImportedBaselineMap } from "@/lib/profile";
 
 type SelectionSource = "default" | "imported" | "edited";
-
-function resolveSelectionSource(params: {
-  characterId?: string;
-  baseline?: boolean;
-  progress?: boolean;
-}): SelectionSource {
-  if (!params.characterId) return "default";
-  if (params.progress === undefined && params.baseline === undefined) return "default";
-  if (params.progress === undefined && params.baseline !== undefined) return "imported";
-  if (params.baseline === undefined) return "edited";
-  return params.progress === params.baseline ? "imported" : "edited";
-}
 
 export const effectTierCatalogSelect = {
   id: true,
@@ -60,20 +31,6 @@ export type MergedEffectTierRow = Omit<EffectTierCatalogRow, "notes"> & {
   selectionSource: SelectionSource;
   tierLabel?: string;
 };
-
-function getCatalogEffectTiersCached(datasetVersionId: string) {
-  const loader = unstable_cache(
-    async () =>
-      prisma.effectTier.findMany({
-        where: { datasetVersionId },
-        select: effectTierCatalogSelect,
-        orderBy: [{ tierId: "asc" }, { effect: { name: "asc" } }]
-      }),
-    ["roll-catalog-effect-tiers", datasetVersionId],
-    { tags: [ROLL_CATALOG_CACHE_TAG] }
-  );
-  return loader();
-}
 
 async function fetchUserProgressMap(userId: string) {
   const rows = await prisma.userProgress.findMany({
@@ -147,53 +104,7 @@ async function fetchGlobalProgressMap(userId: string) {
   return map;
 }
 
-function mergeCatalogWithUserState(
-  catalog: EffectTierCatalogRow[],
-  characterId: string | undefined,
-  baselineMap: Map<string, boolean>,
-  progressMap: Map<string, { unlocked: boolean; isSeeking: boolean; modCount: number }>,
-  globalProgressMap: Map<string, string[]>
-): MergedEffectTierRow[] {
-  return catalog.map((item) => {
-    const baseline = characterId ? baselineMap.get(item.id) : undefined;
-    const progress = progressMap.get(item.id);
-    const unlocked = progress ? progress.unlocked : (baseline ?? false);
-    const isSeeking = progress?.isSeeking ?? false;
-    const modCount = progress?.modCount ?? 0;
-    const unlockedBy = globalProgressMap.get(item.id) || [];
-    
-    const origins = extractOriginsFromNotes(item.notes);
-    const displayNotes = normalizeDisplayNotes(item.notes, origins);
-    const displayWithSources =
-      appendLegendaryModSourceNotes(displayNotes, item.effect.name, item.tier?.label) ?? null;
-    return {
-      ...item,
-      notes: displayWithSources,
-      origins,
-      unlocked,
-      isSeeking,
-      modCount,
-      unlockedBy,
-      selectionSource: resolveSelectionSource({
-        characterId,
-        baseline,
-        progress: progress?.unlocked
-      })
-    };
-  });
-}
-
-const getTierByLabelCached = unstable_cache(
-  async (label: string) =>
-    prisma.tier.findUnique({
-      where: { label },
-      select: { id: true, label: true }
-    }),
-  ["roll-tier-by-label"],
-  { tags: [TIER_CACHE_TAG] }
-);
-
-import { FALLBACK_LEGENDARY_EFFECTS, type StaticEffectRow } from "@/lib/static-fallback-catalog";
+import { FALLBACK_LEGENDARY_EFFECTS } from "@/lib/static-fallback-catalog";
 
 function normalizeFallbackList(list: typeof FALLBACK_LEGENDARY_EFFECTS): MergedEffectTierRow[] {
   return list.map((item) => {
@@ -363,17 +274,6 @@ export async function getUserProgressSummary(userId?: string) {
   }
   return getGlobalProgressSummary(userId);
 }
-
-const getGuestProgressSummaryCached = unstable_cache(
-  async (datasetVersionId: string) => {
-    const total = await prisma.effectTier.count({
-      where: { datasetVersionId }
-    });
-    return { total, unlocked: 0, percent: 0 };
-  },
-  ["guest-progress-summary"],
-  { revalidate: 300, tags: [GUEST_PROGRESS_SUMMARY_TAG] }
-);
 
 export async function getProgressSummary(userId?: string) {
   if (!userId) {

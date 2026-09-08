@@ -4,12 +4,10 @@ import * as React from "react";
 import {
   BASE_GEAR_PIECES,
   isPowerArmorTorsoBasePiece,
-  isTrackableBasePieceId,
-  type BaseGearPiece
+  isTrackableBasePieceId
 } from "@/lib/builder/base-gear";
 import type { BuilderEquipmentKind, BuilderWeaponSub, BuilderUnderarmor } from "@/lib/builder/types";
 import {
-  UNDERARMOR_SHELLS,
   UNDERARMOR_LININGS,
   UNDERARMOR_STYLES,
   findUnderarmorOption

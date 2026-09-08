@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
-  Boxes,
   Shield,
   Zap,
   Flame,
@@ -60,7 +59,6 @@ import {
 import {
   BASE_GEAR_PIECES,
   getBaseGearPiece,
-  isPowerArmorHelmetBasePiece,
   isPowerArmorTorsoBasePiece,
   isPowerArmorTorsoRowLearned,
   isTrackableBasePieceId,
@@ -77,7 +75,6 @@ import {
   filterModsForSlot,
   formatEffectMathDeltas,
   getGroupedLegendaryEffects,
-  isMultiPiecePayload,
   listEquippedLegendariesWithBenchLabels,
   listEquippedModsInBenchOrder,
   listExtraEffectMathEntries,
@@ -92,7 +89,6 @@ import {
 } from "@/lib/builder/normalize-builder-payload";
 import {
   getPowerArmorEquippedFlatStats,
-  getPowerArmorSlotBaseStats,
   powerArmorFrameIntrinsicEffectMath,
   POWER_ARMOR_PIECE_SLOT_LABELS,
 } from "@/lib/builder/power-armor-stats";
@@ -481,9 +477,6 @@ export default function BuilderExperimentClient({
   const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<
     number | null
   >(null);
-  const [legendaryPerkCategory, setLegendaryPerkCategory] = React.useState<
-    "special" | "combat" | "utility"
-  >("special");
   const [isComparisonOpen, setIsComparisonOpen] = React.useState(false);
   const internalUpdateRef = React.useRef(false);
   const [switchboardState, setSwitchboardState] = React.useState<CombatSwitchboardState | null>(null);
@@ -1338,9 +1331,6 @@ export default function BuilderExperimentClient({
     triggerBuilderAchievement("build_specials");
     triggerBuilderAchievement("build_perks");
   };
-
-  const starsDisabled = piece.kind === "underarmor";
-
 
   // Gear schematic card generator for multi-piece view
   function renderGearSlotCard(

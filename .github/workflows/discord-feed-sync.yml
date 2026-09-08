@@ -1,0 +1,44 @@
+name: Discord Feed & Vault Sync
+
+on:
+  schedule:
+    # Automatically runs every 3 hours 24/7 in GitHub Cloud
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types:
+      - completed
+    branches: [main]
+
+concurrency:
+  group: discord-vault-sync
+  cancel-in-progress: true
+
+jobs:
+  sync-discord-vault:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Reconcile Discord Vault & Feeds
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: |
+          if [ -z "$DISCORD_BOT_TOKEN" ]; then
+            echo "❌ Missing DISCORD_BOT_TOKEN secret in GitHub Actions!"
+            echo "Please configure DISCORD_BOT_TOKEN under Repository Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+          npx tsx scripts/sync-discord-vault.ts

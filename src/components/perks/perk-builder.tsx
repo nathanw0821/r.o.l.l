@@ -483,7 +483,6 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                   {/* Actual Official Fallout 76 WebP SPECIAL Letter Icon */}
                   <div className="flex flex-col items-center gap-1 z-10 pt-1">
                     <div className="relative h-20 w-20 flex items-center justify-center filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={`/images/special/special_${(["S","P","E","C","I","A","L"].includes(stat) ? stat : "S")}.webp`}
                         alt={`Official Fallout 76 ${theme.name} SPECIAL Letter`}

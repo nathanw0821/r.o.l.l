@@ -4,6 +4,16 @@ import * as React from "react";
 import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard } from "@/lib/perks/catalog";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
 import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
+import {
+  OFFICIAL_SPECIAL_COLORS,
+  OFFICIAL_SPECIAL_NAMES,
+  OFFICIAL_SPECIAL_PLAQUES,
+  CLEAN_TEXTURES,
+  getCleanPerkForeground,
+  getLegendaryRankStarSprite,
+  getGhoulPerkCardImage,
+  getInGamePerkCardImage,
+} from "@/lib/perks/clean-perk-assets";
 import { Sparkles, Star, Info, X, ExternalLink } from "lucide-react";
 
 export interface InGamePerkCardProps {
@@ -24,7 +34,7 @@ export interface InGamePerkCardProps {
   footerExtra?: React.ReactNode;
 }
 
-// In-Game FO76 Authentic S.P.E.C.I.A.L. Theme Colors
+// In-Game FO76 Official S.P.E.C.I.A.L. Theme Colors (Fallout 76 Exact Palette)
 const INGAME_SPECIAL_THEMES: Record<
   SpecialCategory,
   {
@@ -39,86 +49,290 @@ const INGAME_SPECIAL_THEMES: Record<
   }
 > = {
   S: {
-    cardBg: "bg-gradient-to-b from-[#2a1708] via-[#1a0f05] to-[#0c0602]",
-    border: "border-amber-600/90 hover:border-amber-400 ring-1 ring-amber-500/30",
-    bgHeader: "bg-amber-900/90 text-amber-100 border-amber-600/80",
-    textHeader: "text-amber-200",
-    badgeBg: "bg-amber-950 border-amber-500 text-amber-100",
-    stampBg: "bg-amber-900 border-amber-500 text-amber-100",
-    artWindowBg: "from-amber-500/25 via-[#1a0f05] to-[#0a0502]",
-    glowColor: "#f59e0b",
+    cardBg: "bg-gradient-to-b from-[#1b2820] via-[#121c16] to-[#080d0a]",
+    border: "border-[#749B85] hover:border-[#96b8a4] ring-1 ring-[#749B85]/30",
+    bgHeader: "bg-[#749B85]/90 text-white border-[#749B85]",
+    textHeader: "text-emerald-100",
+    badgeBg: "bg-[#182a20] border-[#749B85] text-emerald-100",
+    stampBg: "bg-[#749B85] border-[#96b8a4] text-slate-950 font-black",
+    artWindowBg: "from-[#749B85]/25 via-[#121c16] to-[#080d0a]",
+    glowColor: "#749B85",
   },
   P: {
-    cardBg: "bg-gradient-to-b from-[#062436] via-[#041724] to-[#020b12]",
-    border: "border-cyan-600/90 hover:border-cyan-400 ring-1 ring-cyan-500/30",
-    bgHeader: "bg-cyan-900/90 text-cyan-100 border-cyan-600/80",
-    textHeader: "text-cyan-200",
-    badgeBg: "bg-cyan-950 border-cyan-500 text-cyan-100",
-    stampBg: "bg-cyan-900 border-cyan-500 text-cyan-100",
-    artWindowBg: "from-cyan-500/25 via-[#041724] to-[#020b12]",
-    glowColor: "#06b6d4",
+    cardBg: "bg-gradient-to-b from-[#252217] via-[#19170e] to-[#0d0c07]",
+    border: "border-[#877B56] hover:border-[#a89b72] ring-1 ring-[#877B56]/30",
+    bgHeader: "bg-[#877B56]/90 text-white border-[#877B56]",
+    textHeader: "text-amber-100",
+    badgeBg: "bg-[#252217] border-[#877B56] text-amber-100",
+    stampBg: "bg-[#877B56] border-[#a89b72] text-slate-950 font-black",
+    artWindowBg: "from-[#877B56]/25 via-[#19170e] to-[#0d0c07]",
+    glowColor: "#877B56",
   },
   E: {
-    cardBg: "bg-gradient-to-b from-[#063326] via-[#042018] to-[#02100c]",
-    border: "border-emerald-600/90 hover:border-emerald-400 ring-1 ring-emerald-500/30",
-    bgHeader: "bg-emerald-900/90 text-emerald-100 border-emerald-600/80",
-    textHeader: "text-emerald-200",
-    badgeBg: "bg-emerald-950 border-emerald-500 text-emerald-100",
-    stampBg: "bg-emerald-900 border-emerald-500 text-emerald-100",
-    artWindowBg: "from-emerald-500/25 via-[#042018] to-[#02100c]",
-    glowColor: "#10b981",
+    cardBg: "bg-gradient-to-b from-[#13262d] via-[#0c191e] to-[#050c0f]",
+    border: "border-[#4A8FA1] hover:border-[#6cb1c4] ring-1 ring-[#4A8FA1]/30",
+    bgHeader: "bg-[#4A8FA1]/90 text-white border-[#4A8FA1]",
+    textHeader: "text-cyan-100",
+    badgeBg: "bg-[#10242b] border-[#4A8FA1] text-cyan-100",
+    stampBg: "bg-[#4A8FA1] border-[#6cb1c4] text-slate-950 font-black",
+    artWindowBg: "from-[#4A8FA1]/25 via-[#0c191e] to-[#050c0f]",
+    glowColor: "#4A8FA1",
   },
   C: {
-    cardBg: "bg-gradient-to-b from-[#362706] via-[#221804] to-[#100b02]",
-    border: "border-yellow-600/90 hover:border-yellow-400 ring-1 ring-yellow-500/30",
-    bgHeader: "bg-yellow-900/90 text-yellow-100 border-yellow-600/80",
-    textHeader: "text-yellow-200",
-    badgeBg: "bg-yellow-950 border-yellow-500 text-yellow-100",
-    stampBg: "bg-yellow-900 border-yellow-500 text-yellow-100",
-    artWindowBg: "from-yellow-500/25 via-[#221804] to-[#100b02]",
-    glowColor: "#eab308",
+    cardBg: "bg-gradient-to-b from-[#332313] via-[#21160a] to-[#0f0903]",
+    border: "border-[#C89053] hover:border-[#dfaa70] ring-1 ring-[#C89053]/30",
+    bgHeader: "bg-[#C89053]/90 text-white border-[#C89053]",
+    textHeader: "text-amber-100",
+    badgeBg: "bg-[#332313] border-[#C89053] text-amber-100",
+    stampBg: "bg-[#C89053] border-[#dfaa70] text-slate-950 font-black",
+    artWindowBg: "from-[#C89053]/25 via-[#21160a] to-[#0f0903]",
+    glowColor: "#C89053",
   },
   I: {
-    cardBg: "bg-gradient-to-b from-[#1e293b] via-[#111827] to-[#070a0f]",
-    border: "border-slate-500/90 hover:border-slate-300 ring-1 ring-slate-400/30",
-    bgHeader: "bg-slate-800/90 text-slate-100 border-slate-500/80",
-    textHeader: "text-slate-200",
-    badgeBg: "bg-slate-900 border-slate-400 text-slate-100",
-    stampBg: "bg-slate-800 border-slate-400 text-slate-100",
-    artWindowBg: "from-slate-400/25 via-[#111827] to-[#070a0f]",
-    glowColor: "#94a3b8",
+    cardBg: "bg-gradient-to-b from-[#1d231a] via-[#131811] to-[#080b07]",
+    border: "border-[#7E8B75] hover:border-[#a0ad97] ring-1 ring-[#7E8B75]/30",
+    bgHeader: "bg-[#7E8B75]/90 text-white border-[#7E8B75]",
+    textHeader: "text-slate-100",
+    badgeBg: "bg-[#1d231a] border-[#7E8B75] text-slate-100",
+    stampBg: "bg-[#7E8B75] border-[#a0ad97] text-slate-950 font-black",
+    artWindowBg: "from-[#7E8B75]/25 via-[#131811] to-[#080b07]",
+    glowColor: "#7E8B75",
   },
   A: {
-    cardBg: "bg-gradient-to-b from-[#3b0717] via-[#24040e] to-[#120207]",
-    border: "border-rose-600/90 hover:border-rose-400 ring-1 ring-rose-500/30",
-    bgHeader: "bg-rose-900/90 text-rose-100 border-rose-600/80",
-    textHeader: "text-rose-200",
-    badgeBg: "bg-rose-950 border-rose-500 text-rose-100",
-    stampBg: "bg-rose-900 border-rose-500 text-rose-100",
-    artWindowBg: "from-rose-500/25 via-[#24040e] to-[#120207]",
-    glowColor: "#f43f5e",
+    cardBg: "bg-gradient-to-b from-[#33211d] via-[#211411] to-[#100907]",
+    border: "border-[#C88F7F] hover:border-[#e2aba0] ring-1 ring-[#C88F7F]/30",
+    bgHeader: "bg-[#C88F7F]/90 text-white border-[#C88F7F]",
+    textHeader: "text-rose-100",
+    badgeBg: "bg-[#33211d] border-[#C88F7F] text-rose-100",
+    stampBg: "bg-[#C88F7F] border-[#e2aba0] text-slate-950 font-black",
+    artWindowBg: "from-[#C88F7F]/25 via-[#211411] to-[#100907]",
+    glowColor: "#C88F7F",
   },
   L: {
-    cardBg: "bg-gradient-to-b from-[#381d06] via-[#221104] to-[#100802]",
-    border: "border-amber-500/90 hover:border-amber-300 ring-1 ring-amber-400/30",
-    bgHeader: "bg-amber-900/90 text-amber-100 border-amber-500/80",
-    textHeader: "text-amber-200",
-    badgeBg: "bg-amber-950 border-amber-400 text-amber-100",
-    stampBg: "bg-amber-900 border-amber-400 text-amber-100",
-    artWindowBg: "from-amber-400/25 via-[#221104] to-[#100802]",
-    glowColor: "#fbbf24",
+    cardBg: "bg-gradient-to-b from-[#24212c] via-[#16141d] to-[#0a080e]",
+    border: "border-[#928BA8] hover:border-[#b4aecd] ring-1 ring-[#928BA8]/30",
+    bgHeader: "bg-[#928BA8]/90 text-white border-[#928BA8]",
+    textHeader: "text-purple-100",
+    badgeBg: "bg-[#24212c] border-[#928BA8] text-purple-100",
+    stampBg: "bg-[#928BA8] border-[#b4aecd] text-slate-950 font-black",
+    artWindowBg: "from-[#928BA8]/25 via-[#16141d] to-[#0a080e]",
+    glowColor: "#928BA8",
   },
   LEGENDARY: {
-    cardBg: "bg-gradient-to-b from-[#3f2005] via-[#261303] to-[#120901]",
+    cardBg: "bg-gradient-to-b from-[#141b24] via-[#0d1218] to-[#05070a]",
     border: "border-amber-400/90 hover:border-amber-200 ring-2 ring-amber-400/50 shadow-amber-500/20",
     bgHeader: "bg-gradient-to-r from-amber-900 via-yellow-800 to-amber-900 text-yellow-100 border-amber-400/90",
     textHeader: "text-yellow-100 font-black",
     badgeBg: "bg-amber-950 border-amber-400 text-yellow-100 font-black",
     stampBg: "bg-amber-900 border-amber-400 text-yellow-100 font-black",
-    artWindowBg: "from-amber-400/30 via-[#261303] to-[#120901]",
+    artWindowBg: "from-amber-400/30 via-[#0d1218] to-[#05070a]",
     glowColor: "#f59e0b",
   },
 };
+
+/**
+ * ScaleformSpecialVisual: Authentic Bethesda 1:1 In-Game Standard Perk Card
+ */
+export function ScaleformSpecialVisual({
+  displayName,
+  special,
+  cost,
+  rank,
+  maxRank,
+  description,
+  cleanForeground,
+}: {
+  displayName: string;
+  special: SpecialCategory;
+  cost: number;
+  rank: number;
+  maxRank: number;
+  description: string;
+  cleanForeground: string;
+}) {
+  const specialKey = (special === "LEGENDARY" ? "S" : special) as Exclude<SpecialCategory, "LEGENDARY">;
+  const plaqueSrc = OFFICIAL_SPECIAL_PLAQUES[specialKey] || OFFICIAL_SPECIAL_PLAQUES.S;
+  const headerColor = OFFICIAL_SPECIAL_COLORS[special] || "#749B85";
+  const specialName = OFFICIAL_SPECIAL_NAMES[special] || special;
+
+  return (
+    <div className="relative w-full h-full select-none overflow-hidden rounded-xl bg-[#efe8d8]">
+      {/* Layer 1: Bethesda Authentic Card Grunge Texture Overlay */}
+      <img
+        src={CLEAN_TEXTURES.cardGrunge}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-80 pointer-events-none z-[1]"
+      />
+
+      {/* Layer 2: Golden Die-Cut Border Frame */}
+      <div
+        className="absolute inset-0 rounded-xl pointer-events-none z-[30]"
+        style={{
+          border: "4px solid #caa85b",
+          boxShadow: "inset 0 0 0 2px #735926, 0 0 0 1px #261f12",
+        }}
+      >
+        <div
+          className="absolute inset-[3px] rounded-[7px] pointer-events-none"
+          style={{ border: "1px solid rgba(138, 107, 43, 0.45)" }}
+        />
+      </div>
+
+      {/* Layer 3: Top Header Bar (Category & Perk Title) */}
+      <div
+        className="absolute top-[2%] inset-x-[3.2%] h-[10%] rounded-[5px] pl-[15%] pr-2 flex flex-col items-center justify-center shadow-[0_2px_4px_rgba(0,0,0,0.35)] border border-black/30 z-[20] pointer-events-none"
+        style={{ backgroundColor: headerColor }}
+      >
+        <span
+          className="text-[0.55rem] sm:text-[0.64rem] font-medium tracking-[0.16em] text-white/90 uppercase leading-none"
+          style={{ fontFamily: "'Oswald', sans-serif" }}
+        >
+          {specialName}
+        </span>
+        <span
+          className="text-[0.76rem] sm:text-[0.90rem] font-bold tracking-wide text-white uppercase truncate max-w-full leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] mt-0.5"
+          style={{ fontFamily: "'Oswald', sans-serif" }}
+        >
+          {displayName}
+        </span>
+      </div>
+
+      {/* Layer 4: Top-Left Point Cost Badge */}
+      <div className="absolute top-[1.2%] left-[2%] w-[13.5%] h-[10.2%] bg-[#dfd5be] border-[2px] border-[#b8984d] rounded-tl-lg rounded-br-md shadow-[2px_2px_5px_rgba(0,0,0,0.45),inset_0_0_0_1px_#59451d] flex flex-col items-center justify-center z-[35] pointer-events-none">
+        <span
+          className="text-base sm:text-xl font-bold text-slate-850 leading-none drop-shadow-[0_1px_0_rgba(255,255,255,0.7)]"
+          style={{ fontFamily: "'Oswald', sans-serif" }}
+        >
+          {cost}
+        </span>
+      </div>
+
+      {/* Layer 5: Character Illustration Art Window (Tight-cropped, Comic Scale) */}
+      <div
+        className="absolute top-[13.5%] inset-x-[3.5%] bottom-[29%] flex items-center justify-center z-[10] pointer-events-none rounded-md"
+        style={{
+          background:
+            "radial-gradient(circle at center, rgba(255,255,255,0.55) 0%, rgba(220,205,175,0.2) 65%, transparent 100%)",
+        }}
+      >
+        <img
+          src={cleanForeground}
+          alt={displayName}
+          className="max-w-[94%] max-h-[96%] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]"
+        />
+      </div>
+
+      {/* Layer 6: Description Plaque Area with Authentic Bethesda Seal */}
+      <div className="absolute bottom-[2.2%] inset-x-[3.2%] h-[27.5%] z-[25] pointer-events-none">
+        {/* Authentic Bethesda Plaque Graphic with Engraved SPECIAL Seal */}
+        <img
+          src={plaqueSrc}
+          alt=""
+          className="absolute inset-0 w-full h-full object-fill drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] pointer-events-none"
+        />
+
+        {/* Description Text */}
+        <div className="absolute top-[8%] left-[6%] right-[6%] h-[48%] flex items-center">
+          <p
+            className="text-[0.62rem] sm:text-[0.74rem] font-bold text-slate-900 leading-snug line-clamp-3 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]"
+            style={{ fontFamily: "'Roboto Condensed', sans-serif" }}
+          >
+            {description}
+          </p>
+        </div>
+
+        {/* Rank Stars Rack Ribbon */}
+        <div className="absolute bottom-[10%] right-[5%] h-[24%] px-1.5 sm:px-2 bg-[#6a7c6f] border border-[#3c4940] rounded flex items-center gap-0.5 sm:gap-1 shadow-sm">
+          {Array.from({ length: maxRank }, (_, i) => {
+            const isFilled = i + 1 <= rank;
+            return (
+              <Star
+                key={i}
+                className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${
+                  isFilled
+                    ? "text-yellow-200 fill-yellow-200 drop-shadow-[0_0_3px_rgba(254,240,138,0.9)]"
+                    : "text-black/35 fill-none"
+                }`}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * ScaleformLegendaryVisual: Authentic Bethesda 1:1 In-Game Legendary Perk Card
+ */
+export function ScaleformLegendaryVisual({
+  displayName,
+  rank,
+  maxRank,
+  description,
+  cleanForeground,
+}: {
+  displayName: string;
+  rank: number;
+  maxRank: number;
+  description: string;
+  cleanForeground: string;
+}) {
+  return (
+    <div className="relative w-full h-full select-none rounded-lg bg-transparent">
+      {/* 1. Official Bethesda Legendary Plaque Frame (Cleaned, No Padlock, No Bleed) */}
+      <img
+        src={CLEAN_TEXTURES.legendaryFrame}
+        alt="Legendary Card Frame"
+        className="absolute inset-0 w-full h-full object-fill pointer-events-none z-[5] drop-shadow-[0_18px_30px_rgba(0,0,0,0.9)]"
+      />
+
+      {/* 2. Header Banner: - LEGENDARY - & Perk Title */}
+      <div className="absolute top-[6%] inset-x-[8%] h-[12%] flex flex-col items-center justify-center text-center z-[25] leading-tight pointer-events-none">
+        <span
+          className="text-[0.6rem] sm:text-[0.68rem] font-bold tracking-[0.22em] text-amber-300 uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
+          style={{ fontFamily: "'Oswald', sans-serif" }}
+        >
+          - LEGENDARY -
+        </span>
+        <span
+          className="text-[0.8rem] sm:text-[0.95rem] font-bold tracking-wide text-white uppercase truncate max-w-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]"
+          style={{ fontFamily: "'Oswald', sans-serif" }}
+        >
+          {displayName}
+        </span>
+      </div>
+
+      {/* 3. Character Illustration Art Window (Tight-cropped, Centered) */}
+      <div className="absolute top-[18%] inset-x-[4%] h-[53%] flex items-center justify-center z-[20] pointer-events-none">
+        <img
+          src={cleanForeground}
+          alt={displayName}
+          className="max-w-[95%] max-h-[98%] object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.8)]"
+        />
+      </div>
+
+      {/* 4. Bethesda 4-Star Rank Sprite Pill (Clean, centered, zero bleed) */}
+      <div className="absolute bottom-[19%] left-1/2 -translate-x-1/2 w-[44%] h-[7%] flex items-center justify-center z-[25] pointer-events-none">
+        <img
+          src={getLegendaryRankStarSprite(rank)}
+          alt={`Rank ${rank} of ${maxRank}`}
+          className="w-full h-full object-contain drop-shadow"
+        />
+      </div>
+
+      {/* 5. Description Text Box */}
+      <div className="absolute bottom-[4.5%] inset-x-[7%] h-[13.5%] flex items-center justify-center text-center z-[25] pointer-events-none px-1">
+        <p
+          className="text-[0.62rem] sm:text-[0.74rem] font-bold text-white leading-tight line-clamp-3 drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)]"
+          style={{ fontFamily: "'Roboto Condensed', sans-serif" }}
+        >
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function InGamePerkCard({
   cardId,
@@ -140,21 +354,44 @@ export default function InGamePerkCard({
   const theme = INGAME_SPECIAL_THEMES[special] || INGAME_SPECIAL_THEMES.S;
   const [imgError, setImgError] = React.useState(false);
   const [showInspector, setShowInspector] = React.useState(false);
+  const [inspectRank, setInspectRank] = React.useState(rank);
+
   const artworkUrl = getPerkCardArtworkUrl(cardId || name, special, isFemale);
   const displayName = getGenderedPerkName(name, isFemale);
   const isLegendary = special === "LEGENDARY" || cardId?.includes("legendary");
   const isGhoul = isGhoulPerkCard(cardId || name);
 
+  // Check if official isolated vector foreground is available
+  const cleanForeground = getCleanPerkForeground(cardId || name);
+  const ghoulPerkImage = isGhoul ? getGhoulPerkCardImage(cardId || name, rank) : null;
+  const inGameCardImage = getInGamePerkCardImage(cardId || name, rank);
+
   const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
     setImgError(false);
-  }, [artworkUrl]);
+  }, [artworkUrl, ghoulPerkImage, inGameCardImage]);
+
+  // Keep inspectRank in sync when rank prop changes
+  React.useEffect(() => {
+    setInspectRank(rank);
+  }, [rank]);
 
   // Full Catalog Card for All Ranks Inspection
   const fullCard = React.useMemo(() => {
     return PERK_CATALOG.find((c) => c.id === cardId || c.name.toLowerCase() === name.toLowerCase());
   }, [cardId, name]);
+
+  // Inspect rank description & cost resolution
+  const inspectRankData = React.useMemo(() => {
+    if (fullCard?.ranks) {
+      const match = fullCard.ranks.find((r) => r.rank === inspectRank);
+      if (match) return match;
+    }
+    return { rank: inspectRank, cost, description };
+  }, [fullCard, inspectRank, cost, description]);
+
+  const inGameInspectImage = getInGamePerkCardImage(cardId || name, inspectRankData.rank);
 
   const openWikiSource = React.useCallback(() => {
     window.open(`/wiki?q=${encodeURIComponent(name)}`, "_blank", "noopener,noreferrer");
@@ -180,14 +417,16 @@ export default function InGamePerkCard({
         isOverflow ? "ring-4 ring-red-500 rounded-xl" : ""
       }`}
     >
-      {/* Style Bible Container: Aspect Ratio 3:4 Uniform Framing */}
+      {/* Style Bible Container: Aspect Ratio Uniform Framing */}
       <div
-        className={`relative w-full aspect-[3/4.2] rounded-xl overflow-hidden shadow-xl transition-all duration-200 group-hover:scale-[1.03] cursor-pointer flex flex-col justify-between ${
+        className={`relative w-full aspect-[310/490] rounded-xl transition-all duration-200 group-hover:scale-[1.03] cursor-pointer flex flex-col justify-between ${
           isEquipped
-            ? "ring-2 ring-amber-400 shadow-amber-500/40"
+            ? "ring-2 ring-amber-400 shadow-amber-500/40 overflow-hidden"
             : isGhoul
-            ? "ring-2 ring-emerald-500/80 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
-            : "opacity-95 group-hover:opacity-100"
+            ? "ring-1 ring-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.85),0_0_12px_rgba(16,185,129,0.4)] overflow-hidden"
+            : isLegendary && cleanForeground
+            ? "shadow-none bg-transparent overflow-visible"
+            : "shadow-xl overflow-hidden opacity-95 group-hover:opacity-100"
         }`}
         onClick={() => (isEquipped ? onUnequip?.() : onEquip?.())}
         onTouchStart={handleTouchStart}
@@ -199,18 +438,58 @@ export default function InGamePerkCard({
         }}
         title="Click to equip • Right-click for perk details & Truth Wiki"
       >
-        {!imgError ? (
+        {/* 1. Literal 1:1 In-Game Bitmap Cards (Pip-Boy Slanted & Curved for Regular, Ghoul, and Legendary) */}
+        {inGameCardImage && !imgError ? (
           <img
-            src={artworkUrl}
+            src={inGameCardImage}
             alt={displayName}
-            className="w-full h-full object-cover object-center rounded-xl block drop-shadow-xl transform-none"
+            className={`w-full h-full object-contain ${
+              isGhoul ? "bg-[#0a100d]" : "bg-transparent"
+            } rounded-xl block drop-shadow-xl transform-none select-none`}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            onError={() => setImgError(true)}
+          />
+        ) : isLegendary && cleanForeground ? (
+          /* 2. Scaleform Legendary Vector Recreation Fallback */
+          <ScaleformLegendaryVisual
+            displayName={displayName}
+            rank={rank}
+            maxRank={maxRank}
+            description={description}
+            cleanForeground={cleanForeground}
+          />
+        ) : cleanForeground ? (
+          /* 3. Scaleform Vector Fallback */
+          <ScaleformSpecialVisual
+            displayName={displayName}
+            special={special}
+            cost={cost}
+            rank={rank}
+            maxRank={maxRank}
+            description={description}
+            cleanForeground={cleanForeground}
+          />
+        ) : !imgError ? (
+          /* 4. Default Catalog Artwork Fallback */
+          <img
+            src={ghoulPerkImage || artworkUrl}
+            alt={displayName}
+            className={`w-full h-full ${isGhoul ? "object-contain bg-[#0a100d]" : "object-cover object-center"} rounded-xl block drop-shadow-xl transform-none`}
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className={`w-full h-full p-3 rounded-xl border-2 ${isGhoul ? "border-emerald-500 bg-[#081210]" : `${theme.border} ${theme.cardBg}`} flex flex-col justify-between`}>
+          <div
+            className={`w-full h-full p-3 rounded-xl border-2 ${
+              isGhoul ? "border-emerald-500 bg-[#081210]" : `${theme.border} ${theme.cardBg}`
+            } flex flex-col justify-between`}
+          >
             {/* Header Stamp Bar */}
             <div className="flex items-center justify-between gap-1.5 border-b border-slate-700/80 pb-1.5">
-              <span className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}>
+              <span
+                className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}
+              >
                 {cost}
               </span>
               <span className="text-[0.68rem] font-black uppercase tracking-wider text-slate-100 truncate">
@@ -233,17 +512,17 @@ export default function InGamePerkCard({
           </div>
         )}
 
-        {/* Legendary Badge Crest Banner */}
-        {isLegendary && (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[0.58rem] px-2 py-0.5 rounded-md shadow-lg border border-yellow-300 tracking-wider flex items-center gap-1">
+        {/* Legendary Badge Crest Banner (only for fallback images that lack built-in title) */}
+        {isLegendary && (!inGameCardImage || imgError) && !cleanForeground && (
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[0.58rem] px-2 py-0.5 rounded-md shadow-lg border border-yellow-300 tracking-wider flex items-center gap-1 z-40">
             <Sparkles className="h-3 w-3 fill-slate-950" /> LEGENDARY
           </div>
         )}
 
         {/* Ghoul Specific Badge Banner */}
-        {isGhoul && !isLegendary && (
-          <div className="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-500 text-emerald-300 font-mono font-black text-[0.55rem] px-1.5 py-0.5 rounded shadow-md tracking-wider">
-            GHOUL
+        {isGhoul && !isLegendary && (!inGameCardImage || imgError) && (
+          <div className="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-400 text-emerald-300 font-mono font-black text-[0.58rem] px-2 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.6)] tracking-wider z-40 flex items-center gap-1">
+            <span className="text-emerald-400">☢</span> GHOUL
           </div>
         )}
 
@@ -254,7 +533,7 @@ export default function InGamePerkCard({
             e.stopPropagation();
             setShowInspector(true);
           }}
-          className="absolute bottom-2 left-2 bg-slate-950/80 hover:bg-slate-900 border border-slate-700 text-amber-400 hover:text-white p-1 rounded shadow-md opacity-80 group-hover:opacity-100 transition-all"
+          className="absolute bottom-2 left-2 bg-slate-950/80 hover:bg-slate-900 border border-slate-700 text-amber-400 hover:text-white p-1 rounded shadow-md opacity-80 group-hover:opacity-100 transition-all z-40"
           title="Inspect All Ranks & Stats"
         >
           <Info className="h-3.5 w-3.5" />
@@ -262,7 +541,7 @@ export default function InGamePerkCard({
 
         {/* Equipped Badge Ribbon */}
         {isEquipped && (
-          <div className="absolute top-2 right-2 bg-amber-500 text-slate-950 font-black text-[0.62rem] px-2 py-0.5 rounded-full shadow-lg border border-amber-300 tracking-wider">
+          <div className="absolute top-2 right-2 bg-amber-500 text-slate-950 font-black text-[0.62rem] px-2 py-0.5 rounded-full shadow-lg border border-amber-300 tracking-wider z-40">
             ✓ EQUIPPED
           </div>
         )}
@@ -272,7 +551,7 @@ export default function InGamePerkCard({
       <div
         className={`w-full mt-2 rounded-lg p-1.5 flex items-center justify-between gap-1 shadow-md border ${
           isLegendary
-            ? "bg-gradient-to-r from-[#241403] via-[#382006] to-[#241403] border-yellow-500/70"
+            ? "bg-gradient-to-r from-[#141b24] via-[#1d2734] to-[#141b24] border-yellow-500/70"
             : "bg-slate-950/90 border-slate-800"
         }`}
       >
@@ -296,7 +575,9 @@ export default function InGamePerkCard({
 
         {/* Current Rank Display */}
         <div className="flex-1 text-center font-mono">
-          <span className={`text-[0.68rem] font-bold block leading-none ${isLegendary ? "text-yellow-200" : "text-slate-300"}`}>
+          <span
+            className={`text-[0.68rem] font-bold block leading-none ${isLegendary ? "text-yellow-200" : "text-slate-300"}`}
+          >
             RANK {rank} / {maxRank}
           </span>
           <div className="flex items-center justify-center gap-0.5 mt-0.5">
@@ -385,7 +666,7 @@ export default function InGamePerkCard({
                   </span>
                 </div>
                 <p className="text-[0.72rem] text-slate-400 flex items-center gap-2">
-                  <span>🔓 Unlocks at Level {minLevel || (fullCard?.minLevel || 1)}</span>
+                  <span>🔓 Unlocks at Level {minLevel || fullCard?.minLevel || 1}</span>
                   <span>•</span>
                   <span>Max Rank: {maxRank} Stars</span>
                 </p>
@@ -399,34 +680,81 @@ export default function InGamePerkCard({
               </button>
             </div>
 
-            {/* Modal Body: Mobile Fluid Scaled Card & All Ranks Table */}
+            {/* Modal Body: Mobile Fluid Scaled Card Preview & All Ranks Table */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
               {/* Large Mobile-Fluid Crystal-Clear Card Preview */}
               <div className="sm:col-span-5 flex justify-center">
-                <div className="w-48 sm:w-56 aspect-[3/4.2] rounded-xl overflow-hidden shadow-2xl border-2 border-amber-400/70 ring-2 ring-amber-500/30">
-                  <img
-                    src={artworkUrl}
-                    alt={name}
-                    className="w-full h-full object-cover object-center rounded-xl"
-                  />
+                <div
+                  className={`w-52 sm:w-60 aspect-[310/490] rounded-xl transition-all ${
+                    isGhoul
+                      ? "ring-2 ring-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.85),0_0_60px_rgba(74,222,128,0.5)] overflow-hidden"
+                      : isLegendary && cleanForeground
+                      ? "shadow-none bg-transparent overflow-visible"
+                      : "overflow-hidden shadow-2xl border-2 border-amber-400/70 ring-2 ring-amber-500/30"
+                  }`}
+                >
+                  {inGameInspectImage ? (
+                    <img
+                      src={inGameInspectImage}
+                      alt={name}
+                      className="w-full h-full object-contain rounded-xl block drop-shadow-xl select-none"
+                      loading="eager"
+                      decoding="async"
+                      draggable={false}
+                    />
+                  ) : cleanForeground ? (
+                    isLegendary ? (
+                      <ScaleformLegendaryVisual
+                        displayName={displayName}
+                        rank={inspectRankData.rank}
+                        maxRank={maxRank}
+                        description={inspectRankData.description}
+                        cleanForeground={cleanForeground}
+                      />
+                    ) : (
+                      <ScaleformSpecialVisual
+                        displayName={displayName}
+                        special={special}
+                        cost={inspectRankData.cost}
+                        rank={inspectRankData.rank}
+                        maxRank={maxRank}
+                        description={inspectRankData.description}
+                        cleanForeground={cleanForeground}
+                      />
+                    )
+                  ) : (
+                    <img
+                      src={artworkUrl}
+                      alt={name}
+                      className="w-full h-full object-cover object-center rounded-xl"
+                    />
+                  )}
                 </div>
               </div>
 
               {/* All Ranks Breakdown List */}
               <div className="sm:col-span-7 space-y-2.5">
                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">
-                  All Rank Stat Levels ({maxRank} Total Ranks):
+                  All Rank Stat Levels ({maxRank} Total Ranks) - Click to Preview:
                 </h4>
                 <div className="space-y-2 max-h-56 sm:max-h-72 overflow-y-auto pr-1">
-                  {(fullCard?.ranks || Array.from({ length: maxRank }, (_, i) => ({ rank: i + 1, cost: i + 1, description }))).map((r) => {
-                    const isSelected = r.rank === rank;
+                  {(
+                    fullCard?.ranks ||
+                    Array.from({ length: maxRank }, (_, i) => ({
+                      rank: i + 1,
+                      cost: i + 1,
+                      description,
+                    }))
+                  ).map((r) => {
+                    const isSelected = r.rank === inspectRank;
                     return (
                       <div
                         key={r.rank}
-                        className={`p-2.5 rounded-lg border text-xs leading-relaxed transition-all ${
+                        onClick={() => setInspectRank(r.rank)}
+                        className={`p-2.5 rounded-lg border text-xs leading-relaxed transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-amber-950/60 border-amber-500/80 text-amber-200 ring-1 ring-amber-400/30"
-                            : "bg-slate-900/80 border-slate-800 text-slate-300"
+                            ? "bg-amber-950/60 border-amber-500/80 text-amber-200 ring-1 ring-amber-400/30 shadow-md"
+                            : "bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800/90"
                         }`}
                       >
                         <div className="flex items-center justify-between font-bold mb-1">
@@ -463,12 +791,26 @@ export default function InGamePerkCard({
               </a>
 
               <div className="flex items-center gap-2">
+                {isEquipped && inspectRank !== rank && onRankChange && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onRankChange(inspectRank);
+                    }}
+                    className="px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all border bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-400 font-mono shadow-sm"
+                  >
+                    ⭐ Apply Rank {inspectRank}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => {
                     if (isEquipped) {
                       onUnequip?.();
                     } else {
+                      if (inspectRank !== rank && onRankChange) {
+                        onRankChange(inspectRank);
+                      }
                       onEquip?.();
                     }
                     setShowInspector(false);
@@ -479,7 +821,7 @@ export default function InGamePerkCard({
                       : "bg-emerald-950/80 border-emerald-500/80 text-emerald-300 hover:bg-emerald-900"
                   }`}
                 >
-                  {isEquipped ? "❌ Unequip Card" : "➕ Equip Card"}
+                  {isEquipped ? "❌ Unequip Card" : `➕ Equip Card (Rank ${inspectRank})`}
                 </button>
 
                 <button
