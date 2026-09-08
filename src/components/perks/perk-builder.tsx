@@ -28,6 +28,13 @@ interface PerkBuilderProps {
   characterId?: string | null;
   characterName?: string | null;
   mode?: "live" | "pts";
+  onLoadoutChange?: (data: {
+    specials: SpecialsState;
+    equippedCards: EquippedItem[];
+    legendaryPerks?: Array<{ id: string; rank: number }>;
+    isGhoul?: boolean;
+  }) => void;
+  externalImport?: { build: NukesDragonsParsedBuild; timestamp: number } | null;
 }
 
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
@@ -46,7 +53,13 @@ function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => v
   return null;
 }
 
-export default function PerkBuilder({ characterId, characterName, mode = "live" }: PerkBuilderProps) {
+export default function PerkBuilder({
+  characterId,
+  characterName,
+  mode = "live",
+  onLoadoutChange,
+  externalImport,
+}: PerkBuilderProps) {
   const [activeSlot, setActiveSlot] = React.useState<number>(0);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL" | "GHOUL">("ALL");
@@ -267,40 +280,84 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
     }
   };
 
-  const handleApplyNdBuild = (build: NukesDragonsParsedBuild) => {
-    const newSpecials: SpecialsState = {
-      S: build.specials.str,
-      P: build.specials.per,
-      E: build.specials.end,
-      C: build.specials.cha,
-      I: build.specials.int,
-      A: build.specials.agi,
-      L: build.specials.lck,
-    };
-    setSpecials(newSpecials);
-    setEquippedCards(build.equippedCards);
-    if (build.isGhoul && mode === "pts") {
+  const handleApplyNdBuild = React.useCallback(
+    (build: NukesDragonsParsedBuild) => {
+      const newSpecials: SpecialsState = {
+        S: build.specials.str,
+        P: build.specials.per,
+        E: build.specials.end,
+        C: build.specials.cha,
+        I: build.specials.int,
+        A: build.specials.agi,
+        L: build.specials.lck,
+      };
+      setSpecials(newSpecials);
+
+      // Merge legendary perks:
+      // If the imported build has legendary perks, equip them.
+      // If not, preserve whatever legendary perks the user already had equipped!
+      setEquippedCards((prevEquipped) => {
+        const importedLegCards: EquippedItem[] = (build.legendaryPerks || []).map((lp) => ({
+          cardId: lp.id,
+          rank: lp.rank,
+        }));
+
+        const existingLegCards: EquippedItem[] = prevEquipped.filter((item) => {
+          const card = getPerkCardById(item.cardId);
+          return card?.special === "LEGENDARY";
+        });
+
+        const finalLegCards = importedLegCards.length > 0 ? importedLegCards : existingLegCards;
+        const mergedEquipped: EquippedItem[] = [...build.equippedCards, ...finalLegCards];
+
+        try {
+          localStorage.setItem(
+            `roll_perk_loadout_slot_${activeSlot}`,
+            JSON.stringify({ specials: newSpecials, equippedCards: mergedEquipped })
+          );
+          if (finalLegCards.length > 0) {
+            localStorage.setItem(
+              "roll_legendary_perk_ids",
+              JSON.stringify(finalLegCards.map((lp) => lp.cardId))
+            );
+          }
+        } catch {
+          // Ignore local storage write errors
+        }
+
+        return mergedEquipped;
+      });
+
+      if (build.isGhoul) {
+        setIsGhoul(true);
+      }
+
+      onLoadoutChange?.({
+        specials: newSpecials,
+        equippedCards: build.equippedCards,
+        legendaryPerks: build.legendaryPerks,
+        isGhoul: build.isGhoul,
+      });
+
+      setSaveMessage(`✅ N&D Build imported successfully into Loadout ${activeSlot + 1}!`);
+      setTimeout(() => setSaveMessage(null), 4000);
+    },
+    [activeSlot, onLoadoutChange]
+  );
+
+  // React to external build import triggered by parent container
+  React.useEffect(() => {
+    if (externalImport?.build) {
+      handleApplyNdBuild(externalImport.build);
+    }
+  }, [externalImport, handleApplyNdBuild]);
+
+  // Sync mode changes from parent container
+  React.useEffect(() => {
+    if (mode === "pts") {
       setIsGhoul(true);
     }
-
-    try {
-      localStorage.setItem(
-        `roll_perk_loadout_slot_${activeSlot}`,
-        JSON.stringify({ specials: newSpecials, equippedCards: build.equippedCards })
-      );
-      if (build.legendaryPerks.length > 0) {
-        localStorage.setItem(
-          "roll_legendary_perk_ids",
-          JSON.stringify(build.legendaryPerks.map((lp) => lp.id))
-        );
-      }
-    } catch {
-      // Ignore local storage write errors
-    }
-
-    setSaveMessage(`✅ N&D Build imported successfully into Loadout ${activeSlot + 1}!`);
-    setTimeout(() => setSaveMessage(null), 4000);
-  };
+  }, [mode]);
 
   const handleExportDeckPng = () => {
     exportPerkDeckCard({

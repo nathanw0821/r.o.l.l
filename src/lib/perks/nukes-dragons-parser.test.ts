@@ -87,4 +87,48 @@ describe("nukes-dragons-parser", () => {
     expect(malformedResult.warnings.length).toBeGreaterThan(0);
     expect(malformedResult.unknownTokens).toContain("zz9");
   });
+
+  it("parses the user reported 36-card Ghoul build with 6 legendary perks", () => {
+    const userUrl =
+      "https://nukesdragons.com/fallout-76/character?cd=0k00000000100000000&l=x&s=aa466aa&p=0510B1sd3so1su1pf1p03093pi1pp2li1eo10l3ej3ee1c82cd2ce1cu10h3lb2ic30730H3as3af1ai1ad2ak1ap3lv3lk30j1lr10n3l23&lp=x84x44x74x54x64x94&v=2&n=Dr";
+
+    const result = parseNukesDragonsBuild(userUrl);
+
+    expect(result.isGhoul).toBe(true);
+    expect(result.specials).toEqual({
+      str: 10,
+      per: 10,
+      end: 4,
+      cha: 6,
+      int: 6,
+      agi: 10,
+      lck: 10,
+    });
+
+    expect(result.equippedCards.length).toBe(36);
+    expect(result.totalCardPoints).toBe(71);
+
+    // Verify 6 legendary perks
+    expect(result.legendaryPerks.length).toBe(6);
+    expect(result.legendaryPerks).toEqual([
+      { id: "legendary-luck", rank: 4 },
+      { id: "legendary-agility", rank: 4 },
+      { id: "legendary-intelligence", rank: 4 },
+      { id: "legendary-charisma", rank: 4 },
+      { id: "legendary-endurance", rank: 4 },
+      { id: "legendary-perception", rank: 4 },
+    ]);
+
+    // Check specific Ghoul cards
+    expect(result.equippedCards).toContainEqual({ cardId: "arms-of-steel", rank: 1 });
+    expect(result.equippedCards).toContainEqual({ cardId: "brick-wall", rank: 1 });
+    expect(result.equippedCards).toContainEqual({ cardId: "eye-of-the-hunter", rank: 3 });
+    expect(result.equippedCards).toContainEqual({ cardId: "glowing-gut", rank: 3 });
+    expect(result.equippedCards).toContainEqual({ cardId: "united-ordeal", rank: 3 });
+    expect(result.equippedCards).toContainEqual({ cardId: "mad-scientist", rank: 3 });
+    expect(result.equippedCards).toContainEqual({ cardId: "science-monster", rank: 3 });
+    expect(result.equippedCards).toContainEqual({ cardId: "faulty-spots", rank: 1 });
+    expect(result.equippedCards).toContainEqual({ cardId: "glowing-criticals", rank: 3 });
+  });
 });
+

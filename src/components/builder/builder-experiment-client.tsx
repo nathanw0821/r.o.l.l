@@ -464,6 +464,8 @@ export default function BuilderExperimentClient({
   const [shareResult, setShareResult] = React.useState<string | null>(null);
   const [shareCopied, setShareCopied] = React.useState(false);
   const [isNdImportOpen, setIsNdImportOpen] = React.useState(false);
+  const [importedBuildForPerkBuilder, setImportedBuildForPerkBuilder] =
+    React.useState<{ build: NukesDragonsParsedBuild; timestamp: number } | null>(null);
   const [learnedBasePieceIds, setLearnedBasePieceIds] = React.useState(
     () => new Set(initialLearnedBasePieceIds),
   );
@@ -911,7 +913,9 @@ export default function BuilderExperimentClient({
   }, [isPA]);
 
 
-  const equippedPerkCards = React.useMemo(() => {
+  const [equippedPerkCards, setEquippedPerkCards] = React.useState<
+    { cardId: string; rank: number }[]
+  >(() => {
     if (typeof window === "undefined") return [];
     try {
       const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
@@ -922,7 +926,7 @@ export default function BuilderExperimentClient({
     } catch {
       return [];
     }
-  }, []);
+  });
 
   const mutationLayer = React.useMemo(
     () => {
@@ -1293,13 +1297,52 @@ export default function BuilderExperimentClient({
     }
   }
 
+  const handlePerkLoadoutChange = React.useCallback(
+    (data: {
+      specials: Record<string, number>;
+      equippedCards: { cardId: string; rank: number }[];
+      legendaryPerks?: Array<{ id: string; rank: number }>;
+      isGhoul?: boolean;
+    }) => {
+      setPayload((prev) => ({
+        ...prev,
+        baseSpecial: {
+          str: data.specials.S ?? prev.baseSpecial?.str ?? 1,
+          per: data.specials.P ?? prev.baseSpecial?.per ?? 1,
+          end: data.specials.E ?? prev.baseSpecial?.end ?? 1,
+          cha: data.specials.C ?? prev.baseSpecial?.cha ?? 1,
+          int: data.specials.I ?? prev.baseSpecial?.int ?? 1,
+          agi: data.specials.A ?? prev.baseSpecial?.agi ?? 1,
+          lck: data.specials.L ?? prev.baseSpecial?.lck ?? 1,
+        },
+        legendaryPerkIds:
+          data.legendaryPerks && data.legendaryPerks.length > 0
+            ? data.legendaryPerks.map((lp) => lp.id)
+            : prev.legendaryPerkIds,
+        ghoul: data.isGhoul !== undefined ? data.isGhoul : prev.ghoul,
+      }));
+      setEquippedPerkCards(data.equippedCards);
+    },
+    []
+  );
+
   const handleApplyNdBuild = (build: NukesDragonsParsedBuild) => {
+    // Determine legendary cards: imported or preserved from active equipped
+    const importedLegCards = (build.legendaryPerks || []).map((lp) => ({ cardId: lp.id, rank: lp.rank }));
+    const existingLegCards = equippedPerkCards.filter((c) => c.cardId.startsWith("legendary-"));
+    const finalLegCards = importedLegCards.length > 0 ? importedLegCards : existingLegCards;
+    const allEquipped = [...build.equippedCards, ...finalLegCards];
+
     setPayload((prev) => ({
       ...prev,
       baseSpecial: { ...build.specials },
-      legendaryPerkIds: build.legendaryPerks.map((p) => p.id),
+      legendaryPerkIds: finalLegCards.map((p) => p.cardId),
       ghoul: build.isGhoul ? true : prev.ghoul,
     }));
+    setEquippedPerkCards(allEquipped);
+
+    // Forward import trigger to PerkBuilder
+    setImportedBuildForPerkBuilder({ build, timestamp: Date.now() });
 
     try {
       const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
@@ -1315,13 +1358,13 @@ export default function BuilderExperimentClient({
             A: build.specials.agi,
             L: build.specials.lck,
           },
-          equippedCards: build.equippedCards,
+          equippedCards: allEquipped,
         })
       );
-      if (build.legendaryPerks.length > 0) {
+      if (finalLegCards.length > 0) {
         localStorage.setItem(
           "roll_legendary_perk_ids",
-          JSON.stringify(build.legendaryPerks.map((lp) => lp.id))
+          JSON.stringify(finalLegCards.map((lp) => lp.cardId))
         );
       }
     } catch {
@@ -1775,7 +1818,11 @@ export default function BuilderExperimentClient({
       {/* VIEWPORT: PERK DECK & SPECIAL (TAB 2) */}
       {masterTab === "perks" && (
         <div className="space-y-4 animate-in fade-in duration-200">
-          <PerkBuilder mode={payload.ghoul ? "pts" : "live"} />
+          <PerkBuilder
+            mode={payload.ghoul ? "pts" : "live"}
+            externalImport={importedBuildForPerkBuilder}
+            onLoadoutChange={handlePerkLoadoutChange}
+          />
         </div>
       )}
 
