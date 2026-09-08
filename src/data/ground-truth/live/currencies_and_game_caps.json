@@ -18,10 +18,10 @@
     "smileyCapsCostFor300Gold": 6000
   },
   "globalServerTimers": {
-    "dailyResetTimeUTC": "17:00:00Z (12:00 PM EST / 1:00 PM EDT)",
+    "dailyResetTimeUTC": "12:00 PM US Eastern Time (16:00:00Z during EDT / 17:00:00Z during EST)",
     "dailyOpsResetTimeUTC": "17:00:00Z",
     "vendorCapsAndScripResetMode": "Shared account-wide pool refreshing globally every 20 hours or at global daily reset.",
     "weeklyScoreboardResetUTC": "Every Tuesday at 17:00:00Z",
-    "minervaScheduleResetUTC": "Every Monday at 17:00:00Z (Departs Wednesday at 17:00:00Z for regular lists; Super Sale departs Monday at 17:00:00Z)."
+    "minervaScheduleResetUTC": "Every Monday at 12:00 PM ET (16:00:00Z EDT / 17:00:00Z EST). Departs Wednesday at 12:00 PM ET for regular lists; Big Sale departs Monday at 12:00 PM ET. Runs on a 5-week block / 30-week full rotation with a 1-week off-period after each Big Sale."
   }
 }

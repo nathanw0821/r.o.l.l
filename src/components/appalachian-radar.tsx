@@ -7,7 +7,11 @@ import type { MinervaIntel, NukeCodes } from "@/lib/discord/vault-intel";
 interface RadarPayload {
   nukeCodes: NukeCodes;
   minerva: MinervaIntel;
-  resets: { noonResetUnix: number; eveningResetUnix: number };
+  resets: {
+    noonResetUnix: number;
+    eveningResetUnix: number;
+    resetUtcHour?: number;
+  };
   timestamp: number;
 }
 
@@ -211,7 +215,7 @@ export default function AppalachianRadar() {
                 ⏱️ Daily Resets Clock
               </span>
               <span className="text-[0.62rem] px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-400">
-                17:00 UTC
+                {resets.resetUtcHour ?? 17}:00 UTC
               </span>
             </div>
 
