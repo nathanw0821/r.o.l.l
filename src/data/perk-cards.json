@@ -749,7 +749,7 @@
     "name": "Bullet Shield",
     "special": "E",
     "minLevel": 39,
-    "maxRank": 4,
+    "maxRank": 3,
     "imageUrl": "https://fallout.wiki/images/thumb/a/a2/FO76_Bullet_Shield_Perk_Card.png/300px-FO76_Bullet_Shield_Perk_Card.png",
     "ranks": [
       {
@@ -766,11 +766,6 @@
         "rank": 3,
         "cost": 3,
         "description": "Gain 15% Deflect chance for 6 sec when firing a heavy gun."
-      },
-      {
-        "rank": 4,
-        "cost": 4,
-        "description": "Gain 20% Deflect chance for 6 sec when firing a heavy gun."
       }
     ]
   },

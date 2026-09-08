@@ -39,13 +39,24 @@ with open(DATA_JSON, "r", encoding="utf-8") as f:
 # Fonts
 BODY_FONT = "/usr/share/fonts/TTF/DejaVuSerif-Bold.ttf"
 TITLE_FONT = os.path.join(PROJECT_ROOT, "data", "fonts", "RobotoCondensed-Bold.ttf")
-NUM_FONT = os.path.join(PROJECT_ROOT, "data", "fonts", "RobotoCondensed-Bold.ttf")
 
 font_body_18 = ImageFont.truetype(BODY_FONT, 18)
 font_title_34 = ImageFont.truetype(TITLE_FONT, 34)
 font_title_28 = ImageFont.truetype(TITLE_FONT, 28)
 font_title_24 = ImageFont.truetype(TITLE_FONT, 24)
-font_num_54 = ImageFont.truetype(NUM_FONT, 54)
+
+# Cost Badge Sprites (100% authentic bit-exact Bethesda Pip-Boy numerals)
+COST_GLYPHS = {}
+for _c in range(1, 6):
+    _gp = os.path.join(PROJECT_ROOT, "data", "sprites", f"cost_glyph_{_c}.png")
+    if os.path.exists(_gp):
+        COST_GLYPHS[_c] = Image.open(_gp).convert("RGBA")
+
+# Pre-computed glyph binary masks for base cost detection
+GLYPH_MASKS = {
+    c: (np.array(g)[:, :, 3] > 128)
+    for c, g in COST_GLYPHS.items()
+}
 
 # Star Sprite (Pristine 36x36 white star extracted from native Bethesda Pip-Boy assets)
 white_star = Image.open(os.path.join(PROJECT_ROOT, "data", "sprites", "white_star.png")).convert("RGBA")
@@ -249,9 +260,37 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None):
 
     return result
 
+def detect_card_base_cost(card_im):
+    """Detect the numeral currently printed on the card's cost badge."""
+    crop_box = (20, 15, 105, 98)
+    badge_crop = card_im.crop(crop_box)
+    flat = badge_crop.rotate(-3.568, expand=True, resample=Image.BICUBIC)
+    f_arr = np.array(flat)
+    if f_arr.shape[:2] != (89, 91):
+        return 1
+    dark = (np.mean(f_arr[:, :, :3], axis=2) < 130) & (f_arr[:, :, 3] > 200)
+
+    ious = []
+    for c_val in [1, 2, 3]:
+        g_mask = GLYPH_MASKS.get(c_val)
+        if g_mask is not None:
+            inter = np.logical_and(dark, g_mask).sum()
+            union = np.logical_or(dark, g_mask).sum()
+            iou = inter / max(1, union)
+            ious.append((iou, c_val))
+
+    if not ious:
+        return 1
+    best_iou, best_cost = max(ious, key=lambda x: x[0])
+    return best_cost if best_iou > 0.35 else 1
+
 def update_cost_badge(card_im, cost, base_cost=1):
-    """Inpaint existing cost number and render new cost (rotated level, feathered fill)."""
+    """Inpaint existing cost number and composite authentic Bethesda cost glyph."""
     if cost == base_cost:
+        return card_im
+
+    glyph_im = COST_GLYPHS.get(cost)
+    if not glyph_im:
         return card_im
 
     crop_box = (20, 15, 105, 98)
@@ -282,18 +321,8 @@ def update_cost_badge(card_im, cost, base_cost=1):
                 cleaned[y, x, :3] = np.clip(cream_med + noise[y, x], 0, 255)
 
     clean_flat = Image.fromarray(cleaned)
-
-    num_layer = Image.new("RGBA", (fw, fh), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(num_layer)
-    bbox = draw.textbbox((0, 0), str(cost), font=font_num_54)
-    tw = bbox[2] - bbox[0]
-    th = bbox[3] - bbox[1]
-    tx = int((fw - tw) / 2)
-    ty = int((fh - th) / 2) - 4
-    draw.text((tx, ty), str(cost), fill=(45, 48, 45, 255), font=font_num_54)
-
-    combined_flat = Image.alpha_composite(clean_flat, num_layer)
-    change_flat = np.maximum(dilated.astype(np.uint8) * 255, np.array(num_layer)[:, :, 3])
+    combined_flat = Image.alpha_composite(clean_flat, glyph_im)
+    change_flat = np.maximum(dilated.astype(np.uint8) * 255, np.array(glyph_im)[:, :, 3])
     change_flat_im = Image.fromarray(change_flat).filter(ImageFilter.GaussianBlur(1.5))
 
     rot_back_img = combined_flat.rotate(3.568, resample=Image.BICUBIC)
@@ -397,6 +426,9 @@ def process_card(card_info, force=False):
     if detected_ribbon > max_rank:
         base_im = patch_card_ribbon(base_im, special, max_rank)
 
+    # Detect base cost from unadulterated base image
+    detected_cost = detect_card_base_cost(base_im)
+
     # 2. Clean canvas (parchment text)
     clean_base = clean_card_canvas(base_im, max_rank=max_rank)
 
@@ -407,8 +439,8 @@ def process_card(card_info, force=False):
 
         card = clean_base.copy()
 
-        # Update cost badge (base cost is 1 in all original card artwork)
-        card = update_cost_badge(card, cost_val, base_cost=1)
+        # Update cost badge
+        card = update_cost_badge(card, cost_val, base_cost=detected_cost)
 
         # Render description text
         card = render_description(card, desc)
