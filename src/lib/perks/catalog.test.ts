@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getGenderedPerkName } from "./catalog";
-import { getInGamePerkCardImage } from "./clean-perk-assets";
+import { getCleanPerkForeground } from "./clean-perk-assets";
+import { getPerkVectorArtUrl } from "./perk-artwork";
 
 describe("Perk Catalog Utilities", () => {
   it("should fetch perk card by ID", () => {
@@ -47,88 +48,76 @@ describe("Perk Catalog Utilities", () => {
   });
 });
 
-describe("1:1 In-Game Perk Card Asset Resolution Engine", () => {
+describe("1:1 Scaleform Vector Perk Card Asset Resolution Engine", () => {
   const publicDir = path.resolve(process.cwd(), "public");
 
-  it("should resolve reworked heavy and melee perks with legacy aliases", () => {
+  it("should resolve reworked heavy and melee perks with legacy aliases to canonical vector SVGs", () => {
     // Bullet Storm & Heavy Gunner legacy alias
-    expect(getInGamePerkCardImage("bullet-storm", 1)).toBe("/images/in_game_cards/bullet_storm_r1.png");
-    expect(getInGamePerkCardImage("heavy-gunner", 1)).toBe("/images/in_game_cards/bullet_storm_r1.png");
-    expect(getInGamePerkCardImage("heavy-gunner", 3)).toBe("/images/in_game_cards/bullet_storm_r3.png");
+    expect(getPerkVectorArtUrl("bullet-storm", "S")).toBe("/images/perks_official/bulletstorm.svg");
+    expect(getPerkVectorArtUrl("heavy-gunner", "S")).toBe("/images/perks_official/bulletstorm.svg");
 
     // Tightly Wound & Expert Heavy Gunner legacy alias
-    expect(getInGamePerkCardImage("tightly-wound", 1)).toBe("/images/in_game_cards/tightly_wound_r1.png");
-    expect(getInGamePerkCardImage("expert-heavy-gunner", 1)).toBe("/images/in_game_cards/tightly_wound_r1.png");
+    expect(getPerkVectorArtUrl("tightly-wound", "S")).toBe("/images/perks_official/tightlywound.svg");
+    expect(getPerkVectorArtUrl("expert-heavy-gunner", "S")).toBe("/images/perks_official/tightlywound.svg");
 
     // Bringing the Big Guns & Master Heavy Gunner legacy alias
-    expect(getInGamePerkCardImage("bringing-the-big-guns", 1)).toBe("/images/in_game_cards/bringing_the_big_guns_r1.png");
-    expect(getInGamePerkCardImage("master-heavy-gunner", 1)).toBe("/images/in_game_cards/bringing_the_big_guns_r1.png");
+    expect(getPerkVectorArtUrl("bringing-the-big-guns", "S")).toBe("/images/perks_official/bringingthebigguns.svg");
+    expect(getPerkVectorArtUrl("master-heavy-gunner", "S")).toBe("/images/perks_official/bringingthebigguns.svg");
 
     // Heavy Hitter & Master Slugger legacy alias
-    expect(getInGamePerkCardImage("heavy-hitter", 1)).toBe("/images/in_game_cards/heavy_hitter_r1.png");
-    expect(getInGamePerkCardImage("master-slugger", 1)).toBe("/images/in_game_cards/heavy_hitter_r1.png");
+    expect(getPerkVectorArtUrl("heavy-hitter", "S")).toBe("/images/perks_official/heavyhitter.svg");
+    expect(getPerkVectorArtUrl("master-slugger", "S")).toBe("/images/perks_official/heavyhitter.svg");
 
     // Knee-Capper & Expert Slugger legacy alias
-    expect(getInGamePerkCardImage("knee-capper", 1)).toBe("/images/in_game_cards/knee_capper_r1.png");
-    expect(getInGamePerkCardImage("expert-slugger", 1)).toBe("/images/in_game_cards/knee_capper_r1.png");
+    expect(getPerkVectorArtUrl("knee-capper", "S")).toBe("/images/perks_official/kneecapper.svg");
+    expect(getPerkVectorArtUrl("expert-slugger", "S")).toBe("/images/perks_official/kneecapper.svg");
   });
 
-  it("should verify resolved bitmapped images physically exist on disk in public/images/in_game_cards", () => {
+  it("should verify resolved vector SVGs physically exist on disk in public/images/perks_official", () => {
     const testCases = [
-      { id: "bullet-storm", rank: 1 },
-      { id: "bullet-storm", rank: 3 },
-      { id: "heavy-gunner", rank: 1 },
-      { id: "tightly-wound", rank: 1 },
-      { id: "bringing-the-big-guns", rank: 1 },
-      { id: "heavy-hitter", rank: 1 },
-      { id: "knee-capper", rank: 1 },
-      { id: "bloody-mess", rank: 1 },
-      { id: "bloody-mess", rank: 3 },
-      { id: "action-boy", rank: 1 },
-      { id: "action-boy", rank: 3 },
-      { id: "legendary-strength", rank: 1 },
-      { id: "legendary-strength", rank: 4 },
-      { id: "ammo-factory", rank: 4 },
-      { id: "what-rads", rank: 4 },
-      { id: "action-ghoul", rank: 1 },
-      { id: "curator", rank: 1 },
-      { id: "woodchucker", rank: 1 },
-      { id: "action-girl", rank: 1 },
-      { id: "action-girl", rank: 3 },
-      { id: "aquagirl", rank: 1 },
-      { id: "party-girl", rank: 1 },
-      { id: "party-girl", rank: 2 },
+      "bullet-storm",
+      "heavy-gunner",
+      "tightly-wound",
+      "bringing-the-big-guns",
+      "heavy-hitter",
+      "knee-capper",
+      "bloody-mess",
+      "action-boy",
+      "legendary-strength",
+      "ammo-factory",
+      "what-rads",
+      "action-ghoul",
+      "curator",
+      "woodchucker",
+      "action-girl",
+      "aquagirl",
+      "party-girl",
     ];
 
-    for (const { id, rank } of testCases) {
-      const url = getInGamePerkCardImage(id, rank);
+    for (const id of testCases) {
+      const url = getCleanPerkForeground(id);
       expect(url).not.toBeNull();
+      expect(url!.endsWith(".svg")).toBe(true);
       const relativePath = url!.replace(/^\//, "");
       const fullPath = path.join(publicDir, relativePath);
-      expect(fs.existsSync(fullPath), `Expected asset to exist: ${fullPath}`).toBe(true);
+      expect(fs.existsSync(fullPath), `Expected SVG asset to exist: ${fullPath}`).toBe(true);
     }
   });
 
-  it("should dynamically resolve gendered in-game perk cards based on isFemale flag", () => {
+  it("should dynamically resolve gendered vector perk cards based on isFemale flag", () => {
     // Action Boy <-> Action Girl
-    expect(getInGamePerkCardImage("action-boy", 1, false)).toBe("/images/in_game_cards/action_boy_r1.png");
-    expect(getInGamePerkCardImage("action-boy", 1, true)).toBe("/images/in_game_cards/action_girl_r1.png");
-    expect(getInGamePerkCardImage("action-boy", 3, true)).toBe("/images/in_game_cards/action_girl_r3.png");
-    expect(getInGamePerkCardImage("action-girl", 1, false)).toBe("/images/in_game_cards/action_boy_r1.png");
-    expect(getInGamePerkCardImage("action-girl", 2, true)).toBe("/images/in_game_cards/action_girl_r2.png");
+    expect(getPerkVectorArtUrl("action-boy", "A", false)).toBe("/images/perks_official/actionboy.svg");
+    expect(getPerkVectorArtUrl("action-boy", "A", true)).toBe("/images/perks_official/actiongirl.svg");
+    expect(getPerkVectorArtUrl("action-girl", "A", false)).toBe("/images/perks_official/actionboy.svg");
+    expect(getPerkVectorArtUrl("action-girl", "A", true)).toBe("/images/perks_official/actiongirl.svg");
 
     // Aquaboy <-> Aquagirl
-    expect(getInGamePerkCardImage("aquaboy", 1, false)).toBe("/images/in_game_cards/aquaboy_r1.png");
-    expect(getInGamePerkCardImage("aquaboy", 1, true)).toBe("/images/in_game_cards/aquagirl_r1.png");
-    expect(getInGamePerkCardImage("aquagirl", 1, false)).toBe("/images/in_game_cards/aquaboy_r1.png");
-    expect(getInGamePerkCardImage("aquagirl", 1, true)).toBe("/images/in_game_cards/aquagirl_r1.png");
+    expect(getPerkVectorArtUrl("aquaboy", "E", false)).toBe("/images/perks_official/aquaticconcealment.svg");
+    expect(getPerkVectorArtUrl("aquaboy", "E", true)).toBe("/images/perks_official/aquaticconcealmentgirl.svg");
 
     // Party Boy <-> Party Girl
-    expect(getInGamePerkCardImage("party-boy", 1, false)).toBe("/images/in_game_cards/party_boy_r1.png");
-    expect(getInGamePerkCardImage("party-boy", 1, true)).toBe("/images/in_game_cards/party_girl_r1.png");
-    expect(getInGamePerkCardImage("party-boy", 2, true)).toBe("/images/in_game_cards/party_girl_r2.png");
-    expect(getInGamePerkCardImage("party-girl", 1, false)).toBe("/images/in_game_cards/party_boy_r1.png");
-    expect(getInGamePerkCardImage("party-girl", 2, true)).toBe("/images/in_game_cards/party_girl_r2.png");
+    expect(getPerkVectorArtUrl("party-boy", "C", false)).toBe("/images/perks_official/partyboy.svg");
+    expect(getPerkVectorArtUrl("party-boy", "C", true)).toBe("/images/perks_official/partygirl.svg");
   });
 
   it("should properly swap gendered perk names bidirectionally", () => {
