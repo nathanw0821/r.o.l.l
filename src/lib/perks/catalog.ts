@@ -156,7 +156,7 @@ export const LEGACY_OUTDATED_PERKS: PerkCard[] = [
     special: "S",
     minLevel: 30,
     maxRank: 3,
-    imageUrl: "/images/perks_official/bulletstorm.svg",
+    imageUrl: "/images/in_game_cards/bullet_storm_r1.png",
     isOutdated: true,
     outdatedMeta: {
       isOutdated: true,
@@ -183,7 +183,7 @@ export const LEGACY_OUTDATED_PERKS: PerkCard[] = [
     special: "S",
     minLevel: 40,
     maxRank: 3,
-    imageUrl: "/images/perks_official/tightlywound.svg",
+    imageUrl: "/images/in_game_cards/tightly_wound_r1.png",
     isOutdated: true,
     outdatedMeta: {
       isOutdated: true,
@@ -210,7 +210,7 @@ export const LEGACY_OUTDATED_PERKS: PerkCard[] = [
     special: "S",
     minLevel: 50,
     maxRank: 3,
-    imageUrl: "/images/perks_official/bringingthebigguns.svg",
+    imageUrl: "/images/in_game_cards/bringing_the_big_guns_r1.png",
     isOutdated: true,
     outdatedMeta: {
       isOutdated: true,
@@ -237,7 +237,7 @@ export const LEGACY_OUTDATED_PERKS: PerkCard[] = [
     special: "S",
     minLevel: 24,
     maxRank: 3,
-    imageUrl: "/images/perks_official/kneecapper.svg",
+    imageUrl: "/images/in_game_cards/knee_capper_r1.png",
     isOutdated: true,
     outdatedMeta: {
       isOutdated: true,
@@ -264,7 +264,7 @@ export const LEGACY_OUTDATED_PERKS: PerkCard[] = [
     special: "S",
     minLevel: 48,
     maxRank: 3,
-    imageUrl: "/images/perks_official/heavyhitter.svg",
+    imageUrl: "/images/in_game_cards/heavy_hitter_r1.png",
     isOutdated: true,
     outdatedMeta: {
       isOutdated: true,

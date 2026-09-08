@@ -1,6 +1,5 @@
 // Official Bethesda 1:1 In-Game Extracted Assets & Theme Registry
 import { SpecialCategory } from "./catalog";
-import { getPerkVectorArtUrl } from "./perk-artwork";
 
 export const OFFICIAL_SPECIAL_COLORS: Record<SpecialCategory, string> = {
   S: "#749B85", // Strength Muted Sage Green
@@ -55,17 +54,14 @@ export const CLEAN_TEXTURES = {
   starsRack: "/images/clean_perk_assets/textures/stars_rack.png",
 };
 
-export function getCleanPerkForeground(
-  cardIdOrName?: string,
-  special: SpecialCategory = "S",
-  isFemale = false
-): string | null {
+export function getCleanPerkForeground(cardIdOrName?: string): string | null {
   if (!cardIdOrName) return null;
-  return getPerkVectorArtUrl(cardIdOrName, special, isFemale);
+  const key = cardIdOrName.toLowerCase().trim().replace(/[\s_]+/g, "-").replace(/[^a-z0-9-]/g, "");
+  return CLEAN_FOREGROUND_ASSETS[key] || null;
 }
 
 export function isCleanPerkAssetAvailable(cardIdOrName?: string): boolean {
-  return Boolean(cardIdOrName);
+  return getCleanPerkForeground(cardIdOrName) !== null;
 }
 
 export function getLegendaryRankStarSprite(rank: number): string {
@@ -73,9 +69,13 @@ export function getLegendaryRankStarSprite(rank: number): string {
   return `/images/clean_perk_assets/legendary/lgn_stars_rank_${safeRank}.png`;
 }
 
-export function getGhoulPerkCardImage(_cardIdOrName?: string, _rank: number = 1): string | null {
-  void _cardIdOrName;
-  void _rank;
+export function getGhoulPerkCardImage(cardIdOrName?: string, rank: number = 1): string | null {
+  if (!cardIdOrName) return null;
+  const key = cardIdOrName.toLowerCase().trim().replace(/[\s_]+/g, "-").replace(/[^a-z0-9-]/g, "");
+  if (key === "action-ghoul") {
+    const safeRank = Math.min(3, Math.max(1, rank));
+    return `/images/in_game_cards/action_ghoul_r${safeRank}.png`;
+  }
   return null;
 }
 
@@ -156,16 +156,35 @@ export const IN_GAME_STRAIGHT_CARDS: Record<string, string> = {
   "feral-rage": "feral_rage",
 };
 
-/**
- * @deprecated Legacy raster helper. All 268 perk cards are now rendered via Flat Scaleform Vector Architecture (getCleanPerkForeground / getPerkVectorArtUrl).
- */
 export function getInGamePerkCardImage(
   cardIdOrName?: string,
-  _rank: number = 1,
+  rank: number = 1,
   isFemale?: boolean
 ): string | null {
-  void _rank;
   if (!cardIdOrName) return null;
-  return getCleanPerkForeground(cardIdOrName, "S", isFemale);
+  const key = cardIdOrName.toLowerCase().trim().replace(/[\s_]+/g, "-").replace(/[^a-z0-9-]/g, "");
+  let baseName = IN_GAME_STRAIGHT_CARDS[key] || key.replace(/-/g, "_");
+
+  // Dynamic gender swapping between Vault Boy and Vault Girl profiles
+  if (isFemale === true) {
+    if (key === "action-boy" || key === "action-girl" || key === "actionboy" || key === "actiongirl") {
+      baseName = "action_girl";
+    } else if (key === "aquaboy" || key === "aquagirl" || key === "aqua-boy" || key === "aqua-girl" || key === "aquaboy-aquagirl") {
+      baseName = "aquagirl";
+    } else if (key === "party-boy" || key === "party-girl" || key === "partyboy" || key === "partygirl") {
+      baseName = "party_girl";
+    }
+  } else if (isFemale === false) {
+    if (key === "action-boy" || key === "action-girl" || key === "actionboy" || key === "actiongirl") {
+      baseName = "action_boy";
+    } else if (key === "aquaboy" || key === "aquagirl" || key === "aqua-boy" || key === "aqua-girl" || key === "aquaboy-aquagirl") {
+      baseName = "aquaboy";
+    } else if (key === "party-boy" || key === "party-girl" || key === "partyboy" || key === "partygirl") {
+      baseName = "party_boy";
+    }
+  }
+
+  const safeRank = Math.max(1, rank);
+  return `/images/in_game_cards/${baseName}_r${safeRank}.png`;
 }
 
