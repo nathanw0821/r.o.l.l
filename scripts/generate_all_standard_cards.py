@@ -250,17 +250,23 @@ def create_special_background(special, w, h):
     noise = np.random.normal(0, 3.0, (h, w, 3))
     arr[:, :, :3] = np.clip(arr[:, :, :3] + noise, 0, 255)
     return Image.fromarray(arr.astype(np.uint8))
-ART_WINDOW_POLY = [(42, 98), (105, 98), (105, 90), (480, 90), (480, 395), (42, 430)]
-ART_CROP_BOX = (42, 90, 480, 430)
+ART_WINDOW_POLY = [(42, 98), (105, 98), (105, 87), (480, 87), (480, 395), (42, 430)]
+ART_CROP_BOX = (42, 72, 480, 430)
 
 def extract_character(src_im, source_special="L", mask_art=None):
-    """Extract character illustration from base artwork, protecting ink outlines and fills."""
+    """Extract character illustration from base artwork, protecting ink outlines, fills, and natural ribbon overlap."""
     art = np.array(src_im.crop(ART_CROP_BOX))
     ah, aw = art.shape[:2]
 
-    crop_mask_arr = np.array(mask_art.crop(ART_CROP_BOX)) > 0 if mask_art else np.ones((ah, aw), dtype=bool)
+    # Explicit spatial mask: protect cost badge (left), ribbon margins, and right card rim
+    allowed_mask = np.ones((ah, aw), dtype=bool)
+    allowed_mask[:26, :63] = False   # protects cost badge (card y < 98, x < 105)
+    allowed_mask[:15, :68] = False   # protects upper left banner (card y < 87, x < 110)
+    allowed_mask[:15, 418:] = False  # protects upper right banner (card x > 460)
+    allowed_mask[:, 430:] = False   # protects right card border (card x > 472)
 
     def is_barrier(y, x):
+        if not allowed_mask[y, x]: return False
         r, g, b = [int(v) for v in art[y, x, :3]]
         mean = (r + g + b) / 3
         if mean < 122: return True # ink linework
@@ -330,7 +336,7 @@ def extract_character(src_im, source_special="L", mask_art=None):
                     if b > 140 and g > 130 and r < 160:
                         bg_mask[y, x] = True
 
-    fg_raw = (~bg_mask) & crop_mask_arr
+    fg_raw = (~bg_mask) & allowed_mask
     fg_alpha = Image.fromarray((fg_raw * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.5))
     fg = Image.fromarray(art)
     fg.putalpha(fg_alpha)
@@ -358,7 +364,7 @@ def build_rethemed_card(card_id, target_special, max_rank, title, donor_id, sour
     Uses the target SPECIAL donor card for authentic banner color, bottom parchment, ribbon,
     and letter badge. Erases the donor character by filling the art window with authentic
     procedural target SPECIAL background patterns, and extracts the character artwork from
-    the source card cleanly.
+    the source card cleanly, allowing natural overlap onto the title banner ribbon.
     """
     donor_file = None
     if donor_id in WIKI_ALIASES:
@@ -381,8 +387,8 @@ def build_rethemed_card(card_id, target_special, max_rank, title, donor_id, sour
     donor_bbox = Image.fromarray(donor_arr).getbbox()
     donor_im = donor_raw.crop(donor_bbox) if donor_bbox else donor_raw
 
-    # Clean donor canvas: inpaint text and inpaint title banner, draw rotated title
-    donor_clean = clean_card_canvas(donor_im, max_rank=max_rank, title_override=title)
+    # Clean donor canvas: inpaint text and clean title banner (without drawing new title yet)
+    donor_clean = clean_card_canvas(donor_im, max_rank=max_rank, inpaint_title=True)
 
     # Erase donor character art with procedural target SPECIAL background
     mask_art = Image.new("L", donor_im.size, 0)
@@ -414,11 +420,14 @@ def build_rethemed_card(card_id, target_special, max_rank, title, donor_id, sour
     src_bbox = Image.fromarray(src_arr).getbbox()
     src_im = src_raw.crop(src_bbox) if src_bbox else src_raw
 
-    # Extract character cutout from source card
-    cutout = extract_character(src_im, source_special=source_special, mask_art=mask_art)
+    # Extract character cutout from source card (with natural banner overlap)
+    cutout = extract_character(src_im, source_special=source_special)
 
-    # Paste cutout into art window
+    # Paste cutout into art window (starts at y=72 allowing character to overlap banner ribbon)
     donor_clean.paste(cutout, (ART_CROP_BOX[0], ART_CROP_BOX[1]), cutout)
+
+    # Render new title on top in authentic Bethesda ALL CAPS
+    donor_clean = render_rotated_title(donor_clean, title.upper())
 
     return donor_clean
 
@@ -471,7 +480,7 @@ def patch_card_ribbon(card_im, special, max_rank):
     res.paste(patch, (crop_box[0], crop_box[1]))
     return res
 
-def clean_card_canvas(base_im, max_rank=None, title_override=None):
+def clean_card_canvas(base_im, max_rank=None, title_override=None, inpaint_title=False):
     """Inpaint parchment text and optionally title banner. Ribbons are always preserved."""
     arr = np.array(base_im)
     h, w = arr.shape[:2]
@@ -499,24 +508,43 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None):
             if arr[y, x, 0] < 165 and arr[y, x, 1] < 165 and arr[y, x, 2] < 165 and arr[y, x, 3] > 200:
                 text_mask[y, x] = True
 
-    # 2. Title banner text mask (if replacing title)
-    if title_override:
-        left_banner = arr[45:60, 115:135, :3]
-        right_banner = arr[40:55, 385:410, :3]
+    # 2. Title banner text mask (if replacing title or requested to inpaint title)
+    do_banner = bool(title_override or inpaint_title)
+    if do_banner:
+        left_banner = arr[45:60, 115:130, :3]
+        right_banner = arr[45:60, 435:460, :3]
         banner_samples = np.vstack([left_banner.reshape(-1, 3), right_banner.reshape(-1, 3)])
         banner_bg = np.median(banner_samples, axis=0)
 
-        for y in range(24, min(h, 88)):
-            for x in range(112, 445):
+        # Strictly detect letters and drop shadows within letter bounds y in [33, 77], x in [125, 435]
+        for y in range(33, 77):
+            for x in range(125, 435):
                 if x < w and y < h:
                     diff = np.linalg.norm(arr[y, x, :3].astype(float) - banner_bg)
-                    if diff > 14 or (arr[y, x, 0] > 180 and arr[y, x, 1] > 190):
+                    mean_col = np.mean(arr[y, x, :3])
+                    if diff > 22 and (mean_col > 208 or mean_col < 95):
                         text_mask[y, x] = True
 
-    mask_im = Image.fromarray((text_mask * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5))
+        # Also clean any donor character art that protruded into lower banner
+        for y in range(77, 88):
+            for x in range(125, 435):
+                if x < w and y < h:
+                    diff = np.linalg.norm(arr[y, x, :3].astype(float) - banner_bg)
+                    if diff > 24:
+                        text_mask[y, x] = True
+
+    mask_im = Image.fromarray((text_mask * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(3))
     mask_arr = np.array(mask_im)
-    # Ensure banner inpaint strictly protects the top-left cost badge zone (x <= 108)
-    mask_arr[:90, :110] = 0
+    # Ensure banner inpaint strictly protects top ribbon bevel (y <= 31), bottom shadow (y >= 89),
+    # cost badge zone (x <= 120), and right card frame (x >= 445)
+    if do_banner:
+        mask_arr[:32, :] = 0
+        mask_arr[89:, :] = 0
+        mask_arr[:, :120] = 0
+        mask_arr[:, 445:] = 0
+    else:
+        mask_arr[:90, :110] = 0
+
     dilated = mask_arr > 0
     mask_im = Image.fromarray(mask_arr)
 
@@ -538,28 +566,28 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None):
             cleaned[y, x, :3] = np.clip(bg_col + noise, 0, 255)
 
     # Inpaint banner if needed
-    if title_override:
-        for y in range(24, min(h, 88)):
-            for x in range(110, min(w, 445)):
+    if do_banner:
+        for y in range(32, 89):
+            for x in range(120, min(w, 445)):
                 if not dilated[y, x]:
                     continue
-                patch = arr[max(20, y-10):min(min(h, 88), y+11), max(110, x-25):min(min(w, 450), x+26), :3]
-                patch_mask = dilated[max(20, y-10):min(min(h, 88), y+11), max(110, x-25):min(min(w, 450), x+26)]
+                patch = arr[max(28, y-6):min(88, y+7), max(115, x-20):min(min(w, 445), x+21), :3]
+                patch_mask = dilated[max(28, y-6):min(88, y+7), max(115, x-20):min(min(w, 445), x+21)]
                 bg = patch[~patch_mask]
                 if len(bg) > 5:
                     bg_col = np.median(bg, axis=0)
                 else:
                     bg_col = banner_bg
-                noise = np.random.normal(0, 1.2, 3)
+                noise = np.random.normal(0, 1.0, 3)
                 cleaned[y, x, :3] = np.clip(bg_col + noise, 0, 255)
 
     clean_im = Image.fromarray(cleaned)
-    final_mask = mask_im.filter(ImageFilter.GaussianBlur(0.8))
+    final_mask = mask_im.filter(ImageFilter.GaussianBlur(0.6))
     result = base_im.copy()
     result.paste(clean_im, (0, 0), final_mask)
 
-    # Render new title if specified (with authentic +3.568° Pip-Boy banner slant)
-    if title_override:
+    # Render new title if specified and not in inpaint-only mode
+    if title_override and not inpaint_title:
         result = render_rotated_title(result, title_override)
 
     return result
