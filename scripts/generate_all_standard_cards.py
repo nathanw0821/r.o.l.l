@@ -140,7 +140,7 @@ DONOR_CARDS = {
     ("S", 2): "bandolier",
     ("S", 3): "blocker",
 
-    ("P", 1): "awareness",
+    ("P", 1): "picklock",
     ("P", 2): "grenadier",
     ("P", 3): "commando",
 
@@ -161,9 +161,258 @@ DONOR_CARDS = {
     ("A", 3): "action-boy",
 
     ("L", 1): "woodchucker",
-    ("L", 2): "starched-genes",
+    ("L", 2): "luck-of-the-draw",
     ("L", 3): "better-criticals",
 }
+
+# Perks migrated across SPECIAL categories in balance patches that require authentic re-theming
+RETHEMED_CARDS = {
+    "good-with-salt": {"target_special": "I", "source_special": "L", "donor": "contractor"},
+    "tormentor": {"target_special": "P", "source_special": "L", "donor": "picklock"},
+    "starched-genes": {"target_special": "E", "source_special": "L", "donor": "aquaboy"},
+    "thru-hiker": {"target_special": "E", "source_special": "A", "donor": "chem-resistant"},
+    "white-knight": {"target_special": "I", "source_special": "A", "donor": "power-user"},
+    "bullet-shield": {"target_special": "E", "source_special": "S", "donor": "ghoulish"},
+    "bloodsucker": {"target_special": "E", "source_special": "C", "donor": "aquaboy"},
+    "field-surgeon": {"target_special": "I", "source_special": "C", "donor": "chemist"},
+    "portable-power": {"target_special": "S", "source_special": "I", "donor": "blocker"},
+    "rad-sponge": {"target_special": "E", "source_special": "C", "donor": "aquaboy"},
+    "revenant": {"target_special": "C", "source_special": "E", "donor": "e-m-t"},
+    "curator": {"target_special": "I", "source_special": "L", "donor": "chemist"},
+    "fortune-finder": {"target_special": "P", "source_special": "L", "donor": "picklock"},
+    "dry-nurse": {"target_special": "L", "source_special": "C", "donor": "woodchucker"},
+    "strong-arm": {"target_special": "S", "source_special": "P", "donor": "blood-luster"},
+    "wrecking-ball": {"target_special": "S", "source_special": "I", "donor": "blood-luster"},
+}
+
+def create_special_background(special, w, h):
+    """Generate authentic procedural SPECIAL illustration background with parchment noise."""
+    im = Image.new("RGBA", (w, h), (235, 226, 206, 255))
+    d = ImageDraw.Draw(im)
+    if special == "S": # Strength: olive-green radiant sunburst rays
+        cx, cy = int(w * 0.5), h + 40
+        c_green = (155, 185, 145, 255)
+        for deg in range(0, 180, 15):
+            rad1 = np.radians(180 + deg)
+            rad2 = np.radians(180 + deg + 8)
+            p1 = (cx + int(600 * np.cos(rad1)), cy + int(600 * np.sin(rad1)))
+            p2 = (cx + int(600 * np.cos(rad2)), cy + int(600 * np.sin(rad2)))
+            d.polygon([(cx, cy), p1, p2], fill=c_green)
+    elif special == "P": # Perception: concentric circular radar/target rings
+        cx, cy = int(w * 0.54), int(h * 0.40)
+        c_ring1 = (190, 158, 120, 255)
+        c_ring2 = (212, 192, 162, 255)
+        for r in range(360, 20, -35):
+            col = c_ring1 if (r // 35) % 2 == 0 else c_ring2
+            d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=col)
+    elif special == "E": # Endurance: steel blue pulse horizontal bands
+        c_teal1 = (120, 165, 180, 255)
+        c_teal2 = (185, 210, 218, 255)
+        for y in range(0, h, 20):
+            col = c_teal1 if (y // 20) % 2 == 0 else c_teal2
+            d.rectangle([0, y, w, y + 20], fill=col)
+    elif special == "C": # Charisma: golden amber radiant starburst
+        cx, cy = int(w * 0.5), int(h * 0.45)
+        c_gold = (226, 180, 108, 255)
+        for deg in range(0, 360, 20):
+            rad1 = np.radians(deg)
+            rad2 = np.radians(deg + 10)
+            p1 = (cx + int(500 * np.cos(rad1)), cy + int(500 * np.sin(rad1)))
+            p2 = (cx + int(500 * np.cos(rad2)), cy + int(500 * np.sin(rad2)))
+            d.polygon([(cx, cy), p1, p2], fill=c_gold)
+    elif special == "I": # Intelligence: diagonal pastel bands
+        c_sage = (195, 208, 185, 255)
+        c_blue = (180, 200, 208, 255)
+        c_tan = (226, 202, 172, 255)
+        for i in range(-300, w + 400, 80):
+            d.polygon([(i, 0), (i + 40, 0), (i + 40 - 180, h), (i - 180, h)], fill=c_sage)
+            d.polygon([(i + 40, 0), (i + 60, 0), (i + 60 - 180, h), (i + 40 - 180, h)], fill=c_blue)
+            d.polygon([(i + 60, 0), (i + 80, 0), (i + 80 - 180, h), (i + 60 - 180, h)], fill=c_tan)
+    elif special == "A": # Agility: coral terracotta speed swooshes
+        c_coral = (216, 144, 128, 255)
+        for i in range(-150, w + 200, 50):
+            d.polygon([(i, 0), (i + 25, 0), (i + 100, h), (i + 75, h)], fill=c_coral)
+    elif special == "L": # Luck: lavender slate diamond starburst
+        cx, cy = int(w * 0.5), int(h * 0.45)
+        c_lav = (210, 195, 225, 255)
+        d.polygon([(cx, cy - 180), (cx + 180, cy), (cx, cy + 180), (cx - 180, cy)], fill=c_lav)
+
+    arr = np.array(im, dtype=np.float32)
+    noise = np.random.normal(0, 3.0, (h, w, 3))
+    arr[:, :, :3] = np.clip(arr[:, :, :3] + noise, 0, 255)
+    return Image.fromarray(arr.astype(np.uint8))
+ART_WINDOW_POLY = [(42, 98), (105, 98), (105, 94), (480, 66), (480, 395), (42, 430)]
+ART_CROP_BOX = (42, 66, 480, 430)
+
+def extract_character(src_im, source_special="L", mask_art=None):
+    """Extract character illustration from base artwork, protecting ink outlines and fills."""
+    art = np.array(src_im.crop(ART_CROP_BOX))
+    ah, aw = art.shape[:2]
+
+    crop_mask_arr = np.array(mask_art.crop(ART_CROP_BOX)) > 0 if mask_art else np.ones((ah, aw), dtype=bool)
+
+    def is_barrier(y, x):
+        r, g, b = [int(v) for v in art[y, x, :3]]
+        mean = (r + g + b) / 3
+        if mean < 122: return True # ink linework
+        if r > 150 and g > 130 and b < 135 and (r - b) > 40 and (g - b) > 30: return True # yellow hair / belt
+        if b > 90 and b > r + 25 and b > g + 5: return True # blue vault suit
+        if source_special != "A":
+            if r > 130 and r > g + 30 and r > b + 30: return True # red meat / laser
+        else:
+            if r > 180 and g < 50 and b < 50: return True # blood
+        if g > 100 and g > r + 20 and g > b + 20: return True # green mutant
+        if r > 90 and g > 70 and b < 65 and (r - b) > 35: return True # leather / straps
+        return False
+
+    visited = np.zeros((ah, aw), dtype=bool)
+    bg_mask = np.zeros((ah, aw), dtype=bool)
+
+    seeds = []
+    for x in range(aw):
+        seeds.append((0, x))
+        seeds.append((ah - 1, x))
+    for y in range(ah):
+        seeds.append((y, 0))
+        seeds.append((y, aw - 1))
+    for p in [(10, 10), (10, aw-10), (ah-10, 10), (ah-10, aw-10), (int(ah*0.5), 10), (int(ah*0.5), aw-10)]:
+        seeds.append(p)
+
+    queue = [s for s in set(seeds) if not is_barrier(s[0], s[1])]
+    for y, x in queue:
+        visited[y, x] = True
+
+    idx = 0
+    while idx < len(queue):
+        cy, cx = queue[idx]
+        idx += 1
+        bg_mask[cy, cx] = True
+        for dy, dx in [(-1,0), (1,0), (0,-1), (0,1)]:
+            ny, nx = cy + dy, cx + dx
+            if 0 <= ny < ah and 0 <= nx < aw and not visited[ny, nx]:
+                visited[ny, nx] = True
+                if not is_barrier(ny, nx):
+                    queue.append((ny, nx))
+
+    # Catch any remaining enclosed background colors matching source special
+    for y in range(ah):
+        for x in range(aw):
+            if not bg_mask[y, x] and not is_barrier(y, x):
+                r, g, b = [int(v) for v in art[y, x, :3]]
+                if source_special == "L":
+                    if abs(r - b) < 25 and r > 140 and g > 140 and b > 140:
+                        bg_mask[y, x] = True
+                elif source_special == "C":
+                    if r > 185 and g > 155 and b < 150:
+                        bg_mask[y, x] = True
+                elif source_special == "A":
+                    if (r > 170 and g < 130 and b < 130) or (abs(r - g) < 15 and abs(r - b) < 15 and r < 160):
+                        bg_mask[y, x] = True
+                elif source_special == "S":
+                    if g > 140 and r < 170 and b < 160:
+                        bg_mask[y, x] = True
+                elif source_special == "I":
+                    if (g > r + 5 and g > 175 and b > 160) or (b > r + 10 and g > 175 and b > 180):
+                        bg_mask[y, x] = True
+                elif source_special == "P":
+                    if r > 160 and g > 130 and b < 140 and r > b + 25:
+                        bg_mask[y, x] = True
+                elif source_special == "E":
+                    if b > 140 and g > 130 and r < 160:
+                        bg_mask[y, x] = True
+
+    fg_raw = (~bg_mask) & crop_mask_arr
+    fg_alpha = Image.fromarray((fg_raw * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.5))
+    fg = Image.fromarray(art)
+    fg.putalpha(fg_alpha)
+    return fg
+
+def render_rotated_title(card_im, title):
+    """Render title text parallel to authentic Pip-Boy banner slant (+3.568°)."""
+    w, h = card_im.size
+    t_font = font_title_34 if len(title) <= 12 else (font_title_28 if len(title) <= 18 else font_title_24)
+    txt_im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(txt_im)
+    bbox = d.textbbox((0, 0), title, font=t_font)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    tx = 270 - (tw // 2)
+    ty = 47 - (th // 2)
+    d.text((tx + 1, ty + 1), title, fill=(40, 50, 40, 180), font=t_font)
+    d.text((tx, ty), title, fill=(245, 242, 230, 255), font=t_font)
+    rot_txt = txt_im.rotate(3.568, center=(270, 47), resample=Image.BICUBIC)
+    return Image.alpha_composite(card_im, rot_txt)
+
+def build_rethemed_card(card_id, target_special, max_rank, title, donor_id, source_special="L"):
+    """
+    Constructs a pristine 1:1 Pip-Boy card for rebalanced cards whose SPECIAL category changed.
+    Uses the target SPECIAL donor card for authentic banner color, bottom parchment, ribbon,
+    and letter badge. Erases the donor character by filling the art window with authentic
+    procedural target SPECIAL background patterns, and extracts the character artwork from
+    the source card cleanly.
+    """
+    donor_file = None
+    if donor_id in WIKI_ALIASES:
+        donor_file = os.path.join(WIKI_DIR, WIKI_ALIASES[donor_id])
+    else:
+        w_path = os.path.join(WIKI_DIR, f"fo76-perk-{donor_id}.webp")
+        if os.path.exists(w_path):
+            donor_file = w_path
+        else:
+            c_path = os.path.join(CURVED_DIR, f"{donor_id.replace('-', '_')}.png")
+            if os.path.exists(c_path):
+                donor_file = c_path
+
+    if not donor_file or not os.path.exists(donor_file):
+        raise FileNotFoundError(f"Donor image not found for {donor_id}")
+
+    donor_raw = Image.open(donor_file).convert("RGBA")
+    donor_arr = np.array(donor_raw)
+    donor_arr[donor_arr[:, :, 3] <= 30, 3] = 0
+    donor_bbox = Image.fromarray(donor_arr).getbbox()
+    donor_im = donor_raw.crop(donor_bbox) if donor_bbox else donor_raw
+
+    # Clean donor canvas: inpaint text and inpaint title banner, draw rotated title
+    donor_clean = clean_card_canvas(donor_im, max_rank=max_rank, title_override=title)
+
+    # Erase donor character art with procedural target SPECIAL background
+    mask_art = Image.new("L", donor_im.size, 0)
+    d_mask = ImageDraw.Draw(mask_art)
+    d_mask.polygon(ART_WINDOW_POLY, fill=255)
+
+    full_bg = create_special_background(target_special, donor_im.width, donor_im.height)
+    donor_clean.paste(full_bg, (0, 0), mask_art)
+
+    # Load source card image
+    src_file = None
+    if card_id in WIKI_ALIASES:
+        src_file = os.path.join(WIKI_DIR, WIKI_ALIASES[card_id])
+    else:
+        w_path = os.path.join(WIKI_DIR, f"fo76-perk-{card_id}.webp")
+        if os.path.exists(w_path):
+            src_file = w_path
+        else:
+            c_path = os.path.join(CURVED_DIR, f"{card_id.replace('-', '_')}.png")
+            if os.path.exists(c_path):
+                src_file = c_path
+
+    if not src_file or not os.path.exists(src_file):
+        raise FileNotFoundError(f"Source image not found for {card_id}")
+
+    src_raw = Image.open(src_file).convert("RGBA")
+    src_arr = np.array(src_raw)
+    src_arr[src_arr[:, :, 3] <= 30, 3] = 0
+    src_bbox = Image.fromarray(src_arr).getbbox()
+    src_im = src_raw.crop(src_bbox) if src_bbox else src_raw
+
+    # Extract character cutout from source card
+    cutout = extract_character(src_im, source_special=source_special, mask_art=mask_art)
+
+    # Paste cutout into art window
+    donor_clean.paste(cutout, (ART_CROP_BOX[0], ART_CROP_BOX[1]), cutout)
+
+    return donor_clean
+
 
 RIBBON_X_BY_RANK = {
     1: 448,
@@ -271,14 +520,18 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None):
 
     # Inpaint banner if needed
     if title_override:
-        banner_bg = np.median(arr[45:65, 150:250, :3], axis=(0, 1))
+        left_banner = arr[45:60, 110:135, :3]
+        right_banner = arr[40:55, 385:410, :3]
+        banner_samples = np.vstack([left_banner.reshape(-1, 3), right_banner.reshape(-1, 3)])
+        banner_bg = np.median(banner_samples, axis=0)
+
         for y in range(24, min(h, 76)):
             for x in range(95, min(w, 440)):
                 if not dilated[y, x]:
                     continue
                 patch = arr[max(20, y-10):min(min(h, 80), y+11), max(85, x-25):min(min(w, 450), x+26), :3]
                 patch_mask = dilated[max(20, y-10):min(min(h, 80), y+11), max(85, x-25):min(min(w, 450), x+26)]
-                bg = patch[(~patch_mask) & (patch[:, :, 1] > 130) & (patch[:, :, 1] < 175)]
+                bg = patch[~patch_mask]
                 if len(bg) > 5:
                     bg_col = np.median(bg, axis=0)
                 else:
@@ -291,23 +544,9 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None):
     result = base_im.copy()
     result.paste(clean_im, (0, 0), final_mask)
 
-    # Render new title if specified (level banner orientation)
+    # Render new title if specified (with authentic +3.568° Pip-Boy banner slant)
     if title_override:
-        if len(title_override) <= 12:
-            t_font = font_title_34
-        elif len(title_override) <= 18:
-            t_font = font_title_28
-        else:
-            t_font = font_title_24
-
-        d = ImageDraw.Draw(result)
-        bbox = d.textbbox((0, 0), title_override, font=t_font)
-        tw = bbox[2] - bbox[0]
-        th = bbox[3] - bbox[1]
-        tx = 270 - (tw // 2)
-        ty = 47 - (th // 2)
-        d.text((tx + 1, ty + 1), title_override, fill=(45, 60, 45, 180), font=t_font)
-        d.text((tx, ty), title_override, fill=(245, 242, 230, 255), font=t_font)
+        result = render_rotated_title(result, title_override)
 
     return result
 
@@ -445,43 +684,57 @@ def process_card(card_info, force=False):
 
     max_rank = card_info.get("maxRank", len(ranks))
     special = card_info.get("special", "S")
-
-    # 1. Determine base image
-    base_file = None
     aliases = list(CARD_ALIASES.get(card_id, []))
 
-    # Check wiki dir first for high-res clean webp
-    if card_id in WIKI_ALIASES:
-        base_file = os.path.join(WIKI_DIR, WIKI_ALIASES[card_id])
+    if card_id in RETHEMED_CARDS:
+        cfg = RETHEMED_CARDS[card_id]
+        target_special = cfg["target_special"]
+        source_special = cfg.get("source_special", "L")
+        donor_id = cfg.get("donor") or DONOR_CARDS.get((target_special, max_rank), "blocker")
+        clean_base = build_rethemed_card(
+            card_id=card_id,
+            target_special=target_special,
+            max_rank=max_rank,
+            title=card_info["name"].upper(),
+            donor_id=donor_id,
+            source_special=source_special
+        )
+        detected_cost = detect_card_base_cost(clean_base)
     else:
-        wiki_path = os.path.join(WIKI_DIR, f"fo76-perk-{card_id}.webp")
-        if os.path.exists(wiki_path):
-            base_file = wiki_path
+        # 1. Determine base image
+        base_file = None
+        # Check wiki dir first for high-res clean webp
+        if card_id in WIKI_ALIASES:
+            base_file = os.path.join(WIKI_DIR, WIKI_ALIASES[card_id])
         else:
-            curved_path = os.path.join(CURVED_DIR, f"{snake}.png")
-            if os.path.exists(curved_path):
-                base_file = curved_path
+            wiki_path = os.path.join(WIKI_DIR, f"fo76-perk-{card_id}.webp")
+            if os.path.exists(wiki_path):
+                base_file = wiki_path
+            else:
+                curved_path = os.path.join(CURVED_DIR, f"{snake}.png")
+                if os.path.exists(curved_path):
+                    base_file = curved_path
 
-    if not base_file or not os.path.exists(base_file):
-        print(f"⚠️ Missing base image for {card_id}, skipping.")
-        return False
+        if not base_file or not os.path.exists(base_file):
+            print(f"⚠️ Missing base image for {card_id}, skipping.")
+            return False
 
-    raw_im = Image.open(base_file).convert("RGBA")
-    raw_arr = np.array(raw_im)
-    raw_arr[raw_arr[:, :, 3] <= 30, 3] = 0
-    bbox = Image.fromarray(raw_arr).getbbox()
-    base_im = raw_im.crop(bbox) if bbox else raw_im
+        raw_im = Image.open(base_file).convert("RGBA")
+        raw_arr = np.array(raw_im)
+        raw_arr[raw_arr[:, :, 3] <= 30, 3] = 0
+        bbox = Image.fromarray(raw_arr).getbbox()
+        base_im = raw_im.crop(bbox) if bbox else raw_im
 
-    # Detect if ribbon rank exceeds target live patch maxRank
-    detected_ribbon = detect_ribbon_rank(np.array(base_im))
-    if detected_ribbon > max_rank:
-        base_im = patch_card_ribbon(base_im, special, max_rank)
+        # Detect if ribbon rank exceeds target live patch maxRank
+        detected_ribbon = detect_ribbon_rank(np.array(base_im))
+        if detected_ribbon > max_rank:
+            base_im = patch_card_ribbon(base_im, special, max_rank)
 
-    # Detect base cost from unadulterated base image
-    detected_cost = detect_card_base_cost(base_im)
+        # Detect base cost from unadulterated base image
+        detected_cost = detect_card_base_cost(base_im)
 
-    # 2. Clean canvas (parchment text)
-    clean_base = clean_card_canvas(base_im, max_rank=max_rank)
+        # 2. Clean canvas (parchment text)
+        clean_base = clean_card_canvas(base_im, max_rank=max_rank)
 
     for r_data in ranks:
         rank_num = r_data["rank"]
