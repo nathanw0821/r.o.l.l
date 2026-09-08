@@ -7,11 +7,10 @@ standard Fallout 76 perk cards from SeventySix.esm.
 
 Features:
 - Native Pip-Boy +3.568° curve & slant preserved (100% parallel to parchment baseline).
-- Pristine ribbon preservation (never draw ugly grey eraser boxes over ribbons).
+- Pristine ribbon preservation & authentic donor ribbon patching for rebalanced perks.
 - 100% live patch game descriptions extracted from SeventySix.esm.
-- Working star progression across all rank counts.
-- Working rotated-flat feathered cost badge inpainting (zero ghost silhouettes).
-- Clean in-place horizontal title replacement for reworked perks (Bullet Storm, Tightly Wound, etc.).
+- Flawless star progression with 0px shift/jitter across all rank tiers.
+- Feathered cost badge inpainting (zero ghost silhouettes).
 - Outputs saved to both:
     - public/images/in_game_cards/
     - /home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/
@@ -48,9 +47,8 @@ font_title_28 = ImageFont.truetype(TITLE_FONT, 28)
 font_title_24 = ImageFont.truetype(TITLE_FONT, 24)
 font_num_54 = ImageFont.truetype(NUM_FONT, 54)
 
-# Star Sprites
+# Star Sprite (Pristine 36x36 white star extracted from native Bethesda Pip-Boy assets)
 white_star = Image.open(os.path.join(PROJECT_ROOT, "data", "sprites", "white_star.png")).convert("RGBA")
-dark_star = Image.open(os.path.join(PROJECT_ROOT, "data", "sprites", "dark_star.png")).convert("RGBA")
 
 # Mappings for wiki filenames that differ from card id
 WIKI_ALIASES = {
@@ -74,41 +72,86 @@ CARD_ALIASES = {
     "knee-capper": ["expert_slugger"],
 }
 
-# Reworked cards that use specific base images & title replacements
-SPECIAL_REWORKS = {
-    "conductor": {
-        "base_file": os.path.join(WIKI_DIR, "fo76-perk-science.webp"),
-        "base_cost": 2,
-        "title": "CONDUCTOR",
-        "aliases": []
-    },
-    "grease-monkey": {
-        "base_file": os.path.join(WIKI_DIR, "fo76-perk-fix-it-good.webp"),
-        "base_cost": 1,
-        "title": "GREASE MONKEY",
-        "aliases": []
-    },
-    "light-meal": {
-        "base_file": os.path.join(WIKI_DIR, "fo76-perk-slow-metabolizer.webp"),
-        "base_cost": 1,
-        "title": "LIGHT MEAL",
-        "aliases": []
-    },
-    "outlaw": {
-        "base_file": os.path.join(WIKI_DIR, "fo76-perk-hard-bargain.webp"),
-        "base_cost": 1,
-        "title": "OUTLAW",
-        "aliases": []
-    },
-    "penetrator": {
-        "base_file": os.path.join(WIKI_DIR, "fo76-perk-tank-killer.webp"),
-        "base_cost": 1,
-        "title": "PENETRATOR",
-        "aliases": []
-    }
+# Authentic Bethesda reference donor cards by SPECIAL and target rank tier
+DONOR_CARDS = {
+    ("S", 1): "blood-luster",
+    ("S", 2): "bandolier",
+    ("S", 3): "blocker",
+
+    ("P", 1): "awareness",
+    ("P", 2): "grenadier",
+    ("P", 3): "commando",
+
+    ("E", 1): "aquaboy",
+    ("E", 2): "chem-resistant",
+    ("E", 3): "ghoulish",
+
+    ("C", 1): "e-m-t",
+    ("C", 2): "anti-epidemic",
+    ("C", 3): "animal-friend",
+
+    ("I", 1): "chemist",
+    ("I", 2): "contractor",
+    ("I", 3): "power-user",
+
+    ("A", 1): "escape-artist",
+    ("A", 2): "ammosmith",
+    ("A", 3): "action-boy",
+
+    ("L", 1): "woodchucker",
+    ("L", 2): "starched-genes",
+    ("L", 3): "better-criticals",
 }
 
-def clean_card_canvas(base_im, title_override=None):
+RIBBON_X_BY_RANK = {
+    1: 448,
+    2: 414,
+    3: 380,
+    4: 348,
+    5: 316,
+}
+
+def detect_ribbon_rank(arr):
+    """Detect how many stars exist on the base card ribbon."""
+    for x in range(300, 460):
+        y = int(525 - 0.0619 * (x - 300))
+        if y >= arr.shape[0]:
+            continue
+        col = arr[max(0, y-3):min(arr.shape[0], y+4), x]
+        is_dark = np.any((col[:, 3] > 200) & (np.mean(col[:, :3], axis=1) < 80))
+        if is_dark:
+            if x < 330: return 5
+            if x < 365: return 4
+            if x < 398: return 3
+            if x < 430: return 2
+            return 1
+    return 1
+
+def patch_card_ribbon(card_im, special, max_rank):
+    """Replace an oversized ribbon with an authentic Bethesda ribbon from a matching SPECIAL donor card."""
+    donor_id = DONOR_CARDS.get((special, max_rank))
+    if not donor_id:
+        return card_im
+    donor_path = os.path.join(WIKI_DIR, f"fo76-perk-{donor_id}.webp")
+    if not os.path.exists(donor_path):
+        return card_im
+
+    donor_raw = Image.open(donor_path).convert("RGBA")
+    donor_arr = np.array(donor_raw)
+    donor_arr[donor_arr[:, :, 3] <= 30, 3] = 0
+    donor_im = donor_raw.crop(Image.fromarray(donor_arr).getbbox())
+    donor_clean = clean_card_canvas(donor_im, max_rank=max_rank)
+
+    crop_x = 220 if max_rank == 1 else (280 if max_rank == 2 else 310)
+    # Stop at x=498 so patch stays inside the card and never touches the recipient card frame at x >= 501
+    crop_box = (crop_x, 450, 498, 565)
+    patch = donor_clean.crop(crop_box)
+
+    res = card_im.copy()
+    res.paste(patch, (crop_box[0], crop_box[1]))
+    return res
+
+def clean_card_canvas(base_im, max_rank=None, title_override=None):
     """Inpaint parchment text and optionally title banner. Ribbons are always preserved."""
     arr = np.array(base_im)
     h, w = arr.shape[:2]
@@ -117,19 +160,22 @@ def clean_card_canvas(base_im, title_override=None):
 
     text_mask = np.zeros((h, w), dtype=bool)
 
+    ribbon_x = RIBBON_X_BY_RANK.get(max_rank, 380) if max_rank else 380
+
     # 1. Parchment text mask
     # Slanted bounding polygon that covers all description lines while safely avoiding
     # the SPECIAL badge on the bottom-left and the star ribbon on the bottom-right.
-    for x in range(75, 480):
+    for x in range(75, 485):
+        if x >= w: break
         yt = int(434 - 0.0619 * (x - 65))
         if x < 135:
             yb = int(530 - 0.0619 * (x - 65))
-        elif x < 375:
+        elif x < ribbon_x:
             yb = int(542 - 0.0619 * (x - 65))
         else:
-            yb = int(506 - 0.0619 * (x - 375))
+            yb = int(509 - 0.0619 * (x - ribbon_x))
 
-        for y in range(yt, yb):
+        for y in range(max(0, yt), min(h, yb)):
             if arr[y, x, 0] < 165 and arr[y, x, 1] < 165 and arr[y, x, 2] < 165 and arr[y, x, 3] > 200:
                 text_mask[y, x] = True
 
@@ -137,8 +183,9 @@ def clean_card_canvas(base_im, title_override=None):
     if title_override:
         for y in range(25, 75):
             for x in range(95, 440):
-                if arr[y, x, 0] > 180 and arr[y, x, 1] > 190 and arr[y, x, 2] > 165 and arr[y, x, 3] > 200:
-                    text_mask[y, x] = True
+                if x < w and y < h:
+                    if arr[y, x, 0] > 180 and arr[y, x, 1] > 190 and arr[y, x, 2] > 165 and arr[y, x, 3] > 200:
+                        text_mask[y, x] = True
 
     mask_im = Image.fromarray((text_mask * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5))
     dilated = np.array(mask_im) > 0
@@ -146,12 +193,12 @@ def clean_card_canvas(base_im, title_override=None):
     cleaned = arr.copy()
 
     # Inpaint parchment
-    for y in range(380, 545):
-        for x in range(75, 480):
+    for y in range(380, min(h, 545)):
+        for x in range(75, min(w, 485)):
             if not dilated[y, x]:
                 continue
-            patch = arr[max(380, y-10):min(545, y+11), max(75, x-25):min(480, x+26), :3]
-            patch_mask = dilated[max(380, y-10):min(545, y+11), max(75, x-25):min(480, x+26)]
+            patch = arr[max(380, y-10):min(min(h, 545), y+11), max(75, x-25):min(min(w, 485), x+26), :3]
+            patch_mask = dilated[max(380, y-10):min(min(h, 545), y+11), max(75, x-25):min(min(w, 485), x+26)]
             bg = patch[(~patch_mask) & (patch[:, :, 0] > 175) & (patch[:, :, 1] > 170)]
             if len(bg) > 5:
                 bg_col = np.median(bg, axis=0)
@@ -163,12 +210,12 @@ def clean_card_canvas(base_im, title_override=None):
     # Inpaint banner if needed
     if title_override:
         banner_bg = np.median(arr[45:65, 150:250, :3], axis=(0, 1))
-        for y in range(24, 76):
-            for x in range(95, 440):
+        for y in range(24, min(h, 76)):
+            for x in range(95, min(w, 440)):
                 if not dilated[y, x]:
                     continue
-                patch = arr[max(20, y-10):min(80, y+11), max(85, x-25):min(450, x+26), :3]
-                patch_mask = dilated[max(20, y-10):min(80, y+11), max(85, x-25):min(450, x+26)]
+                patch = arr[max(20, y-10):min(min(h, 80), y+11), max(85, x-25):min(min(w, 450), x+26), :3]
+                patch_mask = dilated[max(20, y-10):min(min(h, 80), y+11), max(85, x-25):min(min(w, 450), x+26)]
                 bg = patch[(~patch_mask) & (patch[:, :, 1] > 130) & (patch[:, :, 1] < 175)]
                 if len(bg) > 5:
                     bg_col = np.median(bg, axis=0)
@@ -317,72 +364,64 @@ def process_card(card_info, force=False):
             return True
 
     max_rank = card_info.get("maxRank", len(ranks))
+    special = card_info.get("special", "S")
 
-    # 1. Determine base image and base cost
+    # 1. Determine base image
     base_file = None
-    title_override = None
     aliases = list(CARD_ALIASES.get(card_id, []))
-    base_cost = ranks[0].get("cost", 1)
 
-    if card_id in SPECIAL_REWORKS:
-        rework = SPECIAL_REWORKS[card_id]
-        base_file = rework["base_file"]
-        base_cost = rework.get("base_cost", 1)
-        title_override = rework["title"]
-        aliases = list(set(aliases + rework.get("aliases", [])))
+    # Check wiki dir first for high-res clean webp
+    if card_id in WIKI_ALIASES:
+        base_file = os.path.join(WIKI_DIR, WIKI_ALIASES[card_id])
     else:
-        # Check wiki dir first for high-res clean webp
-        if card_id in WIKI_ALIASES:
-            base_file = os.path.join(WIKI_DIR, WIKI_ALIASES[card_id])
+        wiki_path = os.path.join(WIKI_DIR, f"fo76-perk-{card_id}.webp")
+        if os.path.exists(wiki_path):
+            base_file = wiki_path
         else:
-            wiki_path = os.path.join(WIKI_DIR, f"fo76-perk-{card_id}.webp")
-            if os.path.exists(wiki_path):
-                base_file = wiki_path
-            else:
-                curved_path = os.path.join(CURVED_DIR, f"{snake}.png")
-                if os.path.exists(curved_path):
-                    base_file = curved_path
+            curved_path = os.path.join(CURVED_DIR, f"{snake}.png")
+            if os.path.exists(curved_path):
+                base_file = curved_path
 
     if not base_file or not os.path.exists(base_file):
         print(f"⚠️ Missing base image for {card_id}, skipping.")
         return False
 
     raw_im = Image.open(base_file).convert("RGBA")
-    bbox = raw_im.getbbox()
+    raw_arr = np.array(raw_im)
+    raw_arr[raw_arr[:, :, 3] <= 30, 3] = 0
+    bbox = Image.fromarray(raw_arr).getbbox()
     base_im = raw_im.crop(bbox) if bbox else raw_im
 
-    # 2. Clean canvas (parchment text and title banner if rework)
-    clean_base = clean_card_canvas(base_im, title_override=title_override)
+    # Detect if ribbon rank exceeds target live patch maxRank
+    detected_ribbon = detect_ribbon_rank(np.array(base_im))
+    if detected_ribbon > max_rank:
+        base_im = patch_card_ribbon(base_im, special, max_rank)
+
+    # 2. Clean canvas (parchment text)
+    clean_base = clean_card_canvas(base_im, max_rank=max_rank)
 
     for r_data in ranks:
         rank_num = r_data["rank"]
-        cost_val = r_data.get("cost", base_cost)
+        cost_val = r_data.get("cost", 1)
         desc = r_data.get("description", "").strip()
 
         card = clean_base.copy()
 
-        # Update cost badge
-        card = update_cost_badge(card, cost_val, base_cost=base_cost)
+        # Update cost badge (base cost is 1 in all original card artwork)
+        card = update_cost_badge(card, cost_val, base_cost=1)
 
         # Render description text
         card = render_description(card, desc)
 
         # Update stars if multi-rank
-        if max_rank == 2:
-            if rank_num == 1:
-                card.paste(dark_star, (445, 502), dark_star)
-            elif rank_num >= 2:
-                card.paste(white_star, (451, 500), white_star)
-        elif max_rank >= 3:
-            if rank_num == 1:
-                card.paste(dark_star, (427, 496), dark_star)
-                card.paste(dark_star, (457, 492), dark_star)
-            elif rank_num == 2:
-                card.paste(white_star, (429, 502), white_star)
-                card.paste(dark_star, (457, 492), dark_star)
-            elif rank_num >= 3:
-                card.paste(white_star, (429, 502), white_star)
-                card.paste(white_star, (459, 499), white_star)
+        # NEVER stamp stars on rank 1 (native rank 1 already has 1 white star and remaining dark stars)
+        # For rank 2 and above, stamp pristine clean white_star at exact calculated slot coordinates
+        if max_rank >= 2 and rank_num >= 2:
+            for s in range(2, min(rank_num + 1, max_rank + 1)):
+                k = max_rank - s
+                star_x = 456 - k * 32
+                star_y = 499 + k * 2
+                card.paste(white_star, (star_x, star_y), white_star)
 
         # Save rank image and aliases
         target_names = [snake] + aliases
@@ -401,7 +440,7 @@ def process_card(card_info, force=False):
                 shutil.copyfile(proj_path, proj_base)
                 shutil.copyfile(proj_path, desk_base)
 
-    print(f"✅ [{card_info.get('special', 'S')}] {card_info['name']} ({card_id}) -> {len(ranks)} rank(s)")
+    print(f"✅ [{special}] {card_info["name"]} ({card_id}) -> {len(ranks)} rank(s)")
     return True
 
 def main():
