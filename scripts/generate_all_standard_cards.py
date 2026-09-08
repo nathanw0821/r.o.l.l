@@ -37,13 +37,22 @@ with open(DATA_JSON, "r", encoding="utf-8") as f:
     cards_data = json.load(f)
 
 # Fonts
-BODY_FONT = "/usr/share/fonts/TTF/DejaVuSerif-Bold.ttf"
+BODY_FONT_ROBOTO = os.path.join(PROJECT_ROOT, "data", "fonts", "RobotoSlab-ExtraBold.ttf")
+BODY_FONT_DEJAVU = "/usr/share/fonts/TTF/DejaVuSerif-Bold.ttf"
+BODY_FONT = BODY_FONT_ROBOTO if os.path.exists(BODY_FONT_ROBOTO) else BODY_FONT_DEJAVU
 TITLE_FONT = os.path.join(PROJECT_ROOT, "data", "fonts", "RobotoCondensed-Bold.ttf")
 
+font_body_20 = ImageFont.truetype(BODY_FONT, 20)
 font_body_18 = ImageFont.truetype(BODY_FONT, 18)
-font_title_34 = ImageFont.truetype(TITLE_FONT, 34)
-font_title_28 = ImageFont.truetype(TITLE_FONT, 28)
-font_title_24 = ImageFont.truetype(TITLE_FONT, 24)
+
+def get_title_font(title, max_w=330, max_sz=50, min_sz=36):
+    """Dynamically choose the largest authentic bold condensed title font that fits."""
+    for sz in range(max_sz, min_sz - 1, -1):
+        f = ImageFont.truetype(TITLE_FONT, sz)
+        bb = f.getbbox(title)
+        if (bb[2] - bb[0]) <= max_w:
+            return f
+    return ImageFont.truetype(TITLE_FONT, min_sz)
 
 # Cost Badge Sprites (100% authentic bit-exact Bethesda Pip-Boy numerals)
 COST_GLYPHS = {}
@@ -154,7 +163,7 @@ DONOR_CARDS = {
 
     ("I", 1): "chemist",
     ("I", 2): "contractor",
-    ("I", 3): "power-user",
+    ("I", 3): "power-patcher",
 
     ("A", 1): "escape-artist",
     ("A", 2): "ammosmith",
@@ -171,7 +180,7 @@ RETHEMED_CARDS = {
     "tormentor": {"target_special": "P", "source_special": "L", "donor": "picklock"},
     "starched-genes": {"target_special": "E", "source_special": "L", "donor": "aquaboy"},
     "thru-hiker": {"target_special": "E", "source_special": "A", "donor": "chem-resistant"},
-    "white-knight": {"target_special": "I", "source_special": "A", "donor": "power-user"},
+    "white-knight": {"target_special": "I", "source_special": "A", "donor": "power-patcher"},
     "bullet-shield": {"target_special": "E", "source_special": "S", "donor": "ghoulish"},
     "bloodsucker": {"target_special": "E", "source_special": "C", "donor": "aquaboy"},
     "field-surgeon": {"target_special": "I", "source_special": "C", "donor": "chemist"},
@@ -241,8 +250,8 @@ def create_special_background(special, w, h):
     noise = np.random.normal(0, 3.0, (h, w, 3))
     arr[:, :, :3] = np.clip(arr[:, :, :3] + noise, 0, 255)
     return Image.fromarray(arr.astype(np.uint8))
-ART_WINDOW_POLY = [(42, 98), (105, 98), (105, 94), (480, 66), (480, 395), (42, 430)]
-ART_CROP_BOX = (42, 66, 480, 430)
+ART_WINDOW_POLY = [(42, 98), (105, 98), (105, 90), (480, 90), (480, 395), (42, 430)]
+ART_CROP_BOX = (42, 90, 480, 430)
 
 def extract_character(src_im, source_special="L", mask_art=None):
     """Extract character illustration from base artwork, protecting ink outlines and fills."""
@@ -330,17 +339,19 @@ def extract_character(src_im, source_special="L", mask_art=None):
 def render_rotated_title(card_im, title):
     """Render title text parallel to authentic Pip-Boy banner slant (+3.568°)."""
     w, h = card_im.size
-    t_font = font_title_34 if len(title) <= 12 else (font_title_28 if len(title) <= 18 else font_title_24)
+    t_font = get_title_font(title)
     txt_im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(txt_im)
     bbox = d.textbbox((0, 0), title, font=t_font)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
-    tx = 270 - (tw // 2)
-    ty = 47 - (th // 2)
-    d.text((tx + 1, ty + 1), title, fill=(40, 50, 40, 180), font=t_font)
+    cx = 292
+    cy = 46
+    tx = cx - (tw // 2)
+    ty = cy - (th // 2)
+    d.text((tx + 1, ty + 1), title, fill=(30, 30, 30, 200), font=t_font)
     d.text((tx, ty), title, fill=(245, 242, 230, 255), font=t_font)
-    rot_txt = txt_im.rotate(3.568, center=(270, 47), resample=Image.BICUBIC)
+    rot_txt = txt_im.rotate(3.568, center=(cx, cy), resample=Image.BICUBIC)
     return Image.alpha_composite(card_im, rot_txt)
 
 def build_rethemed_card(card_id, target_special, max_rank, title, donor_id, source_special="L"):
@@ -492,14 +503,24 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None):
 
     # 2. Title banner text mask (if replacing title)
     if title_override:
-        for y in range(25, 75):
-            for x in range(95, 440):
+        left_banner = arr[45:60, 115:135, :3]
+        right_banner = arr[40:55, 385:410, :3]
+        banner_samples = np.vstack([left_banner.reshape(-1, 3), right_banner.reshape(-1, 3)])
+        banner_bg = np.median(banner_samples, axis=0)
+
+        for y in range(24, min(h, 88)):
+            for x in range(112, 445):
                 if x < w and y < h:
-                    if arr[y, x, 0] > 180 and arr[y, x, 1] > 190 and arr[y, x, 2] > 165 and arr[y, x, 3] > 200:
+                    diff = np.linalg.norm(arr[y, x, :3].astype(float) - banner_bg)
+                    if diff > 14 or (arr[y, x, 0] > 180 and arr[y, x, 1] > 190):
                         text_mask[y, x] = True
 
     mask_im = Image.fromarray((text_mask * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5))
-    dilated = np.array(mask_im) > 0
+    mask_arr = np.array(mask_im)
+    # Ensure banner inpaint strictly protects the top-left cost badge zone (x <= 108)
+    mask_arr[:90, :110] = 0
+    dilated = mask_arr > 0
+    mask_im = Image.fromarray(mask_arr)
 
     cleaned = arr.copy()
 
@@ -520,17 +541,12 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None):
 
     # Inpaint banner if needed
     if title_override:
-        left_banner = arr[45:60, 110:135, :3]
-        right_banner = arr[40:55, 385:410, :3]
-        banner_samples = np.vstack([left_banner.reshape(-1, 3), right_banner.reshape(-1, 3)])
-        banner_bg = np.median(banner_samples, axis=0)
-
-        for y in range(24, min(h, 76)):
-            for x in range(95, min(w, 440)):
+        for y in range(24, min(h, 88)):
+            for x in range(110, min(w, 445)):
                 if not dilated[y, x]:
                     continue
-                patch = arr[max(20, y-10):min(min(h, 80), y+11), max(85, x-25):min(min(w, 450), x+26), :3]
-                patch_mask = dilated[max(20, y-10):min(min(h, 80), y+11), max(85, x-25):min(min(w, 450), x+26)]
+                patch = arr[max(20, y-10):min(min(h, 88), y+11), max(110, x-25):min(min(w, 450), x+26), :3]
+                patch_mask = dilated[max(20, y-10):min(min(h, 88), y+11), max(110, x-25):min(min(w, 450), x+26)]
                 bg = patch[~patch_mask]
                 if len(bg) > 5:
                     bg_col = np.median(bg, axis=0)
@@ -633,12 +649,14 @@ def render_description(card_im, desc):
         return card_im
     w, h = card_im.size
     words = desc.split()
+
+    # Try fitting with standard 20px font first
     lines = []
     cur_line = []
     for wd in words:
         test = " ".join(cur_line + [wd])
-        bbox = font_body_18.getbbox(test)
-        if (bbox[2] - bbox[0]) > 325:
+        bbox = font_body_20.getbbox(test)
+        if (bbox[2] - bbox[0]) > 330:
             lines.append(" ".join(cur_line))
             cur_line = [wd]
         else:
@@ -646,21 +664,41 @@ def render_description(card_im, desc):
     if cur_line:
         lines.append(" ".join(cur_line))
 
-    line_h = 24
+    # If text is long (3+ lines) or exceeds comfortable height, use 18px font
+    if len(lines) > 2:
+        lines_18 = []
+        cur_line_18 = []
+        for wd in words:
+            test = " ".join(cur_line_18 + [wd])
+            bbox = font_body_18.getbbox(test)
+            if (bbox[2] - bbox[0]) > 330:
+                lines_18.append(" ".join(cur_line_18))
+                cur_line_18 = [wd]
+            else:
+                cur_line_18.append(wd)
+        if cur_line_18:
+            lines_18.append(" ".join(cur_line_18))
+        lines = lines_18
+        active_font = font_body_18
+        line_h = 24
+    else:
+        active_font = font_body_20
+        line_h = 26
+
     total_h = len(lines) * line_h
     start_y = 482 - (total_h // 2)
 
     txt_canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(txt_canvas)
     for i, line in enumerate(lines):
-        bbox = d.textbbox((0, 0), line, font=font_body_18)
+        bbox = d.textbbox((0, 0), line, font=active_font)
         lw = bbox[2] - bbox[0]
         cx = 268
         lx = cx - (lw // 2)
         ly = start_y + i * line_h
-        d.text((lx, ly), line, fill=(35, 38, 40, 255), font=font_body_18)
+        d.text((lx, ly), line, fill=(35, 38, 40, 255), font=active_font)
 
-    rot_txt = txt_canvas.rotate(3.568, center=(275, 482), resample=Image.BICUBIC)
+    rot_txt = txt_canvas.rotate(3.568, center=(268, 482), resample=Image.BICUBIC)
     return Image.alpha_composite(card_im, rot_txt)
 
 def process_card(card_info, force=False):
