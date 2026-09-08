@@ -36,6 +36,9 @@ export interface InGamePerkCardProps {
   onUnequip?: () => void;
   onRankChange?: (newRank: number) => void;
   footerExtra?: React.ReactNode;
+  isAccordion?: boolean;
+  isForefront?: boolean;
+  onSelect?: () => void;
 }
 
 // In-Game FO76 Official S.P.E.C.I.A.L. Theme Colors (Fallout 76 Exact Palette)
@@ -358,6 +361,9 @@ export default function InGamePerkCard({
   onUnequip,
   onRankChange,
   footerExtra,
+  isAccordion = false,
+  isForefront = false,
+  onSelect,
 }: InGamePerkCardProps) {
   const theme = INGAME_SPECIAL_THEMES[special] || INGAME_SPECIAL_THEMES.S;
   const [imgError, setImgError] = React.useState(false);
@@ -431,16 +437,29 @@ export default function InGamePerkCard({
     >
       {/* Style Bible Container: Aspect Ratio Uniform Framing */}
       <div
-        className={`relative w-full aspect-[310/490] rounded-xl transition-all duration-200 group-hover:scale-[1.03] cursor-pointer flex flex-col justify-between ${
-          isEquipped
-            ? "ring-2 ring-amber-400 shadow-amber-500/40 overflow-hidden"
+        className={`relative w-full aspect-[310/490] rounded-xl transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+          isAccordion
+            ? isForefront
+              ? "ring-2 ring-amber-400 shadow-[0_12px_32px_rgba(0,0,0,0.95),0_0_20px_rgba(251,191,36,0.6)] overflow-hidden scale-[1.03]"
+              : "ring-1 ring-slate-800/80 shadow-xl overflow-hidden opacity-95 hover:opacity-100 hover:ring-amber-400/50"
+            : isEquipped
+            ? "ring-2 ring-amber-400 shadow-amber-500/40 overflow-hidden group-hover:scale-[1.03]"
             : isGhoul
-            ? "ring-1 ring-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.85),0_0_12px_rgba(16,185,129,0.4)] overflow-hidden"
+            ? "ring-1 ring-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.85),0_0_12px_rgba(16,185,129,0.4)] overflow-hidden group-hover:scale-[1.03]"
             : isLegendary && cleanForeground
-            ? "shadow-none bg-transparent overflow-visible"
-            : "shadow-xl overflow-hidden opacity-95 group-hover:opacity-100"
+            ? "shadow-none bg-transparent overflow-visible group-hover:scale-[1.03]"
+            : "shadow-xl overflow-hidden opacity-95 group-hover:opacity-100 group-hover:scale-[1.03]"
         }`}
-        onClick={() => (isEquipped ? onUnequip?.() : onEquip?.())}
+        onClick={(e) => {
+          if (isAccordion && !isForefront) {
+            e.stopPropagation();
+            onSelect?.();
+          } else if (isEquipped) {
+            onUnequip?.();
+          } else {
+            onEquip?.();
+          }
+        }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchEnd}
@@ -448,7 +467,7 @@ export default function InGamePerkCard({
           e.preventDefault();
           setShowInspector(true);
         }}
-        title="Click to equip • Right-click for perk details & Truth Wiki"
+        title={isAccordion && !isForefront ? "Click to bring to forefront" : "Click to equip • Right-click for perk details & Truth Wiki"}
       >
         {/* 1. Literal 1:1 In-Game Bitmap Cards (Pip-Boy Slanted & Curved for Regular, Ghoul, and Legendary) */}
         {inGameCardImage && !imgError ? (
@@ -569,7 +588,9 @@ export default function InGamePerkCard({
 
       {/* Clean Rank Level Up / Down Interactive Control Bar */}
       <div
-        className={`w-full mt-2 rounded-lg p-1.5 flex items-center justify-between gap-1 shadow-md border ${
+        className={`w-full mt-2 rounded-lg p-1.5 items-center justify-between gap-1 shadow-md border transition-all duration-150 ${
+          isAccordion && !isForefront ? "hidden" : "flex"
+        } ${
           isLegendary
             ? "bg-gradient-to-r from-[#141b24] via-[#1d2734] to-[#141b24] border-yellow-500/70"
             : "bg-slate-950/90 border-slate-800"

@@ -22,6 +22,9 @@ export interface PipBoyPerkCardProps {
   onEquip?: () => void;
   onUnequip?: () => void;
   footerExtra?: React.ReactNode;
+  isAccordion?: boolean;
+  isForefront?: boolean;
+  onSelect?: () => void;
 }
 
 export default function PipBoyPerkCard(
