@@ -1,16 +1,8 @@
-import { SpecialCategory } from "@/lib/perks/catalog";
+import { SpecialCategory, getGenderedPerkName } from "@/lib/perks/catalog";
 import wikiArtMap from "./wiki-268-art-map.json";
 import exactArtMap from "./exact-268-art-map.json";
 
-export function getGenderedPerkName(name: string, isFemale = false): string {
-  if (!isFemale || !name) return name;
-  const lower = name.toLowerCase().trim();
-  if (lower === "action boy" || lower === "action-boy" || lower === "actionboy") return "Action Girl";
-  if (lower === "aquaboy" || lower === "aqua-boy" || lower === "aquaboy-aquagirl") return "Aquagirl";
-  if (lower === "party boy" || lower === "party-boy" || lower === "partyboy") return "Party Girl";
-  if (lower === "lady killer" || lower === "lady-killer" || lower === "ladykiller") return "Black Widow";
-  return name;
-}
+export { getGenderedPerkName };
 
 // 100% 1:1 Official In-Game WebP Artwork Loader for all 268 Perk Cards
 export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, isFemale = false): string {
@@ -20,11 +12,15 @@ export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, 
   
   let raw = cardId.toLowerCase().trim();
 
-  // Female Vault Girl Card Variant Swapping
+  // Dynamic Vault Boy / Vault Girl Variant Swapping
   if (isFemale) {
     if (raw === "action-boy" || raw === "action boy" || raw === "actionboy" || raw === "action-girl" || raw === "action girl" || raw === "actiongirl") raw = "action-girl";
     else if (raw === "party-boy" || raw === "party boy" || raw === "partyboy" || raw === "party-girl" || raw === "party girl" || raw === "partygirl") raw = "party-girl";
     else if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment" || raw === "aquagirl" || raw === "aqua-girl") raw = "aquagirl";
+  } else {
+    if (raw === "action-boy" || raw === "action boy" || raw === "actionboy" || raw === "action-girl" || raw === "action girl" || raw === "actiongirl") raw = "action-boy";
+    else if (raw === "party-boy" || raw === "party boy" || raw === "partyboy" || raw === "party-girl" || raw === "party girl" || raw === "partygirl") raw = "party-boy";
+    else if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment" || raw === "aquagirl" || raw === "aqua-girl") raw = "aquaboy";
   }
 
   const kebab = raw.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");

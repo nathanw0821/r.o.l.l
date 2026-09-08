@@ -83,6 +83,43 @@ CARD_ALIASES = {
     "knee-capper": ["expert_slugger"],
 }
 
+# Explicit female Vault Girl variant cards
+FEMALE_CARDS = [
+    {
+        "id": "action-girl",
+        "name": "Action Girl",
+        "special": "A",
+        "minLevel": 2,
+        "maxRank": 3,
+        "ranks": [
+            {"rank": 1, "cost": 1, "description": "Action Points regenerate 15% faster."},
+            {"rank": 2, "cost": 2, "description": "Action Points regenerate 30% faster."},
+            {"rank": 3, "cost": 3, "description": "Action Points regenerate 45% faster."}
+        ]
+    },
+    {
+        "id": "aquagirl",
+        "name": "Aquagirl",
+        "special": "E",
+        "minLevel": 26,
+        "maxRank": 1,
+        "ranks": [
+            {"rank": 1, "cost": 1, "description": "You no longer take Rad damage from swimming and can breathe underwater."}
+        ]
+    },
+    {
+        "id": "party-girl",
+        "name": "Party Girl",
+        "special": "C",
+        "minLevel": 24,
+        "maxRank": 2,
+        "ranks": [
+            {"rank": 1, "cost": 2, "description": "The positive effects of pre-war alcohol are doubled."},
+            {"rank": 2, "cost": 3, "description": "The positive effects of pre-war alcohol are tripled."}
+        ]
+    }
+]
+
 # Authentic Bethesda reference donor cards by SPECIAL and target rank tier
 DONOR_CARDS = {
     ("S", 1): "blood-luster",
@@ -480,7 +517,7 @@ def main():
     force = ("--force" in args)
     filter_ids = [a for a in args if not a.startswith("--")]
 
-    standard_cards = [c for c in cards_data if c.get("special") != "LEGENDARY"]
+    standard_cards = [c for c in cards_data if c.get("special") != "LEGENDARY"] + FEMALE_CARDS
     if filter_ids:
         standard_cards = [c for c in standard_cards if c["id"] in filter_ids]
 

@@ -364,7 +364,7 @@ export default function InGamePerkCard({
   // Check if official isolated vector foreground is available
   const cleanForeground = getCleanPerkForeground(cardId || name);
   const ghoulPerkImage = isGhoul ? getGhoulPerkCardImage(cardId || name, rank) : null;
-  const inGameCardImage = getInGamePerkCardImage(cardId || name, rank);
+  const inGameCardImage = getInGamePerkCardImage(cardId || name, rank, isFemale);
 
   const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -391,7 +391,7 @@ export default function InGamePerkCard({
     return { rank: inspectRank, cost, description };
   }, [fullCard, inspectRank, cost, description]);
 
-  const inGameInspectImage = getInGamePerkCardImage(cardId || name, inspectRankData.rank);
+  const inGameInspectImage = getInGamePerkCardImage(cardId || name, inspectRankData.rank, isFemale);
 
   const openWikiSource = React.useCallback(() => {
     window.open(`/wiki?q=${encodeURIComponent(name)}`, "_blank", "noopener,noreferrer");
@@ -659,7 +659,7 @@ export default function InGamePerkCard({
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg sm:text-xl font-black uppercase text-amber-400 tracking-wider">
-                    {name}
+                    {displayName}
                   </h3>
                   <span className={`text-xs font-black px-2 py-0.5 rounded border uppercase ${theme.stampBg}`}>
                     {special}
@@ -696,7 +696,7 @@ export default function InGamePerkCard({
                   {inGameInspectImage ? (
                     <img
                       src={inGameInspectImage}
-                      alt={name}
+                      alt={displayName}
                       className="w-full h-full object-contain rounded-xl block drop-shadow-xl select-none"
                       loading="eager"
                       decoding="async"
