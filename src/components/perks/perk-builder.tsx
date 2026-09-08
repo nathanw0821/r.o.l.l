@@ -129,11 +129,21 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
     if (!Array.isArray(equippedCards)) return [];
     return equippedCards
       .map((item) => {
-        if (typeof item === "string") return { cardId: item, rank: 1 };
-        if (item && typeof item === "object" && typeof (item as { cardId?: unknown }).cardId === "string") {
-          return { cardId: (item as { cardId: string }).cardId, rank: typeof (item as { rank?: unknown }).rank === "number" ? (item as { rank: number }).rank : 1 };
+        let cardId = "";
+        let rank = 1;
+        if (typeof item === "string") {
+          cardId = item;
+        } else if (item && typeof item === "object" && typeof (item as { cardId?: unknown }).cardId === "string") {
+          cardId = (item as { cardId: string }).cardId;
+          rank = typeof (item as { rank?: unknown }).rank === "number" ? (item as { rank: number }).rank : 1;
         }
-        return null;
+        if (!cardId) return null;
+        const card = getPerkCardById(cardId);
+        // Automatically migrate legacy perk cards to modern live equivalents for builds
+        if (card?.isOutdated && card.outdatedMeta?.replacedBy?.id) {
+          return { cardId: card.outdatedMeta.replacedBy.id, rank };
+        }
+        return { cardId, rank };
       })
       .filter((item): item is EquippedItem => item !== null);
   }, [equippedCards]);
@@ -301,10 +311,11 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
     });
   };
 
-  const searchedAllCards = React.useMemo(() => searchPerkCards(searchQuery), [searchQuery]);
+  // Leave out old perk versions from perk deck for builds; only present the newest cards
+  const searchedAllCards = React.useMemo(() => searchPerkCards(searchQuery, undefined, false), [searchQuery]);
 
   const filteredCards = React.useMemo(() => {
-    let result = searchedAllCards;
+    let result = searchedAllCards.filter((c) => !c.isOutdated);
     if (selectedCategory === "GHOUL") {
       result = result.filter((c) => isGhoulPerkCard(c.id || c.name));
     } else if (selectedCategory !== "ALL") {
@@ -678,6 +689,9 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                     isEquipped={true}
                     isOverflow={isOverflowStat}
                     isFemale={isFemale}
+                    isOutdated={card.isOutdated}
+                    outdatedMeta={card.outdatedMeta}
+                    reworkedFrom={card.reworkedFrom}
                     onUnequip={() => handleUnequipCard(card.id)}
                     onRankChange={(newRank) => handleEquipCard(card, newRank)}
                   />
@@ -779,7 +793,7 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
         </CardHeader>
         <CardContent className="pt-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
-            {filteredCards.map((card) => {
+            {filteredCards.map((card, idx) => {
               const equippedItem = equippedCards.find((item) => item.cardId === card.id);
               const currentRank = equippedItem ? equippedItem.rank : 1;
               const activeRankObj = card.ranks.find((r) => r.rank === currentRank) || card.ranks[0];
@@ -797,7 +811,20 @@ export default function PerkBuilder({ characterId, characterName, mode = "live" 
                   description={activeRankObj?.description || ""}
                   isEquipped={!!equippedItem}
                   isFemale={isFemale}
-                  onEquip={() => handleEquipCard(card, currentRank)}
+                  isOutdated={card.isOutdated}
+                  outdatedMeta={card.outdatedMeta}
+                  reworkedFrom={card.reworkedFrom}
+                  priority={idx < 8}
+                  onEquip={() => {
+                    if (card.isOutdated && card.outdatedMeta?.replacedBy) {
+                      const replacement = getPerkCardById(card.outdatedMeta.replacedBy.id);
+                      if (replacement) {
+                        handleEquipCard(replacement, 1);
+                        return;
+                      }
+                    }
+                    handleEquipCard(card, currentRank);
+                  }}
                   onUnequip={() => handleUnequipCard(card.id)}
                   onRankChange={(newRank) => handleEquipCard(card, newRank)}
                 />

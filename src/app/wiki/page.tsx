@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, BookOpen, ExternalLink, Shield, ChevronRight, ArrowUpDown, Filter, Terminal, FileText, ArrowLeft, Layers, Compass, Crosshair, Coins, Activity, Wrench } from "lucide-react";
+import { Search, BookOpen, ExternalLink, Shield, ChevronRight, ArrowUpDown, Filter, Terminal, FileText, ArrowLeft, Layers, Compass, Crosshair, Coins, Activity, Wrench, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -57,6 +57,7 @@ function toHighResImageUrl(url: string | null): string {
 }
 
 import { sanitizeTitle } from "@/lib/utils/clean-formatting";
+import { getArticleOutdatedStatus } from "@/lib/wiki/outdated-articles";
 
 function cleanTitle(title: string): string {
   return sanitizeTitle(title);
@@ -518,6 +519,36 @@ function TruthWikiContent() {
               </a>
             </div>
 
+            {/* Outdated Archival Advisory Banner */}
+            {(() => {
+              const outdatedStatus = getArticleOutdatedStatus(selectedArticle);
+              if (!outdatedStatus) return null;
+              return (
+                <div className="rounded-xl border-2 border-amber-500/70 bg-amber-950/60 p-5 space-y-3 text-amber-200 shadow-xl font-mono">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2 text-sm font-black uppercase text-amber-400 tracking-wider">
+                      <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0" />
+                      VAULT-TEC ADVISORY: OUTDATED ARCHIVAL RECORD ({outdatedStatus.patchVersion})
+                    </div>
+                    <span className="text-[0.65rem] px-2.5 py-0.5 rounded-full bg-red-950 border border-amber-500/50 text-amber-300 font-bold uppercase">
+                      Historical Knowledge
+                    </span>
+                  </div>
+                  <p className="text-xs text-amber-100/95 leading-relaxed">
+                    {outdatedStatus.reason}
+                  </p>
+                  <div className="pt-1">
+                    <Link
+                      href={outdatedStatus.replacementHref}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-black uppercase transition-all shadow-md active:scale-95"
+                    >
+                      Open Live 2026 Ground Truth: {outdatedStatus.replacementTitle} ➔
+                    </Link>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Main Article Document Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8 space-y-4 max-h-[680px] overflow-y-auto pr-2">
@@ -749,22 +780,35 @@ function TruthWikiContent() {
 
         {/* VAULT GUIDE CARDS GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {articles.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => setSelectedArticle(item)}
-              className="bg-[#0f172a] border border-slate-700 hover:border-amber-500/60 rounded-2xl p-6 flex flex-col justify-between gap-5 cursor-pointer group transition-all hover:-translate-y-1 shadow-xl hover:shadow-2xl"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-[10px] font-mono font-bold uppercase">
-                  <span className="px-3 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                    {item.category || "General"}
-                  </span>
-                  <span className="text-slate-400 font-bold">{item.source}</span>
-                </div>
-                <h3 className="font-bold text-lg text-slate-100 group-hover:text-amber-300 font-mono transition-colors leading-snug">
-                  {cleanTitle(item.title)}
-                </h3>
+          {articles.map((item) => {
+            const outdatedInfo = getArticleOutdatedStatus(item);
+            return (
+              <div
+                key={item.id}
+                onClick={() => setSelectedArticle(item)}
+                className={`bg-[#0f172a] border rounded-2xl p-6 flex flex-col justify-between gap-5 cursor-pointer group transition-all hover:-translate-y-1 shadow-xl hover:shadow-2xl ${
+                  outdatedInfo
+                    ? "border-amber-600/50 hover:border-amber-400 ring-1 ring-amber-500/20"
+                    : "border-slate-700 hover:border-amber-500/60"
+                }`}
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-[10px] font-mono font-bold uppercase">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="px-3 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                        {item.category || "General"}
+                      </span>
+                      {outdatedInfo && (
+                        <span className="px-2 py-0.5 rounded-full bg-amber-950/90 text-amber-300 border border-amber-500/60 flex items-center gap-1 animate-pulse">
+                          <AlertTriangle className="h-3 w-3 text-amber-400" /> OUTDATED
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-slate-400 font-bold">{item.source}</span>
+                  </div>
+                  <h3 className="font-bold text-lg text-slate-100 group-hover:text-amber-300 font-mono transition-colors leading-snug">
+                    {cleanTitle(item.title)}
+                  </h3>
                 <p className="text-xs text-slate-300 line-clamp-3 font-sans leading-relaxed">
                   {item.snippet ? item.snippet.replace(/<[^>]*>/g, "") : item.content.replace(/<[^>]*>/g, "").substring(0, 150) + "..."}
                 </p>
@@ -777,7 +821,8 @@ function TruthWikiContent() {
                 <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
       </div>
     </div>

@@ -27,12 +27,14 @@ export function calculateAggregatedBuffSpecial(params: {
   activeCampBuffs: string[];
   activeDrug: string | null;
   activeFood?: string | null;
-  activeFoods?: Record<string, string>;
+  activeFoods?: Record<string, string> | string[];
   activeBobblehead: string | null;
   activeMagazine: string | null;
   activeAlcohol: string | null;
   activeNukaCola: string | null;
   activeCompanion: string | null;
+  activeMutations?: string[];
+  hasStrangeInNumbers?: boolean;
 }): AggregatedBuffSpecial {
   const {
     activeCampBuffs,
@@ -44,6 +46,8 @@ export function calculateAggregatedBuffSpecial(params: {
     activeAlcohol,
     activeNukaCola,
     activeCompanion,
+    activeMutations = [],
+    hasStrangeInNumbers = false,
   } = params;
 
   const totals: Record<SpecialStatKey, number> = {
@@ -97,12 +101,82 @@ export function calculateAggregatedBuffSpecial(params: {
   const chemDef = ALL_CHEMS.find((c) => c.id === activeDrug);
   addBuffDef(chemDef, "Chem");
 
-  // 3. Active Foods (Multi-category stacked foods)
+  // 3. Active Foods (Multi-category stacked foods with Herbivore / Carnivore scaling)
+  const isHerbivore = activeMutations.includes("herbivore");
+  const isCarnivore = activeMutations.includes("carnivore");
   const allFoods = [...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS];
-  const foodIds = activeFoods ? Object.values(activeFoods) : activeFood ? [activeFood] : [];
+  const foodIds = Array.isArray(activeFoods)
+    ? activeFoods
+    : activeFoods
+    ? Object.values(activeFoods)
+    : activeFood
+    ? [activeFood]
+    : [];
+
   foodIds.forEach((fid) => {
     const fDef = allFoods.find((f) => f.id === fid);
-    addBuffDef(fDef, "Food/Tea");
+    if (!fDef || !fDef.specialBonus) return;
+
+    const isPlant = ALL_PLANT_FOODS.some((p) => p.id === fid);
+    const isMeat = ALL_MEAT_FOODS.some((m) => m.id === fid);
+
+    // Mutual exclusivity & mutation scaling:
+    // ALL_PLANT_FOODS and ALL_MEAT_FOODS define values at Herbivore/Carnivore + SiN (2.5x base).
+    let foodMult = 1.0;
+    let tag = "";
+
+    if (isPlant) {
+      if (isCarnivore) {
+        // Carnivores receive 0 benefits from plant foods/teas
+        foodMult = 0;
+      } else if (isHerbivore) {
+        if (hasStrangeInNumbers) {
+          foodMult = 1.0; // 2.5x
+          tag = " (Herbivore + SiN)";
+        } else {
+          foodMult = 0.8; // 2.0x (2.0 / 2.5)
+          tag = " (Herbivore)";
+        }
+      } else {
+        // Unmutated base (1.0x = 1.0 / 2.5 = 0.4)
+        foodMult = 0.4;
+        tag = " (Base)";
+      }
+    } else if (isMeat) {
+      if (isHerbivore) {
+        // Herbivores receive 0 benefits from meat dishes
+        foodMult = 0;
+      } else if (isCarnivore) {
+        if (hasStrangeInNumbers) {
+          foodMult = 1.0; // 2.5x
+          tag = " (Carnivore + SiN)";
+        } else {
+          foodMult = 0.8; // 2.0x (2.0 / 2.5)
+          tag = " (Carnivore)";
+        }
+      } else {
+        // Unmutated base (1.0x = 1.0 / 2.5 = 0.4)
+        foodMult = 0.4;
+        tag = " (Base)";
+      }
+    }
+
+    if (foodMult > 0) {
+      STAT_KEYS.forEach((stat) => {
+        const rawVal = fDef.specialBonus?.[stat];
+        if (rawVal && rawVal !== 0) {
+          const scaledVal = Math.round(rawVal * foodMult);
+          if (scaledVal !== 0) {
+            totals[stat] += scaledVal;
+            breakdown.push({
+              stat,
+              source: `Food/Tea (${fDef.label})${tag}`,
+              val: scaledVal,
+            });
+          }
+        }
+      });
+    }
   });
 
   // 4. Active Bobblehead

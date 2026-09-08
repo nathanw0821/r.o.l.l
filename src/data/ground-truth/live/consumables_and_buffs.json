@@ -1,10 +1,11 @@
 {
   "category": "Consumables, Cooked Foods, Chems, and Mutated Buffs",
-  "patchVersion": "54.0.0 Live",
+  "patchVersion": "69.0.0 Live (Milepost Zero / Burning Springs)",
   "rules": {
     "foodStacking": "Only ONE food buff can be active per primary stat or effect type. Consuming a food of the same type overwrites the previous buff.",
     "chemStacking": "Only ONE primary chem buff can be active at a time (e.g. Berry Mentats, Psychotats, Overdrive). Consuming another chem immediately replaces the active chem buff.",
     "alcoholStacking": "Only ONE alcohol buff can be active at a time. Overwritten upon drinking another alcohol.",
+    "dietaryExclusivity": "Herbivore grants 2.0x (2.5x with Strange in Numbers) to all plant-based foods and steeped teas, but yields 0.0x (ZERO hunger, thirst, or buff benefits) from all meat dishes. Carnivore grants 2.0x (2.5x with Strange in Numbers) to all meat dishes and scorchbeast organs, but yields 0.0x (ZERO benefits) from plant-based foods. Unmutated players gain standard 1.0x benefits from all foods.",
     "mutationMultipliers": {
       "base": 1.0,
       "herbivoreOnly": 2.0,

@@ -17,12 +17,12 @@ tags:
 
 * **Core Premise**: Operate continuously at **$19.9\%$ Health** (managing radiation using Toxic Sludge, Spoiled Meat, or Gamma Gun).
 * **The Synergy Loop**:
-  * **[[Unyielding Armor]] (x5)**: Grants $+3$ to all SPECIAL stats (except Endurance) per piece ➔ **$+15$ Strength, Perception, Charisma, Intelligence, Agility, Luck**.
+  * **Unyielding Armor (x5)**: Grants $+3$ to all SPECIAL stats (except Endurance) per piece ➔ **$+15$ Strength, Perception, Charisma, Intelligence, Agility, Luck**.
   * **33 Luck Threshold**: Hits the golden crit ratio (Crit every alternating shot with Critical Savvy 3).
   * **High Agility (+15)**: Provides an enormous base Action Point pool and near-total stealth invisibility.
   * **High Intelligence (+15)**: Multiplies event XP gain by $+45\%$.
-  * **[[Nerd Rage]] (Rank 3)**: Triggers at $<20\%$ HP ➔ $+20\%$ Additive Damage, $+40$ DR, and $+15\%$ AP Refresh.
-  * **[[Serendipity]] (Rank 3)**: $45\%$ chance to completely ignore incoming damage while below $30\%$ HP.
+  * **Nerd Rage (Rank 3)**: Triggers at $<20\%$ HP ➔ $+20\%$ Additive Damage, $+40$ DR, and $+15\%$ AP Refresh.
+  * **Serendipity (Rank 3)**: $45\%$ chance to completely ignore incoming damage while below $30\%$ HP.
 
 ---
 
@@ -30,11 +30,11 @@ tags:
 
 * **Core Premise**: Maximize flat percentage mitigation while wielding high-capacity heavy weapons. Zero radiation maintenance.
 * **The Synergy Loop**:
-  * **[[Overeaters Power Armor]] (x5)**: $30\%$ flat damage reduction.
-  * **[[What Rads?]] (Legendary Perk)**: Passively regenerates $+6$ HP and cures $+40$ Rads/second. Makes nuke zones walkable without radiation suits.
-  * **[[Stabilized]] (Rank 3)**: Heavy guns ignore **$45\%$ target armor** and gain pinpoint accuracy while inside Power Armor.
-  * **[[Electric Absorption]] (Legendary Perk)**: Energy attacks heal your character and recharge your Power Armor Fusion Core!
-  * **Preferred Weapons**: [[Holy Fire]] (rapid Vampire healing), [[Cremator]] (massive AOE multi-shot DOT), [[Plasma Caster]] (sniper-level single shot crits).
+  * **Overeaters Power Armor (x5)**: $30\%$ flat damage reduction.
+  * **What Rads? (Legendary Perk)**: Passively regenerates $+6$ HP and cures $+40$ Rads/second. Makes nuke zones walkable without radiation suits.
+  * **Stabilized (Rank 3)**: Heavy guns ignore **$45\%$ target armor** and gain pinpoint accuracy while inside Power Armor.
+  * **Electric Absorption (Legendary Perk)**: Energy attacks heal your character and recharge your Power Armor Fusion Core!
+  * **Preferred Weapons**: **Holy Fire** (rapid Vampire healing), **Cremator** (massive AOE multi-shot DOT), **Plasma Caster** (sniper-level single shot crits).
 
 ---
 
@@ -68,4 +68,4 @@ Never run mutations without **Class Freak (Rank 3)** (reduces negative mutation 
 * **Herd Mentality**: $+2$ to all SPECIAL stats while on a team (even if on a public team alone!).
 
 ---
-*Cross-References*: [[Damage_Calculation_Bible]] | [[Box_Mods_and_Scrapping_Guide]] | [[Ballistic_and_Commando_Weapons]] | [[Armor_and_Power_Armor_Master]]
+*Cross-References*: [Master Truth Bible](../README.md) | [01. Damage Calculation & Armor Mitigation Bible](../01_Mechanics_and_Formulas/Damage_Calculation_Bible.md) | [02. Box Mods & Scrapping Guide](../02_Legendary_Crafting/Box_Mods_and_Scrapping_Guide.md) | [03. Ballistic & Commando Weapons](../03_Weapons_Catalog/Ballistic_and_Commando_Weapons.md) | [04. Armor & Power Armor Master](../04_Armor_and_Power_Armor/Armor_and_Power_Armor_Master.md)

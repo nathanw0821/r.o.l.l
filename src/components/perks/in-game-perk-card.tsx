@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard } from "@/lib/perks/catalog";
+import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard, getPerkCardById, OutdatedPerkMeta, ReworkedPerkMeta } from "@/lib/perks/catalog";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
 import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
 import {
@@ -14,7 +14,7 @@ import {
   getGhoulPerkCardImage,
   getInGamePerkCardImage,
 } from "@/lib/perks/clean-perk-assets";
-import { Sparkles, Star, Info, X, ExternalLink } from "lucide-react";
+import { Sparkles, Star, Info, X, ExternalLink, AlertTriangle } from "lucide-react";
 
 export interface InGamePerkCardProps {
   cardId?: string;
@@ -28,6 +28,10 @@ export interface InGamePerkCardProps {
   isEquipped?: boolean;
   isOverflow?: boolean;
   isFemale?: boolean;
+  isOutdated?: boolean;
+  outdatedMeta?: OutdatedPerkMeta;
+  reworkedFrom?: ReworkedPerkMeta;
+  priority?: boolean;
   onEquip?: () => void;
   onUnequip?: () => void;
   onRankChange?: (newRank: number) => void;
@@ -346,6 +350,10 @@ export default function InGamePerkCard({
   isEquipped = false,
   isOverflow = false,
   isFemale = false,
+  isOutdated,
+  outdatedMeta,
+  reworkedFrom,
+  priority = false,
   onEquip,
   onUnequip,
   onRankChange,
@@ -360,6 +368,15 @@ export default function InGamePerkCard({
   const displayName = getGenderedPerkName(name, isFemale);
   const isLegendary = special === "LEGENDARY" || cardId?.includes("legendary");
   const isGhoul = isGhoulPerkCard(cardId || name);
+
+  // Full Catalog Card for All Ranks Inspection & Outdated Metadata Resolution
+  const fullCard = React.useMemo(() => {
+    return getPerkCardById(cardId || "") || PERK_CATALOG.find((c) => c.id === cardId || c.name.toLowerCase() === name.toLowerCase());
+  }, [cardId, name]);
+
+  const effectiveIsOutdated = isOutdated ?? fullCard?.isOutdated ?? false;
+  const effectiveOutdatedMeta = outdatedMeta ?? fullCard?.outdatedMeta;
+  const effectiveReworkedFrom = reworkedFrom ?? fullCard?.reworkedFrom;
 
   // Check if official isolated vector foreground is available
   const cleanForeground = getCleanPerkForeground(cardId || name);
@@ -376,11 +393,6 @@ export default function InGamePerkCard({
   React.useEffect(() => {
     setInspectRank(rank);
   }, [rank]);
-
-  // Full Catalog Card for All Ranks Inspection
-  const fullCard = React.useMemo(() => {
-    return PERK_CATALOG.find((c) => c.id === cardId || c.name.toLowerCase() === name.toLowerCase());
-  }, [cardId, name]);
 
   // Inspect rank description & cost resolution
   const inspectRankData = React.useMemo(() => {
@@ -446,8 +458,9 @@ export default function InGamePerkCard({
             className={`w-full h-full object-contain ${
               isGhoul ? "bg-[#0a100d]" : "bg-transparent"
             } rounded-xl block drop-shadow-xl transform-none select-none`}
-            loading="lazy"
-            decoding="async"
+            loading={priority ? "eager" : "lazy"}
+            decoding={priority ? "sync" : "async"}
+            fetchPriority={priority ? "high" : "auto"}
             draggable={false}
             onError={() => setImgError(true)}
           />
@@ -509,6 +522,13 @@ export default function InGamePerkCard({
             <p className="text-[0.62rem] font-mono text-slate-200 leading-tight bg-slate-950/90 p-2 rounded border border-slate-800 shrink-0 line-clamp-3">
               {description}
             </p>
+          </div>
+        )}
+
+        {/* Outdated Warning Badge Banner */}
+        {effectiveIsOutdated && (
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-red-600 via-amber-600 to-amber-500 text-white font-black text-[0.58rem] px-2 py-0.5 rounded shadow-lg border border-amber-300 tracking-wider flex items-center gap-1 z-40 animate-pulse">
+            <AlertTriangle className="h-3 w-3" /> OUTDATED
           </div>
         )}
 
@@ -679,6 +699,50 @@ export default function InGamePerkCard({
                 <X className="h-5 w-5" />
               </button>
             </div>
+
+            {/* Outdated Advisory Banner */}
+            {effectiveIsOutdated && effectiveOutdatedMeta && (
+              <div className="rounded-xl border-2 border-amber-500/70 bg-amber-950/60 p-4 space-y-2.5 text-amber-200 shadow-lg">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5 tracking-wide">
+                    <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
+                    OUTDATED GAME KNOWLEDGE ({effectiveOutdatedMeta.patchVersion})
+                  </span>
+                  <span className="text-[0.65rem] px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold uppercase">
+                    Reworked in Live FO76
+                  </span>
+                </div>
+                <p className="text-xs text-amber-100/90 leading-relaxed font-mono">
+                  {effectiveOutdatedMeta.reason}
+                </p>
+                {effectiveOutdatedMeta.legacyEffect && (
+                  <p className="text-[0.72rem] text-amber-300/80 italic font-mono bg-amber-950/80 p-2 rounded border border-amber-800/40">
+                    Legacy Effect: &quot;{effectiveOutdatedMeta.legacyEffect}&quot;
+                  </p>
+                )}
+                <div className="pt-1 flex items-center gap-2 flex-wrap">
+                  <a
+                    href={effectiveOutdatedMeta.href || effectiveOutdatedMeta.replacedBy.href || `/perks?q=${effectiveOutdatedMeta.replacedBy.id}`}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-black uppercase transition-all shadow-md active:scale-95"
+                  >
+                    Equip / View Modern Perk: {effectiveOutdatedMeta.replacedBy.name} ➔
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* Modern Rework Info Callout */}
+            {effectiveReworkedFrom && !effectiveIsOutdated && (
+              <div className="rounded-xl border border-sky-500/40 bg-sky-950/40 p-3 space-y-1 text-slate-200">
+                <div className="text-[0.72rem] font-bold uppercase text-sky-400 flex items-center gap-1.5">
+                  <Info className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                  PATCH 69 LIVE GROUND TRUTH: Formerly &quot;{effectiveReworkedFrom.formerName}&quot;
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed font-mono">
+                  {effectiveReworkedFrom.summary} <span className="text-sky-300">({effectiveReworkedFrom.patchVersion})</span>
+                </p>
+              </div>
+            )}
 
             {/* Modal Body: Mobile Fluid Scaled Card Preview & All Ranks Table */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">

@@ -15,6 +15,7 @@ export type WeaponClassCategory =
   | "heavy"
   | "shotgunner"
   | "melee"
+  | "unarmed"
   | "gunslinger"
   | "guerrilla"
   | "bow";
@@ -356,6 +357,71 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     isRanged: true,
     isEnergy: true,
   },
+  "alien-blaster": {
+    id: "alien-blaster",
+    label: "Alien Blaster (Cryo/Poison)",
+    baseDamage: 32,
+    damageType: "energy",
+    fireRate: 6.0,
+    baseVatsApCost: 15,
+    magazineSize: 42,
+    weaponClass: "gunslinger",
+    isAutomatic: false,
+    isRanged: true,
+    isEnergy: true,
+  },
+  "crusader-pistol": {
+    id: "crusader-pistol",
+    label: "Crusader Pistol (Brotherhood Small Arms)",
+    baseDamage: 45,
+    damageType: "ballistic",
+    fireRate: 4.5,
+    baseVatsApCost: 18,
+    magazineSize: 12,
+    weaponClass: "gunslinger",
+    isAutomatic: false,
+    isRanged: true,
+    isEnergy: false,
+  },
+  "compound-bow": {
+    id: "compound-bow",
+    label: "Compound Bow",
+    baseDamage: 110,
+    damageType: "physical",
+    fireRate: 0.8,
+    baseVatsApCost: 22,
+    magazineSize: 1,
+    weaponClass: "bow",
+    isAutomatic: false,
+    isRanged: true,
+    isEnergy: false,
+  },
+  "power-fist": {
+    id: "power-fist",
+    label: "Power Fist (Unarmed)",
+    baseDamage: 58,
+    damageType: "physical",
+    fireRate: 1.8,
+    baseVatsApCost: 20,
+    magazineSize: 1,
+    weaponClass: "unarmed",
+    isAutomatic: false,
+    isRanged: false,
+    isEnergy: false,
+  },
+  "deathclaw-gauntlet": {
+    id: "deathclaw-gauntlet",
+    label: "Deathclaw Gauntlet (Unarmed)",
+    baseDamage: 55,
+    damageType: "physical",
+    fireRate: 2.0,
+    baseVatsApCost: 20,
+    magazineSize: 1,
+    weaponClass: "unarmed",
+    isAutomatic: false,
+    isRanged: false,
+    isEnergy: false,
+  },
 };
 
 /**
@@ -384,7 +450,23 @@ export function getWeaponCombatBaseStats(weaponId: string): WeaponCombatBaseStat
     };
   }
 
-  if (cleanId.includes("melee") || cleanId.includes("axe") || cleanId.includes("sledge") || cleanId.includes("sword") || cleanId.includes("baton") || cleanId.includes("fist") || cleanId.includes("gauntlet")) {
+  if (cleanId.includes("fist") || cleanId.includes("gauntlet") || cleanId.includes("unarmed")) {
+    return {
+      id: cleanId,
+      label: weaponId,
+      baseDamage: 60,
+      damageType: "physical",
+      fireRate: 2.0,
+      baseVatsApCost: 20,
+      magazineSize: 1,
+      weaponClass: "unarmed",
+      isAutomatic: false,
+      isRanged: false,
+      isEnergy: false,
+    };
+  }
+
+  if (cleanId.includes("melee") || cleanId.includes("axe") || cleanId.includes("sledge") || cleanId.includes("sword") || cleanId.includes("baton")) {
     return {
       id: cleanId,
       label: weaponId,
@@ -400,6 +482,22 @@ export function getWeaponCombatBaseStats(weaponId: string): WeaponCombatBaseStat
     };
   }
 
+  if (cleanId.includes("bow") || cleanId.includes("crossbow")) {
+    return {
+      id: cleanId,
+      label: weaponId,
+      baseDamage: 95,
+      damageType: "physical",
+      fireRate: 1.0,
+      baseVatsApCost: 22,
+      magazineSize: 1,
+      weaponClass: "bow",
+      isAutomatic: false,
+      isRanged: true,
+      isEnergy: false,
+    };
+  }
+
   if (cleanId.includes("shotgun")) {
     return {
       id: cleanId,
@@ -411,6 +509,22 @@ export function getWeaponCombatBaseStats(weaponId: string): WeaponCombatBaseStat
       magazineSize: 8,
       weaponClass: "shotgunner",
       isAutomatic: false,
+      isRanged: true,
+      isEnergy: false,
+    };
+  }
+
+  if ((cleanId.includes("auto") || cleanId.includes("automatic")) && (cleanId.includes("pistol") || cleanId.includes("10mm"))) {
+    return {
+      id: cleanId,
+      label: weaponId,
+      baseDamage: 30,
+      damageType: "ballistic",
+      fireRate: 9.1,
+      baseVatsApCost: 15,
+      magazineSize: 24,
+      weaponClass: "guerrilla",
+      isAutomatic: true,
       isRanged: true,
       isEnergy: false,
     };
@@ -448,10 +562,88 @@ export function getWeaponCombatBaseStats(weaponId: string): WeaponCombatBaseStat
   };
 }
 
+export type BossTargetDummy = {
+  id: string;
+  name: string;
+  shortName: string;
+  category: "boss" | "standard" | "sheet";
+  damageResistance: number;
+  energyResistance: number;
+  flatDamageReductionPct: number; // e.g. 0.70 for Queen (70% flat reduction)
+  description: string;
+};
+
+export const TARGET_DUMMY_CATALOG: Record<string, BossTargetDummy> = {
+  "scorchbeast-queen": {
+    id: "scorchbeast-queen",
+    name: "Scorchbeast Queen",
+    shortName: "SBQ",
+    category: "boss",
+    damageResistance: 300,
+    energyResistance: 300,
+    flatDamageReductionPct: 0.70,
+    description: "Endgame Nuke Boss (300 DR, 70% flat damage reduction)",
+  },
+  "earle-williams": {
+    id: "earle-williams",
+    name: "Earle Williams (Colossal Problem)",
+    shortName: "Earle",
+    category: "boss",
+    damageResistance: 400,
+    energyResistance: 400,
+    flatDamageReductionPct: 0.80,
+    description: "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)",
+  },
+  "ultracite-titan": {
+    id: "ultracite-titan",
+    name: "Ultracite Titan (Seismic Activity)",
+    shortName: "Titan",
+    category: "boss",
+    damageResistance: 350,
+    energyResistance: 350,
+    flatDamageReductionPct: 0.75,
+    description: "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)",
+  },
+  "level-100-super-mutant": {
+    id: "level-100-super-mutant",
+    name: "Level 100 Super Mutant Behemoth",
+    shortName: "Mutant L100",
+    category: "standard",
+    damageResistance: 210,
+    energyResistance: 210,
+    flatDamageReductionPct: 0.0,
+    description: "High-tier Appalachian standard target (210 DR, 0% flat reduction)",
+  },
+  "raw-unarmored": {
+    id: "raw-unarmored",
+    name: "Unarmored / Raw Sheet DPS",
+    shortName: "Raw Sheet",
+    category: "sheet",
+    damageResistance: 0,
+    energyResistance: 0,
+    flatDamageReductionPct: 0.0,
+    description: "Unmitigated baseline benchmark dummy (0 DR, 0% reduction)",
+  },
+};
+
+export const TARGET_DUMMY_LIST: BossTargetDummy[] = Object.values(TARGET_DUMMY_CATALOG);
+
+export type TargetDummyCalculation = {
+  dummy: BossTargetDummy;
+  effectiveDR: number;
+  armorMitigationPct: number; // Percentage of damage mitigated by armor
+  mitigationRatio: number; // Ratio penetrating armor (e.g. 0.45)
+  normalLanded: number;
+  criticalLanded: number;
+  burstDPSLanded: number;
+  criticalCycleDPSLanded: number;
+};
+
 export type CombatFirepowerCalculationInput = {
   weaponId: string;
   equippedMods: (Partial<BuilderModDTO> | { slug: string } | null | undefined)[];
   equippedPerks: { cardId: string; rank: number }[];
+  targetDummyId?: string;
   activeBuffs?: {
     activeDrug?: string | null;
     activeFood?: string | null;
@@ -516,6 +708,7 @@ export type CombatFirepowerResult = {
     effectiveArmorPenetrationPct: number;
     breakdown: { source: string; value: string }[];
   };
+  targetDummy: TargetDummyCalculation;
 };
 
 /**
@@ -567,13 +760,25 @@ export function calculateCombatFirepower(
       breakdown.push({ source: "Rifleman Perks", value: `+${Math.round(total * 100)}%` });
     }
   } else if (base.weaponClass === "heavy") {
+    const bulletStormRank = perkRanks.get("bullet-storm") || 0;
+    const hasBigGuns = (perkRanks.get("bringing-the-big-guns") || 0) > 0;
     const h1 = perkRanks.get("heavy-gunner") || 0;
     const h2 = perkRanks.get("expert-heavy-gunner") || 0;
     const h3 = perkRanks.get("master-heavy-gunner") || 0;
-    const total = (h1 > 0 ? 0.1 + (h1 - 1) * 0.05 : 0) + (h2 > 0 ? 0.1 + (h2 - 1) * 0.05 : 0) + (h3 > 0 ? 0.1 + (h3 - 1) * 0.05 : 0);
+    const legacyTotal = (h1 > 0 ? 0.1 + (h1 - 1) * 0.05 : 0) + (h2 > 0 ? 0.1 + (h2 - 1) * 0.05 : 0) + (h3 > 0 ? 0.1 + (h3 - 1) * 0.05 : 0);
+
+    // Bullet Storm: 3%/6%/9% per 30 rounds fired, 10 max stacks (doubled to 20 with Bringing the Big Guns)
+    // Modeled as mid-combat sustained bonus (60% of max stacks)
+    const maxStacks = hasBigGuns ? 20 : 10;
+    const bulletStormBonus = bulletStormRank > 0 ? (bulletStormRank * 0.03) * (maxStacks * 0.6) : 0;
+
+    const total = bulletStormBonus > 0 ? bulletStormBonus : legacyTotal;
     if (total > 0) {
       additiveDamagePct += total;
-      breakdown.push({ source: "Heavy Gunner Perks", value: `+${Math.round(total * 100)}%` });
+      breakdown.push({
+        source: bulletStormBonus > 0 ? "Bullet Storm (Heavy Sustained)" : "Heavy Gunner Perks (Legacy)",
+        value: `+${Math.round(total * 100)}%`,
+      });
     }
   } else if (base.weaponClass === "shotgunner") {
     const s1 = perkRanks.get("shotgunner") || 0;
@@ -585,15 +790,72 @@ export function calculateCombatFirepower(
       breakdown.push({ source: "Shotgunner Perks", value: `+${Math.round(total * 100)}%` });
     }
   } else if (base.weaponClass === "melee") {
-    const m1 = perkRanks.get("gladiator") || perkRanks.get("slugger") || 0;
-    const m2 = perkRanks.get("expert-gladiator") || perkRanks.get("expert-slugger") || 0;
-    const m3 = perkRanks.get("master-gladiator") || perkRanks.get("master-slugger") || 0;
-    const total = (m1 > 0 ? 0.1 + (m1 - 1) * 0.05 : 0) + (m2 > 0 ? 0.1 + (m2 - 1) * 0.05 : 0) + (m3 > 0 ? 0.1 + (m3 - 1) * 0.05 : 0);
-    // Add strength bonus (5% per STR point)
+    // 1-Handed Gladiator Perks
+    const g1 = perkRanks.get("gladiator") || 0;
+    const g2 = perkRanks.get("expert-gladiator") || 0;
+    const g3 = perkRanks.get("master-gladiator") || 0;
+    const gladTotal = (g1 > 0 ? 0.1 + (g1 - 1) * 0.05 : 0) + (g2 > 0 ? 0.1 + (g2 - 1) * 0.05 : 0) + (g3 > 0 ? 0.1 + (g3 - 1) * 0.05 : 0);
+
+    // 2-Handed Slugger (Patch 62+ Rework: bonus damage against crippled targets: +10%/+20%/+30%)
+    const sluggerRank = perkRanks.get("slugger") || 0;
+    const sluggerBonus = sluggerRank > 0 ? sluggerRank * 0.10 : 0;
+
+    // Legacy Slugger support (Expert & Master Slugger if equipped in legacy loadouts)
+    const legS2 = perkRanks.get("expert-slugger") || 0;
+    const legS3 = perkRanks.get("master-slugger") || 0;
+    const legacySluggerTotal = (legS2 > 0 ? 0.1 + (legS2 - 1) * 0.05 : 0) + (legS3 > 0 ? 0.1 + (legS3 - 1) * 0.05 : 0);
+
+    // Modern Rework Perks: Heavy Hitter & Knee-Capper
+    const heavyHitterRank = perkRanks.get("heavy-hitter") || 0;
+    const kneeCapperRank = perkRanks.get("knee-capper") || 0;
+
+    const totalMeleePerks = gladTotal + sluggerBonus + legacySluggerTotal;
+    // Strength bonus: 5% per point of STR
     const strBonus = input.playerStats.strength * 0.05;
-    additiveDamagePct += total + strBonus;
-    if (total > 0) breakdown.push({ source: "Melee Perks", value: `+${Math.round(total * 100)}%` });
+    additiveDamagePct += totalMeleePerks + strBonus;
+
+    if (gladTotal > 0) breakdown.push({ source: "Gladiator Perks", value: `+${Math.round(gladTotal * 100)}%` });
+    if (sluggerBonus > 0) breakdown.push({ source: `Slugger (Rank ${sluggerRank} vs Crippled)`, value: `+${Math.round(sluggerBonus * 100)}%` });
+    if (legacySluggerTotal > 0) breakdown.push({ source: "Legacy Slugger Perks", value: `+${Math.round(legacySluggerTotal * 100)}%` });
+    if (heavyHitterRank > 0) breakdown.push({ source: "Heavy Hitter", value: "+25% Power Attack Dmg" });
+    if (kneeCapperRank > 0) breakdown.push({ source: "Knee-Capper", value: "+50% Limb Dmg" });
     if (strBonus > 0) breakdown.push({ source: `Strength (${input.playerStats.strength})`, value: `+${Math.round(strBonus * 100)}%` });
+  } else if (base.weaponClass === "unarmed") {
+    const ifRank = perkRanks.get("iron-fist") || 0;
+    const ifBonus = ifRank > 0 ? 0.1 + (ifRank - 1) * 0.05 : 0;
+    // Unarmed attacks uniquely scale at +10% base damage per point of Strength (double standard melee +5%)
+    const strBonus = input.playerStats.strength * 0.10;
+    additiveDamagePct += ifBonus + strBonus;
+
+    if (ifBonus > 0) breakdown.push({ source: `Iron Fist (Rank ${ifRank})`, value: `+${Math.round(ifBonus * 100)}%` });
+    if (strBonus > 0) breakdown.push({ source: `Unarmed Strength 10% (${input.playerStats.strength})`, value: `+${Math.round(strBonus * 100)}%` });
+  } else if (base.weaponClass === "gunslinger") {
+    const g1 = perkRanks.get("gunslinger") || 0;
+    const g2 = perkRanks.get("expert-gunslinger") || 0;
+    const g3 = perkRanks.get("master-gunslinger") || 0;
+    const total = (g1 > 0 ? 0.1 + (g1 - 1) * 0.05 : 0) + (g2 > 0 ? 0.1 + (g2 - 1) * 0.05 : 0) + (g3 > 0 ? 0.1 + (g3 - 1) * 0.05 : 0);
+    if (total > 0) {
+      additiveDamagePct += total;
+      breakdown.push({ source: "Gunslinger Perks", value: `+${Math.round(total * 100)}%` });
+    }
+  } else if (base.weaponClass === "guerrilla") {
+    const g1 = perkRanks.get("guerrilla") || 0;
+    const g2 = perkRanks.get("expert-guerrilla") || 0;
+    const g3 = perkRanks.get("master-guerrilla") || 0;
+    const total = (g1 > 0 ? 0.1 + (g1 - 1) * 0.05 : 0) + (g2 > 0 ? 0.1 + (g2 - 1) * 0.05 : 0) + (g3 > 0 ? 0.1 + (g3 - 1) * 0.05 : 0);
+    if (total > 0) {
+      additiveDamagePct += total;
+      breakdown.push({ source: "Guerrilla Perks", value: `+${Math.round(total * 100)}%` });
+    }
+  } else if (base.weaponClass === "bow") {
+    const a1 = perkRanks.get("archer") || 0;
+    const a2 = perkRanks.get("expert-archer") || 0;
+    const a3 = perkRanks.get("master-archer") || 0;
+    const total = (a1 > 0 ? 0.1 + (a1 - 1) * 0.05 : 0) + (a2 > 0 ? 0.1 + (a2 - 1) * 0.05 : 0) + (a3 > 0 ? 0.1 + (a3 - 1) * 0.05 : 0);
+    if (total > 0) {
+      additiveDamagePct += total;
+      breakdown.push({ source: "Archer Perks", value: `+${Math.round(total * 100)}%` });
+    }
   }
 
   // Energy Science Perks
@@ -611,9 +873,8 @@ export function calculateCombatFirepower(
   // Universal Perks
   const bloodyMessRank = perkRanks.get("bloody-mess") || 0;
   if (bloodyMessRank > 0) {
-    const bm = bloodyMessRank * 0.05;
-    additiveDamagePct += bm;
-    breakdown.push({ source: `Bloody Mess (Rank ${bloodyMessRank})`, value: `+${Math.round(bm * 100)}%` });
+    // In Patch 69, Bloody Mess no longer gives flat additive damage; it causes bleeding enemies killed to explode based on LCK
+    breakdown.push({ source: `Bloody Mess (Rank ${bloodyMessRank})`, value: "Bleed Corpse Explosion (LCK Scaled)" });
   }
 
   const nerdRageRank = perkRanks.get("nerd-rage") || 0;
@@ -701,9 +962,32 @@ export function calculateCombatFirepower(
     } else if (buffs.activeBobblehead === "energy-weapons" && base.isEnergy) {
       additiveDamagePct += 0.2;
       breakdown.push({ source: "Energy Weapons Bobblehead", value: "+20%" });
-    } else if (buffs.activeBobblehead === "melee" && base.weaponClass === "melee") {
+    } else if (buffs.activeBobblehead === "melee" && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
       additiveDamagePct += 0.2;
       breakdown.push({ source: "Melee Bobblehead", value: "+20%" });
+    }
+
+    // Melee foods: Glowing Meat Steak (+20% base, +40% Carnivore, +50% Carnivore + SiN), Yao Guai Roast (+15% base, +30% Carnivore, +37.5% Carnivore + SiN)
+    if (base.weaponClass === "melee" || base.weaponClass === "unarmed") {
+      const isCarnivore = Boolean(buffs.activeMutations?.includes("carnivore"));
+      const isHerbivore = Boolean(buffs.activeMutations?.includes("herbivore"));
+      if (!isHerbivore) {
+        const allFoods = [...(buffs.activeFoods || []), buffs.activeFood].filter(Boolean) as string[];
+        const hasGlowingSteak = allFoods.some((f) => f.includes("glowing-steak"));
+        const hasYaoGuai = allFoods.some((f) => f.includes("yao-guai-roast"));
+        let meleeFoodPct = 0;
+        if (hasGlowingSteak) {
+          meleeFoodPct += isCarnivore ? (hasSIN ? 0.50 : 0.40) : 0.20;
+        }
+        if (hasYaoGuai) {
+          meleeFoodPct += isCarnivore ? (hasSIN ? 0.375 : 0.30) : 0.15;
+        }
+        if (meleeFoodPct > 0) {
+          additiveDamagePct += meleeFoodPct;
+          const tag = isCarnivore ? (hasSIN ? " (Carnivore + SiN)" : " (Carnivore)") : " (Base)";
+          breakdown.push({ source: `Melee Food Buffs${tag}`, value: `+${Math.round(meleeFoodPct * 100)}%` });
+        }
+      }
     }
 
     // Mutations (Adrenal Reaction)
@@ -744,10 +1028,16 @@ export function calculateCombatFirepower(
 
   if (buffs) {
     const allFoods = [...(buffs.activeFoods || []), buffs.activeFood].filter(Boolean) as string[];
-    if (allFoods.includes("blight-soup") || allFoods.includes("sweet-mutfruit-tea")) {
-      const foodCrit = hasSIN ? 1.25 : 1.0; // Herbivore + SiN
-      critBonusPct += foodCrit;
-      breakdown.push({ source: `Blight Soup${hasSIN ? " (Herbivore + SiN)" : ""}`, value: `+${Math.round(foodCrit * 100)}% Crit` });
+    const hasCritFood = allFoods.some((f) => f.includes("blight-soup") || f.includes("sweet-mutfruit-tea"));
+    if (hasCritFood) {
+      const isCarnivore = Boolean(buffs.activeMutations?.includes("carnivore"));
+      const isHerbivore = Boolean(buffs.activeMutations?.includes("herbivore"));
+      if (!isCarnivore) {
+        const foodCrit = isHerbivore ? (hasSIN ? 1.25 : 1.0) : 0.50;
+        critBonusPct += foodCrit;
+        const tag = isHerbivore ? (hasSIN ? " (Herbivore + SiN)" : " (Herbivore)") : " (Base)";
+        breakdown.push({ source: `Blight Soup / Steeped Tea${tag}`, value: `+${Math.round(foodCrit * 100)}% Crit` });
+      }
     }
 
     if (buffs.activeMagazine === "guns-and-bullets-3" && !base.isEnergy) {
@@ -833,10 +1123,17 @@ export function calculateCombatFirepower(
   }
 
   const tankKillerRank = perkRanks.get("tank-killer") || 0;
-  if (tankKillerRank > 0 && !isPA) {
+  if (tankKillerRank > 0 && !isPA && (base.weaponClass === "rifleman" || base.weaponClass === "commando" || base.weaponClass === "gunslinger" || base.weaponClass === "guerrilla")) {
     const tkPen = tankKillerRank === 3 ? 0.36 : tankKillerRank === 2 ? 0.24 : 0.12;
     penRemaining *= 1 - tkPen;
     apBreakdown.push({ source: `Tank Killer (Rank ${tankKillerRank})`, value: `${Math.round(tkPen * 100)}% Penetration` });
+  }
+
+  const bowBeforeMeRank = perkRanks.get("bow-before-me") || 0;
+  if (bowBeforeMeRank > 0 && base.weaponClass === "bow") {
+    const bowPen = bowBeforeMeRank === 3 ? 0.36 : bowBeforeMeRank === 2 ? 0.24 : 0.12;
+    penRemaining *= 1 - bowPen;
+    apBreakdown.push({ source: `Bow Before Me (Rank ${bowBeforeMeRank})`, value: `${Math.round(bowPen * 100)}% Penetration` });
   }
 
   const stabilizedRank = perkRanks.get("stabilized") || 0;
@@ -846,9 +1143,16 @@ export function calculateCombatFirepower(
     apBreakdown.push({ source: `Stabilized in PA (Rank ${stabilizedRank})`, value: `${Math.round(stabPen * 100)}% Penetration` });
   }
 
+  const incisorRank = perkRanks.get("incisor") || 0;
+  if (incisorRank > 0 && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
+    const incisorPen = incisorRank === 3 ? 0.75 : incisorRank === 2 ? 0.5 : 0.25;
+    penRemaining *= 1 - incisorPen;
+    apBreakdown.push({ source: `Incisor (Rank ${incisorRank})`, value: `${Math.round(incisorPen * 100)}% Penetration` });
+  }
+
   const effectiveArmorPenetrationPct = Math.round((1 - penRemaining) * 100);
 
-  return {
+  const intermediateFirepower = {
     baseStats: base,
     damagePerShot: {
       normal: normalDamage,
@@ -892,5 +1196,67 @@ export function calculateCombatFirepower(
       effectiveArmorPenetrationPct,
       breakdown: apBreakdown,
     },
+  };
+
+  const targetDummy = calculateTargetMitigation(
+    intermediateFirepower,
+    input.targetDummyId ?? "scorchbeast-queen"
+  );
+
+  return {
+    ...intermediateFirepower,
+    targetDummy,
+  };
+}
+
+/**
+ * Calculates landed damage and DPS against a specific target dummy
+ * using authentic Fallout 76 damage mitigation formulas and boss flat reductions.
+ */
+export function calculateTargetMitigation(
+  firepower: Pick<CombatFirepowerResult, "damagePerShot" | "armorPenetration" | "fireRate" | "baseStats">,
+  dummyId?: string
+): TargetDummyCalculation {
+  const dummy = TARGET_DUMMY_CATALOG[dummyId || "scorchbeast-queen"] || TARGET_DUMMY_CATALOG["scorchbeast-queen"];
+  const baseDR = firepower.baseStats.isEnergy ? dummy.energyResistance : dummy.damageResistance;
+  const apFactor = Math.min(1, Math.max(0, firepower.armorPenetration.effectiveArmorPenetrationPct / 100));
+  const effectiveDR = Math.max(0, Math.round(baseDR * (1 - apFactor)));
+
+  const rawNormal = firepower.damagePerShot.totalPerShot;
+  const rawCrit = firepower.damagePerShot.critical;
+
+  let normalMitigationRatio = 1.0;
+  let critMitigationRatio = 1.0;
+
+  if (effectiveDR > 0) {
+    if (rawNormal > 0) {
+      const ratioNormal = rawNormal / effectiveDR;
+      normalMitigationRatio = Math.min(0.99, Math.max(0.01, 0.5 * Math.pow(ratioNormal, 0.365)));
+    }
+    if (rawCrit > 0) {
+      const ratioCrit = rawCrit / effectiveDR;
+      critMitigationRatio = Math.min(0.99, Math.max(0.01, 0.5 * Math.pow(ratioCrit, 0.365)));
+    }
+  }
+
+  const flatMult = 1 - dummy.flatDamageReductionPct;
+
+  const normalLanded = Math.max(1, Math.round(rawNormal * normalMitigationRatio * flatMult));
+  const criticalLanded = Math.max(1, Math.round(rawCrit * critMitigationRatio * flatMult));
+
+  const burstDPSLanded = Math.round(normalLanded * firepower.fireRate.rps);
+  const criticalCycleDPSLanded = Math.round(((normalLanded + criticalLanded) / 2) * firepower.fireRate.rps);
+
+  const armorMitigationPct = Math.round((1 - normalMitigationRatio) * 100);
+
+  return {
+    dummy,
+    effectiveDR,
+    armorMitigationPct,
+    mitigationRatio: normalMitigationRatio,
+    normalLanded,
+    criticalLanded,
+    burstDPSLanded,
+    criticalCycleDPSLanded,
   };
 }

@@ -48,7 +48,9 @@ export function getLocalTacticalAdvice(payload: BuildAdvicePayload): string | nu
   }
 
   // 5. Heavy Gunner / PA without Stabilized
-  const hasHeavyGunner = Array.from(perkNames).some((n) => n.includes("heavy gunner"));
+  const hasHeavyGunner = Array.from(perkNames).some(
+    (n) => n.includes("heavy gunner") || n.includes("bullet storm") || n.includes("tightly wound")
+  );
   if (hasHeavyGunner && int >= 3 && !perkNames.has("stabilized")) {
     return "Vault-Tec Tip: Heavy Gunner setups in Power Armor benefit immensely from Rank 3 Stabilized (+45% armor penetration & tighter accuracy).";
   }

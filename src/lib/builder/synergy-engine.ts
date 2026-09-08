@@ -30,18 +30,19 @@ const WEAPON_SYNERGIES: Record<string, SynergyItem[]> = {
     { id: "critical-savvy", name: "Critical Savvy", category: "perk", reason: "VATS criticals consume only 55% crit meter", boostLabel: "Crit Every 2nd Shot" },
   ],
   cremator: [
-    { id: "heavy-gunner", name: "Heavy Gunner", category: "perk", reason: "Increases heavy energy weapon damage", boostLabel: "+20% Dmg" },
+    { id: "bullet-storm", name: "Bullet Storm", category: "perk", reason: "Ramps heavy weapon damage per continuous shot", boostLabel: "Ramping Dmg" },
     { id: "demolition-expert", name: "Demolition Expert", category: "perk", reason: "Increases explosive blast radius damage", boostLabel: "+60% Explosive" },
     { id: "grenadier", name: "Grenadier", category: "perk", reason: "Doubles explosive area of effect radius", boostLabel: "2x Blast Radius" },
     { id: "fireproof", name: "Fireproof", category: "perk", reason: "Reduces self-inflicted explosive & fire damage", boostLabel: "60% Fire Resist" },
   ],
   "holy-fire": [
-    { id: "heavy-gunner", name: "Heavy Gunner", category: "perk", reason: "Increases flamer damage", boostLabel: "+20% Dmg" },
+    { id: "bullet-storm", name: "Bullet Storm", category: "perk", reason: "Ramps flamer damage per continuous hit", boostLabel: "Ramping Dmg" },
     { id: "stabilized", name: "Stabilized", category: "perk", reason: "45% armor penetration & accuracy in Power Armor", boostLabel: "45% PA Armor Pen" },
     { id: "one-gun-army", name: "One Gun Army", category: "perk", reason: "12% chance to stagger & cripple limbs", boostLabel: "12% Stagger" },
   ],
   "gatling-plasma": [
-    { id: "heavy-gunner", name: "Heavy Gunner", category: "perk", reason: "Increases heavy plasma damage", boostLabel: "+20% Dmg" },
+    { id: "bullet-storm", name: "Bullet Storm", category: "perk", reason: "Ramps heavy plasma damage per continuous shot", boostLabel: "Ramping Dmg" },
+    { id: "tightly-wound", name: "Tightly Wound", category: "perk", reason: "Accelerates heavy gun spin-up speed by 60%", boostLabel: "60% Spin-up" },
     { id: "stabilized", name: "Stabilized", category: "perk", reason: "45% armor penetration in Power Armor", boostLabel: "45% PA Armor Pen" },
     { id: "batteries-included", name: "Batteries Included", category: "perk", reason: "Reduces Plasma Core weight by 90%", boostLabel: "-90% Weight" },
   ],
@@ -67,7 +68,7 @@ const ARMOR_SYNERGIES: Record<string, SynergyItem[]> = {
 export function getEquipmentSynergies(equipId: string): SynergyItem[] {
   const norm = equipId.toLowerCase().replace(/^armor-set-/, "").replace(/-torso$/, "");
   return WEAPON_SYNERGIES[norm] || ARMOR_SYNERGIES[norm] || [
-    { id: "bloody-mess", name: "Bloody Mess", category: "perk", reason: "Universal +15% damage bonus", boostLabel: "+15% Flat Dmg" },
+    { id: "bloody-mess", name: "Bloody Mess", category: "perk", reason: "Bleeding enemies killed explode based on Luck", boostLabel: "Corpse Explode" },
     { id: "starched-genes", name: "Starched Genes", category: "perk", reason: "Protects mutations from Radaway", boostLabel: "Mutation Shield" },
   ];
 }

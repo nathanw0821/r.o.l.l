@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import type { CombatFirepowerResult } from "@/lib/builder/combat-firepower-engine";
+import {
+  type CombatFirepowerResult,
+  TARGET_DUMMY_LIST,
+  calculateTargetMitigation,
+} from "@/lib/builder/combat-firepower-engine";
 import {
   Crosshair,
   Zap,
@@ -12,6 +16,8 @@ import {
   CheckCircle2,
   AlertCircle,
   HelpCircle,
+  Skull,
+  Target,
 } from "lucide-react";
 import {
   Tooltip,
@@ -27,6 +33,9 @@ interface BuilderFirepowerMatrixProps {
 export default function BuilderFirepowerMatrix({
   firepower,
 }: BuilderFirepowerMatrixProps) {
+  const [selectedDummyId, setSelectedDummyId] = React.useState<string>(
+    firepower.targetDummy?.dummy?.id || "scorchbeast-queen"
+  );
   const {
     baseStats,
     damagePerShot,
@@ -37,6 +46,10 @@ export default function BuilderFirepowerMatrix({
     critCycle,
     armorPenetration,
   } = firepower;
+
+  const dummyCalc = React.useMemo(() => {
+    return calculateTargetMitigation(firepower, selectedDummyId);
+  }, [firepower, selectedDummyId]);
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -204,6 +217,96 @@ export default function BuilderFirepowerMatrix({
                 <span className="text-emerald-400 font-bold">
                   {armorPenetration.effectiveArmorPenetrationPct}%
                 </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Boss Combat Mitigation & Landed DPS Matrix */}
+        <div className="rounded-lg border border-slate-800 bg-slate-900/50 p-3.5 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">
+            <div className="flex items-center gap-2">
+              <Skull className="h-4 w-4 text-rose-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-rose-300">
+                Target Dummy Combat Simulator
+              </span>
+              <span className="text-[0.65rem] px-2 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/40 font-bold">
+                DR &amp; FLAT MITIGATION
+              </span>
+            </div>
+
+            {/* Target Selectors */}
+            <div className="flex flex-wrap items-center gap-1">
+              {TARGET_DUMMY_LIST.map((dummy) => {
+                const isActive = dummy.id === selectedDummyId;
+                return (
+                  <button
+                    key={dummy.id}
+                    type="button"
+                    onClick={() => setSelectedDummyId(dummy.id)}
+                    className={`px-2.5 py-1 rounded text-[0.68rem] font-bold uppercase tracking-wider transition-all ${
+                      isActive
+                        ? "bg-rose-600 text-white shadow-[0_0_10px_rgba(244,63,94,0.4)] border border-rose-400"
+                        : "bg-slate-800/80 text-slate-400 border border-slate-700/60 hover:text-slate-200 hover:bg-slate-700/60"
+                    }`}
+                  >
+                    {dummy.shortName}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Active Target Dummy Details & Landed Numbers */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+            {/* Target Specs */}
+            <div className="md:col-span-5 space-y-1.5 text-xs">
+              <div className="flex items-center gap-2">
+                <Target className="h-3.5 w-3.5 text-rose-400" />
+                <span className="font-bold text-white text-xs">{dummyCalc.dummy.name}</span>
+              </div>
+              <p className="text-[0.68rem] text-slate-400 leading-relaxed">
+                {dummyCalc.dummy.description}
+              </p>
+              <div className="flex flex-wrap gap-2 text-[0.68rem] pt-1">
+                <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
+                  Target DR: <strong className="text-white">{baseStats.isEnergy ? dummyCalc.dummy.energyResistance : dummyCalc.dummy.damageResistance}</strong>
+                </span>
+                <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
+                  Effective DR: <strong className="text-white">{dummyCalc.effectiveDR}</strong>
+                </span>
+                {dummyCalc.dummy.flatDamageReductionPct > 0 && (
+                  <span className="px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/40 text-amber-300">
+                    Shield: <strong>-{Math.round(dummyCalc.dummy.flatDamageReductionPct * 100)}% Flat</strong>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Landed Telemetry Grid */}
+            <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="rounded border border-slate-800 bg-slate-950/60 p-2 text-center space-y-0.5">
+                <span className="text-[0.65rem] text-slate-400 uppercase tracking-wider block">Landed Hit</span>
+                <span className="text-base font-black text-white">{dummyCalc.normalLanded}</span>
+                <span className="text-[0.62rem] text-slate-500 block">vs {damagePerShot.totalPerShot} sheet</span>
+              </div>
+
+              <div className="rounded border border-amber-500/30 bg-amber-950/20 p-2 text-center space-y-0.5">
+                <span className="text-[0.65rem] text-amber-400 uppercase tracking-wider block">Landed Crit</span>
+                <span className="text-base font-black text-amber-300">{dummyCalc.criticalLanded}</span>
+                <span className="text-[0.62rem] text-amber-400/60 block">vs {damagePerShot.critical} sheet</span>
+              </div>
+
+              <div className="rounded border border-cyan-500/30 bg-cyan-950/20 p-2 text-center space-y-0.5">
+                <span className="text-[0.65rem] text-cyan-400 uppercase tracking-wider block">Landed Burst</span>
+                <span className="text-base font-black text-cyan-300">{dummyCalc.burstDPSLanded.toLocaleString()}</span>
+                <span className="text-[0.62rem] text-cyan-400/60 block">DPS</span>
+              </div>
+
+              <div className="rounded border border-emerald-500/30 bg-emerald-950/20 p-2 text-center space-y-0.5">
+                <span className="text-[0.65rem] text-emerald-400 uppercase tracking-wider block">Landed 2nd Crit</span>
+                <span className="text-base font-black text-emerald-300">{dummyCalc.criticalCycleDPSLanded.toLocaleString()}</span>
+                <span className="text-[0.62rem] text-emerald-400/60 block">DPS</span>
               </div>
             </div>
           </div>

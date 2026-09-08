@@ -38,8 +38,8 @@ Once you permanently unlock a recipe, crafting a Box Mod at the Tinkerer Workben
 | :--- | :--- | :--- | :--- |
 | **1-Star ($\bigstar$)** | **15 Modules** | Specific Bobblehead (e.g., Small Guns for Quad, Leader for Bloodied) | Yes (Box Mod) |
 | **2-Star ($\bigstar\bigstar$)** | **30 Modules** | Specific Material (e.g., Explosive Bobblehead, Faster Fire Rate) | Yes (Box Mod) |
-| **3-Star ($\bigstar\bigstar\bigstar$)** | **45 Modules** | Hard Material (e.g., Pure Flux, Swift Bobblehead) | Yes (Box Mod) |
-| **4-Star ($\bigstar\bigstar\bigstar\bigstar$)** | **60 Modules** | Raid Drops & Season 26 High-Tier Mats | Bound on Socket |
+| **3-Star ($\bigstar\bigstar\bigstar$)** | **60 Modules** | Hard Material (e.g., Pure Flux, Swift Bobblehead) | Yes (Box Mod) |
+| **4-Star ($\bigstar\bigstar\bigstar\bigstar$)** | **120 Modules** | Raid Drops & Season 26 High-Tier Mats | Bound on Socket |
 
 ### Character Binding Rule:
 * **Loose Box Mods**: 100% tradeable and sellable in player vendors.
@@ -53,10 +53,10 @@ Once you permanently unlock a recipe, crafting a Box Mod at the Tinkerer Workben
 
 #### 1-Star ($\bigstar$) Primary:
 * **S-Tier**:
-  * **[[Quad]]**: $+300\%$ ammo capacity (The DPS king for Commando, Railway, Tesla).
-  * **[[Bloodied]]**: Up to $+95\%$ additive damage scaling inverse to HP.
-  * **[[Anti-Armor]]**: Ignores $50\%$ target armor (Dominates bosses and high-DR targets).
-  * **[[Vampire's]]**: Heals $2\%$ health per hit (God-tier for fast auto-melee and shotguns).
+  * **Quad**: $+300\%$ ammo capacity (The DPS king for Commando, Railway, Tesla).
+  * **Bloodied**: Up to $+95\%$ additive damage scaling inverse to HP.
+  * **Anti-Armor**: Ignores $50\%$ target armor (Dominates bosses and high-DR targets).
+  * **Vampire's**: Heals $2\%$ health per hit (God-tier for fast auto-melee and shotguns).
 * **A-Tier**:
   * **Aristocrat's**: $+50\%$ damage at $>29,000$ caps.
   * **Two-Shot**: Adds 2nd projectile (meta for explosive launchers: Cryolator, AGL, Fat Man).
@@ -82,12 +82,12 @@ Once you permanently unlock a recipe, crafting a Box Mod at the Tinkerer Workben
 
 | Star Tier | Meta Winners | Functionality & Value |
 | :--- | :--- | :--- |
-| **1-Star ($\bigstar$)** | **[[Overeaters]]** | $6\%$ flat damage reduction per piece ($30\%$ total). Undisputed #1 for Full Health. |
-| **1-Star ($\bigstar$)** | **[[Unyielding]]** | $+3$ to all SPECIAL stats (except END) at $<20\%$ HP ($+15$ stats total). Undisputed #1 for Low Health. |
+| **1-Star ($\bigstar$)** | **Overeaters** | $6\%$ flat damage reduction per piece ($30\%$ total). Undisputed #1 for Full Health. |
+| **1-Star ($\bigstar$)** | **Unyielding** | $+3$ to all SPECIAL stats (except END) at $<20\%$ HP ($+15$ stats total). Undisputed #1 for Low Health. |
 | **2-Star ($\bigstar\bigstar$)** | **Powered** | $+5\%$ Action Point Refresh Speed per piece (Stacks to $+25\%$). |
 | **2-Star ($\bigstar\bigstar$)** | **Hardy** | $-7\%$ Explosion Damage reduction per piece. |
 | **3-Star ($\bigstar\bigstar\bigstar$)** | **Sentinel's** | $75\%$ chance to reduce damage by $15\%$ while standing still ($75\%$ total). |
 | **3-Star ($\bigstar\bigstar\bigstar$)** | **Arms Keeper's** | Weapon weights reduced by $20\%$ ($90\%$ cap with 5 pieces). |
 
 ---
-*Cross-References*: [[Damage_Calculation_Bible]] | [[Ballistic_and_Commando_Weapons]] | [[Armor_and_Power_Armor_Master]]
+*Cross-References*: [Master Truth Bible](../README.md) | [01. Damage Calculation & Armor Mitigation Bible](../01_Mechanics_and_Formulas/Damage_Calculation_Bible.md) | [03. Ballistic & Commando Weapons](../03_Weapons_Catalog/Ballistic_and_Commando_Weapons.md) | [04. Armor & Power Armor Master](../04_Armor_and_Power_Armor/Armor_and_Power_Armor_Master.md) | [05. Builds & Mutation Matrix](../05_Builds_and_Synergies/Builds_and_Mutation_Matrix.md)
