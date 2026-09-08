@@ -73,15 +73,79 @@ export async function fetchNukeCodes(): Promise<NukeCodes> {
   };
 }
 
-export function getDailyResetTimers() {
-  const now = new Date();
+export interface DailyResetTimers {
+  noonResetUnix: number;
+  eveningResetUnix: number;
+  resetUtcHour: number;
+}
 
-  // 16:00 UTC (12:00 PM EST) Economy & Vendor Pool Reset
-  const nextNoonReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 16, 0, 0));
-  if (now.getTime() >= nextNoonReset.getTime()) {
-    nextNoonReset.setUTCDate(nextNoonReset.getUTCDate() + 1);
+export function getEasternParts(d: Date) {
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false,
+  });
+  const parts = dtf.formatToParts(d);
+  const p: Record<string, string> = {};
+  for (const part of parts) {
+    p[part.type] = part.value;
   }
-  const noonResetUnix = Math.floor(nextNoonReset.getTime() / 1000);
+  return {
+    year: parseInt(p.year, 10),
+    month: parseInt(p.month, 10),
+    day: parseInt(p.day, 10),
+    hour: parseInt(p.hour === "24" ? "0" : p.hour, 10),
+    minute: parseInt(p.minute, 10),
+    second: parseInt(p.second, 10),
+  };
+}
+
+export function easternToUtc(
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute = 0,
+  second = 0
+): Date {
+  let guess = new Date(Date.UTC(year, month - 1, day, hour + 4, minute, second));
+  for (let i = 0; i < 3; i++) {
+    const p = getEasternParts(guess);
+    const targetMs = Date.UTC(year, month - 1, day, hour, minute, second);
+    const actualMs = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+    const diff = targetMs - actualMs;
+    if (diff === 0) break;
+    guess = new Date(guess.getTime() + diff);
+  }
+  return guess;
+}
+
+export function getDailyResetTimers(now = new Date()): DailyResetTimers {
+  const p = getEasternParts(now);
+  const todayNoonUtc = easternToUtc(p.year, p.month, p.day, 12, 0, 0);
+
+  let nextNoonUtc: Date;
+  if (now.getTime() >= todayNoonUtc.getTime()) {
+    const tomorrow = new Date(Date.UTC(p.year, p.month - 1, p.day + 1));
+    nextNoonUtc = easternToUtc(
+      tomorrow.getUTCFullYear(),
+      tomorrow.getUTCMonth() + 1,
+      tomorrow.getUTCDate(),
+      12,
+      0,
+      0
+    );
+  } else {
+    nextNoonUtc = todayNoonUtc;
+  }
+
+  const resetUtcHour = nextNoonUtc.getUTCHours();
+  const noonResetUnix = Math.floor(nextNoonUtc.getTime() / 1000);
 
   // 00:00 UTC (8:00 PM EST) Faction & Personal Daily Quests Reset
   const nextEveningReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
@@ -90,104 +154,115 @@ export function getDailyResetTimers() {
   }
   const eveningResetUnix = Math.floor(nextEveningReset.getTime() / 1000);
 
-  return { noonResetUnix, eveningResetUnix };
+  return { noonResetUnix, eveningResetUnix, resetUtcHour };
 }
 
+const SALE_DAYS = new Set([0, 1, 7, 8, 14, 15, 24, 25, 26, 27]);
+const LOCATIONS = ["Foundation", "The Crater", "Fort Atlas", "The Whitespring Resort"];
+
 export function getMinervaSchedule(now = new Date()): MinervaIntel {
-  // Reference cycle anchor: Monday, Sep 14, 2026 16:00 UTC starts List 1 (Foundation)
-  const anchorTime = Date.UTC(2026, 8, 14, 16, 0, 0); // Month is 0-indexed (8 = Sep)
-  const msInWeek = 7 * 24 * 60 * 60 * 1000;
+  const p = getEasternParts(now);
+  const todayNoonUtc = easternToUtc(p.year, p.month, p.day, 12, 0, 0);
 
-  const dayOfWeek = now.getUTCDay();
-  const utcHours = now.getUTCHours();
-  const utcMinutes = now.getUTCMinutes();
-  const nowTime = now.getTime();
+  const resetCalendarDate = new Date(Date.UTC(p.year, p.month - 1, p.day));
+  if (now.getTime() < todayNoonUtc.getTime()) {
+    resetCalendarDate.setUTCDate(resetCalendarDate.getUTCDate() - 1);
+  }
 
-  const diffWeeks = Math.floor((nowTime - anchorTime) / msInWeek);
-  const cycleWeek = ((diffWeeks % 4) + 4) % 4; // 0 = Week 1, 1 = Week 2, 2 = Week 3, 3 = Week 4 (Big Sale)
+  // Anchor: Monday, July 12, 2021 (Day 0, Sale 1 @ Foundation)
+  const startCalDate = new Date(Date.UTC(2021, 6, 12));
+  const dayIndex = Math.round((resetCalendarDate.getTime() - startCalDate.getTime()) / (86400 * 1000));
+  const cycleDay = ((dayIndex % 35) + 35) % 35;
+  const cycleIndex = Math.floor(dayIndex / 35);
 
-  const locations = ["Foundation", "The Crater", "Fort Atlas", "The Whitespring Resort"];
+  const isActive = SALE_DAYS.has(cycleDay);
 
-  // Monday 16:00 UTC to Wednesday 16:00 UTC: Emporium (Weeks 0, 1, 2)
-  const isEmporiumTime =
-    (dayOfWeek === 1 && utcHours >= 16) ||
-    dayOfWeek === 2 ||
-    (dayOfWeek === 3 && (utcHours < 16 || (utcHours === 16 && utcMinutes === 0)));
+  const getNoonUtcForDayIndex = (dIdx: number) => {
+    const targetCal = new Date(startCalDate.getTime() + dIdx * 86400 * 1000);
+    return easternToUtc(targetCal.getUTCFullYear(), targetCal.getUTCMonth() + 1, targetCal.getUTCDate(), 12, 0, 0);
+  };
 
-  // Thursday 16:00 UTC to Monday 16:00 UTC: Big Sale (Week 3)
-  const isBigSaleTime =
-    (dayOfWeek === 4 && utcHours >= 16) ||
-    dayOfWeek === 5 ||
-    dayOfWeek === 6 ||
-    dayOfWeek === 0 ||
-    (dayOfWeek === 1 && (utcHours < 16 || (utcHours === 16 && utcMinutes === 0)));
+  if (isActive) {
+    let blockSaleIndex = 0;
+    let endDay = dayIndex;
+    let isBigSale = false;
 
-  if (cycleWeek < 3 && isEmporiumTime) {
-    const listNum = cycleWeek + 1;
-    const loc = locations[cycleWeek];
-    const end = new Date(now);
-    const daysUntilWed = (3 - dayOfWeek + 7) % 7;
-    end.setUTCDate(end.getUTCDate() + daysUntilWed);
-    end.setUTCHours(16, 0, 0, 0);
+    if (cycleDay <= 1) {
+      blockSaleIndex = 0;
+      endDay = dayIndex + (2 - cycleDay);
+    } else if (cycleDay <= 8) {
+      blockSaleIndex = 1;
+      endDay = dayIndex + (9 - cycleDay);
+    } else if (cycleDay <= 15) {
+      blockSaleIndex = 2;
+      endDay = dayIndex + (16 - cycleDay);
+    } else {
+      blockSaleIndex = 3;
+      endDay = dayIndex + (28 - cycleDay);
+      isBigSale = true;
+    }
+
+    const totalSalesBefore = cycleIndex * 4 + blockSaleIndex;
+    const listNumber = (totalSalesBefore % 24) + 1;
+    const location = LOCATIONS[blockSaleIndex];
+    const endUtc = getNoonUtcForDayIndex(endDay);
 
     return {
-      status: "active_emporium",
-      statusText: `🟢 **Active Now at ${loc}**`,
-      location: loc,
-      saleType: `Minerva's Emporium (Sale #${listNum})`,
-      listNumber: listNum,
-      nextEventUnix: Math.floor(end.getTime() / 1000),
-      nextEventLabel: "Departs Appalachia",
+      status: isBigSale ? "active_big_sale" : "active_emporium",
+      statusText: isBigSale
+        ? `🟡 **BIG SALE Active Now at ${location}**`
+        : `🟢 **Active Now at ${location}**`,
+      location,
+      saleType: isBigSale
+        ? `Minerva's Super Big Sale (Sale #${listNumber})`
+        : `Minerva's Emporium (Sale #${listNumber})`,
+      listNumber,
+      nextEventUnix: Math.floor(endUtc.getTime() / 1000),
+      nextEventLabel: isBigSale ? "Big Sale Concludes" : "Departs Appalachia",
     };
   }
 
-  if (cycleWeek === 3 && isBigSaleTime) {
-    const end = new Date(now);
-    const daysUntilMon = (1 - dayOfWeek + 7) % 7 || (dayOfWeek === 1 && utcHours < 16 ? 0 : 7);
-    end.setUTCDate(end.getUTCDate() + daysUntilMon);
-    end.setUTCHours(16, 0, 0, 0);
+  // Not active: traveling / resting
+  let nextCycleDay = 0;
+  let nextBlockSaleIndex = 0;
+  let isBigSale = false;
 
-    return {
-      status: "active_big_sale",
-      statusText: `🟡 **BIG SALE Active Now at The Whitespring Resort**`,
-      location: "The Whitespring Resort",
-      saleType: "Minerva's Super Big Sale (Sale #4)",
-      listNumber: 4,
-      nextEventUnix: Math.floor(end.getTime() / 1000),
-      nextEventLabel: "Big Sale Concludes",
-    };
+  if (cycleDay < 7) {
+    nextCycleDay = 7;
+    nextBlockSaleIndex = 1;
+  } else if (cycleDay < 14) {
+    nextCycleDay = 14;
+    nextBlockSaleIndex = 2;
+  } else if (cycleDay < 24) {
+    nextCycleDay = 24;
+    nextBlockSaleIndex = 3;
+    isBigSale = true;
+  } else {
+    // 28..34 -> next is Day 35 (Day 0 of next 35-day block)
+    nextCycleDay = 35;
+    nextBlockSaleIndex = 0;
   }
 
-  const nextArrival = new Date(now);
-  if (cycleWeek === 3 && dayOfWeek < 4) {
-    const daysUntilThu = (4 - dayOfWeek + 7) % 7;
-    nextArrival.setUTCDate(nextArrival.getUTCDate() + daysUntilThu);
-    nextArrival.setUTCHours(16, 0, 0, 0);
-    return {
-      status: "traveling",
-      statusText: `🔴 **Traveling & Preparing Big Sale**`,
-      location: "The Whitespring Resort",
-      saleType: "Upcoming: Minerva's Big Sale #4",
-      listNumber: 4,
-      nextEventUnix: Math.floor(nextArrival.getTime() / 1000),
-      nextEventLabel: "Arrives at Whitespring",
-    };
-  }
-
-  const daysUntilMon = (1 - dayOfWeek + 7) % 7 || 7;
-  nextArrival.setUTCDate(nextArrival.getUTCDate() + daysUntilMon);
-  nextArrival.setUTCHours(16, 0, 0, 0);
-  const nextCycleWeek = (cycleWeek + 1) % 4;
-  const nextLoc = locations[nextCycleWeek];
+  const daysUntilNext = nextCycleDay - cycleDay;
+  const nextDayIndex = dayIndex + daysUntilNext;
+  const nextCycleIndex = Math.floor(nextDayIndex / 35);
+  const nextTotalSalesBefore = nextCycleIndex * 4 + nextBlockSaleIndex;
+  const nextListNumber = (nextTotalSalesBefore % 24) + 1;
+  const nextLocation = LOCATIONS[nextBlockSaleIndex];
+  const nextArrivalUtc = getNoonUtcForDayIndex(nextDayIndex);
 
   return {
     status: "traveling",
-    statusText: `🔴 **Resting & Sourcing Inventory**`,
-    location: nextLoc,
-    saleType: `Upcoming: Minerva's Emporium (Sale #${nextCycleWeek + 1})`,
-    listNumber: nextCycleWeek + 1,
-    nextEventUnix: Math.floor(nextArrival.getTime() / 1000),
-    nextEventLabel: `Arrives at ${nextLoc}`,
+    statusText: isBigSale
+      ? "🔴 **Traveling & Preparing Big Sale**"
+      : "🔴 **Resting & Sourcing Inventory**",
+    location: nextLocation,
+    saleType: isBigSale
+      ? `Upcoming: Minerva's Big Sale #${nextListNumber}`
+      : `Upcoming: Minerva's Emporium (Sale #${nextListNumber})`,
+    listNumber: nextListNumber,
+    nextEventUnix: Math.floor(nextArrivalUtc.getTime() / 1000),
+    nextEventLabel: isBigSale ? "Arrives at Whitespring" : `Arrives at ${nextLocation}`,
   };
 }
 
@@ -264,10 +339,12 @@ export function buildMinervaDiscordEmbed(minerva: MinervaIntel) {
         inline: false,
       },
       {
-        name: "🧭 Weekly Rotation Schedule",
+        name: "🧭 Minerva Rotation Schedule",
         value:
-          "• **Weeks 1–3**: Mon 12:00 PM EST – Wed 12:00 PM EST (Standard Emporium)\n" +
-          "• **Week 4 (Super Sale)**: Thu 12:00 PM EST – Mon 12:00 PM EST (The Whitespring)\n" +
+          "• **Weeks 1–3**: Mon 12:00 PM ET – Wed 12:00 PM ET (Foundation, Crater, Fort Atlas)\n" +
+          "• **Week 4 (Big Sale)**: Thu 12:00 PM ET – Mon 12:00 PM ET (The Whitespring Resort)\n" +
+          "• **Week 5**: Off-week (Resting & Sourcing Inventory)\n" +
+          "• Full 24-sale rotation spans 30 weeks (6 blocks of 5 weeks).\n" +
           "• Run `/daily` or `/minerva` at any time for live countdowns!",
         inline: false,
       },
