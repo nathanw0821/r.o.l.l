@@ -120,6 +120,20 @@ FEMALE_CARDS = [
     }
 ]
 
+GHOUL_PERK_IDS = {
+    "action-ghoul", "action-diet", "arms-of-steel", "battle-genes", "bomb-scientist",
+    "bone-shatterer", "breathe-it-in", "brick-wall", "chem-diet", "eye-of-the-hunter",
+    "faulty-spots", "feral-presence", "feral-rage", "glowing-criticals", "glowing-gut",
+    "glowing-hunter", "glowing-one", "gun-tricks", "hyper-reflexes", "jaguar-speed",
+    "mad-scientist", "moral-support", "rad-specialist", "rad-reaver", "radiation-power",
+    "radioactive-strength", "science-monster", "thick-skin", "united-ordeal", "wild-west-hands"
+}
+
+def is_ghoul_card(card_id: str) -> bool:
+    clean = card_id.lower().strip().replace(" ", "-")
+    unhyphenated = clean.replace("-", "")
+    return clean in GHOUL_PERK_IDS or unhyphenated in GHOUL_PERK_IDS or any(clean == g.replace("-", "") for g in GHOUL_PERK_IDS)
+
 # Authentic Bethesda reference donor cards by SPECIAL and target rank tier
 DONOR_CARDS = {
     ("S", 1): "blood-luster",
@@ -486,10 +500,31 @@ def process_card(card_info, force=False):
         # NEVER stamp stars on rank 1 (native rank 1 already has 1 white star and remaining dark stars)
         # For rank 2 and above, stamp pristine clean white_star at exact calculated slot coordinates
         if max_rank >= 2 and rank_num >= 2:
+            is_ghoul = is_ghoul_card(card_id) or card_info.get("ghoulOnly", False)
             for s in range(2, min(rank_num + 1, max_rank + 1)):
-                k = max_rank - s
-                star_x = 456 - k * 32
-                star_y = 499 + k * 2
+                if is_ghoul:
+                    if max_rank == 2:
+                        star_x, star_y = 463, 504
+                    elif max_rank == 3:
+                        if s == 2:
+                            star_x, star_y = 433, 506
+                        else:
+                            star_x, star_y = 463, 504
+                    elif max_rank == 4:
+                        if s == 2:
+                            star_x, star_y = 258, 489
+                        elif s == 3:
+                            star_x, star_y = 288, 485
+                        else:
+                            star_x, star_y = 320, 481
+                    else:
+                        k = max_rank - s
+                        star_x = 456 - k * 32
+                        star_y = 499 + k * 2
+                else:
+                    k = max_rank - s
+                    star_x = 456 - k * 32
+                    star_y = 499 + k * 2
                 card.paste(white_star, (star_x, star_y), white_star)
 
         # Save rank image and aliases
