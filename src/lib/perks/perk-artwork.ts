@@ -1,14 +1,44 @@
 import { SpecialCategory, getGenderedPerkName } from "@/lib/perks/catalog";
+import wikiArtMap from "./wiki-268-art-map.json";
 import exactArtMap from "./exact-268-art-map.json";
 
 export { getGenderedPerkName };
 
-// Canonical Perk Card Artwork Loader (Scaleform Vector SVG standard)
+// 100% 1:1 Official In-Game WebP Artwork Loader for all 268 Perk Cards
 export function getPerkCardArtworkUrl(cardId: string, special: SpecialCategory, isFemale = false): string {
-  return getPerkVectorArtUrl(cardId, special, isFemale);
+  if (!cardId) {
+    return `/images/perks_official_wiki/fo76-perk-bloody-mess.webp`;
+  }
+  
+  let raw = cardId.toLowerCase().trim();
+
+  // Dynamic Vault Boy / Vault Girl Variant Swapping
+  if (isFemale) {
+    if (raw === "action-boy" || raw === "action boy" || raw === "actionboy" || raw === "action-girl" || raw === "action girl" || raw === "actiongirl") raw = "action-girl";
+    else if (raw === "party-boy" || raw === "party boy" || raw === "partyboy" || raw === "party-girl" || raw === "party girl" || raw === "partygirl") raw = "party-girl";
+    else if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment" || raw === "aquagirl" || raw === "aqua-girl") raw = "aquagirl";
+  } else {
+    if (raw === "action-boy" || raw === "action boy" || raw === "actionboy" || raw === "action-girl" || raw === "action girl" || raw === "actiongirl") raw = "action-boy";
+    else if (raw === "party-boy" || raw === "party boy" || raw === "partyboy" || raw === "party-girl" || raw === "party girl" || raw === "partygirl") raw = "party-boy";
+    else if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment" || raw === "aquagirl" || raw === "aqua-girl") raw = "aquaboy";
+  }
+
+  const kebab = raw.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const clean = raw.replace(/[^a-z0-9]/g, "");
+
+  // 1. Direct WebP texture lookup from 268-card WebP map
+  const map = wikiArtMap as Record<string, string>;
+  const webpLookup = map[raw] || map[kebab] || map[clean] || map[kebab.replace("-s-", "s-")];
+
+  if (webpLookup) {
+    return webpLookup;
+  }
+
+  // 2. Direct WebP path construction fallback
+  return `/images/perks_official_wiki/fo76-perk-${kebab}.webp`;
 }
 
-// Official Datamined SVG Vector Asset Loader for Pip-Boy Card Frame
+// Official Datamined SVG Vector Asset Loader for Pip-Boy Radar Card Frame
 export function getPerkVectorArtUrl(cardId: string, special: SpecialCategory, isFemale = false): string {
   if (!cardId) {
     return `/images/perks_official/bloodymess.svg`;
@@ -17,15 +47,10 @@ export function getPerkVectorArtUrl(cardId: string, special: SpecialCategory, is
   const raw = cardId.toLowerCase().trim();
 
   if (isFemale) {
-    if (raw === "action-boy" || raw === "action boy" || raw === "actionboy" || raw === "action-girl" || raw === "action girl" || raw === "actiongirl") return "/images/perks_official/actiongirl.svg";
-    if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment" || raw === "aquagirl" || raw === "aqua-girl") return "/images/perks_official/aquaticconcealmentgirl.svg";
-    if (raw === "party-boy" || raw === "party boy" || raw === "partyboy" || raw === "party-girl" || raw === "party girl" || raw === "partygirl") return "/images/perks_official/partygirl.svg";
-    if (raw === "lady-killer" || raw === "lady killer" || raw === "ladykiller" || raw === "black-widow" || raw === "black widow" || raw === "blackwidow") return "/images/perks_official/blackwidow.svg";
-  } else {
-    if (raw === "action-boy" || raw === "action boy" || raw === "actionboy" || raw === "action-girl" || raw === "action girl" || raw === "actiongirl") return "/images/perks_official/actionboy.svg";
-    if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment" || raw === "aquagirl" || raw === "aqua-girl") return "/images/perks_official/aquaticconcealment.svg";
-    if (raw === "party-boy" || raw === "party boy" || raw === "partyboy" || raw === "party-girl" || raw === "party girl" || raw === "partygirl") return "/images/perks_official/partyboy.svg";
-    if (raw === "lady-killer" || raw === "lady killer" || raw === "ladykiller" || raw === "black-widow" || raw === "black widow" || raw === "blackwidow") return "/images/perks_official/ladykiller.svg";
+    if (raw === "action-boy" || raw === "action boy" || raw === "actionboy") return "/images/perks_official/actiongirl.svg";
+    if (raw === "aquaboy" || raw === "aqua-boy" || raw === "aquaboy-aquagirl" || raw === "aquaticconcealment") return "/images/perks_official/aquaticconcealmentgirl.svg";
+    if (raw === "party-boy" || raw === "party boy" || raw === "partyboy") return "/images/perks_official/partygirl.svg";
+    if (raw === "lady-killer" || raw === "lady killer" || raw === "ladykiller") return "/images/perks_official/blackwidow.svg";
   }
 
   const kebab = raw.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
