@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
-import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses } from "./catalog";
+import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getGenderedPerkName } from "./catalog";
 import { getInGamePerkCardImage } from "./clean-perk-assets";
 
 describe("Perk Catalog Utilities", () => {
@@ -92,7 +92,12 @@ describe("1:1 In-Game Perk Card Asset Resolution Engine", () => {
       { id: "what-rads", rank: 4 },
       { id: "action-ghoul", rank: 1 },
       { id: "curator", rank: 1 },
-      { id: "woodchucker", rank: 1 }
+      { id: "woodchucker", rank: 1 },
+      { id: "action-girl", rank: 1 },
+      { id: "action-girl", rank: 3 },
+      { id: "aquagirl", rank: 1 },
+      { id: "party-girl", rank: 1 },
+      { id: "party-girl", rank: 2 },
     ];
 
     for (const { id, rank } of testCases) {
@@ -102,6 +107,46 @@ describe("1:1 In-Game Perk Card Asset Resolution Engine", () => {
       const fullPath = path.join(publicDir, relativePath);
       expect(fs.existsSync(fullPath), `Expected asset to exist: ${fullPath}`).toBe(true);
     }
+  });
+
+  it("should dynamically resolve gendered in-game perk cards based on isFemale flag", () => {
+    // Action Boy <-> Action Girl
+    expect(getInGamePerkCardImage("action-boy", 1, false)).toBe("/images/in_game_cards/action_boy_r1.png");
+    expect(getInGamePerkCardImage("action-boy", 1, true)).toBe("/images/in_game_cards/action_girl_r1.png");
+    expect(getInGamePerkCardImage("action-boy", 3, true)).toBe("/images/in_game_cards/action_girl_r3.png");
+    expect(getInGamePerkCardImage("action-girl", 1, false)).toBe("/images/in_game_cards/action_boy_r1.png");
+    expect(getInGamePerkCardImage("action-girl", 2, true)).toBe("/images/in_game_cards/action_girl_r2.png");
+
+    // Aquaboy <-> Aquagirl
+    expect(getInGamePerkCardImage("aquaboy", 1, false)).toBe("/images/in_game_cards/aquaboy_r1.png");
+    expect(getInGamePerkCardImage("aquaboy", 1, true)).toBe("/images/in_game_cards/aquagirl_r1.png");
+    expect(getInGamePerkCardImage("aquagirl", 1, false)).toBe("/images/in_game_cards/aquaboy_r1.png");
+    expect(getInGamePerkCardImage("aquagirl", 1, true)).toBe("/images/in_game_cards/aquagirl_r1.png");
+
+    // Party Boy <-> Party Girl
+    expect(getInGamePerkCardImage("party-boy", 1, false)).toBe("/images/in_game_cards/party_boy_r1.png");
+    expect(getInGamePerkCardImage("party-boy", 1, true)).toBe("/images/in_game_cards/party_girl_r1.png");
+    expect(getInGamePerkCardImage("party-boy", 2, true)).toBe("/images/in_game_cards/party_girl_r2.png");
+    expect(getInGamePerkCardImage("party-girl", 1, false)).toBe("/images/in_game_cards/party_boy_r1.png");
+    expect(getInGamePerkCardImage("party-girl", 2, true)).toBe("/images/in_game_cards/party_girl_r2.png");
+  });
+
+  it("should properly swap gendered perk names bidirectionally", () => {
+    // Male -> Female
+    expect(getGenderedPerkName("Action Boy", true)).toBe("Action Girl");
+    expect(getGenderedPerkName("Aquaboy", true)).toBe("Aquagirl");
+    expect(getGenderedPerkName("Party Boy", true)).toBe("Party Girl");
+
+    // Female -> Male
+    expect(getGenderedPerkName("Action Girl", false)).toBe("Action Boy");
+    expect(getGenderedPerkName("Aquagirl", false)).toBe("Aquaboy");
+    expect(getGenderedPerkName("Party Girl", false)).toBe("Party Boy");
+
+    // Idempotent when flag matches
+    expect(getGenderedPerkName("Action Girl", true)).toBe("Action Girl");
+    expect(getGenderedPerkName("Action Boy", false)).toBe("Action Boy");
+    expect(getGenderedPerkName("Bloody Mess", true)).toBe("Bloody Mess");
+    expect(getGenderedPerkName("Bloody Mess", false)).toBe("Bloody Mess");
   });
 });
 

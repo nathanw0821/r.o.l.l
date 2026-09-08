@@ -85,11 +85,17 @@ export function getPerkCardById(id: string): PerkCard | undefined {
 }
 
 export function getGenderedPerkName(name: string, isFemale = false): string {
-  if (!isFemale || !name) return name;
+  if (!name) return name;
   const lower = name.toLowerCase().trim();
-  if (lower === "action boy" || lower === "action-boy" || lower === "actionboy") return "Action Girl";
-  if (lower === "aquaboy" || lower === "aqua-boy" || lower === "aquaboy-aquagirl") return "Aquagirl";
-  if (lower === "party boy" || lower === "party-boy" || lower === "partyboy") return "Party Girl";
+  if (isFemale) {
+    if (lower === "action boy" || lower === "action-boy" || lower === "actionboy" || lower === "action girl" || lower === "action-girl" || lower === "actiongirl") return "Action Girl";
+    if (lower === "aquaboy" || lower === "aqua-boy" || lower === "aquaboy-aquagirl" || lower === "aquagirl" || lower === "aqua-girl") return "Aquagirl";
+    if (lower === "party boy" || lower === "party-boy" || lower === "partyboy" || lower === "party girl" || lower === "party-girl" || lower === "partygirl") return "Party Girl";
+  } else {
+    if (lower === "action boy" || lower === "action-boy" || lower === "actionboy" || lower === "action girl" || lower === "action-girl" || lower === "actiongirl") return "Action Boy";
+    if (lower === "aquaboy" || lower === "aqua-boy" || lower === "aquaboy-aquagirl" || lower === "aquagirl" || lower === "aqua-girl") return "Aquaboy";
+    if (lower === "party boy" || lower === "party-boy" || lower === "partyboy" || lower === "party girl" || lower === "party-girl" || lower === "partygirl") return "Party Boy";
+  }
   return name;
 }
 

@@ -82,7 +82,11 @@ export function getGhoulPerkCardImage(cardIdOrName?: string, rank: number = 1): 
 export const IN_GAME_STRAIGHT_CARDS: Record<string, string> = {
   // Standard & Reworked Perks (Official Bethesda Live Mechanics)
   "action-boy": "action_boy",
-  "action-girl": "action_boy",
+  "action-girl": "action_girl",
+  "aquaboy": "aquaboy",
+  "aquagirl": "aquagirl",
+  "party-boy": "party_boy",
+  "party-girl": "party_girl",
   "action-ghoul": "action_ghoul",
   "bullet-storm": "bullet_storm",
   "heavy-gunner": "bullet_storm",
@@ -152,10 +156,34 @@ export const IN_GAME_STRAIGHT_CARDS: Record<string, string> = {
   "feral-rage": "feral_rage",
 };
 
-export function getInGamePerkCardImage(cardIdOrName?: string, rank: number = 1): string | null {
+export function getInGamePerkCardImage(
+  cardIdOrName?: string,
+  rank: number = 1,
+  isFemale?: boolean
+): string | null {
   if (!cardIdOrName) return null;
   const key = cardIdOrName.toLowerCase().trim().replace(/[\s_]+/g, "-").replace(/[^a-z0-9-]/g, "");
-  const baseName = IN_GAME_STRAIGHT_CARDS[key] || key.replace(/-/g, "_");
+  let baseName = IN_GAME_STRAIGHT_CARDS[key] || key.replace(/-/g, "_");
+
+  // Dynamic gender swapping between Vault Boy and Vault Girl profiles
+  if (isFemale === true) {
+    if (key === "action-boy" || key === "action-girl" || key === "actionboy" || key === "actiongirl") {
+      baseName = "action_girl";
+    } else if (key === "aquaboy" || key === "aquagirl" || key === "aqua-boy" || key === "aqua-girl" || key === "aquaboy-aquagirl") {
+      baseName = "aquagirl";
+    } else if (key === "party-boy" || key === "party-girl" || key === "partyboy" || key === "partygirl") {
+      baseName = "party_girl";
+    }
+  } else if (isFemale === false) {
+    if (key === "action-boy" || key === "action-girl" || key === "actionboy" || key === "actiongirl") {
+      baseName = "action_boy";
+    } else if (key === "aquaboy" || key === "aquagirl" || key === "aqua-boy" || key === "aqua-girl" || key === "aquaboy-aquagirl") {
+      baseName = "aquaboy";
+    } else if (key === "party-boy" || key === "party-girl" || key === "partyboy" || key === "partygirl") {
+      baseName = "party_boy";
+    }
+  }
+
   const safeRank = Math.max(1, rank);
   return `/images/in_game_cards/${baseName}_r${safeRank}.png`;
 }
