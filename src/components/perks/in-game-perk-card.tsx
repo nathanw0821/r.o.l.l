@@ -432,23 +432,21 @@ export default function InGamePerkCard({
   return (
     <div
       className={`group relative w-full flex flex-col items-center justify-between transition-all duration-200 font-mono ${
-        isOverflow ? "ring-4 ring-red-500 rounded-xl" : ""
+        isOverflow && !isAccordion ? "ring-4 ring-red-500 rounded-xl" : ""
       }`}
     >
       {/* Style Bible Container: Aspect Ratio Uniform Framing */}
       <div
-        className={`relative w-full aspect-[310/490] rounded-xl transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+        className={`relative w-full aspect-[310/490] transition-all duration-200 cursor-pointer flex flex-col justify-between ${
           isAccordion
-            ? isForefront
-              ? "ring-2 ring-amber-400 shadow-[0_12px_32px_rgba(0,0,0,0.95),0_0_20px_rgba(251,191,36,0.6)] overflow-hidden scale-[1.03]"
-              : "ring-1 ring-slate-800/80 shadow-xl overflow-hidden opacity-95 hover:opacity-100 hover:ring-amber-400/50"
+            ? "border-0 ring-0 shadow-none bg-transparent overflow-visible"
             : isEquipped
-            ? "ring-2 ring-amber-400 shadow-amber-500/40 overflow-hidden group-hover:scale-[1.03]"
+            ? "rounded-xl ring-2 ring-amber-400 shadow-amber-500/40 overflow-hidden group-hover:scale-[1.03]"
             : isGhoul
-            ? "ring-1 ring-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.85),0_0_12px_rgba(16,185,129,0.4)] overflow-hidden group-hover:scale-[1.03]"
+            ? "rounded-xl ring-1 ring-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.85),0_0_12px_rgba(16,185,129,0.4)] overflow-hidden group-hover:scale-[1.03]"
             : isLegendary && cleanForeground
             ? "shadow-none bg-transparent overflow-visible group-hover:scale-[1.03]"
-            : "shadow-xl overflow-hidden opacity-95 group-hover:opacity-100 group-hover:scale-[1.03]"
+            : "rounded-xl shadow-xl overflow-hidden opacity-95 group-hover:opacity-100 group-hover:scale-[1.03]"
         }`}
         onClick={(e) => {
           if (isAccordion && !isForefront) {
@@ -474,9 +472,13 @@ export default function InGamePerkCard({
           <img
             src={inGameCardImage}
             alt={displayName}
-            className={`w-full h-full object-contain ${
-              isGhoul ? "bg-[#0a100d]" : "bg-transparent"
-            } rounded-xl block drop-shadow-xl transform-none select-none`}
+            className={`w-full h-full object-contain bg-transparent block select-none transform-none transition-all duration-200 ${
+              isAccordion
+                ? isForefront
+                  ? "drop-shadow-[0_0_14px_rgba(251,191,36,0.85)] drop-shadow-[0_12px_24px_rgba(0,0,0,0.95)]"
+                  : "drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
+                : "rounded-xl drop-shadow-xl"
+            }`}
             loading={priority ? "eager" : "lazy"}
             decoding={priority ? "sync" : "async"}
             fetchPriority={priority ? "high" : "auto"}
@@ -545,41 +547,43 @@ export default function InGamePerkCard({
         )}
 
         {/* Outdated Warning Badge Banner */}
-        {effectiveIsOutdated && (
+        {effectiveIsOutdated && (!isAccordion || isForefront) && (
           <div className="absolute top-2 left-2 bg-gradient-to-r from-red-600 via-amber-600 to-amber-500 text-white font-black text-[0.58rem] px-2 py-0.5 rounded shadow-lg border border-amber-300 tracking-wider flex items-center gap-1 z-40 animate-pulse">
             <AlertTriangle className="h-3 w-3" /> OUTDATED
           </div>
         )}
 
         {/* Legendary Badge Crest Banner (only for fallback images that lack built-in title) */}
-        {isLegendary && (!inGameCardImage || imgError) && !cleanForeground && (
+        {isLegendary && (!inGameCardImage || imgError) && !cleanForeground && (!isAccordion || isForefront) && (
           <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[0.58rem] px-2 py-0.5 rounded-md shadow-lg border border-yellow-300 tracking-wider flex items-center gap-1 z-40">
             <Sparkles className="h-3 w-3 fill-slate-950" /> LEGENDARY
           </div>
         )}
 
         {/* Ghoul Specific Badge Banner */}
-        {isGhoul && !isLegendary && (!inGameCardImage || imgError) && (
+        {isGhoul && !isLegendary && (!inGameCardImage || imgError) && (!isAccordion || isForefront) && (
           <div className="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-400 text-emerald-300 font-mono font-black text-[0.58rem] px-2 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.6)] tracking-wider z-40 flex items-center gap-1">
             <span className="text-emerald-400">☢</span> GHOUL
           </div>
         )}
 
         {/* Rank Inspector Trigger Badge Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowInspector(true);
-          }}
-          className="absolute bottom-2 left-2 bg-slate-950/80 hover:bg-slate-900 border border-slate-700 text-amber-400 hover:text-white p-1 rounded shadow-md opacity-80 group-hover:opacity-100 transition-all z-40"
-          title="Inspect All Ranks & Stats"
-        >
-          <Info className="h-3.5 w-3.5" />
-        </button>
+        {(!isAccordion || isForefront) && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowInspector(true);
+            }}
+            className="absolute bottom-2 left-2 bg-slate-950/80 hover:bg-slate-900 border border-slate-700 text-amber-400 hover:text-white p-1 rounded shadow-md opacity-80 group-hover:opacity-100 transition-all z-40"
+            title="Inspect All Ranks & Stats"
+          >
+            <Info className="h-3.5 w-3.5" />
+          </button>
+        )}
 
         {/* Equipped Badge Ribbon */}
-        {isEquipped && (
+        {isEquipped && !isAccordion && (
           <div className="absolute top-2 right-2 bg-amber-500 text-slate-950 font-black text-[0.62rem] px-2 py-0.5 rounded-full shadow-lg border border-amber-300 tracking-wider z-40">
             ✓ EQUIPPED
           </div>

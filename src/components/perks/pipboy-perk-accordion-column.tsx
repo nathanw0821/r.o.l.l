@@ -140,8 +140,8 @@ export default function PipBoyPerkAccordionColumn({
                     index === 0 ? "mt-0" : "-mt-[112%]"
                   } ${
                     isForefront
-                      ? "transform -translate-y-2 scale-[1.03] shadow-[0_16px_36px_rgba(0,0,0,0.95),0_0_24px_rgba(251,191,36,0.6)]"
-                      : "hover:scale-[1.01]"
+                      ? "transform -translate-y-2 scale-[1.03]"
+                      : ""
                   }`}
                   onMouseEnter={() => setHoveredCardId(item.cardId)}
                   onMouseLeave={() => setHoveredCardId(null)}
