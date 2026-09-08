@@ -33,7 +33,7 @@ tags:
 
 * **Ammo Type**: .45 Rounds (or Prime Ultracite .45).
 * **Innate Property**: Modified Combat Rifle frame that grants **Sneak Speed bonus** and **Reduced Detection Profile**.
-* **Stealth Multiplier**: Stacks natively with [[Covert Operative]] ($2.5\times$), [[Mister Sandman]] ($3.5\times$ at night), and Suppressor mods.
+* **Stealth Multiplier**: Stacks natively with **Covert Operative** ($2.5\times$), **Mister Sandman** ($3.5\times$ at night), and Suppressor mods.
 * **God-Roll Blueprint**:
   * $\bigstar$ **Quad** (for bosses) or **Bloodied / Anti-Armor** (for mob clearing)
   * $\bigstar\bigstar$ **Explosive** or **Vital (+50% Crit Damage)** or **Rapid (+25% FFR)**
@@ -80,4 +80,4 @@ Yes, even Appalachia's most degraded plumbing has a place in the Truth Bible:
 * **Crusader Pistol**: Brotherhood tech capable of swapping receivers: 5.56mm, Fusion, Cryo, or Pyro. Pyro receiver synergizes with **Friendly Fire** perk to heal NPC event escorts!
 
 ---
-*Cross-References*: [[Damage_Calculation_Bible]] | [[Box_Mods_and_Scrapping_Guide]] | [[Builds_and_Mutation_Matrix]]
+*Cross-References*: [Master Truth Bible](../README.md) | [01. Damage Calculation & Armor Mitigation Bible](../01_Mechanics_and_Formulas/Damage_Calculation_Bible.md) | [02. Box Mods & Scrapping Guide](../02_Legendary_Crafting/Box_Mods_and_Scrapping_Guide.md) | [04. Armor & Power Armor Master](../04_Armor_and_Power_Armor/Armor_and_Power_Armor_Master.md) | [05. Builds & Mutation Matrix](../05_Builds_and_Synergies/Builds_and_Mutation_Matrix.md)

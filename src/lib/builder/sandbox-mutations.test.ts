@@ -27,3 +27,32 @@ describe("sandboxMutationMathLayer + Strange in Numbers", () => {
     expect(sin?.end).toBe(-3);
   });
 });
+
+describe("sandboxMutationMathLayer + Class Freak", () => {
+  it("mitigates negative penalties by 25% at rank 1", () => {
+    const cf1 = sandboxMutationMathLayer(["egg-head"], false, { classFreakRank: 1 });
+    expect(cf1?.str).toBe(-2.25);
+    expect(cf1?.end).toBe(-2.25);
+    expect(cf1?.int).toBe(6);
+  });
+
+  it("mitigates negative penalties by 50% at rank 2", () => {
+    const cf2 = sandboxMutationMathLayer(["egg-head"], false, { classFreakRank: 2 });
+    expect(cf2?.str).toBe(-1.5);
+    expect(cf2?.end).toBe(-1.5);
+  });
+
+  it("mitigates negative penalties by 75% at rank 3", () => {
+    const cf3 = sandboxMutationMathLayer(["egg-head"], false, { classFreakRank: 3 });
+    expect(cf3?.str).toBe(-0.75);
+    expect(cf3?.end).toBe(-0.75);
+  });
+
+  it("leaves penalties at 0 if ignorePenalties is true even with Class Freak", () => {
+    const res = sandboxMutationMathLayer(["egg-head"], true, { classFreakRank: 3 });
+    expect(res?.str).toBeUndefined();
+    expect(res?.end).toBeUndefined();
+    expect(res?.int).toBe(6);
+  });
+});
+

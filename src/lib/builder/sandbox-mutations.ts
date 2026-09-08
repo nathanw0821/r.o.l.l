@@ -163,6 +163,11 @@ export type SandboxMutationLayerOpts = {
    * When omitted or 0, no SiN scaling is applied.
    */
   strangeInNumbersMutatedTeammates?: number;
+  /**
+   * Rank of Class Freak perk (0–3).
+   * Reduces negative mutation penalties by 25% per rank (25%, 50%, 75%).
+   */
+  classFreakRank?: number;
 };
 
 /** Merge selected sandbox mutations into one `effectMath`-shaped layer. */
@@ -175,6 +180,8 @@ export function sandboxMutationMathLayer(
   const dropPenalties = Boolean(ignorePenalties);
   const sinTeammates = Math.max(0, Math.min(4, Math.floor(opts?.strangeInNumbersMutatedTeammates ?? 0)));
   const sinMult = strangeInNumbersBenefitMultiplier(sinTeammates);
+  const classFreakRank = Math.max(0, Math.min(3, Math.floor(opts?.classFreakRank ?? 0)));
+  const penaltyMultiplier = 1 - classFreakRank * 0.25;
 
   const benefits: Record<string, number> = {};
   const penalties: Record<string, number> = {};
@@ -190,6 +197,14 @@ export function sandboxMutationMathLayer(
       const v = benefits[k];
       if (typeof v !== "number" || !Number.isFinite(v) || v === 0) continue;
       if (v > 0) benefits[k] = v * sinMult;
+    }
+  }
+
+  if (!dropPenalties && penaltyMultiplier < 1) {
+    for (const k of Object.keys(penalties)) {
+      const v = penalties[k];
+      if (typeof v !== "number" || !Number.isFinite(v) || v === 0) continue;
+      penalties[k] = v * penaltyMultiplier;
     }
   }
 

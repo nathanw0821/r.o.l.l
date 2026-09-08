@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { SpecialCategory } from "@/lib/perks/catalog";
+import { SpecialCategory, OutdatedPerkMeta, ReworkedPerkMeta } from "@/lib/perks/catalog";
 import InGamePerkCard from "@/components/perks/in-game-perk-card";
 
 export interface PipBoyPerkCardProps {
@@ -15,6 +15,10 @@ export interface PipBoyPerkCardProps {
   isEquipped?: boolean;
   isOverflow?: boolean;
   isFemale?: boolean;
+  isOutdated?: boolean;
+  outdatedMeta?: OutdatedPerkMeta;
+  reworkedFrom?: ReworkedPerkMeta;
+  priority?: boolean;
   onEquip?: () => void;
   onUnequip?: () => void;
   footerExtra?: React.ReactNode;

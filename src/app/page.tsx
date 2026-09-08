@@ -8,6 +8,7 @@ import { getAllEffectTiers, getProgressSummary } from "@/lib/data";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import AppalachianRadar from "@/components/appalachian-radar";
 
 async function HomeSummaryOverview() {
   let session = null;
@@ -162,6 +163,7 @@ function HomeSummaryTrackerFallback() {
 export default function HomePage() {
   return (
     <div className="space-y-6 summary-page-container">
+      <AppalachianRadar />
       <Suspense fallback={<HomeSummaryOverviewFallback />}>
         <HomeSummaryOverview />
       </Suspense>

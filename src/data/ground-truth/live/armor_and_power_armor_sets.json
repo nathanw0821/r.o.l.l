@@ -1,6 +1,6 @@
 {
   "category": "Armor, Power Armor, and Inherent Damage Reduction Formulas",
-  "patchVersion": "54.0.0 Live",
+  "patchVersion": "69.0.0 Live (Milepost Zero / Burning Springs)",
   "powerArmorInherentBonuses": {
     "flatDamageReduction": "42% flat damage reduction applied before all armor resistance calculations (7% per individual piece on a full chassis).",
     "flatRadiationReduction": "90% flat incoming radiation reduction applied before all Rad Resistance calculations (15% per individual piece).",

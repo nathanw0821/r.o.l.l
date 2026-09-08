@@ -126,4 +126,192 @@ describe("combat-firepower-engine", () => {
     expect(result.fireRate.rps).toBe(12.5);
     expect(result.fireRate.rpm).toBe(750);
   });
+
+  it("calculates Melee weapon damage with Incisor armor penetration and Heavy Hitter", () => {
+    const result = calculateCombatFirepower({
+      weaponId: "v63-shock-baton",
+      equippedMods: [],
+      equippedPerks: [
+        { cardId: "incisor", rank: 3 },
+        { cardId: "heavy-hitter", rank: 1 },
+        { cardId: "slugger", rank: 3 },
+      ],
+      playerStats: {
+        strength: 20, // +100% melee damage
+        agility: 10,
+        luck: 15,
+        healthPct: 1.0,
+      },
+    });
+
+    // Incisor 3 provides 75% armor penetration
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(75);
+    expect(result.damagePerShot.breakdown.some((b) => b.source.includes("Incisor"))).toBe(false); // in armor penetration
+    expect(result.armorPenetration.breakdown.some((b) => b.source.includes("Incisor"))).toBe(true);
+    // Breakdown includes Heavy Hitter and Strength
+    expect(result.damagePerShot.breakdown.some((b) => b.source.includes("Heavy Hitter"))).toBe(true);
+    expect(result.damagePerShot.breakdown.some((b) => b.source.includes("Strength (20)"))).toBe(true);
+  });
+
+  it("calculates Pistol damage and Tank Killer 36% armor penetration", () => {
+    const result = calculateCombatFirepower({
+      weaponId: "alien-blaster",
+      equippedMods: [],
+      equippedPerks: [
+        { cardId: "gunslinger", rank: 3 },
+        { cardId: "expert-gunslinger", rank: 3 },
+        { cardId: "master-gunslinger", rank: 3 },
+        { cardId: "tank-killer", rank: 3 },
+      ],
+      playerStats: { strength: 5, agility: 15, luck: 15 },
+    });
+
+    // Base: 32 -> +60% Gunslinger -> 32 * 1.6 = 51.2 -> 51
+    expect(result.damagePerShot.normal).toBe(51);
+    // Tank Killer on Pistols provides 36% armor penetration
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(36);
+  });
+
+  it("calculates Bow damage and Bow Before Me 36% armor penetration", () => {
+    const result = calculateCombatFirepower({
+      weaponId: "compound-bow",
+      equippedMods: [],
+      equippedPerks: [
+        { cardId: "archer", rank: 3 },
+        { cardId: "expert-archer", rank: 3 },
+        { cardId: "master-archer", rank: 3 },
+        { cardId: "bow-before-me", rank: 3 },
+      ],
+      playerStats: { strength: 5, agility: 15, luck: 15 },
+    });
+
+    // Base: 110 -> +60% Archer -> 110 * 1.6 = 176
+    expect(result.damagePerShot.normal).toBe(176);
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(36);
+  });
+
+  it("calculates Unarmed weapon 10% Strength scaling and Iron Fist", () => {
+    const result = calculateCombatFirepower({
+      weaponId: "power-fist",
+      equippedMods: [],
+      equippedPerks: [
+        { cardId: "iron-fist", rank: 3 },
+        { cardId: "incisor", rank: 3 },
+      ],
+      playerStats: { strength: 20, agility: 10, luck: 15 },
+    });
+
+    // Base: 58
+    // Iron Fist 3 (+20%) + 20 STR * 10% (+200%) = +220%
+    // 58 * (1 + 2.20) = 185.6 -> 186
+    expect(result.damagePerShot.normal).toBe(186);
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(75);
+    expect(result.damagePerShot.breakdown.some((b) => b.source.includes("Unarmed Strength 10% (20)"))).toBe(true);
+  });
+
+  it("applies Carnivore + SiN scaling to melee food and 0 to Herbivores", () => {
+    // With Carnivore + SiN, Glowing Meat Steak gives +50% melee damage
+    const carnivoreRes = calculateCombatFirepower({
+      weaponId: "power-fist",
+      equippedMods: [],
+      equippedPerks: [],
+      activeBuffs: {
+        activeFoods: ["meat-glowing-steak"],
+        activeMutations: ["carnivore"],
+      },
+      playerStats: { strength: 1, agility: 10, luck: 15, hasStrangeInNumbers: true },
+    });
+    // Base 58 + 10% STR (1 STR = 0.10) + 50% Glowing Meat = +60% -> 58 * 1.6 = 92.8 -> 93
+    expect(carnivoreRes.damagePerShot.normal).toBe(93);
+    expect(carnivoreRes.damagePerShot.breakdown.some((b) => b.source.includes("Carnivore + SiN"))).toBe(true);
+
+    // With Herbivore, meat gives 0 benefit
+    const herbivoreRes = calculateCombatFirepower({
+      weaponId: "power-fist",
+      equippedMods: [],
+      equippedPerks: [],
+      activeBuffs: {
+        activeFoods: ["meat-glowing-steak"],
+        activeMutations: ["herbivore"],
+      },
+      playerStats: { strength: 1, agility: 10, luck: 15, hasStrangeInNumbers: true },
+    });
+    // Base 58 + 10% STR = +10% -> 58 * 1.1 = 63.8 -> 64
+    expect(herbivoreRes.damagePerShot.normal).toBe(64);
+    expect(herbivoreRes.damagePerShot.breakdown.some((b) => b.source.includes("Melee Food"))).toBe(false);
+  });
+
+  it("applies Herbivore + SiN scaling to Blight Soup crits and 0 to Carnivores", () => {
+    // Herbivore + SiN Blight Soup: +125% crit bonus
+    const herbivoreRes = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [],
+      equippedPerks: [],
+      activeBuffs: {
+        activeFoods: ["plant-blight-soup"],
+        activeMutations: ["herbivore"],
+      },
+      playerStats: { strength: 1, agility: 15, luck: 15, hasStrangeInNumbers: true },
+    });
+    // Base Fixer: 48. Base crit: +100%. Blight Soup Herbivore+SiN: +125%. Total crit bonus = +225% -> 48 * 2.25 = 108. Total crit = normal (48) + 108 = 156
+    expect(herbivoreRes.damagePerShot.critical).toBe(156);
+
+    // Carnivore Blight Soup: 0% crit bonus
+    const carnivoreRes = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [],
+      equippedPerks: [],
+      activeBuffs: {
+        activeFoods: ["plant-blight-soup"],
+        activeMutations: ["carnivore"],
+      },
+      playerStats: { strength: 1, agility: 15, luck: 15, hasStrangeInNumbers: true },
+    });
+    // Base crit only: +100% -> 48 * 1 = 48. Total crit = 48 + 48 = 96
+    expect(carnivoreRes.damagePerShot.critical).toBe(96);
+  });
+
+  it("calculates boss target dummy mitigation against Earle Williams (400 DR, 80% flat reduction)", () => {
+    const withoutAA = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [],
+      equippedPerks: [],
+      targetDummyId: "earle-williams",
+      playerStats: { strength: 1, agility: 15, luck: 15 },
+    });
+
+    expect(withoutAA.targetDummy.dummy.id).toBe("earle-williams");
+    expect(withoutAA.targetDummy.effectiveDR).toBe(400);
+    // 80% flat reduction means landed damage is heavily suppressed compared to sheet damage
+    expect(withoutAA.targetDummy.normalLanded).toBeLessThan(withoutAA.damagePerShot.normal * 0.15);
+
+    // Now test with Anti-Armor mod + Tank Killer rank 3:
+    // Anti-Armor 50% + Tank Killer 36% -> 68% total armor penetration
+    const withAA = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [{ slug: "anti-armor" }],
+      equippedPerks: [{ cardId: "tank-killer", rank: 3 }],
+      targetDummyId: "earle-williams",
+      playerStats: { strength: 1, agility: 15, luck: 15 },
+    });
+
+    // 400 DR * (1 - 0.68) = 128 Effective DR
+    expect(withAA.targetDummy.effectiveDR).toBe(128);
+    // Landed damage with 68% AP must be substantially higher than without AP
+    expect(withAA.targetDummy.normalLanded).toBeGreaterThan(withoutAA.targetDummy.normalLanded);
+  });
+
+  it("returns 100% passthrough for raw-unarmored target dummy", () => {
+    const rawRes = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [],
+      equippedPerks: [],
+      targetDummyId: "raw-unarmored",
+      playerStats: { strength: 1, agility: 15, luck: 15 },
+    });
+
+    expect(rawRes.targetDummy.effectiveDR).toBe(0);
+    expect(rawRes.targetDummy.normalLanded).toBe(rawRes.damagePerShot.totalPerShot);
+    expect(rawRes.targetDummy.criticalLanded).toBe(rawRes.damagePerShot.critical);
+  });
 });

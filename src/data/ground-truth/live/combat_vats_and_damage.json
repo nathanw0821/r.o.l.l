@@ -1,6 +1,11 @@
 {
   "category": "Combat, V.A.T.S., Action Points, and Damage Calculation Engine",
-  "patchVersion": "54.0.0 Live",
+  "patchVersion": "69.0.0 Live (Milepost Zero / Burning Springs)",
+  "unarmedAndMeleeMechanics": {
+    "standardMeleeScaling": "+5% additive base damage per point of Strength.",
+    "unarmedMeleeScaling": "+10% additive base damage per point of Strength (double standard melee rate). Applies to Power Fist, Deathclaw Gauntlet, Gauntlet, Meat Hook, Boxing Glove, Knuckles, and bare fists.",
+    "perkIronFist": "+10% (Rank 1), +15% (Rank 2), +20% (Rank 3) additive base damage to unarmed weapons."
+  },
   "actionPointMechanics": {
     "baseRecoveryRate": "6.0% of total Action Point pool per second when not sprinting, jumping, or in V.A.T.S.",
     "recoveryDelay": "1.0 second delay after stopping AP consumption before passive regeneration begins.",
@@ -17,10 +22,13 @@
     "maximumHitChanceCap": "95% (Hit chance in V.A.T.S. can never exceed 95%, regardless of Perception or weapon accuracy buffs).",
     "minimumHitChanceFloor": "0% (Unless line-of-sight is established, minimum floor is 0%).",
     "rangeFalloff": "Accuracy scales down dramatically past the weapon's listed effective range stat. Concentrated Fire perk increases hit chance by 10% / 15% / 20% on consecutive shots per target limb.",
-    "criticalHitFormula": "V.A.T.S. criticals guarantee a 100% hit (ignoring accuracy falloff) and bypass non-boss flat damage reductions. Critical meter fills based on Luck: at 33 Luck with Critical Savvy Rank 3 (55% fill cost), a critical hit can be executed on every alternate shot (1 normal shot -> 1 crit -> 1 normal shot -> 1 crit)."
+    "criticalHitFormula": "V.A.T.S. criticals guarantee a 100% hit (ignoring accuracy falloff) and bypass non-boss flat damage reductions. Critical meter fills based on Luck: at 33 Luck with Critical Savvy Rank 3 (55% fill cost), a critical hit can be executed on every alternate shot (1 normal shot -> 1 crit -> 1 normal shot -> 1 crit). With 3★ Lucky (+15% crit charge), the requirement drops to 23 Luck."
   },
   "damageMitigationAndPenetration": {
     "antiArmorCalculation": "Anti-Armor reduces target's Armor and Energy Resistance by 50%. Combined with Tank Killer (+36% armor penetration) or Stabilized (+45% in PA), effective target resistance drops by up to ~68%–72.5%.",
-    "damageAdditiveVsMultiplicative": "Standard perks (Commando, Rifleman, Heavy Gunner) apply additive bonuses to weapon base damage. Vulnerability effects (Follow Through, Taking One for the Team) apply multiplicative final damage increases."
+    "tankKillerMechanics": "Tank Killer reduces target Armor and Energy Resistance by 12% (Rank 1), 24% (Rank 2), and 36% (Rank 3). Following Patch 22 (One Wasteland), Tank Killer explicitly applies to both Rifles (Commando, Rifleman) AND Pistols (Gunslinger, Guerrilla).",
+    "bowBeforeMeMechanics": "Bow Before Me reduces target armor by 12% (Rank 1), 24% (Rank 2), and 36% (Rank 3), and provides stagger chances for Bows and Crossbows.",
+    "incisorMechanics": "Incisor reduces target armor by 25% (Rank 1), 50% (Rank 2), and 75% (Rank 3) for both 1H/2H Melee weapons AND Unarmed weapons.",
+    "damageAdditiveVsMultiplicative": "Standard perks (Commando, Rifleman, Gunslinger, Guerrilla, Archer, Slugger, Gladiator, Iron Fist) apply additive bonuses to weapon base damage. Note: Heavy Gunner damage cards were reworked in Patch 62+ into Bullet Storm (ramping sustained damage), Tightly Wound (spin-up speed), and Bringing the Big Guns (stack doubling). Vulnerability effects (Follow Through, Taking One for the Team) apply multiplicative final damage increases."
   }
 }

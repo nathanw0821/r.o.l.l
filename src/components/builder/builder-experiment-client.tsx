@@ -493,8 +493,10 @@ export default function BuilderExperimentClient({
       activeAlcohol: switchboardState.activeAlcohol,
       activeNukaCola: switchboardState.activeNukaCola,
       activeCompanion: switchboardState.activeCompanion,
+      activeMutations: payload.mutationIds,
+      hasStrangeInNumbers: payload.hasStrangeInNumbers,
     });
-  }, [switchboardState]);
+  }, [switchboardState, payload.mutationIds, payload.hasStrangeInNumbers]);
 
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } =
     useBuilderBetaAccess(isAdmin);
@@ -909,9 +911,23 @@ export default function BuilderExperimentClient({
   }, [isPA]);
 
 
+  const equippedPerkCards = React.useMemo(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
+      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
+      if (!perkSlotStr) return [];
+      const perkData = JSON.parse(perkSlotStr);
+      return Array.isArray(perkData.equippedCards) ? (perkData.equippedCards as { cardId: string; rank: number }[]) : [];
+    } catch {
+      return [];
+    }
+  }, []);
+
   const mutationLayer = React.useMemo(
-    () =>
-      sandboxMutationMathLayer(
+    () => {
+      const cfRank = equippedPerkCards.find((c) => c.cardId === "class-freak")?.rank ?? 0;
+      return sandboxMutationMathLayer(
         payload.mutationIds,
         payload.ignoreMutationPenalties,
         {
@@ -919,24 +935,21 @@ export default function BuilderExperimentClient({
             payload.hasStrangeInNumbers && payload.mutationIds.length > 0
               ? 4
               : 0,
+          classFreakRank: cfRank,
         },
-      ),
+      );
+    },
     [
       payload.mutationIds,
       payload.ignoreMutationPenalties,
       payload.hasStrangeInNumbers,
+      equippedPerkCards,
     ],
   );
 
   const perkDeckDefensiveLayer = React.useMemo(() => {
-    if (typeof window === "undefined") return null;
+    if (!equippedPerkCards || equippedPerkCards.length === 0) return null;
     try {
-      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
-      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
-      if (!perkSlotStr) return null;
-      const perkData = JSON.parse(perkSlotStr);
-      if (!Array.isArray(perkData.equippedCards)) return null;
-
       let dr = 0;
       let er = 0;
       let fr = 0;
@@ -947,7 +960,7 @@ export default function BuilderExperimentClient({
       const strVal = payload.baseSpecial?.str || 1;
       const agiVal = payload.baseSpecial?.agi || 1;
 
-      for (const card of perkData.equippedCards) {
+      for (const card of equippedPerkCards) {
         const id = (card.cardId || "").toLowerCase();
         const rank = card.rank || 1;
 
@@ -982,7 +995,7 @@ export default function BuilderExperimentClient({
     } catch {
       return null;
     }
-  }, [piece.kind, payload.baseSpecial]);
+  }, [piece.kind, payload.baseSpecial, equippedPerkCards]);
 
   const intrinsicBenchTotals = React.useMemo(
     () =>
@@ -1039,19 +1052,6 @@ export default function BuilderExperimentClient({
       piece.kind,
     ],
   );
-
-  const equippedPerkCards = React.useMemo(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
-      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
-      if (!perkSlotStr) return [];
-      const perkData = JSON.parse(perkSlotStr);
-      return Array.isArray(perkData.equippedCards) ? (perkData.equippedCards as { cardId: string; rank: number }[]) : [];
-    } catch {
-      return [];
-    }
-  }, []);
 
   const weaponFirepowerResult = React.useMemo(() => {
     const targetWeapon = activeWeaponPiece;
