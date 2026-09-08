@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard, getPerkCardById, OutdatedPerkMeta, ReworkedPerkMeta } from "@/lib/perks/catalog";
-import PipBoyCardArt from "@/components/perks/pipboy-card-art";
-import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
+import { getGenderedPerkName } from "@/lib/perks/perk-artwork";
 import {
   OFFICIAL_SPECIAL_COLORS,
   OFFICIAL_SPECIAL_NAMES,
@@ -11,10 +10,8 @@ import {
   CLEAN_TEXTURES,
   getCleanPerkForeground,
   getLegendaryRankStarSprite,
-  getGhoulPerkCardImage,
-  getInGamePerkCardImage,
 } from "@/lib/perks/clean-perk-assets";
-import { Sparkles, Star, Info, X, ExternalLink, AlertTriangle } from "lucide-react";
+import { Star, Info, X, ExternalLink, AlertTriangle } from "lucide-react";
 
 export interface InGamePerkCardProps {
   cardId?: string;
@@ -356,7 +353,6 @@ export default function InGamePerkCard({
   isOutdated,
   outdatedMeta,
   reworkedFrom,
-  priority = false,
   onEquip,
   onUnequip,
   onRankChange,
@@ -366,11 +362,9 @@ export default function InGamePerkCard({
   onSelect,
 }: InGamePerkCardProps) {
   const theme = INGAME_SPECIAL_THEMES[special] || INGAME_SPECIAL_THEMES.S;
-  const [imgError, setImgError] = React.useState(false);
   const [showInspector, setShowInspector] = React.useState(false);
   const [inspectRank, setInspectRank] = React.useState(rank);
 
-  const artworkUrl = getPerkCardArtworkUrl(cardId || name, special, isFemale);
   const displayName = getGenderedPerkName(name, isFemale);
   const isLegendary = special === "LEGENDARY" || cardId?.includes("legendary");
   const isGhoul = isGhoulPerkCard(cardId || name);
@@ -385,15 +379,9 @@ export default function InGamePerkCard({
   const effectiveReworkedFrom = reworkedFrom ?? fullCard?.reworkedFrom;
 
   // Check if official isolated vector foreground is available
-  const cleanForeground = getCleanPerkForeground(cardId || name);
-  const ghoulPerkImage = isGhoul ? getGhoulPerkCardImage(cardId || name, rank) : null;
-  const inGameCardImage = getInGamePerkCardImage(cardId || name, rank, isFemale);
+  const cleanForeground = getCleanPerkForeground(cardId || name, special, isFemale) || "/images/perks_official/bloodymess.svg";
 
   const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
-
-  React.useEffect(() => {
-    setImgError(false);
-  }, [artworkUrl, ghoulPerkImage, inGameCardImage]);
 
   // Keep inspectRank in sync when rank prop changes
   React.useEffect(() => {
@@ -408,8 +396,6 @@ export default function InGamePerkCard({
     }
     return { rank: inspectRank, cost, description };
   }, [fullCard, inspectRank, cost, description]);
-
-  const inGameInspectImage = getInGamePerkCardImage(cardId || name, inspectRankData.rank, isFemale);
 
   const openWikiSource = React.useCallback(() => {
     window.open(`/wiki?q=${encodeURIComponent(name)}`, "_blank", "noopener,noreferrer");
@@ -439,12 +425,14 @@ export default function InGamePerkCard({
       <div
         className={`relative w-full aspect-[310/490] transition-all duration-200 cursor-pointer flex flex-col justify-between ${
           isAccordion
-            ? "border-0 ring-0 shadow-none bg-transparent overflow-visible"
+            ? isForefront
+              ? "border-0 ring-0 bg-transparent overflow-visible drop-shadow-[0_0_14px_rgba(251,191,36,0.85)] drop-shadow-[0_12px_24px_rgba(0,0,0,0.95)] z-20 scale-[1.02]"
+              : "border-0 ring-0 bg-transparent overflow-visible drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
             : isEquipped
             ? "rounded-xl ring-2 ring-amber-400 shadow-amber-500/40 overflow-hidden group-hover:scale-[1.03]"
             : isGhoul
             ? "rounded-xl ring-1 ring-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.85),0_0_12px_rgba(16,185,129,0.4)] overflow-hidden group-hover:scale-[1.03]"
-            : isLegendary && cleanForeground
+            : isLegendary
             ? "shadow-none bg-transparent overflow-visible group-hover:scale-[1.03]"
             : "rounded-xl shadow-xl overflow-hidden opacity-95 group-hover:opacity-100 group-hover:scale-[1.03]"
         }`}
@@ -467,26 +455,8 @@ export default function InGamePerkCard({
         }}
         title={isAccordion && !isForefront ? "Click to bring to forefront" : "Click to equip • Right-click for perk details & Truth Wiki"}
       >
-        {/* 1. Literal 1:1 In-Game Bitmap Cards (Pip-Boy Slanted & Curved for Regular, Ghoul, and Legendary) */}
-        {inGameCardImage && !imgError ? (
-          <img
-            src={inGameCardImage}
-            alt={displayName}
-            className={`w-full h-full object-contain bg-transparent block select-none transform-none transition-all duration-200 ${
-              isAccordion
-                ? isForefront
-                  ? "drop-shadow-[0_0_14px_rgba(251,191,36,0.85)] drop-shadow-[0_12px_24px_rgba(0,0,0,0.95)]"
-                  : "drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
-                : "rounded-xl drop-shadow-xl"
-            }`}
-            loading={priority ? "eager" : "lazy"}
-            decoding={priority ? "sync" : "async"}
-            fetchPriority={priority ? "high" : "auto"}
-            draggable={false}
-            onError={() => setImgError(true)}
-          />
-        ) : isLegendary && cleanForeground ? (
-          /* 2. Scaleform Legendary Vector Recreation Fallback */
+        {/* Flat Scaleform Vector Card Architecture (Standard SPECIAL, Ghoul, and Legendary) */}
+        {isLegendary ? (
           <ScaleformLegendaryVisual
             displayName={displayName}
             rank={rank}
@@ -494,8 +464,7 @@ export default function InGamePerkCard({
             description={description}
             cleanForeground={cleanForeground}
           />
-        ) : cleanForeground ? (
-          /* 3. Scaleform Vector Fallback */
+        ) : (
           <ScaleformSpecialVisual
             displayName={displayName}
             special={special}
@@ -505,45 +474,6 @@ export default function InGamePerkCard({
             description={description}
             cleanForeground={cleanForeground}
           />
-        ) : !imgError ? (
-          /* 4. Default Catalog Artwork Fallback */
-          <img
-            src={ghoulPerkImage || artworkUrl}
-            alt={displayName}
-            className={`w-full h-full ${isGhoul ? "object-contain bg-[#0a100d]" : "object-cover object-center"} rounded-xl block drop-shadow-xl transform-none`}
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div
-            className={`w-full h-full p-3 rounded-xl border-2 ${
-              isGhoul ? "border-emerald-500 bg-[#081210]" : `${theme.border} ${theme.cardBg}`
-            } flex flex-col justify-between`}
-          >
-            {/* Header Stamp Bar */}
-            <div className="flex items-center justify-between gap-1.5 border-b border-slate-700/80 pb-1.5">
-              <span
-                className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}
-              >
-                {cost}
-              </span>
-              <span className="text-[0.68rem] font-black uppercase tracking-wider text-slate-100 truncate">
-                {displayName}
-              </span>
-              <span className={`text-[0.58rem] font-black px-1.5 py-0.5 rounded border uppercase ${theme.stampBg}`}>
-                {special}
-              </span>
-            </div>
-
-            {/* Central Vault Boy Graphic */}
-            <div className="my-2 flex-1 flex items-center justify-center min-h-0 overflow-hidden">
-              <PipBoyCardArt special={special} name={name} isFemale={isFemale} className="w-full h-full max-h-[140px]" />
-            </div>
-
-            {/* Description Text Box */}
-            <p className="text-[0.62rem] font-mono text-slate-200 leading-tight bg-slate-950/90 p-2 rounded border border-slate-800 shrink-0 line-clamp-3">
-              {description}
-            </p>
-          </div>
         )}
 
         {/* Outdated Warning Badge Banner */}
@@ -553,15 +483,8 @@ export default function InGamePerkCard({
           </div>
         )}
 
-        {/* Legendary Badge Crest Banner (only for fallback images that lack built-in title) */}
-        {isLegendary && (!inGameCardImage || imgError) && !cleanForeground && (!isAccordion || isForefront) && (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[0.58rem] px-2 py-0.5 rounded-md shadow-lg border border-yellow-300 tracking-wider flex items-center gap-1 z-40">
-            <Sparkles className="h-3 w-3 fill-slate-950" /> LEGENDARY
-          </div>
-        )}
-
         {/* Ghoul Specific Badge Banner */}
-        {isGhoul && !isLegendary && (!inGameCardImage || imgError) && (!isAccordion || isForefront) && (
+        {isGhoul && !isLegendary && (!isAccordion || isForefront) && (
           <div className="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-400 text-emerald-300 font-mono font-black text-[0.58rem] px-2 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.6)] tracking-wider z-40 flex items-center gap-1">
             <span className="text-emerald-400">☢</span> GHOUL
           </div>
@@ -618,7 +541,7 @@ export default function InGamePerkCard({
                 isLegendary ? "text-yellow-200" : "text-slate-200"
               }`}
             >
-              {maxRank > 1 ? `RANK ${rank}/${maxRank}` : `RANK 1`}
+              {maxRank > 1 ? `RK ${rank}/${maxRank}` : `RK 1`}
             </span>
             {maxRank > 1 && (
               <div className="flex items-center justify-center gap-0.5 mt-0.5">
@@ -790,45 +713,28 @@ export default function InGamePerkCard({
                   className={`w-52 sm:w-60 aspect-[310/490] rounded-xl transition-all ${
                     isGhoul
                       ? "ring-2 ring-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.85),0_0_60px_rgba(74,222,128,0.5)] overflow-hidden"
-                      : isLegendary && cleanForeground
+                      : isLegendary
                       ? "shadow-none bg-transparent overflow-visible"
                       : "overflow-hidden shadow-2xl border-2 border-amber-400/70 ring-2 ring-amber-500/30"
                   }`}
                 >
-                  {inGameInspectImage ? (
-                    <img
-                      src={inGameInspectImage}
-                      alt={displayName}
-                      className="w-full h-full object-contain rounded-xl block drop-shadow-xl select-none"
-                      loading="eager"
-                      decoding="async"
-                      draggable={false}
+                  {isLegendary ? (
+                    <ScaleformLegendaryVisual
+                      displayName={displayName}
+                      rank={inspectRankData.rank}
+                      maxRank={maxRank}
+                      description={inspectRankData.description}
+                      cleanForeground={cleanForeground}
                     />
-                  ) : cleanForeground ? (
-                    isLegendary ? (
-                      <ScaleformLegendaryVisual
-                        displayName={displayName}
-                        rank={inspectRankData.rank}
-                        maxRank={maxRank}
-                        description={inspectRankData.description}
-                        cleanForeground={cleanForeground}
-                      />
-                    ) : (
-                      <ScaleformSpecialVisual
-                        displayName={displayName}
-                        special={special}
-                        cost={inspectRankData.cost}
-                        rank={inspectRankData.rank}
-                        maxRank={maxRank}
-                        description={inspectRankData.description}
-                        cleanForeground={cleanForeground}
-                      />
-                    )
                   ) : (
-                    <img
-                      src={artworkUrl}
-                      alt={name}
-                      className="w-full h-full object-cover object-center rounded-xl"
+                    <ScaleformSpecialVisual
+                      displayName={displayName}
+                      special={special}
+                      cost={inspectRankData.cost}
+                      rank={inspectRankData.rank}
+                      maxRank={maxRank}
+                      description={inspectRankData.description}
+                      cleanForeground={cleanForeground}
                     />
                   )}
                 </div>
