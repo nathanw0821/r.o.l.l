@@ -9,6 +9,8 @@ import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
 import { Sparkles, Link2 } from "lucide-react";
 import PerkLevelingRoadmap from "@/components/perks/perk-leveling-roadmap";
 import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
+import PipBoyPerkAccordionColumn from "@/components/perks/pipboy-perk-accordion-column";
+import PipBoyLegendaryRack from "@/components/perks/pipboy-legendary-rack";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 
@@ -81,6 +83,16 @@ export default function PerkBuilder({
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
   const [isFemale, setIsFemale] = React.useState(false);
   const [isNdImportOpen, setIsNdImportOpen] = React.useState(false);
+  const [viewMode, setViewMode] = React.useState<"pipboy" | "grid">("pipboy");
+
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("roll_perk_builder_view_mode");
+      if (saved === "pipboy" || saved === "grid") {
+        setViewMode(saved);
+      }
+    } catch {}
+  }, []);
 
   const isInitialLoadedRef = React.useRef(false);
 
@@ -169,6 +181,26 @@ export default function PerkBuilder({
       const card = getPerkCardById(item.cardId);
       return card?.special === "LEGENDARY";
     });
+  }, [safeEquippedCards]);
+
+  const equippedBySpecial = React.useMemo(() => {
+    const map: Record<SpecialCategory, EquippedItem[]> = {
+      S: [],
+      P: [],
+      E: [],
+      C: [],
+      I: [],
+      A: [],
+      L: [],
+      LEGENDARY: [],
+    };
+    safeEquippedCards.forEach((item) => {
+      const card = getPerkCardById(item.cardId);
+      if (card && map[card.special]) {
+        map[card.special].push(item);
+      }
+    });
+    return map;
   }, [safeEquippedCards]);
 
   // Hard Cap of 15 (Human) or 20 (Ghoul) for perk card slot capacity
@@ -663,11 +695,50 @@ export default function PerkBuilder({
       {/* Equipped Perk Cards Deck */}
       <Card className="bg-slate-950 border-slate-800 shadow-xl">
         <CardHeader className="pb-3 border-b border-slate-900">
-          <CardTitle className="text-base font-mono text-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span>Equipped Perk Deck ({safeEquippedCards.length} Cards)</span>
-              <span className="text-xs px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                Legendary Perks: {equippedLegendaryCards.length} / 6 Slots
+          <CardTitle className="text-base font-mono text-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="font-bold">Equipped Perk Deck ({safeEquippedCards.length} Cards)</span>
+
+              {/* View Mode Toggle Button Group */}
+              <div className="flex items-center rounded-lg border border-slate-800 bg-slate-900/90 p-0.5 shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setViewMode("pipboy");
+                    try { localStorage.setItem("roll_perk_builder_view_mode", "pipboy"); } catch {}
+                  }}
+                  className={`px-2.5 py-1 rounded text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+                    viewMode === "pipboy"
+                      ? "bg-amber-500 text-slate-950 shadow-md font-black"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                  title="1:1 In-Game Fallout 76 Pip-Boy Accordion Lineups"
+                >
+                  <span>🗂️</span>
+                  <span className="hidden sm:inline">In-Game Lineup</span>
+                  <span className="sm:hidden">Lineup</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setViewMode("grid");
+                    try { localStorage.setItem("roll_perk_builder_view_mode", "grid"); } catch {}
+                  }}
+                  className={`px-2.5 py-1 rounded text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+                    viewMode === "grid"
+                      ? "bg-slate-700 text-white shadow-md font-black"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                  title="Expanded Theorycrafter Flat Grid"
+                >
+                  <span>⊞</span>
+                  <span className="hidden sm:inline">Expanded Grid</span>
+                  <span className="sm:hidden">Grid</span>
+                </button>
+              </div>
+
+              <span className="text-xs px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold hidden md:inline-flex">
+                Legendary: {equippedLegendaryCards.length} / 6
               </span>
               {safeEquippedCards.length > 0 && (
                 <button
@@ -721,7 +792,60 @@ export default function PerkBuilder({
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           {showRoadmap && <PerkLevelingRoadmap equippedCards={safeEquippedCards} />}
-          {safeEquippedCards.length === 0 ? (
+
+          {viewMode === "pipboy" ? (
+            <div className="space-y-4">
+              {/* Dedicated 6-Slot Legendary Perk Rack */}
+              <PipBoyLegendaryRack
+                equippedLegendaryCards={equippedLegendaryCards}
+                isFemale={isFemale}
+                onEquipCard={handleEquipCard}
+                onUnequipCard={handleUnequipCard}
+                onFilterLegendary={() => setSelectedCategory("LEGENDARY")}
+              />
+
+              {/* Mobile Fast SPECIAL Selector Bar (Small screens only) */}
+              <div className="flex lg:hidden items-center justify-between gap-1 overflow-x-auto py-1">
+                {(["S", "P", "E", "C", "I", "A", "L"] as SpecialCategory[]).map((stat) => (
+                  <button
+                    key={stat}
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById(`special-col-${stat}`);
+                      el?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                    }}
+                    className="flex-1 min-w-[36px] py-1 text-center font-mono font-black text-xs rounded border border-slate-800 bg-slate-900 text-slate-300 hover:border-amber-500/50 hover:text-amber-300"
+                  >
+                    {stat}
+                  </button>
+                ))}
+              </div>
+
+              {/* 7-Column S.P.E.C.I.A.L. In-Game Lineup */}
+              <div className="flex flex-row overflow-x-auto snap-x lg:grid lg:grid-cols-7 gap-3 pb-6 pt-1 px-0.5">
+                {(["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).map((stat) => (
+                  <div
+                    key={stat}
+                    id={`special-col-${stat}`}
+                    className="min-w-[190px] sm:min-w-[210px] lg:min-w-0 snap-start flex-1"
+                  >
+                    <PipBoyPerkAccordionColumn
+                      special={stat}
+                      equippedCards={equippedBySpecial[stat]}
+                      capacity={effectiveCapacities[stat]}
+                      basePoints={specials[stat]}
+                      legendaryBonus={legendaryBonuses[stat] || 0}
+                      isOverCapacity={usedSpecialCapacity[stat] > effectiveCapacities[stat]}
+                      isFemale={isFemale}
+                      onEquipCard={handleEquipCard}
+                      onUnequipCard={handleUnequipCard}
+                      onFilterSpecial={(s) => setSelectedCategory(s)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : safeEquippedCards.length === 0 ? (
             <div className="py-10 text-center text-xs font-mono text-slate-500 border border-dashed border-slate-800 rounded-lg">
               No perk cards equipped in this loadout yet. Select cards below from the Vault-Tec catalog!
             </div>
