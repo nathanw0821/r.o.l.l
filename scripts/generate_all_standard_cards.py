@@ -174,25 +174,8 @@ DONOR_CARDS = {
     ("L", 3): "better-criticals",
 }
 
-# Perks migrated across SPECIAL categories in balance patches that require authentic re-theming
-RETHEMED_CARDS = {
-    "good-with-salt": {"target_special": "I", "source_special": "L", "donor": "contractor"},
-    "tormentor": {"target_special": "P", "source_special": "L", "donor": "picklock"},
-    "starched-genes": {"target_special": "E", "source_special": "L", "donor": "aquaboy"},
-    "thru-hiker": {"target_special": "E", "source_special": "A", "donor": "chem-resistant"},
-    "white-knight": {"target_special": "I", "source_special": "A", "donor": "power-patcher"},
-    "bullet-shield": {"target_special": "E", "source_special": "S", "donor": "ghoulish"},
-    "bloodsucker": {"target_special": "E", "source_special": "C", "donor": "aquaboy"},
-    "field-surgeon": {"target_special": "I", "source_special": "C", "donor": "chemist"},
-    "portable-power": {"target_special": "S", "source_special": "I", "donor": "blocker"},
-    "rad-sponge": {"target_special": "E", "source_special": "C", "donor": "aquaboy"},
-    "revenant": {"target_special": "C", "source_special": "E", "donor": "e-m-t"},
-    "curator": {"target_special": "I", "source_special": "L", "donor": "chemist"},
-    "fortune-finder": {"target_special": "P", "source_special": "L", "donor": "picklock"},
-    "dry-nurse": {"target_special": "L", "source_special": "C", "donor": "woodchucker"},
-    "strong-arm": {"target_special": "S", "source_special": "P", "donor": "blood-luster"},
-    "wrecking-ball": {"target_special": "S", "source_special": "I", "donor": "blood-luster"},
-}
+# Perks previously migrated across SPECIAL categories now have authentic native 2026 Bethesda rips in perks_official_wiki
+RETHEMED_CARDS = {}
 
 def create_special_background(special, w, h):
     """Generate authentic procedural SPECIAL illustration background with parchment noise."""

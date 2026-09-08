@@ -142,6 +142,24 @@ export const REWORKED_MODERN_MAP: Record<string, ReworkedPerkMeta> = {
     patchVersion: "Patch 62 (CAMP Revamp)",
     summary: "Moved from Agility to Endurance; compressed from 3 ranks to 2 ranks (-45% / -90% food/drink weight).",
   },
+  "portable-power": {
+    formerName: "Portable Power (Legacy Weight)",
+    formerId: "portable-power",
+    patchVersion: "Patch 68 (The Backwoods)",
+    summary: "Moved from Intelligence to Strength; reworked from PA chassis weight reduction into +10%/+20%/+30% Power Armor movement speed.",
+  },
+  "tormentor": {
+    formerName: "Tormentor (Luck)",
+    formerId: "tormentor",
+    patchVersion: "Patch 60 (Gone Fission)",
+    summary: "Moved from Luck to Perception; converted to a single Rank (Cost 2) perk dealing +20% damage per crippled limb your target has.",
+  },
+  "good-with-salt": {
+    formerName: "Good with Salt (Luck)",
+    formerId: "good-with-salt",
+    patchVersion: "Patch 62 (CAMP Revamp)",
+    summary: "Moved from Luck to Intelligence; compressed from 3 ranks to 2 ranks (-45% / -90% food spoil rate).",
+  },
 };
 
 /**
