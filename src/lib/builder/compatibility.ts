@@ -28,7 +28,7 @@ function weaponSubMatches(mod: BuilderModDTO, piece: BaseGearPiece): boolean {
   if (!modSub) return true;
   if (!sub) return true;
 
-  const pieceIsRangedStyle = sub === "ranged" || sub === "energy";
+  const pieceIsRangedStyle = sub === "ranged" || sub === "energy" || sub === "heavy";
   if (modSub === "ranged" || modSub === "guns" || modSub === "gun" || modSub === "ballistic" || modSub === "heavy") {
     return pieceIsRangedStyle;
   }
@@ -36,7 +36,7 @@ function weaponSubMatches(mod: BuilderModDTO, piece: BaseGearPiece): boolean {
     return sub === "melee";
   }
   if (modSub === "energy") {
-    return sub === "energy" || sub === "ranged";
+    return sub === "energy" || sub === "ranged" || sub === "heavy";
   }
   return modSub === sub;
 }

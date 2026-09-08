@@ -567,124 +567,137 @@ export default function InGamePerkCard({
           </div>
         )}
 
-        {/* Rank Inspector Trigger Badge Button */}
-        {(!isAccordion || isForefront) && (
+        {/* Equipped Badge Ribbon */}
+        {isEquipped && !isAccordion && (
+          <div className="absolute top-2 right-2 bg-amber-500 text-slate-950 font-black text-[0.62rem] px-2 py-0.5 rounded-full shadow-lg border border-amber-300 tracking-wider z-40 pointer-events-none">
+            ✓ EQUIPPED
+          </div>
+        )}
+
+        {/* Baked-In Interactive Control Bar (Inside Card Frame) */}
+        <div
+          className={`absolute bottom-1.5 inset-x-1.5 sm:bottom-2 sm:inset-x-2 z-30 rounded-lg p-1 items-center justify-between gap-1 shadow-2xl border font-mono backdrop-blur-md transition-all duration-200 ${
+            isAccordion
+              ? isForefront
+                ? "flex opacity-100 animate-in fade-in duration-150"
+                : "hidden"
+              : isEquipped
+              ? "flex opacity-95 group-hover:opacity-100 transition-opacity duration-150"
+              : "flex opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150"
+          } ${
+            isLegendary
+              ? "bg-slate-950/92 border-yellow-500/70 text-yellow-200 shadow-yellow-900/40"
+              : "bg-slate-950/92 border-slate-700/80 text-slate-200 shadow-black/80"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Rank Level Down Button */}
+          {maxRank > 1 && onRankChange && (
+            <button
+              type="button"
+              disabled={rank <= 1}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (rank > 1) onRankChange(rank - 1);
+              }}
+              className={`h-6 w-6 rounded border font-black text-xs flex items-center justify-center transition-all disabled:opacity-20 shrink-0 ${
+                isLegendary
+                  ? "bg-yellow-950/80 border-yellow-500/80 text-yellow-300 hover:bg-yellow-400 hover:text-slate-950"
+                  : "bg-slate-900 border-slate-700 text-amber-400 hover:bg-amber-500 hover:text-slate-950"
+              }`}
+              title="Rank Down"
+            >
+              -
+            </button>
+          )}
+
+          {/* Current Rank Display & Stars */}
+          <div className="flex-1 text-center font-mono px-0.5 min-w-0">
+            <span
+              className={`text-[0.60rem] sm:text-[0.65rem] font-black block leading-none truncate ${
+                isLegendary ? "text-yellow-200" : "text-slate-200"
+              }`}
+            >
+              {maxRank > 1 ? `RANK ${rank}/${maxRank}` : `RANK 1`}
+            </span>
+            {maxRank > 1 && (
+              <div className="flex items-center justify-center gap-0.5 mt-0.5">
+                {Array.from({ length: maxRank }, (_, i) => {
+                  const isActive = i + 1 <= rank;
+                  return (
+                    <Star
+                      key={i}
+                      className={`h-2 w-2 ${
+                        isActive
+                          ? isLegendary
+                            ? "text-yellow-300 fill-yellow-300 drop-shadow-[0_0_3px_rgba(234,179,8,0.8)]"
+                            : "text-amber-400 fill-amber-400"
+                          : "text-slate-700 fill-none"
+                      }`}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Rank Level Up Button */}
+          {maxRank > 1 && onRankChange && (
+            <button
+              type="button"
+              disabled={rank >= maxRank}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (rank < maxRank) onRankChange(rank + 1);
+              }}
+              className={`h-6 w-6 rounded border font-black text-xs flex items-center justify-center transition-all disabled:opacity-20 shrink-0 ${
+                isLegendary
+                  ? "bg-yellow-950/80 border-yellow-500/80 text-yellow-300 hover:bg-yellow-400 hover:text-slate-950"
+                  : "bg-slate-900 border-slate-700 text-amber-400 hover:bg-amber-500 hover:text-slate-950"
+              }`}
+              title="Rank Up"
+            >
+              +
+            </button>
+          )}
+
+          {/* Equip / Remove Button */}
+          {onEquip || onUnequip ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isEquipped) {
+                  onUnequip?.();
+                } else {
+                  onEquip?.();
+                }
+              }}
+              className={`text-[0.58rem] font-black uppercase px-2 py-1 rounded border transition-all shadow-sm shrink-0 ${
+                isEquipped
+                  ? "bg-red-950/90 border-red-700 text-red-300 hover:bg-red-900 hover:text-white"
+                  : isLegendary
+                  ? "bg-yellow-400 text-slate-950 border-yellow-300 font-black hover:bg-yellow-300"
+                  : "bg-amber-500 text-slate-950 border-amber-400 font-black hover:bg-amber-400"
+              }`}
+            >
+              {isEquipped ? "REMOVE" : "EQUIP"}
+            </button>
+          ) : null}
+
+          {/* Inspect Info Button */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               setShowInspector(true);
             }}
-            className="absolute bottom-2 left-2 bg-slate-950/80 hover:bg-slate-900 border border-slate-700 text-amber-400 hover:text-white p-1 rounded shadow-md opacity-80 group-hover:opacity-100 transition-all z-40"
-            title="Inspect All Ranks & Stats"
+            className="h-6 w-6 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-amber-400 hover:text-white flex items-center justify-center transition-all shrink-0"
+            title="Inspect All Ranks & Lore"
           >
-            <Info className="h-3.5 w-3.5" />
+            <Info className="h-3 w-3" />
           </button>
-        )}
-
-        {/* Equipped Badge Ribbon */}
-        {isEquipped && !isAccordion && (
-          <div className="absolute top-2 right-2 bg-amber-500 text-slate-950 font-black text-[0.62rem] px-2 py-0.5 rounded-full shadow-lg border border-amber-300 tracking-wider z-40">
-            ✓ EQUIPPED
-          </div>
-        )}
-      </div>
-
-      {/* Clean Rank Level Up / Down Interactive Control Bar */}
-      <div
-        className={`w-full mt-2 rounded-lg p-1.5 items-center justify-between gap-1 shadow-md border transition-all duration-150 ${
-          isAccordion && !isForefront ? "hidden" : "flex"
-        } ${
-          isLegendary
-            ? "bg-gradient-to-r from-[#141b24] via-[#1d2734] to-[#141b24] border-yellow-500/70"
-            : "bg-slate-950/90 border-slate-800"
-        }`}
-      >
-        {/* Rank Level Down Button */}
-        <button
-          type="button"
-          disabled={rank <= 1}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (rank > 1) onRankChange?.(rank - 1);
-          }}
-          className={`h-7 w-7 rounded border font-black text-sm flex items-center justify-center transition-all disabled:opacity-30 ${
-            isLegendary
-              ? "bg-yellow-950 border-yellow-500/80 text-yellow-300 hover:bg-yellow-400 hover:text-slate-950"
-              : "bg-slate-900 border-slate-700 text-amber-400 hover:bg-amber-500 hover:text-slate-950"
-          }`}
-          title="Rank Down"
-        >
-          -
-        </button>
-
-        {/* Current Rank Display */}
-        <div className="flex-1 text-center font-mono">
-          <span
-            className={`text-[0.68rem] font-bold block leading-none ${isLegendary ? "text-yellow-200" : "text-slate-300"}`}
-          >
-            RANK {rank} / {maxRank}
-          </span>
-          <div className="flex items-center justify-center gap-0.5 mt-0.5">
-            {Array.from({ length: maxRank }, (_, i) => {
-              const isActive = i + 1 <= rank;
-              return (
-                <Star
-                  key={i}
-                  className={`h-2.5 w-2.5 ${
-                    isActive
-                      ? isLegendary
-                        ? "text-yellow-300 fill-yellow-300 drop-shadow-[0_0_4px_rgba(234,179,8,0.8)]"
-                        : "text-amber-400 fill-amber-400"
-                      : "text-slate-700 fill-none"
-                  }`}
-                />
-              );
-            })}
-          </div>
         </div>
-
-        {/* Rank Level Up Button */}
-        <button
-          type="button"
-          disabled={rank >= maxRank}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (rank < maxRank) onRankChange?.(rank + 1);
-          }}
-          className={`h-7 w-7 rounded border font-black text-sm flex items-center justify-center transition-all disabled:opacity-30 ${
-            isLegendary
-              ? "bg-yellow-950 border-yellow-500/80 text-yellow-300 hover:bg-yellow-400 hover:text-slate-950"
-              : "bg-slate-900 border-slate-700 text-amber-400 hover:bg-amber-500 hover:text-slate-950"
-          }`}
-          title="Rank Up"
-        >
-          +
-        </button>
-
-        {/* Equip / Remove Button */}
-        {onEquip || onUnequip ? (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (isEquipped) {
-                onUnequip?.();
-              } else {
-                onEquip?.();
-              }
-            }}
-            className={`text-[0.60rem] font-black uppercase px-2 py-1.5 rounded border transition-all shadow-sm ${
-              isEquipped
-                ? "bg-red-950/90 border-red-700 text-red-300 hover:bg-red-900"
-                : isLegendary
-                ? "bg-yellow-400 text-slate-950 border-yellow-300 font-black hover:bg-yellow-300"
-                : "bg-amber-500 text-slate-950 border-amber-400 font-black hover:bg-amber-400"
-            }`}
-          >
-            {isEquipped ? "REMOVE" : "EQUIP"}
-          </button>
-        ) : null}
       </div>
 
       {footerExtra && <div className="mt-1.5 w-full">{footerExtra}</div>}

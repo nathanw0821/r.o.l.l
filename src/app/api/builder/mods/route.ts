@@ -52,13 +52,29 @@ function toDto(
 
 /** Mod catalog + tracker unlock hints (matched by effect name + tier star in the active dataset). */
 export async function GET() {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
-  const rows = await getCachedBuilderModCatalog();
-  const merged = await getAllEffectTiers(userId);
-  const unlockById = computeLegendaryTrackerUnlockByModId(rows, merged);
-  const mods = rows.map((row) => toDto(row, unlockById[row.id] ?? "unknown"));
-  const response = ok({ mods });
-  response.headers.set("Cache-Control", "private, no-store, max-age=0, must-revalidate");
-  return response;
+  let userId: string | undefined;
+  try {
+    const session = await getServerSession(authOptions);
+    userId = session?.user?.id;
+  } catch {
+    // Unauthenticated or non-session context
+  }
+
+  try {
+    const rows = await getCachedBuilderModCatalog();
+    let unlockById: Record<string, BuilderModDTO["trackerUnlock"]> = {};
+    try {
+      const merged = await getAllEffectTiers(userId);
+      unlockById = computeLegendaryTrackerUnlockByModId(rows, merged);
+    } catch {
+      // Tracker unlock mapping fallback
+    }
+    const mods = rows.map((row) => toDto(row, unlockById[row.id] ?? "unknown"));
+    const response = ok({ mods });
+    response.headers.set("Cache-Control", "private, no-store, max-age=0, must-revalidate");
+    return response;
+  } catch (error) {
+    console.error("[GET /api/builder/mods error]", error);
+    return ok({ mods: [] });
+  }
 }

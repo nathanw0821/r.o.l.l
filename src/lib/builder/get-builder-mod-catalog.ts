@@ -10,6 +10,28 @@ import {
 
 export type BuilderModCatalogRow = BuilderLegendaryCatalogRow;
 
+import { EXTENDED_LEGENDARY_MOD_SEEDS } from "@/lib/builder/legendary-mod-catalog-seeds";
+
+function getStaticFallbackModCatalog(): BuilderModCatalogRow[] {
+  return EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
+    id: `seed-${r.slug}`,
+    slug: r.slug,
+    name: r.name,
+    starRank: r.starRank,
+    category: r.category,
+    subCategory: r.subCategory,
+    description: r.description,
+    effectMath: r.effectMath ?? {},
+    craftingCost: {},
+    allowedOnPowerArmor: r.allowedOnPowerArmor,
+    allowedOnArmor: r.allowedOnArmor,
+    allowedOnWeapon: r.allowedOnWeapon,
+    infestationOnly: false,
+    fifthStarEligible: r.fifthStarEligible,
+    ghoulSpecialCap: r.ghoulSpecialCap
+  }));
+}
+
 async function loadBuilderModCatalogUncached() {
   try {
     const [dataset, legendary] = await Promise.all([
@@ -21,7 +43,7 @@ async function loadBuilderModCatalogUncached() {
     ]);
 
     if (!dataset?.id) {
-      return legendary;
+      return legendary.length > 0 ? legendary : getStaticFallbackModCatalog();
     }
 
     const effectTiers = await prisma.effectTier.findMany({
@@ -31,12 +53,12 @@ async function loadBuilderModCatalogUncached() {
 
     const merged = mergeLegendaryModsWithEffectTiers(legendary, effectTiers);
     merged.sort((a, b) => a.starRank - b.starRank || a.name.localeCompare(b.name));
-    return merged;
+    return merged.length > 0 ? merged : getStaticFallbackModCatalog();
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
       console.error("[loadBuilderModCatalogUncached]", error);
     }
-    return [];
+    return getStaticFallbackModCatalog();
   }
 }
 

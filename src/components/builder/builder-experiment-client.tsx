@@ -65,6 +65,7 @@ import {
   pairedPowerArmorHelmetId,
   type BaseGearPiece,
 } from "@/lib/builder/base-gear";
+import { EXTENDED_LEGENDARY_MOD_SEEDS } from "@/lib/builder/legendary-mod-catalog-seeds";
 import {
   aggregateEffectMath,
   BUILDER_SPECIAL_KEYS,
@@ -433,11 +434,11 @@ export default function BuilderExperimentClient({
     React.useState<BuilderPayload>(defaultPayload());
 
   const [activeWeaponId, setActiveWeaponId] = React.useState<string>(() => {
-    const defaultWeap = BASE_GEAR_PIECES.find(p => p.kind === "weapon")?.id || "the-fixer";
+    const defaultWeap = BASE_GEAR_PIECES.find(p => p.kind === "weapon")?.id || "fixer";
     return defaultWeap;
   });
   const [activeChassisId, setActiveChassisId] = React.useState<string>(() => {
-    const defaultArm = BASE_GEAR_PIECES.find(p => p.kind === "armor")?.id || "civil-engineer";
+    const defaultArm = BASE_GEAR_PIECES.find(p => p.kind === "armor")?.id || "armor-set-civil-engineer";
     return defaultArm;
   });
 
@@ -744,13 +745,31 @@ export default function BuilderExperimentClient({
       }
     }
 
+    const fallbackMods: BuilderModDTO[] = EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
+      id: `seed-${r.slug}`,
+      slug: r.slug,
+      name: r.name,
+      starRank: r.starRank,
+      category: r.category,
+      subCategory: r.subCategory,
+      description: r.description,
+      effectMath: r.effectMath ?? {},
+      craftingCost: {},
+      allowedOnPowerArmor: r.allowedOnPowerArmor,
+      allowedOnArmor: r.allowedOnArmor,
+      allowedOnWeapon: r.allowedOnWeapon,
+      infestationOnly: false,
+      fifthStarEligible: r.fifthStarEligible,
+      ghoulSpecialCap: r.ghoulSpecialCap,
+      trackerUnlock: "unknown"
+    }));
+
     fetch("/api/builder/mods")
       .then((r) => r.json() as Promise<{ success?: boolean; data?: { mods?: BuilderModDTO[] } }>)
       .then((body) => {
-        if (!body?.success || !Array.isArray(body.data?.mods)) {
-          throw new Error("Could not load builder catalog.");
-        }
-        const catalog = body.data.mods;
+        const catalog = Array.isArray(body?.data?.mods) && body.data.mods.length > 0
+          ? body.data.mods
+          : fallbackMods;
         setMods(catalog);
         setLoadError(null);
         try {
@@ -759,11 +778,10 @@ export default function BuilderExperimentClient({
           // Ignore quota errors
         }
       })
-      .catch(() =>
-        setLoadError(
-          "Builder catalog failed to load. On the server, run database migrations (`prisma migrate deploy`) and seed builder mods (`npm run db:seed:builder` or full `npm run db:seed`) if tables are empty.",
-        ),
-      );
+      .catch(() => {
+        setMods(fallbackMods);
+        setLoadError(null);
+      });
   }, []);
 
   React.useEffect(() => {
@@ -1508,7 +1526,7 @@ export default function BuilderExperimentClient({
                   <div className="space-y-1 mt-1.5 pt-1.5 border-t border-border/10">
                     {SLOT_LABELS.map((starLabel, starIndex) => {
                       const id = payload.armorLegendaryModIds[payloadIndex]?.[starIndex];
-                      const mod = id ? mods.find(m => m.id === id) : null;
+                      const mod = id ? mods.find(m => m.id === id || m.slug === id) : null;
                       return (
                         <div 
                           key={starIndex}
@@ -1916,7 +1934,7 @@ export default function BuilderExperimentClient({
 
                   payload.legendaryModIds.forEach((id, idx) => {
                     if (!id) return;
-                    const mod = mods.find((m) => m.id === id);
+                    const mod = mods.find((m) => m.id === id || m.slug === id);
                     if (mod?.effectMath && mod.effectMath[key]) {
                       bLines.push({ source: `${mod.name} (${idx + 1}★)`, val: `+${mod.effectMath[key]}` });
                     }
@@ -2071,7 +2089,7 @@ export default function BuilderExperimentClient({
 
                   payload.legendaryModIds.forEach((id, idx) => {
                     if (!id) return;
-                    const mod = mods.find((m) => m.id === id);
+                    const mod = mods.find((m) => m.id === id || m.slug === id);
                     if (mod?.effectMath && mod.effectMath[k]) {
                       rLines.push({ source: `${mod.name} (${idx + 1}★)`, val: `+${mod.effectMath[k]}` });
                     }
@@ -2181,28 +2199,42 @@ export default function BuilderExperimentClient({
             <div className="space-y-3 relative z-10">
               {/* SECTION A: ACTIVE PRIMARY WEAPON BAY */}
               <div className="rounded-lg border border-accent/30 bg-background/30 p-3 space-y-2">
-                <div className="flex items-center justify-between border-b border-border/20 pb-1.5">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between border-b border-border/20 pb-1.5 gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <span className="text-sm">🎯</span>
-                    <div>
-                      <div className="text-xs font-black uppercase tracking-wider text-accent">
+                    <div className="min-w-0">
+                      <div className="text-xs font-black uppercase tracking-wider text-accent truncate">
                         {activeWeaponPiece.label}
                       </div>
-                      <div className="text-[0.62rem] text-foreground/45 uppercase">
+                      <div className="text-[0.62rem] text-foreground/45 uppercase truncate">
                         Primary Weapon · {activeWeaponPiece.weaponSub || "Tactical"}
                       </div>
                     </div>
                   </div>
-                  <span className="text-[0.62rem] px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
-                    ACTIVE WEAPON
-                  </span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <select
+                      value={activeWeaponPiece.id}
+                      onChange={(e) => setBase(e.target.value)}
+                      className="h-6 text-[0.65rem] font-mono bg-slate-900 border border-slate-700 text-amber-300 rounded px-1.5 focus:ring-1 focus:ring-accent outline-none cursor-pointer max-w-[130px] sm:max-w-[180px] truncate"
+                      title="Switch Active Weapon"
+                    >
+                      {BASE_GEAR_PIECES.filter((p) => p.kind === "weapon").map((w) => (
+                        <option key={w.id} value={w.id} className="bg-slate-950 text-slate-200">
+                          {w.label}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-[0.62rem] px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
+                      ACTIVE WEAPON
+                    </span>
+                  </div>
                 </div>
 
                 {/* Weapon 4-Star Slots */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                   {SLOT_LABELS.map((starLabel, starIndex) => {
                     const id = payload.legendaryModIds[starIndex];
-                    const mod = id ? mods.find((m) => m.id === id) : null;
+                    const mod = id ? mods.find((m) => m.id === id || m.slug === id) : null;
                     return (
                       <div
                         key={starIndex}
@@ -2672,77 +2704,83 @@ export default function BuilderExperimentClient({
               : "max-w-2xl p-5 sm:p-6",
           )}
         >
-          <div className="crt-scanline" />
-          
-          <DialogHeader className={cn("shrink-0 pr-8 relative z-10", isCompactDensity && "space-y-1")}>
-            <DialogTitle className={cn("font-black uppercase tracking-widest text-accent", isCompactDensity ? "text-xs" : "text-sm")}>
-              {activePick
-                ? `&gt; CONFIGURE SLOT: ${activePickLabel(activePick, baseStarsContextLabel, piece.kind === "powerArmor")}`
-                : "CHOOSE MOD"}
-            </DialogTitle>
-            <DialogDescription className="text-[0.78rem] text-foreground/50 uppercase tracking-widest leading-relaxed">
-              {isCompactDensity
-                ? "Search compatible catalog mods. Tap row to equip."
-                : "Search compatibilities. Unlocked entries sync from legendary ledger tracker database values."}
-              {payload.ghoul ? (
-                <span className="mt-1.5 block text-[0.72rem] text-warning/90 font-bold bg-warning/5 p-1 rounded border border-warning/20">
-                  GHOUL NOTICE: FOOD/WATER ACCENTS STRIPPED FROM EFFECT MATH.
-                </span>
-              ) : null}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="relative mt-3 shrink-0 relative z-10">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/40" />
-            <Input
-              className={cn(
-                "pl-8 h-9 text-xs bg-background/60 font-mono text-foreground border-border/30 focus-visible:ring-accent",
-                isCompactDensity && "h-8"
-              )}
-              placeholder="SEARCH EFFECT CODENAME..."
-              value={slotQuery}
-              onChange={(e) => setSlotQuery(e.target.value)}
-            />
-          </div>
-          
-          {slotQuery.trim() !== deferredSlotQuery.trim() ? (
-            <p className="mt-1 text-[0.72rem] text-foreground/35 uppercase tracking-wider relative z-10 animate-pulse">
-              &gt; searching matrices database...
-            </p>
-          ) : null}
-          
-          <div
-            className={cn(
-              "mt-3 min-h-[min(32vh,14rem)] flex-1 overflow-y-auto pr-1 [scrollbar-gutter:stable] relative z-10",
-              isCompactDensity
-                ? "max-h-[min(74vh,30rem)] space-y-1 sm:max-h-[min(76vh,32rem)]"
-                : "max-h-[min(70vh,38rem)] space-y-2 sm:max-h-[min(72vh,40rem)] min-h-[min(36vh,18rem)]",
-            )}
-          >
-            {piece.kind === "underarmor" ? (
-              <div className="text-foreground/40 text-xs italic uppercase">
-                &gt; underarmor does not equip legendary stars.
-              </div>
-            ) : optionsForActivePick.length === 0 ? (
-              <div className="text-foreground/40 text-xs italic uppercase">
-                &gt; no matching catalog mods found.
-              </div>
-            ) : (
-              <div className="grid gap-2">
-                {optionsForActivePick.map((m) => (
-                  <ModPickerOption
-                    key={m.id}
-                    mod={m}
-                    piece={piece}
-                    compact={isCompactDensity}
-                    ghoulMode={payload.ghoul}
-                    isRecommended={recommendedIds.has(m.id)}
-                    onPick={assignSlot}
+          {(() => {
+            const targetPiece = activePick?.scope === "single" ? activeWeaponPiece : activeChassisPiece;
+            const targetLabel = activePick?.scope === "single" ? activeWeaponPiece.label : baseStarsContextLabel;
+            return (
+              <>
+                <DialogHeader className={cn("shrink-0 pr-8 relative z-10", isCompactDensity && "space-y-1")}>
+                  <DialogTitle className={cn("font-black uppercase tracking-widest text-accent", isCompactDensity ? "text-xs" : "text-sm")}>
+                    {activePick
+                      ? `> CONFIGURE SLOT: ${activePickLabel(activePick, targetLabel, targetPiece?.kind === "powerArmor")}`
+                      : "CHOOSE MOD"}
+                  </DialogTitle>
+                  <DialogDescription className="text-[0.78rem] text-foreground/50 uppercase tracking-widest leading-relaxed">
+                    {isCompactDensity
+                      ? "Search compatible catalog mods. Tap row to equip."
+                      : "Search compatibilities. Unlocked entries sync from legendary ledger tracker database values."}
+                    {payload.ghoul ? (
+                      <span className="mt-1.5 block text-[0.72rem] text-warning/90 font-bold bg-warning/5 p-1 rounded border border-warning/20">
+                        GHOUL NOTICE: FOOD/WATER ACCENTS STRIPPED FROM EFFECT MATH.
+                      </span>
+                    ) : null}
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="relative mt-3 shrink-0 relative z-10">
+                  <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/40" />
+                  <Input
+                    className={cn(
+                      "pl-8 h-9 text-xs bg-background/60 font-mono text-foreground border-border/30 focus-visible:ring-accent",
+                      isCompactDensity && "h-8"
+                    )}
+                    placeholder="SEARCH EFFECT CODENAME..."
+                    value={slotQuery}
+                    onChange={(e) => setSlotQuery(e.target.value)}
                   />
-                ))}
-              </div>
-            )}
-          </div>
+                </div>
+                
+                {slotQuery.trim() !== deferredSlotQuery.trim() ? (
+                  <p className="mt-1 text-[0.72rem] text-foreground/35 uppercase tracking-wider relative z-10 animate-pulse">
+                    &gt; searching matrices database...
+                  </p>
+                ) : null}
+                
+                <div
+                  className={cn(
+                    "mt-3 min-h-[min(32vh,14rem)] flex-1 overflow-y-auto pr-1 [scrollbar-gutter:stable] relative z-10",
+                    isCompactDensity
+                      ? "max-h-[min(74vh,30rem)] space-y-1 sm:max-h-[min(76vh,32rem)]"
+                      : "max-h-[min(70vh,38rem)] space-y-2 sm:max-h-[min(72vh,40rem)] min-h-[min(36vh,18rem)]",
+                  )}
+                >
+                  {targetPiece?.kind === "underarmor" ? (
+                    <div className="text-foreground/40 text-xs italic uppercase">
+                      &gt; underarmor does not equip legendary stars.
+                    </div>
+                  ) : optionsForActivePick.length === 0 ? (
+                    <div className="text-foreground/40 text-xs italic uppercase">
+                      &gt; no matching catalog mods found.
+                    </div>
+                  ) : (
+                    <div className="grid gap-2">
+                      {optionsForActivePick.map((m) => (
+                        <ModPickerOption
+                          key={m.id}
+                          mod={m}
+                          piece={targetPiece ?? piece}
+                          compact={isCompactDensity}
+                          ghoulMode={payload.ghoul}
+                          isRecommended={recommendedIds.has(m.id)}
+                          onPick={assignSlot}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          })()}
           
           <div className="mt-4 pt-3 border-t border-border/15 shrink-0 flex items-center justify-between relative z-10">
             <Button

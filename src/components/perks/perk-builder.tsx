@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSession, signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards, isGhoulPerkCard } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,8 @@ export default function PerkBuilder({
   onLoadoutChange,
   externalImport,
 }: PerkBuilderProps) {
+  const { data: session } = useSession();
+  const isSignedIn = Boolean(session?.user?.id);
   const [activeSlot, setActiveSlot] = React.useState<number>(0);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL" | "GHOUL">("ALL");
@@ -286,27 +289,33 @@ export default function PerkBuilder({
       // Ignore local storage error
     }
 
-    try {
-      const res = await fetch("/api/perks/loadouts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          characterId: characterId || undefined,
-          slotIndex: activeSlot,
-          name: `Punch Card Loadout ${activeSlot + 1}`,
-          specials,
-          equippedCards
-        })
-      });
-      const payload = (await res.json()) as { success?: boolean };
-      if (payload?.success) {
-        setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved! (Cloud & Local)`);
-      } else {
+    if (isSignedIn) {
+      try {
+        const res = await fetch("/api/perks/loadouts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            characterId: characterId || undefined,
+            slotIndex: activeSlot,
+            name: `Punch Card Loadout ${activeSlot + 1}`,
+            specials,
+            equippedCards
+          })
+        });
+        const payload = (await res.json()) as { success?: boolean };
+        if (payload?.success) {
+          setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved! (Cloud & Local)`);
+        } else {
+          setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved Locally!`);
+        }
+      } catch {
         setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved Locally!`);
+      } finally {
+        setSaving(false);
+        setTimeout(() => setSaveMessage(null), 3500);
       }
-    } catch {
-      setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved Locally!`);
-    } finally {
+    } else {
+      setSaveMessage(`✅ Punch Card Loadout ${activeSlot + 1} Saved Locally! (Sign in to sync across devices)`);
       setSaving(false);
       setTimeout(() => setSaveMessage(null), 3500);
     }
@@ -473,7 +482,7 @@ export default function PerkBuilder({
               P.E.R.K. Loadout Manager
             </h1>
             <p className="text-xs text-slate-400 mt-0.5">
-              Perk Equipment &amp; Reconfiguration Kit for {characterName ? <strong className="text-emerald-400">{characterName}</strong> : "Selected Character"}
+              Perk Equipment &amp; Reconfiguration Kit for {characterName ? <strong className="text-emerald-400">{characterName}</strong> : session?.user?.name ? <strong className="text-emerald-400">{session.user.name}</strong> : "Vault Dweller"}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -483,9 +492,23 @@ export default function PerkBuilder({
             <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-emerald-500/60 text-emerald-400 bg-emerald-950/30 hover:bg-emerald-900/50">
               Export Deck PNG
             </Button>
-            <Button onClick={handleSaveLoadout} disabled={saving || !characterId} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs disabled:opacity-60">
-              {saving ? "Saving..." : !characterId ? "Sign In to Save Loadout" : "Save Active Loadout"}
+            <Button
+              onClick={handleSaveLoadout}
+              disabled={saving}
+              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs disabled:opacity-60"
+            >
+              {saving ? "Saving..." : isSignedIn ? "Save Active Loadout" : "Save Loadout (Local)"}
             </Button>
+            {!isSignedIn && (
+              <Button
+                type="button"
+                onClick={() => signIn()}
+                variant="outline"
+                className="font-mono text-xs border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50"
+              >
+                Sign In to Sync Cloud
+              </Button>
+            )}
           </div>
         </div>
         {saveMessage ? <div className="mt-3 text-xs text-emerald-400 font-bold">{saveMessage}</div> : null}
