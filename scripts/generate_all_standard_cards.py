@@ -45,9 +45,9 @@ TITLE_FONT = os.path.join(PROJECT_ROOT, "data", "fonts", "RobotoCondensed-Bold.t
 font_body_20 = ImageFont.truetype(BODY_FONT, 20)
 font_body_18 = ImageFont.truetype(BODY_FONT, 18)
 
-def get_title_font(title, max_w=330, max_sz=50, min_sz=36):
-    """Dynamically choose the largest authentic bold condensed title font that fits."""
-    for sz in range(max_sz, min_sz - 1, -1):
+def get_title_font(title, max_w=325, base_sz=42, min_sz=32):
+    """Dynamically choose authentic title font matching native Bethesda Pip-Boy scale."""
+    for sz in range(base_sz, min_sz - 1, -1):
         f = ImageFont.truetype(TITLE_FONT, sz)
         bb = f.getbbox(title)
         if (bb[2] - bb[0]) <= max_w:
@@ -337,21 +337,19 @@ def extract_character(src_im, source_special="L", mask_art=None):
     return fg
 
 def render_rotated_title(card_im, title):
-    """Render title text parallel to authentic Pip-Boy banner slant (+3.568°)."""
+    """Render title text parallel to authentic Pip-Boy banner slant (-0.65°)."""
     w, h = card_im.size
     t_font = get_title_font(title)
     txt_im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(txt_im)
     bbox = d.textbbox((0, 0), title, font=t_font)
-    tw = bbox[2] - bbox[0]
-    th = bbox[3] - bbox[1]
     cx = 292
-    cy = 46
-    tx = cx - (tw // 2)
-    ty = cy - (th // 2)
-    d.text((tx + 1, ty + 1), title, fill=(30, 30, 30, 200), font=t_font)
-    d.text((tx, ty), title, fill=(245, 242, 230, 255), font=t_font)
-    rot_txt = txt_im.rotate(3.568, center=(cx, cy), resample=Image.BICUBIC)
+    cy = 56
+    tx = cx - (bbox[2] + bbox[0]) // 2
+    ty = cy - (bbox[3] + bbox[1]) // 2
+    d.text((tx + 1, ty + 1), title, fill=(35, 30, 25, 90), font=t_font)
+    d.text((tx, ty), title, fill=(236, 227, 205, 255), font=t_font)
+    rot_txt = txt_im.rotate(-0.65, center=(cx, cy), resample=Image.BICUBIC)
     return Image.alpha_composite(card_im, rot_txt)
 
 def build_rethemed_card(card_id, target_special, max_rank, title, donor_id, source_special="L"):
