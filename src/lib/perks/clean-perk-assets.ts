@@ -100,11 +100,6 @@ export const IN_GAME_STRAIGHT_CARDS: Record<string, string> = {
   "lone-wanderer": "lone_wanderer",
   "batteries-included": "batteries_included",
   "bloody-mess": "bloody_mess",
-  "conductor": "conductor",
-  "grease-monkey": "grease_monkey",
-  "light-meal": "light_meal",
-  "outlaw": "outlaw",
-  "penetrator": "penetrator",
 
   // Bidirectional Word-Order Aliases (Expert / Master prefix vs suffix)
   "expert-guerrilla": "guerrilla_expert",
@@ -155,7 +150,6 @@ export const IN_GAME_STRAIGHT_CARDS: Record<string, string> = {
   "legendary-luck": "legendary_luck",
   "action-diet": "action_diet",
   "feral-rage": "feral_rage",
-  "nuclear-proliferator": "nuclear_proliferator",
 };
 
 export function getInGamePerkCardImage(cardIdOrName?: string, rank: number = 1): string | null {
