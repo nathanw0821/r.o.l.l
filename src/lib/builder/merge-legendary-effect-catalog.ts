@@ -147,7 +147,9 @@ export function mergeLegendaryModsWithEffectTiers(
 
   for (const row of effectTiers) {
     const starRank = tierStarRankFromTierLabel(row.tier?.label);
-    const key = `${normalizeLegendaryMatchKey(row.effect.name)}|${starRank ?? ""}`;
+    const normName = normalizeLegendaryMatchKey(row.effect.name);
+    if (normName === "lucky" && starRank === 3) continue;
+    const key = `${normName}|${starRank ?? ""}`;
     if (curatedKeys.has(key)) continue;
 
     const supplemental = effectTierToSupplementalMod(row);

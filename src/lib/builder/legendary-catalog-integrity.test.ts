@@ -155,4 +155,146 @@ describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verificat
     expect(names).toContain("Sentinel's");
     expect(names).toContain("Overeater's");
   });
+
+  it("filterModsForSlot for Elder's Mark (Ranged) returns exact authentic 2★, 3★, and 4★ pools with no melee or armor bleed", async () => {
+    const catalog = await getCachedBuilderModCatalog();
+    const dtos: BuilderModDTO[] = catalog.map((m) => ({
+      ...m,
+      effectMath: typeof m.effectMath === "object" && m.effectMath !== null ? (m.effectMath as Record<string, unknown>) : {},
+      craftingCost: typeof m.craftingCost === "object" && m.craftingCost !== null ? (m.craftingCost as Record<string, unknown>) : {},
+      trackerUnlock: "unlocked" as const
+    }));
+
+    const eldersMark = {
+      id: "elders-mark",
+      name: "Elder's Mark",
+      kind: "weapon" as const,
+      label: "Elder's Mark",
+      weaponSub: "ranged" as const
+    };
+
+    // 1-star (Slot 0): 28 mods (all ranged + universal, no melee-only Feral's)
+    const star1 = filterModsForSlot(dtos, eldersMark, 0);
+    expect(star1.length).toBe(28);
+    expect(star1.map(m => m.name)).toContain("Anti-armor");
+    expect(star1.map(m => m.name)).toContain("Bloodied");
+    expect(star1.map(m => m.name)).toContain("Quad");
+    expect(star1.map(m => m.name)).toContain("Two Shot");
+    expect(star1.map(m => m.name)).not.toContain("Feral's");
+    expect(star1.some(m => m.category === "Armor")).toBe(false);
+
+    // 2-star (Slot 1): 9 mods
+    const star2 = filterModsForSlot(dtos, eldersMark, 1);
+    expect(star2.length).toBe(9);
+    const star2Names = star2.map(m => m.name);
+    expect(star2Names).toContain("Rapid");
+    expect(star2Names).toContain("Vital");
+    expect(star2Names).toContain("Explosive");
+    expect(star2Names).toContain("Hitman's");
+    expect(star2Names).toContain("Crippling");
+    expect(star2Names).toContain("Inertial");
+    expect(star2Names).toContain("Last Shot");
+    expect(star2Names).toContain("V.A.T.S. Enhanced");
+    expect(star2Names).toContain("Basher's");
+    // Melee-only effects must not appear
+    expect(star2Names).not.toContain("Heavy Hitter's");
+    expect(star2Names).not.toContain("Steady");
+    expect(star2Names).not.toContain("Riposting");
+    expect(star2Names).not.toContain("Pick Pocketer's");
+
+    // 3-star (Slot 2): 17 mods
+    const star3 = filterModsForSlot(dtos, eldersMark, 2);
+    expect(star3.length).toBe(17);
+    const star3Names = star3.map(m => m.name);
+    expect(star3Names).toContain("V.A.T.S. Optimized");
+    expect(star3Names).toContain("Swift");
+    expect(star3Names).toContain("Lucky Hit");
+    expect(star3Names).toContain("Durability");
+    expect(star3Names).toContain("Lightweight");
+    expect(star3Names).toContain("Ghost's");
+    expect(star3Names).toContain("Nimble");
+    expect(star3Names).toContain("Steadfast");
+    expect(star3Names).toContain("Resilient");
+    expect(star3Names).toContain("Agility");
+    expect(star3Names).toContain("Strength");
+    // Melee-only effects must not appear
+    expect(star3Names).not.toContain("Defender's");
+    expect(star3Names).not.toContain("Barbarian");
+    expect(star3Names).not.toContain("Blocker");
+
+    // 4-star (Slot 3): 13 mods
+    const star4 = filterModsForSlot(dtos, eldersMark, 3);
+    expect(star4.length).toBe(13);
+    const star4Names = star4.map(m => m.name);
+    expect(star4Names).toContain("Pin-Pointer's");
+    expect(star4Names).toContain("Polished");
+    expect(star4Names).toContain("Tarnished");
+    expect(star4Names).toContain("Bully's");
+    expect(star4Names).toContain("Conductor's");
+    expect(star4Names).toContain("Electrician's");
+    expect(star4Names).toContain("Encircler's");
+    expect(star4Names).toContain("Fracturer's");
+    expect(star4Names).toContain("Pyromaniac's");
+    expect(star4Names).toContain("Satiated");
+    expect(star4Names).toContain("Stabilizer's");
+    expect(star4Names).toContain("Thrill-Seeker's");
+    expect(star4Names).toContain("Viper's");
+    // Melee-only effects must not appear
+    expect(star4Names).not.toContain("Charged");
+    expect(star4Names).not.toContain("Fencer's");
+    expect(star4Names).not.toContain("Icemen's");
+    expect(star4Names).not.toContain("Pounder's");
+  });
+
+  it("filterModsForSlot for Melee weapon includes melee-only and excludes ranged-only effects", async () => {
+    const catalog = await getCachedBuilderModCatalog();
+    const dtos: BuilderModDTO[] = catalog.map((m) => ({
+      ...m,
+      effectMath: typeof m.effectMath === "object" && m.effectMath !== null ? (m.effectMath as Record<string, unknown>) : {},
+      craftingCost: typeof m.craftingCost === "object" && m.craftingCost !== null ? (m.craftingCost as Record<string, unknown>) : {},
+      trackerUnlock: "unlocked" as const
+    }));
+
+    const meleePiece = {
+      id: "auto-axe",
+      name: "Auto-Axe",
+      kind: "weapon" as const,
+      label: "Auto-Axe",
+      weaponSub: "melee" as const
+    };
+
+    // 1-star: includes Feral's, excludes Quad, Two Shot
+    const star1 = filterModsForSlot(dtos, meleePiece, 0);
+    expect(star1.map(m => m.name)).toContain("Feral's");
+    expect(star1.map(m => m.name)).not.toContain("Quad");
+    expect(star1.map(m => m.name)).not.toContain("Two Shot");
+
+    // 2-star: includes Heavy Hitter's, Steady, Riposting; excludes Explosive, Hitman's
+    const star2 = filterModsForSlot(dtos, meleePiece, 1);
+    expect(star2.map(m => m.name)).toContain("Heavy Hitter's");
+    expect(star2.map(m => m.name)).toContain("Steady");
+    expect(star2.map(m => m.name)).toContain("Riposting");
+    expect(star2.map(m => m.name)).not.toContain("Explosive");
+    expect(star2.map(m => m.name)).not.toContain("Hitman's");
+    expect(star2.map(m => m.name)).not.toContain("Last Shot");
+
+    // 3-star: includes Defender's, Barbarian, Blocker; excludes Swift, Nimble, Steadfast
+    const star3 = filterModsForSlot(dtos, meleePiece, 2);
+    expect(star3.map(m => m.name)).toContain("Defender's");
+    expect(star3.map(m => m.name)).toContain("Barbarian");
+    expect(star3.map(m => m.name)).toContain("Blocker");
+    expect(star3.map(m => m.name)).not.toContain("Swift");
+    expect(star3.map(m => m.name)).not.toContain("Nimble");
+    expect(star3.map(m => m.name)).not.toContain("Steadfast");
+
+    // 4-star: includes Charged, Fencer's, Icemen's, Pounder's; excludes Pin-Pointer's, Stabilizer's
+    const star4 = filterModsForSlot(dtos, meleePiece, 3);
+    expect(star4.map(m => m.name)).toContain("Charged");
+    expect(star4.map(m => m.name)).toContain("Fencer's");
+    expect(star4.map(m => m.name)).toContain("Icemen's");
+    expect(star4.map(m => m.name)).toContain("Pounder's");
+    expect(star4.map(m => m.name)).not.toContain("Pin-Pointer's");
+    expect(star4.map(m => m.name)).not.toContain("Stabilizer's");
+    expect(star4.map(m => m.name)).not.toContain("Electrician's");
+  });
 });

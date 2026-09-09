@@ -78,11 +78,11 @@ export async function GET() {
     const mods = rows.map((row) => toDto(row, unlockById[row.id] ?? "unknown"));
     const response = ok({ mods });
     if (userId) {
-      response.headers.set("Cache-Control", "private, max-age=60, stale-while-revalidate=300");
+      response.headers.set("Cache-Control", "private, no-cache, no-store, max-age=0, must-revalidate");
     } else {
       response.headers.set(
         "Cache-Control",
-        "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+        "public, max-age=60, s-maxage=120, stale-while-revalidate=600"
       );
     }
     return response;
