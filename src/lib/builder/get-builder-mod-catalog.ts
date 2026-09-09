@@ -67,7 +67,9 @@ async function loadBuilderModCatalogUncached() {
       }).catch(() => [])
     ]);
 
+    const validSeedSlugs = new Set(EXTENDED_LEGENDARY_MOD_SEEDS.map((s) => s.slug));
     const cleanLegendary = legendary.filter((m) => {
+      if (!validSeedSlugs.has(m.slug)) return false;
       const desc = (m.description || "").toLowerCase();
       const name = (m.name || "").toLowerCase();
       if (desc.includes("placeholder") || desc.includes("demo")) return false;
@@ -75,26 +77,34 @@ async function loadBuilderModCatalogUncached() {
       return true;
     });
 
-    const baseLegendary: BuilderModCatalogRow[] =
-      cleanLegendary.length > 0
-        ? cleanLegendary
-        : EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
-            id: `seed-${r.slug}`,
-            slug: r.slug,
-            name: r.name,
-            starRank: r.starRank,
-            category: r.category,
-            subCategory: r.subCategory,
-            description: r.description,
-            effectMath: r.effectMath ?? {},
-            craftingCost: {},
-            allowedOnPowerArmor: r.allowedOnPowerArmor,
-            allowedOnArmor: r.allowedOnArmor,
-            allowedOnWeapon: r.allowedOnWeapon,
-            infestationOnly: false,
-            fifthStarEligible: r.fifthStarEligible,
-            ghoulSpecialCap: r.ghoulSpecialCap
-          }));
+    const seedMap = new Map(
+      EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => [
+        r.slug,
+        {
+          id: `seed-${r.slug}`,
+          slug: r.slug,
+          name: r.name,
+          starRank: r.starRank,
+          category: r.category,
+          subCategory: r.subCategory,
+          description: r.description,
+          effectMath: r.effectMath ?? {},
+          craftingCost: {},
+          allowedOnPowerArmor: r.allowedOnPowerArmor,
+          allowedOnArmor: r.allowedOnArmor,
+          allowedOnWeapon: r.allowedOnWeapon,
+          infestationOnly: false,
+          fifthStarEligible: r.fifthStarEligible,
+          ghoulSpecialCap: r.ghoulSpecialCap
+        } as BuilderModCatalogRow
+      ])
+    );
+
+    for (const row of cleanLegendary) {
+      seedMap.set(row.slug, row);
+    }
+
+    const baseLegendary: BuilderModCatalogRow[] = Array.from(seedMap.values());
 
     let effectTiers: EffectTierCatalogRow[] = [];
     if (dataset?.id) {

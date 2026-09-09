@@ -46,7 +46,7 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import ProgressToggle from "@/components/progress-toggle";
 import BuilderCombatSwitchboard, { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { calculateAggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
-import { calculateCombatFirepower } from "@/lib/builder/combat-firepower-engine";
+import { calculateCombatFirepower, getWeaponMaxLevel } from "@/lib/builder/combat-firepower-engine";
 import { calculateStanceAndBiometricModifiers } from "@/lib/builder/stance-biometrics-engine";
 import BuilderFirepowerMatrix from "@/components/builder/builder-firepower-matrix";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
@@ -57,7 +57,9 @@ import {
   ARMOR_SET_SLOT_LABELS,
   ARMOR_SET_ROWS,
   getArmorSetRow,
+  getArmorSetMaxLevel,
 } from "@/lib/builder/armor-sets";
+import { getPowerArmorMaxLevel } from "@/lib/builder/power-armor-frame-data";
 import {
   ARMOR_MATERIAL_MODS,
   listArmorMiscModOptions,
@@ -1064,6 +1066,14 @@ export default function BuilderExperimentClient({
 
   const piece = getBaseGearPiece(payload.basePieceId) ?? BASE_GEAR_PIECES[0]!;
   
+  const pieceMaxLevel = React.useMemo(() => {
+    if (!piece) return null;
+    if (piece.kind === "weapon") return getWeaponMaxLevel(piece.id);
+    if (piece.kind === "armor" && piece.armorSetKey) return getArmorSetMaxLevel(piece.armorSetKey);
+    if (piece.kind === "powerArmor") return getPowerArmorMaxLevel(piece.id);
+    return null;
+  }, [piece]);
+
   const activeWeaponPiece = React.useMemo(
     () => getBaseGearPiece(activeWeaponId) || BASE_GEAR_PIECES.find((p) => p.kind === "weapon") || BASE_GEAR_PIECES[0],
     [activeWeaponId]
@@ -1430,30 +1440,6 @@ export default function BuilderExperimentClient({
     isPA,
   ]);
 
-  const ghoulLegendarySandboxNotes = React.useMemo(() => {
-    if (!payload.ghoul) return null;
-    const lines: string[] = [
-      "RR: Radiation Resist still sums from gear in stats block though Ghouls take no rad damage.",
-      "CHA: Playable Ghoul sets base effective Charisma −10 in-game vs humans.",
-      "Stars: Food/Thirst bench rows are hidden; Bloodied/Unyielding trigger off-meta logs.",
-    ];
-    if (equippedModsOrdered.length > 0) {
-      const human = aggregateEffectMath(equippedModsOrdered, {
-        ghoul: false,
-        extraLayers: [],
-      });
-      const ghoul = aggregateEffectMath(equippedModsOrdered, {
-        ghoul: true,
-        extraLayers: [],
-      });
-      if (human.specialBonus !== ghoul.specialBonus) {
-        lines.push(
-          `SPECIAL block bonus: ${human.specialBonus} → ${ghoul.specialBonus} after Ghoul caps on flagged rows.`,
-        );
-      }
-    }
-    return lines;
-  }, [payload.ghoul, equippedModsOrdered]);
 
   const shopping = React.useMemo(
     () => buildShoppingList(equippedModsOrdered, { underarmor: payload.underarmor, pieceKind: piece.kind, isMultiPiece }),
@@ -2257,7 +2243,11 @@ export default function BuilderExperimentClient({
                   <button
                     type="button"
                     onClick={() => {
-                      setPayload((p) => ({ ...p, ghoul: true }));
+                      setPayload((p) => {
+                        const base = { ...p, ghoul: true };
+                        if (mods.length > 0) return stripGhoulBlockedLegendarySelections(base, mods);
+                        return base;
+                      });
                       triggerBuilderAchievement("build_biometrics");
                     }}
                     className={cn(
@@ -2871,7 +2861,18 @@ export default function BuilderExperimentClient({
             
             <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 relative z-10">
               <span>[ Chassis Bay schematic ]</span>
-              <span className="text-[0.72rem] text-foreground/40 font-normal">Active frame: {activeChassisPiece.label}</span>
+              <span className="text-[0.72rem] text-foreground/40 font-normal flex items-center gap-1.5">
+                <span>Active frame: {activeChassisPiece.label}</span>
+                {activeChassisPiece.kind === "powerArmor" ? (
+                  <span className="text-[0.62rem] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+                    LVL {getPowerArmorMaxLevel(activeChassisPiece.id)} (MAX)
+                  </span>
+                ) : (
+                  <span className="text-[0.62rem] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+                    LVL {getArmorSetMaxLevel(activeChassisPiece.armorSetKey || activeChassisPiece.id)} (MAX)
+                  </span>
+                )}
+              </span>
             </div>
 
             <div className="space-y-3 relative z-10">
@@ -2923,6 +2924,9 @@ export default function BuilderExperimentClient({
                         ))}
                       </select>
                     )}
+                    <span className="text-[0.62rem] px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+                      LVL {getWeaponMaxLevel(activeWeaponPiece.id)} (MAX)
+                    </span>
                     <span className="text-[0.62rem] px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
                       ACTIVE WEAPON
                     </span>
@@ -3453,58 +3457,16 @@ export default function BuilderExperimentClient({
             </div>
           )}
 
-          {/* Character Species / Ghoul switch & Registry flush */}
-          <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
-            <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2">
-              [ TELEMETRY MODS &amp; SPECIES ]
-            </div>
-            
-            <div className="space-y-3">
-              <label className={cn("flex items-start gap-2 text-xs text-foreground/75 p-1.5 rounded transition-all", !readOnly ? "cursor-pointer hover:bg-background/25" : "cursor-default")}>
-                <input
-                  type="checkbox"
-                  disabled={readOnly}
-                  checked={payload.ghoul}
-                  onChange={(e) => {
-                    if (readOnly) return;
-                    const next = e.target.checked;
-                    setPayload((p) => {
-                      const base = { ...p, ghoul: next };
-                      if (next && mods.length > 0)
-                        return stripGhoulBlockedLegendarySelections(base, mods);
-                      return base;
-                    });
-                  }}
-                  className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[var(--accent)] cursor-pointer disabled:cursor-not-allowed"
-                />
-                <span>
-                  <span className="font-bold text-accent">GHOUL BIOLOGY ACTIVATION</span>
-                  <span className="block text-[0.72rem] text-foreground/50 uppercase tracking-wide mt-0.5">
-                    Radiation immunised; CHA −10 penalty; Blocked rows stripped.
-                  </span>
-                </span>
-              </label>
-
-              {ghoulLegendarySandboxNotes ? (
-                <div className="p-2 border border-warning/30 bg-warning/5 text-[0.72rem] rounded text-warning/90 space-y-1">
-                  <div className="font-black uppercase tracking-widest">&gt;&gt; WARNING: RAD DEVIATION LOGGED</div>
-                  <ul className="list-disc pl-3.5 space-y-0.5 font-sans">
-                    {ghoulLegendarySandboxNotes.map((line, i) => (
-                      <li key={i}>{line}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-            </div>
-
-            {/* Global Actions */}
-            {!readOnly && (
-              <div className="flex gap-2 pt-2 border-t border-border/15">
+          {/* Global Actions (Flush & Restore) */}
+          {!readOnly && (
+            <div className="pip-terminal-panel p-3 rounded-xl font-mono flex items-center justify-between gap-2">
+              <span className="text-xs font-black uppercase tracking-widest text-foreground/60">[ ARMORY CONTROLS ]</span>
+              <div className="flex items-center gap-2">
                 <Button
                   variant="secondary"
                   size="sm"
                   onClick={clearAllSelections}
-                  className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20 flex-1"
+                  className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20"
                 >
                   <Trash2 className="h-3 w-3" />
                   <span>Flush Registry</span>
@@ -3514,15 +3476,15 @@ export default function BuilderExperimentClient({
                     variant="outline"
                     size="sm"
                     onClick={undoClear}
-                    className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono flex-1 font-bold"
+                    className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono font-bold"
                   >
                     <RotateCcw className="h-3 w-3" />
                     <span>Restore</span>
                   </Button>
                 ) : null}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Shopping list of modules required (Compact High-Density Matrix) */}
           <div className="pip-terminal-panel p-3 rounded-xl space-y-2 font-mono">
@@ -3600,6 +3562,11 @@ export default function BuilderExperimentClient({
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                {pieceMaxLevel && (
+                  <span className="text-[0.62rem] px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+                    LVL {pieceMaxLevel} (MAX)
+                  </span>
+                )}
                 <span className="text-[0.62rem] px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
                   ✓ ACTIVE LOADOUT BASE
                 </span>

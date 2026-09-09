@@ -2,8 +2,11 @@ import { describe, it, expect } from "vitest";
 import {
   calculateCombatFirepower,
   calculateVatsCritQualification,
+  getWeaponCombatBaseStats,
+  getWeaponMaxLevel,
   WEAPON_COMBAT_BASE_CATALOG,
 } from "./combat-firepower-engine";
+import { WEAPON_BASE_PIECES } from "./base-gear";
 
 describe("combat-firepower-engine", () => {
   it("contains catalog entries for standard meta weapons", () => {
@@ -416,5 +419,43 @@ describe("combat-firepower-engine", () => {
     expect(critCycleResult.dps.activeDPS).toBe(critCycleResult.dps.criticalCycleDPS);
     // Target dummy active landed DPS matches critical cycle landed DPS
     expect(critCycleResult.targetDummy.activeDPSLanded).toBe(critCycleResult.targetDummy.criticalCycleDPSLanded);
+  });
+
+  it("guarantees 100% catalog coverage for all 114 weapons in WEAPON_BASE_PIECES with maxLevel 50 or 45", () => {
+    expect(WEAPON_BASE_PIECES.length).toBe(114);
+
+    for (const piece of WEAPON_BASE_PIECES) {
+      const stats = getWeaponCombatBaseStats(piece.id);
+      expect(stats, `Missing combat stats for weapon: ${piece.id}`).toBeDefined();
+      expect(stats.baseDamage, `Zero/invalid baseDamage for ${piece.id}`).toBeGreaterThan(0);
+      expect(stats.fireRate, `Zero/invalid fireRate for ${piece.id}`).toBeGreaterThan(0);
+      expect(stats.baseVatsApCost, `Zero/invalid baseVatsApCost for ${piece.id}`).toBeGreaterThan(0);
+      expect(stats.magazineSize, `Zero/invalid magazineSize for ${piece.id}`).toBeGreaterThan(0);
+      expect([50, 45], `Invalid maxLevel for ${piece.id}`).toContain(stats.maxLevel);
+
+      const maxLvl = getWeaponMaxLevel(piece.id);
+      expect([50, 45]).toContain(maxLvl);
+      expect(maxLvl).toBe(stats.maxLevel);
+    }
+  });
+
+  it("verifies alias resolution between canonical base-gear keys and hyphenated aliases", () => {
+    expect(getWeaponCombatBaseStats("fixer").baseDamage).toBe(48);
+    expect(getWeaponCombatBaseStats("the-fixer").baseDamage).toBe(48);
+    expect(getWeaponMaxLevel("fixer")).toBe(50);
+    expect(getWeaponMaxLevel("the-fixer")).toBe(50);
+
+    expect(getWeaponCombatBaseStats("handmade").baseDamage).toBe(45);
+    expect(getWeaponCombatBaseStats("handmade-rifle").baseDamage).toBe(45);
+    expect(getWeaponMaxLevel("handmade")).toBe(45);
+    expect(getWeaponMaxLevel("handmade-rifle")).toBe(45);
+
+    expect(getWeaponCombatBaseStats("railway").baseDamage).toBe(95);
+    expect(getWeaponCombatBaseStats("railway-rifle").baseDamage).toBe(95);
+    expect(getWeaponMaxLevel("railway")).toBe(50);
+    expect(getWeaponMaxLevel("railway-rifle")).toBe(50);
+
+    expect(getWeaponCombatBaseStats("the-dragon").baseDamage).toBe(225);
+    expect(getWeaponMaxLevel("the-dragon")).toBe(45);
   });
 });

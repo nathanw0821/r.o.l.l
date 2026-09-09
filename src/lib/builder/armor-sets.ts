@@ -69,3 +69,17 @@ export function armorSetKeyFromBasePieceId(basePieceId: string): string | null {
   const m = /^armor-set-(.+)$/.exec(basePieceId);
   return m?.[1] ?? null;
 }
+
+/** Canonical max level for armor sets (Level 50 or 45 in Fallout 76). */
+export function getArmorSetMaxLevel(key: string): 50 | 45 {
+  if (
+    key === "marine" ||
+    key === "arctic-marine" ||
+    key === "trapper" ||
+    key.includes("raider") ||
+    key === "wood"
+  ) {
+    return 45;
+  }
+  return 50;
+}

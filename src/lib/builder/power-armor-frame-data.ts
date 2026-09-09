@@ -318,3 +318,12 @@ export const POWER_ARMOR_FRAME_COMPARISON_ROWS: PowerArmorFrameComparisonRow[] =
   }
 ];
 
+/** Canonical max level for power armor frames (Level 50 or 45 in Fallout 76). */
+export function getPowerArmorMaxLevel(frameKey: string): 50 | 45 {
+  const clean = frameKey.toLowerCase().replace(/-(torso|helm|helmet|arm|leg)$/, "").replace(/^armor-set-/, "");
+  if (clean === "raider-pa" || clean === "raider" || clean === "excavator" || clean === "t45") {
+    return 45;
+  }
+  return 50;
+}
+
