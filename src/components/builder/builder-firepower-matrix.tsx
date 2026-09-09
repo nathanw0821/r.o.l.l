@@ -67,6 +67,24 @@ export default function BuilderFirepowerMatrix({
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 text-[0.68rem]">
+            {/* Active Firing Mode Indicator */}
+            {firepower.firingMode === "vats_crit_cycle" ? (
+              <span className="rounded bg-amber-950/90 border border-amber-400 px-2 py-0.5 font-black uppercase text-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.35)] animate-pulse">
+                ⚡ 1:1 CRIT CYCLE
+              </span>
+            ) : firepower.firingMode === "vats_standard" ? (
+              <span className="rounded bg-emerald-950 border border-emerald-500/60 px-2 py-0.5 font-bold uppercase text-emerald-300">
+                🎯 IN V.A.T.S.
+              </span>
+            ) : firepower.firingMode === "aiming_ads" ? (
+              <span className="rounded bg-purple-950 border border-purple-500/60 px-2 py-0.5 font-bold uppercase text-purple-300">
+                🎯 AIMING (ADS)
+              </span>
+            ) : (
+              <span className="rounded bg-slate-800 border border-slate-700 px-2 py-0.5 font-bold uppercase text-slate-400">
+                🔫 HIP FIRE
+              </span>
+            )}
             <span className="rounded bg-slate-800 border border-slate-700 px-2 py-0.5 font-bold uppercase text-slate-300">
               {baseStats.weaponClass}
             </span>
@@ -142,16 +160,34 @@ export default function BuilderFirepowerMatrix({
             </div>
 
             <div className="space-y-1">
-              <div className="flex items-baseline justify-between">
-                <span className="text-xs text-slate-400">Burst DPS:</span>
+              <div className={`flex items-baseline justify-between p-1 rounded transition-colors ${
+                firepower.firingMode !== "vats_crit_cycle" ? "bg-cyan-950/40 border border-cyan-500/30" : ""
+              }`}>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-slate-400">Burst DPS:</span>
+                  {firepower.firingMode !== "vats_crit_cycle" && (
+                    <span className="text-[0.55rem] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">
+                      ACTIVE
+                    </span>
+                  )}
+                </div>
                 <span className="text-lg font-black text-cyan-300">
                   {dps.burstDPS.toLocaleString()}
                 </span>
               </div>
-              <div className="flex items-baseline justify-between pt-1 border-t border-slate-800">
-                <span className="text-xs text-emerald-400 font-bold">
-                  2nd-Shot Crit DPS:
-                </span>
+              <div className={`flex items-baseline justify-between p-1 rounded transition-colors ${
+                firepower.firingMode === "vats_crit_cycle" ? "bg-amber-950/40 border border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]" : "pt-1 border-t border-slate-800"
+              }`}>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-emerald-400 font-bold">
+                    2nd-Shot Crit DPS:
+                  </span>
+                  {firepower.firingMode === "vats_crit_cycle" && (
+                    <span className="text-[0.55rem] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-black">
+                      ACTIVE
+                    </span>
+                  )}
+                </div>
                 <span className="text-lg font-black text-emerald-300">
                   {dps.criticalCycleDPS.toLocaleString()}
                 </span>
@@ -192,9 +228,28 @@ export default function BuilderFirepowerMatrix({
               <span className="font-bold uppercase tracking-wider flex items-center gap-1">
                 <ShieldAlert className="h-3.5 w-3.5 text-purple-400" /> Crit Fill Cycle
               </span>
-              <span className="text-[0.65rem] font-bold text-purple-300">
-                Luck: {critCycle.currentLuck} / {critCycle.requiredLuck}
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-purple-300 font-bold text-[0.65rem] hover:underline flex items-center gap-0.5">
+                    <span>Luck: {critCycle.currentLuck} / {critCycle.requiredLuck}</span>
+                    <HelpCircle className="h-3 w-3 text-slate-500 ml-0.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="bg-slate-950 border-emerald-500/40 text-xs font-mono p-2.5 max-w-xs space-y-1.5">
+                  <div className="font-bold text-emerald-400 border-b border-slate-800 pb-1">
+                    Fallout 76 Luck &amp; Critical Savvy Chart:
+                  </div>
+                  <div className="text-[0.68rem] text-slate-300 space-y-0.5">
+                    <div>• Crit Savvy Rank 3: 33 Luck (23 with 3★ Lucky)</div>
+                    <div>• Crit Savvy Rank 2: 44 Luck (34 with 3★ Lucky)</div>
+                    <div>• Crit Savvy Rank 1: 54 Luck (44 with 3★ Lucky)</div>
+                    <div>• No Crit Savvy: 64 Luck (54 with 3★ Lucky)</div>
+                  </div>
+                  <div className="border-t border-slate-800 pt-1 text-[0.65rem] text-slate-400">
+                    Fill/Shot = (Luck × 1.5) + 5 + (Lucky ? 15 : 0)
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             </div>
 
             <div className="space-y-1">
@@ -207,15 +262,15 @@ export default function BuilderFirepowerMatrix({
                 <div className="rounded bg-amber-950/60 border border-amber-500/40 p-1.5 text-center flex items-center justify-center gap-1.5 text-[0.68rem] text-amber-300 font-bold">
                   <AlertCircle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
                   <span>
-                    Need +{Math.max(0, critCycle.requiredLuck - critCycle.currentLuck)} Luck (or 3★ Lucky)
+                    Need +{critCycle.missingLuck} Luck (or 3★ Lucky)
                   </span>
                 </div>
               )}
 
               <div className="flex items-center justify-between text-[0.68rem] text-slate-400 pt-0.5">
-                <span>Armor Pen:</span>
+                <span>Savvy: {critCycle.critSavvyRank > 0 ? `R${critCycle.critSavvyRank} (${critCycle.fillCostPct}%)` : "None"}</span>
                 <span className="text-emerald-400 font-bold">
-                  {armorPenetration.effectiveArmorPenetrationPct}%
+                  {critCycle.fillPerShotPct}% / shot · {armorPenetration.effectiveArmorPenetrationPct}% AP
                 </span>
               </div>
             </div>

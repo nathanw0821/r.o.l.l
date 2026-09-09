@@ -628,6 +628,25 @@ export const TARGET_DUMMY_CATALOG: Record<string, BossTargetDummy> = {
 
 export const TARGET_DUMMY_LIST: BossTargetDummy[] = Object.values(TARGET_DUMMY_CATALOG);
 
+export type CombatFiringMode = "hip_fire" | "aiming_ads" | "vats_standard" | "vats_crit_cycle";
+
+export type VatsCritQualification = {
+  everySecondShotReady: boolean;
+  currentLuck: number;
+  requiredLuck: number;
+  missingLuck: number;
+  fillCostPct: number;
+  fillPerShotPct: number;
+  critSavvyRank: number;
+  hasCriticalSavvy: boolean;
+  hasLucky15Fill: boolean;
+  hasVatsOptimized: boolean;
+  hasFourLeafClover?: boolean;
+  fourLeafCloverRank?: number;
+  summary: string;
+  recommendation: string;
+};
+
 export type TargetDummyCalculation = {
   dummy: BossTargetDummy;
   effectiveDR: number;
@@ -637,6 +656,7 @@ export type TargetDummyCalculation = {
   criticalLanded: number;
   burstDPSLanded: number;
   criticalCycleDPSLanded: number;
+  activeDPSLanded?: number;
 };
 
 export type CombatFirepowerCalculationInput = {
@@ -661,16 +681,33 @@ export type CombatFirepowerCalculationInput = {
     caps?: number; // for Aristocrat's
     isPowerArmor?: boolean;
     hasStrangeInNumbers?: boolean;
+    isCrouched?: boolean;
+    isSneaking?: boolean;
+    isAiming?: boolean;
+    isPowerAttacking?: boolean;
+    isSprinting?: boolean;
+    isStationary?: boolean;
+    isInVats?: boolean;
+    vatsCritEveryOtherShot?: boolean;
+    timeOfDay?: "day" | "night";
+    addictionsCount?: number;
+    adrenalineStacks?: number;
+    feralPct?: number;
+    foodState?: string;
+    thirstState?: string;
   };
 };
 
 export type CombatFirepowerResult = {
   baseStats: WeaponCombatBaseStats;
+  firingMode: CombatFiringMode;
+  firingModeLabel: string;
   damagePerShot: {
     normal: number;
     critical: number;
     explosiveBonus: number;
     totalPerShot: number;
+    activeShotDamage: number;
     breakdown: { source: string; value: string }[];
   };
   fireRate: {
@@ -687,6 +724,7 @@ export type CombatFirepowerResult = {
   dps: {
     burstDPS: number;
     criticalCycleDPS: number;
+    activeDPS: number;
     breakdown: { source: string; value: string }[];
   };
   vats: {
@@ -695,21 +733,90 @@ export type CombatFirepowerResult = {
     totalApPool: number;
     breakdown: { source: string; value: string }[];
   };
-  critCycle: {
-    everySecondShotReady: boolean;
-    currentLuck: number;
-    requiredLuck: number;
-    fillCostPct: number;
-    fillPerShotPct: number;
-    hasCriticalSavvy: boolean;
-    hasLucky15Fill: boolean;
-  };
+  critCycle: VatsCritQualification;
   armorPenetration: {
     effectiveArmorPenetrationPct: number;
     breakdown: { source: string; value: string }[];
   };
   targetDummy: TargetDummyCalculation;
 };
+
+/**
+ * Authoritative Fallout 76 Luck & Critical Savvy chart evaluation.
+ * Evaluates whether a build qualifies for alternating 1:1 Critical Hits every 2nd shot.
+ */
+export function calculateVatsCritQualification(params: {
+  luck: number;
+  critSavvyRank: number;
+  hasLucky15Fill: boolean;
+  hasVatsOptimized?: boolean;
+  fourLeafCloverRank?: number;
+}): VatsCritQualification {
+  const { luck, critSavvyRank, hasLucky15Fill, hasVatsOptimized = false, fourLeafCloverRank = 0 } = params;
+
+  // Meter cost per crit in Fallout 76:
+  // Rank 3 = 55%, Rank 2 = 70%, Rank 1 = 85%, None (0) = 100%
+  const fillCostPct =
+    critSavvyRank >= 3 ? 55 : critSavvyRank === 2 ? 70 : critSavvyRank === 1 ? 85 : 100;
+
+  // Fill per shot: (Luck * 1.5) + 5 + (Lucky 15% ? 15 : 0)
+  const fillPerShotPct = Math.round(luck * 1.5 + (hasLucky15Fill ? 15 : 0) + 5);
+
+  // Canonical FO76 Luck Thresholds for 1:1 Crit-Every-Other-Shot:
+  // Rank 3 (55% cost): 33 Luck without Lucky, 23 Luck with Lucky
+  // Rank 2 (70% cost): 44 Luck without Lucky, 34 Luck with Lucky
+  // Rank 1 (85% cost): 54 Luck without Lucky, 44 Luck with Lucky
+  // Rank 0 (100% cost): 64 Luck without Lucky, 54 Luck with Lucky
+  let requiredLuck = 64;
+  if (critSavvyRank >= 3) {
+    requiredLuck = hasLucky15Fill ? 23 : 33;
+  } else if (critSavvyRank === 2) {
+    requiredLuck = hasLucky15Fill ? 34 : 44;
+  } else if (critSavvyRank === 1) {
+    requiredLuck = hasLucky15Fill ? 44 : 54;
+  } else {
+    requiredLuck = hasLucky15Fill ? 54 : 64;
+  }
+
+  const everySecondShotReady = luck >= requiredLuck;
+  const missingLuck = Math.max(0, requiredLuck - luck);
+
+  let summary = "";
+  let recommendation = "";
+
+  if (everySecondShotReady) {
+    summary = `QUALIFIED: 1:1 Crit Cycle active (${luck}/${requiredLuck} Luck with ${
+      critSavvyRank > 0 ? `Crit Savvy R${critSavvyRank}` : "No Crit Savvy"
+    }${hasLucky15Fill ? " + 3★ Lucky" : ""}).`;
+    recommendation = "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot.";
+  } else {
+    summary = `LOCKED: Need ${requiredLuck} Luck (Current: ${luck}, Missing: +${missingLuck}).`;
+    if (critSavvyRank < 3 && !hasLucky15Fill) {
+      recommendation = `Equip Critical Savvy Rank 3 to lower Luck threshold from ${requiredLuck} down to 33, or add a 3★ Lucky weapon to drop it to 23.`;
+    } else if (critSavvyRank >= 3 && !hasLucky15Fill) {
+      recommendation = `Add +${missingLuck} Luck (via Unyielding armor, Legendary Luck, or buffs) or add 3★ Lucky weapon mod (-10 Luck requirement).`;
+    } else {
+      recommendation = `Add +${missingLuck} Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality).`;
+    }
+  }
+
+  return {
+    everySecondShotReady,
+    currentLuck: luck,
+    requiredLuck,
+    missingLuck,
+    fillCostPct,
+    fillPerShotPct,
+    critSavvyRank,
+    hasCriticalSavvy: critSavvyRank >= 3,
+    hasLucky15Fill,
+    hasVatsOptimized,
+    hasFourLeafClover: fourLeafCloverRank > 0,
+    fourLeafCloverRank,
+    summary,
+    recommendation,
+  };
+}
 
 /**
  * Calculates complete Live Weapon Firepower, Damage per Shot, Burst/Sustained DPS,
@@ -719,7 +826,8 @@ export function calculateCombatFirepower(
   input: CombatFirepowerCalculationInput
 ): CombatFirepowerResult {
   const base = getWeaponCombatBaseStats(input.weaponId);
-  const healthPct = input.playerStats.healthPct ?? 0.2; // Default to 20% for Bloodied testing
+  const rawHealth = input.playerStats.healthPct ?? 0.2;
+  const healthPct = rawHealth > 1 ? rawHealth / 100 : rawHealth; // Seamlessly handles 0.2 and 20% format
   const caps = input.playerStats.caps ?? 30000; // Default max caps for Aristocrat's
   const hasSIN = Boolean(input.playerStats.hasStrangeInNumbers);
   const isPA = Boolean(input.playerStats.isPowerArmor);
@@ -927,11 +1035,117 @@ export function calculateCombatFirepower(
       hasExplosive = true;
     } else if (slug === "vital" || slug.includes("50-critical-damage")) {
       hasVitalCrit = true;
-    } else if (slug === "vats-optimized" || slug.includes("25-less-vats-action-point-cost")) {
+    } else if (slug === "vats-optimized" || slug.includes("25-less-vats-action-point-cost") || slug.includes("35-less-vats-action-point-cost") || slug.includes("vats-cost")) {
       hasVatsOptimized = true;
     } else if (slug === "lucky" || slug.includes("15-critical-charge") || slug.includes("15-crit-fill")) {
       hasLucky15Fill = true;
+    } else if (slug === "nocturnal" || slug === "nocturnal-weapon") {
+      const isNight = input.playerStats.timeOfDay === "night";
+      const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
+      if (isNight || isCrouched) {
+        additiveDamagePct += 0.50;
+        breakdown.push({
+          source: isCrouched ? "Nocturnal (Crouched / Stealthed)" : "Nocturnal (Nighttime)",
+          value: "+50%"
+        });
+      }
+    } else if (slug === "stalkers" || slug === "stalker-s") {
+      const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
+      if (isCrouched) {
+        additiveDamagePct += 1.0;
+        breakdown.push({ source: "Stalker's (Crouched / Stealthed)", value: "+100% Sneak Attack" });
+      }
+    } else if (slug === "hitmans" || slug === "hitman-s" || slug.includes("damage-while-aiming")) {
+      const isInVats = Boolean(input.playerStats.isInVats);
+      if (input.playerStats.isAiming && !isInVats) {
+        additiveDamagePct += 0.25;
+        breakdown.push({ source: "Hitman's 2★ (Aiming Down Sights)", value: "+25%" });
+      }
+    } else if (slug === "heavy-hitters" || slug === "heavy-hitter-s" || slug.includes("power-attack-damage")) {
+      if (input.playerStats.isPowerAttacking) {
+        additiveDamagePct += 0.40;
+        breakdown.push({ source: "Heavy Hitter's 2★ (Power Attack)", value: "+40%" });
+      }
+    } else if (slug === "steady" || slug.includes("damage-while-not-moving")) {
+      if (!input.playerStats.isSprinting) {
+        additiveDamagePct += 0.25;
+        breakdown.push({ source: "Steady 2★ (Stationary / Not Moving)", value: "+25%" });
+      }
+    } else if (slug === "junkies" || slug === "junkie-s") {
+      const addictions = input.playerStats.addictionsCount || 0;
+      const jBonus = Math.min(0.50, addictions * 0.10);
+      if (jBonus > 0) {
+        additiveDamagePct += jBonus;
+        breakdown.push({ source: `Junkie's (${addictions} Addictions)`, value: `+${Math.round(jBonus * 100)}%` });
+      }
+    } else if (slug === "juggernauts" || slug === "juggernaut-s") {
+      if (healthPct >= 0.75) {
+        const juggBonus = Math.min(0.25, (healthPct - 0.75) * 1.0);
+        if (juggBonus > 0) {
+          additiveDamagePct += juggBonus;
+          breakdown.push({ source: `Juggernaut's (${Math.round(healthPct * 100)}% HP)`, value: `+${Math.round(juggBonus * 100)}%` });
+        }
+      }
+    } else if (slug === "gourmands" || slug === "gourmand-s") {
+      const isWellFed = input.playerStats.foodState === "well_fed" || input.playerStats.foodState === "fully_fed";
+      const isWellHydrated = input.playerStats.thirstState === "well_hydrated" || input.playerStats.thirstState === "fully_hydrated";
+      const gourmandBonus = (isWellFed ? 0.12 : 0) + (isWellHydrated ? 0.12 : 0);
+      if (gourmandBonus > 0) {
+        additiveDamagePct += gourmandBonus;
+        breakdown.push({ source: "Gourmand's (Fed & Hydrated)", value: `+${Math.round(gourmandBonus * 100)}%` });
+      }
+    } else if (slug === "mutants" || slug === "mutant-s") {
+      const mutationCount = Math.min(5, input.activeBuffs?.activeMutations?.length || 0);
+      const mutBonus = mutationCount * 0.05;
+      if (mutBonus > 0) {
+        additiveDamagePct += mutBonus;
+        breakdown.push({ source: `Mutant's (${mutationCount} Mutations)`, value: `+${Math.round(mutBonus * 100)}%` });
+      }
+    } else if (slug === "lucid") {
+      const feral = input.playerStats.feralPct ?? 100;
+      if (feral >= 80) {
+        additiveDamagePct += 0.40;
+        breakdown.push({ source: "Lucid (High Lucidity 80%+)", value: "+40%" });
+      }
     }
+  }
+
+  // Sneak Attack Multiplier (when Crouched / Stealthed)
+  const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
+  if (isCrouched) {
+    const ninjaRank = perkRanks.get("ninja") || 0;
+    const covertRank = perkRanks.get("covert-operative") || 0;
+    const sandmanRank = perkRanks.get("mister-sandman") || 0;
+    const isNight = input.playerStats.timeOfDay === "night";
+
+    let sneakMultiplier = 2.0;
+    if (base.weaponClass === "melee" || base.weaponClass === "unarmed") {
+      sneakMultiplier = ninjaRank > 0 ? 3.0 : 2.0;
+    } else {
+      if (covertRank > 0) sneakMultiplier = 2.5;
+      if (isNight && sandmanRank > 0) sneakMultiplier += sandmanRank * 0.25;
+    }
+
+    additiveDamagePct += (sneakMultiplier - 1.0);
+    breakdown.push({
+      source: `Sneak Attack (${isNight && sandmanRank > 0 ? "Mister Sandman " : ""}${sneakMultiplier}× Multiplier)`,
+      value: `+${Math.round((sneakMultiplier - 1.0) * 100)}%`
+    });
+  }
+
+  // Ghoul Apex Feral Bloodlust (Feral Meter 0-20%)
+  if (input.playerStats.feralPct !== undefined && input.playerStats.feralPct <= 20) {
+    if (base.weaponClass === "melee" || base.weaponClass === "unarmed") {
+      additiveDamagePct += 0.50;
+      breakdown.push({ source: "Apex Feral Bloodlust (0–20% Lucidity)", value: "+50% Melee" });
+    }
+  }
+
+  // Dynamic Adrenaline Kill Streak scaling (if provided directly via switchboard)
+  if (input.playerStats.adrenalineStacks !== undefined && input.playerStats.adrenalineStacks > 0 && adrenalineRank === 0) {
+    const adrKillsBonus = input.playerStats.adrenalineStacks * 0.10;
+    additiveDamagePct += adrKillsBonus;
+    breakdown.push({ source: `Adrenaline (${input.playerStats.adrenalineStacks} Kills)`, value: `+${Math.round(adrKillsBonus * 100)}%` });
   }
 
   // 3. Consumable Buffs
@@ -1101,18 +1315,25 @@ export function calculateCombatFirepower(
   vatsBreakdown.push({ source: "Base VATS AP Cost", value: `${base.baseVatsApCost} AP` });
   vatsBreakdown.push({ source: "Total Action Points", value: `${totalApPool} AP (${input.playerStats.agility} AGI)` });
 
-  // 8. Critical Fill & Every-2nd-Shot Status
-  // In FO76: Crit Fill per shot = (Luck × 1.5) + (Lucky 15% Fill ? 15 : 0) + 5
-  // Crit Cost = Critical Savvy Rank 3 = 55% fill needed per crit (45% refunded)
+  // 8. Critical Fill & Every-2nd-Shot Status (FO76 Luck & Critical Savvy Chart)
   const critSavvyRank = perkRanks.get("critical-savvy") || 0;
-  const critCostPct = critSavvyRank === 3 ? 55 : critSavvyRank === 2 ? 60 : critSavvyRank === 1 ? 70 : 100;
-  const fillPerShotPct = Math.round(input.playerStats.luck * 1.5 + (hasLucky15Fill ? 15 : 0) + 5);
+  const fourLeafCloverRank = perkRanks.get("four-leaf-clover") || 0;
 
-  const requiredLuck = hasLucky15Fill
-    ? (critSavvyRank === 3 ? 23 : 30)
-    : (critSavvyRank === 3 ? 33 : 40);
+  const critCycle = calculateVatsCritQualification({
+    luck: input.playerStats.luck,
+    critSavvyRank,
+    hasLucky15Fill,
+    hasVatsOptimized,
+    fourLeafCloverRank,
+  });
 
-  const everySecondShotReady = input.playerStats.luck >= requiredLuck && critSavvyRank === 3;
+  if (fourLeafCloverRank > 0) {
+    const cloverChance = fourLeafCloverRank === 3 ? 13.5 : fourLeafCloverRank === 2 ? 10.5 : 7.5;
+    vatsBreakdown.push({
+      source: `Four Leaf Clover (Rank ${fourLeafCloverRank})`,
+      value: `~${cloverChance}% Instant Crit Refill on Hit`,
+    });
+  }
 
   // 9. True Armor Penetration Compounding
   // Anti-Armor (50%) + Tank Killer (36%) or Stabilized (45% in PA)
@@ -1152,13 +1373,44 @@ export function calculateCombatFirepower(
 
   const effectiveArmorPenetrationPct = Math.round((1 - penRemaining) * 100);
 
+  // 10. Resolve Combat Firing Mode & Active DPS
+  const isInVats = Boolean(input.playerStats.isInVats);
+  const vatsCritEveryOtherShot = Boolean(input.playerStats.vatsCritEveryOtherShot);
+
+  let firingMode: CombatFiringMode = "hip_fire";
+  let firingModeLabel = "Hip Fire (Standard Spread)";
+
+  if (isInVats) {
+    if (vatsCritEveryOtherShot && critCycle.everySecondShotReady) {
+      firingMode = "vats_crit_cycle";
+      firingModeLabel = "V.A.T.S. (1:1 Crit Every 2nd Shot)";
+    } else {
+      firingMode = "vats_standard";
+      firingModeLabel = "V.A.T.S. (Standard Target Lock)";
+    }
+  } else if (input.playerStats.isAiming) {
+    firingMode = "aiming_ads";
+    firingModeLabel = "Aiming Down Sights (ADS)";
+  }
+
+  const activeShotDamage =
+    firingMode === "vats_crit_cycle"
+      ? Math.round((normalDamage + explosiveDamage + criticalDamage) / 2)
+      : normalDamage + explosiveDamage;
+
+  const activeDPS =
+    firingMode === "vats_crit_cycle" ? criticalCycleDPS : burstDPS;
+
   const intermediateFirepower = {
     baseStats: base,
+    firingMode,
+    firingModeLabel,
     damagePerShot: {
       normal: normalDamage,
       critical: criticalDamage,
       explosiveBonus: explosiveDamage,
       totalPerShot: normalDamage + explosiveDamage,
+      activeShotDamage,
       breakdown,
     },
     fireRate: {
@@ -1175,6 +1427,7 @@ export function calculateCombatFirepower(
     dps: {
       burstDPS,
       criticalCycleDPS,
+      activeDPS,
       breakdown: dpsBreakdown,
     },
     vats: {
@@ -1183,15 +1436,7 @@ export function calculateCombatFirepower(
       totalApPool,
       breakdown: vatsBreakdown,
     },
-    critCycle: {
-      everySecondShotReady,
-      currentLuck: input.playerStats.luck,
-      requiredLuck,
-      fillCostPct: critCostPct,
-      fillPerShotPct,
-      hasCriticalSavvy: critSavvyRank === 3,
-      hasLucky15Fill,
-    },
+    critCycle,
     armorPenetration: {
       effectiveArmorPenetrationPct,
       breakdown: apBreakdown,
@@ -1202,6 +1447,10 @@ export function calculateCombatFirepower(
     intermediateFirepower,
     input.targetDummyId ?? "scorchbeast-queen"
   );
+  targetDummy.activeDPSLanded =
+    firingMode === "vats_crit_cycle"
+      ? targetDummy.criticalCycleDPSLanded
+      : targetDummy.burstDPSLanded;
 
   return {
     ...intermediateFirepower,

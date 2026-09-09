@@ -309,3 +309,223 @@ export function canonicalBasePieceId(id: string | null | undefined): string {
   const piece = getBaseGearPiece(id);
   return piece ? piece.id : id;
 }
+
+export type WeaponCategoryKey =
+  | "rifles"
+  | "heavy"
+  | "energy"
+  | "shotguns"
+  | "pistols"
+  | "melee"
+  | "archery";
+
+export interface WeaponOptionItem {
+  id: string;
+  label: string;
+  isVariant: boolean;
+  parentChassisId?: string;
+  parentChassisLabel?: string;
+}
+
+export interface WeaponCategoryGroup {
+  categoryKey: WeaponCategoryKey;
+  categoryLabel: string;
+  icon: string;
+  options: WeaponOptionItem[];
+}
+
+/**
+ * Definition of chassis clusters by weapon type.
+ * When multiple weapons share a chassis (e.g. Flamer & Holy Fire), they are clustered together.
+ * Standalone weapons are single-element tuples.
+ */
+const WEAPON_TYPE_CHASSIS_MAP: Record<WeaponCategoryKey, { label: string; icon: string; clusters: string[][] }> = {
+  rifles: {
+    label: "Rifles & Automatic (Commando / Rifleman)",
+    icon: "🎯",
+    clusters: [
+      ["10mm-smg", "anchorage-ace"],
+      ["assault-rifle"],
+      ["combat-rifle", "fixer"],
+      ["gauss-rifle"],
+      ["handmade", "shattered-grounds"],
+      ["hunting-rifle", "doctors-orders"],
+      ["lever-action", "sole-survivor", "western-spirit"],
+      ["pipe-gun"],
+      ["railway", "ticket-to-revenge"],
+      ["submachine-gun", "elders-mark", "love-tap"]
+    ]
+  },
+  heavy: {
+    label: "Heavy Ordnance (Heavy Guns & Launchers)",
+    icon: "🚀",
+    clusters: [
+      ["auto-grenade-launcher"],
+      ["broadsider", "grand-finale"],
+      ["cal50", "the-action-hero"],
+      ["cremator"],
+      ["fat-man", "overkill"],
+      ["flamer", "holy-fire"],
+      ["gatling-gun", "resolute-veteran"],
+      ["gatling-laser", "v63-helga"],
+      ["gatling-plasma"],
+      ["gauss-minigun"],
+      ["harpoon-gun"],
+      ["lmg", "red-terror"],
+      ["m79-grenade"],
+      ["minigun"],
+      ["missile-launcher", "boomstick"],
+      ["pepper-shaker"],
+      ["plasma-caster"]
+    ]
+  },
+  energy: {
+    label: "Energy & Science Weapons",
+    icon: "⚡",
+    clusters: [
+      ["alien-blaster"],
+      ["alien-disintegrator"],
+      ["enclave-plasma"],
+      ["gamma-gun"],
+      ["laser-musket"],
+      ["laser-rifle", "v63-olga"],
+      ["plasma-flamer"],
+      ["plasma-gun"],
+      ["radium-rifle"],
+      ["tesla", "v63-bertha", "night-light"],
+      ["ultracite-laser"]
+    ]
+  },
+  shotguns: {
+    label: "Shotguns (Scatterguns)",
+    icon: "💥",
+    clusters: [
+      ["combat-shotgun", "crowd-control"],
+      ["double-barrel", "cold-shoulder"],
+      ["gauss-shotgun"],
+      ["pump-shotgun", "the-kabloom"]
+    ]
+  },
+  pistols: {
+    label: "Pistols & Revolvers (Gunslinger / Guerrilla)",
+    icon: "🔫",
+    clusters: [
+      ["44-pistol", "the-fact-finder", "medical-malpractice"],
+      ["10mm-pistol"],
+      ["black-powder-pistol"],
+      ["crusader-pistol"],
+      ["single-action", "gunthers-big-iron"],
+      ["the-dragon"],
+      ["western-revolver"]
+    ]
+  },
+  melee: {
+    label: "Melee & Unarmed",
+    icon: "⚔️",
+    clusters: [
+      ["auto-axe"],
+      ["baseball-bat"],
+      ["bear-arm"],
+      ["boxing-glove"],
+      ["cattleprod"],
+      ["chainsaw"],
+      ["combat-knife"],
+      ["cultist-dagger"],
+      ["dc-gauntlet", "unstoppable-monster"],
+      ["drill"],
+      ["fire-axe"],
+      ["gauntlet"],
+      ["grognak-axe"],
+      ["knuckles"],
+      ["meat-hook"],
+      ["mole-miner-gauntlet"],
+      ["mr-handy-buzz-blade"],
+      ["pipe-wrench", "mechanics-best-friend"],
+      ["plasma-cutter"],
+      ["power-fist", "face-breaker"],
+      ["ripper"],
+      ["sheepsquatch-club"],
+      ["sheepsquatch-staff"],
+      ["shishkebab"],
+      ["sledgehammer"],
+      ["super-sledge", "v63-zweihander", "whacker-smacker"],
+      ["switchblade"],
+      ["tenderizer"],
+      ["the-gutter"],
+      ["v63-shock-baton"],
+      ["war-glaive"]
+    ]
+  },
+  archery: {
+    label: "Archery & Primitive Weapons",
+    icon: "🏹",
+    clusters: [
+      ["compound-bow"],
+      ["crossbow"],
+      ["bow"]
+    ]
+  }
+};
+
+/**
+ * Returns grouped weapon categories with shared chassis groups and alphanumeric sorting.
+ */
+export function getGroupedWeaponCategories(): WeaponCategoryGroup[] {
+  const categories: WeaponCategoryGroup[] = [];
+  const categoriesKeys = Object.keys(WEAPON_TYPE_CHASSIS_MAP) as WeaponCategoryKey[];
+
+  for (const catKey of categoriesKeys) {
+    const config = WEAPON_TYPE_CHASSIS_MAP[catKey];
+    
+    // Sort clusters alphanumerically by the primary/base piece label
+    const sortedClusters = [...config.clusters].sort((clusterA, clusterB) => {
+      const pieceA = getBaseGearPiece(clusterA[0]);
+      const pieceB = getBaseGearPiece(clusterB[0]);
+      const labelA = pieceA?.label || clusterA[0];
+      const labelB = pieceB?.label || clusterB[0];
+      return labelA.localeCompare(labelB);
+    });
+
+    const options: WeaponOptionItem[] = [];
+
+    for (const cluster of sortedClusters) {
+      const baseId = cluster[0];
+      const basePiece = getBaseGearPiece(baseId);
+      if (!basePiece) continue;
+
+      const hasVariants = cluster.length > 1;
+
+      // Base weapon entry
+      options.push({
+        id: basePiece.id,
+        label: hasVariants ? `${basePiece.label} (Base Chassis)` : basePiece.label,
+        isVariant: false,
+        parentChassisId: basePiece.id,
+        parentChassisLabel: basePiece.label
+      });
+
+      // Variant entries
+      for (let i = 1; i < cluster.length; i++) {
+        const variantPiece = getBaseGearPiece(cluster[i]);
+        if (!variantPiece) continue;
+        options.push({
+          id: variantPiece.id,
+          label: variantPiece.label,
+          isVariant: true,
+          parentChassisId: basePiece.id,
+          parentChassisLabel: basePiece.label
+        });
+      }
+    }
+
+    categories.push({
+      categoryKey: catKey,
+      categoryLabel: config.label,
+      icon: config.icon,
+      options
+    });
+  }
+
+  return categories;
+}
+

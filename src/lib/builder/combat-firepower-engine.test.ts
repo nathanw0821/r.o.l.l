@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   calculateCombatFirepower,
+  calculateVatsCritQualification,
   WEAPON_COMBAT_BASE_CATALOG,
 } from "./combat-firepower-engine";
 
@@ -313,5 +314,107 @@ describe("combat-firepower-engine", () => {
     expect(rawRes.targetDummy.effectiveDR).toBe(0);
     expect(rawRes.targetDummy.normalLanded).toBe(rawRes.damagePerShot.totalPerShot);
     expect(rawRes.targetDummy.criticalLanded).toBe(rawRes.damagePerShot.critical);
+  });
+
+  it("evaluates the authoritative Fallout 76 Luck & Critical Savvy chart across all tiers", () => {
+    // Critical Savvy Rank 3: 33 Luck without Lucky, 23 Luck with Lucky
+    const cs3NoLucky = calculateVatsCritQualification({ luck: 33, critSavvyRank: 3, hasLucky15Fill: false });
+    expect(cs3NoLucky.requiredLuck).toBe(33);
+    expect(cs3NoLucky.fillCostPct).toBe(55);
+    expect(cs3NoLucky.everySecondShotReady).toBe(true);
+
+    const cs3Short = calculateVatsCritQualification({ luck: 32, critSavvyRank: 3, hasLucky15Fill: false });
+    expect(cs3Short.everySecondShotReady).toBe(false);
+    expect(cs3Short.missingLuck).toBe(1);
+
+    const cs3Lucky = calculateVatsCritQualification({ luck: 23, critSavvyRank: 3, hasLucky15Fill: true });
+    expect(cs3Lucky.requiredLuck).toBe(23);
+    expect(cs3Lucky.everySecondShotReady).toBe(true);
+
+    // Critical Savvy Rank 2: 44 Luck without Lucky, 34 Luck with Lucky
+    const cs2NoLucky = calculateVatsCritQualification({ luck: 44, critSavvyRank: 2, hasLucky15Fill: false });
+    expect(cs2NoLucky.requiredLuck).toBe(44);
+    expect(cs2NoLucky.fillCostPct).toBe(70);
+    expect(cs2NoLucky.everySecondShotReady).toBe(true);
+
+    const cs2Lucky = calculateVatsCritQualification({ luck: 34, critSavvyRank: 2, hasLucky15Fill: true });
+    expect(cs2Lucky.requiredLuck).toBe(34);
+    expect(cs2Lucky.everySecondShotReady).toBe(true);
+
+    // Critical Savvy Rank 1: 54 Luck without Lucky, 44 Luck with Lucky
+    const cs1NoLucky = calculateVatsCritQualification({ luck: 54, critSavvyRank: 1, hasLucky15Fill: false });
+    expect(cs1NoLucky.requiredLuck).toBe(54);
+    expect(cs1NoLucky.fillCostPct).toBe(85);
+    expect(cs1NoLucky.everySecondShotReady).toBe(true);
+
+    const cs1Lucky = calculateVatsCritQualification({ luck: 44, critSavvyRank: 1, hasLucky15Fill: true });
+    expect(cs1Lucky.requiredLuck).toBe(44);
+    expect(cs1Lucky.everySecondShotReady).toBe(true);
+
+    // Critical Savvy Rank 0: 64 Luck without Lucky, 54 Luck with Lucky
+    const cs0NoLucky = calculateVatsCritQualification({ luck: 64, critSavvyRank: 0, hasLucky15Fill: false });
+    expect(cs0NoLucky.requiredLuck).toBe(64);
+    expect(cs0NoLucky.fillCostPct).toBe(100);
+    expect(cs0NoLucky.everySecondShotReady).toBe(true);
+
+    const cs0Lucky = calculateVatsCritQualification({ luck: 54, critSavvyRank: 0, hasLucky15Fill: true });
+    expect(cs0Lucky.requiredLuck).toBe(54);
+    expect(cs0Lucky.everySecondShotReady).toBe(true);
+  });
+
+  it("suppresses Hitman's (+25% Aiming) when in V.A.T.S. even if isAiming was flagged", () => {
+    // 1. Aiming outside VATS: Hitman's applies
+    const aimingOutsideVats = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [{ slug: "hitmans" }],
+      equippedPerks: [],
+      playerStats: {
+        agility: 15,
+        luck: 15,
+        strength: 5,
+        isAiming: true,
+        isInVats: false,
+      },
+    });
+    expect(aimingOutsideVats.firingMode).toBe("aiming_ads");
+    expect(aimingOutsideVats.damagePerShot.breakdown.some((b) => b.source.includes("Hitman's"))).toBe(true);
+
+    // 2. In VATS: Hitman's is SUPPRESSED
+    const aimingInVats = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [{ slug: "hitmans" }],
+      equippedPerks: [],
+      playerStats: {
+        agility: 15,
+        luck: 15,
+        strength: 5,
+        isAiming: true,
+        isInVats: true,
+      },
+    });
+    expect(aimingInVats.firingMode).toBe("vats_standard");
+    expect(aimingInVats.damagePerShot.breakdown.some((b) => b.source.includes("Hitman's"))).toBe(false);
+  });
+
+  it("activates 1:1 V.A.T.S. Crit Cycle when qualified and switches active DPS", () => {
+    const critCycleResult = calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [{ slug: "vats-optimized" }],
+      equippedPerks: [{ cardId: "critical-savvy", rank: 3 }],
+      playerStats: {
+        agility: 20,
+        luck: 33, // Exactly meets 33 Luck threshold with Crit Savvy 3
+        strength: 5,
+        isInVats: true,
+        vatsCritEveryOtherShot: true,
+      },
+    });
+
+    expect(critCycleResult.firingMode).toBe("vats_crit_cycle");
+    expect(critCycleResult.critCycle.everySecondShotReady).toBe(true);
+    // Active DPS matches 2nd-shot critical cycle DPS
+    expect(critCycleResult.dps.activeDPS).toBe(critCycleResult.dps.criticalCycleDPS);
+    // Target dummy active landed DPS matches critical cycle landed DPS
+    expect(critCycleResult.targetDummy.activeDPSLanded).toBe(critCycleResult.targetDummy.criticalCycleDPSLanded);
   });
 });
