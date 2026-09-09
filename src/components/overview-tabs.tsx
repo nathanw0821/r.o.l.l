@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Shield, Palette, Trophy, BookOpen } from "lucide-react";
+import { User, Shield, Palette, Trophy, BookOpen, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const overviewTabs = [
   { href: "/overview/general", label: "General", icon: User },
+  { href: "/overview/transmissions", label: "My Transmissions", icon: Radio },
   { href: "/overview/security", label: "Password & Security", icon: Shield },
   { href: "/overview/appearance", label: "Theme & Appearance", icon: Palette },
   { href: "/overview/achievements", label: "Achievements", icon: Trophy },

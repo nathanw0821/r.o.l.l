@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 import type { BuilderPayload } from "@/lib/builder/types";
 import {
@@ -15,13 +18,44 @@ export async function GET(request: Request) {
     const species = searchParams.get("species") || "all";
     const kind = searchParams.get("kind") || "all";
     const tag = searchParams.get("tag") || "all";
+    const mine = searchParams.get("mine") === "true";
+    const slugsParam = searchParams.get("slugs")?.trim() || "";
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "18", 10)));
     const skip = (page - 1) * limit;
 
+    const session = await getServerSession(authOptions);
+    const currentUserId = session?.user?.id;
+    const isAdmin = isAdminUser(session?.user);
+
     const where: Record<string, unknown> = {
       published: true,
     };
+
+    if (mine) {
+      const slugList = slugsParam ? slugsParam.split(",").map((s) => s.trim()).filter(Boolean) : [];
+      if (currentUserId && slugList.length > 0) {
+        where.OR = [
+          { userId: currentUserId },
+          { slug: { in: slugList } }
+        ];
+      } else if (currentUserId) {
+        where.userId = currentUserId;
+      } else if (slugList.length > 0) {
+        where.slug = { in: slugList };
+      } else {
+        return NextResponse.json({
+          success: true,
+          data: [],
+          pagination: {
+            page: 1,
+            limit,
+            totalCount: 0,
+            totalPages: 0,
+          },
+        });
+      }
+    }
 
     if (q) {
       where.OR = [
@@ -53,6 +87,7 @@ export async function GET(request: Request) {
       const payload = (rec.payload as unknown as BuilderPayload) || {};
       const baseSpecial = payload.baseSpecial || { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
       const archetypeTags = deriveArchetypeTags(payload);
+      const isOwner = Boolean((currentUserId && rec.userId === currentUserId) || isAdmin);
 
       return {
         id: rec.id,
@@ -61,10 +96,13 @@ export async function GET(request: Request) {
         description: rec.description,
         createdAt: rec.createdAt.toISOString(),
         author: rec.user ? {
+          id: rec.userId,
           name: rec.user.name,
           username: rec.user.username,
           image: rec.user.image,
         } : null,
+        userId: rec.userId,
+        isOwner,
         isGhoul: Boolean(payload.ghoul),
         equipmentKind: payload.equipmentKind || "weapon",
         basePieceId: payload.basePieceId || "the-fixer",

@@ -100,7 +100,11 @@ export async function POST(request: Request) {
 
   const session = await getServerSession(authOptions);
   const slug = makeSlug(parsed.data.title);
-  const payload = parsed.data.payload as BuilderPayload;
+  const editToken = randomBytes(16).toString("hex");
+  const payload = {
+    ...parsed.data.payload,
+    _editToken: editToken,
+  } as unknown as BuilderPayload;
 
   const record = await prisma.sharedBuild.create({
     data: {
@@ -108,12 +112,12 @@ export async function POST(request: Request) {
       title: parsed.data.title,
       seoTitle: parsed.data.seoTitle ?? null,
       description: parsed.data.description ?? null,
-      payload,
+      payload: payload as unknown as object,
       userId: session?.user?.id ?? null
     }
   });
 
   safeRevalidateTag(sharedBuildTagForSlug(record.slug), { expire: 0 });
 
-  return ok({ slug: record.slug, path: `/l/${record.slug}` });
+  return ok({ id: record.id, slug: record.slug, path: `/l/${record.slug}`, editToken });
 }

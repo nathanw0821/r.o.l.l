@@ -10,7 +10,8 @@ const sharedBuildSelect = {
   seoTitle: true,
   description: true,
   payload: true,
-  published: true
+  published: true,
+  userId: true
 } satisfies Prisma.SharedBuildSelect;
 
 export type CachedSharedBuildRow = Prisma.SharedBuildGetPayload<{ select: typeof sharedBuildSelect }>;

@@ -41,6 +41,9 @@ import {
 } from "@/lib/builder/underarmor";
 import { getSortedMutationLabels, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
+import { getAppSession } from "@/lib/auth";
+import { isAdminUser } from "@/lib/app-config";
+import TransmissionActionButtons from "@/components/transmissions/transmission-action-buttons";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -97,6 +100,11 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   if (!row || !payload) {
     notFound();
   }
+
+  const session = await getAppSession();
+  const currentUserId = session?.user?.id;
+  const isAdmin = isAdminUser(session?.user);
+  const isOwner = Boolean((currentUserId && row.userId === currentUserId) || isAdmin);
 
   const piece = getBaseGearPiece(payload.basePieceId);
   const modRows = await getCachedBuilderModCatalog();
@@ -196,6 +204,12 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
         <p className="text-[0.75rem] text-foreground/50 mt-2 italic">
           Shared via B.U.I.L.D. Diagnostic Hub · {new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
         </p>
+        <TransmissionActionButtons
+          transmissionId={row.id}
+          slug={row.slug}
+          title={row.title}
+          initialIsOwner={isOwner}
+        />
       </div>
 
       {/* 3-Column Terminal Layout */}
