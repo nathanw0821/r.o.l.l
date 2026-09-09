@@ -297,4 +297,86 @@ describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verificat
     expect(star4.map(m => m.name)).not.toContain("Stabilizer's");
     expect(star4.map(m => m.name)).not.toContain("Electrician's");
   });
+
+  it("filterModsForSlot for Regular Armor includes Nocturnal and all dual-purpose effects", async () => {
+    const catalog = await getCachedBuilderModCatalog();
+    const dtos: BuilderModDTO[] = catalog.map((m) => ({
+      ...m,
+      effectMath: typeof m.effectMath === "object" && m.effectMath !== null ? (m.effectMath as Record<string, unknown>) : {},
+      craftingCost: typeof m.craftingCost === "object" && m.craftingCost !== null ? (m.craftingCost as Record<string, unknown>) : {},
+      trackerUnlock: "unlocked" as const
+    }));
+
+    const armorPiece = {
+      id: "civil-engineer-torso",
+      name: "Civil Engineer Armor Torso",
+      kind: "armor" as const,
+      label: "Civil Engineer Armor Torso"
+    };
+
+    // 1-star: exactly 22 authentic effects including Nocturnal & dual weapon/armor effects
+    const star1 = filterModsForSlot(dtos, armorPiece, 0);
+    const star1Names = star1.map(m => m.name);
+    expect(star1.length).toBe(22);
+    expect(star1Names).toContain("Nocturnal");
+    expect(star1Names).toContain("Adrenal");
+    expect(star1Names).toContain("Assassin's");
+    expect(star1Names).toContain("Exterminator's");
+    expect(star1Names).toContain("Ghoul Slayer's");
+    expect(star1Names).toContain("Hunter's");
+    expect(star1Names).toContain("Lucid");
+    expect(star1Names).toContain("Mutant Slayer's");
+    expect(star1Names).toContain("Mutant's");
+    expect(star1Names).toContain("Troubleshooter's");
+    expect(star1Names).toContain("Zealot's");
+    expect(star1Names).toContain("Overeater's");
+    expect(star1Names).toContain("Unyielding");
+    expect(star1Names).toContain("Bolstering");
+    expect(star1Names).toContain("Vanguard's");
+    expect(star1Names).toContain("Heavyweight");
+    expect(star1Names).toContain("Life Saving");
+
+    // Weapon-only effects must NOT bleed into armor
+    expect(star1Names).not.toContain("Bloodied");
+    expect(star1Names).not.toContain("Anti-armor");
+    expect(star1Names).not.toContain("Quad");
+    expect(star1Names).not.toContain("Two Shot");
+    expect(star1Names).not.toContain("Furious");
+    expect(star1Names).not.toContain("Instigating");
+  });
+
+  it("filterModsForSlot for Power Armor includes Nocturnal, Unyielding, and excludes non-PA armor effects", async () => {
+    const catalog = await getCachedBuilderModCatalog();
+    const dtos: BuilderModDTO[] = catalog.map((m) => ({
+      ...m,
+      effectMath: typeof m.effectMath === "object" && m.effectMath !== null ? (m.effectMath as Record<string, unknown>) : {},
+      craftingCost: typeof m.craftingCost === "object" && m.craftingCost !== null ? (m.craftingCost as Record<string, unknown>) : {},
+      trackerUnlock: "unlocked" as const
+    }));
+
+    const paPiece = {
+      id: "t65-torso",
+      name: "T-65 Torso",
+      kind: "powerArmor" as const,
+      label: "T-65 Power Armor (full set)"
+    };
+
+    // 1-star: exactly 20 authentic effects
+    const star1 = filterModsForSlot(dtos, paPiece, 0);
+    const star1Names = star1.map(m => m.name);
+    expect(star1.length).toBe(20);
+    expect(star1Names).toContain("Nocturnal");
+    expect(star1Names).toContain("Unyielding");
+    expect(star1Names).toContain("Overeater's");
+    expect(star1Names).toContain("Bolstering");
+    expect(star1Names).toContain("Vanguard's");
+    expect(star1Names).toContain("Assassin's");
+    expect(star1Names).toContain("Mutant's");
+
+    // Regular-armor-only and weapon-only must not appear on PA
+    expect(star1Names).not.toContain("Heavyweight");
+    expect(star1Names).not.toContain("Life Saving");
+    expect(star1Names).not.toContain("Bloodied");
+    expect(star1Names).not.toContain("Quad");
+  });
 });
