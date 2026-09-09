@@ -642,23 +642,25 @@ export default function BuilderExperimentClient({
     let cancelled = false;
     setTransmissionLoading(true);
 
+    interface TransmissionResponse {
+      success?: boolean;
+      data?: {
+        id: string;
+        slug: string;
+        title: string;
+        description?: string;
+        payload?: Record<string, unknown>;
+        userId?: string | null;
+        isOwner?: boolean;
+      };
+    }
+
     fetch(`/api/builder/transmissions/by-slug/${encodeURIComponent(targetTransmissionSlug)}`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Transmission not found");
-        return res.json();
+        return (await res.json()) as TransmissionResponse;
       })
-      .then((json: {
-        success?: boolean;
-        data?: {
-          id: string;
-          slug: string;
-          title: string;
-          description?: string;
-          payload?: Record<string, unknown>;
-          userId?: string | null;
-          isOwner?: boolean;
-        };
-      }) => {
+      .then((json: TransmissionResponse) => {
         if (cancelled || !json?.success || !json?.data) return;
         const item = json.data;
 
@@ -703,8 +705,10 @@ export default function BuilderExperimentClient({
           const norm = normalizeBuilderPayload(item.payload) || item.payload;
           if (norm && typeof norm === "object") {
             setPayload(norm as BuilderPayload);
-            if (norm.basePieceId) {
-              const base = getBaseGearPiece(norm.basePieceId);
+            const payloadObj = norm as Record<string, unknown>;
+            const basePieceId = typeof payloadObj.basePieceId === "string" ? payloadObj.basePieceId : undefined;
+            if (basePieceId) {
+              const base = getBaseGearPiece(basePieceId);
               if (base?.kind === "weapon") {
                 setActiveWeaponId(base.id);
               } else if (base?.kind === "armor" || base?.kind === "powerArmor") {

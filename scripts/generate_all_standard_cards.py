@@ -69,6 +69,8 @@ GLYPH_MASKS = {
 
 # Star Sprite (Pristine 36x36 white star extracted from native Bethesda Pip-Boy assets)
 white_star = Image.open(os.path.join(PROJECT_ROOT, "data", "sprites", "white_star.png")).convert("RGBA")
+ghoul_oval_star_path = os.path.join(PROJECT_ROOT, "data", "sprites", "ghoul_oval_star.png")
+ghoul_oval_star = Image.open(ghoul_oval_star_path).convert("RGBA") if os.path.exists(ghoul_oval_star_path) else None
 
 # Mappings for wiki filenames that differ from card id
 WIKI_ALIASES = {
@@ -130,9 +132,9 @@ FEMALE_CARDS = [
 ]
 
 GHOUL_PERK_IDS = {
-    "action-ghoul", "action-diet", "arms-of-steel", "battle-genes", "bomb-scientist",
+    "action-ghoul", "arms-of-steel", "battle-genes", "bomb-scientist",
     "bone-shatterer", "breathe-it-in", "brick-wall", "chem-diet", "eye-of-the-hunter",
-    "faulty-spots", "feral-presence", "feral-rage", "glowing-criticals", "glowing-gut",
+    "faulty-spots", "feral-presence", "glowing-criticals", "glowing-gut",
     "glowing-hunter", "glowing-one", "gun-tricks", "hyper-reflexes", "jaguar-speed",
     "mad-scientist", "moral-support", "rad-specialist", "rad-reaver", "radiation-power",
     "radioactive-strength", "science-monster", "thick-skin", "united-ordeal", "wild-west-hands"
@@ -463,7 +465,7 @@ def patch_card_ribbon(card_im, special, max_rank):
     res.paste(patch, (crop_box[0], crop_box[1]))
     return res
 
-def clean_card_canvas(base_im, max_rank=None, title_override=None, inpaint_title=False):
+def clean_card_canvas(base_im, max_rank=None, title_override=None, inpaint_title=False, is_ghoul=False):
     """Inpaint parchment text and optionally title banner. Ribbons are always preserved."""
     arr = np.array(base_im)
     h, w = arr.shape[:2]
@@ -479,16 +481,27 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None, inpaint_title
     # the SPECIAL badge on the bottom-left and the star ribbon on the bottom-right.
     for x in range(75, 485):
         if x >= w: break
-        yt = int(434 - 0.0619 * (x - 65))
-        if x < 135:
-            yb = int(530 - 0.0619 * (x - 65))
-        elif x < ribbon_x:
-            yb = int(542 - 0.0619 * (x - 65))
+        if is_ghoul:
+            # Ghoul card parchment box top border line: y = 435 - 0.08055 * (x - 90)
+            b_y = int(435 - 0.08055 * (x - 90))
+            yt = b_y + 3
+            if x < 145:
+                yb = 540
+            elif x < ribbon_x:
+                yb = 575
+            else:
+                yb = int(507 - 0.08055 * (x - ribbon_x))
         else:
-            yb = int(509 - 0.0619 * (x - ribbon_x))
+            yt = int(434 - 0.0619 * (x - 65))
+            if x < 135:
+                yb = int(530 - 0.0619 * (x - 65))
+            elif x < ribbon_x:
+                yb = int(542 - 0.0619 * (x - 65))
+            else:
+                yb = int(509 - 0.0619 * (x - ribbon_x))
 
         for y in range(max(0, yt), min(h, yb)):
-            if arr[y, x, 0] < 165 and arr[y, x, 1] < 165 and arr[y, x, 2] < 165 and arr[y, x, 3] > 200:
+            if arr[y, x, 0] < 185 and arr[y, x, 1] < 185 and arr[y, x, 2] < 185 and arr[y, x, 3] > 200:
                 text_mask[y, x] = True
 
     # 2. Title banner text mask (if replacing title or requested to inpaint title)
@@ -518,6 +531,13 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None, inpaint_title
 
     mask_im = Image.fromarray((text_mask * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(3))
     mask_arr = np.array(mask_im)
+    if is_ghoul:
+        # Strictly ensure dilated mask NEVER touches or erodes the top border line
+        for x in range(75, 485):
+            if x < w:
+                b_y = int(435 - 0.08055 * (x - 90))
+                mask_arr[:b_y + 2, x] = 0
+
     # Ensure banner inpaint strictly protects top ribbon bevel (y <= 31), bottom shadow (y >= 89),
     # cost badge zone (x <= 120), and right card frame (x >= 445)
     if do_banner:
@@ -534,12 +554,13 @@ def clean_card_canvas(base_im, max_rank=None, title_override=None, inpaint_title
     cleaned = arr.copy()
 
     # Inpaint parchment
-    for y in range(380, min(h, 545)):
+    max_inpaint_y = min(h, 585 if is_ghoul else 545)
+    for y in range(380, max_inpaint_y):
         for x in range(75, min(w, 485)):
             if not dilated[y, x]:
                 continue
-            patch = arr[max(380, y-10):min(min(h, 545), y+11), max(75, x-25):min(min(w, 485), x+26), :3]
-            patch_mask = dilated[max(380, y-10):min(min(h, 545), y+11), max(75, x-25):min(min(w, 485), x+26)]
+            patch = arr[max(380, y-10):min(max_inpaint_y, y+11), max(75, x-25):min(min(w, 485), x+26), :3]
+            patch_mask = dilated[max(380, y-10):min(max_inpaint_y, y+11), max(75, x-25):min(min(w, 485), x+26)]
             bg = patch[(~patch_mask) & (patch[:, :, 0] > 175) & (patch[:, :, 1] > 170)]
             if len(bg) > 5:
                 bg_col = np.median(bg, axis=0)
@@ -614,31 +635,36 @@ def update_cost_badge(card_im, cost, base_cost=1):
     fw, fh = flat.size
     arr = np.array(flat)
 
+    # Detect the existing numeral inside the cream interior
+    # The numeral (and its antialiasing/shadow) has y in 14..fh-6 and x in 22..fw-18
     num_mask = np.zeros((fh, fw), dtype=bool)
-    for y in range(12, fh - 12):
-        for x in range(16, fw - 16):
-            if np.mean(arr[y, x, :3]) < 175 and arr[y, x, 3] > 200:
+    for y in range(14, fh - 6):
+        for x in range(22, fw - 18):
+            if np.mean(arr[y, x, :3]) < 185 and arr[y, x, 3] > 200:
                 num_mask[y, x] = True
 
-    mask_im = Image.fromarray((num_mask * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(7))
+    mask_im = Image.fromarray((num_mask * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5))
     dilated = np.array(mask_im) > 0
 
-    interior_bg = arr[12:fh - 12, 16:fw - 16, :3]
-    interior_mask = dilated[12:fh - 12, 16:fw - 16]
-    cream_pixels = interior_bg[~interior_mask]
-    cream_med = np.median(cream_pixels, axis=0) if len(cream_pixels) > 0 else np.array([240, 226, 195])
-
     cleaned = arr.copy()
-    noise = np.random.normal(0, 1.5, (fh, fw, 3))
+    # Inpaint by sampling local neighborhood cream pixels within 14px
     for y in range(fh):
         for x in range(fw):
-            if dilated[y, x]:
-                cleaned[y, x, :3] = np.clip(cream_med + noise[y, x], 0, 255)
+            if not dilated[y, x]: continue
+            sub = arr[max(0, y-14):min(fh, y+15), max(0, x-14):min(fw, x+15), :3]
+            sub_mask = dilated[max(0, y-14):min(fh, y+15), max(0, x-14):min(fw, x+15)]
+            valid = sub[(~sub_mask) & (np.mean(sub, axis=2) > 195)]
+            if len(valid) > 0:
+                col = np.median(valid, axis=0)
+            else:
+                col = np.array([235, 220, 192])
+            noise = np.random.normal(0, 1.2, 3)
+            cleaned[y, x, :3] = np.clip(col + noise, 0, 255)
 
     clean_flat = Image.fromarray(cleaned)
     combined_flat = Image.alpha_composite(clean_flat, glyph_im)
     change_flat = np.maximum(dilated.astype(np.uint8) * 255, np.array(glyph_im)[:, :, 3])
-    change_flat_im = Image.fromarray(change_flat).filter(ImageFilter.GaussianBlur(1.5))
+    change_flat_im = Image.fromarray(change_flat).filter(ImageFilter.GaussianBlur(1.2))
 
     rot_back_img = combined_flat.rotate(3.568, resample=Image.BICUBIC)
     rot_back_mask = change_flat_im.rotate(3.568, resample=Image.BICUBIC)
@@ -652,12 +678,16 @@ def update_cost_badge(card_im, cost, base_cost=1):
     res.paste(final_patch, (crop_box[0], crop_box[1]), final_mask)
     return res
 
-def render_description(card_im, desc):
-    """Render word-wrapped description text centered at authentic Pip-Boy angle (+3.568°)."""
+def render_description(card_im, desc, is_ghoul=False):
+    """Render word-wrapped description text centered at authentic Pip-Boy angle (+3.568° or +4.6° for Ghoul)."""
     if not desc or not desc.strip():
         return card_im
     w, h = card_im.size
     words = desc.split()
+
+    max_w = 320 if is_ghoul else 330
+    rot_angle = 4.6 if is_ghoul else 3.568
+    rot_center = (268, 480) if is_ghoul else (268, 482)
 
     # Try fitting with standard 20px font first
     lines = []
@@ -665,7 +695,7 @@ def render_description(card_im, desc):
     for wd in words:
         test = " ".join(cur_line + [wd])
         bbox = font_body_20.getbbox(test)
-        if (bbox[2] - bbox[0]) > 330:
+        if (bbox[2] - bbox[0]) > max_w:
             lines.append(" ".join(cur_line))
             cur_line = [wd]
         else:
@@ -680,7 +710,7 @@ def render_description(card_im, desc):
         for wd in words:
             test = " ".join(cur_line_18 + [wd])
             bbox = font_body_18.getbbox(test)
-            if (bbox[2] - bbox[0]) > 330:
+            if (bbox[2] - bbox[0]) > max_w:
                 lines_18.append(" ".join(cur_line_18))
                 cur_line_18 = [wd]
             else:
@@ -689,13 +719,13 @@ def render_description(card_im, desc):
             lines_18.append(" ".join(cur_line_18))
         lines = lines_18
         active_font = font_body_18
-        line_h = 24
+        line_h = 23 if is_ghoul else 24
     else:
         active_font = font_body_20
-        line_h = 26
+        line_h = 25 if is_ghoul else 26
 
     total_h = len(lines) * line_h
-    start_y = 482 - (total_h // 2)
+    start_y = (488 if is_ghoul else 482) - (total_h // 2)
 
     txt_canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(txt_canvas)
@@ -707,8 +737,31 @@ def render_description(card_im, desc):
         ly = start_y + i * line_h
         d.text((lx, ly), line, fill=(35, 38, 40, 255), font=active_font)
 
-    rot_txt = txt_canvas.rotate(3.568, center=(268, 482), resample=Image.BICUBIC)
+    rot_txt = txt_canvas.rotate(rot_angle, center=rot_center, resample=Image.BICUBIC)
     return Image.alpha_composite(card_im, rot_txt)
+
+def get_ghoul_star_coords(card_id, max_rank, s):
+    """Return exact, calibrated star slot coordinates for multi-rank Ghoul perk cards."""
+    if max_rank == 2:
+        if card_id == "arms-of-steel":
+            return 461, 507
+        elif card_id == "battle-genes":
+            return 460, 507
+        return 460, 507
+    elif max_rank == 3:
+        if s == 2:
+            return 430, 508
+        else:
+            return 460, 506
+    elif max_rank == 4:
+        if s == 2:
+            return 265, 494
+        elif s == 3:
+            return 295, 490
+        else:
+            return 324, 487
+    k = max_rank - s
+    return 456 - k * 32, 499 + k * 2
 
 def process_card(card_info, force=False):
     card_id = card_info["id"]
@@ -732,6 +785,7 @@ def process_card(card_info, force=False):
     max_rank = card_info.get("maxRank", len(ranks))
     special = card_info.get("special", "S")
     aliases = list(CARD_ALIASES.get(card_id, []))
+    is_ghoul = is_ghoul_card(card_id) or card_info.get("ghoulOnly", False)
 
     if card_id in RETHEMED_CARDS:
         cfg = RETHEMED_CARDS[card_id]
@@ -772,16 +826,17 @@ def process_card(card_info, force=False):
         bbox = Image.fromarray(raw_arr).getbbox()
         base_im = raw_im.crop(bbox) if bbox else raw_im
 
-        # Detect if ribbon rank exceeds target live patch maxRank
-        detected_ribbon = detect_ribbon_rank(np.array(base_im))
-        if detected_ribbon > max_rank:
-            base_im = patch_card_ribbon(base_im, special, max_rank)
+        # Detect if ribbon rank exceeds target live patch maxRank (standard cards only; ghoul cards have native 1:1 ribbons)
+        if not is_ghoul:
+            detected_ribbon = detect_ribbon_rank(np.array(base_im))
+            if detected_ribbon > max_rank:
+                base_im = patch_card_ribbon(base_im, special, max_rank)
 
         # Detect base cost from unadulterated base image
         detected_cost = detect_card_base_cost(base_im)
 
         # 2. Clean canvas (parchment text)
-        clean_base = clean_card_canvas(base_im, max_rank=max_rank)
+        clean_base = clean_card_canvas(base_im, max_rank=max_rank, is_ghoul=is_ghoul)
 
     for r_data in ranks:
         rank_num = r_data["rank"]
@@ -794,38 +849,22 @@ def process_card(card_info, force=False):
         card = update_cost_badge(card, cost_val, base_cost=detected_cost)
 
         # Render description text
-        card = render_description(card, desc)
+        card = render_description(card, desc, is_ghoul=is_ghoul)
 
         # Update stars if multi-rank
         # NEVER stamp stars on rank 1 (native rank 1 already has 1 white star and remaining dark stars)
         # For rank 2 and above, stamp pristine clean white_star at exact calculated slot coordinates
         if max_rank >= 2 and rank_num >= 2:
-            is_ghoul = is_ghoul_card(card_id) or card_info.get("ghoulOnly", False)
             for s in range(2, min(rank_num + 1, max_rank + 1)):
                 if is_ghoul:
-                    if max_rank == 2:
-                        star_x, star_y = 463, 504
-                    elif max_rank == 3:
-                        if s == 2:
-                            star_x, star_y = 433, 506
-                        else:
-                            star_x, star_y = 463, 504
-                    elif max_rank == 4:
-                        if s == 2:
-                            star_x, star_y = 258, 489
-                        elif s == 3:
-                            star_x, star_y = 288, 485
-                        else:
-                            star_x, star_y = 320, 481
-                    else:
-                        k = max_rank - s
-                        star_x = 456 - k * 32
-                        star_y = 499 + k * 2
+                    star_x, star_y = get_ghoul_star_coords(card_id, max_rank, s)
+                    active_star = ghoul_oval_star if (max_rank == 4 and ghoul_oval_star is not None) else white_star
                 else:
                     k = max_rank - s
                     star_x = 456 - k * 32
                     star_y = 499 + k * 2
-                card.paste(white_star, (star_x, star_y), white_star)
+                    active_star = white_star
+                card.paste(active_star, (star_x, star_y), active_star)
 
         # Save rank image and aliases
         target_names = [snake] + aliases

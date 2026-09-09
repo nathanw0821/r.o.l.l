@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard, getPerkCardById, OutdatedPerkMeta, ReworkedPerkMeta } from "@/lib/perks/catalog";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
 import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
@@ -400,6 +401,23 @@ export default function InGamePerkCard({
     setInspectRank(rank);
   }, [rank]);
 
+  // Handle ESC key and lock body scrolling when inspector modal is active
+  React.useEffect(() => {
+    if (!showInspector) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowInspector(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [showInspector]);
+
   // Inspect rank description & cost resolution
   const inspectRankData = React.useMemo(() => {
     if (fullCard?.ranks) {
@@ -465,7 +483,11 @@ export default function InGamePerkCard({
           e.preventDefault();
           setShowInspector(true);
         }}
-        title={isAccordion && !isForefront ? "Click to bring to forefront" : "Click to equip • Right-click for perk details & Truth Wiki"}
+        title={
+          isAccordion && !isForefront
+            ? `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to bring to forefront]`
+            : `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to ${isEquipped ? "unequip" : "equip"} • Right-click / Info icon to inspect all ranks]`
+        }
       >
         {/* 1. Literal 1:1 In-Game Bitmap Cards (Pip-Boy Slanted & Curved for Regular, Ghoul, and Legendary) */}
         {inGameCardImage && !imgError ? (
@@ -692,10 +714,10 @@ export default function InGamePerkCard({
               e.stopPropagation();
               setShowInspector(true);
             }}
-            className="h-6 w-6 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-amber-400 hover:text-white flex items-center justify-center transition-all shrink-0"
-            title="Inspect All Ranks & Lore"
+            className="h-7 w-7 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-amber-400 hover:text-white flex items-center justify-center transition-all shrink-0 active:scale-95"
+            title="Inspect All Ranks & Lore (Right-click card also opens this)"
           >
-            <Info className="h-3 w-3" />
+            <Info className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
@@ -703,13 +725,13 @@ export default function InGamePerkCard({
       {footerExtra && <div className="mt-1.5 w-full">{footerExtra}</div>}
 
       {/* ALL RANKS INSPECTOR MODAL POPUP */}
-      {showInspector && (
+      {showInspector && typeof document !== "undefined" && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
           onClick={() => setShowInspector(false)}
         >
           <div
-            className="relative w-full max-w-xl md:max-w-2xl max-h-[92vh] overflow-y-auto bg-slate-950 border border-amber-500/50 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-4 font-mono"
+            className="relative w-full max-w-xl md:max-w-3xl max-h-[92vh] overflow-y-auto bg-slate-950 border border-amber-500/50 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-4 font-mono text-foreground"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -723,7 +745,7 @@ export default function InGamePerkCard({
                     {special}
                   </span>
                 </div>
-                <p className="text-[0.72rem] text-slate-400 flex items-center gap-2">
+                <p className="text-xs text-slate-400 flex items-center gap-2">
                   <span>🔓 Unlocks at Level {minLevel || fullCard?.minLevel || 1}</span>
                   <span>•</span>
                   <span>Max Rank: {maxRank} Stars</span>
@@ -872,7 +894,7 @@ export default function InGamePerkCard({
                             Cost: {r.cost} SPECIAL Pt{r.cost > 1 ? "s" : ""}
                           </span>
                         </div>
-                        <p className="text-[0.74rem] text-slate-200 leading-snug">{r.description}</p>
+                        <p className="text-xs sm:text-sm text-slate-200 leading-snug">{r.description}</p>
                       </div>
                     );
                   })}
@@ -936,7 +958,8 @@ export default function InGamePerkCard({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
