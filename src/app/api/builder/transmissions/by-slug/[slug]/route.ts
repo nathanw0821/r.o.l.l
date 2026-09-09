@@ -34,26 +34,36 @@ export async function GET(request: Request, { params }: RouteParams) {
 
     const isOwner = Boolean((currentUserId && record.userId === currentUserId) || isAdmin);
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        id: record.id,
-        slug: record.slug,
-        title: record.title,
-        description: record.description,
-        payload: record.payload,
-        createdAt: record.createdAt.toISOString(),
-        updatedAt: record.updatedAt.toISOString(),
-        userId: record.userId,
-        isOwner,
-        author: record.user ? {
-          id: record.userId,
-          name: record.user.name,
-          username: record.user.username,
-          image: record.user.image,
-        } : null,
+    const headers: Record<string, string> = {};
+    if (!currentUserId) {
+      headers["Cache-Control"] = "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400";
+    } else {
+      headers["Cache-Control"] = "private, no-cache, no-store, max-age=0, must-revalidate";
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          id: record.id,
+          slug: record.slug,
+          title: record.title,
+          description: record.description,
+          payload: record.payload,
+          createdAt: record.createdAt.toISOString(),
+          updatedAt: record.updatedAt.toISOString(),
+          userId: record.userId,
+          isOwner,
+          author: record.user ? {
+            id: record.userId,
+            name: record.user.name,
+            username: record.user.username,
+            image: record.user.image,
+          } : null,
+        },
       },
-    });
+      { headers }
+    );
   } catch (error) {
     console.error("Failed to get transmission by slug:", error);
     return NextResponse.json({ success: false, error: "Failed to retrieve transmission." }, { status: 500 });

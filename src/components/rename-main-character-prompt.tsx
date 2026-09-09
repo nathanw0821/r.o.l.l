@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,17 +8,38 @@ import { renameCharacter } from "@/actions/character";
 import { Sparkles, Check } from "lucide-react";
 
 export function RenameMainCharacterPrompt({
-  characterId
+  characterId: initialCharacterId
 }: {
-  characterId: string;
+  characterId?: string | null;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [characterId, setCharacterId] = useState<string | null>(initialCharacterId || null);
+  const [isOpen, setIsOpen] = useState(Boolean(initialCharacterId));
   const [name, setName] = useState("");
   const [isPending, startTransition] = useTransition();
 
+  // Asynchronously verify if a legacy "Main Character" exists without blocking layout SSR
+  useEffect(() => {
+    if (typeof window === "undefined" || initialCharacterId) return;
+    let active = true;
+    fetch("/api/character-selection")
+      .then((res) => res.json() as Promise<{ success?: boolean; data?: { characters?: Array<{ id: string; name: string }> } }>)
+      .then((res) => {
+        if (!active || !res?.success || !Array.isArray(res?.data?.characters)) return;
+        const main = res.data.characters.find((c) => c.name === "Main Character");
+        if (main) {
+          setCharacterId(main.id);
+          setIsOpen(true);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [initialCharacterId]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || name.length > 30) return;
+    if (!name.trim() || name.length > 30 || !characterId) return;
     
     startTransition(async () => {
       try {

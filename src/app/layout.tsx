@@ -8,7 +8,6 @@ import AppShell from "@/components/app-shell";
 import { getSiteUrl } from "@/lib/app-config";
 import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 
 import { VT323, Share_Tech_Mono } from "next/font/google";
@@ -88,20 +87,6 @@ async function DynamicShell({ children }: { children: ReactNode }) {
     // Graceful fallback if NextAuth session check fails
   }
   
-  let mainCharacterId: string | null = null;
-  if (session?.user?.id) {
-    try {
-      const mainChar = await prisma.character.findFirst({
-        where: { userId: session.user.id, name: "Main Character" }
-      });
-      if (mainChar) {
-        mainCharacterId = mainChar.id;
-      }
-    } catch {
-      // Graceful fallback if database is unready
-    }
-  }
-
   const isAdmin = isAdminUser(session?.user);
   const initialTheme: ThemeMode = "dark";
   const initialAccent = "ember";
@@ -119,7 +104,7 @@ async function DynamicShell({ children }: { children: ReactNode }) {
     >
       <AppShell isAdmin={isAdmin}>
         {children}
-        {mainCharacterId && <RenameMainCharacterPrompt characterId={mainCharacterId} />}
+        {session?.user?.id && <RenameMainCharacterPrompt />}
       </AppShell>
     </Providers>
   );

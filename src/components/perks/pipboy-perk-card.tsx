@@ -27,8 +27,10 @@ export interface PipBoyPerkCardProps {
   onSelect?: () => void;
 }
 
-export default function PipBoyPerkCard(
+const PipBoyPerkCard = React.memo(function PipBoyPerkCard(
   props: PipBoyPerkCardProps & { cardId?: string; onRankChange?: (newRank: number) => void }
 ) {
   return <InGamePerkCard {...props} />;
-}
+});
+
+export default PipBoyPerkCard;

@@ -342,7 +342,7 @@ export function ScaleformLegendaryVisual({
   );
 }
 
-export default function InGamePerkCard({
+function InGamePerkCardComponent({
   cardId,
   name,
   special,
@@ -470,6 +470,11 @@ export default function InGamePerkCard({
           if (isAccordion && !isForefront) {
             e.stopPropagation();
             onSelect?.();
+          } else if (isAccordion && isForefront) {
+            // Guard: in accordion stacks, tapping/clicking a forefront card opens inspector.
+            // Unequipping is explicitly handled via the [REMOVE] button in the control bar.
+            e.stopPropagation();
+            setShowInspector(true);
           } else if (isEquipped) {
             onUnequip?.();
           } else {
@@ -486,6 +491,8 @@ export default function InGamePerkCard({
         title={
           isAccordion && !isForefront
             ? `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to bring to forefront]`
+            : isAccordion && isForefront
+            ? `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to inspect all ranks • Use control bar below to adjust rank or remove]`
             : `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to ${isEquipped ? "unequip" : "equip"} • Right-click / Info icon to inspect all ranks]`
         }
       >
@@ -964,3 +971,6 @@ export default function InGamePerkCard({
     </div>
   );
 }
+
+const InGamePerkCard = React.memo(InGamePerkCardComponent);
+export default InGamePerkCard;

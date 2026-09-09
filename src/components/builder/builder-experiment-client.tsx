@@ -2160,58 +2160,51 @@ export default function BuilderExperimentClient({
       </div>
 
       {/* VIEWPORT: PERK DECK & SPECIAL (TAB 2) */}
-      {masterTab === "perks" && (
-        <div className="space-y-4 animate-in fade-in duration-200">
-          <PerkBuilder
-            mode="live"
-            externalImport={importedBuildForPerkBuilder}
-            onLoadoutChange={handlePerkLoadoutChange}
-          />
-        </div>
-      )}
+      <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "perks" ? "block" : "hidden")}>
+        <PerkBuilder
+          mode="live"
+          externalImport={importedBuildForPerkBuilder}
+          onLoadoutChange={handlePerkLoadoutChange}
+        />
+      </div>
 
       {/* VIEWPORT: BIOMETRICS & CHARACTER PANEL (TAB 3) */}
-      {masterTab === "biometrics" && (
-        <div className="space-y-4 animate-in fade-in duration-200">
-          <BuilderCombatSwitchboard
-            rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
-            isGhoul={payload.ghoul}
-            onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
-            activeMutations={payload.mutationIds}
-            onMutationsChange={(nextMutations) =>
-              setPayload((p) => ({ ...p, mutationIds: nextMutations }))
-            }
-            hasStrangeInNumbers={payload.hasStrangeInNumbers}
-            onStrangeInNumbersChange={(enabled) =>
-              setPayload((p) => ({ ...p, hasStrangeInNumbers: enabled }))
-            }
-            ignoreMutationPenalties={payload.ignoreMutationPenalties}
-            onIgnoreMutationPenaltiesChange={(enabled) =>
-              setPayload((p) => ({ ...p, ignoreMutationPenalties: enabled }))
-            }
-            onStateChange={setSwitchboardState}
-            activeTacticalTags={stanceAndBiometricsLayer.activeTacticalTags}
-            critQualification={weaponFirepowerResult?.critCycle}
-          />
-        </div>
-      )}
+      <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "biometrics" ? "block" : "hidden")}>
+        <BuilderCombatSwitchboard
+          rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
+          isGhoul={payload.ghoul}
+          onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
+          activeMutations={payload.mutationIds}
+          onMutationsChange={(nextMutations) =>
+            setPayload((p) => ({ ...p, mutationIds: nextMutations }))
+          }
+          hasStrangeInNumbers={payload.hasStrangeInNumbers}
+          onStrangeInNumbersChange={(enabled) =>
+            setPayload((p) => ({ ...p, hasStrangeInNumbers: enabled }))
+          }
+          ignoreMutationPenalties={payload.ignoreMutationPenalties}
+          onIgnoreMutationPenaltiesChange={(enabled) =>
+            setPayload((p) => ({ ...p, ignoreMutationPenalties: enabled }))
+          }
+          onStateChange={setSwitchboardState}
+          activeTacticalTags={stanceAndBiometricsLayer.activeTacticalTags}
+          critQualification={weaponFirepowerResult?.critCycle}
+        />
+      </div>
 
       {/* VIEWPORT: COMBAT DPS & VATS (TAB 4) */}
-      {masterTab === "combat" && (
-        <div className="space-y-4 animate-in fade-in duration-200">
-          {weaponFirepowerResult ? (
-            <BuilderFirepowerMatrix firepower={weaponFirepowerResult} />
-          ) : (
-            <div className="rounded-xl border border-slate-800 bg-slate-950/90 p-8 text-center text-slate-400 font-mono">
-              &gt;&gt; NO WEAPON CONFIGURED. Switch to [ 1. GEAR &amp; ARMORY ] to select your weapon and mods.
-            </div>
-          )}
-        </div>
-      )}
+      <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "combat" ? "block" : "hidden")}>
+        {weaponFirepowerResult ? (
+          <BuilderFirepowerMatrix firepower={weaponFirepowerResult} />
+        ) : (
+          <div className="rounded-xl border border-slate-800 bg-slate-950/90 p-8 text-center text-slate-400 font-mono">
+            &gt;&gt; NO WEAPON CONFIGURED. Switch to [ 1. GEAR &amp; ARMORY ] to select your weapon and mods.
+          </div>
+        )}
+      </div>
 
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}
-      {masterTab === "gear" && (
-        <div className="space-y-6 animate-in fade-in duration-200">
+      <div className={cn("space-y-6 animate-in fade-in duration-200", masterTab === "gear" ? "block" : "hidden")}>
           {/* Three Pane Responsive Tactical Grid */}
           <div className="grid gap-6 xl:grid-cols-[280px_1fr_325px] lg:grid-cols-[250px_1fr_280px] grid-cols-1">
         
@@ -3016,7 +3009,6 @@ export default function BuilderExperimentClient({
         </div>
       </div>
     </div>
-  )}
 
       {/* Dialog Overlay Mod Picker with customized Fallout styling */}
       <Dialog
