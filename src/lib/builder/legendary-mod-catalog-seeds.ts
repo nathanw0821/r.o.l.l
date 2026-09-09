@@ -11,7 +11,7 @@ export type BuilderLegendarySeedRow = {
   slug: string;
   name: string;
   starRank: 1 | 2 | 3 | 4;
-  category: "Armor" | "Weapon";
+  category: "Armor" | "Weapon" | "Universal";
   subCategory: string | null;
   description: string;
   effectMath: Record<string, number>;
@@ -68,14 +68,13 @@ export const EXTENDED_LEGENDARY_MOD_SEEDS: BuilderLegendarySeedRow[] = FALLBACK_
     return t === "armor" || (t.includes("armor") && !t.includes("power") && !t.includes("underarmor"));
   });
 
-  let category: "Armor" | "Weapon" = "Weapon";
+  let category: "Armor" | "Weapon" | "Universal" = "Universal";
   if (hasWeapon && !hasRegularArmor && !hasPA) {
     category = "Weapon";
   } else if (!hasWeapon && (hasRegularArmor || hasPA)) {
     category = "Armor";
   } else {
-    // If dual (universal), default to weapon category for seed typing; allowed flags distinguish equipment
-    category = hasWeapon ? "Weapon" : "Armor";
+    category = "Universal";
   }
 
   let subCategory: string | null = null;

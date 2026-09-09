@@ -86,8 +86,6 @@ export function filterModsForSlot(
     if (!equipmentAllowsMod(mod, piece)) return false;
     if (!weaponSubMatches(mod, piece)) return false;
     if (!starMatchesSlot(mod, slotIndex)) return false;
-    if (piece.kind === "weapon" && mod.category === "Armor") return false;
-    if ((piece.kind === "armor" || piece.kind === "powerArmor") && mod.category === "Weapon") return false;
     return true;
   });
 }
