@@ -61,18 +61,8 @@ export async function seedBuilderCatalog(prisma: PrismaClient) {
 
   const validSlugs = new Set(SEED_MODS.map((m) => m.slug));
 
-  // Purge any obsolete placeholder rows, old demo junk, or uncataloged slugs
-  await prisma.legendaryMod.deleteMany({
-    where: {
-      OR: [
-        { slug: { notIn: Array.from(validSlugs) } },
-        { description: { contains: "placeholder", mode: "insensitive" } },
-        { description: { contains: "demo", mode: "insensitive" } },
-        { name: { startsWith: "+" } },
-        { name: { contains: "echo", mode: "insensitive" } }
-      ]
-    }
-  });
+  // Completely purge all obsolete rows from LegendaryMod to guarantee a clean slate
+  await prisma.legendaryMod.deleteMany({});
 
   for (const mod of SEED_MODS) {
     // Try to find real cost from DB tiers

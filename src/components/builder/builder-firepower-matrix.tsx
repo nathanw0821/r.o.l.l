@@ -64,6 +64,9 @@ export default function BuilderFirepowerMatrix({
             <span className="text-xs font-bold text-white">
               {baseStats.label}
             </span>
+            <span className="rounded bg-amber-500/15 border border-amber-500/40 px-2 py-0.5 font-bold uppercase text-amber-300 text-[0.68rem] tracking-wider">
+              LVL {baseStats.maxLevel || 50} (MAX)
+            </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 text-[0.68rem]">
