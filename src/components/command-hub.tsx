@@ -663,7 +663,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <FlaskConical className="h-4 w-4 text-amber-400 shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-amber-400">PTS Experimental Lab</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">Ghoul 20-Cap Sandbox, The Pitt & Atlantic City drop tables</div>
+                    <div className="text-[0.68rem] text-foreground/50 truncate">Ghoul Sandbox, The Pitt & Atlantic City drop tables</div>
                   </div>
                 </Link>
 

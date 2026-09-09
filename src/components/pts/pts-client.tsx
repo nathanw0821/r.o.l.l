@@ -86,7 +86,7 @@ export default function PtsClient() {
                 : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
-            <span>PTS 20-Cap Perk Matrix</span>
+            <span>PTS Perk Matrix</span>
           </button>
         </div>
       </div>
@@ -115,14 +115,14 @@ export default function PtsClient() {
         {ptsTab === "sandbox" ? (
           <div className="space-y-4 pt-6">
             <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs font-mono text-amber-300">
-              🧟 <strong>PTS GHOUL EXPERIMENTAL SANDBOX ACTIVE</strong> — Test Playable Ghoul race mutation multipliers and 20 S.P.E.C.I.A.L. Cap scaling before Patch 70 live release!
+              🧟 <strong>PTS GHOUL EXPERIMENTAL SANDBOX ACTIVE</strong> — Test Playable Ghoul race mutation multipliers and S.P.E.C.I.A.L. scaling before Patch 70 live release!
             </div>
             <BuilderExperimentClient />
           </div>
         ) : ptsTab === "perks" ? (
           <div className="space-y-4 pt-6">
             <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs font-mono text-amber-300">
-              🃏 <strong>PTS 20-CAP P.E.R.K. MATRIX ACTIVE</strong> — Experiment with 20-point perk card capacity slots and Feral Gauge perks!
+              🃏 <strong>PTS P.E.R.K. MATRIX ACTIVE</strong> — Experiment with PTS perk cards and Feral Gauge synergies under standard 15-cap rules!
             </div>
             <PerkBuilder mode="pts" />
           </div>

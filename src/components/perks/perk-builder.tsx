@@ -69,8 +69,6 @@ export default function PerkBuilder({
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL" | "GHOUL">("ALL");
   const [showRoadmap, setShowRoadmap] = React.useState(false);
-  const [isGhoul, setIsGhoul] = React.useState(mode === "pts");
-
   const [specials, setSpecials] = React.useState<SpecialsState>({
     S: 1,
     P: 1,
@@ -206,15 +204,15 @@ export default function PerkBuilder({
     return map;
   }, [safeEquippedCards]);
 
-  // Hard Cap of 15 (Human) or 20 (Ghoul) for perk card slot capacity
+  // Universal Hard Cap of 15 for perk card slot capacity across all modes
   const effectiveCapacities = React.useMemo(() => {
-    const maxCap = isGhoul ? 20 : 15;
+    const maxCap = 15;
     const caps: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
     (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
       caps[stat] = Math.min(maxCap, specials[stat] + (legendaryBonuses[stat] || 0));
     });
     return caps;
-  }, [specials, legendaryBonuses, isGhoul]);
+  }, [specials, legendaryBonuses]);
 
   const totalEffectiveSpecials = React.useMemo(() => {
     const totals: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
@@ -369,9 +367,7 @@ export default function PerkBuilder({
         return mergedEquipped;
       });
 
-      if (build.isGhoul) {
-        setIsGhoul(true);
-      }
+
 
       onLoadoutChange?.({
         specials: newSpecials,
@@ -393,12 +389,7 @@ export default function PerkBuilder({
     }
   }, [externalImport, handleApplyNdBuild]);
 
-  // Sync mode changes from parent container
-  React.useEffect(() => {
-    if (mode === "pts") {
-      setIsGhoul(true);
-    }
-  }, [mode]);
+
 
   const handleExportDeckPng = () => {
     exportPerkDeckCard({
@@ -792,17 +783,9 @@ export default function PerkBuilder({
                 {showRoadmap ? "Hide Leveling Roadmap" : "View Leveling Roadmap (Lvl 2–100+)"}
               </button>
               {mode === "pts" ? (
-                <button
-                  type="button"
-                  onClick={() => setIsGhoul((prev) => !prev)}
-                  className={`text-[0.68rem] px-2.5 py-0.5 rounded border font-mono font-bold transition-all ${
-                    isGhoul
-                      ? "bg-lime-500 text-slate-950 border-lime-400 font-black"
-                      : "bg-lime-500/20 text-lime-300 border-lime-500/40 hover:bg-lime-500/30"
-                  }`}
-                >
-                  {isGhoul ? "PTS Ghoul Mode (20 Max Cap)" : "PTS Human Mode (15 Max Cap)"}
-                </button>
+                <span className="text-[0.68rem] px-2.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 font-mono font-bold">
+                  [PTS EXPERIMENTAL - 15 CAP]
+                </span>
               ) : (
                 <span className="text-[0.68rem] px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
                   [LIVE GAME RULES - 15 CAP]

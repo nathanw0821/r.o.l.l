@@ -1837,7 +1837,7 @@ export default function BuilderExperimentClient({
       {masterTab === "perks" && (
         <div className="space-y-4 animate-in fade-in duration-200">
           <PerkBuilder
-            mode={payload.ghoul ? "pts" : "live"}
+            mode="live"
             externalImport={importedBuildForPerkBuilder}
             onLoadoutChange={handlePerkLoadoutChange}
           />
