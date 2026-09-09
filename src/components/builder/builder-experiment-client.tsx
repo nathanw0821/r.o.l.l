@@ -207,6 +207,20 @@ function useDensityCompact() {
   return compact;
 }
 
+function findModByIdOrSlug(mods: BuilderModDTO[], id: string | null | undefined): BuilderModDTO | null {
+  if (!id) return null;
+  const direct = mods.find((m) => m.id === id || m.slug === id);
+  if (direct) return direct;
+  const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+  return (
+    mods.find((m) => {
+      const mCleanSlug = m.slug.replace(/\./g, "").toLowerCase();
+      const mCleanId = m.id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+      return mCleanSlug === clean || mCleanId === clean;
+    }) ?? null
+  );
+}
+
 function LegendaryModDetailFootprint({
   mod,
   piece = null,
@@ -220,69 +234,72 @@ function LegendaryModDetailFootprint({
   const extras = listExtraEffectMathEntries(mod.effectMath);
   const descRaw = mod.description?.trim() ?? "";
   const desc = sandboxLegendaryDescription(descRaw, piece) || descRaw;
-  const tail = Boolean(desc || extras.length > 0);
+  const modules =
+    (typeof mod.craftingCost === "object" && mod.craftingCost !== null && "legendaryModules" in mod.craftingCost
+      ? (mod.craftingCost.legendaryModules as number)
+      : null) ??
+    (mod.starRank === 4 ? 120 : mod.starRank === 3 ? 60 : mod.starRank === 2 ? 30 : 15);
+  const catalyst =
+    mod.extraComponent ||
+    (typeof mod.craftingCost === "object" && mod.craftingCost !== null && "extraComponent" in mod.craftingCost
+      ? (mod.craftingCost.extraComponent as string)
+      : null) ||
+    null;
 
   if (density === "compact") {
-    const line =
-      deltas || "No modeled DR/SPECIAL/damage in sandbox — still equippable.";
-    const titleBits = [
-      desc,
-      descRaw !== desc ? descRaw : "",
-      ...extras.map((e) => `${e.key}: ${e.value}`),
-    ].filter(Boolean);
-    const title = titleBits.length
-      ? `${line}\n\n${titleBits.join("\n")}`
-      : line;
     return (
-      <p
-        className="mt-0.5 truncate text-[0.78rem] leading-snug text-foreground/65"
-        title={title}
-      >
-        <span className="font-semibold text-accent/85 tabular-nums">{line}</span>
-        {tail ? (
-          <span className="text-foreground/45"> · details on hover</span>
+      <div className="mt-0.5 space-y-0.5 text-[0.76rem] leading-snug">
+        {desc ? (
+          <p className="text-foreground/90 font-sans">{desc}</p>
+        ) : deltas ? (
+          <p className="font-semibold text-accent/85 tabular-nums">{deltas}</p>
         ) : null}
-      </p>
+        <div className="flex items-center gap-2 text-[0.68rem] text-foreground/50 font-mono">
+          <span className="text-amber-400 font-semibold">{modules} Mod</span>
+          {catalyst && <span>• {catalyst}</span>}
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="mt-1 space-y-1 bg-background/30 p-1.5 rounded border border-border/10">
-      <div className="text-[0.78rem] leading-snug font-mono">
-        {deltas ? (
-          <span className="font-semibold text-accent/90 tabular-nums">
-            {deltas}
-          </span>
-        ) : (
-          <span className="text-foreground/45 italic">
-            No resist, SPECIAL, or damage bonus modeled.
-          </span>
-        )}
-      </div>
-      {tail ? (
-        <div className="space-y-1 border-t border-border/10 pt-1 text-[0.78rem] leading-snug text-foreground/70">
-          {desc ? (
-            <p>
-              <span className="font-bold text-accent/70">Desc: </span>
-              {desc}
-            </p>
-          ) : null}
-          {extras.length > 0 ? (
-            <div>
-              <div className="font-bold text-foreground/40 uppercase text-[0.84rem] tracking-tight">
-                Extras (not in sandbox totals)
-              </div>
-              <ul className="list-disc pl-3 text-[0.72rem] text-foreground/50 space-y-0.5">
-                {extras.map((e) => (
-                  <li key={e.key}>
-                    <span className="font-mono">{e.key}</span>: {e.value}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+    <div className="mt-1 space-y-1.5 bg-background/30 p-2 rounded border border-border/10">
+      {desc ? (
+        <p className="text-[0.78rem] leading-snug text-foreground/90 font-sans">
+          {desc}
+        </p>
+      ) : null}
+      {deltas ? (
+        <div className="text-[0.76rem] leading-snug font-mono font-semibold text-accent/90 tabular-nums">
+          {deltas}
+        </div>
+      ) : !desc ? (
+        <div className="text-[0.74rem] text-foreground/45 italic font-mono">
+          Active combat effect (see live telemetry).
         </div>
       ) : null}
+      {extras.length > 0 ? (
+        <div className="border-t border-border/10 pt-1">
+          <div className="font-bold text-foreground/40 uppercase text-[0.72rem] tracking-tight">
+            Extras
+          </div>
+          <ul className="list-disc pl-3 text-[0.70rem] text-foreground/50 space-y-0.5 font-mono">
+            {extras.map((e) => (
+              <li key={e.key}>
+                <span className="text-accent/80">{e.key}</span>: {e.value}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/10 text-[0.70rem] font-mono">
+        <span className="text-amber-400 font-bold">{modules} Modules</span>
+        {catalyst ? (
+          <span className="text-slate-400">
+            • Catalyst: <span className="text-emerald-400/90 font-semibold">{catalyst}</span>
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -1770,7 +1787,7 @@ export default function BuilderExperimentClient({
                   <div className="space-y-1 mt-1.5 pt-1.5 border-t border-border/10">
                     {SLOT_LABELS.map((starLabel, starIndex) => {
                       const id = payload.armorLegendaryModIds[payloadIndex]?.[starIndex];
-                      const mod = id ? mods.find(m => m.id === id || m.slug === id) : null;
+                      const mod = findModByIdOrSlug(mods, id);
                       return (
                         <div 
                           key={starIndex}
@@ -2574,7 +2591,7 @@ export default function BuilderExperimentClient({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                   {SLOT_LABELS.map((starLabel, starIndex) => {
                     const id = payload.legendaryModIds[starIndex];
-                    const mod = id ? mods.find((m) => m.id === id || m.slug === id) : null;
+                    const mod = findModByIdOrSlug(mods, id);
                     return (
                       <div
                         key={starIndex}

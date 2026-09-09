@@ -46,6 +46,10 @@ function toDto(
     infestationOnly: row.infestationOnly,
     fifthStarEligible: row.fifthStarEligible,
     ghoulSpecialCap: row.ghoulSpecialCap,
+    extraComponent:
+      typeof row.craftingCost === "object" && row.craftingCost !== null && "extraComponent" in row.craftingCost
+        ? (String((row.craftingCost as Record<string, unknown>).extraComponent || "") || null)
+        : null,
     trackerUnlock
   };
 }

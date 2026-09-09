@@ -1632,6 +1632,17 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   gap: 0.4rem;
 }
 
+.effect-tile__description {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.effect-tile__origins {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
 .effect-tile__notes {
   font-size: 0.7rem;
   color: var(--text-soft);

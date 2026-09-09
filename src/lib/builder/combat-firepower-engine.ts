@@ -1002,7 +1002,7 @@ export function calculateCombatFirepower(
   // 2. Legendary Stars Analysis
   const modSlugs = (input.equippedMods || [])
     .filter((m): m is { slug: string } => Boolean(m && typeof m.slug === "string"))
-    .map((m) => m.slug.toLowerCase());
+    .map((m) => m.slug.toLowerCase().replace(/[^a-z0-9-]/g, ""));
 
   let hasAntiArmor = false;
   let hasQuad = false;
@@ -1035,9 +1035,9 @@ export function calculateCombatFirepower(
       hasExplosive = true;
     } else if (slug === "vital" || slug.includes("50-critical-damage")) {
       hasVitalCrit = true;
-    } else if (slug === "vats-optimized" || slug.includes("25-less-vats-action-point-cost") || slug.includes("35-less-vats-action-point-cost") || slug.includes("vats-cost")) {
+    } else if (slug === "vats-optimized" || slug.includes("vats-optimized") || slug.includes("25-less-vats-action-point-cost") || slug.includes("35-less-vats-action-point-cost") || slug.includes("vats-cost")) {
       hasVatsOptimized = true;
-    } else if (slug === "lucky" || slug.includes("15-critical-charge") || slug.includes("15-crit-fill")) {
+    } else if (slug === "lucky-hit" || slug === "lucky" || slug.includes("lucky-hit") || slug.includes("15-critical-charge") || slug.includes("15-crit-fill")) {
       hasLucky15Fill = true;
     } else if (slug === "nocturnal" || slug === "nocturnal-weapon") {
       const isNight = input.playerStats.timeOfDay === "night";

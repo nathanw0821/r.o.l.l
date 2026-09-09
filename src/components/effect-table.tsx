@@ -561,6 +561,12 @@ export default function EffectTable({
                     {/* Tactical Effect */}
                     <td className="py-2 px-4 text-slate-300 font-sans text-xs leading-relaxed">
                       {renderInlineMarkdown(row.description)}
+                      {row.origins && row.origins.length > 0 && (
+                        <div className="text-[10px] text-slate-500 font-mono mt-1">
+                          <span className="text-amber-500/70 font-bold">Source: </span>
+                          {row.origins.join(" • ")}
+                        </div>
+                      )}
                     </td>
 
                     {/* Modules Cost */}
@@ -733,13 +739,40 @@ export default function EffectTable({
                     ))}
                   </div>
                 ) : null}
-                <div className="effect-tile__costs">
-                  {row.legendaryModules !== null && row.legendaryModules !== undefined ? renderModules(row.legendaryModules) : null}
-                  {row.extraComponent ? renderComponent(row.extraComponent) : null}
+
+                {/* Tactical Effect Description */}
+                {row.description ? (
+                  <div className="effect-tile__description text-xs text-slate-300 leading-relaxed font-sans mt-1 p-2 rounded bg-black/40 border border-slate-800/80">
+                    {renderInlineMarkdown(row.description)}
+                  </div>
+                ) : null}
+
+                {/* Crafting Costs & Catalyst */}
+                <div className="effect-tile__costs flex flex-wrap items-center gap-2 mt-1">
+                  {row.legendaryModules !== null && row.legendaryModules !== undefined ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                      {renderModules(row.legendaryModules)}
+                    </span>
+                  ) : null}
+                  {row.extraComponent ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-slate-800/60 border border-slate-700/60 text-slate-300" onClick={(e) => e.stopPropagation()}>
+                      <span className="text-slate-500 text-[9px] uppercase font-bold">Catalyst:</span>
+                      {renderComponent(row.extraComponent)}
+                    </span>
+                  ) : null}
                 </div>
-                <div className="effect-tile__notes">
-                  {renderInlineMarkdown(row.notes)}
-                </div>
+
+                {/* Origins / Scrapping Source */}
+                {row.origins && row.origins.length > 0 ? (
+                  <div className="effect-tile__origins text-[10px] text-slate-400 font-mono mt-1 flex items-center gap-1.5 flex-wrap">
+                    <span className="text-amber-400/80 font-bold uppercase text-[9px]">Source:</span>
+                    <span>{row.origins.join(" • ")}</span>
+                  </div>
+                ) : row.notes ? (
+                  <div className="effect-tile__notes text-[10px] text-slate-400 font-mono mt-1">
+                    {renderInlineMarkdown(row.notes)}
+                  </div>
+                ) : null}
               </div>
             );
           })}

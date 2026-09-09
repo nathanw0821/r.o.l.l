@@ -3611,8 +3611,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
     ]
   },
   {
-    "id": "effect-3star-lucky",
-    "effectName": "Lucky",
+    "id": "effect-3star-lucky-hit",
+    "effectName": "Lucky Hit",
     "tierLabel": "3 Star",
     "categories": "Weapon: Ranged \u2022 Weapon: Melee",
     "description": "+15 bonus V.A.T.S. critical charge.",
@@ -3620,7 +3620,7 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
     "legendaryModules": 60,
     "notes": "",
     "origins": [
-      "Scrapping Lucky Items",
+      "Scrapping Lucky Hit Items",
       "Legendary Crafting"
     ],
     "unlocked": false,
@@ -3629,7 +3629,7 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
     "unlockedBy": [],
     "selectionSource": "default",
     "effect": {
-      "name": "Lucky"
+      "name": "Lucky Hit"
     },
     "tier": {
       "label": "3 Star"
