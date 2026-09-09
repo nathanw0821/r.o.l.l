@@ -51,11 +51,11 @@ export const ALL_BOBBLEHEADS: Fallout76BuffDef[] = sortAlphanumerically([
 export const ALL_MAGAZINES: Fallout76BuffDef[] = sortAlphanumerically([
   { id: "mag-aat4", label: "Astoundingly Awesome #4", category: "magazine", description: "+15% Alien Blaster Dmg", damageMultiplier: 1.15 },
   { id: "mag-aat10", label: "Astoundingly Awesome #10", category: "magazine", description: "+15% Scoped Weapon Dmg", damageMultiplier: 1.15 },
-  { id: "mag-bw6", label: "Backwoodsman #6", category: "magazine", description: "+50% Food Buff Effectiveness", damageMultiplier: 1.05 },
+  { id: "mag-bw6", label: "Backwoodsman #6", category: "magazine", description: "+50% HP restoration from cooked meat" },
   { id: "mag-gb3", label: "Guns and Bullets #3", category: "magazine", description: "+100% Ballistic VATS Crit Dmg", damageMultiplier: 1.15 },
   { id: "mag-grognak1", label: "Grognak the Barbarian #1", category: "magazine", description: "+15% Melee Weapon Dmg", damageMultiplier: 1.15 },
   { id: "mag-grognak5", label: "Grognak the Barbarian #5", category: "magazine", description: "+15% Dmg vs Scorched", damageMultiplier: 1.15 },
-  { id: "mag-ll3", label: "Live & Love #3", category: "magazine", description: "+50% Healing & Food Effectiveness", damageMultiplier: 1.05 },
+  { id: "mag-ll3", label: "Live & Love #3", category: "magazine", description: "+50% HP restoration from plant foods" },
   { id: "mag-ll8", label: "Live & Love #8", category: "magazine", description: "+5% XP when in Team", xpBonusPct: 5 },
   { id: "mag-ts7", label: "Tesla Science #7", category: "magazine", description: "+100% Energy VATS Crit Dmg", damageMultiplier: 1.15 },
   { id: "mag-ts8", label: "Tesla Science #8", category: "magazine", description: "+50% Crit Dmg", damageMultiplier: 1.08 },

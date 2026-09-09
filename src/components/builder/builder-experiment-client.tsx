@@ -409,7 +409,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
   );
 });
 
-type BuilderExperimentClientProps = {
+export type BuilderExperimentClientProps = {
   initialLearnedBasePieceIds?: string[];
   isAdmin?: boolean;
   initialTab?: "gear" | "perks" | "biometrics" | "combat";
