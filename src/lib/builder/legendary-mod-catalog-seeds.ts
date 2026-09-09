@@ -67,135 +67,184 @@ function weapon(
 }
 
 /** 1★ armor — common primary bench effects (names match in-game conventions). */
+/** 1★ armor — common primary bench effects (names match in-game conventions). */
 const ARMOR_1: BuilderLegendarySeedRow[] = [
-  armor("aristocrats", "Aristocrat's", 1, "Reflect incoming damage based on caps held (max 10%).", {
+  armor("aristocrats", "Aristocrat's", 1, "Grants up to +20 DR/ER the higher your caps (max at 29k caps).", {
     effectMath: { dr: 20, er: 20 }
   }),
-  armor("assassins-armor", "Assassin's", 1, "Damage reduction vs humans."),
-  armor("auto-stim", "Auto Stim", 1, "Chance to use a stimpak when health drops."),
-  armor("exterminators-armor", "Exterminator's", 1, "Damage reduction vs Mirelurks and bugs."),
-  armor("hunters-armor", "Hunter's", 1, "Damage reduction vs animals."),
-  armor("mutant-slayers-armor", "Mutant Slayer's", 1, "Damage reduction vs Super Mutants."),
-  armor("mutants-armor", "Mutant's", 1, "Damage / energy resist if mutated."),
-  armor("nocturnal-armor", "Nocturnal", 1, "+80 Damage & Energy Resistance.", { effectMath: { dr: 80, er: 80 } }),
-  armor("troubleshooters-armor", "Troubleshooter's", 1, "Damage reduction vs robots."),
-  armor("vanguards", "Vanguard's", 1, "Damage reduction increase at high health."),
-  armor("weightless", "Weightless", 1, "Chameleon when stationary and not moving."),
-  armor("zealots-armor", "Zealot's", 1, "Damage reduction vs Scorched.")
+  armor("assassins-armor", "Assassin's", 1, "-15% damage from humans."),
+  armor("auto-stim", "Auto Stim", 1, "Automatically use a stimpak when hit while health is 25% or less, once every 60s."),
+  armor("bolstering", "Bolstering", 1, "Grants up to +35 Energy and Damage Resistance the lower your health.", {
+    effectMath: { dr: 10, er: 10 }
+  }),
+  armor("chameleon-armor", "Chameleon", 1, "Invisibility while sneaking and stationary."),
+  armor("cloaking", "Cloaking", 1, "Being hit in melee generates a stealth field once per 30 seconds."),
+  armor("exterminators-armor", "Exterminator's", 1, "-15% damage from Mirelurks and bugs."),
+  armor("ghoul-slayers-armor", "Ghoul Slayer's", 1, "-15% damage from Ghouls."),
+  armor("hunters-armor", "Hunter's", 1, "-15% damage from animals."),
+  armor("life-saving", "Life Saving", 1, "When incapacitated, 100% chance to revive with a Stimpak once every 5 minutes.", { pa: false }),
+  armor("mutant-slayers-armor", "Mutant Slayer's", 1, "-15% damage from Super Mutants."),
+  armor("mutants-armor", "Mutant's", 1, "+10 Damage and Energy Resistance if you are mutated.", { effectMath: { dr: 10, er: 10 } }),
+  armor("nocturnal-armor", "Nocturnal", 1, "+80 Damage and Energy Resistance at night or while crouched.", { effectMath: { dr: 80, er: 80 } }),
+  armor("overeaters", "Overeater's", 1, "Increases damage reduction up to 6% as you fill hunger and thirst meters.", {
+    effectMath: { dr: 6, er: 6 }
+  }),
+  armor("regenerating-armor", "Regenerating", 1, "Slowly regenerate health while not in combat."),
+  armor("troubleshooters-armor", "Troubleshooter's", 1, "-15% damage from robots."),
+  armor("unyielding", "Unyielding", 1, "+3 to all SPECIAL except END when health is low (armor only).", {
+    pa: false,
+    ghoulSpecialCap: 2,
+    effectMath: { specialBonus: 3 }
+  }),
+  armor("vanguards", "Vanguard's", 1, "Grants up to +35 Energy and Damage Resistance the higher your health.", {
+    effectMath: { dr: 10, er: 10 }
+  }),
+  armor("weightless", "Weightless", 1, "Weighs 90% less and does not count as armor for Chameleon mutation.", { pa: false }),
+  armor("zealots-armor", "Zealot's", 1, "-15% damage from Scorched.")
 ];
 
 /** 2★ armor */
 const ARMOR_2: BuilderLegendarySeedRow[] = [
-  armor("acrobats", "Acrobat's", 2, "Reduced fall damage."),
-  armor("aerodynamic", "Aerodynamic", 2, "Power attack AP cost reduction."),
-  armor("cunning", "Cunning", 2, "Agility and Perception while sneaking."),
-  armor("durability-armor", "Durability", 2, "Breaks more slowly."),
-  armor("hazmat-lining", "Hazmat lining", 2, "Rad exposure mitigation (sandbox placeholder)."),
-  armor("hydration", "Hydration", 2, "Thirst decay reduction."),
-  armor("lead-lined", "Lead Lined", 2, "Radiation resistance."),
-  armor("lightweight-armor", "Lightweight", 2, "Reduced armor weight."),
-  armor("luck", "Luck", 2, "Luck while equipped."),
-  armor("medic", "Medic's", 2, "Heal nearby teammates on crit."),
-  armor("nutrition", "Nutrition", 2, "Hunger decay reduction."),
-  armor("poisoners", "Poisoner's", 2, "Poison resist."),
-  armor("safecracker", "Safecracker's", 2, "Sweet spot on lockpicks."),
-  armor("sneak", "Sneak", 2, "Harder to detect while sneaking.")
+  armor("powered", "Powered", 2, "Increases Action Point refresh speed (+5 AP/s).", { effectMath: { apRegen: 0.05 } }),
+  armor("poisoners", "Poisoner's", 2, "+25 Poison Resistance.", { effectMath: { pr: 25 } }),
+  armor("fireproof-armor", "Fireproof", 2, "+25 Fire Resistance.", { effectMath: { fr: 25 } }),
+  armor("warming", "Warming", 2, "+25 Cryo Resistance.", { effectMath: { cr: 25 } }),
+  armor("hazmat", "HazMat", 2, "+25 Radiation Resistance.", { effectMath: { rr: 25 } }),
+  armor("hardy", "Hardy", 2, "Receive 7% less explosion damage.", { effectMath: { er: 15 } }),
+  armor("antiseptic", "Antiseptic", 2, "Receive 25% less disease chance from environmental sources."),
+  armor("glutton", "Glutton", 2, "Thirst and hunger grow 10% slower."),
+  armor("strength-2", "Strength", 2, "+2 Strength.", { effectMath: { str: 2 } }),
+  armor("perception-2", "Perception", 2, "+2 Perception.", { effectMath: { per: 2 } }),
+  armor("endurance-2", "Endurance", 2, "+2 Endurance.", { effectMath: { end: 2 } }),
+  armor("charisma-2", "Charisma", 2, "+2 Charisma.", { effectMath: { cha: 2 } }),
+  armor("intelligence-2", "Intelligence", 2, "+2 Intelligence.", { effectMath: { int: 2 } }),
+  armor("agility-2", "Agility", 2, "+2 Agility.", { effectMath: { agi: 2 } }),
+  armor("luck-2", "Luck", 2, "+2 Luck.", { effectMath: { lck: 2 } })
 ];
 
 /** 3★ armor */
 const ARMOR_3: BuilderLegendarySeedRow[] = [
-  armor("cavaliers", "Cavalier's", 3, "Damage reduction while sprinting."),
-  armor("docile", "Doctor's", 3, "Healing from stimpaks increased."),
-  armor("dodge", "Dodge", 3, "Chance to avoid damage."),
-  armor("fireproof-armor", "Fireproof", 3, "Fire resist / explosion mitigation."),
-  armor("lockpicking", "Lockpicking", 3, "Lockpick sweet spot."),
-  armor("thorns", "Thorn", 3, "Melee attackers bleed."),
-  armor("underwater", "Underwater", 3, "Breathing underwater.")
+  armor("sentinels", "Sentinel's", 3, "75% chance to reduce damage by 15% while standing still.", { effectMath: { dr: 15, er: 15 } }),
+  armor("cavaliers", "Cavalier's", 3, "75% chance to reduce damage by 15% while sprinting."),
+  armor("arms-keepers", "Arms Keeper's", 3, "Weapon weights reduced by 20%."),
+  armor("thru-hikers", "Thru-Hiker's", 3, "Food, drink, and chem weights reduced by 20%."),
+  armor("belted", "Belted", 3, "Ammo weight reduced by 20%."),
+  armor("pack-rats", "Pack Rat's", 3, "Junk weight reduced by 20%."),
+  armor("acrobats", "Acrobat's", 3, "Reduces fall damage by 50%.", { pa: false }),
+  armor("doctors", "Doctor's", 3, "Stimpaks, RadAway, and Rad-X 5% more effective."),
+  armor("secret-agents", "Secret Agent's", 3, "Harder to detect while sneaking.", { pa: false }),
+  armor("dissipating", "Dissipating", 3, "Slowly regenerate radiation damage while not in combat."),
+  armor("burning", "Burning", 3, "5% chance to deal 100 Fire damage to melee attackers."),
+  armor("electrified", "Electrified", 3, "5% chance to deal 100 Energy damage to melee attackers."),
+  armor("frozen", "Frozen", 3, "5% chance to deal 100 Cryo damage to melee attackers."),
+  armor("toxic", "Toxic", 3, "5% chance to deal 100 Poison damage to melee attackers."),
+  armor("divers", "Diver's", 3, "Grants underwater breathing.", { pa: false })
 ];
 
 /** 4★ armor */
 const ARMOR_4: BuilderLegendarySeedRow[] = [
-  armor("breakers", "Breaker's", 4, "Break speed / stagger utility."),
-  armor("chameleon-armor", "Chameleon", 4, "Invisibility while sneaking and not moving."),
-  armor("cloaking", "Cloaking", 4, "Brief invisibility when hit."),
-  armor("detection", "Detection", 4, "Enemy detection bonus."),
-  armor("grounded-armor", "Grounded", 4, "Energy damage mitigation."),
-  armor("mitigating", "Mitigating", 4, "Damage reduction after taking damage."),
-  armor("phoenix", "Phoenix", 4, "Chance to revive with full HP on down."),
-  armor("rad-resist-4", "Rad Resistant", 4, "Radiation resistance."),
-  armor("regenerating-armor", "Regenerating", 4, "Health regen out of combat."),
-  armor("stealth-armor", "Stealth", 4, "Harder to detect while sneaking.")
+  armor("aegis", "Aegis", 4, "+15 Damage & Energy Resistance for every 10% health above 50%."),
+  armor("battle-scarred", "Battle-Scarred", 4, "+20% Damage Resistance while health is below 40%."),
+  armor("bruising", "Bruising", 4, "Reflect 25% of incoming melee damage."),
+  armor("bulwarks", "Bulwark's", 4, "Reduce damage taken by 10% when stationary."),
+  armor("rangers", "Ranger's", 4, "+10% ranged weapon damage while wearing this armor."),
+  armor("rejuvenators", "Rejuvenator's", 4, "Adds HP and AP regeneration to hunger and thirst."),
+  armor("runners", "Runner's", 4, "-10% sprint AP cost and +5% sprint speed."),
+  armor("tanky", "Tanky", 4, "+100 flat Max Health."),
+  armor("vengeful", "Vengeful", 4, "When hit, deal 50 damage back to attacker.")
 ];
 
 /** 1★ weapons */
 const WEAPON_1: BuilderLegendarySeedRow[] = [
+  weapon("anti-armor", "Anti-Armor", 1, null, "+50% Armor Penetration.", { damagePct: 0.12 }),
   weapon(
     "aristocrats-weapon",
     "Aristocrat's",
     1,
     null,
-    "+50% damage (maximum weapon bonus from caps; sandbox ceiling).",
+    "Damage increases as caps increase (max +50% at 29k caps).",
     { damagePct: 0.5 }
   ),
-  weapon("assassins-weapon", "Assassin's", 1, null, "Damage vs humans."),
-  weapon("berserkers", "Berserker's", 1, null, "More damage with lower damage resist."),
-  weapon("executioners", "Executioner's", 1, null, "More damage vs targets below 40% HP."),
-  weapon("exterminators-weapon", "Exterminator's", 1, null, "Damage vs Mirelurks and bugs."),
-  weapon("furious", "Furious", 1, null, "Each consecutive hit increases damage."),
-  weapon("ghoul-slayer", "Ghoul Slayer's", 1, null, "Damage vs ghouls."),
-  weapon("hunters-weapon", "Hunter's", 1, null, "Damage vs animals."),
-  weapon("instigating", "Instigating", 1, null, "Double damage if target is full health."),
-  weapon("junkies", "Junkie's", 1, null, "Damage increase per addiction."),
-  weapon("medics-weapon", "Medic's", 1, null, "Crits heal you and your group."),
-  weapon("mutants-weapon", "Mutant's", 1, null, "Damage if mutated."),
-  weapon("mutant-slayers-weapon", "Mutant Slayer's", 1, null, "Damage vs Super Mutants."),
-  weapon("nocturnal-weapon", "Nocturnal", 1, null, "+50% Damage.", { damagePct: 0.5 }),
-  weapon("quad", "Quad", 1, null, "Quad capacity (weapon dependent)."),
-  weapon("stalkers", "Stalker's", 1, null, "If not in combat, +100% VATS accuracy at +100% AP cost."),
-  weapon("suppressors", "Suppressor's", 1, null, "Reduce target damage output."),
-  weapon("troubleshooters-weapon", "Troubleshooter's", 1, null, "Damage vs robots."),
-  weapon("two-shot", "Two Shot", 1, null, "Fire an additional projectile."),
-  weapon("vampires", "Vampire's", 1, null, "Brief health regen on hit."),
-  weapon("zealots-weapon", "Zealot's", 1, null, "Damage vs Scorched.")
+  weapon("assassins-weapon", "Assassin's", 1, null, "+50% damage vs humans."),
+  weapon("berserkers", "Berserker's", 1, null, "Damage increases up to +50% as Damage Resistance decreases."),
+  weapon("bloodied", "Bloodied", 1, null, "Damage increases up to +95% as Health decreases.", { damagePct: 0.25 }),
+  weapon("executioners", "Executioner's", 1, null, "+50% more damage when target is below 40% health."),
+  weapon("exterminators-weapon", "Exterminator's", 1, null, "+50% damage to Mirelurks and bugs."),
+  weapon("furious", "Furious", 1, null, "+5% damage per consecutive hit on the same target (max +45%)."),
+  weapon("ghoul-slayer", "Ghoul Slayer's", 1, null, "+50% damage to Ghouls."),
+  weapon("gourmands", "Gourmand's", 1, null, "Damage increases up to +24% as you fill hunger and thirst."),
+  weapon("hunters-weapon", "Hunter's", 1, null, "+50% damage to animals."),
+  weapon("instigating", "Instigating", 1, null, "+100% damage if target is at full health."),
+  weapon("juggernauts", "Juggernaut's", 1, null, "Damage increases up to +25% as health increases."),
+  weapon("junkies", "Junkie's", 1, null, "+10% damage per addiction (max +50%)."),
+  weapon("medics-weapon", "Medic's", 1, null, "Attacks heal friendly targets by 5% health."),
+  weapon("mutants-weapon", "Mutant's", 1, null, "+5% damage per mutation (max +25%)."),
+  weapon("mutant-slayers-weapon", "Mutant Slayer's", 1, null, "+50% damage to Super Mutants."),
+  weapon("nocturnal-weapon", "Nocturnal", 1, null, "+50% damage at night or when crouched.", { damagePct: 0.5 }),
+  weapon("quad", "Quad", 1, null, "+300% ammo capacity (quadruple base capacity)."),
+  weapon("stalkers", "Stalker's", 1, null, "+100% sneak attack damage."),
+  weapon("suppressors", "Suppressor's", 1, null, "Reduce target's damage output by 25% for 5 seconds."),
+  weapon("troubleshooters-weapon", "Troubleshooter's", 1, null, "+50% damage to robots."),
+  weapon("two-shot", "Two Shot", 1, null, "Fires an additional projectile (+25% damage).", { damagePct: 0.25 }),
+  weapon("vampires", "Vampire's", 1, null, "Restore 2% health over 2 seconds when hitting a target."),
+  weapon("zealots-weapon", "Zealot's", 1, null, "+50% damage to Scorched.")
 ];
 
 /** 2★ weapons */
 const WEAPON_2: BuilderLegendarySeedRow[] = [
-  weapon("bashing", "Bashing", 2, "Melee", "Increased bash damage."),
-  weapon("black-powder-extra", "Muzzle Loading", 2, "Ranged", "Black powder style bonus (placeholder)."),
-  weapon("crit-dmg", "+50% crit damage", 2, null, "Increased critical damage."),
-  weapon("extra-barrels", "Dual / extra barrels", 2, "Ranged", "Rate-of-fire style (placeholder)."),
-  weapon("faster-reload", "15% faster reload", 2, null, "Reload speed."),
-  weapon("hitmans", "10% damage while aiming", 2, "Ranged", "Damage while aiming."),
-  weapon("limb-dmg", "+50% limb damage", 2, null, "Limb damage."),
-  weapon("movement-speed-aim", "Movement speed while aiming", 2, "Ranged", "Move faster while aiming."),
-  weapon("perception-2", "+1 Perception", 2, null, "Perception."),
-  weapon("rip-extend", "Extended ripper", 2, "Melee", "Melee reach / duration (placeholder)."),
-  weapon("vats-accuracy", "+33% VATS accuracy", 2, null, "VATS hit chance."),
-  weapon("vats-cost", "25% less VATS AP cost", 2, null, "VATS AP cost.")
+  weapon("rapid", "Rapid", 2, null, "+25% weapon speed (ranged) or +40% swing speed (melee).", { damagePct: 0.05 }),
+  weapon("vital", "Vital", 2, null, "+50% critical damage."),
+  weapon("vats-enhanced", "V.A.T.S. Enhanced", 2, null, "+50% chance to hit a target in V.A.T.S."),
+  weapon("explosive", "Explosive", 2, "Ranged", "Bullets explode for +20% area-of-effect damage.", { damagePct: 0.2 }),
+  weapon("hitmans", "Hitman's", 2, "Ranged", "+25% damage while aiming down sights."),
+  weapon("heavy-hitters", "Heavy Hitter's", 2, "Melee", "+40% power attack damage."),
+  weapon("crippling", "Crippling", 2, null, "+50% limb damage."),
+  weapon("inertial", "Inertial", 2, null, "Replenish 15 Action Points with each kill."),
+  weapon("last-shot", "Last Shot", 2, "Ranged", "The final round in a magazine has 25% chance to deal +100% damage."),
+  weapon("steady", "Steady", 2, "Melee", "+25% melee damage while standing still."),
+  weapon("riposting", "Riposting", 2, "Melee", "+50% melee damage reflection while blocking."),
+  weapon("bashers", "Basher's", 2, "Ranged", "+50% bash damage.")
 ];
 
 /** 3★ weapons */
 const WEAPON_3: BuilderLegendarySeedRow[] = [
-  weapon("agility-3", "Agility", 3, null, "Agility."),
-  weapon("endurance-3", "Endurance", 3, null, "Endurance."),
-  weapon("fill-meter", "Fill meter", 3, null, "Meter fill on crit (placeholder)."),
-  weapon("last-shot", "Last Shot", 3, "Ranged", "Last round in mag bonus damage chance."),
-  weapon("luck-3", "Luck", 3, null, "Luck."),
-  weapon("perception-3", "Perception", 3, null, "Perception."),
-  weapon("resilient", "Resilient", 3, "Melee", "Damage reflect while blocking."),
-  weapon("stealth-field-weapon", "Stealth Field", 3, null, "Brief stealth on hit."),
-  weapon("strength-3", "Strength", 3, null, "Strength.")
+  weapon("vats-optimized", "V.A.T.S. Optimized", 3, null, "-35% Action Point Cost in V.A.T.S."),
+  weapon("lucky-hit", "Lucky Hit", 3, null, "+15 bonus V.A.T.S. critical charge fill."),
+  weapon("swift", "Swift", 3, "Ranged", "+15% reload speed."),
+  weapon("durability", "Durability", 3, null, "Weapons break 50% slower."),
+  weapon("lightweight", "Lightweight", 3, null, "-90% weapon weight."),
+  weapon("ghosts", "Ghost's", 3, null, "10% chance to cause stealth field for 2 seconds on hit."),
+  weapon("steadfast", "Steadfast", 3, "Ranged", "+50 Damage Resistance while aiming down sights."),
+  weapon("nimble", "Nimble", 3, "Ranged", "+100% faster movement speed while aiming."),
+  weapon("resilient", "Resilient", 3, null, "Gain +500 to all resistances while reloading."),
+  weapon("cavaliers-weapon", "Cavalier's", 3, "Melee", "-15% damage taken while blocking."),
+  weapon("defenders", "Defender's", 3, "Melee", "-40% damage taken while power attacking."),
+  weapon("strength-3", "Strength", 3, null, "+3 Strength.", { str: 3 }),
+  weapon("perception-3", "Perception", 3, null, "+3 Perception.", { per: 3 }),
+  weapon("endurance-3", "Endurance", 3, null, "+3 Endurance.", { end: 3 }),
+  weapon("charisma-3", "Charisma", 3, null, "+3 Charisma.", { cha: 3 }),
+  weapon("intelligence-3", "Intelligence", 3, null, "+3 Intelligence.", { int: 3 }),
+  weapon("agility-3", "Agility", 3, null, "+3 Agility.", { agi: 3 }),
+  weapon("luck-3", "Luck", 3, null, "+3 Luck.", { lck: 3 })
 ];
 
 /** 4★ weapons */
 const WEAPON_4: BuilderLegendarySeedRow[] = [
-  weapon("break-slower-weapon", "Durability", 4, null, "Slower break."),
-  weapon("faster-move-ads", "Faster movement while aiming", 4, "Ranged", "ADS move speed."),
-  weapon("instigating-4-wrong", "Rapid reload echo", 4, null, "Reload utility (placeholder).", { damagePct: 0.02 }),
-  weapon("quad-4-alt", "Capacity echo", 4, null, "Magazine utility (placeholder)."),
-  weapon("steady-aim-4", "Steady", 4, "Ranged", "Reduced sway while aiming."),
-  weapon("two-shot-4-alt", "Focused", 4, null, "Single-target bias (placeholder).")
+  weapon("bullys", "Bully's", 4, null, "+25% damage per crippled limb target has."),
+  weapon("conductors", "Conductor's", 4, null, "Crits restore 10 HP & AP instantly and 100 over 5s to team."),
+  weapon("encirclers", "Encircler's", 4, null, "+10% damage for each combat target around you (up to +50%)."),
+  weapon("fracturers", "Fracturer's", 4, null, "When crippling limbs, explode dealing up to 50 damage."),
+  weapon("polished", "Polished", 4, null, "The higher the item condition (+100%), the higher the damage (up to +60%)."),
+  weapon("pyromaniacs", "Pyromaniac's", 4, null, "When target is burning, deal +50% bonus damage."),
+  weapon("vipers", "Viper's", 4, null, "When target is poisoned, deal +50% bonus damage."),
+  weapon("charged", "Charged", 4, "Melee", "Light attacks build charge released with heavy attacks."),
+  weapon("combo-breakers", "Combo-Breaker's", 4, null, "50% chance to consume 0 AP on hit (10% for power tools)."),
+  weapon("fencers", "Fencer's", 4, "Melee", "+12.5% melee damage (+12.5% per nearby teammate, max +50%)."),
+  weapon("icemens", "Icemen's", 4, "Melee", "+20% Cryo damage."),
+  weapon("pounders", "Pounder's", 4, "Melee", "+10% damage per Onslaught stack (+10 max stacks)."),
+  weapon("electricians", "Electrician's", 4, "Ranged", "When reloading, emit shock wave stunning nearby targets for 3s."),
+  weapon("pin-pointers", "Pin-Pointer's", 4, "Ranged", "+20% weak spot damage."),
+  weapon("stabilizers", "Stabilizer's", 4, "Ranged", "Improves weapon recoil by +35% and stability by +20%.")
 ];
 
 export const EXTENDED_LEGENDARY_MOD_SEEDS: BuilderLegendarySeedRow[] = [

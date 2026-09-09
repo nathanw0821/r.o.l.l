@@ -45,17 +45,18 @@ const WEAPON_CATEGORY_TOKENS = new Set([
 ]);
 
 function inferWeaponSubCategory(names: Set<string>): string | null {
-  const melee = names.has("melee");
-  const rangedLike =
-    names.has("ranged") ||
-    names.has("guns") ||
-    names.has("gun") ||
-    names.has("ballistic") ||
-    names.has("heavy") ||
-    names.has("shotgun") ||
-    names.has("energy") ||
-    names.has("explosive") ||
-    names.has("explosives");
+  const melee = [...names].some((n) => n.includes("melee"));
+  const rangedLike = [...names].some((n) =>
+    n.includes("ranged") ||
+    n.includes("guns") ||
+    n.includes("gun") ||
+    n.includes("ballistic") ||
+    n.includes("heavy") ||
+    n.includes("shotgun") ||
+    n.includes("energy") ||
+    n.includes("explosive") ||
+    n.includes("explosives")
+  );
   if (melee && rangedLike) return null;
   if (melee) return "Melee";
   if (rangedLike) return "Ranged";
@@ -69,60 +70,64 @@ function effectTierToSupplementalMod(row: EffectTierCatalogRow): BuilderLegendar
   const names = normalizedCategorySet(row);
   if ([...names].some((n) => n.includes("infestation"))) return null;
 
-  const hasWeaponToken = [...names].some((n) => WEAPON_CATEGORY_TOKENS.has(n));
-  const hasPowerArmor = names.has("power armor") || [...names].some((n) => n.includes("power armor"));
-  const hasRegularArmor =
-    names.has("armor") ||
-    [...names].some((n) => {
-      if (n.includes("power")) return false;
-      if (n.includes("underarmor")) return false;
-      if (WEAPON_CATEGORY_TOKENS.has(n)) return false;
-      return n === "armor" || n.includes("armor");
+  const hasWeaponToken = [...names].some((n) =>
+    n.split(/\s+/).some((t) => WEAPON_CATEGORY_TOKENS.has(t)) ||
+    n.includes("weapon") ||
+    n.includes("ranged") ||
+    n.includes("melee")
+  );
+  const hasPowerArmor = [...names].some((n) => n.includes("power armor") || n.includes("powerarmor"));
+  const hasRegularArmor = [...names].some((n) => {
+    if (n.includes("power")) return false;
+    if (n.includes("underarmor")) return false;
+    return n === "armor" || n.includes("armor");
+  });
+
+  if (!hasWeaponToken && !hasRegularArmor && !hasPowerArmor) return null;
+
+  let category = "Universal";
+  if (hasWeaponToken && !hasRegularArmor && !hasPowerArmor) {
+    category = "Weapon";
+  } else if (!hasWeaponToken && (hasRegularArmor || hasPowerArmor)) {
+    category = "Armor";
+  } else {
+    category = "Universal";
+  }
+
+  const rawSlug = row.id.replace(/^effect-\d+star-/, "");
+  const cleanSlug = rawSlug.replace(/\./g, "");
+  const subCategory = hasWeaponToken ? inferWeaponSubCategory(names) : null;
+
+  const modules = row.legendaryModules ?? (star === 4 ? 120 : star === 3 ? 60 : star === 2 ? 30 : 15);
+  const craftingCost: Record<string, unknown> = {
+    legendaryModules: modules,
+    extraComponent: row.extraComponent ?? null,
+    items: [{ name: "Legendary module", count: modules }]
+  };
+  if (row.extraComponent) {
+    (craftingCost.items as Array<{ name: string; count: number | string }>).push({
+      name: row.extraComponent,
+      count: 1
     });
-
-  if (hasWeaponToken && (hasRegularArmor || hasPowerArmor)) return null;
-
-  if (hasWeaponToken) {
-    return {
-      id: `et-${row.id}`,
-      slug: `et-${row.id}`,
-      name: row.effect.name,
-      starRank: star,
-      category: "Weapon",
-      subCategory: inferWeaponSubCategory(names),
-      description: row.description?.trim() ?? "",
-      effectMath: {},
-      craftingCost: {},
-      allowedOnPowerArmor: false,
-      allowedOnArmor: false,
-      allowedOnWeapon: true,
-      infestationOnly: false,
-      fifthStarEligible: false,
-      ghoulSpecialCap: null
-    };
   }
 
-  if (hasRegularArmor || hasPowerArmor) {
-    return {
-      id: `et-${row.id}`,
-      slug: `et-${row.id}`,
-      name: row.effect.name,
-      starRank: star,
-      category: "Armor",
-      subCategory: null,
-      description: row.description?.trim() ?? "",
-      effectMath: {},
-      craftingCost: {},
-      allowedOnPowerArmor: hasPowerArmor,
-      allowedOnArmor: hasRegularArmor,
-      allowedOnWeapon: false,
-      infestationOnly: false,
-      fifthStarEligible: false,
-      ghoulSpecialCap: null
-    };
-  }
-
-  return null;
+  return {
+    id: row.id,
+    slug: cleanSlug || rawSlug,
+    name: row.effect.name,
+    starRank: star,
+    category,
+    subCategory,
+    description: row.description?.trim() ?? "",
+    effectMath: {} as Prisma.JsonValue,
+    craftingCost: craftingCost as Prisma.JsonValue,
+    allowedOnPowerArmor: hasPowerArmor,
+    allowedOnArmor: hasRegularArmor,
+    allowedOnWeapon: hasWeaponToken,
+    infestationOnly: false,
+    fifthStarEligible: false,
+    ghoulSpecialCap: null
+  };
 }
 
 /**
@@ -141,11 +146,16 @@ export function mergeLegendaryModsWithEffectTiers(
   const seenSlugs = new Set(legendary.map((m) => m.slug));
 
   for (const row of effectTiers) {
-    const key = `${normalizeLegendaryMatchKey(row.effect.name)}|${tierStarRankFromTierLabel(row.tier?.label) ?? ""}`;
+    const starRank = tierStarRankFromTierLabel(row.tier?.label);
+    const key = `${normalizeLegendaryMatchKey(row.effect.name)}|${starRank ?? ""}`;
     if (curatedKeys.has(key)) continue;
 
     const supplemental = effectTierToSupplementalMod(row);
     if (!supplemental) continue;
+
+    if (seenSlugs.has(supplemental.slug)) {
+      supplemental.slug = `${supplemental.slug}-${supplemental.starRank}`;
+    }
     if (seenSlugs.has(supplemental.slug)) continue;
 
     curatedKeys.add(key);

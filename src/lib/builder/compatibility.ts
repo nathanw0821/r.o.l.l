@@ -495,16 +495,17 @@ export function collectEquippedLegendaryModIds(payload: BuilderPayload): string[
     seen.add(id);
     out.push(id);
   };
-  if (isMultiPiecePayload(payload)) {
-    for (const row of payload.armorLegendaryModIds) {
-      for (const id of row) {
-        if (id) push(id);
-      }
-    }
-    return out;
-  }
   for (const id of payload.legendaryModIds) {
     if (id) push(id);
+  }
+  if (Array.isArray(payload.armorLegendaryModIds)) {
+    for (const row of payload.armorLegendaryModIds) {
+      if (Array.isArray(row)) {
+        for (const id of row) {
+          if (id) push(id);
+        }
+      }
+    }
   }
   return out;
 }
@@ -518,22 +519,28 @@ export function listEquippedModsInBenchOrder(
   for (const m of mods) {
     map.set(m.id, m);
     if (m.slug) map.set(m.slug, m);
+    const cleanSlug = m.slug.replace(/\./g, "").toLowerCase();
+    map.set(cleanSlug, m);
+    const cleanId = m.id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    map.set(cleanId, m);
   }
   const ids: string[] = [];
-  if (isMultiPiecePayload(payload)) {
+  for (const id of payload.legendaryModIds) {
+    if (id) ids.push(id);
+  }
+  if (Array.isArray(payload.armorLegendaryModIds)) {
     for (const row of payload.armorLegendaryModIds) {
-      for (const id of row) {
-        if (id) ids.push(id);
+      if (Array.isArray(row)) {
+        for (const id of row) {
+          if (id) ids.push(id);
+        }
       }
-    }
-  } else {
-    for (const id of payload.legendaryModIds) {
-      if (id) ids.push(id);
     }
   }
   const out: BuilderModDTO[] = [];
   for (const id of ids) {
-    const m = map.get(id);
+    const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    const m = map.get(id) ?? map.get(clean);
     if (m) out.push(m);
   }
   return out;
@@ -557,32 +564,41 @@ export function listEquippedLegendariesWithBenchLabels(
   for (const m of mods) {
     map.set(m.id, m);
     if (m.slug) map.set(m.slug, m);
+    const cleanSlug = m.slug.replace(/\./g, "").toLowerCase();
+    map.set(cleanSlug, m);
+    const cleanId = m.id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    map.set(cleanId, m);
   }
   const isSet = isMultiPiecePayload(payload);
   const out: EquippedLegendaryBenchLine[] = [];
 
-  if (isSet) {
-    const pieces = payload.armorPieceCrafting.length;
+  // Single / weapon stars
+  for (let s = 0; s < 4; s++) {
+    const id = payload.legendaryModIds?.[s];
+    if (!id) continue;
+    const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    const mod = map.get(id) ?? map.get(clean);
+    if (!mod) continue;
+    const starName = BENCH_STAR_LABELS[s] ?? `${s + 1}th star`;
+    const label = isSet ? `Weapon · ${starName}` : starName;
+    out.push({ mod, benchLabel: label });
+  }
+
+  // Multi-piece armor stars
+  if (Array.isArray(payload.armorLegendaryModIds)) {
+    const pieces = Math.min(payload.armorPieceCrafting?.length || 5, payload.armorLegendaryModIds.length);
     for (let p = 0; p < pieces; p++) {
       const pieceName = ARMOR_SET_SLOT_LABELS[p] ?? `Piece ${p + 1}`;
       const stars = payload.armorLegendaryModIds[p] ?? [null, null, null, null];
       for (let s = 0; s < 4; s++) {
         const id = stars[s];
         if (!id) continue;
-        const mod = map.get(id);
+        const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+        const mod = map.get(id) ?? map.get(clean);
         if (!mod) continue;
         const starName = BENCH_STAR_LABELS[s] ?? `${s + 1}th star`;
         out.push({ mod, benchLabel: `${pieceName} · ${starName}` });
       }
-    }
-  } else {
-    for (let s = 0; s < 4; s++) {
-      const id = payload.legendaryModIds[s];
-      if (!id) continue;
-      const mod = map.get(id);
-      if (!mod) continue;
-      const starName = BENCH_STAR_LABELS[s] ?? `${s + 1}th star`;
-      out.push({ mod, benchLabel: starName });
     }
   }
   return out;
