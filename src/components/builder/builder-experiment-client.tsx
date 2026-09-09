@@ -30,6 +30,7 @@ import {
   RefreshCw,
   X,
   AlertTriangle,
+  GitFork,
 } from "lucide-react";
 import PerkBuilder from "@/components/perks/perk-builder";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
@@ -221,13 +222,13 @@ function useDensityCompact() {
 
 function findModByIdOrSlug(mods: BuilderModDTO[], id: string | null | undefined): BuilderModDTO | null {
   if (!id) return null;
-  const direct = mods.find((m) => m.id === id || m.slug === id);
+  const direct = mods.find((m) => m.id === id || m.slug === id || m.id === id.replace(/^et-/, "") || m.slug === id.replace(/^et-/, ""));
   if (direct) return direct;
-  const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+  const clean = id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
   return (
     mods.find((m) => {
       const mCleanSlug = m.slug.replace(/\./g, "").toLowerCase();
-      const mCleanId = m.id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+      const mCleanId = m.id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
       return mCleanSlug === clean || mCleanId === clean;
     }) ?? null
   );
@@ -435,12 +436,24 @@ export type BuilderExperimentClientProps = {
   initialLearnedBasePieceIds?: string[];
   isAdmin?: boolean;
   initialTab?: "gear" | "perks" | "biometrics" | "combat";
+  readOnly?: boolean;
+  initialPayload?: BuilderPayload;
+  sharedTransmissionTitle?: string;
+  sharedTransmissionSlug?: string;
+  sharedTransmissionId?: string;
+  isOwner?: boolean;
 };
 
 export default function BuilderExperimentClient({
   initialLearnedBasePieceIds = [],
   isAdmin = false,
   initialTab = "gear",
+  readOnly = false,
+  initialPayload,
+  sharedTransmissionTitle,
+  sharedTransmissionSlug,
+  sharedTransmissionId,
+  isOwner = false,
 }: BuilderExperimentClientProps) {
   const { data: session, status: sessionStatus } = useSession();
   const isSignedIn =
@@ -469,21 +482,30 @@ export default function BuilderExperimentClient({
     setMasterTab(newTab);
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      url.pathname = "/build";
+      if (!readOnly) {
+        url.pathname = "/build";
+      }
       url.searchParams.set("tab", newTab);
       window.history.replaceState({}, "", url.toString());
     }
-  }, []);
+  }, [readOnly]);
 
   const [mods, setMods] = React.useState<BuilderModDTO[]>([]);
   const [loadError, setLoadError] = React.useState<string | null>(null);
 
   // Persistence state
   const [isMounted, setIsMounted] = React.useState(false);
-  const [payload, setPayload] =
-    React.useState<BuilderPayload>(defaultPayload());
+  const [payload, setPayload] = React.useState<BuilderPayload>(() => {
+    if (initialPayload) {
+      return normalizeBuilderPayload(initialPayload) || initialPayload;
+    }
+    return defaultPayload();
+  });
 
   const [activeWeaponId, setActiveWeaponId] = React.useState<string>(() => {
+    if (initialPayload?.activeWeaponPieceId) {
+      return initialPayload.activeWeaponPieceId;
+    }
     const defaultWeap = BASE_GEAR_PIECES.find(p => p.kind === "weapon")?.id || "fixer";
     return defaultWeap;
   });
@@ -514,7 +536,7 @@ export default function BuilderExperimentClient({
   const [slotQuery, setSlotQuery] = React.useState("");
   const deferredSlotQuery = React.useDeferredValue(slotQuery);
   const isCompactDensity = useDensityCompact();
-  const [shareTitle, setShareTitle] = React.useState("B.U.I.L.D. Loadout");
+  const [shareTitle, setShareTitle] = React.useState(sharedTransmissionTitle || "B.U.I.L.D. Loadout");
   const [shareBusy, setShareBusy] = React.useState(false);
   const [shareResult, setShareResult] = React.useState<string | null>(null);
   const [shareCopied, setShareCopied] = React.useState(false);
@@ -550,7 +572,31 @@ export default function BuilderExperimentClient({
   >(null);
   const [isComparisonOpen, setIsComparisonOpen] = React.useState(false);
   const internalUpdateRef = React.useRef(false);
-  const [switchboardState, setSwitchboardState] = React.useState<CombatSwitchboardState | null>(null);
+  const [switchboardState, setSwitchboardState] = React.useState<CombatSwitchboardState | null>(() => {
+    if (initialPayload?.switchboardState && typeof initialPayload.switchboardState === "object") {
+      return initialPayload.switchboardState as unknown as CombatSwitchboardState;
+    }
+    return null;
+  });
+
+  const [equippedPerkCards, setEquippedPerkCards] = React.useState<
+    { cardId: string; rank: number }[]
+  >(() => {
+    if (Array.isArray(initialPayload?.equippedPerkCards) && initialPayload.equippedPerkCards.length > 0) {
+      return initialPayload.equippedPerkCards;
+    }
+    if (readOnly) return [];
+    if (typeof window === "undefined") return [];
+    try {
+      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
+      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
+      if (!perkSlotStr) return [];
+      const perkData = JSON.parse(perkSlotStr);
+      return Array.isArray(perkData.equippedCards) ? (perkData.equippedCards as { cardId: string; rank: number }[]) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const buffSpecial = React.useMemo(() => {
     if (!switchboardState) return { totals: { str: 0, per: 0, end: 0, cha: 0, int: 0, agi: 0, lck: 0 }, breakdown: [] };
@@ -574,6 +620,10 @@ export default function BuilderExperimentClient({
   const [showBetaPrompt, setShowBetaPrompt] = React.useState(false);
 
   React.useEffect(() => {
+    if (readOnly) {
+      setIsMounted(true);
+      return;
+    }
     try {
       const saved = localStorage.getItem("roll-builder-payload");
       if (saved) {
@@ -677,7 +727,30 @@ export default function BuilderExperimentClient({
       // ignore
     }
     setIsMounted(true);
-  }, [isAdmin, hasBuilderAccess]);
+  }, [isAdmin, hasBuilderAccess, readOnly]);
+
+  // Synchronize state when initialPayload is passed (e.g. read-only shared build view)
+  React.useEffect(() => {
+    if (initialPayload) {
+      const norm = normalizeBuilderPayload(initialPayload) || initialPayload;
+      setPayload(norm);
+      if (Array.isArray(norm.equippedPerkCards) && norm.equippedPerkCards.length > 0) {
+        setEquippedPerkCards(norm.equippedPerkCards);
+      }
+      if (norm.activeWeaponPieceId) {
+        setActiveWeaponId(norm.activeWeaponPieceId);
+      }
+      if (norm.switchboardState && typeof norm.switchboardState === "object") {
+        setSwitchboardState(norm.switchboardState as unknown as CombatSwitchboardState);
+      }
+      const base = getBaseGearPiece(norm.basePieceId);
+      if (base?.kind === "weapon") {
+        setActiveWeaponId(base.id);
+      } else if (base?.kind === "armor" || base?.kind === "powerArmor") {
+        setActiveChassisId(base.id);
+      }
+    }
+  }, [initialPayload]);
 
   // Synchronize target transmission when ?load=slug or ?edit=slug is provided in URL
   React.useEffect(() => {
@@ -837,7 +910,12 @@ export default function BuilderExperimentClient({
         next[slotIndex] = {
           id: String(slotIndex),
           name: name || `Loadout ${slotIndex + 1}`,
-          payload,
+          payload: {
+            ...payload,
+            equippedPerkCards,
+            activeWeaponPieceId: activeWeaponId,
+            switchboardState: switchboardState ? (switchboardState as unknown as Record<string, unknown>) : undefined,
+          },
         };
 
         const filledCount = next.filter(
@@ -850,7 +928,7 @@ export default function BuilderExperimentClient({
       });
       setActiveLoadoutIndex(slotIndex);
     },
-    [payload, savedLoadouts],
+    [payload, savedLoadouts, equippedPerkCards, activeWeaponId, switchboardState],
   );
 
   const loadLoadout = React.useCallback(
@@ -858,7 +936,23 @@ export default function BuilderExperimentClient({
       const saved = savedLoadouts[slotIndex];
       if (saved) {
         internalUpdateRef.current = true;
-        setPayload(saved.payload);
+        const norm = normalizeBuilderPayload(saved.payload) || saved.payload;
+        setPayload(norm);
+        if (Array.isArray(norm.equippedPerkCards)) {
+          setEquippedPerkCards(norm.equippedPerkCards);
+        }
+        if (norm.activeWeaponPieceId) {
+          setActiveWeaponId(norm.activeWeaponPieceId);
+        }
+        if (norm.switchboardState && typeof norm.switchboardState === "object") {
+          setSwitchboardState(norm.switchboardState as unknown as CombatSwitchboardState);
+        }
+        const base = getBaseGearPiece(norm.basePieceId);
+        if (base?.kind === "weapon") {
+          setActiveWeaponId(base.id);
+        } else if (base?.kind === "armor" || base?.kind === "powerArmor") {
+          setActiveChassisId(base.id);
+        }
         setActiveLoadoutIndex(slotIndex);
         triggerBuilderAchievement("build_stats");
         triggerBuilderAchievement("build_perks");
@@ -868,16 +962,16 @@ export default function BuilderExperimentClient({
   );
 
   React.useEffect(() => {
-    if (isMounted) {
+    if (isMounted && !readOnly) {
       localStorage.setItem("roll-builder-payload", JSON.stringify(payload));
     }
-  }, [payload, isMounted]);
+  }, [payload, isMounted, readOnly]);
 
   React.useEffect(() => {
-    if (isMounted) {
+    if (isMounted && !readOnly) {
       localStorage.setItem("roll-builder-saves", JSON.stringify(savedLoadouts));
     }
-  }, [savedLoadouts, isMounted]);
+  }, [savedLoadouts, isMounted, readOnly]);
 
   React.useEffect(() => {
     if (!isMounted) return;
@@ -1131,20 +1225,7 @@ export default function BuilderExperimentClient({
   }, [isPA]);
 
 
-  const [equippedPerkCards, setEquippedPerkCards] = React.useState<
-    { cardId: string; rank: number }[]
-  >(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
-      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
-      if (!perkSlotStr) return [];
-      const perkData = JSON.parse(perkSlotStr);
-      return Array.isArray(perkData.equippedCards) ? (perkData.equippedCards as { cardId: string; rank: number }[]) : [];
-    } catch {
-      return [];
-    }
-  });
+
 
   const mutationLayer = React.useMemo(
     () => {
@@ -1562,7 +1643,12 @@ export default function BuilderExperimentClient({
         body: JSON.stringify({
           title: shareTitle,
           description: `${piece.label} · ${payload.ghoul ? "Ghoul" : "Human"} · sandbox`,
-          payload,
+          payload: {
+            ...payload,
+            equippedPerkCards,
+            activeWeaponPieceId: activeWeaponId,
+            switchboardState: switchboardState ? (switchboardState as unknown as Record<string, unknown>) : undefined,
+          },
         }),
       });
       const body = (await response.json()) as {
@@ -1626,7 +1712,12 @@ export default function BuilderExperimentClient({
         body: JSON.stringify({
           title: shareTitle,
           description: `${piece.label} · ${payload.ghoul ? "Ghoul" : "Human"} · sandbox`,
-          payload,
+          payload: {
+            ...payload,
+            equippedPerkCards,
+            activeWeaponPieceId: activeWeaponId,
+            switchboardState: switchboardState ? (switchboardState as unknown as Record<string, unknown>) : undefined,
+          },
           editToken: activeTransmission.editToken,
         }),
       });
@@ -1698,6 +1789,7 @@ export default function BuilderExperimentClient({
             ? data.legendaryPerks.map((lp) => lp.id)
             : prev.legendaryPerkIds,
         ghoul: data.isGhoul !== undefined ? data.isGhoul : prev.ghoul,
+        equippedPerkCards: data.equippedCards,
       }));
       setEquippedPerkCards(data.equippedCards);
     },
@@ -1784,7 +1876,7 @@ export default function BuilderExperimentClient({
           {/* Header */}
           <div className="flex items-center justify-between text-[0.72rem] uppercase font-black text-foreground/50 tracking-widest border-b border-border/20 pb-1 mb-1.5">
             <span>{label}</span>
-            {isPA && payloadIndex !== null && (
+            {isPA && payloadIndex !== null && !readOnly && (
               <button
                 type="button"
                 className="text-[0.84rem] text-accent hover:underline font-black uppercase transition-colors"
@@ -1807,28 +1899,34 @@ export default function BuilderExperimentClient({
           {/* Per-Slot Armor Piece Selector for Mixed Sets */}
           {!isPA && payloadIndex !== null && (
             <div className="mb-1.5">
-              <select
-                className="w-full text-[0.68rem] bg-background/90 border border-border/40 rounded px-1 py-0.5 font-mono uppercase text-accent font-bold cursor-pointer hover:border-accent"
-                value={payload.armorPieceSetKeys?.[payloadIndex] || piece.armorSetKey || "civil-engineer"}
-                onChange={(e) => {
-                  const currentKeys = payload.armorPieceSetKeys || [
-                    piece.armorSetKey || "civil-engineer",
-                    piece.armorSetKey || "civil-engineer",
-                    piece.armorSetKey || "civil-engineer",
-                    piece.armorSetKey || "civil-engineer",
-                    piece.armorSetKey || "civil-engineer"
-                  ];
-                  const nextKeys = [...currentKeys];
-                  nextKeys[payloadIndex] = e.target.value;
-                  setPayload(p => ({ ...p, armorPieceSetKeys: nextKeys }));
-                }}
-              >
-                {ARMOR_SET_ROWS.map((row) => (
-                  <option key={row.key} value={row.key} className="bg-background text-foreground">
-                    {row.label}
-                  </option>
-                ))}
-              </select>
+              {readOnly ? (
+                <div className="w-full text-[0.68rem] bg-background/90 border border-border/30 rounded px-1.5 py-0.5 font-mono uppercase text-accent font-bold truncate">
+                  {ARMOR_SET_ROWS.find(r => r.key === (payload.armorPieceSetKeys?.[payloadIndex] || piece.armorSetKey || "civil-engineer"))?.label || "Armor Piece"}
+                </div>
+              ) : (
+                <select
+                  className="w-full text-[0.68rem] bg-background/90 border border-border/40 rounded px-1 py-0.5 font-mono uppercase text-accent font-bold cursor-pointer hover:border-accent"
+                  value={payload.armorPieceSetKeys?.[payloadIndex] || piece.armorSetKey || "civil-engineer"}
+                  onChange={(e) => {
+                    const currentKeys = payload.armorPieceSetKeys || [
+                      piece.armorSetKey || "civil-engineer",
+                      piece.armorSetKey || "civil-engineer",
+                      piece.armorSetKey || "civil-engineer",
+                      piece.armorSetKey || "civil-engineer",
+                      piece.armorSetKey || "civil-engineer"
+                    ];
+                    const nextKeys = [...currentKeys];
+                    nextKeys[payloadIndex] = e.target.value;
+                    setPayload(p => ({ ...p, armorPieceSetKeys: nextKeys }));
+                  }}
+                >
+                  {ARMOR_SET_ROWS.map((row) => (
+                    <option key={row.key} value={row.key} className="bg-background text-foreground">
+                      {row.label}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           )}
 
@@ -1847,7 +1945,7 @@ export default function BuilderExperimentClient({
               )}
 
               {/* Tweak selectors */}
-              {!isRegularHelmet && payloadIndex !== null && (
+              {!readOnly && !isRegularHelmet && payloadIndex !== null && (
                 <div className="flex flex-col gap-1 mt-1">
                   {!isPA && (
                     <select
@@ -1891,17 +1989,22 @@ export default function BuilderExperimentClient({
                         <div 
                           key={starIndex}
                           className={cn(
-                            "flex items-center justify-between text-[0.72rem] rounded px-1.5 py-0.5 cursor-pointer transition-all border",
+                            "flex items-center justify-between text-[0.72rem] rounded px-1.5 py-0.5 transition-all border",
+                            !readOnly && "cursor-pointer",
                             mod 
                               ? "border-accent/30 bg-accent/[0.04] text-foreground/90 hover:border-accent/60" 
                               : "border-dashed border-border/30 text-foreground/40 hover:border-accent/40 hover:text-foreground/75"
                           )}
-                          onClick={() => setActivePick({ scope: "armorSet", pieceIndex: payloadIndex, starIndex })}
+                          onClick={() => {
+                            if (!readOnly) {
+                              setActivePick({ scope: "armorSet", pieceIndex: payloadIndex, starIndex });
+                            }
+                          }}
                         >
                           <span className="truncate max-w-[100px] font-bold">
                             {starIndex + 1}★ {mod ? mod.name : "empty"}
                           </span>
-                          {mod && (
+                          {mod && !readOnly && (
                             <button
                               type="button"
                               className="text-[0.84rem] text-foreground/40 hover:text-destructive px-1 font-bold"
@@ -1987,139 +2090,221 @@ export default function BuilderExperimentClient({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <span className="text-[0.7rem] uppercase font-mono tracking-widest text-emerald-400 font-bold flex items-center gap-1.5">
-              <Terminal className="h-3.5 w-3.5 animate-pulse" /> VAULT-TEC PUNCH CARD MACHINE // B.U.I.L.D. SANDBOX
+              <Terminal className="h-3.5 w-3.5 animate-pulse" />{" "}
+              {readOnly ? "VAULT-TEC ARCHIVAL TRANSMISSION // SPECTATOR LOADOUT" : "VAULT-TEC PUNCH CARD MACHINE // B.U.I.L.D. SANDBOX"}
             </span>
             <h1 className="text-3xl font-bold tracking-tight mt-1 font-mono text-white">
-              B.U.I.L.D. Loadout Manager
+              {readOnly ? (sharedTransmissionTitle || shareTitle || "Wasteland Loadout Spec") : "B.U.I.L.D. Loadout Manager"}
             </h1>
             <p className="text-sm text-slate-300 mt-1 font-mono">
-              Battle Utility &amp; Inventory Logistics Diagnostic System
+              {readOnly
+                ? `Unified 4-Tab Transmission Spec · ${sharedTransmissionSlug ? `ID: ${sharedTransmissionSlug}` : "Verified Build"}`
+                : "Battle Utility & Inventory Logistics Diagnostic System"}
             </p>
           </div>
           
           <div className="flex flex-col items-start lg:items-end gap-2 font-mono text-xs">
-            <div className="flex flex-wrap items-center gap-2">
-              {/* Global Species Selector (Human vs Playable Ghoul) */}
-              <div className="flex items-center gap-1 rounded-lg border border-emerald-500/50 bg-slate-900/90 p-1 shadow-md">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPayload((p) => ({ ...p, ghoul: false }));
-                    triggerBuilderAchievement("build_biometrics");
-                  }}
-                  className={cn(
-                    "px-2.5 py-1 rounded text-xs font-bold uppercase transition-all flex items-center gap-1 cursor-pointer",
-                    !payload.ghoul
-                      ? "bg-emerald-500 text-slate-950 font-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
-                      : "text-slate-400 hover:text-slate-200"
-                  )}
-                >
-                  <span>👤</span>
-                  <span>HUMAN</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPayload((p) => ({ ...p, ghoul: true }));
-                    triggerBuilderAchievement("build_biometrics");
-                  }}
-                  className={cn(
-                    "px-2.5 py-1 rounded text-xs font-bold uppercase transition-all flex items-center gap-1 cursor-pointer",
-                    payload.ghoul
-                      ? "bg-lime-500 text-slate-950 font-black shadow-[0_0_15px_rgba(132,204,22,0.5)] animate-pulse"
-                      : "text-slate-400 hover:text-slate-200"
-                  )}
-                >
-                  <span>☣️</span>
-                  <span>PLAYABLE GHOUL</span>
-                </button>
-              </div>
-
-              {/* Active Transmission Editing Banner */}
-              {activeTransmission && (
-                <div className="flex items-center gap-2 rounded border border-amber-500/60 bg-amber-950/50 px-2.5 py-1 text-xs backdrop-blur-sm">
-                  <Radio className="h-3.5 w-3.5 text-amber-400 shrink-0 animate-pulse" />
-                  <div className="flex items-center gap-1 font-mono text-[0.7rem]">
-                    <span className="text-amber-400 font-black uppercase">
-                      {activeTransmission.isOwner ? "TRANSMISSION:" : "VIEWING:"}
-                    </span>
-                    <span className="text-amber-200 font-bold max-w-[120px] sm:max-w-[180px] truncate" title={activeTransmission.title}>
-                      {activeTransmission.title}
-                    </span>
-                  </div>
-                  {activeTransmission.isOwner && (
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={updateTransmission}
-                      disabled={updateBusy}
-                      className="h-7 px-2.5 text-[0.68rem] font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-all shrink-0 flex items-center gap-1"
-                    >
-                      <RefreshCw className={cn("h-3 w-3", updateBusy && "animate-spin")} />
-                      {updateBusy ? "SAVING..." : "UPDATE"}
-                    </Button>
-                  )}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={exitTransmissionMode}
-                    className="h-7 w-7 p-0 text-slate-400 hover:text-white hover:bg-amber-900/40 shrink-0"
-                    title="Exit transmission mode"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </Button>
+            {readOnly ? (
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Global Species Badge */}
+                <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/50 bg-slate-900/90 px-3 py-1.5 shadow-md">
+                  <span>{payload.ghoul ? "☣️" : "👤"}</span>
+                  <span className="font-bold text-xs uppercase text-slate-200">
+                    {payload.ghoul ? "PLAYABLE GHOUL" : "HUMAN"}
+                  </span>
                 </div>
-              )}
 
-              {/* Publish / Clone Controls */}
-              <div className="flex items-center gap-1 rounded border border-emerald-500/50 bg-emerald-950/40 p-0.5">
-                <Input
-                  className="h-8 w-36 sm:w-44 text-xs bg-transparent border-0 font-mono text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2.5"
-                  value={shareTitle}
-                  onChange={(e) => setShareTitle(e.target.value)}
-                  placeholder="Loadout name..."
-                />
+                {/* Clone / Fork in Builder */}
                 <Button
                   type="button"
                   size="sm"
-                  className="h-8 px-3 text-[0.72rem] font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5"
-                  onClick={shareBuild}
-                  disabled={shareBusy}
-                  title={activeTransmission ? "Publish as a new transmission" : "Publish transmission to vault"}
+                  onClick={() => {
+                    try {
+                      if (typeof window !== "undefined") {
+                        window.localStorage.setItem("roll_active_builder_payload", JSON.stringify(payload));
+                        window.localStorage.setItem("roll_equipped_perks", JSON.stringify(equippedPerkCards));
+                        if (switchboardState) {
+                          window.localStorage.setItem("roll_combat_switchboard_state", JSON.stringify(switchboardState));
+                        }
+                      }
+                    } catch {}
+                    window.location.href = "/build";
+                  }}
+                  className="h-8 px-3 text-[0.72rem] font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5 cursor-pointer"
+                  title="Clone this loadout into your interactive B.U.I.L.D. workspace"
                 >
-                  <Share2 className="h-3.5 w-3.5" />
-                  {shareBusy ? "PUBLISHING..." : activeTransmission ? "SAVE AS NEW" : "PUBLISH"}
+                  <GitFork className="h-3.5 w-3.5" />
+                  Clone in Builder
                 </Button>
+
+                {/* Copy Share Link */}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const fullUrl = typeof window !== "undefined" ? window.location.href : "";
+                    if (fullUrl) {
+                      navigator.clipboard.writeText(fullUrl);
+                      setShareCopied(true);
+                      setTimeout(() => setShareCopied(false), 2000);
+                    }
+                  }}
+                  className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  {shareCopied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-400" /> COPIED!
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-3.5 w-3.5" /> COPY TRANSMISSION LINK
+                    </>
+                  )}
+                </Button>
+
+                {/* Edit Transmission if Owner */}
+                {isOwner && sharedTransmissionSlug && (
+                  <Link
+                    href={`/build?transmission=${encodeURIComponent(sharedTransmissionSlug)}`}
+                    className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-amber-500/60 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60 transition-all flex items-center gap-1.5"
+                  >
+                    <Radio className="h-3.5 w-3.5 text-amber-400" />
+                    Edit Transmission
+                  </Link>
+                )}
+
+                <Link
+                  href="/build"
+                  className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-slate-700 bg-slate-900/60 text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5"
+                >
+                  New Build ↗
+                </Link>
               </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Global Species Selector (Human vs Playable Ghoul) */}
+                <div className="flex items-center gap-1 rounded-lg border border-emerald-500/50 bg-slate-900/90 p-1 shadow-md">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPayload((p) => ({ ...p, ghoul: false }));
+                      triggerBuilderAchievement("build_biometrics");
+                    }}
+                    className={cn(
+                      "px-2.5 py-1 rounded text-xs font-bold uppercase transition-all flex items-center gap-1 cursor-pointer",
+                      !payload.ghoul
+                        ? "bg-emerald-500 text-slate-950 font-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                        : "text-slate-400 hover:text-slate-200"
+                    )}
+                  >
+                    <span>👤</span>
+                    <span>HUMAN</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPayload((p) => ({ ...p, ghoul: true }));
+                      triggerBuilderAchievement("build_biometrics");
+                    }}
+                    className={cn(
+                      "px-2.5 py-1 rounded text-xs font-bold uppercase transition-all flex items-center gap-1 cursor-pointer",
+                      payload.ghoul
+                        ? "bg-lime-500 text-slate-950 font-black shadow-[0_0_15px_rgba(132,204,22,0.5)] animate-pulse"
+                        : "text-slate-400 hover:text-slate-200"
+                    )}
+                  >
+                    <span>☣️</span>
+                    <span>PLAYABLE GHOUL</span>
+                  </button>
+                </div>
 
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setIsNdImportOpen(true)}
-                className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
-              >
-                <Link2 className="h-3.5 w-3.5" />
-                Import N&amp;D Spec
-              </Button>
+                {/* Active Transmission Editing Banner */}
+                {activeTransmission && (
+                  <div className="flex items-center gap-2 rounded border border-amber-500/60 bg-amber-950/50 px-2.5 py-1 text-xs backdrop-blur-sm">
+                    <Radio className="h-3.5 w-3.5 text-amber-400 shrink-0 animate-pulse" />
+                    <div className="flex items-center gap-1 font-mono text-[0.7rem]">
+                      <span className="text-amber-400 font-black uppercase">
+                        {activeTransmission.isOwner ? "TRANSMISSION:" : "VIEWING:"}
+                      </span>
+                      <span className="text-amber-200 font-bold max-w-[120px] sm:max-w-[180px] truncate" title={activeTransmission.title}>
+                        {activeTransmission.title}
+                      </span>
+                    </div>
+                    {activeTransmission.isOwner && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={updateTransmission}
+                        disabled={updateBusy}
+                        className="h-7 px-2.5 text-[0.68rem] font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-all shrink-0 flex items-center gap-1"
+                      >
+                        <RefreshCw className={cn("h-3 w-3", updateBusy && "animate-spin")} />
+                        {updateBusy ? "SAVING..." : "UPDATE"}
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={exitTransmissionMode}
+                      className="h-7 w-7 p-0 text-slate-400 hover:text-white hover:bg-amber-900/40 shrink-0"
+                      title="Exit transmission mode"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                )}
 
-              <a
-                className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-2 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all flex items-center gap-1"
-                href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Resist Matrix Notes
-              </a>
-              <a
-                className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-2 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all flex items-center gap-1"
-                href="https://nukesdragons.com/fallout-76/character"
-                target="_blank"
-                rel="noreferrer"
-              >
-                N&amp;D Overlay Spec
-              </a>
-            </div>
+                {/* Publish / Clone Controls */}
+                <div className="flex items-center gap-1 rounded border border-emerald-500/50 bg-emerald-950/40 p-0.5">
+                  <Input
+                    className="h-8 w-36 sm:w-44 text-xs bg-transparent border-0 font-mono text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2.5"
+                    value={shareTitle}
+                    onChange={(e) => setShareTitle(e.target.value)}
+                    placeholder="Loadout name..."
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="h-8 px-3 text-[0.72rem] font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5"
+                    onClick={shareBuild}
+                    disabled={shareBusy}
+                    title={activeTransmission ? "Publish as a new transmission" : "Publish transmission to vault"}
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                    {shareBusy ? "PUBLISHING..." : activeTransmission ? "SAVE AS NEW" : "PUBLISH"}
+                  </Button>
+                </div>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => setIsNdImportOpen(true)}
+                  className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+                >
+                  <Link2 className="h-3.5 w-3.5" />
+                  Import N&amp;D Spec
+                </Button>
+
+                <a
+                  className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-2 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all flex items-center gap-1"
+                  href="https://nukaknights.com/articles/expected-changes-for-the-backwoods-update-on-3rd-march-2026.html#armor"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Resist Matrix Notes
+                </a>
+                <a
+                  className="rounded border border-emerald-500/60 bg-emerald-950/30 px-3 py-2 text-emerald-400 font-bold hover:bg-emerald-900/50 transition-all flex items-center gap-1"
+                  href="https://nukesdragons.com/fallout-76/character"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  N&amp;D Overlay Spec
+                </a>
+              </div>
+            )}
 
             {/* Transmission Loading Indicator */}
             {transmissionLoading && (
@@ -2262,6 +2447,10 @@ export default function BuilderExperimentClient({
       <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "perks" ? "block" : "hidden")}>
         <PerkBuilder
           mode="live"
+          readOnly={readOnly}
+          initialSpecials={payload.baseSpecial}
+          initialEquippedCards={equippedPerkCards}
+          initialLegendaryPerks={payload.legendaryPerkIds}
           externalImport={importedBuildForPerkBuilder}
           onLoadoutChange={handlePerkLoadoutChange}
         />
@@ -2270,6 +2459,8 @@ export default function BuilderExperimentClient({
       {/* VIEWPORT: BIOMETRICS & CHARACTER PANEL (TAB 3) */}
       <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "biometrics" ? "block" : "hidden")}>
         <BuilderCombatSwitchboard
+          readOnly={readOnly}
+          initialState={switchboardState || undefined}
           rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
           isGhoul={payload.ghoul}
           onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
@@ -2646,33 +2837,39 @@ export default function BuilderExperimentClient({
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <select
-                      value={activeWeaponPiece.id}
-                      onChange={(e) => setBase(e.target.value)}
-                      className="h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-amber-300 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer max-w-[170px] sm:max-w-[240px] truncate shadow-inner"
-                      title="Switch Active Weapon Chassis"
-                    >
-                      {groupedWeaponCategories.map((group) => (
-                        <optgroup
-                          key={group.categoryKey}
-                          label={`── ${group.categoryLabel.toUpperCase()} ──`}
-                          className="bg-slate-950 text-emerald-400 font-bold"
-                        >
-                          {group.options.map((opt) => (
-                            <option
-                              key={opt.id}
-                              value={opt.id}
-                              className={cn(
-                                "bg-slate-900 text-slate-100",
-                                opt.isVariant && "text-amber-200"
-                              )}
-                            >
-                              {opt.isVariant ? `\u00A0\u00A0↳ ${opt.label}` : opt.label}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ))}
-                    </select>
+                    {readOnly ? (
+                      <span className="h-7 flex items-center text-xs font-mono bg-slate-950 border border-amber-500/40 text-amber-300 rounded px-2.5 max-w-[170px] sm:max-w-[240px] truncate shadow-inner font-bold">
+                        {activeWeaponPiece.label}
+                      </span>
+                    ) : (
+                      <select
+                        value={activeWeaponPiece.id}
+                        onChange={(e) => setBase(e.target.value)}
+                        className="h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-amber-300 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer max-w-[170px] sm:max-w-[240px] truncate shadow-inner"
+                        title="Switch Active Weapon Chassis"
+                      >
+                        {groupedWeaponCategories.map((group) => (
+                          <optgroup
+                            key={group.categoryKey}
+                            label={`── ${group.categoryLabel.toUpperCase()} ──`}
+                            className="bg-slate-950 text-emerald-400 font-bold"
+                          >
+                            {group.options.map((opt) => (
+                              <option
+                                key={opt.id}
+                                value={opt.id}
+                                className={cn(
+                                  "bg-slate-900 text-slate-100",
+                                  opt.isVariant && "text-amber-200"
+                                )}
+                              >
+                                {opt.isVariant ? `\u00A0\u00A0↳ ${opt.label}` : opt.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    )}
                     <span className="text-[0.62rem] px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
                       ACTIVE WEAPON
                     </span>
@@ -2770,20 +2967,22 @@ export default function BuilderExperimentClient({
                           +{Math.round(activeWeaponAttachments.durabilityPct * 100)}% Durability
                         </span>
                       )}
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        className="ml-auto h-5 px-2 text-[0.65rem] text-foreground/45 hover:text-amber-400 font-mono cursor-pointer"
-                        onClick={() => {
-                          setPayload((p) => ({
-                            ...p,
-                            weaponCrafting: defaultWeaponInnateCrafting(activeWeaponPiece.id),
-                          }));
-                        }}
-                      >
-                        ↺ Reset Meta Defaults
-                      </Button>
+                      {!readOnly && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          className="ml-auto h-5 px-2 text-[0.65rem] text-foreground/45 hover:text-amber-400 font-mono cursor-pointer"
+                          onClick={() => {
+                            setPayload((p) => ({
+                              ...p,
+                              weaponCrafting: defaultWeaponInnateCrafting(activeWeaponPiece.id),
+                            }));
+                          }}
+                        >
+                          ↺ Reset Meta Defaults
+                        </Button>
+                      )}
                     </div>
 
                     {/* Attachment Selectors Grid */}
@@ -2829,17 +3028,23 @@ export default function BuilderExperimentClient({
                               )}
                             </div>
 
-                            <select
-                              value={activeOpt?.id || ""}
-                              onChange={(e) => setWeaponInnateSlot(slotKey, e.target.value)}
-                              className="w-full h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-slate-100 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer truncate shadow-inner"
-                            >
-                              {options.map((opt) => (
-                                <option key={opt.id} value={opt.id} className="bg-slate-900 text-slate-100">
-                                  {opt.label}
-                                </option>
-                              ))}
-                            </select>
+                            {readOnly ? (
+                              <div className="w-full h-7 flex items-center text-xs font-mono bg-slate-950/80 border border-amber-500/20 text-slate-200 rounded px-2 truncate font-semibold">
+                                {activeOpt?.label || "Standard"}
+                              </div>
+                            ) : (
+                              <select
+                                value={activeOpt?.id || ""}
+                                onChange={(e) => setWeaponInnateSlot(slotKey, e.target.value)}
+                                className="w-full h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-slate-100 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer truncate shadow-inner"
+                              >
+                                {options.map((opt) => (
+                                  <option key={opt.id} value={opt.id} className="bg-slate-900 text-slate-100">
+                                    {opt.label}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
 
                             {activeOpt?.description && (
                               <p className="text-[0.65rem] text-foreground/50 leading-relaxed truncate">
@@ -2884,29 +3089,31 @@ export default function BuilderExperimentClient({
                                   {mod ? mod.name : starLabel}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-1 shrink-0">
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-6 px-2 text-[0.66rem] uppercase font-mono font-bold hover:text-accent bg-accent/15 border border-accent/40 cursor-pointer"
-                                  onClick={() => setActivePick({ scope: "single", starIndex })}
-                                >
-                                  Bench
-                                </Button>
-                                {mod && (
+                              {!readOnly && (
+                                <div className="flex items-center gap-1 shrink-0">
                                   <Button
                                     type="button"
                                     size="sm"
                                     variant="ghost"
-                                    className="h-6 px-1.5 text-[0.66rem] uppercase font-mono hover:text-destructive text-foreground/40 cursor-pointer"
-                                    onClick={() => clearStarSlot("single", undefined, starIndex)}
-                                    title="Remove Mod"
+                                    className="h-6 px-2 text-[0.66rem] uppercase font-mono font-bold hover:text-accent bg-accent/15 border border-accent/40 cursor-pointer"
+                                    onClick={() => setActivePick({ scope: "single", starIndex })}
                                   >
-                                    ✕
+                                    Bench
                                   </Button>
-                                )}
-                              </div>
+                                  {mod && (
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="ghost"
+                                      className="h-6 px-1.5 text-[0.66rem] uppercase font-mono hover:text-destructive text-foreground/40 cursor-pointer"
+                                      onClick={() => clearStarSlot("single", undefined, starIndex)}
+                                      title="Remove Mod"
+                                    >
+                                      ✕
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
                             </div>
 
                             {/* Live Mod Tracker Status */}
@@ -3121,61 +3328,77 @@ export default function BuilderExperimentClient({
         <div className="space-y-4">
           
           {/* Holotape presets compact dropdown saver */}
-          <div className="pip-terminal-panel p-3.5 rounded-xl space-y-2.5 font-mono">
-            <div className="flex items-center justify-between border-b border-border/20 pb-1.5">
-              <div className="text-xs font-black uppercase tracking-widest text-accent">
-                [ PRESETS HOLOTAPE DECK ]
+          {readOnly ? (
+            <div className="pip-terminal-panel p-3.5 rounded-xl space-y-2 font-mono">
+              <div className="flex items-center justify-between border-b border-border/20 pb-1.5">
+                <div className="text-xs font-black uppercase tracking-widest text-accent">
+                  [ ARCHIVED LOADOUT TAPE ]
+                </div>
+                <span className="px-2 py-0.5 rounded text-[0.68rem] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
+                  VERIFIED SNAPSHOT
+                </span>
               </div>
-              <div className={cn(
-                "flex items-center gap-1 px-2 py-0.5 rounded text-[0.78rem] font-black uppercase border tracking-wider",
-                activeLoadoutIndex === null
-                  ? "bg-amber-400/10 border-amber-400/20 text-amber-500/90"
-                  : "bg-emerald-400/10 border-emerald-400/20 text-emerald-500/90"
-              )}>
+              <p className="text-[0.7rem] text-foreground/60 leading-normal">
+                Viewing archived 4-tab transmission snapshot. To tweak or modify, use <span className="text-accent font-bold">Clone in Builder</span> at the top header to load it into your local terminal.
+              </p>
+            </div>
+          ) : (
+            <div className="pip-terminal-panel p-3.5 rounded-xl space-y-2.5 font-mono">
+              <div className="flex items-center justify-between border-b border-border/20 pb-1.5">
+                <div className="text-xs font-black uppercase tracking-widest text-accent">
+                  [ PRESETS HOLOTAPE DECK ]
+                </div>
                 <div className={cn(
-                  "h-1.5 w-1.5 rounded-full animate-pulse",
-                  activeLoadoutIndex === null ? "bg-amber-500" : "bg-emerald-500"
-                )} />
-                <span>{activeLoadoutIndex === null ? "SANDBOX" : `SLOT ${activeLoadoutIndex + 1}`}</span>
+                  "flex items-center gap-1 px-2 py-0.5 rounded text-[0.78rem] font-black uppercase border tracking-wider",
+                  activeLoadoutIndex === null
+                    ? "bg-amber-400/10 border-amber-400/20 text-amber-500/90"
+                    : "bg-emerald-400/10 border-emerald-400/20 text-emerald-500/90"
+                )}>
+                  <div className={cn(
+                    "h-1.5 w-1.5 rounded-full animate-pulse",
+                    activeLoadoutIndex === null ? "bg-amber-500" : "bg-emerald-500"
+                  )} />
+                  <span>{activeLoadoutIndex === null ? "SANDBOX" : `SLOT ${activeLoadoutIndex + 1}`}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <select
+                  className="h-8 flex-1 min-w-0 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer truncate focus:outline-none focus:border-accent"
+                  value={activeLoadoutIndex ?? -1}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    if (val >= 0 && savedLoadouts[val]) {
+                      loadLoadout(val);
+                    }
+                  }}
+                >
+                  <option value={-1} className="bg-background text-foreground">-- Select Saved Holotape Slot --</option>
+                  {Array.from({ length: 10 }).map((_, i) => {
+                    const saved = savedLoadouts[i];
+                    return (
+                      <option key={i} value={i} className="bg-background text-foreground">
+                        {saved ? `Tape ${i + 1}: ${saved.name}` : `Tape Slot ${i + 1} (Empty)`}
+                      </option>
+                    );
+                  })}
+                </select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-[0.72rem] uppercase font-mono px-2.5 font-bold shrink-0 hover:text-accent hover:border-accent"
+                  onClick={() => {
+                    const idx = activeLoadoutIndex ?? 0;
+                    saveLoadout(idx);
+                  }}
+                  title="Write current loadout to selected slot"
+                >
+                  <Save className="h-3 w-3 mr-1" /> Write
+                </Button>
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <select
-                className="h-8 flex-1 min-w-0 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer truncate focus:outline-none focus:border-accent"
-                value={activeLoadoutIndex ?? -1}
-                onChange={(e) => {
-                  const val = parseInt(e.target.value, 10);
-                  if (val >= 0 && savedLoadouts[val]) {
-                    loadLoadout(val);
-                  }
-                }}
-              >
-                <option value={-1} className="bg-background text-foreground">-- Select Saved Holotape Slot --</option>
-                {Array.from({ length: 10 }).map((_, i) => {
-                  const saved = savedLoadouts[i];
-                  return (
-                    <option key={i} value={i} className="bg-background text-foreground">
-                      {saved ? `Tape ${i + 1}: ${saved.name}` : `Tape Slot ${i + 1} (Empty)`}
-                    </option>
-                  );
-                })}
-              </select>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-8 text-[0.72rem] uppercase font-mono px-2.5 font-bold shrink-0 hover:text-accent hover:border-accent"
-                onClick={() => {
-                  const idx = activeLoadoutIndex ?? 0;
-                  saveLoadout(idx);
-                }}
-                title="Write current loadout to selected slot"
-              >
-                <Save className="h-3 w-3 mr-1" /> Write
-              </Button>
-            </div>
-          </div>
+          )}
 
           {/* Character Species / Ghoul switch & Registry flush */}
           <div className="pip-terminal-panel p-4 rounded-xl space-y-3 font-mono">
@@ -3184,11 +3407,13 @@ export default function BuilderExperimentClient({
             </div>
             
             <div className="space-y-3">
-              <label className="flex cursor-pointer items-start gap-2 text-xs text-foreground/75 hover:bg-background/25 p-1.5 rounded transition-all">
+              <label className={cn("flex items-start gap-2 text-xs text-foreground/75 p-1.5 rounded transition-all", !readOnly ? "cursor-pointer hover:bg-background/25" : "cursor-default")}>
                 <input
                   type="checkbox"
+                  disabled={readOnly}
                   checked={payload.ghoul}
                   onChange={(e) => {
+                    if (readOnly) return;
                     const next = e.target.checked;
                     setPayload((p) => {
                       const base = { ...p, ghoul: next };
@@ -3197,7 +3422,7 @@ export default function BuilderExperimentClient({
                       return base;
                     });
                   }}
-                  className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[var(--accent)] cursor-pointer"
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[var(--accent)] cursor-pointer disabled:cursor-not-allowed"
                 />
                 <span>
                   <span className="font-bold text-accent">GHOUL BIOLOGY ACTIVATION</span>
@@ -3220,28 +3445,30 @@ export default function BuilderExperimentClient({
             </div>
 
             {/* Global Actions */}
-            <div className="flex gap-2 pt-2 border-t border-border/15">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={clearAllSelections}
-                className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20 flex-1"
-              >
-                <Trash2 className="h-3 w-3" />
-                <span>Flush Registry</span>
-              </Button>
-              {undoPayload ? (
+            {!readOnly && (
+              <div className="flex gap-2 pt-2 border-t border-border/15">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
-                  onClick={undoClear}
-                  className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono flex-1 font-bold"
+                  onClick={clearAllSelections}
+                  className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20 flex-1"
                 >
-                  <RotateCcw className="h-3 w-3" />
-                  <span>Restore</span>
+                  <Trash2 className="h-3 w-3" />
+                  <span>Flush Registry</span>
                 </Button>
-              ) : null}
-            </div>
+                {undoPayload ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={undoClear}
+                    className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono flex-1 font-bold"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                    <span>Restore</span>
+                  </Button>
+                ) : null}
+              </div>
+            )}
           </div>
 
           {/* Shopping list of modules required (Compact High-Density Matrix) */}
@@ -3405,7 +3632,7 @@ export default function BuilderExperimentClient({
               </div>
               <ProgressToggle
                 unlocked={currentBaseLearned}
-                disabled={!isSignedIn || pendingLearnedPieceId === piece.id}
+                disabled={!isSignedIn || pendingLearnedPieceId === piece.id || readOnly}
                 onToggle={() =>
                   void toggleLearnedBasePiece(piece.id, !currentBaseLearned)
                 }

@@ -31,6 +31,10 @@ interface PerkBuilderProps {
   characterId?: string | null;
   characterName?: string | null;
   mode?: "live" | "pts";
+  readOnly?: boolean;
+  initialSpecials?: SpecialsState | Record<string, number>;
+  initialEquippedCards?: EquippedItem[];
+  initialLegendaryPerks?: Array<{ id: string; rank: number }> | string[];
   onLoadoutChange?: (data: {
     specials: SpecialsState;
     equippedCards: EquippedItem[];
@@ -41,6 +45,45 @@ interface PerkBuilderProps {
 }
 
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
+
+function normalizeToSpecialsState(raw?: Record<string, number> | null): SpecialsState | null {
+  if (!raw || typeof raw !== "object" || Object.keys(raw).length === 0) return null;
+  return {
+    S: raw.S ?? raw.str ?? 1,
+    P: raw.P ?? raw.per ?? 1,
+    E: raw.E ?? raw.end ?? 1,
+    C: raw.C ?? raw.cha ?? 1,
+    I: raw.I ?? raw.int ?? 1,
+    A: raw.A ?? raw.agi ?? 1,
+    L: raw.L ?? raw.lck ?? 1,
+  };
+}
+
+function normalizeEquippedCards(
+  cards?: EquippedItem[] | null,
+  legendaryIds?: Array<{ id: string; rank: number }> | string[] | null
+): EquippedItem[] {
+  const result: EquippedItem[] = [];
+  if (Array.isArray(cards)) {
+    for (const item of cards) {
+      if (!item) continue;
+      const cardId = typeof item === "string" ? item : item.cardId;
+      const rank = typeof item === "object" && typeof item.rank === "number" ? item.rank : 1;
+      if (cardId) result.push({ cardId, rank });
+    }
+  }
+  if (Array.isArray(legendaryIds)) {
+    for (const item of legendaryIds) {
+      if (!item) continue;
+      const cardId = typeof item === "string" ? item.split(":")[0] : item.id;
+      const rank = typeof item === "string" ? (Number(item.split(":")[1]) || 4) : (item.rank || 4);
+      if (cardId && !result.some((c) => c.cardId === cardId)) {
+        result.push({ cardId, rank });
+      }
+    }
+  }
+  return result;
+}
 
 function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => void }) {
   React.useEffect(() => {
@@ -60,6 +103,10 @@ export default function PerkBuilder({
   characterId,
   characterName,
   mode = "live",
+  readOnly = false,
+  initialSpecials,
+  initialEquippedCards,
+  initialLegendaryPerks,
   onLoadoutChange,
   externalImport,
 }: PerkBuilderProps) {
@@ -69,17 +116,15 @@ export default function PerkBuilder({
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<SpecialCategory | "ALL" | "GHOUL">("ALL");
   const [showRoadmap, setShowRoadmap] = React.useState(false);
-  const [specials, setSpecials] = React.useState<SpecialsState>({
-    S: 1,
-    P: 1,
-    E: 1,
-    C: 1,
-    I: 1,
-    A: 1,
-    L: 1
+  const [specials, setSpecials] = React.useState<SpecialsState>(() => {
+    const normalized = normalizeToSpecialsState(initialSpecials as Record<string, number> | undefined);
+    if (normalized) return normalized;
+    return { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
   });
 
-  const [equippedCards, setEquippedCards] = React.useState<EquippedItem[]>([]);
+  const [equippedCards, setEquippedCards] = React.useState<EquippedItem[]>(() => {
+    return normalizeEquippedCards(initialEquippedCards, initialLegendaryPerks);
+  });
   const [saving, setSaving] = React.useState(false);
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
   const [isFemale, setIsFemale] = React.useState(false);
@@ -95,10 +140,28 @@ export default function PerkBuilder({
     } catch {}
   }, []);
 
-  const isInitialLoadedRef = React.useRef(false);
+  const isInitialLoadedRef = React.useRef(readOnly);
+
+  // Sync external props if they change (e.g. from loadout switch in B.U.I.L.D.)
+  React.useEffect(() => {
+    if (initialSpecials) {
+      const normalized = normalizeToSpecialsState(initialSpecials as Record<string, number> | undefined);
+      if (normalized) {
+        setSpecials(normalized);
+      }
+    }
+  }, [initialSpecials]);
+
+  React.useEffect(() => {
+    if (initialEquippedCards && initialEquippedCards.length > 0) {
+      const normalized = normalizeEquippedCards(initialEquippedCards, initialLegendaryPerks);
+      setEquippedCards(normalized);
+    }
+  }, [initialEquippedCards, initialLegendaryPerks]);
 
   // Load active loadout slot (LocalStorage first for instant load, then Cloud sync)
   React.useEffect(() => {
+    if (readOnly) return;
     isInitialLoadedRef.current = false;
     // 1. LocalStorage prefill
     try {
@@ -136,11 +199,11 @@ export default function PerkBuilder({
         }
       })
       .catch(() => undefined);
-  }, [characterId, activeSlot]);
+  }, [characterId, activeSlot, readOnly]);
 
   // Auto-save to LocalStorage on change ONLY after initial load is complete
   React.useEffect(() => {
-    if (!isInitialLoadedRef.current) return;
+    if (!isInitialLoadedRef.current || readOnly) return;
     try {
       localStorage.setItem(
         `roll_perk_loadout_slot_${activeSlot}`,
@@ -149,7 +212,7 @@ export default function PerkBuilder({
     } catch {
       // Ignore write error
     }
-  }, [activeSlot, specials, equippedCards]);
+  }, [activeSlot, specials, equippedCards, readOnly]);
 
   const safeEquippedCards = React.useMemo(() => {
     if (!Array.isArray(equippedCards)) return [];
@@ -184,6 +247,16 @@ export default function PerkBuilder({
     });
   }, [safeEquippedCards]);
 
+  // Auto-notify parent whenever specials or equippedCards change
+  React.useEffect(() => {
+    if (!isInitialLoadedRef.current || readOnly) return;
+    onLoadoutChange?.({
+      specials,
+      equippedCards,
+      legendaryPerks: equippedLegendaryCards.map((c) => ({ id: c.cardId, rank: c.rank })),
+    });
+  }, [specials, equippedCards, equippedLegendaryCards, onLoadoutChange, readOnly]);
+
   const equippedBySpecial = React.useMemo(() => {
     const map: Record<SpecialCategory, EquippedItem[]> = {
       S: [],
@@ -206,10 +279,11 @@ export default function PerkBuilder({
 
   // Universal Hard Cap of 15 for perk card slot capacity across all modes
   const effectiveCapacities = React.useMemo(() => {
-    const maxCap = 15;
     const caps: Record<keyof SpecialsState, number> = { S: 1, P: 1, E: 1, C: 1, I: 1, A: 1, L: 1 };
     (["S", "P", "E", "C", "I", "A", "L"] as Array<keyof SpecialsState>).forEach((stat) => {
-      caps[stat] = Math.min(maxCap, specials[stat] + (legendaryBonuses[stat] || 0));
+      const base = specials[stat];
+      const leg = legendaryBonuses[stat] || 0;
+      caps[stat] = Math.min(15, base + leg);
     });
     return caps;
   }, [specials, legendaryBonuses]);
@@ -246,6 +320,7 @@ export default function PerkBuilder({
   }, [searchQuery]);
 
   const handleSpecialChange = (stat: keyof SpecialsState, delta: number) => {
+    if (readOnly) return;
     setSpecials((prev) => {
       const current = prev[stat];
       const next = Math.max(1, Math.min(15, current + delta));
@@ -254,6 +329,7 @@ export default function PerkBuilder({
   };
 
   const handleEquipCard = (card: PerkCard, rank = 1) => {
+    if (readOnly) return;
     if (card.special === "LEGENDARY") {
       const isAlreadyEquipped = equippedCards.some((item) => item.cardId === card.id);
       if (!isAlreadyEquipped && equippedLegendaryCards.length >= 6) {
@@ -270,10 +346,12 @@ export default function PerkBuilder({
   };
 
   const handleUnequipCard = (cardId: string) => {
+    if (readOnly) return;
     setEquippedCards((prev) => prev.filter((item) => item.cardId !== cardId));
   };
 
   const handleSaveLoadout = async () => {
+    if (readOnly) return;
     setSaving(true);
     setSaveMessage(null);
 
@@ -477,28 +555,32 @@ export default function PerkBuilder({
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button onClick={handleGetAiAdvice} disabled={loadingAi} variant="outline" className="font-mono text-xs border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50">
-              {loadingAi ? "Analyzing Build..." : "Build Tactics"}
-            </Button>
             <Button onClick={handleExportDeckPng} variant="outline" className="font-mono text-xs border-emerald-500/60 text-emerald-400 bg-emerald-950/30 hover:bg-emerald-900/50">
               Export Deck PNG
             </Button>
-            <Button
-              onClick={handleSaveLoadout}
-              disabled={saving}
-              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs disabled:opacity-60"
-            >
-              {saving ? "Saving..." : isSignedIn ? "Save Active Loadout" : "Save Loadout (Local)"}
-            </Button>
-            {!isSignedIn && (
-              <Button
-                type="button"
-                onClick={() => signIn()}
-                variant="outline"
-                className="font-mono text-xs border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50"
-              >
-                Sign In to Sync Cloud
-              </Button>
+            {!readOnly && (
+              <>
+                <Button onClick={handleGetAiAdvice} disabled={loadingAi} variant="outline" className="font-mono text-xs border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50">
+                  {loadingAi ? "Analyzing Build..." : "Build Tactics"}
+                </Button>
+                <Button
+                  onClick={handleSaveLoadout}
+                  disabled={saving}
+                  className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs disabled:opacity-60"
+                >
+                  {saving ? "Saving..." : isSignedIn ? "Save Active Loadout" : "Save Loadout (Local)"}
+                </Button>
+                {!isSignedIn && (
+                  <Button
+                    type="button"
+                    onClick={() => signIn()}
+                    variant="outline"
+                    className="font-mono text-xs border-amber-500/60 text-amber-300 bg-amber-950/30 hover:bg-amber-900/50"
+                  >
+                    Sign In to Sync Cloud
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -518,22 +600,30 @@ export default function PerkBuilder({
       </div>
 
       {/* 6 Loadout Slot Selection Tabs */}
-      <div className="flex flex-wrap gap-1.5 border-b border-slate-800 pb-2.5 font-mono text-xs">
-        {[0, 1, 2, 3, 4, 5].map((slot) => (
-          <button
-            key={slot}
-            type="button"
-            onClick={() => setActiveSlot(slot)}
-            className={`px-3 py-1.5 border transition-all ${
-              activeSlot === slot
-                ? "border-amber-400 bg-amber-500/10 text-amber-300 font-black shadow-sm"
-                : "border-slate-800 bg-[#0c121a] text-slate-400 hover:text-white hover:border-slate-600"
-            }`}
-          >
-            SLOT {slot + 1}
-          </button>
-        ))}
-      </div>
+      {!readOnly ? (
+        <div className="flex flex-wrap gap-1.5 border-b border-slate-800 pb-2.5 font-mono text-xs">
+          {[0, 1, 2, 3, 4, 5].map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              onClick={() => setActiveSlot(slot)}
+              className={`px-3 py-1.5 border transition-all ${
+                activeSlot === slot
+                  ? "border-amber-400 bg-amber-500/10 text-amber-300 font-black shadow-sm"
+                  : "border-slate-800 bg-[#0c121a] text-slate-400 hover:text-white hover:border-slate-600"
+              }`}
+            >
+              SLOT {slot + 1}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-2.5 font-mono text-xs">
+          <span className="px-3 py-1 border border-amber-500/40 bg-amber-500/10 text-amber-300 font-bold tracking-wider uppercase">
+            &gt;&gt; SPECTATOR LOADOUT · PERK DECK (READ-ONLY)
+          </span>
+        </div>
+      )}
 
       {/* SPECIAL Stat Allocation Sliders */}
       <Card className="bg-slate-950 border-slate-800 shadow-xl">
@@ -547,13 +637,15 @@ export default function PerkBuilder({
                   <span className="ml-1.5 text-amber-300 font-normal">(+{totalLegendaryBonusSpecial} Legendary)</span>
                 ) : null}
               </span>
-              <button
-                type="button"
-                onClick={handleResetSpecials}
-                className="text-[0.68rem] px-2 py-0.5 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition-all font-mono"
-              >
-                Reset (1-1-1-1-1-1-1)
-              </button>
+              {!readOnly && (
+                <button
+                  type="button"
+                  onClick={handleResetSpecials}
+                  className="text-[0.68rem] px-2 py-0.5 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition-all font-mono"
+                >
+                  Reset (1-1-1-1-1-1-1)
+                </button>
+              )}
             </div>
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">
@@ -624,25 +716,29 @@ export default function PerkBuilder({
 
                   {/* Point Adjuster */}
                   <div className="flex items-center gap-1.5 z-10 my-1">
-                    <button
-                      type="button"
-                      title={`Decrease ${theme.name} base points`}
-                      onClick={() => handleSpecialChange(stat, -1)}
-                      className="w-7 h-7 rounded-md bg-[#121619]/80 hover:bg-[#121619] border border-[#e8dfc8]/40 text-[#f8f5ea] font-mono font-bold text-sm transition-all shadow active:scale-95 flex items-center justify-center"
-                    >
-                      -
-                    </button>
+                    {!readOnly && (
+                      <button
+                        type="button"
+                        title={`Decrease ${theme.name} base points`}
+                        onClick={() => handleSpecialChange(stat, -1)}
+                        className="w-7 h-7 rounded-md bg-[#121619]/80 hover:bg-[#121619] border border-[#e8dfc8]/40 text-[#f8f5ea] font-mono font-bold text-sm transition-all shadow active:scale-95 flex items-center justify-center"
+                      >
+                        -
+                      </button>
+                    )}
                     <span className="text-base font-mono font-bold text-[#fffdf5] w-6 text-center drop-shadow">
                       {specials[stat]}
                     </span>
-                    <button
-                      type="button"
-                      title={`Increase ${theme.name} base points`}
-                      onClick={() => handleSpecialChange(stat, 1)}
-                      className="w-7 h-7 rounded-md bg-[#121619]/80 hover:bg-[#121619] border border-[#e8dfc8]/40 text-[#f8f5ea] font-mono font-bold text-sm transition-all shadow active:scale-95 flex items-center justify-center"
-                    >
-                      +
-                    </button>
+                    {!readOnly && (
+                      <button
+                        type="button"
+                        title={`Increase ${theme.name} base points`}
+                        onClick={() => handleSpecialChange(stat, 1)}
+                        className="w-7 h-7 rounded-md bg-[#121619]/80 hover:bg-[#121619] border border-[#e8dfc8]/40 text-[#f8f5ea] font-mono font-bold text-sm transition-all shadow active:scale-95 flex items-center justify-center"
+                      >
+                        +
+                      </button>
+                    )}
                   </div>
 
                   {/* Stat Total & Card Capacity Badge */}
@@ -808,6 +904,7 @@ export default function PerkBuilder({
                 onEquipCard={handleEquipCard}
                 onUnequipCard={handleUnequipCard}
                 onFilterLegendary={() => setSelectedCategory("LEGENDARY")}
+                readOnly={readOnly}
               />
 
               {/* Mobile Fast SPECIAL Selector Bar (Small screens only) */}
@@ -846,6 +943,7 @@ export default function PerkBuilder({
                       onEquipCard={handleEquipCard}
                       onUnequipCard={handleUnequipCard}
                       onFilterSpecial={(s) => setSelectedCategory(s)}
+                      readOnly={readOnly}
                     />
                   </div>
                 ))}
@@ -879,8 +977,8 @@ export default function PerkBuilder({
                     isOutdated={card.isOutdated}
                     outdatedMeta={card.outdatedMeta}
                     reworkedFrom={card.reworkedFrom}
-                    onUnequip={() => handleUnequipCard(card.id)}
-                    onRankChange={(newRank) => handleEquipCard(card, newRank)}
+                    onUnequip={readOnly ? undefined : () => handleUnequipCard(card.id)}
+                    onRankChange={readOnly ? undefined : (newRank) => handleEquipCard(card, newRank)}
                   />
                 );
               })}
@@ -890,142 +988,146 @@ export default function PerkBuilder({
       </Card>
 
       {/* Perk Cards Catalog Selection */}
-      <Card className="bg-slate-950 border-slate-800 shadow-xl">
-        <CardHeader className="pb-3 border-b border-slate-900">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div>
-              <CardTitle className="text-base font-mono text-slate-100 flex items-center gap-2">
-                <span>Vault-Tec Perk Card Catalog</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono">
-                  {filteredCards.length} Cards
-                </span>
-              </CardTitle>
-              <CardDescription className="text-xs text-slate-400">Browse all Fallout 76 perk cards across S.P.E.C.I.A.L. categories.</CardDescription>
+      {!readOnly && (
+        <Card className="bg-slate-950 border-slate-800 shadow-xl">
+          <CardHeader className="pb-3 border-b border-slate-900">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <CardTitle className="text-base font-mono text-slate-100 flex items-center gap-2">
+                  <span>Vault-Tec Perk Card Catalog</span>
+                  <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono">
+                    {filteredCards.length} Cards
+                  </span>
+                </CardTitle>
+                <CardDescription className="text-xs text-slate-400">Browse all Fallout 76 perk cards across S.P.E.C.I.A.L. categories.</CardDescription>
+              </div>
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsFemale((prev) => !prev)}
+                  className={`px-3 py-1.5 rounded-md border text-xs font-mono font-bold transition-all shrink-0 ${
+                    isFemale
+                      ? "bg-pink-950/80 border-pink-500 text-pink-300 shadow-md shadow-pink-900/30"
+                      : "bg-blue-950/80 border-blue-500 text-blue-300 shadow-md shadow-blue-900/30"
+                  }`}
+                  title="Toggle Vault Boy / Vault Girl card variant artwork"
+                >
+                  {isFemale ? "♀ Vault Girl Art" : "♂ Vault Boy Art"}
+                </button>
+                <input
+                  type="text"
+                  placeholder="Search perk cards..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="px-3 py-1.5 rounded-md border border-slate-800 bg-slate-900 text-xs font-mono text-white placeholder:text-slate-500 w-full md:w-64 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-2 w-full md:w-auto">
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap gap-1.5 pt-3">
               <button
                 type="button"
-                onClick={() => setIsFemale((prev) => !prev)}
-                className={`px-3 py-1.5 rounded-md border text-xs font-mono font-bold transition-all shrink-0 ${
-                  isFemale
-                    ? "bg-pink-950/80 border-pink-500 text-pink-300 shadow-md shadow-pink-900/30"
-                    : "bg-blue-950/80 border-blue-500 text-blue-300 shadow-md shadow-blue-900/30"
+                onClick={() => setSelectedCategory("ALL")}
+                className={`px-3 py-1 rounded text-xs font-mono font-bold transition-all border ${
+                  selectedCategory === "ALL" ? "bg-emerald-500 text-slate-950 border-emerald-500 shadow-md" : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
                 }`}
-                title="Toggle Vault Boy / Vault Girl card variant artwork"
               >
-                {isFemale ? "♀ Vault Girl Art" : "♂ Vault Boy Art"}
+                ALL ({searchedAllCards.length})
               </button>
-              <input
-                type="text"
-                placeholder="Search perk cards..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-3 py-1.5 rounded-md border border-slate-800 bg-slate-900 text-xs font-mono text-white placeholder:text-slate-500 w-full md:w-64 focus:outline-none focus:border-emerald-500"
-              />
+              {(["S", "P", "E", "C", "I", "A", "L", "LEGENDARY"] as SpecialCategory[]).map((cat) => {
+                const theme = SPECIAL_THEMES[cat];
+                const count = searchedAllCards.filter((c) => c.special === cat).length;
+                const hasMatches = searchQuery.trim().length > 0 && count > 0;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all border ${
+                      selectedCategory === cat
+                        ? `${theme.badge} border-current shadow-md`
+                        : hasMatches
+                        ? `${theme.badge} border-emerald-500/60 ring-1 ring-emerald-500/50`
+                        : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    {cat === "LEGENDARY" ? `LEGENDARY (${count}) [${equippedLegendaryCards.length}/6]` : `${cat} (${count})`}
+                  </button>
+                );
+              })}
+
+              {/* Ghoul Perks Dedicated Filter Pill */}
+              {(() => {
+                const ghoulCount = searchedAllCards.filter((c) => isGhoulPerkCard(c.id || c.name)).length;
+                return (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory("GHOUL")}
+                    className={`px-3 py-1 rounded text-xs font-mono font-bold transition-all border flex items-center gap-1.5 ${
+                      selectedCategory === "GHOUL"
+                        ? "bg-emerald-950/90 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.4)] ring-1 ring-emerald-400"
+                        : "border-emerald-800/40 bg-emerald-950/30 text-emerald-400/80 hover:text-emerald-300 hover:border-emerald-500/60"
+                    }`}
+                    title="Filter by Playable Ghoul & Feral synergy perk cards"
+                  >
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    GHOUL ({ghoulCount})
+                  </button>
+                );
+              })()}
             </div>
-          </div>
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap gap-1.5 pt-3">
-            <button
-              type="button"
-              onClick={() => setSelectedCategory("ALL")}
-              className={`px-3 py-1 rounded text-xs font-mono font-bold transition-all border ${
-                selectedCategory === "ALL" ? "bg-emerald-500 text-slate-950 border-emerald-500 shadow-md" : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
-              }`}
-            >
-              ALL ({searchedAllCards.length})
-            </button>
-            {(["S", "P", "E", "C", "I", "A", "L", "LEGENDARY"] as SpecialCategory[]).map((cat) => {
-              const theme = SPECIAL_THEMES[cat];
-              const count = searchedAllCards.filter((c) => c.special === cat).length;
-              const hasMatches = searchQuery.trim().length > 0 && count > 0;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all border ${
-                    selectedCategory === cat
-                      ? `${theme.badge} border-current shadow-md`
-                      : hasMatches
-                      ? `${theme.badge} border-emerald-500/60 ring-1 ring-emerald-500/50`
-                      : "border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
-                  }`}
-                >
-                  {cat === "LEGENDARY" ? `LEGENDARY (${count}) [${equippedLegendaryCards.length}/6]` : `${cat} (${count})`}
-                </button>
-              );
-            })}
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+              {filteredCards.map((card, idx) => {
+                const equippedItem = equippedCards.find((item) => item.cardId === card.id);
+                const currentRank = equippedItem ? equippedItem.rank : 1;
+                const activeRankObj = card.ranks.find((r) => r.rank === currentRank) || card.ranks[0];
 
-            {/* Ghoul Perks Dedicated Filter Pill */}
-            {(() => {
-              const ghoulCount = searchedAllCards.filter((c) => isGhoulPerkCard(c.id || c.name)).length;
-              return (
-                <button
-                  type="button"
-                  onClick={() => setSelectedCategory("GHOUL")}
-                  className={`px-3 py-1 rounded text-xs font-mono font-bold transition-all border flex items-center gap-1.5 ${
-                    selectedCategory === "GHOUL"
-                      ? "bg-emerald-950/90 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.4)] ring-1 ring-emerald-400"
-                      : "border-emerald-800/40 bg-emerald-950/30 text-emerald-400/80 hover:text-emerald-300 hover:border-emerald-500/60"
-                  }`}
-                  title="Filter by Playable Ghoul & Feral synergy perk cards"
-                >
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  GHOUL ({ghoulCount})
-                </button>
-              );
-            })()}
-          </div>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
-            {filteredCards.map((card, idx) => {
-              const equippedItem = equippedCards.find((item) => item.cardId === card.id);
-              const currentRank = equippedItem ? equippedItem.rank : 1;
-              const activeRankObj = card.ranks.find((r) => r.rank === currentRank) || card.ranks[0];
-
-              return (
-                <PipBoyPerkCard
-                  key={card.id}
-                  cardId={card.id}
-                  name={card.name}
-                  special={card.special}
-                  cost={activeRankObj?.cost ?? (currentRank)}
-                  rank={currentRank}
-                  maxRank={card.maxRank}
-                  minLevel={card.minLevel}
-                  description={activeRankObj?.description || ""}
-                  isEquipped={!!equippedItem}
-                  isFemale={isFemale}
-                  isOutdated={card.isOutdated}
-                  outdatedMeta={card.outdatedMeta}
-                  reworkedFrom={card.reworkedFrom}
-                  priority={idx < 8}
-                  onEquip={() => {
-                    if (card.isOutdated && card.outdatedMeta?.replacedBy) {
-                      const replacement = getPerkCardById(card.outdatedMeta.replacedBy.id);
-                      if (replacement) {
-                        handleEquipCard(replacement, 1);
-                        return;
+                return (
+                  <PipBoyPerkCard
+                    key={card.id}
+                    cardId={card.id}
+                    name={card.name}
+                    special={card.special}
+                    cost={activeRankObj?.cost ?? (currentRank)}
+                    rank={currentRank}
+                    maxRank={card.maxRank}
+                    minLevel={card.minLevel}
+                    description={activeRankObj?.description || ""}
+                    isEquipped={!!equippedItem}
+                    isFemale={isFemale}
+                    isOutdated={card.isOutdated}
+                    outdatedMeta={card.outdatedMeta}
+                    reworkedFrom={card.reworkedFrom}
+                    priority={idx < 8}
+                    onEquip={() => {
+                      if (card.isOutdated && card.outdatedMeta?.replacedBy) {
+                        const replacement = getPerkCardById(card.outdatedMeta.replacedBy.id);
+                        if (replacement) {
+                          handleEquipCard(replacement, 1);
+                          return;
+                        }
                       }
-                    }
-                    handleEquipCard(card, currentRank);
-                  }}
-                  onUnequip={() => handleUnequipCard(card.id)}
-                  onRankChange={(newRank) => handleEquipCard(card, newRank)}
-                />
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                      handleEquipCard(card, currentRank);
+                    }}
+                    onUnequip={() => handleUnequipCard(card.id)}
+                    onRankChange={(newRank) => handleEquipCard(card, newRank)}
+                  />
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      <NukesDragonsImportModal
-        isOpen={isNdImportOpen}
-        onClose={() => setIsNdImportOpen(false)}
-        onApplyBuild={handleApplyNdBuild}
-      />
+      {!readOnly && (
+        <NukesDragonsImportModal
+          isOpen={isNdImportOpen}
+          onClose={() => setIsNdImportOpen(false)}
+          onApplyBuild={handleApplyNdBuild}
+        />
+      )}
     </div>
   );
 }

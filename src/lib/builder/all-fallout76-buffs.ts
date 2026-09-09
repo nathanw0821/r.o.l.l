@@ -83,6 +83,7 @@ export const ALL_CHEMS: Fallout76BuffDef[] = sortAlphanumerically([
 export const ALL_PLANT_FOODS: Fallout76BuffDef[] = sortAlphanumerically([
   { id: "plant-blight-soup", label: "Blight Soup", category: "food_plant", foodBuffType: "crit_damage", description: "+50% VATS Crit Dmg (+125% Herbivore)", damageMultiplier: 1.0 },
   { id: "plant-brain-bombs", label: "Brain Bombs", category: "food_plant", foodBuffType: "int", description: "+4 INT (+8 INT Herbivore = +24% XP)", specialBonus: { int: 8 }, xpBonusPct: 24 },
+  { id: "plant-challys-feed", label: "Chally's Feed", category: "food_plant", foodBuffType: "lck", description: "+2 Luck, +2 Charisma, +20% Melee Dmg (+5 LCK/CHA Herbivore)", specialBonus: { lck: 5, cha: 5 }, damageMultiplier: 1.20 },
   { id: "plant-company-tea", label: "Company Tea", category: "food_plant", foodBuffType: "ap_regen", description: "+10 AP Regen/sec (+25 Herbivore)", damageMultiplier: 1.0 },
   { id: "plant-corn-soup", label: "Corn Soup", category: "food_plant", foodBuffType: "ap_regen", description: "+6 AP Regen (+15 Herbivore)" },
   { id: "plant-cranberry-relish", label: "Cranberry Relish", category: "food_plant", foodBuffType: "xp", description: "+10% XP (+25% Herbivore)", xpBonusPct: 25 },

@@ -12,7 +12,8 @@ import type {
   BuilderPayload,
   BuilderPowerArmorHelmetCrafting,
   BuilderUnderarmor,
-  BuilderWeaponInnateCrafting
+  BuilderWeaponInnateCrafting,
+  BuilderWeaponSub
 } from "@/lib/builder/types";
 
 const STAR_SLOTS = 4;
@@ -28,7 +29,7 @@ function padLegendaryRow(row: unknown): (string | null)[] {
   const out = [...EMPTY_STAR_ROW];
   for (let i = 0; i < STAR_SLOTS; i++) {
     const v = arr[i];
-    out[i] = typeof v === "string" ? v : null;
+    out[i] = typeof v === "string" ? v.replace(/^et-/, "") : null;
   }
   return out;
 }
@@ -147,21 +148,55 @@ function readLegendaryPerkIds(raw: unknown): string[] {
   if (!raw || typeof raw !== "object") return [];
   const o = raw as Record<string, unknown>;
   if (Array.isArray(o.legendaryPerkIds)) {
-    return o.legendaryPerkIds.filter((x): x is string => typeof x === "string");
+    const set = new Set<string>();
+    for (const x of o.legendaryPerkIds) {
+      if (typeof x === "string" && x.trim()) {
+        const base = x.split(":")[0]?.trim() || x.trim();
+        set.add(base);
+      }
+    }
+    return Array.from(set);
   }
   return [];
 }
 
+function readEquippedPerkCards(raw: Record<string, unknown>): Array<{ cardId: string; rank: number }> | undefined {
+  if (!Array.isArray(raw.equippedPerkCards)) return undefined;
+  const out: Array<{ cardId: string; rank: number }> = [];
+  for (const item of raw.equippedPerkCards) {
+    if (item && typeof item === "object") {
+      const o = item as Record<string, unknown>;
+      if (typeof o.cardId === "string" && typeof o.rank === "number") {
+        out.push({ cardId: o.cardId, rank: o.rank });
+      }
+    }
+  }
+  return out.length > 0 ? out : undefined;
+}
+
+function readSwitchboardState(raw: Record<string, unknown>): Record<string, unknown> | undefined {
+  if (!raw.switchboardState || typeof raw.switchboardState !== "object") return undefined;
+  return raw.switchboardState as Record<string, unknown>;
+}
+
+function readActiveWeaponPieceId(raw: Record<string, unknown>, basePieceId: string, equipmentKind: string): string | undefined {
+  if (typeof raw.activeWeaponPieceId === "string" && raw.activeWeaponPieceId.trim()) {
+    return canonicalBasePieceId(raw.activeWeaponPieceId.trim()) || raw.activeWeaponPieceId.trim();
+  }
+  if (equipmentKind === "weapon") {
+    return basePieceId;
+  }
+  return undefined;
+}
+
 function readWeaponInnateCrafting(
   v: Record<string, unknown>,
-  basePieceId: string,
-  isWeapon: boolean
+  weaponPieceId: string
 ): BuilderWeaponInnateCrafting | undefined {
-  if (!isWeapon) return undefined;
   const w = v.weaponCrafting;
-  if (!w || typeof w !== "object") return defaultWeaponInnateCrafting(basePieceId);
+  if (!w || typeof w !== "object") return defaultWeaponInnateCrafting(weaponPieceId);
   const raw = w as Record<string, unknown>;
-  const def = defaultWeaponInnateCrafting(basePieceId);
+  const def = defaultWeaponInnateCrafting(weaponPieceId);
   return {
     receiverId: typeof raw.receiverId === "string" ? raw.receiverId : def.receiverId,
     barrelId: typeof raw.barrelId === "string" ? raw.barrelId : def.barrelId,
@@ -174,8 +209,9 @@ function readWeaponInnateCrafting(
 
 function buildPayloadV5(fields: {
   basePieceId: string;
+  activeWeaponPieceId?: string;
   equipmentKind: BuilderPayload["equipmentKind"];
-  weaponSub: BuilderPayload["weaponSub"];
+  weaponSub: BuilderWeaponSub | null;
   legendaryModIds: (string | null)[];
   armorLegendaryModIds: (string | null)[][];
   weaponCrafting?: BuilderWeaponInnateCrafting;
@@ -189,12 +225,15 @@ function buildPayloadV5(fields: {
   ignoreMutationPenalties: boolean;
   baseSpecial?: Record<string, number>;
   legendaryPerkIds?: string[];
+  equippedPerkCards?: Array<{ cardId: string; rank: number }>;
+  switchboardState?: Record<string, unknown>;
   hasStrangeInNumbers?: boolean;
   ndUrl?: string;
 }): BuilderPayload {
   return {
     version: 5,
     basePieceId: fields.basePieceId,
+    activeWeaponPieceId: fields.activeWeaponPieceId,
     equipmentKind: fields.equipmentKind,
     weaponSub: fields.weaponSub,
     legendaryModIds: fields.legendaryModIds,
@@ -210,6 +249,8 @@ function buildPayloadV5(fields: {
     ignoreMutationPenalties: fields.ignoreMutationPenalties,
     baseSpecial: fields.baseSpecial ?? {},
     legendaryPerkIds: fields.legendaryPerkIds ?? [],
+    equippedPerkCards: fields.equippedPerkCards,
+    switchboardState: fields.switchboardState,
     hasStrangeInNumbers: fields.hasStrangeInNumbers ?? false,
     ndUrl: fields.ndUrl
   };
@@ -245,13 +286,16 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
         : typeof v.powerArmorHelmetId === "string"
           ? v.powerArmorHelmetId
           : null;
+    const activeWeaponPieceId = readActiveWeaponPieceId(v, basePieceId, v.equipmentKind);
+    const effectiveWeaponId = activeWeaponPieceId || (v.equipmentKind === "weapon" ? basePieceId : "fixer");
     return buildPayloadV5({
       basePieceId,
+      activeWeaponPieceId,
       equipmentKind: v.equipmentKind,
       weaponSub,
       legendaryModIds: padLegendaryRow(v.legendaryModIds),
       armorLegendaryModIds: grid,
-      weaponCrafting: readWeaponInnateCrafting(v, basePieceId, v.equipmentKind === "weapon"),
+      weaponCrafting: readWeaponInnateCrafting(v, effectiveWeaponId),
       armorPieceCrafting: crafting,
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
@@ -262,6 +306,8 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       ignoreMutationPenalties: Boolean(v.ignoreMutationPenalties),
       baseSpecial: readBaseSpecial(v),
       legendaryPerkIds: readLegendaryPerkIds(v),
+      equippedPerkCards: readEquippedPerkCards(v),
+      switchboardState: readSwitchboardState(v),
       hasStrangeInNumbers: Boolean(v.hasStrangeInNumbers),
       ndUrl: typeof v.ndUrl === "string" ? v.ndUrl : undefined
     });
@@ -298,7 +344,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       legendaryModIds: padLegendaryRow(v.legendaryModIds),
       armorLegendaryModIds: remapped.armorLegendaryModIds,
       armorPieceCrafting: remapped.armorPieceCrafting,
-      weaponCrafting: readWeaponInnateCrafting(v, basePieceId, v.equipmentKind === "weapon"),
+      weaponCrafting: readWeaponInnateCrafting(v, basePieceId),
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
       powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(v.powerArmorPiecesEquipped),

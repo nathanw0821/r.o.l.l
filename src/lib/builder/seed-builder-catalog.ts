@@ -21,7 +21,7 @@ type SeedMod = {
 };
 
 function seedRowToMod(r: BuilderLegendarySeedRow): SeedMod {
-  const modules = r.starRank >= 3 ? 2 : 1;
+  const modules = r.starRank === 1 ? 15 : r.starRank === 2 ? 30 : r.starRank === 3 ? 60 : 120;
   return {
     slug: r.slug,
     name: r.name,
@@ -29,7 +29,7 @@ function seedRowToMod(r: BuilderLegendarySeedRow): SeedMod {
     category: r.category,
     subCategory: r.subCategory,
     description: r.description,
-    effectMath: r.effectMath,
+    effectMath: r.effectMath ?? {},
     craftingCost: {
       legendaryModules: modules,
       items: [{ name: "Legendary module", count: modules }]
@@ -42,301 +42,7 @@ function seedRowToMod(r: BuilderLegendarySeedRow): SeedMod {
   };
 }
 
-function mergeBySlug(extended: SeedMod[], core: SeedMod[]): SeedMod[] {
-  const map = new Map<string, SeedMod>();
-  for (const x of extended) {
-    map.set(x.slug, x);
-  }
-  for (const x of core) {
-    map.set(x.slug, x);
-  }
-  return [...map.values()];
-}
-
-/** Curated rows with richer `effectMath` — win over extended list on slug collision. */
-const CORE_SEED_MODS: SeedMod[] = [
-  {
-    slug: "unyielding",
-    name: "Unyielding",
-    starRank: 1,
-    category: "Armor",
-    subCategory: null,
-    description: "+3 to all SPECIAL when low health (armor only; not on power armor).",
-    effectMath: { specialBonus: 3 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: true,
-    allowedOnWeapon: false,
-    fifthStarEligible: false,
-    ghoulSpecialCap: 2
-  },
-  {
-    slug: "bolstering",
-    name: "Bolstering",
-    starRank: 1,
-    category: "Armor",
-    subCategory: null,
-    description: "Energy and damage resist increase at low health.",
-    effectMath: { dr: 10, er: 10 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: true,
-    allowedOnArmor: true,
-    allowedOnWeapon: false,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "overeaters",
-    name: "Overeater's",
-    starRank: 1,
-    category: "Armor",
-    subCategory: null,
-    description: "Damage reduction while well fed / hydrated.",
-    effectMath: { dr: 6, er: 6 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: true,
-    allowedOnArmor: true,
-    allowedOnWeapon: false,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "bloodied",
-    name: "Bloodied",
-    starRank: 1,
-    category: "Weapon",
-    subCategory: null,
-    description: "More damage at lower health.",
-    effectMath: { damagePct: 0.25 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "anti-armor",
-    name: "Anti-Armor",
-    starRank: 1,
-    category: "Weapon",
-    subCategory: null,
-    description: "Ignores armor.",
-    effectMath: { damagePct: 0.12 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "powered",
-    name: "Powered",
-    starRank: 2,
-    category: "Armor",
-    subCategory: null,
-    description: "AP regen.",
-    effectMath: { apRegen: 0.05 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: true,
-    allowedOnArmor: true,
-    allowedOnWeapon: false,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "hardy",
-    name: "Hardy",
-    starRank: 2,
-    category: "Armor",
-    subCategory: null,
-    description: "Explosion damage reduction (sandbox: flat ER bump).",
-    effectMath: { er: 15 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: true,
-    allowedOnArmor: true,
-    allowedOnWeapon: false,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "swing-speed",
-    name: "40% faster swing speed",
-    starRank: 2,
-    category: "Weapon",
-    subCategory: "Melee",
-    description: "Melee only.",
-    effectMath: { damagePct: 0.04 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "rapid",
-    name: "25% faster fire rate",
-    starRank: 2,
-    category: "Weapon",
-    subCategory: "Ranged",
-    description: "Ballistic / rapid-fire style ranged.",
-    effectMath: { damagePct: 0.05 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "explosive",
-    name: "Explosive",
-    starRank: 2,
-    category: "Weapon",
-    subCategory: "Ranged",
-    description: "Bullets explode (blocked on Gamma Gun in this demo).",
-    effectMath: { damagePct: 0.2 },
-    craftingCost: {
-      legendaryModules: 1,
-      items: [
-        { name: "Legendary module", count: 1 },
-        { name: "Adhesive", count: 6 }
-      ]
-    },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "sentinel",
-    name: "Sentinel's",
-    starRank: 3,
-    category: "Armor",
-    subCategory: null,
-    description: "Damage reduction while standing.",
-    effectMath: { dr: 15, er: 15 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: true,
-    allowedOnArmor: true,
-    allowedOnWeapon: false,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "vats-enhanced",
-    name: "V.A.T.S. Enhanced",
-    starRank: 2,
-    category: "Weapon",
-    subCategory: null,
-    description: "+50% chance to hit a target in V.A.T.S.",
-    effectMath: { damagePct: 0.05 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "vital",
-    name: "Vital",
-    starRank: 2,
-    category: "Weapon",
-    subCategory: null,
-    description: "+50% Critical Damage.",
-    effectMath: { damagePct: 0.15 },
-    craftingCost: { legendaryModules: 1, items: [{ name: "Legendary module", count: 1 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "vats-optimized",
-    name: "V.A.T.S. Optimized",
-    starRank: 3,
-    category: "Weapon",
-    subCategory: null,
-    description: "-35% Action Point Cost in V.A.T.S.",
-    effectMath: {},
-    craftingCost: { legendaryModules: 2, items: [{ name: "Legendary module", count: 2 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "lucky-hit",
-    name: "Lucky Hit",
-    starRank: 3,
-    category: "Weapon",
-    subCategory: null,
-    description: "+15 bonus V.A.T.S. critical charge fill.",
-    effectMath: {},
-    craftingCost: { legendaryModules: 2, items: [{ name: "Legendary module", count: 2 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "bullys",
-    name: "Bully's",
-    starRank: 4,
-    category: "Weapon",
-    subCategory: null,
-    description: "+25% damage per crippled limb target has.",
-    effectMath: { damagePct: 0.25 },
-    craftingCost: { legendaryModules: 2, items: [{ name: "Legendary module", count: 2 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: false,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "fifth-star-fortify",
-    name: "Fortifying Echo",
-    starRank: 5,
-    category: "Armor",
-    subCategory: null,
-    description: "Fifth-star style defensive echo (demo).",
-    effectMath: { dr: 12, er: 12, hp: 20 },
-    craftingCost: { legendaryModules: 3, items: [{ name: "Legendary module", count: 3 }] },
-    allowedOnPowerArmor: true,
-    allowedOnArmor: true,
-    allowedOnWeapon: false,
-    fifthStarEligible: true,
-    ghoulSpecialCap: null
-  },
-  {
-    slug: "fifth-star-overcharge",
-    name: "Overcharge Lattice",
-    starRank: 5,
-    category: "Weapon",
-    subCategory: null,
-    description: "Fifth-star style weapon echo (demo).",
-    effectMath: { damagePct: 0.1 },
-    craftingCost: { legendaryModules: 3, items: [{ name: "Legendary module", count: 3 }] },
-    allowedOnPowerArmor: false,
-    allowedOnArmor: false,
-    allowedOnWeapon: true,
-    fifthStarEligible: true,
-    ghoulSpecialCap: null
-  }
-];
-
-const SEED_MODS = mergeBySlug(
-  EXTENDED_LEGENDARY_MOD_SEEDS.map(seedRowToMod),
-  CORE_SEED_MODS
-);
+export const SEED_MODS: SeedMod[] = EXTENDED_LEGENDARY_MOD_SEEDS.map(seedRowToMod);
 
 export async function seedBuilderCatalog(prisma: PrismaClient) {
   // Fetch existing effect tiers to get real crafting costs if available
@@ -353,8 +59,19 @@ export async function seedBuilderCatalog(prisma: PrismaClient) {
     });
   }
 
+  const validSlugs = new Set(SEED_MODS.map((m) => m.slug));
+
+  // Purge any obsolete placeholder rows, old demo junk, or uncataloged slugs
   await prisma.legendaryMod.deleteMany({
-    where: { slug: { in: ["infestation-corrosive", "infestation-armor-weeps"] } }
+    where: {
+      OR: [
+        { slug: { notIn: Array.from(validSlugs) } },
+        { description: { contains: "placeholder", mode: "insensitive" } },
+        { description: { contains: "demo", mode: "insensitive" } },
+        { name: { startsWith: "+" } },
+        { name: { contains: "echo", mode: "insensitive" } }
+      ]
+    }
   });
 
   for (const mod of SEED_MODS) {
@@ -384,7 +101,7 @@ export async function seedBuilderCatalog(prisma: PrismaClient) {
 
     const craftingCost = {
       legendaryModules: finalModules,
-      items: finalItems
+      items: finalItems.length > 0 ? finalItems : [{ name: "Legendary module", count: finalModules }]
     };
 
     await prisma.legendaryMod.upsert({
