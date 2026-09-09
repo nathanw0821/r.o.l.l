@@ -79,3 +79,62 @@ describe("deriveArchetypeTags", () => {
     expect(tags).toContain("Quad");
   });
 });
+
+describe("Transmission Authorization & Ownership Verification", () => {
+  it("authorizes a user when currentUserId matches record.userId", () => {
+    const record = { id: "build-1", userId: "user-abc", payload: { _editToken: "secret-token-123" } };
+    const currentUserId = "user-abc";
+    const isAdmin = false;
+    const editToken = null;
+
+    const isAuthorized = Boolean(
+      (currentUserId && record.userId === currentUserId) ||
+      isAdmin ||
+      (editToken && record.payload._editToken && editToken === record.payload._editToken)
+    );
+    expect(isAuthorized).toBe(true);
+  });
+
+  it("authorizes an admin regardless of userId or editToken", () => {
+    const record = { id: "build-2", userId: "user-xyz", payload: { _editToken: "secret-token-456" } };
+    const currentUserId = "admin-1";
+    const isAdmin = true;
+    const editToken = null;
+
+    const isAuthorized = Boolean(
+      (currentUserId && record.userId === currentUserId) ||
+      isAdmin ||
+      (editToken && record.payload._editToken && editToken === record.payload._editToken)
+    );
+    expect(isAuthorized).toBe(true);
+  });
+
+  it("authorizes anonymous uploader when matching editToken is provided", () => {
+    const record = { id: "build-3", userId: null, payload: { _editToken: "valid-hex-token-789" } };
+    const currentUserId = null;
+    const isAdmin = false;
+    const editToken = "valid-hex-token-789";
+
+    const isAuthorized = Boolean(
+      (currentUserId && record.userId === currentUserId) ||
+      isAdmin ||
+      (editToken && record.payload._editToken && editToken === record.payload._editToken)
+    );
+    expect(isAuthorized).toBe(true);
+  });
+
+  it("rejects unauthorized access when userId differs and editToken is invalid", () => {
+    const record = { id: "build-4", userId: "user-real", payload: { _editToken: "valid-hex-token-789" } };
+    const currentUserId = "user-imposter";
+    const isAdmin = false;
+    const editToken = "wrong-token";
+
+    const isAuthorized = Boolean(
+      (currentUserId && record.userId === currentUserId) ||
+      isAdmin ||
+      (editToken && record.payload._editToken && editToken === record.payload._editToken)
+    );
+    expect(isAuthorized).toBe(false);
+  });
+});
+

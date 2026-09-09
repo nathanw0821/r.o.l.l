@@ -26,10 +26,15 @@ import {
   Crosshair,
   Sliders,
   Sparkles,
+  Radio,
+  RefreshCw,
+  X,
+  AlertTriangle,
 } from "lucide-react";
 import PerkBuilder from "@/components/perks/perk-builder";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
+import type { LocalTransmissionRecord } from "@/components/transmissions/transmissions-vault-client";
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
@@ -399,9 +404,13 @@ export default function BuilderExperimentClient({
   const { data: session, status: sessionStatus } = useSession();
   const isSignedIn =
     sessionStatus === "authenticated" && Boolean(session?.user?.id);
+  const currentUserId = session?.user?.id;
 
   const searchParams = useSearchParams();
   const tabParam = searchParams?.get("tab");
+  const editSlug = searchParams?.get("edit");
+  const loadSlug = searchParams?.get("load");
+  const targetTransmissionSlug = editSlug || loadSlug;
 
   const [masterTab, setMasterTab] = React.useState<"gear" | "perks" | "biometrics" | "combat">(
     (tabParam === "gear" || tabParam === "perks" || tabParam === "biometrics" || tabParam === "combat")
@@ -464,6 +473,20 @@ export default function BuilderExperimentClient({
   const [shareBusy, setShareBusy] = React.useState(false);
   const [shareResult, setShareResult] = React.useState<string | null>(null);
   const [shareCopied, setShareCopied] = React.useState(false);
+
+  // Active transmission management (loaded from /transmissions or /l/[slug])
+  const [activeTransmission, setActiveTransmission] = React.useState<{
+    id: string;
+    slug: string;
+    title: string;
+    description?: string;
+    isOwner: boolean;
+    editToken?: string;
+  } | null>(null);
+  const [transmissionLoading, setTransmissionLoading] = React.useState(false);
+  const [updateBusy, setUpdateBusy] = React.useState(false);
+  const [updateStatus, setUpdateStatus] = React.useState<{ type: "success" | "error"; text: string } | null>(null);
+
   const [isNdImportOpen, setIsNdImportOpen] = React.useState(false);
   const [importedBuildForPerkBuilder, setImportedBuildForPerkBuilder] =
     React.useState<{ build: NukesDragonsParsedBuild; timestamp: number } | null>(null);
@@ -610,6 +633,98 @@ export default function BuilderExperimentClient({
     }
     setIsMounted(true);
   }, [isAdmin, hasBuilderAccess]);
+
+  // Synchronize target transmission when ?load=slug or ?edit=slug is provided in URL
+  React.useEffect(() => {
+    if (!targetTransmissionSlug || !isMounted) return;
+    if (activeTransmission?.slug === targetTransmissionSlug) return;
+
+    let cancelled = false;
+    setTransmissionLoading(true);
+
+    fetch(`/api/builder/transmissions/by-slug/${encodeURIComponent(targetTransmissionSlug)}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Transmission not found");
+        return res.json();
+      })
+      .then((json: {
+        success?: boolean;
+        data?: {
+          id: string;
+          slug: string;
+          title: string;
+          description?: string;
+          payload?: Record<string, unknown>;
+          userId?: string | null;
+          isOwner?: boolean;
+        };
+      }) => {
+        if (cancelled || !json?.success || !json?.data) return;
+        const item = json.data;
+
+        // Check ownership from session, server isOwner flag, or localStorage roll_my_transmissions
+        let localToken: string | undefined;
+        try {
+          const raw = localStorage.getItem("roll_my_transmissions");
+          if (raw) {
+            const list: LocalTransmissionRecord[] = JSON.parse(raw);
+            const match = list.find(
+              (x) => x.slug === item.slug || x.id === item.id
+            );
+            if (match?.editToken) {
+              localToken = match.editToken;
+            }
+          }
+        } catch {
+          // ignore
+        }
+
+        const isOwner = Boolean(
+          item.isOwner ||
+          localToken ||
+          (item.userId && currentUserId && item.userId === currentUserId) ||
+          isAdmin
+        );
+
+        setActiveTransmission({
+          id: item.id,
+          slug: item.slug,
+          title: item.title,
+          description: item.description,
+          isOwner,
+          editToken: localToken || (typeof item.payload?._editToken === "string" ? item.payload._editToken : undefined),
+        });
+
+        if (item.title) {
+          setShareTitle(item.title);
+        }
+
+        if (item.payload) {
+          const norm = normalizeBuilderPayload(item.payload) || item.payload;
+          if (norm && typeof norm === "object") {
+            setPayload(norm as BuilderPayload);
+            if (norm.basePieceId) {
+              const base = getBaseGearPiece(norm.basePieceId);
+              if (base?.kind === "weapon") {
+                setActiveWeaponId(base.id);
+              } else if (base?.kind === "armor" || base?.kind === "powerArmor") {
+                setActiveChassisId(base.id);
+              }
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load transmission:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setTransmissionLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [targetTransmissionSlug, isMounted, currentUserId, isAdmin, activeTransmission?.slug]);
 
   const clearAllSelections = React.useCallback(() => {
     setUndoPayload(payload);
@@ -1302,16 +1417,113 @@ export default function BuilderExperimentClient({
           payload,
         }),
       });
-      const body = (await response.json()) as { success?: boolean; data?: { path?: string }; error?: { message?: string } };
+      const body = (await response.json()) as {
+        success?: boolean;
+        data?: { id?: string; slug?: string; path?: string; editToken?: string };
+        error?: { message?: string };
+      };
       if (!response.ok || !body?.success) {
         throw new Error(body?.error?.message ?? "Share failed.");
       }
       const path = body.data?.path;
+      const slug = body.data?.slug;
+      const id = body.data?.id;
+      const editToken = body.data?.editToken;
       setShareResult(path ?? "");
+
+      // Save to localStorage roll_my_transmissions for author tracking
+      if (id && slug) {
+        try {
+          const raw = localStorage.getItem("roll_my_transmissions");
+          const list: LocalTransmissionRecord[] = raw ? JSON.parse(raw) : [];
+          const updated = [
+            {
+              id,
+              slug,
+              title: shareTitle,
+              editToken,
+              createdAt: new Date().toISOString(),
+            },
+            ...list.filter((x) => x.id !== id && x.slug !== slug),
+          ];
+          localStorage.setItem("roll_my_transmissions", JSON.stringify(updated));
+        } catch {
+          // ignore
+        }
+
+        // Switch active transmission to the newly saved build
+        setActiveTransmission({
+          id,
+          slug,
+          title: shareTitle,
+          isOwner: true,
+          editToken,
+        });
+      }
     } catch (e) {
       setShareResult(e instanceof Error ? e.message : "Share failed.");
     } finally {
       setShareBusy(false);
+    }
+  }
+
+  async function updateTransmission() {
+    if (!activeTransmission) return;
+    setUpdateBusy(true);
+    setUpdateStatus(null);
+    try {
+      const response = await fetch(`/api/builder/transmissions/${activeTransmission.id}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title: shareTitle,
+          description: `${piece.label} · ${payload.ghoul ? "Ghoul" : "Human"} · sandbox`,
+          payload,
+          editToken: activeTransmission.editToken,
+        }),
+      });
+      const body = (await response.json()) as { success?: boolean; error?: string };
+      if (!response.ok || !body?.success) {
+        throw new Error(body?.error ?? "Update failed.");
+      }
+
+      // Update title in localStorage roll_my_transmissions if present
+      try {
+        const raw = localStorage.getItem("roll_my_transmissions");
+        if (raw) {
+          const list: LocalTransmissionRecord[] = JSON.parse(raw);
+          const updated = list.map((item) =>
+            item.id === activeTransmission.id || item.slug === activeTransmission.slug
+              ? { ...item, title: shareTitle }
+              : item
+          );
+          localStorage.setItem("roll_my_transmissions", JSON.stringify(updated));
+        }
+      } catch {
+        // ignore
+      }
+
+      setActiveTransmission((prev) => (prev ? { ...prev, title: shareTitle } : null));
+      setUpdateStatus({ type: "success", text: "Transmission updated in vault!" });
+      setTimeout(() => setUpdateStatus(null), 4000);
+    } catch (e) {
+      setUpdateStatus({
+        type: "error",
+        text: e instanceof Error ? e.message : "Failed to update transmission.",
+      });
+    } finally {
+      setUpdateBusy(false);
+    }
+  }
+
+  function exitTransmissionMode() {
+    setActiveTransmission(null);
+    setUpdateStatus(null);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("edit");
+      url.searchParams.delete("load");
+      window.history.replaceState({}, "", url.toString());
     }
   }
 
@@ -1675,7 +1887,44 @@ export default function BuilderExperimentClient({
                 </button>
               </div>
 
-              {/* Publish Transmission Controls */}
+              {/* Active Transmission Editing Banner */}
+              {activeTransmission && (
+                <div className="flex items-center gap-2 rounded border border-amber-500/60 bg-amber-950/50 px-2.5 py-1 text-xs backdrop-blur-sm">
+                  <Radio className="h-3.5 w-3.5 text-amber-400 shrink-0 animate-pulse" />
+                  <div className="flex items-center gap-1 font-mono text-[0.7rem]">
+                    <span className="text-amber-400 font-black uppercase">
+                      {activeTransmission.isOwner ? "TRANSMISSION:" : "VIEWING:"}
+                    </span>
+                    <span className="text-amber-200 font-bold max-w-[120px] sm:max-w-[180px] truncate" title={activeTransmission.title}>
+                      {activeTransmission.title}
+                    </span>
+                  </div>
+                  {activeTransmission.isOwner && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={updateTransmission}
+                      disabled={updateBusy}
+                      className="h-7 px-2.5 text-[0.68rem] font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-all shrink-0 flex items-center gap-1"
+                    >
+                      <RefreshCw className={cn("h-3 w-3", updateBusy && "animate-spin")} />
+                      {updateBusy ? "SAVING..." : "UPDATE"}
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={exitTransmissionMode}
+                    className="h-7 w-7 p-0 text-slate-400 hover:text-white hover:bg-amber-900/40 shrink-0"
+                    title="Exit transmission mode"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              )}
+
+              {/* Publish / Clone Controls */}
               <div className="flex items-center gap-1 rounded border border-emerald-500/50 bg-emerald-950/40 p-0.5">
                 <Input
                   className="h-8 w-36 sm:w-44 text-xs bg-transparent border-0 font-mono text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2.5"
@@ -1689,9 +1938,10 @@ export default function BuilderExperimentClient({
                   className="h-8 px-3 text-[0.72rem] font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5"
                   onClick={shareBuild}
                   disabled={shareBusy}
+                  title={activeTransmission ? "Publish as a new transmission" : "Publish transmission to vault"}
                 >
                   <Share2 className="h-3.5 w-3.5" />
-                  {shareBusy ? "PUBLISHING..." : "PUBLISH"}
+                  {shareBusy ? "PUBLISHING..." : activeTransmission ? "SAVE AS NEW" : "PUBLISH"}
                 </Button>
               </div>
 
@@ -1722,6 +1972,33 @@ export default function BuilderExperimentClient({
                 N&amp;D Overlay Spec
               </a>
             </div>
+
+            {/* Transmission Loading Indicator */}
+            {transmissionLoading && (
+              <div className="flex items-center gap-1.5 rounded border border-amber-500/40 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-300 font-mono animate-pulse">
+                <RefreshCw className="h-3 w-3 animate-spin" />
+                <span>LOADING TRANSMISSION DATA...</span>
+              </div>
+            )}
+
+            {/* Update Status Overlay */}
+            {updateStatus && (
+              <div
+                className={cn(
+                  "flex items-center gap-2 rounded px-2.5 py-1 text-xs font-mono font-bold animate-in fade-in",
+                  updateStatus.type === "success"
+                    ? "bg-emerald-950/90 border border-emerald-500/60 text-emerald-300"
+                    : "bg-red-950/90 border border-red-500/60 text-red-300"
+                )}
+              >
+                {updateStatus.type === "success" ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                ) : (
+                  <AlertTriangle className="h-3.5 w-3.5 text-red-400 shrink-0" />
+                )}
+                <span>{updateStatus.text}</span>
+              </div>
+            )}
 
             {/* Share Result Status Overlay */}
             {shareResult?.startsWith("/") ? (

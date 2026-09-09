@@ -7,10 +7,13 @@ export type TransmissionSummary = {
   description: string | null;
   createdAt: string;
   author: {
+    id?: string | null;
     name: string | null;
     username: string | null;
     image: string | null;
   } | null;
+  userId?: string | null;
+  isOwner?: boolean;
   isGhoul: boolean;
   equipmentKind: "weapon" | "armor" | "powerArmor" | "underarmor";
   basePieceId: string;
