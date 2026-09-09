@@ -15,6 +15,16 @@ export type BuilderArmorPieceCrafting = {
   miscModId: string;
 };
 
+/** Weapon innate workbench modifications (receiver, barrel, stock, magazine, sights, muzzle). */
+export type BuilderWeaponInnateCrafting = {
+  receiverId?: string;
+  barrelId?: string;
+  stockId?: string;
+  magazineId?: string;
+  sightId?: string;
+  muzzleId?: string;
+};
+
 /** Material + misc for paired power armor helmet (torso bases only). */
 export type BuilderPowerArmorHelmetCrafting = {
   materialModId: string;
@@ -52,6 +62,10 @@ export type BuilderPayload = {
   legendaryModIds: (string | null)[];
   /** Five (armor) or six (power armor) body slots × four stars — full set only. */
   armorLegendaryModIds: (string | null)[][];
+  /**
+   * Weapon innate workbench modifications (receiver, barrel, stock, magazine, sights, muzzle).
+   */
+  weaponCrafting?: BuilderWeaponInnateCrafting;
   /** Material + misc craft choice per body slot (full set).
    * 5 slots for armor sets, 6 slots for power armor (including helmet).
    */

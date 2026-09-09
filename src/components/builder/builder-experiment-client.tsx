@@ -104,7 +104,17 @@ import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
   type BuilderModDTO,
   type BuilderPayload,
+  type BuilderWeaponInnateCrafting,
 } from "@/lib/builder/types";
+import { useLocalProgress, type LocalProgressMap } from "@/components/use-local-progress";
+import { findLocalProgressEntry } from "@/lib/progress-lookup";
+import {
+  listWeaponInnateModOptions,
+  defaultWeaponInnateCrafting,
+  getWeaponInnateModOption,
+  calculateWeaponInnateAggregate,
+  type WeaponInnateSlotKey,
+} from "@/lib/builder/weapon-piece-mods";
 import { subscribeProgressChange } from "@/lib/progress-events";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
 import { isNewMod } from "@/lib/filter-utils";
@@ -160,6 +170,7 @@ function defaultPayload(): BuilderPayload {
     basePieceId: first.id,
     equipmentKind: first.kind,
     weaponSub: first.weaponSub ?? null,
+    weaponCrafting: defaultWeaponInnateCrafting("fixer"),
     legendaryModIds: [null, null, null, null],
     armorLegendaryModIds: emptyArmorLegendaryGrid(),
     armorPieceCrafting: defaultArmorPieceCrafting(),
@@ -310,6 +321,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
   compact,
   ghoulMode,
   isRecommended,
+  localProgress,
   onPick,
 }: {
   mod: BuilderModDTO;
@@ -317,21 +329,15 @@ const ModPickerOption = React.memo(function ModPickerOption({
   compact: boolean;
   ghoulMode: boolean;
   isRecommended?: boolean;
+  localProgress?: LocalProgressMap;
   onPick: (id: string) => void;
 }) {
-  const unlock = mod.trackerUnlock ?? "unknown";
-  const statusAttr =
-    unlock === "unlocked"
-      ? "unlocked"
-      : unlock === "locked"
-        ? "locked"
-        : undefined;
-  const statusLabel =
-    unlock === "unlocked"
-      ? "Unlocked"
-      : unlock === "locked"
-        ? "Locked"
-        : "Not in tracker";
+  const entry = findLocalProgressEntry(localProgress, mod.id, mod.name, `${mod.starRank} Star`);
+  const isUnlocked = entry?.unlocked ?? (mod.trackerUnlock === "unlocked");
+  const modCount = entry?.modCount ?? 0;
+  const isSeeking = entry?.isSeeking ?? false;
+
+  const statusAttr = isUnlocked ? "unlocked" : modCount > 0 ? "stash" : "locked";
   const descDisplay =
     sandboxLegendaryDescription(mod.description, piece) ||
     mod.description?.trim() ||
@@ -353,12 +359,12 @@ const ModPickerOption = React.memo(function ModPickerOption({
       }}
       className={cn(
         "pip-terminal-panel flex w-full flex-col rounded-[var(--radius)] border text-left p-2.5 transition-all duration-150 cursor-pointer font-mono select-none overflow-hidden relative group",
-        unlock === "unlocked"
-          ? "border-accent bg-accent/5 hover:bg-accent/10 shadow-[0_0_10px_rgba(var(--color-accent),0.05)]"
-          : unlock === "locked"
-            ? "border-border/30 opacity-70 hover:opacity-100 hover:border-border/60 hover:bg-background/20"
-            : "border-border/40 bg-background/10 hover:border-accent/50 hover:bg-background/30",
-        isRecommended && "border-accent/60 bg-accent/[0.04]",
+        isUnlocked
+          ? "border-emerald-500/50 bg-emerald-950/20 hover:bg-emerald-900/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+          : modCount > 0
+            ? "border-amber-500/50 bg-amber-950/20 hover:bg-amber-900/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
+            : "border-border/30 opacity-75 hover:opacity-100 hover:border-border/60 hover:bg-background/20",
+        isRecommended && "ring-1 ring-accent/60",
       )}
       onClick={() => onPick(mod.id)}
     >
@@ -366,8 +372,8 @@ const ModPickerOption = React.memo(function ModPickerOption({
         <span className="min-w-0 font-bold flex flex-wrap items-center gap-1.5 text-xs">
           <span 
             className={cn(
-              "break-words",
-              unlock === "unlocked" ? "text-accent" : "text-foreground"
+              "break-words font-black",
+              isUnlocked ? "text-emerald-300" : modCount > 0 ? "text-amber-200" : "text-foreground"
             )}
             style={{ overflowWrap: "anywhere" }}
           >
@@ -384,12 +390,27 @@ const ModPickerOption = React.memo(function ModPickerOption({
             </span>
           )}
         </span>
-        <span className={cn(
-          "shrink-0 text-[0.72rem] font-black uppercase tracking-wider mt-0.5",
-          unlock === "unlocked" ? "text-accent" : "text-foreground/40"
-        )}>
-          {statusLabel}
-        </span>
+        <div className="shrink-0 flex items-center gap-1.5 text-[0.68rem] font-mono">
+          {isUnlocked ? (
+            <span className="px-1.5 py-0.5 rounded font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex items-center gap-0.5 shadow-sm">
+              <Check className="w-2.5 h-2.5" /> Unlocked
+            </span>
+          ) : (
+            <span className="px-1.5 py-0.5 rounded font-medium uppercase tracking-wider bg-rose-500/10 border border-rose-500/25 text-rose-400/80">
+              🔒 Locked
+            </span>
+          )}
+          {modCount > 0 && (
+            <span className="px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm">
+              📦 x{modCount} Stash
+            </span>
+          )}
+          {isSeeking && (
+            <span className="px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-cyan-500/20 border border-cyan-500/50 text-cyan-300">
+              🎯 Seeking
+            </span>
+          )}
+        </div>
       </div>
       
       <div className="mt-1 w-full">
@@ -483,6 +504,10 @@ export default function BuilderExperimentClient({
   const [savedLoadouts, setSavedLoadouts] = React.useState<
     { id: string; name: string; payload: BuilderPayload }[]
   >([]);
+
+  const { map: localProgress } = useLocalProgress(true);
+  const [weaponSubMenu, setWeaponSubMenu] = React.useState<"attachments" | "stars" | "matrix">("attachments");
+  const [modalTrackerFilter, setModalTrackerFilter] = React.useState<"all" | "unlocked" | "stash">("all");
 
   const [activePick, setActivePick] = React.useState<ActivePick>(null);
   const [slotQuery, setSlotQuery] = React.useState("");
@@ -939,6 +964,40 @@ export default function BuilderExperimentClient({
     [activeWeaponId]
   );
 
+  const isMeleeWeapon = activeWeaponPiece.weaponSub === "melee";
+
+  const activeWeaponAttachments = React.useMemo(() => {
+    return calculateWeaponInnateAggregate(activeWeaponPiece.id, payload.weaponCrafting);
+  }, [activeWeaponPiece.id, payload.weaponCrafting]);
+
+  const setWeaponInnateSlot = React.useCallback(
+    (slot: WeaponInnateSlotKey, modId: string) => {
+      setPayload((prev) => {
+        const current = prev.weaponCrafting ?? defaultWeaponInnateCrafting(activeWeaponPiece.id);
+        const slotKey =
+          slot === "receiver"
+            ? "receiverId"
+            : slot === "barrel"
+            ? "barrelId"
+            : slot === "stock"
+            ? "stockId"
+            : slot === "magazine"
+            ? "magazineId"
+            : slot === "sight"
+            ? "sightId"
+            : "muzzleId";
+        return {
+          ...prev,
+          weaponCrafting: {
+            ...current,
+            [slotKey]: modId,
+          },
+        };
+      });
+    },
+    [activeWeaponPiece.id]
+  );
+
   const groupedWeaponCategories = React.useMemo(() => getGroupedWeaponCategories(), []);
 
   const activeChassisPiece = React.useMemo(
@@ -1230,6 +1289,7 @@ export default function BuilderExperimentClient({
     const targetWeapon = activeWeaponPiece;
     return calculateCombatFirepower({
       weaponId: targetWeapon.id,
+      weaponCrafting: payload.weaponCrafting,
       equippedMods: equippedModsOrdered,
       equippedPerks: equippedPerkCards,
       activeBuffs: {
@@ -1266,6 +1326,7 @@ export default function BuilderExperimentClient({
     });
   }, [
     activeWeaponPiece,
+    payload.weaponCrafting,
     equippedModsOrdered,
     equippedPerkCards,
     switchboardState,
@@ -1352,17 +1413,42 @@ export default function BuilderExperimentClient({
       ghoul: payload.ghoul,
     }).filter((m) => {
       const q = deferredSlotQuery.trim().toLowerCase();
-      if (!q) return true;
-      return (
-        m.name.toLowerCase().includes(q) ||
-        m.description.toLowerCase().includes(q) ||
-        m.slug.toLowerCase().includes(q)
-      );
+      if (q) {
+        const matchesQuery =
+          m.name.toLowerCase().includes(q) ||
+          m.description.toLowerCase().includes(q) ||
+          m.slug.toLowerCase().includes(q);
+        if (!matchesQuery) return false;
+      }
+
+      if (modalTrackerFilter !== "all") {
+        const entry = findLocalProgressEntry(localProgress, m.id, m.name, `${m.starRank} Star`);
+        const isUnlocked = entry?.unlocked ?? (m.trackerUnlock === "unlocked");
+        const stashCount = entry?.modCount ?? 0;
+
+        if (modalTrackerFilter === "unlocked" && !isUnlocked) return false;
+        if (modalTrackerFilter === "stash" && stashCount <= 0) return false;
+      }
+
+      return true;
     });
+
     return [...filtered].sort((a, b) => {
+      const entryA = findLocalProgressEntry(localProgress, a.id, a.name, `${a.starRank} Star`);
+      const entryB = findLocalProgressEntry(localProgress, b.id, b.name, `${b.starRank} Star`);
+      const unlockedA = (entryA?.unlocked ?? (a.trackerUnlock === "unlocked")) ? 1 : 0;
+      const unlockedB = (entryB?.unlocked ?? (b.trackerUnlock === "unlocked")) ? 1 : 0;
+      const stashA = (entryA?.modCount ?? 0) > 0 ? 1 : 0;
+      const stashB = (entryB?.modCount ?? 0) > 0 ? 1 : 0;
+
       const recA = recommendedIds.has(a.id) ? 1 : 0;
       const recB = recommendedIds.has(b.id) ? 1 : 0;
       if (recA !== recB) return recB - recA;
+
+      // Status prioritization: unlocked > stash > locked
+      const statusScoreA = unlockedA * 2 + stashA;
+      const statusScoreB = unlockedB * 2 + stashB;
+      if (statusScoreA !== statusScoreB) return statusScoreB - statusScoreA;
 
       if (payload.ghoul) {
         const discA = isGhoulDiscouragedLegendarySlug(a.slug) ? 1 : 0;
@@ -1377,6 +1463,8 @@ export default function BuilderExperimentClient({
     activeChassisPiece,
     activePick,
     deferredSlotQuery,
+    modalTrackerFilter,
+    localProgress,
     payload.ghoul,
     recommendedIds,
   ]);
@@ -1386,11 +1474,21 @@ export default function BuilderExperimentClient({
     if (!next) return;
     if (next.kind === "weapon") {
       setActiveWeaponId(id);
-      setPayload((p) => ({
-        ...p,
-        basePieceId: id,
-        weaponSub: next.weaponSub ?? null,
-      }));
+      setPayload((p) => {
+        const isPrevMelee = getBaseGearPiece(p.basePieceId)?.weaponSub === "melee";
+        const isNextMelee = next.weaponSub === "melee";
+        const nextCrafting =
+          !p.weaponCrafting || isPrevMelee !== isNextMelee
+            ? defaultWeaponInnateCrafting(id)
+            : p.weaponCrafting;
+
+        return {
+          ...p,
+          basePieceId: id,
+          weaponSub: next.weaponSub ?? null,
+          weaponCrafting: nextCrafting,
+        };
+      });
     } else if (next.kind === "armor" || next.kind === "powerArmor") {
       setActiveChassisId(id);
       const isNextPA = next.kind === "powerArmor";
@@ -2533,10 +2631,10 @@ export default function BuilderExperimentClient({
 
             <div className="space-y-3 relative z-10">
               {/* SECTION A: ACTIVE PRIMARY WEAPON BAY */}
-              <div className="rounded-lg border border-accent/30 bg-background/30 p-3 space-y-2">
-                <div className="flex items-center justify-between border-b border-border/20 pb-1.5 gap-2">
+              <div className="rounded-lg border border-accent/30 bg-background/30 p-3 space-y-2.5">
+                <div className="flex items-center justify-between border-b border-border/20 pb-2 gap-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-sm">🎯</span>
+                    <span className="text-base">🎯</span>
                     <div className="min-w-0">
                       <div className="text-xs font-black uppercase tracking-wider text-accent truncate">
                         {activeWeaponPiece.label}
@@ -2580,53 +2678,380 @@ export default function BuilderExperimentClient({
                   </div>
                 </div>
 
-                {/* Weapon 4-Star Slots */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                  {SLOT_LABELS.map((starLabel, starIndex) => {
-                    const id = payload.legendaryModIds[starIndex];
-                    const mod = findModByIdOrSlug(mods, id);
-                    return (
-                      <div
-                        key={starIndex}
-                        className={cn(
-                          "flex items-center justify-between gap-1.5 rounded border px-2 py-1 text-[0.72rem] transition-all",
-                          mod
-                            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
-                            : "border-border/20 bg-background/20 text-foreground/50"
-                        )}
+                {/* WEAPON SUB-NAVIGATION: ATTACHMENTS vs LEGENDARY STARS vs MATRIX */}
+                <div className="flex items-center justify-between gap-1 border-b border-border/15 pb-2">
+                  <div className="flex items-center gap-1 font-mono text-xs overflow-x-auto">
+                    <button
+                      type="button"
+                      onClick={() => setWeaponSubMenu("attachments")}
+                      className={cn(
+                        "px-2.5 py-1 rounded text-[0.72rem] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
+                        weaponSubMenu === "attachments"
+                          ? "bg-amber-500/20 text-amber-300 border border-amber-500/60 shadow-sm"
+                          : "text-foreground/50 hover:text-foreground hover:bg-background/30 border border-transparent"
+                      )}
+                    >
+                      <span>⚙️ Attachments</span>
+                      <span className="text-[0.65rem] px-1 py-0.2 rounded bg-amber-500/20 text-amber-200">
+                        {isMeleeWeapon ? "2" : "6"}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWeaponSubMenu("stars")}
+                      className={cn(
+                        "px-2.5 py-1 rounded text-[0.72rem] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
+                        weaponSubMenu === "stars"
+                          ? "bg-accent/20 text-accent border border-accent/60 shadow-sm"
+                          : "text-foreground/50 hover:text-foreground hover:bg-background/30 border border-transparent"
+                      )}
+                    >
+                      <span>★ Legendary Stars</span>
+                      <span className="text-[0.65rem] px-1 py-0.2 rounded bg-accent/20 text-accent">
+                        4
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWeaponSubMenu("matrix")}
+                      className={cn(
+                        "px-2.5 py-1 rounded text-[0.72rem] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
+                        weaponSubMenu === "matrix"
+                          ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/60 shadow-sm"
+                          : "text-foreground/50 hover:text-foreground hover:bg-background/30 border border-transparent"
+                      )}
+                    >
+                      <span>👁️ All Weapon Matrix</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* TAB 1: WORKBENCH INNATE ATTACHMENTS */}
+                {weaponSubMenu === "attachments" && (
+                  <div className="space-y-2.5 pt-0.5">
+                    {/* Active Aggregate Summary Banner */}
+                    <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-lg bg-slate-950/70 border border-amber-500/20 text-xs font-mono">
+                      <span className="text-foreground/50 font-bold uppercase text-[0.66rem] mr-1">
+                        Innate Mod Bonuses:
+                      </span>
+                      {activeWeaponAttachments.damagePct !== 0 && (
+                        <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-bold text-[0.68rem]">
+                          {activeWeaponAttachments.damagePct > 0 ? "+" : ""}{Math.round(activeWeaponAttachments.damagePct * 100)}% Dmg
+                        </span>
+                      )}
+                      {activeWeaponAttachments.apCostPct !== 0 && (
+                        <span className="px-1.5 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 font-bold text-[0.68rem]">
+                          {activeWeaponAttachments.apCostPct > 0 ? "+" : ""}{Math.round(activeWeaponAttachments.apCostPct * 100)}% AP
+                        </span>
+                      )}
+                      {activeWeaponAttachments.armorPenetrationPct > 0 && (
+                        <span className="px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-bold text-[0.68rem]">
+                          +{activeWeaponAttachments.armorPenetrationPct}% Armor Pen
+                        </span>
+                      )}
+                      {activeWeaponAttachments.critDamagePct > 0 && (
+                        <span className="px-1.5 py-0.5 rounded bg-yellow-500/15 border border-yellow-500/40 text-yellow-300 font-bold text-[0.68rem]">
+                          +{Math.round(activeWeaponAttachments.critDamagePct * 100)}% Crit
+                        </span>
+                      )}
+                      {activeWeaponAttachments.fireRatePct !== 0 && (
+                        <span className="px-1.5 py-0.5 rounded bg-blue-500/15 border border-blue-500/40 text-blue-300 font-bold text-[0.68rem]">
+                          {activeWeaponAttachments.fireRatePct > 0 ? "+" : ""}{Math.round(activeWeaponAttachments.fireRatePct * 100)}% Fire Rate
+                        </span>
+                      )}
+                      {activeWeaponAttachments.isSuppressed && (
+                        <span className="px-1.5 py-0.5 rounded bg-purple-500/15 border border-purple-500/40 text-purple-300 font-bold text-[0.68rem]">
+                          🔇 Silenced
+                        </span>
+                      )}
+                      {activeWeaponAttachments.durabilityPct > 0 && (
+                        <span className="px-1.5 py-0.5 rounded bg-slate-500/15 border border-slate-500/40 text-slate-300 font-bold text-[0.68rem]">
+                          +{Math.round(activeWeaponAttachments.durabilityPct * 100)}% Durability
+                        </span>
+                      )}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="ml-auto h-5 px-2 text-[0.65rem] text-foreground/45 hover:text-amber-400 font-mono cursor-pointer"
+                        onClick={() => {
+                          setPayload((p) => ({
+                            ...p,
+                            weaponCrafting: defaultWeaponInnateCrafting(activeWeaponPiece.id),
+                          }));
+                        }}
                       >
-                        <div className="min-w-0 flex-1 truncate">
-                          <span className="font-bold mr-1">{starIndex + 1}★</span>
-                          <span className="text-foreground truncate">
-                            {mod ? mod.name : starLabel}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            className="h-5 px-1.5 text-[0.65rem] uppercase font-mono hover:text-accent cursor-pointer"
-                            onClick={() => setActivePick({ scope: "single", starIndex })}
+                        ↺ Reset Meta Defaults
+                      </Button>
+                    </div>
+
+                    {/* Attachment Selectors Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {(isMeleeWeapon
+                        ? ([
+                            { key: "barrel" as WeaponInnateSlotKey, label: "Blade / Head / Heating Mod", icon: "⚔️" },
+                            { key: "stock" as WeaponInnateSlotKey, label: "Grip / Handle Mod", icon: "✋" },
+                          ])
+                        : ([
+                            { key: "receiver" as WeaponInnateSlotKey, label: "Receiver / Breech", icon: "⚡" },
+                            { key: "barrel" as WeaponInnateSlotKey, label: "Barrel Assembly", icon: "🎯" },
+                            { key: "stock" as WeaponInnateSlotKey, label: "Stock / Grip", icon: "🛡️" },
+                            { key: "magazine" as WeaponInnateSlotKey, label: "Magazine / Ammo", icon: "🔋" },
+                            { key: "sight" as WeaponInnateSlotKey, label: "Sights / Optics", icon: "👁️" },
+                            { key: "muzzle" as WeaponInnateSlotKey, label: "Muzzle / Tip", icon: "🔇" },
+                          ])
+                      ).map((slotInfo) => {
+                        const slotKey = slotInfo.key;
+                        const crafting = payload.weaponCrafting ?? defaultWeaponInnateCrafting(activeWeaponPiece.id);
+                        const currentId =
+                          slotKey === "receiver"
+                            ? crafting.receiverId
+                            : slotKey === "barrel"
+                            ? crafting.barrelId
+                            : slotKey === "stock"
+                            ? crafting.stockId
+                            : slotKey === "magazine"
+                            ? crafting.magazineId
+                            : slotKey === "sight"
+                            ? crafting.sightId
+                            : crafting.muzzleId;
+
+                        const options = listWeaponInnateModOptions(activeWeaponPiece.id, slotKey);
+                        const activeOpt = getWeaponInnateModOption(activeWeaponPiece.id, slotKey, currentId) || options[0];
+
+                        return (
+                          <div
+                            key={slotKey}
+                            className="flex flex-col gap-1.5 rounded-lg border border-amber-500/25 bg-background/30 p-2.5 font-mono text-xs transition-all hover:border-amber-500/40"
                           >
-                            Bench
-                          </Button>
-                          {mod && (
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="ghost"
-                              className="h-5 px-1 text-[0.65rem] uppercase font-mono hover:text-destructive text-foreground/40 cursor-pointer"
-                              onClick={() => clearStarSlot("single", undefined, starIndex)}
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="font-bold text-amber-300 text-[0.72rem] uppercase flex items-center gap-1.5">
+                                <span>{slotInfo.icon}</span>
+                                <span>{slotInfo.label}</span>
+                              </span>
+                              {activeOpt?.effectMath.apCostPct && (
+                                <span className="text-[0.62rem] px-1 py-0.2 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold">
+                                  {activeOpt.effectMath.apCostPct < 0 ? "" : "+"}{Math.round(activeOpt.effectMath.apCostPct * 100)}% AP
+                                </span>
+                              )}
+                              {activeOpt?.effectMath.armorPenetrationPct && (
+                                <span className="text-[0.62rem] px-1 py-0.2 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-semibold">
+                                  +{activeOpt.effectMath.armorPenetrationPct}% Pen
+                                </span>
+                              )}
+                            </div>
+
+                            <select
+                              value={activeOpt?.id || ""}
+                              onChange={(e) => setWeaponInnateSlot(slotKey, e.target.value)}
+                              className="w-full h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-slate-100 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer truncate shadow-inner"
                             >
-                              ✕
-                            </Button>
+                              {options.map((opt) => (
+                                <option key={opt.id} value={opt.id} className="bg-slate-900 text-slate-100">
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+
+                            {activeOpt?.description && (
+                              <p className="text-[0.65rem] text-foreground/50 leading-relaxed truncate">
+                                {activeOpt.description}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 2: LEGENDARY 4-STAR SLOTS */}
+                {weaponSubMenu === "stars" && (
+                  <div className="space-y-2 pt-0.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {SLOT_LABELS.map((starLabel, starIndex) => {
+                        const id = payload.legendaryModIds[starIndex];
+                        const mod = findModByIdOrSlug(mods, id);
+                        const trackerEntry = mod ? findLocalProgressEntry(localProgress, mod.id, mod.name, `${starIndex + 1} Star`) : undefined;
+                        const isUnlocked = trackerEntry?.unlocked ?? (mod?.trackerUnlock === "unlocked");
+                        const modCount = trackerEntry?.modCount ?? 0;
+                        const isSeeking = trackerEntry?.isSeeking ?? false;
+
+                        return (
+                          <div
+                            key={starIndex}
+                            className={cn(
+                              "flex flex-col gap-1.5 rounded-lg border p-2.5 text-[0.72rem] transition-all font-mono",
+                              mod
+                                ? "border-accent/40 bg-accent/10 text-accent"
+                                : "border-border/20 bg-background/20 text-foreground/50"
+                            )}
+                          >
+                            <div className="flex items-center justify-between gap-1.5">
+                              <div className="min-w-0 flex items-center gap-1.5 truncate">
+                                <span className="font-black px-1.5 py-0.5 rounded bg-accent/20 text-accent text-[0.7rem]">
+                                  {starIndex + 1}★
+                                </span>
+                                <span className="text-foreground font-bold truncate">
+                                  {mod ? mod.name : starLabel}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1 shrink-0">
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-6 px-2 text-[0.66rem] uppercase font-mono font-bold hover:text-accent bg-accent/15 border border-accent/40 cursor-pointer"
+                                  onClick={() => setActivePick({ scope: "single", starIndex })}
+                                >
+                                  Bench
+                                </Button>
+                                {mod && (
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 px-1.5 text-[0.66rem] uppercase font-mono hover:text-destructive text-foreground/40 cursor-pointer"
+                                    onClick={() => clearStarSlot("single", undefined, starIndex)}
+                                    title="Remove Mod"
+                                  >
+                                    ✕
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Live Mod Tracker Status */}
+                            {mod ? (
+                              <div className="flex items-center justify-between gap-2 border-t border-border/15 pt-1 mt-0.5 text-[0.66rem]">
+                                <span className="text-foreground/50 truncate text-[0.64rem] italic">
+                                  {mod.description || "Active Legendary Effect"}
+                                </span>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {isUnlocked ? (
+                                    <span className="px-1.5 py-0.2 rounded font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center gap-0.5">
+                                      <Check className="w-2.5 h-2.5" /> Unlocked
+                                    </span>
+                                  ) : (
+                                    <span className="px-1.5 py-0.2 rounded font-medium uppercase tracking-wider bg-rose-500/10 border border-rose-500/25 text-rose-400/80">
+                                      🔒 Locked
+                                    </span>
+                                  )}
+                                  {modCount > 0 && (
+                                    <span className="px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                                      📦 x{modCount}
+                                    </span>
+                                  )}
+                                  {isSeeking && (
+                                    <span className="px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
+                                      🎯 Seeking
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="text-[0.64rem] text-foreground/35 italic">
+                                Empty slot. Click [Bench] to equip unlocked legendary mods or craft with mod boxes.
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: ALL WEAPON MATRIX OVERVIEW */}
+                {weaponSubMenu === "matrix" && (
+                  <div className="space-y-3 pt-1 font-mono text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {/* Attachments Column */}
+                      <div className="p-2.5 rounded-lg border border-amber-500/30 bg-background/40 space-y-1.5">
+                        <div className="text-[0.7rem] font-black uppercase tracking-wider text-amber-300 flex items-center justify-between">
+                          <span>⚙️ Installed Attachments</span>
+                          <button
+                            type="button"
+                            onClick={() => setWeaponSubMenu("attachments")}
+                            className="text-[0.65rem] text-accent hover:underline cursor-pointer"
+                          >
+                            Edit Attachments &gt;
+                          </button>
+                        </div>
+                        <div className="space-y-1 text-[0.68rem]">
+                          {activeWeaponAttachments.installedMods.length > 0 ? (
+                            activeWeaponAttachments.installedMods.map((m, idx) => (
+                              <div key={idx} className="flex items-center justify-between text-foreground/80 py-0.5 border-b border-border/10">
+                                <span className="text-foreground/50 uppercase">{m.slot}:</span>
+                                <span className="font-semibold text-slate-100">{m.label}</span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-foreground/40 italic">Factory default components installed.</div>
                           )}
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+
+                      {/* Stars Column */}
+                      <div className="p-2.5 rounded-lg border border-accent/30 bg-background/40 space-y-1.5">
+                        <div className="text-[0.7rem] font-black uppercase tracking-wider text-accent flex items-center justify-between">
+                          <span>★ Legendary Stars</span>
+                          <button
+                            type="button"
+                            onClick={() => setWeaponSubMenu("stars")}
+                            className="text-[0.65rem] text-accent hover:underline cursor-pointer"
+                          >
+                            Edit Stars &gt;
+                          </button>
+                        </div>
+                        <div className="space-y-1 text-[0.68rem]">
+                          {SLOT_LABELS.map((starLabel, starIndex) => {
+                            const id = payload.legendaryModIds[starIndex];
+                            const mod = findModByIdOrSlug(mods, id);
+                            const trackerEntry = mod ? findLocalProgressEntry(localProgress, mod.id, mod.name, `${starIndex + 1} Star`) : undefined;
+                            const isUnlocked = trackerEntry?.unlocked ?? (mod?.trackerUnlock === "unlocked");
+
+                            return (
+                              <div key={starIndex} className="flex items-center justify-between py-0.5 border-b border-border/10">
+                                <span className="text-foreground/50">{starIndex + 1}★:</span>
+                                <span className={cn("font-semibold truncate max-w-[140px]", mod ? "text-accent" : "text-foreground/30")}>
+                                  {mod ? mod.name : "None"}
+                                </span>
+                                {mod && (
+                                  <span className={cn("text-[0.6rem] font-bold px-1 rounded", isUnlocked ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-400")}>
+                                    {isUnlocked ? "UNLOCKED" : "LOCKED"}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quick Firepower Stat Chips */}
+                    {weaponFirepowerResult && (
+                      <div className="p-2.5 rounded-lg bg-slate-950/80 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-2 text-[0.72rem]">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-emerald-400">⚡ Single Shot:</span>
+                          <span className="font-mono text-slate-100">{weaponFirepowerResult.damagePerShot.normal}</span>
+                          <span className="text-amber-400 font-mono">/ Crit: {weaponFirepowerResult.damagePerShot.critical}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-cyan-300">Burst DPS:</span>
+                          <span className="font-mono text-slate-100">{weaponFirepowerResult.dps.burstDPS.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-amber-300">V.A.T.S.:</span>
+                          <span className="font-mono text-slate-100">{weaponFirepowerResult.vats.apCostPerShot} AP</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-purple-300">Armor Pen:</span>
+                          <span className="font-mono text-slate-100">{weaponFirepowerResult.armorPenetration.effectiveArmorPenetrationPct}%</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* SECTION B: CHASSIS FRAME SKELETAL BAY */}
@@ -3063,6 +3488,45 @@ export default function BuilderExperimentClient({
                     onChange={(e) => setSlotQuery(e.target.value)}
                   />
                 </div>
+
+                <div className="flex items-center gap-1.5 mt-2 text-[0.72rem] font-mono shrink-0 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => setModalTrackerFilter("all")}
+                    className={cn(
+                      "px-2.5 py-1 rounded border transition-colors cursor-pointer",
+                      modalTrackerFilter === "all"
+                        ? "bg-accent/20 border-accent text-accent font-black"
+                        : "border-border/30 text-foreground/50 hover:text-foreground hover:border-border/60"
+                    )}
+                  >
+                    ALL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModalTrackerFilter("unlocked")}
+                    className={cn(
+                      "px-2.5 py-1 rounded border transition-colors cursor-pointer flex items-center gap-1",
+                      modalTrackerFilter === "unlocked"
+                        ? "bg-emerald-500/20 border-emerald-500 text-emerald-300 font-black"
+                        : "border-border/30 text-foreground/50 hover:text-emerald-400 hover:border-emerald-500/40"
+                    )}
+                  >
+                    <Check className="w-3 h-3" /> UNLOCKED ONLY
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModalTrackerFilter("stash")}
+                    className={cn(
+                      "px-2.5 py-1 rounded border transition-colors cursor-pointer flex items-center gap-1",
+                      modalTrackerFilter === "stash"
+                        ? "bg-amber-500/20 border-amber-500 text-amber-300 font-black"
+                        : "border-border/30 text-foreground/50 hover:text-amber-400 hover:border-amber-500/40"
+                    )}
+                  >
+                    📦 IN STASH
+                  </button>
+                </div>
                 
                 {slotQuery.trim() !== deferredSlotQuery.trim() ? (
                   <p className="mt-1 text-[0.72rem] text-foreground/35 uppercase tracking-wider relative z-10 animate-pulse">
@@ -3096,6 +3560,7 @@ export default function BuilderExperimentClient({
                           compact={isCompactDensity}
                           ghoulMode={payload.ghoul}
                           isRecommended={recommendedIds.has(m.id)}
+                          localProgress={localProgress}
                           onPick={assignSlot}
                         />
                       ))}
