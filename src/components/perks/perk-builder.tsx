@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useSession, signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
-import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards, isGhoulPerkCard } from "@/lib/perks/catalog";
+import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards, isGhoulPerkCard, areEquippedCardsEqual } from "@/lib/perks/catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
@@ -141,13 +141,28 @@ export default function PerkBuilder({
   }, []);
 
   const isInitialLoadedRef = React.useRef(readOnly);
+  const isExternalSyncRef = React.useRef(false);
 
   // Sync external props if they change (e.g. from loadout switch in B.U.I.L.D.)
   React.useEffect(() => {
     if (initialSpecials) {
       const normalized = normalizeToSpecialsState(initialSpecials as Record<string, number> | undefined);
       if (normalized) {
-        setSpecials(normalized);
+        setSpecials((prev) => {
+          if (
+            prev.S === normalized.S &&
+            prev.P === normalized.P &&
+            prev.E === normalized.E &&
+            prev.C === normalized.C &&
+            prev.I === normalized.I &&
+            prev.A === normalized.A &&
+            prev.L === normalized.L
+          ) {
+            return prev;
+          }
+          isExternalSyncRef.current = true;
+          return normalized;
+        });
       }
     }
   }, [initialSpecials]);
@@ -155,7 +170,13 @@ export default function PerkBuilder({
   React.useEffect(() => {
     if (initialEquippedCards && initialEquippedCards.length > 0) {
       const normalized = normalizeEquippedCards(initialEquippedCards, initialLegendaryPerks);
-      setEquippedCards(normalized);
+      setEquippedCards((prev) => {
+        if (areEquippedCardsEqual(prev, normalized)) {
+          return prev;
+        }
+        isExternalSyncRef.current = true;
+        return normalized;
+      });
     }
   }, [initialEquippedCards, initialLegendaryPerks]);
 
@@ -250,6 +271,10 @@ export default function PerkBuilder({
   // Auto-notify parent whenever specials or equippedCards change
   React.useEffect(() => {
     if (!isInitialLoadedRef.current || readOnly) return;
+    if (isExternalSyncRef.current) {
+      isExternalSyncRef.current = false;
+      return;
+    }
     onLoadoutChange?.({
       specials,
       equippedCards,

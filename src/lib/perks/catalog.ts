@@ -460,3 +460,25 @@ export function calculateLegendarySpecialBonuses(
   return bonuses;
 }
 
+/**
+ * Compares two equipped card lists for value equality to prevent redundant re-renders.
+ */
+export function areEquippedCardsEqual(
+  a: Array<{ cardId?: string; id?: string; rank?: number } | string> | null | undefined,
+  b: Array<{ cardId?: string; id?: string; rank?: number } | string> | null | undefined
+): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const itemA = a[i];
+    const itemB = b[i];
+    const idA = typeof itemA === "string" ? itemA : itemA?.cardId || itemA?.id;
+    const idB = typeof itemB === "string" ? itemB : itemB?.cardId || itemB?.id;
+    const rankA = typeof itemA === "object" ? (itemA?.rank ?? 1) : 1;
+    const rankB = typeof itemB === "object" ? (itemB?.rank ?? 1) : 1;
+    if (idA !== idB || rankA !== rankB) return false;
+  }
+  return true;
+}
+
