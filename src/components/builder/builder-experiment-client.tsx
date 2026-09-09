@@ -33,6 +33,7 @@ import {
   GitFork,
 } from "lucide-react";
 import PerkBuilder from "@/components/perks/perk-builder";
+import { areEquippedCardsEqual } from "@/lib/perks/catalog";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 import type { LocalTransmissionRecord } from "@/components/transmissions/transmissions-vault-client";
@@ -833,6 +834,15 @@ export default function BuilderExperimentClient({
                 setActiveChassisId(base.id);
               }
             }
+            if (typeof payloadObj.activeWeaponPieceId === "string" && payloadObj.activeWeaponPieceId) {
+              setActiveWeaponId(payloadObj.activeWeaponPieceId);
+            }
+            if (Array.isArray(payloadObj.equippedPerkCards) && payloadObj.equippedPerkCards.length > 0) {
+              setEquippedPerkCards(payloadObj.equippedPerkCards as Array<{ cardId: string; rank: number }>);
+            }
+            if (payloadObj.switchboardState && typeof payloadObj.switchboardState === "object") {
+              setSwitchboardState(payloadObj.switchboardState as unknown as CombatSwitchboardState);
+            }
           }
         }
       })
@@ -1551,13 +1561,14 @@ export default function BuilderExperimentClient({
     recommendedIds,
   ]);
 
-  function setBase(id: string) {
-    const next = getBaseGearPiece(id);
-    if (!next) return;
-    if (next.kind === "weapon") {
+  const selectActiveWeapon = React.useCallback(
+    (id: string) => {
+      const next = getBaseGearPiece(id);
+      if (!next || next.kind !== "weapon") return;
       setActiveWeaponId(id);
       setPayload((p) => {
-        const isPrevMelee = getBaseGearPiece(p.basePieceId)?.weaponSub === "melee";
+        const prevWeaponId = p.activeWeaponPieceId || activeWeaponId;
+        const isPrevMelee = getBaseGearPiece(prevWeaponId)?.weaponSub === "melee";
         const isNextMelee = next.weaponSub === "melee";
         const nextCrafting =
           !p.weaponCrafting || isPrevMelee !== isNextMelee
@@ -1566,11 +1577,23 @@ export default function BuilderExperimentClient({
 
         return {
           ...p,
-          basePieceId: id,
-          weaponSub: next.weaponSub ?? null,
+          activeWeaponPieceId: id,
           weaponCrafting: nextCrafting,
+          ...(p.equipmentKind === "weapon"
+            ? { basePieceId: id, weaponSub: next.weaponSub ?? null }
+            : {}),
         };
       });
+      setActivePick(null);
+    },
+    [activeWeaponId]
+  );
+
+  function setBase(id: string) {
+    const next = getBaseGearPiece(id);
+    if (!next) return;
+    if (next.kind === "weapon") {
+      selectActiveWeapon(id);
     } else if (next.kind === "armor" || next.kind === "powerArmor") {
       setActiveChassisId(id);
       const isNextPA = next.kind === "powerArmor";
@@ -1773,9 +1796,14 @@ export default function BuilderExperimentClient({
       legendaryPerks?: Array<{ id: string; rank: number }>;
       isGhoul?: boolean;
     }) => {
-      setPayload((prev) => ({
-        ...prev,
-        baseSpecial: {
+      setEquippedPerkCards((prev) => {
+        if (areEquippedCardsEqual(prev, data.equippedCards)) {
+          return prev;
+        }
+        return data.equippedCards;
+      });
+      setPayload((prev) => {
+        const nextSpecials = {
           str: data.specials.S ?? prev.baseSpecial?.str ?? 1,
           per: data.specials.P ?? prev.baseSpecial?.per ?? 1,
           end: data.specials.E ?? prev.baseSpecial?.end ?? 1,
@@ -1783,15 +1811,40 @@ export default function BuilderExperimentClient({
           int: data.specials.I ?? prev.baseSpecial?.int ?? 1,
           agi: data.specials.A ?? prev.baseSpecial?.agi ?? 1,
           lck: data.specials.L ?? prev.baseSpecial?.lck ?? 1,
-        },
-        legendaryPerkIds:
+        };
+        const nextLegPerks =
           data.legendaryPerks && data.legendaryPerks.length > 0
             ? data.legendaryPerks.map((lp) => lp.id)
-            : prev.legendaryPerkIds,
-        ghoul: data.isGhoul !== undefined ? data.isGhoul : prev.ghoul,
-        equippedPerkCards: data.equippedCards,
-      }));
-      setEquippedPerkCards(data.equippedCards);
+            : prev.legendaryPerkIds;
+        const nextGhoul = data.isGhoul !== undefined ? data.isGhoul : prev.ghoul;
+
+        const specialsSame =
+          prev.baseSpecial?.str === nextSpecials.str &&
+          prev.baseSpecial?.per === nextSpecials.per &&
+          prev.baseSpecial?.end === nextSpecials.end &&
+          prev.baseSpecial?.cha === nextSpecials.cha &&
+          prev.baseSpecial?.int === nextSpecials.int &&
+          prev.baseSpecial?.agi === nextSpecials.agi &&
+          prev.baseSpecial?.lck === nextSpecials.lck;
+
+        const cardsSame = areEquippedCardsEqual(prev.equippedPerkCards, data.equippedCards);
+        const ghoulSame = prev.ghoul === nextGhoul;
+        const legSame =
+          prev.legendaryPerkIds?.length === nextLegPerks?.length &&
+          (prev.legendaryPerkIds || []).every((id, idx) => id === nextLegPerks?.[idx]);
+
+        if (specialsSame && cardsSame && ghoulSame && legSame) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          baseSpecial: nextSpecials,
+          legendaryPerkIds: nextLegPerks,
+          ghoul: nextGhoul,
+          equippedPerkCards: data.equippedCards,
+        };
+      });
     },
     []
   );
@@ -2461,7 +2514,7 @@ export default function BuilderExperimentClient({
         <BuilderCombatSwitchboard
           readOnly={readOnly}
           initialState={switchboardState || undefined}
-          rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
+          rawDamage={weaponFirepowerResult?.damagePerShot.normal ?? 110}
           isGhoul={payload.ghoul}
           onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
           activeMutations={payload.mutationIds}
@@ -2844,7 +2897,7 @@ export default function BuilderExperimentClient({
                     ) : (
                       <select
                         value={activeWeaponPiece.id}
-                        onChange={(e) => setBase(e.target.value)}
+                        onChange={(e) => selectActiveWeapon(e.target.value)}
                         className="h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-amber-300 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer max-w-[170px] sm:max-w-[240px] truncate shadow-inner"
                         title="Switch Active Weapon Chassis"
                       >

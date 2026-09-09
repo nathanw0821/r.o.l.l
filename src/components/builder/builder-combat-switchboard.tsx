@@ -298,36 +298,60 @@ export default function BuilderCombatSwitchboard({
     };
   });
 
+  const onStateChangeRef = React.useRef(onStateChange);
   React.useEffect(() => {
+    onStateChangeRef.current = onStateChange;
+  }, [onStateChange]);
+
+  const isInternalChangeRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
     if (initialState) {
-      setSwitchboard((prev) => ({
-        ...prev,
-        ...initialState,
-        combatStance: {
-          isSneaking: initialState.combatStance?.isSneaking ?? prev.combatStance?.isSneaking ?? false,
-          isCrouched: initialState.combatStance?.isCrouched ?? prev.combatStance?.isCrouched ?? false,
-          isSprinting: initialState.combatStance?.isSprinting ?? prev.combatStance?.isSprinting ?? false,
-          isAiming: initialState.combatStance?.isAiming ?? prev.combatStance?.isAiming ?? false,
-          isPowerAttacking: initialState.combatStance?.isPowerAttacking ?? prev.combatStance?.isPowerAttacking ?? false,
-          isStationary: initialState.combatStance?.isStationary ?? prev.combatStance?.isStationary ?? false,
-          isInVats: initialState.combatStance?.isInVats ?? prev.combatStance?.isInVats ?? false,
-          vatsCritEveryOtherShot: initialState.combatStance?.vatsCritEveryOtherShot ?? prev.combatStance?.vatsCritEveryOtherShot ?? false,
-        },
-        activeFoods: {
-          ...prev.activeFoods,
-          ...(initialState.activeFoods || {}),
-        },
-      }));
+      setSwitchboard((prev) => {
+        let hasDiff = false;
+        const next = { ...prev };
+        for (const k of Object.keys(initialState) as Array<keyof CombatSwitchboardState>) {
+          if (k === "combatStance") {
+            const nextStance = {
+              isSneaking: initialState.combatStance?.isSneaking ?? prev.combatStance?.isSneaking ?? false,
+              isCrouched: initialState.combatStance?.isCrouched ?? prev.combatStance?.isCrouched ?? false,
+              isSprinting: initialState.combatStance?.isSprinting ?? prev.combatStance?.isSprinting ?? false,
+              isAiming: initialState.combatStance?.isAiming ?? prev.combatStance?.isAiming ?? false,
+              isPowerAttacking: initialState.combatStance?.isPowerAttacking ?? prev.combatStance?.isPowerAttacking ?? false,
+              isStationary: initialState.combatStance?.isStationary ?? prev.combatStance?.isStationary ?? false,
+              isInVats: initialState.combatStance?.isInVats ?? prev.combatStance?.isInVats ?? false,
+              vatsCritEveryOtherShot: initialState.combatStance?.vatsCritEveryOtherShot ?? prev.combatStance?.vatsCritEveryOtherShot ?? false,
+            };
+            if (JSON.stringify(nextStance) !== JSON.stringify(prev.combatStance)) {
+              next.combatStance = nextStance;
+              hasDiff = true;
+            }
+          } else if (k === "activeFoods") {
+            const nextFoods = { ...prev.activeFoods, ...(initialState.activeFoods || {}) };
+            if (JSON.stringify(nextFoods) !== JSON.stringify(prev.activeFoods)) {
+              next.activeFoods = nextFoods;
+              hasDiff = true;
+            }
+          } else if (prev[k] !== initialState[k]) {
+            (next as Record<string, unknown>)[k] = initialState[k];
+            hasDiff = true;
+          }
+        }
+        return hasDiff ? next : prev;
+      });
     }
   }, [initialState]);
 
   const updateField = <K extends keyof CombatSwitchboardState>(key: K, val: CombatSwitchboardState[K]) => {
     if (readOnly) return;
-    setSwitchboard((prev) => {
-      const next = { ...prev, [key]: val };
-      onStateChange?.(next);
-      return next;
-    });
+    isInternalChangeRef.current = true;
+    const next = { ...switchboard, [key]: val };
+    setSwitchboard(next);
+    onStateChangeRef.current?.(next);
   };
 
   const updateStance = (
@@ -335,52 +359,51 @@ export default function BuilderCombatSwitchboard({
     val: boolean
   ) => {
     if (readOnly) return;
-    setSwitchboard((prev) => {
-      const curr = prev.combatStance || {
-        isSneaking: false,
-        isCrouched: false,
-        isSprinting: false,
-        isAiming: false,
-        isPowerAttacking: false,
-        isStationary: false,
-        isInVats: false,
-        vatsCritEveryOtherShot: false,
-      };
-      const nextStance = { ...curr, [key]: val };
-      if (key === "isCrouched") {
-        nextStance.isSneaking = val;
-      } else if (key === "isSneaking") {
-        nextStance.isCrouched = val;
+    const curr = switchboard.combatStance || {
+      isSneaking: false,
+      isCrouched: false,
+      isSprinting: false,
+      isAiming: false,
+      isPowerAttacking: false,
+      isStationary: false,
+      isInVats: false,
+      vatsCritEveryOtherShot: false,
+    };
+    const nextStance = { ...curr, [key]: val };
+    if (key === "isCrouched") {
+      nextStance.isSneaking = val;
+    } else if (key === "isSneaking") {
+      nextStance.isCrouched = val;
+    }
+    if (key === "isSprinting" && val) {
+      nextStance.isStationary = false;
+    }
+    if (key === "isStationary" && val) {
+      nextStance.isSprinting = false;
+    }
+    if (key === "isInVats") {
+      if (val) {
+        nextStance.isAiming = false;
+      } else {
+        nextStance.vatsCritEveryOtherShot = false;
       }
-      if (key === "isSprinting" && val) {
-        nextStance.isStationary = false;
+    }
+    if (key === "isAiming") {
+      if (val) {
+        nextStance.isInVats = false;
+        nextStance.vatsCritEveryOtherShot = false;
       }
-      if (key === "isStationary" && val) {
-        nextStance.isSprinting = false;
+    }
+    if (key === "vatsCritEveryOtherShot") {
+      if (val) {
+        nextStance.isInVats = true;
+        nextStance.isAiming = false;
       }
-      if (key === "isInVats") {
-        if (val) {
-          nextStance.isAiming = false;
-        } else {
-          nextStance.vatsCritEveryOtherShot = false;
-        }
-      }
-      if (key === "isAiming") {
-        if (val) {
-          nextStance.isInVats = false;
-          nextStance.vatsCritEveryOtherShot = false;
-        }
-      }
-      if (key === "vatsCritEveryOtherShot") {
-        if (val) {
-          nextStance.isInVats = true;
-          nextStance.isAiming = false;
-        }
-      }
-      const next = { ...prev, combatStance: nextStance };
-      onStateChange?.(next);
-      return next;
-    });
+    }
+    const next = { ...switchboard, combatStance: nextStance };
+    isInternalChangeRef.current = true;
+    setSwitchboard(next);
+    onStateChangeRef.current?.(next);
   };
 
   // Step Helpers
@@ -416,36 +439,32 @@ export default function BuilderCombatSwitchboard({
     const nextFoods = { ...(switchboard.activeFoods || {}) };
     nextFoods[categoryKey] = food.id;
 
-    setSwitchboard((prev) => {
-      const next = { ...prev, activeFoods: nextFoods, activeFood: food.id };
-      onStateChange?.(next);
-      return next;
-    });
+    const next = { ...switchboard, activeFoods: nextFoods, activeFood: food.id };
+    isInternalChangeRef.current = true;
+    setSwitchboard(next);
+    onStateChangeRef.current?.(next);
   };
 
   const handleRemoveFoodCategory = (categoryKey: string) => {
     if (readOnly) return;
     const nextFoods = { ...(switchboard.activeFoods || {}) };
     delete nextFoods[categoryKey];
-    setSwitchboard((prev) => {
-      const next = {
-        ...prev,
-        activeFoods: nextFoods,
-        activeFood: Object.values(nextFoods)[0] || null,
-      };
-      onStateChange?.(next);
-      return next;
-    });
+    const next = {
+      ...switchboard,
+      activeFoods: nextFoods,
+      activeFood: Object.values(nextFoods)[0] || null,
+    };
+    isInternalChangeRef.current = true;
+    setSwitchboard(next);
+    onStateChangeRef.current?.(next);
   };
 
   React.useEffect(() => {
     setSwitchboard((prev) => {
       if (prev.isGhoul === isGhoul) return prev;
-      const next = { ...prev, isGhoul };
-      onStateChange?.(next);
-      return next;
+      return { ...prev, isGhoul };
     });
-  }, [isGhoul, onStateChange]);
+  }, [isGhoul]);
 
   const currentFoodDef = FOOD_STATES.find((f) => f.id === (switchboard.foodState || "fully_fed")) || FOOD_STATES[4];
   const currentThirstDef = THIRST_STATES.find((t) => t.id === (switchboard.thirstState || "fully_hydrated")) || THIRST_STATES[4];

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
-import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getGenderedPerkName } from "./catalog";
+import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getGenderedPerkName, areEquippedCardsEqual } from "./catalog";
 import { getInGamePerkCardImage } from "./clean-perk-assets";
 
 describe("Perk Catalog Utilities", () => {
@@ -229,6 +229,31 @@ describe("1:1 In-Game Perk Card Asset Resolution Engine", () => {
       expect(buildDeckResults.some((p) => p.id === "heavy-gunner")).toBe(false);
       expect(buildDeckResults.some((p) => p.id === "expert-heavy-gunner")).toBe(false);
       expect(buildDeckResults.some((p) => p.id === "master-heavy-gunner")).toBe(false);
+    });
+
+    it("should accurately compare equipped card arrays for value equality", () => {
+      const a = [
+        { cardId: "blocker", rank: 3 },
+        { cardId: "bandolier", rank: 2 },
+      ];
+      const b = [
+        { cardId: "blocker", rank: 3 },
+        { cardId: "bandolier", rank: 2 },
+      ];
+      const c = [
+        { cardId: "blocker", rank: 3 },
+        { cardId: "bandolier", rank: 1 },
+      ];
+      const d = [
+        { cardId: "blocker", rank: 3 },
+      ];
+
+      expect(areEquippedCardsEqual(a, b)).toBe(true);
+      expect(areEquippedCardsEqual(a, c)).toBe(false);
+      expect(areEquippedCardsEqual(a, d)).toBe(false);
+      expect(areEquippedCardsEqual(null, null)).toBe(true);
+      expect(areEquippedCardsEqual(a, null)).toBe(false);
+      expect(areEquippedCardsEqual(undefined, b)).toBe(false);
     });
   });
 });
