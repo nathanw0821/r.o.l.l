@@ -45,8 +45,7 @@ export async function POST(req: Request) {
 
     const prompt = `You are Vault-Tec's Senior Tactical AI Advisor for Fallout 76 (2026 Patch & PTS Standard).
 FALLOUT 76 GAME MECHANICS & R.O.L.L. PLATFORM FEATURES:
-- Live Mode: Maximum 15 perk card points per S.P.E.C.I.A.L. category.
-- PTS Ghoul Mode: Maximum 20 perk card points per category for Playable Ghouls with Feral Gauge mechanics.
+- Perk Card Limit: Universal maximum of 15 perk card points per S.P.E.C.I.A.L. category across all character builds.
 - Logarithmic Damage Formula Audit: min(0.99, (Damage / Enemy DR)^0.366).
 - Direct SeventySix.esm Binary Extraction: 100% FormID parity for all 1★–4★ legendary mods.
 - Expeditions: Complete drop tables for The Pitt (Union Dues, From Ashes to Fire) and Atlantic City (Tax Evasion, Sensational Game, Human Condition).
@@ -57,7 +56,7 @@ S.P.E.C.I.A.L. Allocation: ${specialSummary}
 Equipped Perks: ${perkList || "None equipped yet"}
 
 TASK:
-Provide a precise, encouraging 2-sentence Vault-Tec tactical recommendation for optimizing perk synergies, AP refresh rates, damage multipliers, or PTS Ghoul 20-Cap potential for this build. Maintain a witty, corporate Vault-Tec tone.`;
+Provide a precise, encouraging 2-sentence Vault-Tec tactical recommendation for optimizing perk synergies, AP refresh rates, or damage multipliers for this build. Maintain a witty, corporate Vault-Tec tone.`;
 
     const response = await ai.models.generateContent({
       model: GEMINI_DEFAULT_MODEL,

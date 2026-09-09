@@ -31,11 +31,11 @@
   },
   {
     "id": "pts-ghoul-race",
-    "name": "Playable Ghoul Race & 20-Cap S.P.E.C.I.A.L.",
+    "name": "Playable Ghoul Race & S.P.E.C.I.A.L. Tuning",
     "section": "modified-effects",
     "tier": "Character Overhaul",
     "categories": "Player Character • Mutations • Perks",
-    "description": "Transforms player into a Ghoul at Level 50+. Replaces human Rad damage with instant HP healing, adds Feral Gauge mechanics, and increases max S.P.E.C.I.A.L. stat cap from 15 to 20.",
+    "description": "Transforms player into a Ghoul at Level 50+. Replaces human Rad damage with instant HP healing, adds Feral Gauge mechanics, and introduces specialized Ghoul perk synergies under standard 15-cap S.P.E.C.I.A.L. limits.",
     "extraComponent": "Ghoul Mutation Injection",
     "legendaryModules": 0,
     "scripCost": 0,
