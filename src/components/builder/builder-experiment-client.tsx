@@ -113,6 +113,7 @@ import {
   defaultWeaponInnateCrafting,
   getWeaponInnateModOption,
   calculateWeaponInnateAggregate,
+  listWeaponAvailableSlots,
   type WeaponInnateSlotKey,
 } from "@/lib/builder/weapon-piece-mods";
 import { subscribeProgressChange } from "@/lib/progress-events";
@@ -2693,7 +2694,7 @@ export default function BuilderExperimentClient({
                     >
                       <span>⚙️ Attachments</span>
                       <span className="text-[0.65rem] px-1 py-0.2 rounded bg-amber-500/20 text-amber-200">
-                        {isMeleeWeapon ? "2" : "6"}
+                        {listWeaponAvailableSlots(activeWeaponPiece.id).length}
                       </span>
                     </button>
                     <button
@@ -2787,20 +2788,7 @@ export default function BuilderExperimentClient({
 
                     {/* Attachment Selectors Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {(isMeleeWeapon
-                        ? ([
-                            { key: "barrel" as WeaponInnateSlotKey, label: "Blade / Head / Heating Mod", icon: "⚔️" },
-                            { key: "stock" as WeaponInnateSlotKey, label: "Grip / Handle Mod", icon: "✋" },
-                          ])
-                        : ([
-                            { key: "receiver" as WeaponInnateSlotKey, label: "Receiver / Breech", icon: "⚡" },
-                            { key: "barrel" as WeaponInnateSlotKey, label: "Barrel Assembly", icon: "🎯" },
-                            { key: "stock" as WeaponInnateSlotKey, label: "Stock / Grip", icon: "🛡️" },
-                            { key: "magazine" as WeaponInnateSlotKey, label: "Magazine / Ammo", icon: "🔋" },
-                            { key: "sight" as WeaponInnateSlotKey, label: "Sights / Optics", icon: "👁️" },
-                            { key: "muzzle" as WeaponInnateSlotKey, label: "Muzzle / Tip", icon: "🔇" },
-                          ])
-                      ).map((slotInfo) => {
+                      {listWeaponAvailableSlots(activeWeaponPiece.id).map((slotInfo) => {
                         const slotKey = slotInfo.key;
                         const crafting = payload.weaponCrafting ?? defaultWeaponInnateCrafting(activeWeaponPiece.id);
                         const currentId =
