@@ -21,7 +21,7 @@ function normalizeWeaponSubLabel(raw: string | null | undefined): string {
  * Align with site filters: ballistic + energy guns share the ranged-style legendary pool;
  * melee stays separate. Unknown / null subCategory matches all weapon bases.
  */
-function weaponSubMatches(mod: BuilderModDTO, piece: BaseGearPiece): boolean {
+export function weaponSubMatches(mod: BuilderModDTO, piece: BaseGearPiece): boolean {
   if (piece.kind !== "weapon") return true;
   const sub = piece.weaponSub;
   const modSub = normalizeWeaponSubLabel(mod.subCategory);

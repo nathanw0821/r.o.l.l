@@ -139,7 +139,7 @@ export async function getCachedBuilderModCatalog() {
     return loadBuilderModCatalogUncached();
   }
   try {
-    const loader = unstable_cache(loadBuilderModCatalogUncached, ["builder-mod-catalog", "v4-effect-tier-merge"], {
+    const loader = unstable_cache(loadBuilderModCatalogUncached, ["builder-mod-catalog", "v6-patch69-canonical"], {
       revalidate: 3600,
       tags: [BUILDER_MODS_CACHE_TAG, ROLL_CATALOG_CACHE_TAG]
     });

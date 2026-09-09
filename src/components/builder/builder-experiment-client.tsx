@@ -91,6 +91,7 @@ import {
   listEquippedModsInBenchOrder,
   listExtraEffectMathEntries,
   stripGhoulBlockedLegendarySelections,
+  weaponSubMatches,
   type BuilderEffectTotals,
 } from "@/lib/builder/compatibility";
 import { isGhoulDiscouragedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
@@ -223,13 +224,38 @@ function useDensityCompact() {
   return compact;
 }
 
-function findModByIdOrSlug(mods: BuilderModDTO[], id: string | null | undefined): BuilderModDTO | null {
+const INITIAL_BUILDER_MODS: BuilderModDTO[] = EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
+  id: `seed-${r.slug}`,
+  slug: r.slug,
+  name: r.name,
+  starRank: r.starRank,
+  category: r.category,
+  subCategory: r.subCategory,
+  description: r.description,
+  effectMath: r.effectMath ?? {},
+  craftingCost: {},
+  allowedOnPowerArmor: r.allowedOnPowerArmor,
+  allowedOnArmor: r.allowedOnArmor,
+  allowedOnWeapon: r.allowedOnWeapon,
+  infestationOnly: false,
+  fifthStarEligible: r.fifthStarEligible,
+  ghoulSpecialCap: r.ghoulSpecialCap,
+  trackerUnlock: "unknown"
+}));
+
+function findModByIdOrSlug(
+  mods: BuilderModDTO[],
+  id: string | null | undefined,
+  starRank?: number
+): BuilderModDTO | null {
   if (!id) return null;
-  const direct = mods.find((m) => m.id === id || m.slug === id || m.id === id.replace(/^et-/, "") || m.slug === id.replace(/^et-/, ""));
+  const pool = typeof starRank === "number" ? mods.filter((m) => m.starRank === starRank) : mods;
+  const searchPool = pool.length > 0 ? pool : mods;
+  const direct = searchPool.find((m) => m.id === id || m.slug === id || m.id === id.replace(/^et-/, "") || m.slug === id.replace(/^et-/, ""));
   if (direct) return direct;
   const clean = id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
   return (
-    mods.find((m) => {
+    searchPool.find((m) => {
       const mCleanSlug = m.slug.replace(/\./g, "").toLowerCase();
       const mCleanId = m.id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
       return mCleanSlug === clean || mCleanId === clean;
@@ -493,7 +519,7 @@ export default function BuilderExperimentClient({
     }
   }, [readOnly]);
 
-  const [mods, setMods] = React.useState<BuilderModDTO[]>([]);
+  const [mods, setMods] = React.useState<BuilderModDTO[]>(INITIAL_BUILDER_MODS);
   const [loadError, setLoadError] = React.useState<string | null>(null);
 
   // Persistence state
@@ -999,57 +1025,62 @@ export default function BuilderExperimentClient({
   }, [initialLearnedBasePieceIds]);
 
   const loadMods = React.useCallback((forceRefresh = false) => {
+    const MODS_CACHE_KEY = "roll-builder-mods-v6-patch69";
+    try {
+      sessionStorage.removeItem("roll-builder-mods-cache");
+      sessionStorage.removeItem("roll-builder-mods-cache-v4");
+      sessionStorage.removeItem("roll-builder-mods-cache-v5");
+    } catch {
+      // Ignore storage errors
+    }
+
     if (!forceRefresh) {
       try {
-        const cached = sessionStorage.getItem("roll-builder-mods-cache");
+        const cached = sessionStorage.getItem(MODS_CACHE_KEY);
         if (cached) {
           const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          const isValid =
+            Array.isArray(parsed) &&
+            parsed.length >= 148 &&
+            parsed.some((m: BuilderModDTO) => m.slug.includes("pin-pointer")) &&
+            parsed.some((m: BuilderModDTO) => m.slug === "rapid") &&
+            parsed.some((m: BuilderModDTO) => m.slug === "vital") &&
+            parsed.some((m: BuilderModDTO) => m.slug === "vats-optimized");
+          if (isValid) {
             setMods(parsed);
             setLoadError(null);
             return;
           }
+          sessionStorage.removeItem(MODS_CACHE_KEY);
         }
       } catch {
         // Fall back to fetch on storage error
       }
     }
 
-    const fallbackMods: BuilderModDTO[] = EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
-      id: `seed-${r.slug}`,
-      slug: r.slug,
-      name: r.name,
-      starRank: r.starRank,
-      category: r.category,
-      subCategory: r.subCategory,
-      description: r.description,
-      effectMath: r.effectMath ?? {},
-      craftingCost: {},
-      allowedOnPowerArmor: r.allowedOnPowerArmor,
-      allowedOnArmor: r.allowedOnArmor,
-      allowedOnWeapon: r.allowedOnWeapon,
-      infestationOnly: false,
-      fifthStarEligible: r.fifthStarEligible,
-      ghoulSpecialCap: r.ghoulSpecialCap,
-      trackerUnlock: "unknown"
-    }));
-
-    fetch("/api/builder/mods")
+    fetch("/api/builder/mods?v=69", { cache: "no-cache" })
       .then((r) => r.json() as Promise<{ success?: boolean; data?: { mods?: BuilderModDTO[] } }>)
       .then((body) => {
-        const catalog = Array.isArray(body?.data?.mods) && body.data.mods.length > 0
-          ? body.data.mods
-          : fallbackMods;
+        const candidate = body?.data?.mods;
+        const isValid =
+          Array.isArray(candidate) &&
+          candidate.length >= 148 &&
+          candidate.some((m: BuilderModDTO) => m.slug.includes("pin-pointer")) &&
+          candidate.some((m: BuilderModDTO) => m.slug === "rapid") &&
+          candidate.some((m: BuilderModDTO) => m.slug === "vital");
+        const catalog = isValid ? candidate : INITIAL_BUILDER_MODS;
         setMods(catalog);
         setLoadError(null);
-        try {
-          sessionStorage.setItem("roll-builder-mods-cache", JSON.stringify(catalog));
-        } catch {
-          // Ignore quota errors
+        if (isValid) {
+          try {
+            sessionStorage.setItem(MODS_CACHE_KEY, JSON.stringify(catalog));
+          } catch {
+            // Ignore quota errors
+          }
         }
       })
       .catch(() => {
-        setMods(fallbackMods);
+        setMods(INITIAL_BUILDER_MODS);
         setLoadError(null);
       });
   }, []);
@@ -1561,9 +1592,24 @@ export default function BuilderExperimentClient({
             ? defaultWeaponInnateCrafting(id)
             : p.weaponCrafting;
 
+        // Sanitize legendary stars if transitioning between melee and ranged
+        const nextStars = [...p.legendaryModIds] as [string | null, string | null, string | null, string | null];
+        if (isPrevMelee !== isNextMelee) {
+          for (let s = 0; s < 4; s++) {
+            const starId = nextStars[s];
+            if (starId) {
+              const mod = findModByIdOrSlug(mods, starId, s + 1);
+              if (mod && !weaponSubMatches(mod, next)) {
+                nextStars[s] = null;
+              }
+            }
+          }
+        }
+
         return {
           ...p,
           activeWeaponPieceId: id,
+          legendaryModIds: nextStars,
           weaponCrafting: nextCrafting,
           ...(p.equipmentKind === "weapon"
             ? { basePieceId: id, weaponSub: next.weaponSub ?? null }
@@ -1572,7 +1618,7 @@ export default function BuilderExperimentClient({
       });
       setActivePick(null);
     },
-    [activeWeaponId]
+    [activeWeaponId, mods]
   );
 
   function setBase(id: string) {
@@ -2023,7 +2069,7 @@ export default function BuilderExperimentClient({
                   <div className="space-y-1 mt-1.5 pt-1.5 border-t border-border/10">
                     {SLOT_LABELS.map((starLabel, starIndex) => {
                       const id = payload.armorLegendaryModIds[payloadIndex]?.[starIndex];
-                      const mod = findModByIdOrSlug(mods, id);
+                      const mod = findModByIdOrSlug(mods, id, starIndex + 1);
                       return (
                         <div 
                           key={starIndex}
@@ -3121,7 +3167,7 @@ export default function BuilderExperimentClient({
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {SLOT_LABELS.map((starLabel, starIndex) => {
                         const id = payload.legendaryModIds[starIndex];
-                        const mod = findModByIdOrSlug(mods, id);
+                        const mod = findModByIdOrSlug(mods, id, starIndex + 1);
                         const trackerEntry = mod ? findLocalProgressEntry(localProgress, mod.id, mod.name, `${starIndex + 1} Star`) : undefined;
                         const isUnlocked = trackerEntry?.unlocked ?? (mod?.trackerUnlock === "unlocked");
                         const modCount = trackerEntry?.modCount ?? 0;
@@ -3258,7 +3304,7 @@ export default function BuilderExperimentClient({
                         <div className="space-y-1 text-[0.68rem]">
                           {SLOT_LABELS.map((starLabel, starIndex) => {
                             const id = payload.legendaryModIds[starIndex];
-                            const mod = findModByIdOrSlug(mods, id);
+                            const mod = findModByIdOrSlug(mods, id, starIndex + 1);
                             const trackerEntry = mod ? findLocalProgressEntry(localProgress, mod.id, mod.name, `${starIndex + 1} Star`) : undefined;
                             const isUnlocked = trackerEntry?.unlocked ?? (mod?.trackerUnlock === "unlocked");
 
