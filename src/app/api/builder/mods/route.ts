@@ -67,15 +67,24 @@ export async function GET() {
   try {
     const rows = await getCachedBuilderModCatalog();
     let unlockById: Record<string, BuilderModDTO["trackerUnlock"]> = {};
-    try {
-      const merged = await getAllEffectTiers(userId);
-      unlockById = computeLegendaryTrackerUnlockByModId(rows, merged);
-    } catch {
-      // Tracker unlock mapping fallback
+    if (userId) {
+      try {
+        const merged = await getAllEffectTiers(userId);
+        unlockById = computeLegendaryTrackerUnlockByModId(rows, merged);
+      } catch {
+        // Tracker unlock mapping fallback
+      }
     }
     const mods = rows.map((row) => toDto(row, unlockById[row.id] ?? "unknown"));
     const response = ok({ mods });
-    response.headers.set("Cache-Control", "private, no-store, max-age=0, must-revalidate");
+    if (userId) {
+      response.headers.set("Cache-Control", "private, max-age=60, stale-while-revalidate=300");
+    } else {
+      response.headers.set(
+        "Cache-Control",
+        "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+      );
+    }
     return response;
   } catch (error) {
     console.error("[GET /api/builder/mods error]", error);
