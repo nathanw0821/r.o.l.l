@@ -389,7 +389,33 @@ function TruthWikiContent() {
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [loadingContent, setLoadingContent] = React.useState(false);
   const hasAutoOpenedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (!selectedArticle) return;
+    if (selectedArticle.content && selectedArticle.content.trim().length > 0) return;
+
+    let active = true;
+    setLoadingContent(true);
+    fetch(`/data/wiki/${encodeURIComponent(selectedArticle.id)}.json`)
+      .then((res) => res.json() as Promise<{ content?: string }>)
+      .then((data) => {
+        if (active && data?.content) {
+          setSelectedArticle((prev) => (prev ? { ...prev, content: data.content! } : null));
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to load article content:", err);
+      })
+      .finally(() => {
+        if (active) setLoadingContent(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedArticle?.id, selectedArticle?.content]);
 
   React.useEffect(() => {
     const q = searchParams?.get("q") || searchParams?.get("query");
@@ -552,7 +578,14 @@ function TruthWikiContent() {
             {/* Main Article Document Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8 space-y-4 max-h-[680px] overflow-y-auto pr-2">
-                {parseCleanArticleContent(selectedArticle.content)}
+                {loadingContent ? (
+                  <div className="py-20 flex flex-col items-center justify-center space-y-3 font-mono text-amber-400">
+                    <Terminal className="h-8 w-8 animate-pulse text-amber-500" />
+                    <span className="text-sm font-bold tracking-wider">RETRIEVING VAULT-TEC TERMINAL ARCHIVE...</span>
+                  </div>
+                ) : (
+                  parseCleanArticleContent(selectedArticle.content || selectedArticle.snippet)
+                )}
               </div>
 
               {/* Sidebar Specifications */}

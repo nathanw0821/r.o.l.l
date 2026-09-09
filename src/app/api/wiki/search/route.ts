@@ -42,7 +42,7 @@ export async function GET(req: Request) {
     list = list.filter(
       (a) =>
         a.title.toLowerCase().includes(kw) ||
-        a.content.toLowerCase().includes(kw) ||
+        a.snippet.toLowerCase().includes(kw) ||
         (a.category || "").toLowerCase().includes(kw)
     );
   }

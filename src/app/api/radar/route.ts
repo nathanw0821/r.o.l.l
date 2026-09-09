@@ -11,15 +11,22 @@ export async function GET() {
       Promise.resolve(getDailyResetTimers()),
     ]);
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        nukeCodes,
-        minerva,
-        resets,
-        timestamp: Math.floor(Date.now() / 1000),
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          nukeCodes,
+          minerva,
+          resets,
+          timestamp: Math.floor(Date.now() / 1000),
+        },
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "public, max-age=300, s-maxage=1800, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (error) {
     console.error("[api/radar] Error:", error);
     return NextResponse.json(
