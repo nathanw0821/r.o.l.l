@@ -1,4 +1,5 @@
-import type { BuilderModDTO } from "@/lib/builder/types";
+import type { BuilderModDTO, BuilderWeaponInnateCrafting } from "@/lib/builder/types";
+import { calculateWeaponInnateAggregate } from "@/lib/builder/weapon-piece-mods";
 
 export type WeaponDamageType =
   | "ballistic"
@@ -662,6 +663,7 @@ export type TargetDummyCalculation = {
 export type CombatFirepowerCalculationInput = {
   weaponId: string;
   equippedMods: (Partial<BuilderModDTO> | { slug: string } | null | undefined)[];
+  weaponCrafting?: BuilderWeaponInnateCrafting | null;
   equippedPerks: { cardId: string; rank: number }[];
   targetDummyId?: string;
   activeBuffs?: {
@@ -826,6 +828,8 @@ export function calculateCombatFirepower(
   input: CombatFirepowerCalculationInput
 ): CombatFirepowerResult {
   const base = getWeaponCombatBaseStats(input.weaponId);
+  const innateMods = calculateWeaponInnateAggregate(input.weaponId, input.weaponCrafting);
+  const effectiveIsAutomatic = innateMods.isAutomatic || base.isAutomatic;
   const rawHealth = input.playerStats.healthPct ?? 0.2;
   const healthPct = rawHealth > 1 ? rawHealth / 100 : rawHealth; // Seamlessly handles 0.2 and 20% format
   const caps = input.playerStats.caps ?? 30000; // Default max caps for Aristocrat's
@@ -842,6 +846,14 @@ export function calculateCombatFirepower(
   // 1. Additive Damage Modifiers Pool
   let additiveDamagePct = 0;
 
+  if (innateMods.damagePct !== 0) {
+    additiveDamagePct += innateMods.damagePct;
+    breakdown.push({
+      source: "Weapon Innate Mods (Receiver/Attachments)",
+      value: `${innateMods.damagePct > 0 ? "+" : ""}${Math.round(innateMods.damagePct * 100)}%`,
+    });
+  }
+
   // Perk Card Scaling
   const perkRanks = new Map<string, number>();
   for (const p of input.equippedPerks) {
@@ -849,7 +861,7 @@ export function calculateCombatFirepower(
   }
 
   // Weapon Class Perks
-  if (base.weaponClass === "commando" && base.isAutomatic) {
+  if (base.weaponClass === "commando" && effectiveIsAutomatic) {
     const c1 = perkRanks.get("commando") || 0;
     const c2 = perkRanks.get("expert-commando") || 0;
     const c3 = perkRanks.get("master-commando") || 0;
@@ -858,7 +870,7 @@ export function calculateCombatFirepower(
       additiveDamagePct += total;
       breakdown.push({ source: "Commando Perks", value: `+${Math.round(total * 100)}%` });
     }
-  } else if (base.weaponClass === "rifleman" || (!base.isAutomatic && base.weaponClass === "commando")) {
+  } else if (base.weaponClass === "rifleman" || (!effectiveIsAutomatic && base.weaponClass === "commando")) {
     const r1 = perkRanks.get("rifleman") || 0;
     const r2 = perkRanks.get("expert-rifleman") || 0;
     const r3 = perkRanks.get("master-rifleman") || 0;
@@ -1117,18 +1129,21 @@ export function calculateCombatFirepower(
     const covertRank = perkRanks.get("covert-operative") || 0;
     const sandmanRank = perkRanks.get("mister-sandman") || 0;
     const isNight = input.playerStats.timeOfDay === "night";
+    const isSuppressed = innateMods.isSuppressed;
 
     let sneakMultiplier = 2.0;
     if (base.weaponClass === "melee" || base.weaponClass === "unarmed") {
       sneakMultiplier = ninjaRank > 0 ? 3.0 : 2.0;
     } else {
       if (covertRank > 0) sneakMultiplier = 2.5;
-      if (isNight && sandmanRank > 0) sneakMultiplier += sandmanRank * 0.25;
+      if (isNight && sandmanRank > 0 && isSuppressed) {
+        sneakMultiplier += sandmanRank * 0.25;
+      }
     }
 
     additiveDamagePct += (sneakMultiplier - 1.0);
     breakdown.push({
-      source: `Sneak Attack (${isNight && sandmanRank > 0 ? "Mister Sandman " : ""}${sneakMultiplier}× Multiplier)`,
+      source: `Sneak Attack (${isNight && sandmanRank > 0 && isSuppressed ? "Mister Sandman (Silenced) " : ""}${sneakMultiplier}× Multiplier)`,
       value: `+${Math.round((sneakMultiplier - 1.0) * 100)}%`
     });
   }
@@ -1228,6 +1243,14 @@ export function calculateCombatFirepower(
   // Base Crit = +100% of Base Damage
   let critBonusPct = 1.0;
 
+  if (innateMods.critDamagePct !== 0) {
+    critBonusPct += innateMods.critDamagePct;
+    breakdown.push({
+      source: "Receiver / Attachments (+Crit)",
+      value: `+${Math.round(innateMods.critDamagePct * 100)}% Crit`,
+    });
+  }
+
   const betterCritsRank = perkRanks.get("better-criticals") || 0;
   if (betterCritsRank > 0) {
     const bc = betterCritsRank === 1 ? 0.5 : betterCritsRank === 2 ? 0.75 : 1.0;
@@ -1280,12 +1303,19 @@ export function calculateCombatFirepower(
   const criticalDamage = normalDamage + Math.round(base.baseDamage * critBonusPct) + explosiveDamage;
 
   // 5. Fire Rate & DPS
-  const fireRateMultiplier = hasRapid ? 1.25 : 1.0;
+  const innateFireRateFactor = 1.0 + innateMods.fireRatePct;
+  const fireRateMultiplier = (hasRapid ? 1.25 : 1.0) * Math.max(0.2, innateFireRateFactor);
   const effectiveRPS = base.fireRate * fireRateMultiplier;
   const effectiveRPM = Math.round(effectiveRPS * 60);
 
   if (hasRapid) {
     dpsBreakdown.push({ source: "Rapid 2★ Weapon Speed", value: "+25% Fire Rate" });
+  }
+  if (innateMods.fireRatePct !== 0) {
+    dpsBreakdown.push({
+      source: "Innate Receiver / Barrel Speed",
+      value: `${innateMods.fireRatePct > 0 ? "+" : ""}${Math.round(innateMods.fireRatePct * 100)}% Fire Rate`,
+    });
   }
 
   const burstDPS = Math.round((normalDamage + explosiveDamage) * effectiveRPS);
@@ -1299,13 +1329,25 @@ export function calculateCombatFirepower(
   dpsBreakdown.push({ source: "Effective Fire Rate", value: `${effectiveRPS.toFixed(1)} rps (${effectiveRPM} rpm)` });
 
   // 6. Magazine Capacity
-  const effectiveMag = hasQuad ? base.magazineSize * 4 : base.magazineSize;
+  let baseMag = base.magazineSize;
+  if (innateMods.magCapacityPct !== 0) {
+    baseMag = Math.max(1, Math.round(baseMag * (1.0 + innateMods.magCapacityPct)));
+  }
+  const effectiveMag = hasQuad ? baseMag * 4 : baseMag;
 
   // 7. VATS AP Cost per Shot
   let apMultiplier = 1.0;
   if (hasVatsOptimized) {
     apMultiplier *= 0.75;
     vatsBreakdown.push({ source: "VATS Optimized 3★ (-25% AP)", value: "×0.75" });
+  }
+  if (innateMods.apCostPct !== 0) {
+    const innateApFactor = 1.0 + innateMods.apCostPct;
+    apMultiplier *= Math.max(0.1, innateApFactor);
+    vatsBreakdown.push({
+      source: "Attachments (Reflex / Stock / Barrel AP)",
+      value: `${innateMods.apCostPct > 0 ? "+" : ""}${Math.round(innateMods.apCostPct * 100)}% AP`,
+    });
   }
 
   const vatsApCost = Math.max(2, Math.round(base.baseVatsApCost * apMultiplier));
@@ -1341,6 +1383,15 @@ export function calculateCombatFirepower(
   if (hasAntiArmor) {
     penRemaining *= 0.5;
     apBreakdown.push({ source: "Anti-Armor 1★", value: "50% Penetration" });
+  }
+
+  if (innateMods.armorPenetrationPct > 0) {
+    const innatePen = Math.min(0.9, innateMods.armorPenetrationPct / 100);
+    penRemaining *= 1 - innatePen;
+    apBreakdown.push({
+      source: "Magazine Penetration (Perforating/Piercing)",
+      value: `${Math.round(innatePen * 100)}% Penetration`,
+    });
   }
 
   const tankKillerRank = perkRanks.get("tank-killer") || 0;
@@ -1416,7 +1467,7 @@ export function calculateCombatFirepower(
     fireRate: {
       rps: effectiveRPS,
       rpm: effectiveRPM,
-      isAutomatic: base.isAutomatic,
+      isAutomatic: effectiveIsAutomatic,
       fireRateMultiplier,
     },
     magazineCapacity: {

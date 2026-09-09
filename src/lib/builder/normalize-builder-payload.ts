@@ -6,11 +6,13 @@ import {
   sanitizePowerArmorPiecesEquipped
 } from "@/lib/builder/power-armor-stats";
 import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
+import { defaultWeaponInnateCrafting } from "@/lib/builder/weapon-piece-mods";
 import type {
   BuilderArmorPieceCrafting,
   BuilderPayload,
   BuilderPowerArmorHelmetCrafting,
-  BuilderUnderarmor
+  BuilderUnderarmor,
+  BuilderWeaponInnateCrafting
 } from "@/lib/builder/types";
 
 const STAR_SLOTS = 4;
@@ -150,12 +152,33 @@ function readLegendaryPerkIds(raw: unknown): string[] {
   return [];
 }
 
+function readWeaponInnateCrafting(
+  v: Record<string, unknown>,
+  basePieceId: string,
+  isWeapon: boolean
+): BuilderWeaponInnateCrafting | undefined {
+  if (!isWeapon) return undefined;
+  const w = v.weaponCrafting;
+  if (!w || typeof w !== "object") return defaultWeaponInnateCrafting(basePieceId);
+  const raw = w as Record<string, unknown>;
+  const def = defaultWeaponInnateCrafting(basePieceId);
+  return {
+    receiverId: typeof raw.receiverId === "string" ? raw.receiverId : def.receiverId,
+    barrelId: typeof raw.barrelId === "string" ? raw.barrelId : def.barrelId,
+    stockId: typeof raw.stockId === "string" ? raw.stockId : def.stockId,
+    magazineId: typeof raw.magazineId === "string" ? raw.magazineId : def.magazineId,
+    sightId: typeof raw.sightId === "string" ? raw.sightId : def.sightId,
+    muzzleId: typeof raw.muzzleId === "string" ? raw.muzzleId : def.muzzleId,
+  };
+}
+
 function buildPayloadV5(fields: {
   basePieceId: string;
   equipmentKind: BuilderPayload["equipmentKind"];
   weaponSub: BuilderPayload["weaponSub"];
   legendaryModIds: (string | null)[];
   armorLegendaryModIds: (string | null)[][];
+  weaponCrafting?: BuilderWeaponInnateCrafting;
   armorPieceCrafting: BuilderArmorPieceCrafting[];
   powerArmorHelmetId: string | null;
   powerArmorHelmetCrafting: BuilderPowerArmorHelmetCrafting;
@@ -176,6 +199,7 @@ function buildPayloadV5(fields: {
     weaponSub: fields.weaponSub,
     legendaryModIds: fields.legendaryModIds,
     armorLegendaryModIds: fields.armorLegendaryModIds,
+    weaponCrafting: fields.weaponCrafting,
     armorPieceCrafting: fields.armorPieceCrafting,
     powerArmorHelmetId: sanitizePowerArmorHelmetId(fields.basePieceId, fields.powerArmorHelmetId),
     powerArmorHelmetCrafting: fields.powerArmorHelmetCrafting,
@@ -227,6 +251,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       weaponSub,
       legendaryModIds: padLegendaryRow(v.legendaryModIds),
       armorLegendaryModIds: grid,
+      weaponCrafting: readWeaponInnateCrafting(v, basePieceId, v.equipmentKind === "weapon"),
       armorPieceCrafting: crafting,
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
@@ -273,6 +298,7 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       legendaryModIds: padLegendaryRow(v.legendaryModIds),
       armorLegendaryModIds: remapped.armorLegendaryModIds,
       armorPieceCrafting: remapped.armorPieceCrafting,
+      weaponCrafting: readWeaponInnateCrafting(v, basePieceId, v.equipmentKind === "weapon"),
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
       powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(v.powerArmorPiecesEquipped),
