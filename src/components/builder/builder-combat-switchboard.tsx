@@ -34,6 +34,7 @@ import type {
   ThirstSurvivalState,
   TeamCategory,
 } from "@/lib/builder/unified-builder-state";
+import type { VatsCritQualification } from "@/lib/builder/combat-firepower-engine";
 
 export type CombatSwitchboardState = {
   isGhoul?: boolean;
@@ -52,9 +53,13 @@ export type CombatSwitchboardState = {
   bulletStormStacks?: number;
   combatStance?: {
     isSneaking: boolean;
+    isCrouched?: boolean;
     isSprinting: boolean;
     isAiming: boolean;
     isPowerAttacking: boolean;
+    isStationary?: boolean;
+    isInVats?: boolean;
+    vatsCritEveryOtherShot?: boolean;
   };
   caps?: number;
 
@@ -174,6 +179,8 @@ interface BuilderCombatSwitchboardProps {
   ignoreMutationPenalties?: boolean;
   onIgnoreMutationPenaltiesChange?: (enabled: boolean) => void;
   onStateChange?: (state: CombatSwitchboardState) => void;
+  activeTacticalTags?: string[];
+  critQualification?: VatsCritQualification;
 }
 
 export default function BuilderCombatSwitchboard({
@@ -183,6 +190,8 @@ export default function BuilderCombatSwitchboard({
   hasStrangeInNumbers = false,
   onStrangeInNumbersChange,
   onStateChange,
+  activeTacticalTags,
+  critQualification,
 }: BuilderCombatSwitchboardProps) {
   const isCarnivore = activeMutations.includes("carnivore");
   const isHerbivore = activeMutations.includes("herbivore");
@@ -230,9 +239,13 @@ export default function BuilderCombatSwitchboard({
       bulletStormStacks: 0,
       combatStance: {
         isSneaking: false,
+        isCrouched: false,
         isSprinting: false,
         isAiming: false,
         isPowerAttacking: false,
+        isStationary: false,
+        isInVats: false,
+        vatsCritEveryOtherShot: false,
       },
       caps: 30000,
 
@@ -258,9 +271,52 @@ export default function BuilderCombatSwitchboard({
     });
   };
 
-  const updateStance = (key: "isSneaking" | "isSprinting" | "isAiming" | "isPowerAttacking", val: boolean) => {
+  const updateStance = (
+    key: keyof NonNullable<CombatSwitchboardState["combatStance"]>,
+    val: boolean
+  ) => {
     setSwitchboard((prev) => {
-      const nextStance = { ...(prev.combatStance || { isSneaking: false, isSprinting: false, isAiming: false, isPowerAttacking: false }), [key]: val };
+      const curr = prev.combatStance || {
+        isSneaking: false,
+        isCrouched: false,
+        isSprinting: false,
+        isAiming: false,
+        isPowerAttacking: false,
+        isStationary: false,
+        isInVats: false,
+        vatsCritEveryOtherShot: false,
+      };
+      const nextStance = { ...curr, [key]: val };
+      if (key === "isCrouched") {
+        nextStance.isSneaking = val;
+      } else if (key === "isSneaking") {
+        nextStance.isCrouched = val;
+      }
+      if (key === "isSprinting" && val) {
+        nextStance.isStationary = false;
+      }
+      if (key === "isStationary" && val) {
+        nextStance.isSprinting = false;
+      }
+      if (key === "isInVats") {
+        if (val) {
+          nextStance.isAiming = false;
+        } else {
+          nextStance.vatsCritEveryOtherShot = false;
+        }
+      }
+      if (key === "isAiming") {
+        if (val) {
+          nextStance.isInVats = false;
+          nextStance.vatsCritEveryOtherShot = false;
+        }
+      }
+      if (key === "vatsCritEveryOtherShot") {
+        if (val) {
+          nextStance.isInVats = true;
+          nextStance.isAiming = false;
+        }
+      }
       const next = { ...prev, combatStance: nextStance };
       onStateChange?.(next);
       return next;
@@ -817,6 +873,30 @@ export default function BuilderCombatSwitchboard({
                   </button>
                 </div>
                 <p className="text-[0.68rem] text-slate-400">{currentThirstDef.desc}</p>
+                <div className="flex items-center gap-1.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateField("foodState", "fully_fed");
+                      updateField("thirstState", "fully_hydrated");
+                    }}
+                    className="flex-1 py-1 rounded border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 text-[0.65rem] font-bold uppercase hover:bg-emerald-900/50 transition-colors cursor-pointer text-center truncate"
+                    title="Set Hunger & Thirst to 100% (Triggers Overeater's 30% mitigation & Gourmand's +24% damage)"
+                  >
+                    🍖💧 Max Overeater&apos;s
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateField("foodState", "starving");
+                      updateField("thirstState", "parched");
+                    }}
+                    className="px-2 py-1 rounded border border-rose-500/30 bg-rose-950/30 text-rose-400 text-[0.65rem] font-bold uppercase hover:bg-rose-900/40 transition-colors cursor-pointer"
+                    title="Set to Starving & Parched"
+                  >
+                    ⚠️ Depleted
+                  </button>
+                </div>
               </div>
             )}
 
@@ -863,71 +943,238 @@ export default function BuilderCombatSwitchboard({
             </div>
           </div>
 
-          {/* Combat Stances Matrix */}
-          <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-2">
-            <div className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-              <Target className="h-3.5 w-3.5" /> Tactical Combat Stances
+          {/* Combat Stances & V.A.T.S. Matrix */}
+          <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-emerald-400">
+              <span className="flex items-center gap-1.5">
+                <Target className="h-3.5 w-3.5" /> Tactical Combat Stances &amp; V.A.T.S.
+              </span>
+              <span className="text-[0.65rem] text-slate-400 font-normal">
+                {switchboard.combatStance?.isCrouched ? "🤫 Stealthed" : "🧍 Upright"} ·{" "}
+                {switchboard.combatStance?.isInVats
+                  ? switchboard.combatStance?.vatsCritEveryOtherShot
+                    ? "✨ 1:1 Crit Loop"
+                    : "🎯 In V.A.T.S."
+                  : switchboard.combatStance?.isAiming
+                  ? "🎯 Aiming ADS"
+                  : "🔫 Hip Fire"}
+              </span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <button
-                type="button"
-                onClick={() => updateStance("isSneaking", !switchboard.combatStance?.isSneaking)}
-                className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                  switchboard.combatStance?.isSneaking
-                    ? "bg-emerald-950 border-emerald-500 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.3)] font-black"
-                    : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
-                }`}
-              >
-                <span>{switchboard.combatStance?.isSneaking ? "🤫 Sneaking (2.5×)" : "🧍 Standing"}</span>
-                <span className="text-[0.65rem] font-normal text-slate-500">
-                  {switchboard.combatStance?.isSneaking ? "Sneak Attack Active" : "Normal Detection"}
-                </span>
-              </button>
 
-              <button
-                type="button"
-                onClick={() => updateStance("isSprinting", !switchboard.combatStance?.isSprinting)}
-                className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                  switchboard.combatStance?.isSprinting
-                    ? "bg-cyan-950 border-cyan-500 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.3)] font-black"
-                    : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
-                }`}
-              >
-                <span>{switchboard.combatStance?.isSprinting ? "🏃 Sprinting" : "🚶 Walking"}</span>
-                <span className="text-[0.65rem] font-normal text-slate-500">
-                  {switchboard.combatStance?.isSprinting ? "Cavalier's -75% DR" : "Standard Mobility"}
-                </span>
-              </button>
+            {/* Row 1: Physical Posture & Movement Stances */}
+            <div className="space-y-1">
+              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                <span>Physical Movement &amp; Posture</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {/* 1. Crouched / Stealthed */}
+                <button
+                  type="button"
+                  onClick={() => updateStance("isCrouched", !switchboard.combatStance?.isCrouched)}
+                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isCrouched
+                      ? "bg-emerald-950 border-emerald-500 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.3)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>{switchboard.combatStance?.isCrouched ? "🤫 Stealthed" : "🧍 Upright"}</span>
+                  <span className="text-[0.62rem] font-normal text-slate-500">
+                    {switchboard.combatStance?.isCrouched ? "Nocturnal / Sneak (2.5×)" : "Normal Detection"}
+                  </span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => updateStance("isPowerAttacking", !switchboard.combatStance?.isPowerAttacking)}
-                className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                  switchboard.combatStance?.isPowerAttacking
-                    ? "bg-amber-950 border-amber-500 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.3)] font-black"
-                    : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
-                }`}
-              >
-                <span>{switchboard.combatStance?.isPowerAttacking ? "💥 Power Attack" : "🗡️ Normal Attack"}</span>
-                <span className="text-[0.65rem] font-normal text-slate-500">
-                  {switchboard.combatStance?.isPowerAttacking ? "+40% Heavy Hitter" : "Base Attack"}
-                </span>
-              </button>
+                {/* 2. Sprinting */}
+                <button
+                  type="button"
+                  onClick={() => updateStance("isSprinting", !switchboard.combatStance?.isSprinting)}
+                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isSprinting
+                      ? "bg-cyan-950 border-cyan-500 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.3)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>{switchboard.combatStance?.isSprinting ? "🏃 Sprinting" : "🚶 Walking"}</span>
+                  <span className="text-[0.62rem] font-normal text-slate-500">
+                    {switchboard.combatStance?.isSprinting ? "Cavalier's (-75% Dmg)" : "Standard Speed"}
+                  </span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => updateStance("isAiming", !switchboard.combatStance?.isAiming)}
-                className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                  switchboard.combatStance?.isAiming
-                    ? "bg-purple-950 border-purple-500 text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.3)] font-black"
-                    : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
-                }`}
-              >
-                <span>{switchboard.combatStance?.isAiming ? "🎯 Aiming Down Sight" : "🔫 Hip Fire"}</span>
-                <span className="text-[0.65rem] font-normal text-slate-500">
-                  {switchboard.combatStance?.isAiming ? "+25% Hitman's Mod" : "Free Spread"}
+                {/* 3. Stationary / Standing Still */}
+                <button
+                  type="button"
+                  onClick={() => updateStance("isStationary", !switchboard.combatStance?.isStationary)}
+                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isStationary
+                      ? "bg-blue-950 border-blue-500 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.3)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>{switchboard.combatStance?.isStationary ? "🛑 Stationary" : "🏃 Moving"}</span>
+                  <span className="text-[0.62rem] font-normal text-slate-500">
+                    {switchboard.combatStance?.isStationary ? "Sentinel's / Steady (+25%)" : "Dynamic Movement"}
+                  </span>
+                </button>
+
+                {/* 4. Power Attack */}
+                <button
+                  type="button"
+                  onClick={() => updateStance("isPowerAttacking", !switchboard.combatStance?.isPowerAttacking)}
+                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isPowerAttacking
+                      ? "bg-amber-950 border-amber-500 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.3)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>{switchboard.combatStance?.isPowerAttacking ? "💥 Power Attack" : "🗡️ Regular Atk"}</span>
+                  <span className="text-[0.62rem] font-normal text-slate-500">
+                    {switchboard.combatStance?.isPowerAttacking ? "+40% Heavy Hitter's" : "Base Attack Cost"}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Row 2: Targeting & V.A.T.S. Fire Control */}
+            <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
+              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                <span>Targeting &amp; V.A.T.S. Critical Loop</span>
+                <span className="text-[0.62rem] text-slate-500 lowercase">vats suppresses ads bonuses</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {/* 1. Aiming Down Sights */}
+                <button
+                  type="button"
+                  onClick={() => updateStance("isAiming", !switchboard.combatStance?.isAiming)}
+                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isAiming
+                      ? "bg-purple-950 border-purple-500 text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.3)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span>🎯</span>
+                    <span>{switchboard.combatStance?.isAiming ? "Aiming (ADS)" : "Hip Fire"}</span>
+                  </div>
+                  <span className="text-[0.62rem] font-normal text-slate-500">
+                    {switchboard.combatStance?.isAiming ? "Hitman's (+25%) · Steadfast (+50 DR)" : "Free Hip Spread (ADS Off)"}
+                  </span>
+                </button>
+
+                {/* 2. In V.A.T.S. */}
+                <button
+                  type="button"
+                  onClick={() => updateStance("isInVats", !switchboard.combatStance?.isInVats)}
+                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isInVats
+                      ? "bg-emerald-950 border-emerald-500 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.35)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-emerald-400">⚡</span>
+                    <span>{switchboard.combatStance?.isInVats ? "In V.A.T.S. (Active)" : "Enter V.A.T.S."}</span>
+                  </div>
+                  <span className="text-[0.62rem] font-normal text-slate-500">
+                    {switchboard.combatStance?.isInVats ? "Target Lock · 95% Cap · AP Cost" : "Free Targeting (VATS Off)"}
+                  </span>
+                </button>
+
+                {/* 3. V.A.T.S. Crit Every Other Shot */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateStance(
+                      "vatsCritEveryOtherShot",
+                      !switchboard.combatStance?.vatsCritEveryOtherShot
+                    )
+                  }
+                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.vatsCritEveryOtherShot
+                      ? critQualification?.everySecondShotReady
+                        ? "bg-amber-950 border-amber-400 text-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.4)] font-black"
+                        : "bg-amber-950/60 border-amber-600 text-amber-300 font-bold"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full px-1">
+                    <span className="flex items-center gap-1 text-amber-300 font-bold">
+                      <span>✨</span>
+                      <span>Crit Every 2nd Shot</span>
+                    </span>
+                    {critQualification?.everySecondShotReady ? (
+                      <span className="text-[0.58rem] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-black">
+                        ⚡ QUALIFIED
+                      </span>
+                    ) : (
+                      <span className="text-[0.58rem] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                        🔒 NEED +{critQualification?.missingLuck ?? "?"} LCK
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[0.62rem] font-normal text-slate-400">
+                    {switchboard.combatStance?.vatsCritEveryOtherShot
+                      ? "1 Normal ➔ 1 Crit Alternating Loop"
+                      : `Req: ${critQualification?.requiredLuck ?? 33} Luck (Build has ${critQualification?.currentLuck ?? 0})`}
+                  </span>
+                </button>
+              </div>
+
+              {/* V.A.T.S. & Luck Chart Telemetry Card */}
+              {critQualification && (
+                <div className="rounded border border-emerald-500/20 bg-slate-950/80 p-2.5 text-[0.68rem] font-mono space-y-1.5">
+                  <div className="flex flex-wrap items-center justify-between gap-1 border-b border-slate-800 pb-1">
+                    <span className="text-emerald-400 font-bold">
+                      [ V.A.T.S. CRITICAL METER &amp; LUCK CHART TELEMETRY ]
+                    </span>
+                    <span className={critQualification.everySecondShotReady ? "text-emerald-300 font-bold" : "text-amber-400 font-bold"}>
+                      {critQualification.summary}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-300 pt-0.5">
+                    <div>
+                      <span className="text-slate-500">Current Luck:</span>{" "}
+                      <span className="text-white font-bold">{critQualification.currentLuck}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">1:1 Req Luck:</span>{" "}
+                      <span className="text-amber-300 font-bold">{critQualification.requiredLuck}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Crit Savvy:</span>{" "}
+                      <span className="text-emerald-300 font-bold">
+                        {critQualification.critSavvyRank > 0 ? `Rank ${critQualification.critSavvyRank} (${critQualification.fillCostPct}% cost)` : "None (100% cost)"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Fill Per Shot:</span>{" "}
+                      <span className="text-cyan-300 font-bold">{critQualification.fillPerShotPct}% / shot</span>
+                    </div>
+                  </div>
+                  <div className="text-[0.62rem] text-slate-400 pt-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <span>💡 {critQualification.recommendation}</span>
+                    <span className="text-slate-500 shrink-0">
+                      3★ Lucky: {critQualification.hasLucky15Fill ? "Active (-10 Luck)" : "Off"} · VATS Opt: {critQualification.hasVatsOptimized ? "Active (-25% AP)" : "Off"}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Active Tactical Telemetry Banner */}
+            <div className="rounded border border-emerald-500/30 bg-slate-950 p-2 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 font-mono">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="text-slate-400 font-bold uppercase text-[0.68rem] shrink-0">Tactical Triggers:</span>
+                <span className="text-emerald-300 font-black text-[0.7rem] truncate">
+                  {activeTacticalTags && activeTacticalTags.length > 0
+                    ? activeTacticalTags.join(" · ")
+                    : switchboard.combatStance?.isCrouched
+                    ? "Crouched / Stealthed (Sneak Attack 2.0×–2.5× · Nocturnal/Chameleon Ready)"
+                    : "Standard Upright Combat (No Stance Buffs Active)"}
                 </span>
-              </button>
+              </div>
+              <span className="text-[0.62rem] text-slate-500 uppercase shrink-0 text-right">
+                Live Game Mechanics Active
+              </span>
             </div>
           </div>
 

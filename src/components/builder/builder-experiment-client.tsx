@@ -45,6 +45,7 @@ import ProgressToggle from "@/components/progress-toggle";
 import BuilderCombatSwitchboard, { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { calculateAggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
 import { calculateCombatFirepower } from "@/lib/builder/combat-firepower-engine";
+import { calculateStanceAndBiometricModifiers } from "@/lib/builder/stance-biometrics-engine";
 import BuilderFirepowerMatrix from "@/components/builder/builder-firepower-matrix";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
 import BuilderGearSelector from "@/components/builder/builder-gear-selector";
@@ -64,6 +65,7 @@ import {
 import {
   BASE_GEAR_PIECES,
   getBaseGearPiece,
+  getGroupedWeaponCategories,
   isPowerArmorTorsoBasePiece,
   isPowerArmorTorsoRowLearned,
   isTrackableBasePieceId,
@@ -920,6 +922,8 @@ export default function BuilderExperimentClient({
     [activeWeaponId]
   );
 
+  const groupedWeaponCategories = React.useMemo(() => getGroupedWeaponCategories(), []);
+
   const activeChassisPiece = React.useMemo(
     () => getBaseGearPiece(activeChassisId) || BASE_GEAR_PIECES.find((p) => p.kind === "armor") || BASE_GEAR_PIECES[0],
     [activeChassisId]
@@ -1160,6 +1164,15 @@ export default function BuilderExperimentClient({
     ],
   );
 
+  const stanceAndBiometricsLayer = React.useMemo(() => {
+    return calculateStanceAndBiometricModifiers({
+      switchboard: switchboardState,
+      equippedMods: equippedModsOrdered,
+      isGhoul: payload.ghoul,
+      activeMutations: payload.mutationIds,
+    });
+  }, [switchboardState, equippedModsOrdered, payload.ghoul, payload.mutationIds]);
+
   const totals = React.useMemo(
     () =>
       aggregateEffectMath(equippedModsOrdered, {
@@ -1172,6 +1185,7 @@ export default function BuilderExperimentClient({
             : []),
           ...(mutationLayer ? [mutationLayer] : []),
           ...(perkDeckDefensiveLayer ? [perkDeckDefensiveLayer] : []),
+          stanceAndBiometricsLayer.layer,
         ],
         baseArmorStats,
         armorPieceSetKeys: payload.armorPieceSetKeys,
@@ -1186,6 +1200,7 @@ export default function BuilderExperimentClient({
       powerArmorFrameIntrinsicLayer,
       mutationLayer,
       perkDeckDefensiveLayer,
+      stanceAndBiometricsLayer.layer,
       baseArmorStats,
       payload.armorPieceSetKeys,
       payload.baseSpecial,
@@ -1213,10 +1228,23 @@ export default function BuilderExperimentClient({
         agility: totals.agi,
         luck: totals.lck,
         strength: totals.str,
-        healthPct: switchboardState?.healthPct ?? 0.2,
-        caps: 30000,
+        healthPct: switchboardState?.healthPct ?? 20,
+        caps: switchboardState?.caps ?? 30000,
         isPowerArmor: isPA,
         hasStrangeInNumbers: payload.hasStrangeInNumbers,
+        timeOfDay: switchboardState?.timeOfDay ?? "day",
+        isCrouched: Boolean(switchboardState?.combatStance?.isCrouched || switchboardState?.combatStance?.isSneaking),
+        isAiming: Boolean(switchboardState?.combatStance?.isAiming),
+        isPowerAttacking: Boolean(switchboardState?.combatStance?.isPowerAttacking),
+        isSprinting: Boolean(switchboardState?.combatStance?.isSprinting),
+        isStationary: Boolean(switchboardState?.combatStance?.isStationary),
+        isInVats: Boolean(switchboardState?.combatStance?.isInVats),
+        vatsCritEveryOtherShot: Boolean(switchboardState?.combatStance?.vatsCritEveryOtherShot),
+        addictionsCount: switchboardState?.addictionsCount ?? 0,
+        adrenalineStacks: switchboardState?.adrenalineStacks ?? 0,
+        feralPct: switchboardState?.feralPct ?? 100,
+        foodState: switchboardState?.foodState,
+        thirstState: switchboardState?.thirstState,
       },
     });
   }, [
@@ -2145,6 +2173,8 @@ export default function BuilderExperimentClient({
               setPayload((p) => ({ ...p, ignoreMutationPenalties: enabled }))
             }
             onStateChange={setSwitchboardState}
+            activeTacticalTags={stanceAndBiometricsLayer.activeTacticalTags}
+            critQualification={weaponFirepowerResult?.critCycle}
           />
         </div>
       )}
@@ -2193,6 +2223,13 @@ export default function BuilderExperimentClient({
 
                   // Add active Buffs & CAMP Furniture (Deduplicated)
                   buffSpecial.breakdown
+                    .filter((item) => item.stat === key)
+                    .forEach((item) => {
+                      bLines.push({ source: item.source, val: `+${item.val}` });
+                    });
+
+                  // Add dynamic Stance and Biometric Modifiers (Nocturnal, Unyielding, Chameleon)
+                  stanceAndBiometricsLayer.specialBreakdowns
                     .filter((item) => item.stat === key)
                     .forEach((item) => {
                       bLines.push({ source: item.source, val: `+${item.val}` });
@@ -2375,6 +2412,13 @@ export default function BuilderExperimentClient({
                       rLines.push({ source: `${mod.name} (${idx + 1}★)`, val: `+${mod.effectMath[k]}` });
                     }
                   });
+
+                  // Add dynamic Stance and Biometric Resistance Modifiers (Bolstering, Vanguard, Steadfast, Mutant's)
+                  stanceAndBiometricsLayer.resistanceBreakdowns
+                    .filter((item) => item.res === k)
+                    .forEach((item) => {
+                      rLines.push({ source: item.source, val: `+${item.val}` });
+                    });
                   
                   return (
                     <Tooltip key={k}>
@@ -2496,13 +2540,28 @@ export default function BuilderExperimentClient({
                     <select
                       value={activeWeaponPiece.id}
                       onChange={(e) => setBase(e.target.value)}
-                      className="h-6 text-[0.65rem] font-mono bg-slate-900 border border-slate-700 text-amber-300 rounded px-1.5 focus:ring-1 focus:ring-accent outline-none cursor-pointer max-w-[130px] sm:max-w-[180px] truncate"
-                      title="Switch Active Weapon"
+                      className="h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-amber-300 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer max-w-[170px] sm:max-w-[240px] truncate shadow-inner"
+                      title="Switch Active Weapon Chassis"
                     >
-                      {BASE_GEAR_PIECES.filter((p) => p.kind === "weapon").map((w) => (
-                        <option key={w.id} value={w.id} className="bg-slate-950 text-slate-200">
-                          {w.label}
-                        </option>
+                      {groupedWeaponCategories.map((group) => (
+                        <optgroup
+                          key={group.categoryKey}
+                          label={`── ${group.categoryLabel.toUpperCase()} ──`}
+                          className="bg-slate-950 text-emerald-400 font-bold"
+                        >
+                          {group.options.map((opt) => (
+                            <option
+                              key={opt.id}
+                              value={opt.id}
+                              className={cn(
+                                "bg-slate-900 text-slate-100",
+                                opt.isVariant && "text-amber-200"
+                              )}
+                            >
+                              {opt.isVariant ? `\u00A0\u00A0↳ ${opt.label}` : opt.label}
+                            </option>
+                          ))}
+                        </optgroup>
                       ))}
                     </select>
                     <span className="text-[0.62rem] px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
@@ -2796,8 +2855,8 @@ export default function BuilderExperimentClient({
 
       </div>
 
-      {/* BOTTOM SECTION: Side-by-side Tactical Matrices (Armory & Vault-Tec Buffs) */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+      {/* BOTTOM SECTION: Tactile Armory Station & Aux Base Picker */}
+      <div className="mt-6">
         
         {/* Matrix 1: Chassis & Gear Armory Matrix */}
         <div className="pip-terminal-panel p-4 rounded-xl space-y-3.5 font-mono">
@@ -2938,31 +2997,6 @@ export default function BuilderExperimentClient({
             </p>
           ) : null}
         </div>
-
-        {/* Live Weapon Combat Firepower & VATS Simulation Matrix */}
-        {weaponFirepowerResult ? (
-          <BuilderFirepowerMatrix firepower={weaponFirepowerResult} />
-        ) : null}
-
-        {/* Matrix 2: All-Inclusive Vault-Tec Buff & Consumable Registry / CHARACTER COMBAT SWITCHBOARD */}
-        <BuilderCombatSwitchboard
-          rawDamage={piece.kind === "weapon" ? (weaponFirepowerResult?.damagePerShot.normal ?? 110) : 0}
-          isGhoul={payload.ghoul}
-          onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
-          activeMutations={payload.mutationIds}
-          onMutationsChange={(nextMutations) =>
-            setPayload((p) => ({ ...p, mutationIds: nextMutations }))
-          }
-          hasStrangeInNumbers={payload.hasStrangeInNumbers}
-          onStrangeInNumbersChange={(enabled) =>
-            setPayload((p) => ({ ...p, hasStrangeInNumbers: enabled }))
-          }
-          ignoreMutationPenalties={payload.ignoreMutationPenalties}
-          onIgnoreMutationPenaltiesChange={(enabled) =>
-            setPayload((p) => ({ ...p, ignoreMutationPenalties: enabled }))
-          }
-          onStateChange={setSwitchboardState}
-        />
       </div>
     </div>
   )}
