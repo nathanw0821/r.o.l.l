@@ -53,6 +53,8 @@ export const DEFAULT_POWER_ARMOR_PIECES_EQUIPPED: PowerArmorPiecesEquipped = [
 export type BuilderPayload = {
   version: 5;
   basePieceId: string;
+  /** Active primary weapon piece ID (e.g. 'elders-mark', 'the-dragon', 'fixer') when base is armor or PA, or matches basePieceId if base is weapon. */
+  activeWeaponPieceId?: string;
   equipmentKind: BuilderEquipmentKind;
   weaponSub: BuilderWeaponSub | null;
   /**
@@ -93,6 +95,10 @@ export type BuilderPayload = {
   baseSpecial: Record<string, number>;
   /** Selected legendary perk card IDs. */
   legendaryPerkIds: string[];
+  /** Equipped regular perk cards with ranks: [{ cardId: "commando", rank: 3 }, ...] */
+  equippedPerkCards?: Array<{ cardId: string; rank: number }>;
+  /** Biometrics & Stance switchboard settings (health %, food buffs, chems, stance) */
+  switchboardState?: Record<string, unknown>;
   /** When true, mutation scaling is increased (Strange in Numbers). */
   hasStrangeInNumbers: boolean;
   /** Optional Nukes & Dragons URL if imported. */

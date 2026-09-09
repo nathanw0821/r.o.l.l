@@ -521,7 +521,7 @@ export function listEquippedModsInBenchOrder(
     if (m.slug) map.set(m.slug, m);
     const cleanSlug = m.slug.replace(/\./g, "").toLowerCase();
     map.set(cleanSlug, m);
-    const cleanId = m.id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    const cleanId = m.id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
     map.set(cleanId, m);
   }
   const ids: string[] = [];
@@ -539,7 +539,7 @@ export function listEquippedModsInBenchOrder(
   }
   const out: BuilderModDTO[] = [];
   for (const id of ids) {
-    const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    const clean = id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
     const m = map.get(id) ?? map.get(clean);
     if (m) out.push(m);
   }
@@ -566,7 +566,7 @@ export function listEquippedLegendariesWithBenchLabels(
     if (m.slug) map.set(m.slug, m);
     const cleanSlug = m.slug.replace(/\./g, "").toLowerCase();
     map.set(cleanSlug, m);
-    const cleanId = m.id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    const cleanId = m.id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
     map.set(cleanId, m);
   }
   const isSet = isMultiPiecePayload(payload);
@@ -576,7 +576,7 @@ export function listEquippedLegendariesWithBenchLabels(
   for (let s = 0; s < 4; s++) {
     const id = payload.legendaryModIds?.[s];
     if (!id) continue;
-    const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+    const clean = id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
     const mod = map.get(id) ?? map.get(clean);
     if (!mod) continue;
     const starName = BENCH_STAR_LABELS[s] ?? `${s + 1}th star`;
@@ -593,7 +593,7 @@ export function listEquippedLegendariesWithBenchLabels(
       for (let s = 0; s < 4; s++) {
         const id = stars[s];
         if (!id) continue;
-        const clean = id.replace(/^seed-|^effect-\d+star-/, "").replace(/\./g, "").toLowerCase();
+        const clean = id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
         const mod = map.get(id) ?? map.get(clean);
         if (!mod) continue;
         const starName = BENCH_STAR_LABELS[s] ?? `${s + 1}th star`;

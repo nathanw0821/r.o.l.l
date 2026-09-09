@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Skull,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   ALL_BOBBLEHEADS,
   ALL_MAGAZINES,
@@ -181,6 +182,8 @@ interface BuilderCombatSwitchboardProps {
   onStateChange?: (state: CombatSwitchboardState) => void;
   activeTacticalTags?: string[];
   critQualification?: VatsCritQualification;
+  readOnly?: boolean;
+  initialState?: Partial<CombatSwitchboardState>;
 }
 
 export default function BuilderCombatSwitchboard({
@@ -192,6 +195,8 @@ export default function BuilderCombatSwitchboard({
   onStateChange,
   activeTacticalTags,
   critQualification,
+  readOnly = false,
+  initialState,
 }: BuilderCombatSwitchboardProps) {
   const isCarnivore = activeMutations.includes("carnivore");
   const isHerbivore = activeMutations.includes("herbivore");
@@ -209,6 +214,17 @@ export default function BuilderCombatSwitchboard({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showMathInspector]);
 
+  const DEFAULT_COMBAT_STANCE = React.useMemo(() => ({
+    isSneaking: false,
+    isCrouched: false,
+    isSprinting: false,
+    isAiming: false,
+    isPowerAttacking: false,
+    isStationary: false,
+    isInVats: false,
+    vatsCritEveryOtherShot: false,
+  }), []);
+
   const [switchboard, setSwitchboard] = React.useState<CombatSwitchboardState>(() => {
     const initialFoods: Record<string, string> = {};
     if (isHerbivore) {
@@ -222,7 +238,7 @@ export default function BuilderCombatSwitchboard({
       initialFoods["str"] = "meat-deathclaw-steak";
       initialFoods["xp"] = "meat-tasty-squirrel";
     }
-    return {
+    const defaults: CombatSwitchboardState = {
       isGhoul,
       healthPct: 100,
       radsPct: 0,
@@ -261,9 +277,52 @@ export default function BuilderCombatSwitchboard({
       activeCampBuffs: ["camp-phoropter", "camp-love-seat", "camp-mothman-tome", "camp-instrument"],
       targetEnemy: "superMutant",
     };
+
+    return {
+      ...defaults,
+      ...(initialState || {}),
+      combatStance: {
+        isSneaking: initialState?.combatStance?.isSneaking ?? false,
+        isCrouched: initialState?.combatStance?.isCrouched ?? false,
+        isSprinting: initialState?.combatStance?.isSprinting ?? false,
+        isAiming: initialState?.combatStance?.isAiming ?? false,
+        isPowerAttacking: initialState?.combatStance?.isPowerAttacking ?? false,
+        isStationary: initialState?.combatStance?.isStationary ?? false,
+        isInVats: initialState?.combatStance?.isInVats ?? false,
+        vatsCritEveryOtherShot: initialState?.combatStance?.vatsCritEveryOtherShot ?? false,
+      },
+      activeFoods: {
+        ...defaults.activeFoods,
+        ...(initialState?.activeFoods || {}),
+      },
+    };
   });
 
+  React.useEffect(() => {
+    if (initialState) {
+      setSwitchboard((prev) => ({
+        ...prev,
+        ...initialState,
+        combatStance: {
+          isSneaking: initialState.combatStance?.isSneaking ?? prev.combatStance?.isSneaking ?? false,
+          isCrouched: initialState.combatStance?.isCrouched ?? prev.combatStance?.isCrouched ?? false,
+          isSprinting: initialState.combatStance?.isSprinting ?? prev.combatStance?.isSprinting ?? false,
+          isAiming: initialState.combatStance?.isAiming ?? prev.combatStance?.isAiming ?? false,
+          isPowerAttacking: initialState.combatStance?.isPowerAttacking ?? prev.combatStance?.isPowerAttacking ?? false,
+          isStationary: initialState.combatStance?.isStationary ?? prev.combatStance?.isStationary ?? false,
+          isInVats: initialState.combatStance?.isInVats ?? prev.combatStance?.isInVats ?? false,
+          vatsCritEveryOtherShot: initialState.combatStance?.vatsCritEveryOtherShot ?? prev.combatStance?.vatsCritEveryOtherShot ?? false,
+        },
+        activeFoods: {
+          ...prev.activeFoods,
+          ...(initialState.activeFoods || {}),
+        },
+      }));
+    }
+  }, [initialState]);
+
   const updateField = <K extends keyof CombatSwitchboardState>(key: K, val: CombatSwitchboardState[K]) => {
+    if (readOnly) return;
     setSwitchboard((prev) => {
       const next = { ...prev, [key]: val };
       onStateChange?.(next);
@@ -275,6 +334,7 @@ export default function BuilderCombatSwitchboard({
     key: keyof NonNullable<CombatSwitchboardState["combatStance"]>,
     val: boolean
   ) => {
+    if (readOnly) return;
     setSwitchboard((prev) => {
       const curr = prev.combatStance || {
         isSneaking: false,
@@ -325,24 +385,28 @@ export default function BuilderCombatSwitchboard({
 
   // Step Helpers
   const stepFood = (dir: -1 | 1) => {
+    if (readOnly) return;
     const currIdx = FOOD_STATES.findIndex((f) => f.id === (switchboard.foodState || "fully_fed"));
     const nextIdx = Math.max(0, Math.min(FOOD_STATES.length - 1, currIdx + dir));
     updateField("foodState", FOOD_STATES[nextIdx].id);
   };
 
   const stepThirst = (dir: -1 | 1) => {
+    if (readOnly) return;
     const currIdx = THIRST_STATES.findIndex((t) => t.id === (switchboard.thirstState || "fully_hydrated"));
     const nextIdx = Math.max(0, Math.min(THIRST_STATES.length - 1, currIdx + dir));
     updateField("thirstState", THIRST_STATES[nextIdx].id);
   };
 
   const stepTeam = (dir: -1 | 1) => {
+    if (readOnly) return;
     const currIdx = TEAM_STATES.findIndex((t) => t.id === (switchboard.teamState || "casual"));
     const nextIdx = Math.max(0, Math.min(TEAM_STATES.length - 1, currIdx + dir));
     updateField("teamState", TEAM_STATES[nextIdx].id);
   };
 
   const handleSelectFood = (foodId: string) => {
+    if (readOnly) return;
     if (!foodId || foodId === "none") return;
     const allFoods = [...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS];
     const food = allFoods.find((f) => f.id === foodId);
@@ -360,6 +424,7 @@ export default function BuilderCombatSwitchboard({
   };
 
   const handleRemoveFoodCategory = (categoryKey: string) => {
+    if (readOnly) return;
     const nextFoods = { ...(switchboard.activeFoods || {}) };
     delete nextFoods[categoryKey];
     setSwitchboard((prev) => {
@@ -391,6 +456,14 @@ export default function BuilderCombatSwitchboard({
 
   return (
     <div className="rounded-xl border border-emerald-500/40 bg-slate-950/95 p-4 font-mono text-slate-100 shadow-[0_0_30px_rgba(16,185,129,0.12)] space-y-4">
+      {readOnly && (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-950/20 p-2.5 text-xs font-mono text-amber-300 flex items-center justify-between">
+          <span className="font-bold tracking-wider uppercase">&gt;&gt; SPECTATOR VIEW · READ-ONLY BIOMETRICS &amp; COMBAT STANCES</span>
+          <span className="text-[0.65rem] px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/40 text-amber-200">
+            Telemetry Locked
+          </span>
+        </div>
+      )}
       {/* Top Header & Sub-Tab Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-500/20 pb-3">
         <div className="flex items-center gap-2">
@@ -439,7 +512,7 @@ export default function BuilderCombatSwitchboard({
 
       {/* TAB 1: BIOMETRICS & COMBAT STANCES */}
       {activeTab === "biometrics" && (
-        <div className="space-y-4">
+        <div className={cn("space-y-4", readOnly && "pointer-events-none opacity-90")}>
           {/* Top Species & Frame Indicator */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Species Toggle */}
@@ -1256,7 +1329,7 @@ export default function BuilderCombatSwitchboard({
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3", readOnly && "pointer-events-none opacity-90")}>
             {/* Chems */}
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">

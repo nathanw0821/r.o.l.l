@@ -11,6 +11,7 @@ export interface PipBoyLegendaryRackProps {
   onEquipCard: (card: PerkCard, rank: number) => void;
   onUnequipCard: (cardId: string) => void;
   onFilterLegendary?: () => void;
+  readOnly?: boolean;
 }
 
 const LEGENDARY_UNLOCK_LEVELS = [50, 75, 100, 150, 200, 300];
@@ -21,6 +22,7 @@ export default function PipBoyLegendaryRack({
   onEquipCard,
   onUnequipCard,
   onFilterLegendary,
+  readOnly = false,
 }: PipBoyLegendaryRackProps) {
   return (
     <div className="w-full rounded-xl border border-yellow-500/40 bg-gradient-to-r from-yellow-950/20 via-slate-950 to-yellow-950/20 p-3 shadow-xl">
@@ -29,13 +31,13 @@ export default function PipBoyLegendaryRack({
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-yellow-400 fill-yellow-400" />
           <span className="font-mono font-bold text-xs uppercase tracking-wider text-yellow-300">
-            Legendary Perk Slots
+            Legendary Perk Slots {readOnly && "· Read-Only"}
           </span>
           <span className="font-mono text-xs px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 font-bold">
             {equippedLegendaryCards.length} / 6 Slots Active
           </span>
         </div>
-        {onFilterLegendary && (
+        {!readOnly && onFilterLegendary && (
           <button
             type="button"
             onClick={onFilterLegendary}
@@ -81,8 +83,8 @@ export default function PipBoyLegendaryRack({
                   isOutdated={card.isOutdated}
                   outdatedMeta={card.outdatedMeta}
                   reworkedFrom={card.reworkedFrom}
-                  onUnequip={() => onUnequipCard(card.id)}
-                  onRankChange={(newRank) => onEquipCard(card, newRank)}
+                  onUnequip={readOnly ? undefined : () => onUnequipCard(card.id)}
+                  onRankChange={readOnly ? undefined : (newRank) => onEquipCard(card, newRank)}
                 />
               </div>
             );
@@ -91,22 +93,28 @@ export default function PipBoyLegendaryRack({
           return (
             <div
               key={`empty-slot-${index}`}
-              onClick={onFilterLegendary}
-              className="w-full aspect-[310/490] rounded-xl border-2 border-dashed border-yellow-500/30 hover:border-yellow-400 bg-yellow-950/10 hover:bg-yellow-950/30 transition-all cursor-pointer flex flex-col items-center justify-center p-3 text-center group"
-              title={`Click to slot a legendary perk (Unlocked at Level ${unlockLevel})`}
+              onClick={readOnly ? undefined : onFilterLegendary}
+              className={`w-full aspect-[310/490] rounded-xl border-2 border-dashed border-yellow-500/30 ${
+                readOnly
+                  ? "bg-yellow-950/5 opacity-60 cursor-default"
+                  : "hover:border-yellow-400 bg-yellow-950/10 hover:bg-yellow-950/30 transition-all cursor-pointer group"
+              } flex flex-col items-center justify-center p-3 text-center`}
+              title={readOnly ? `Empty slot ${index + 1}` : `Click to slot a legendary perk (Unlocked at Level ${unlockLevel})`}
             >
-              <div className="h-10 w-10 rounded-full border border-dashed border-yellow-500/50 flex items-center justify-center mb-2 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all">
+              <div className="h-10 w-10 rounded-full border border-dashed border-yellow-500/50 flex items-center justify-center mb-2 text-yellow-400 opacity-60">
                 <Sparkles className="h-5 w-5" />
               </div>
-              <span className="text-xs font-mono font-bold text-yellow-200 group-hover:text-yellow-100 uppercase tracking-wider">
+              <span className="text-xs font-mono font-bold text-yellow-200 uppercase tracking-wider">
                 Slot {index + 1}
               </span>
               <span className="text-[0.62rem] font-mono text-yellow-500/80 mt-0.5">
                 Level {unlockLevel}
               </span>
-              <span className="mt-3 text-[0.60rem] font-mono font-bold px-2 py-0.5 rounded bg-yellow-950/60 border border-yellow-500/40 text-yellow-300 group-hover:bg-yellow-900/80 transition-all">
-                + Equip
-              </span>
+              {!readOnly && (
+                <span className="mt-3 text-[0.60rem] font-mono font-bold px-2 py-0.5 rounded bg-yellow-950/60 border border-yellow-500/40 text-yellow-300 group-hover:bg-yellow-900/80 transition-all">
+                  + Equip
+                </span>
+              )}
             </div>
           );
         })}

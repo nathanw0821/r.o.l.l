@@ -17,6 +17,7 @@ export interface PipBoyPerkAccordionColumnProps {
   onEquipCard: (card: PerkCard, rank: number) => void;
   onUnequipCard: (cardId: string) => void;
   onFilterSpecial?: (special: SpecialCategory) => void;
+  readOnly?: boolean;
 }
 
 export default function PipBoyPerkAccordionColumn({
@@ -28,6 +29,7 @@ export default function PipBoyPerkAccordionColumn({
   onEquipCard,
   onUnequipCard,
   onFilterSpecial,
+  readOnly = false,
 }: PipBoyPerkAccordionColumnProps) {
   const theme = SPECIAL_THEMES[special] || SPECIAL_THEMES.S;
   const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
@@ -85,7 +87,7 @@ export default function PipBoyPerkAccordionColumn({
         </div>
 
         {/* Quick Add Perk Filter Button */}
-        {onFilterSpecial && (
+        {!readOnly && onFilterSpecial && (
           <button
             type="button"
             onClick={() => onFilterSpecial(special)}
@@ -102,24 +104,30 @@ export default function PipBoyPerkAccordionColumn({
         {equippedCards.length === 0 ? (
           /* Diegetic Empty Card Slot Placeholder */
           <div
-            onClick={() => onFilterSpecial?.(special)}
-            className={`w-full aspect-[310/490] rounded-xl border-2 border-dashed ${theme.border} bg-slate-900/30 hover:bg-slate-900/60 transition-all cursor-pointer flex flex-col items-center justify-center p-3 text-center group`}
-            title={`Click to browse ${theme.name} perks`}
+            onClick={readOnly ? undefined : () => onFilterSpecial?.(special)}
+            className={`w-full aspect-[310/490] rounded-xl border-2 border-dashed ${theme.border} ${
+              readOnly
+                ? "bg-slate-900/15 opacity-60 cursor-default"
+                : "bg-slate-900/30 hover:bg-slate-900/60 transition-all cursor-pointer group"
+            } flex flex-col items-center justify-center p-3 text-center`}
+            title={readOnly ? `No ${theme.name} perks equipped` : `Click to browse ${theme.name} perks`}
           >
             <div
-              className={`h-12 w-12 rounded-full border border-dashed flex items-center justify-center mb-2 font-mono font-black text-lg ${theme.badge} opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all`}
+              className={`h-12 w-12 rounded-full border border-dashed flex items-center justify-center mb-2 font-mono font-black text-lg ${theme.badge} opacity-70`}
             >
               {special}
             </div>
-            <span className="text-xs font-mono font-bold text-slate-300 group-hover:text-amber-400 transition-colors uppercase tracking-wider">
+            <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
               Empty Slot
             </span>
             <span className="text-[0.65rem] font-mono text-slate-500 mt-1">
               Cap: {capacity} pts
             </span>
-            <span className="mt-3 text-[0.62rem] font-mono font-bold px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 group-hover:border-amber-500/50 group-hover:text-amber-300 transition-all">
-              + Add Perk
-            </span>
+            {!readOnly && (
+              <span className="mt-3 text-[0.62rem] font-mono font-bold px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 group-hover:border-amber-500/50 group-hover:text-amber-300 transition-all">
+                + Add Perk
+              </span>
+            )}
           </div>
         ) : (
           /* Overlapping Accordion Stack of Cards */
@@ -164,12 +172,12 @@ export default function PipBoyPerkAccordionColumn({
                     onSelect={() => {
                       setSelectedCardId((prev) => (prev === item.cardId ? null : item.cardId));
                     }}
-                    onUnequip={() => {
+                    onUnequip={readOnly ? undefined : () => {
                       onUnequipCard(card.id);
                       if (selectedCardId === item.cardId) setSelectedCardId(null);
                       if (hoveredCardId === item.cardId) setHoveredCardId(null);
                     }}
-                    onRankChange={(newRank) => onEquipCard(card, newRank)}
+                    onRankChange={readOnly ? undefined : (newRank) => onEquipCard(card, newRank)}
                   />
                 </div>
               );

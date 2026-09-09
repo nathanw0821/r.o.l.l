@@ -63,4 +63,42 @@ describe("unified-builder-state", () => {
     expect(decodeUnifiedBuildHash("")).toBeNull();
     expect(decodeUnifiedBuildHash("xyz123_invalid")).toBeNull();
   });
+
+  it("normalizes and preserves multi-tab loadout properties (activeWeaponPieceId, equippedPerkCards, switchboardState)", async () => {
+    const { normalizeBuilderPayload } = await import("./normalize-builder-payload");
+    const rawPayload = {
+      version: 5,
+      basePieceId: "combat-armor",
+      equipmentKind: "armor",
+      legendaryModIds: [null, null, null, null],
+      activeWeaponPieceId: "fixer",
+      equippedPerkCards: [
+        { cardId: "commando", rank: 3 },
+        { cardId: "expert-commando", rank: 3 }
+      ],
+      switchboardState: {
+        healthPct: 20,
+        teamState: "casual",
+        combatStance: { isSneaking: true }
+      }
+    };
+
+    const normalized = normalizeBuilderPayload(rawPayload);
+    expect(normalized).not.toBeNull();
+    expect(normalized?.basePieceId).toBe("combat-armor");
+    expect(normalized?.activeWeaponPieceId).toBe("fixer");
+    expect(normalized?.equippedPerkCards).toHaveLength(2);
+    expect(normalized?.equippedPerkCards?.[0].cardId).toBe("commando");
+    expect((normalized?.switchboardState as Record<string, unknown>)?.healthPct).toBe(20);
+  });
+
+  it("verifies Chally's Feed buff configuration and Herbivore scaling stats", async () => {
+    const { ALL_PLANT_FOODS } = await import("./all-fallout76-buffs");
+    const chally = ALL_PLANT_FOODS.find((b) => b.id === "plant-challys-feed");
+    expect(chally).toBeDefined();
+    expect(chally?.label).toBe("Chally's Feed");
+    expect(chally?.category).toBe("food_plant");
+    expect(chally?.specialBonus).toEqual({ lck: 5, cha: 5 });
+    expect(chally?.damageMultiplier).toBe(1.20);
+  });
 });

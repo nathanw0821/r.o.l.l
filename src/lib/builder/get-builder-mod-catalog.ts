@@ -67,9 +67,17 @@ async function loadBuilderModCatalogUncached() {
       }).catch(() => [])
     ]);
 
+    const cleanLegendary = legendary.filter((m) => {
+      const desc = (m.description || "").toLowerCase();
+      const name = (m.name || "").toLowerCase();
+      if (desc.includes("placeholder") || desc.includes("demo")) return false;
+      if (name.startsWith("+") || name.includes("echo") || name.includes("demo")) return false;
+      return true;
+    });
+
     const baseLegendary: BuilderModCatalogRow[] =
-      legendary.length > 0
-        ? legendary
+      cleanLegendary.length > 0
+        ? cleanLegendary
         : EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
             id: `seed-${r.slug}`,
             slug: r.slug,
