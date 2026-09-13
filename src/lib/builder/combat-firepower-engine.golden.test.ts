@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateCombatFirepower, WEAPON_COMBAT_BASE_CATALOG } from "./combat-firepower-engine";
+import { calculateCombatFirepower, resolveVatsApCost, WEAPON_COMBAT_BASE_CATALOG } from "./combat-firepower-engine";
 import { AP_FUZZ_REDUCTIONS, GOLDEN_BUILDS, GOLDEN_DUMMY_IDS } from "./__fixtures__/firepower/builds";
 import goldens from "./__fixtures__/firepower/goldens.json";
 import apFuzz from "./__fixtures__/firepower/ap-fuzz.json";
@@ -32,14 +32,20 @@ describe("combat-firepower-engine goldens", () => {
     expect(result.targetDummy.effectiveDR).toBe(40); // 400 DR × (1 − 0.90)
   });
 
-  it("VATS AP cost contract covers every catalog base AP", () => {
+  it("VATS AP cost matches the frozen contract at every catalog base AP", () => {
     const baseAps = new Set(Object.values(WEAPON_COMBAT_BASE_CATALOG).map((w) => w.baseVatsApCost));
     const contract = apFuzz as Record<string, number>;
+    const mismatches: string[] = [];
     for (const baseAp of baseAps) {
       for (const pct of AP_FUZZ_REDUCTIONS) {
-        expect(contract[`${baseAp}|${pct}|none`]).toBeTypeOf("number");
-        expect(contract[`${baseAp}|${pct}|lvc`]).toBeTypeOf("number");
+        for (const lvc of [false, true]) {
+          const key = `${baseAp}|${pct}|${lvc ? "lvc" : "none"}`;
+          expect(contract[key], key).toBeTypeOf("number");
+          const got = resolveVatsApCost(baseAp, pct, lvc);
+          if (got !== contract[key]) mismatches.push(`${key}: expected ${contract[key]}, got ${got}`);
+        }
       }
     }
+    expect(mismatches).toEqual([]);
   });
 });
