@@ -1,6 +1,6 @@
 import type { BuilderModDTO, BuilderWeaponInnateCrafting } from "@/lib/builder/types";
 import { calculateWeaponInnateAggregate } from "@/lib/builder/weapon-piece-mods";
-import { calculateEffectiveArmor } from "@/lib/calculator/creation-engine-math";
+import { calculateEffectiveArmor, calculateMitigatedDamage } from "@/lib/calculator/creation-engine-math";
 import {
   TARGET_DUMMY_CATALOG,
   WEAPON_ALIASES,
@@ -1106,24 +1106,18 @@ export function calculateTargetMitigation(
   const rawNormal = firepower.damagePerShot.totalPerShot;
   const rawCrit = firepower.damagePerShot.critical;
 
-  let normalMitigationRatio = 1.0;
-  let critMitigationRatio = 1.0;
+  // Canonical continuous Creation Engine curve, coeff = min(0.99, ((dmg * 0.15) / DR) ^ 0.365),
+  // owned by creation-engine-math. Zero DR lands the 0.99 cap (the curve's limit), and the
+  // dummy's flat boss reduction (stored as a fraction) applies after the curve. The engine
+  // keeps whole-number landed damage with a floor of 1.
+  const flatReductionPct = dummy.flatDamageReductionPct * 100;
+  const normalHit = calculateMitigatedDamage(rawNormal, effectiveDR, flatReductionPct);
+  const critHit = calculateMitigatedDamage(rawCrit, effectiveDR, flatReductionPct);
 
-  if (effectiveDR > 0) {
-    if (rawNormal > 0) {
-      const ratioNormal = rawNormal / effectiveDR;
-      normalMitigationRatio = Math.min(0.99, Math.max(0.01, 0.5 * Math.pow(ratioNormal, 0.365)));
-    }
-    if (rawCrit > 0) {
-      const ratioCrit = rawCrit / effectiveDR;
-      critMitigationRatio = Math.min(0.99, Math.max(0.01, 0.5 * Math.pow(ratioCrit, 0.365)));
-    }
-  }
+  const normalMitigationRatio = rawNormal > 0 ? normalHit.damageCoefficientPct / 100 : 1.0;
 
-  const flatMult = 1 - dummy.flatDamageReductionPct;
-
-  const normalLanded = Math.max(1, Math.round(rawNormal * normalMitigationRatio * flatMult));
-  const criticalLanded = Math.max(1, Math.round(rawCrit * critMitigationRatio * flatMult));
+  const normalLanded = Math.max(1, Math.round(normalHit.finalDamage));
+  const criticalLanded = Math.max(1, Math.round(critHit.finalDamage));
 
   const burstDPSLanded = Math.round(normalLanded * firepower.fireRate.rps);
   const criticalCycleDPSLanded = Math.round(((normalLanded + criticalLanded) / 2) * firepower.fireRate.rps);
