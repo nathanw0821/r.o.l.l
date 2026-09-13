@@ -165,7 +165,7 @@ export const GOLDEN_BUILDS: GoldenBuild[] = [
   },
   {
     id: "melee-chainsaw-over-cap-penetration",
-    description: "Anti-Armor Chainsaw, Incisor 3, bow bar: penetration exceeds the 90% cap (~92%)",
+    description: "Anti-Armor Chainsaw, Incisor 3, bow bar: penetration would be ~92% uncapped; engine cap holds it at 90%",
     input: {
       weaponId: "chainsaw",
       equippedMods: [{ slug: "anti-armor" }, { slug: "heavy-hitters" }],
