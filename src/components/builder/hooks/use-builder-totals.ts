@@ -227,3 +227,5 @@ export function useBuilderTotals({
     totals,
   };
 }
+
+export type UseBuilderTotalsResult = ReturnType<typeof useBuilderTotals>;
