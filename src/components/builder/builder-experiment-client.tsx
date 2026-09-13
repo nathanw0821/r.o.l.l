@@ -44,6 +44,7 @@ import { SLOT_LABELS, activePickLabel, type ActivePick } from "@/lib/builder/act
 import { BUILDER_SESSION_KEYS, BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import ModPickerOption from "@/components/builder/mod-picker-option";
+import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
@@ -51,7 +52,6 @@ import ProgressToggle from "@/components/progress-toggle";
 import BuilderCombatSwitchboard, { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { calculateAggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
 import { calculateCombatFirepower, getWeaponMaxLevel } from "@/lib/builder/combat-firepower-engine";
-import { calculateStanceAndBiometricModifiers } from "@/lib/builder/stance-biometrics-engine";
 import BuilderFirepowerMatrix from "@/components/builder/builder-firepower-matrix";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
 import BuilderGearSelector from "@/components/builder/builder-gear-selector";
@@ -66,7 +66,6 @@ import { getPowerArmorMaxLevel } from "@/lib/builder/power-armor-frame-data";
 import {
   ARMOR_MATERIAL_MODS,
   listArmorMiscModOptions,
-  armorCraftingEffectLayers,
   defaultArmorPieceCrafting,
 } from "@/lib/builder/armor-piece-mods";
 import {
@@ -81,7 +80,6 @@ import {
 } from "@/lib/builder/base-gear";
 import { INITIAL_BUILDER_MODS } from "@/lib/builder/legendary-mod-catalog-seeds";
 import {
-  aggregateEffectMath,
   BUILDER_SPECIAL_KEYS,
   BUILDER_SPECIAL_LABELS,
   SPECIAL_FULL_NAMES,
@@ -89,9 +87,6 @@ import {
   buildShoppingList,
   filterModsForSlot,
   findModByIdOrSlug,
-  getGroupedLegendaryEffects,
-  listEquippedLegendariesWithBenchLabels,
-  listEquippedModsInBenchOrder,
   stripGhoulBlockedLegendarySelections,
   weaponSubMatches,
   type BuilderEffectTotals,
@@ -103,14 +98,9 @@ import {
   normalizeBuilderPayload,
 } from "@/lib/builder/normalize-builder-payload";
 import {
-  getPowerArmorEquippedFlatStats,
-  powerArmorFrameIntrinsicEffectMath,
-} from "@/lib/builder/power-armor-stats";
-import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
   type BuilderModDTO,
   type BuilderPayload,
-  type BuilderWeaponInnateCrafting,
 } from "@/lib/builder/types";
 import { useLocalProgress } from "@/components/use-local-progress";
 import { findLocalProgressEntry } from "@/lib/progress-lookup";
@@ -138,7 +128,6 @@ import {
 } from "@/components/builder/builder-beta-gate";
 
 import {
-  sandboxMutationMathLayer,
   getSortedMutationLabels,
 } from "@/lib/builder/sandbox-mutations";
 import {
@@ -896,216 +885,22 @@ export default function BuilderExperimentClient({
     }));
   }, [piece.id, piece.kind, piece.weaponSub]);
 
-  const equippedModsOrdered = React.useMemo(
-    () => listEquippedModsInBenchOrder(payload, mods),
-    [mods, payload],
-  );
-
-  const equippedLegendaryBenchLines = React.useMemo(
-    () => listEquippedLegendariesWithBenchLabels(payload, mods),
-    [mods, payload],
-  );
-
-  const groupedLegendaryEffects = React.useMemo(
-    () => getGroupedLegendaryEffects(equippedLegendaryBenchLines),
-    [equippedLegendaryBenchLines]
-  );
-
-  const underLayers = React.useMemo(() => {
-    // Underarmor resistances (lining) and SPECIAL bonuses (style) are strictly SUPPRESSED when in Power Armor!
-    if (isPA || activeChassisPiece.kind === "powerArmor" || piece.kind === "powerArmor") return [];
-    const layers: Record<string, number>[] = [];
-    const shell = findUnderarmorOption(
-      UNDERARMOR_SHELLS,
-      payload.underarmor.shellId,
-    );
-    const lining = findUnderarmorOption(
-      UNDERARMOR_LININGS,
-      payload.underarmor.liningId,
-    );
-    const style = findUnderarmorOption(
-      UNDERARMOR_STYLES,
-      payload.underarmor.styleId,
-    );
-    if (shell?.effectMath) layers.push(shell.effectMath);
-    if (lining?.effectMath) layers.push(lining.effectMath);
-    if (style?.effectMath) layers.push(style.effectMath);
-    return layers;
-  }, [payload.underarmor, isPA, activeChassisPiece.kind, piece.kind]);
-
-  const armorCraftingLayers = React.useMemo(() => {
-    return armorCraftingEffectLayers(
-      payload.armorPieceCrafting,
-      isPA,
-    );
-  }, [isPA, payload.armorPieceCrafting]);
-
-  const baseArmorStats = React.useMemo(() => {
-    const chassis = activeChassisPiece;
-    if (chassis.kind === "armor" && chassis.armorSetKey) {
-      return getArmorSetRow(chassis.armorSetKey)?.stats ?? null;
-    }
-    if (chassis.kind === "powerArmor") {
-      return getPowerArmorEquippedFlatStats(
-        chassis.id,
-        payload.powerArmorHelmetId,
-        payload.powerArmorPiecesEquipped,
-      );
-    }
-    return null;
-  }, [
+  const {
+    equippedModsOrdered,
+    groupedLegendaryEffects,
+    perkDeckDefensiveLayer,
+    intrinsicBenchTotals,
+    stanceAndBiometricsLayer,
+    totals,
+  } = useBuilderTotals({
+    payload,
+    mods,
     activeChassisPiece,
-    payload.powerArmorHelmetId,
-    payload.powerArmorPiecesEquipped,
-  ]);
-
-  const powerArmorFrameIntrinsicLayer = React.useMemo(() => {
-    if (!isPA) return null;
-    return powerArmorFrameIntrinsicEffectMath();
-  }, [isPA]);
-
-
-
-
-  const mutationLayer = React.useMemo(
-    () => {
-      const cfRank = equippedPerkCards.find((c) => c.cardId === "class-freak")?.rank ?? 0;
-      return sandboxMutationMathLayer(
-        payload.mutationIds,
-        payload.ignoreMutationPenalties,
-        {
-          strangeInNumbersMutatedTeammates:
-            payload.hasStrangeInNumbers && payload.mutationIds.length > 0
-              ? 4
-              : 0,
-          classFreakRank: cfRank,
-        },
-      );
-    },
-    [
-      payload.mutationIds,
-      payload.ignoreMutationPenalties,
-      payload.hasStrangeInNumbers,
-      equippedPerkCards,
-    ],
-  );
-
-  const perkDeckDefensiveLayer = React.useMemo(() => {
-    if (!equippedPerkCards || equippedPerkCards.length === 0) return null;
-    try {
-      let dr = 0;
-      let er = 0;
-      let fr = 0;
-      const pr = 0;
-      let rr = 0;
-
-      const isPowerArmor = piece.kind === "powerArmor";
-      const strVal = payload.baseSpecial?.str || 1;
-      const agiVal = payload.baseSpecial?.agi || 1;
-
-      for (const card of equippedPerkCards) {
-        const id = (card.cardId || "").toLowerCase();
-        const rank = card.rank || 1;
-
-        if (id === "ironclad" && !isPowerArmor) {
-          dr += rank * 10;
-          er += rank * 10;
-        } else if (id === "barbarian" && !isPowerArmor) {
-          const mult = rank === 1 ? 2 : rank === 2 ? 3 : 4;
-          dr += Math.min(80, strVal * mult);
-        } else if (id === "evasive" && !isPowerArmor) {
-          const mult = rank === 1 ? 1 : rank === 2 ? 2 : 3;
-          const bonus = Math.min(45, agiVal * mult);
-          dr += bonus;
-          er += bonus;
-        } else if (id === "refractor") {
-          er += rank * 10;
-        } else if (id === "fireproof") {
-          fr += rank * 15;
-        } else if (id === "rad-resistant" || id === "radresistant") {
-          rr += rank * 10;
-        } else if (id === "junk-shield" && !isPowerArmor) {
-          dr += rank * 10;
-          er += rank * 10;
-        } else if (id === "bodyguards") {
-          const perMember = rank === 1 ? 6 : rank === 2 ? 8 : rank === 3 ? 10 : 12;
-          dr += perMember * 3;
-          er += perMember * 3;
-        }
-      }
-
-      return { dr, er, fr, pr, rr };
-    } catch {
-      return null;
-    }
-  }, [piece.kind, payload.baseSpecial, equippedPerkCards]);
-
-  const intrinsicBenchTotals = React.useMemo(
-    () =>
-      aggregateEffectMath([], {
-        ghoul: payload.ghoul,
-        extraLayers: [
-          ...armorCraftingLayers,
-          ...(powerArmorFrameIntrinsicLayer
-            ? [powerArmorFrameIntrinsicLayer]
-            : []),
-        ],
-        baseArmorStats,
-        baseSpecial: payload.baseSpecial,
-      }),
-    [
-      payload.ghoul,
-      armorCraftingLayers,
-      powerArmorFrameIntrinsicLayer,
-      baseArmorStats,
-      payload.baseSpecial,
-    ],
-  );
-
-  const stanceAndBiometricsLayer = React.useMemo(() => {
-    return calculateStanceAndBiometricModifiers({
-      switchboard: switchboardState,
-      equippedMods: equippedModsOrdered,
-      isGhoul: payload.ghoul,
-      activeMutations: payload.mutationIds,
-    });
-  }, [switchboardState, equippedModsOrdered, payload.ghoul, payload.mutationIds]);
-
-  const totals = React.useMemo(
-    () =>
-      aggregateEffectMath(equippedModsOrdered, {
-        ghoul: payload.ghoul,
-        extraLayers: [
-          ...(piece.kind !== "powerArmor" ? underLayers : []),
-          ...armorCraftingLayers,
-          ...(powerArmorFrameIntrinsicLayer
-            ? [powerArmorFrameIntrinsicLayer]
-            : []),
-          ...(mutationLayer ? [mutationLayer] : []),
-          ...(perkDeckDefensiveLayer ? [perkDeckDefensiveLayer] : []),
-          stanceAndBiometricsLayer.layer,
-        ],
-        baseArmorStats,
-        armorPieceSetKeys: payload.armorPieceSetKeys,
-        baseSpecial: payload.baseSpecial,
-        legendaryPerkIds: payload.legendaryPerkIds,
-      }),
-    [
-      equippedModsOrdered,
-      payload.ghoul,
-      underLayers,
-      armorCraftingLayers,
-      powerArmorFrameIntrinsicLayer,
-      mutationLayer,
-      perkDeckDefensiveLayer,
-      stanceAndBiometricsLayer.layer,
-      baseArmorStats,
-      payload.armorPieceSetKeys,
-      payload.baseSpecial,
-      payload.legendaryPerkIds,
-      piece.kind,
-    ],
-  );
+    piece,
+    isPA,
+    equippedPerkCards,
+    switchboardState,
+  });
 
   const weaponFirepowerResult = React.useMemo(() => {
     const targetWeapon = activeWeaponPiece;
