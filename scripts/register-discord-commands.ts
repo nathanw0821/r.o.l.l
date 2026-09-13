@@ -192,7 +192,7 @@ const commands = [
               { name: "Rank 3", value: 3 }
             ]
           },
-          { name: "fill_star", description: "15% Faster V.A.T.S. Critical Fill star equipped", type: 5, required: false }
+          { name: "lucky_hit", description: "3★ Lucky Hit legendary equipped (+15 V.A.T.S. critical charge)", type: 5, required: false }
         ]
       }
     ]

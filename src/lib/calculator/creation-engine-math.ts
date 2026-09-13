@@ -11,7 +11,7 @@
  * 2. Multiplicative sequential armor penetration stacking (Anti-Armor, Tank Killer, mags)
  * 3. Non-linear Bethesda damage resistance (DR/ER) mitigation power curve (0.15 / 0.365)
  * 4. VATS AP cost mod multipliers and -25% Less VATS Cost (LVC)
- * 5. Critical meter fill and Luck breakpoints (Critical Savvy rank 1-3)
+ * 5. Critical meter fill and Luck breakpoints (Critical Savvy rank 1-3, Lucky Hit)
  */
 
 /** Bethesda Creation Engine Game Settings (GMST). */
@@ -21,12 +21,15 @@ export const MAX_DAMAGE_MITIGATION = 0.99;
 /** Engine cap on effective armor reduction. */
 export const MAX_ARMOR_PENETRATION = 0.9;
 
-/** Fraction of the critical meter preserved after a crit, by Critical Savvy rank. */
+/**
+ * Percent of the critical meter preserved after a crit, by Critical Savvy rank
+ * (the perk uses 15/30/45% less meter, so rank 3 consumes 55 and preserves 45).
+ */
 export const CRIT_SAVVY_METER_PRESERVED_PCT: Readonly<Record<number, number>> = {
   0: 0,
   1: 15,
   2: 30,
-  3: 55
+  3: 45
 };
 
 /** Rounds to `digits` decimal places (mirrors Python's `round(x, digits)` for these inputs). */
@@ -189,28 +192,31 @@ export function calculateVatsApCost(
 /**
  * Formula 5 — Critical meter fill per shot and shots needed per critical.
  *
- *   Fill per hit = (Luck * 1.5) + 5   (+15 with the 15% Faster Crit Fill star)
+ *   Fill per hit = round((Luck * 1.5) + 5)   (+15 with the 3★ legendary "Lucky Hit")
  *
- * Meter preserved after a crit: rank 0 → 0%, rank 1 → 15%, rank 2 → 30%, rank 3 → 55%.
- * The cycle length is the hits needed to refill the consumed portion, plus the
- * crit shot itself. Luck 33 with Critical Savvy 3 is the classic every-other-shot
- * benchmark (Luck 23-24 with the 15% fill star).
+ * The meter is integer-valued, so fill rounds half-up to a whole percent before the
+ * comparison. Meter preserved after a crit: rank 0 → 0%, rank 1 → 15%, rank 2 → 30%,
+ * rank 3 → 45% (Critical Savvy uses 15/30/45% less meter). The cycle length is the
+ * hits needed to refill the consumed portion, plus the crit shot itself.
+ * Game-verified breakpoints: Luck 33 with Critical Savvy 3, or Luck 23 with Lucky Hit.
  *
  * @param luckStat Character Luck.
  * @param critSavvyRank Critical Savvy perk rank (0-3). Unknown ranks are treated as 3.
- * @param has15CritFillStar Whether the 15% Faster V.A.T.S. Critical Fill star is present.
+ * @param hasLuckyHit Whether the 3★ Lucky Hit legendary (+15 V.A.T.S. critical charge) is present.
  */
 export function calculateCritFrequency(
   luckStat: number,
   critSavvyRank = 3,
-  has15CritFillStar = false
+  hasLuckyHit = false
 ): CritFrequencyResult {
   let fillPerShot = luckStat * 1.5 + 5;
-  if (has15CritFillStar) {
+  if (hasLuckyHit) {
     fillPerShot += 15;
   }
+  // Round half-up (never banker's rounding) to mirror the integer meter.
+  fillPerShot = Math.floor(fillPerShot + 0.5);
 
-  const meterPreserved = CRIT_SAVVY_METER_PRESERVED_PCT[critSavvyRank] ?? 55;
+  const meterPreserved = CRIT_SAVVY_METER_PRESERVED_PCT[critSavvyRank] ?? 45;
   const neededAfterCrit = 100 - meterPreserved;
 
   // +1 for the crit shot itself
@@ -219,7 +225,7 @@ export function calculateCritFrequency(
   return {
     luck: luckStat,
     critSavvyRank,
-    fillPerShotPct: roundTo(fillPerShot, 1),
+    fillPerShotPct: fillPerShot,
     meterPreservedPct: meterPreserved,
     shotsPerCritCycle: shotsToCrit,
     everyOtherShot: shotsToCrit <= 2
