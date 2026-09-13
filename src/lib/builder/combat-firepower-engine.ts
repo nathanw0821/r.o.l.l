@@ -1,5 +1,6 @@
 import type { BuilderModDTO, BuilderWeaponInnateCrafting } from "@/lib/builder/types";
 import { calculateWeaponInnateAggregate } from "@/lib/builder/weapon-piece-mods";
+import { calculateEffectiveArmor } from "@/lib/calculator/creation-engine-math";
 import {
   TARGET_DUMMY_CATALOG,
   WEAPON_ALIASES,
@@ -928,16 +929,18 @@ export function calculateCombatFirepower(
   }
 
   // 9. True Armor Penetration Compounding
-  // Anti-Armor (50%) + Tank Killer (36%) or Stabilized (45% in PA)
-  let penRemaining = 1.0;
+  // Anti-Armor (50%) + Tank Killer (36%) or Stabilized (45% in PA).
+  // Sources stack multiplicatively and the total is capped at the 90% engine limit
+  // by calculateEffectiveArmor (creation-engine-math is the source of truth).
+  const penetrationSourcesPct: number[] = [];
   if (hasAntiArmor) {
-    penRemaining *= 0.5;
+    penetrationSourcesPct.push(50);
     apBreakdown.push({ source: "Anti-Armor 1★", value: "50% Penetration" });
   }
 
   if (innateMods.armorPenetrationPct > 0) {
     const innatePen = Math.min(0.9, innateMods.armorPenetrationPct / 100);
-    penRemaining *= 1 - innatePen;
+    penetrationSourcesPct.push(innatePen * 100);
     apBreakdown.push({
       source: "Magazine Penetration (Perforating/Piercing)",
       value: `${Math.round(innatePen * 100)}% Penetration`,
@@ -947,32 +950,35 @@ export function calculateCombatFirepower(
   const tankKillerRank = perkRanks.get("tank-killer") || 0;
   if (tankKillerRank > 0 && !isPA && (base.weaponClass === "rifleman" || base.weaponClass === "commando" || base.weaponClass === "gunslinger" || base.weaponClass === "guerrilla")) {
     const tkPen = tankKillerRank === 3 ? 0.36 : tankKillerRank === 2 ? 0.24 : 0.12;
-    penRemaining *= 1 - tkPen;
+    penetrationSourcesPct.push(tkPen * 100);
     apBreakdown.push({ source: `Tank Killer (Rank ${tankKillerRank})`, value: `${Math.round(tkPen * 100)}% Penetration` });
   }
 
   const bowBeforeMeRank = perkRanks.get("bow-before-me") || 0;
   if (bowBeforeMeRank > 0 && base.weaponClass === "bow") {
     const bowPen = bowBeforeMeRank === 3 ? 0.36 : bowBeforeMeRank === 2 ? 0.24 : 0.12;
-    penRemaining *= 1 - bowPen;
+    penetrationSourcesPct.push(bowPen * 100);
     apBreakdown.push({ source: `Bow Before Me (Rank ${bowBeforeMeRank})`, value: `${Math.round(bowPen * 100)}% Penetration` });
   }
 
   const stabilizedRank = perkRanks.get("stabilized") || 0;
   if (stabilizedRank > 0 && isPA && base.weaponClass === "heavy") {
     const stabPen = stabilizedRank === 3 ? 0.45 : stabilizedRank === 2 ? 0.3 : 0.15;
-    penRemaining *= 1 - stabPen;
+    penetrationSourcesPct.push(stabPen * 100);
     apBreakdown.push({ source: `Stabilized in PA (Rank ${stabilizedRank})`, value: `${Math.round(stabPen * 100)}% Penetration` });
   }
 
   const incisorRank = perkRanks.get("incisor") || 0;
   if (incisorRank > 0 && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
     const incisorPen = incisorRank === 3 ? 0.75 : incisorRank === 2 ? 0.5 : 0.25;
-    penRemaining *= 1 - incisorPen;
+    penetrationSourcesPct.push(incisorPen * 100);
     apBreakdown.push({ source: `Incisor (Rank ${incisorRank})`, value: `${Math.round(incisorPen * 100)}% Penetration` });
   }
 
-  const effectiveArmorPenetrationPct = Math.round((1 - penRemaining) * 100);
+  // Nominal 100 DR so totalPenetrationPct is the capped headline percentage.
+  const effectiveArmorPenetrationPct = Math.round(
+    calculateEffectiveArmor(100, penetrationSourcesPct).totalPenetrationPct
+  );
 
   // 10. Resolve Combat Firing Mode & Active DPS
   const isInVats = Boolean(input.playerStats.isInVats);
@@ -1069,8 +1075,10 @@ export function calculateTargetMitigation(
 ): TargetDummyCalculation {
   const dummy = TARGET_DUMMY_CATALOG[dummyId || "scorchbeast-queen"] || TARGET_DUMMY_CATALOG["scorchbeast-queen"];
   const baseDR = firepower.baseStats.isEnergy ? dummy.energyResistance : dummy.damageResistance;
-  const apFactor = Math.min(1, Math.max(0, firepower.armorPenetration.effectiveArmorPenetrationPct / 100));
-  const effectiveDR = Math.max(0, Math.round(baseDR * (1 - apFactor)));
+  const effectiveDR = Math.max(
+    0,
+    Math.round(calculateEffectiveArmor(baseDR, [firepower.armorPenetration.effectiveArmorPenetrationPct]).effectiveDr)
+  );
 
   const rawNormal = firepower.damagePerShot.totalPerShot;
   const rawCrit = firepower.damagePerShot.critical;

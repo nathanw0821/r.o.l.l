@@ -27,8 +27,9 @@ describe("combat-firepower-engine goldens", () => {
       ...GOLDEN_BUILDS.find((b) => b.id === "melee-chainsaw-over-cap-penetration")!.input,
       targetDummyId: "earle-williams"
     });
-    // Pre-unification the engine has no total cap; this fixture documents that state.
-    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBeGreaterThanOrEqual(90);
+    // Anti-Armor 50% × Incisor 75% × bow bar 35% would be ~92%; the engine cap holds it at 90%.
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(90);
+    expect(result.targetDummy.effectiveDR).toBe(40); // 400 DR × (1 − 0.90)
   });
 
   it("VATS AP cost contract covers every catalog base AP", () => {

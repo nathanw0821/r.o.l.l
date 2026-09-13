@@ -1211,9 +1211,9 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 66,
-        "armorMitigationPct": 52,
-        "mitigationRatio": 0.47696628947557074,
+        "effectiveDR": 67,
+        "armorMitigationPct": 53,
+        "mitigationRatio": 0.47435547657078064,
         "normalLanded": 7,
         "criticalLanded": 16,
         "burstDPSLanded": 80,
@@ -5524,7 +5524,7 @@
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky weapon to drop it to 23."
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 92,
+        "effectiveArmorPenetrationPct": 90,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -5551,14 +5551,14 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 24,
-        "armorMitigationPct": 2,
-        "mitigationRatio": 0.9784068550952422,
-        "normalLanded": 44,
+        "effectiveDR": 30,
+        "armorMitigationPct": 10,
+        "mitigationRatio": 0.9018770427715703,
+        "normalLanded": 41,
         "criticalLanded": 56,
-        "burstDPSLanded": 352,
-        "criticalCycleDPSLanded": 400,
-        "activeDPSLanded": 352
+        "burstDPSLanded": 328,
+        "criticalCycleDPSLanded": 388,
+        "activeDPSLanded": 328
       }
     },
     "earle-williams": {
@@ -5669,7 +5669,7 @@
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky weapon to drop it to 23."
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 92,
+        "effectiveArmorPenetrationPct": 90,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -5696,14 +5696,14 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 32,
-        "armorMitigationPct": 12,
-        "mitigationRatio": 0.880880199547886,
-        "normalLanded": 27,
-        "criticalLanded": 36,
-        "burstDPSLanded": 216,
-        "criticalCycleDPSLanded": 252,
-        "activeDPSLanded": 216
+        "effectiveDR": 40,
+        "armorMitigationPct": 19,
+        "mitigationRatio": 0.8119788054090684,
+        "normalLanded": 25,
+        "criticalLanded": 33,
+        "burstDPSLanded": 200,
+        "criticalCycleDPSLanded": 232,
+        "activeDPSLanded": 200
       }
     },
     "ultracite-titan": {
@@ -5814,7 +5814,7 @@
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky weapon to drop it to 23."
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 92,
+        "effectiveArmorPenetrationPct": 90,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -5841,14 +5841,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 28,
-        "armorMitigationPct": 8,
-        "mitigationRatio": 0.9248768491969003,
-        "normalLanded": 35,
-        "criticalLanded": 47,
-        "burstDPSLanded": 280,
-        "criticalCycleDPSLanded": 328,
-        "activeDPSLanded": 280
+        "effectiveDR": 35,
+        "armorMitigationPct": 15,
+        "mitigationRatio": 0.852534089819302,
+        "normalLanded": 32,
+        "criticalLanded": 44,
+        "burstDPSLanded": 256,
+        "criticalCycleDPSLanded": 304,
+        "activeDPSLanded": 256
       }
     },
     "level-100-super-mutant": {
@@ -5959,7 +5959,7 @@
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky weapon to drop it to 23."
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 92,
+        "effectiveArmorPenetrationPct": 90,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -5986,7 +5986,7 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 17,
+        "effectiveDR": 21,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
         "normalLanded": 149,
@@ -6104,7 +6104,7 @@
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky weapon to drop it to 23."
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 92,
+        "effectiveArmorPenetrationPct": 90,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
