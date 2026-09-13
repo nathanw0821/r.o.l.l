@@ -38,25 +38,33 @@ describe("combat-firepower-engine goldens", () => {
     expect(result.targetDummy.effectiveDR).toBe(40); // 400 DR × (1 − 0.90)
   });
 
-  it("crit every-other-shot: engine Luck table vs calculator derivation (known rank-3 gap)", () => {
-    // The engine's Luck thresholds (33/23 at Critical Savvy 3, 44/34, 54/44, 64/54) are the
-    // game-verified figures. creation-engine-math derives the same flag from meter fill, but
-    // its rank-3 meterPreserved value is 55 where the real figure is 45, so it flips 6 Luck
-    // early at rank 3. This test pins the exact disagreement so a calculator fix is noticed.
+  it("crit every-other-shot: engine Luck table vs calculator derivation (ranks 0-2 need game verification)", () => {
+    // Rank 3 is game-verified (33 Luck, 23 with Lucky Hit) and the calculator now agrees at
+    // every Luck value. The engine's rank 0-2 thresholds (64/54/44, or 54/44/34 with Lucky Hit)
+    // were derived without rounding the fill; the calculator's integer meter rounding (the same
+    // rule that makes 33 work at rank 3) qualifies one Luck earlier at each of those ranks.
+    // Until those six thresholds are verified in-game the engine keeps its table and this test
+    // pins the exact one-point residual so any drift is loud.
     const disagreements: Record<string, number[]> = {};
     for (const rank of [0, 1, 2, 3]) {
-      for (const lucky of [false, true]) {
+      for (const luckyHit of [false, true]) {
         for (let luck = 1; luck <= 80; luck++) {
-          const engine = calculateVatsCritQualification({ luck, critSavvyRank: rank, hasLucky15Fill: lucky }).everySecondShotReady;
-          const calc = calculateCritFrequency(luck, rank, lucky).everyOtherShot;
-          if (engine !== calc) (disagreements[`rank${rank}:${lucky ? "lucky" : "plain"}`] ??= []).push(luck);
+          const engine = calculateVatsCritQualification({ luck, critSavvyRank: rank, hasLucky15Fill: luckyHit }).everySecondShotReady;
+          const calc = calculateCritFrequency(luck, rank, luckyHit).everyOtherShot;
+          if (engine !== calc) (disagreements[`rank${rank}:${luckyHit ? "luckyHit" : "plain"}`] ??= []).push(luck);
         }
       }
     }
     expect(disagreements).toEqual({
-      "rank3:plain": [27, 28, 29, 30, 31, 32],
-      "rank3:lucky": [17, 18, 19, 20, 21, 22]
+      "rank0:plain": [63],
+      "rank0:luckyHit": [53],
+      "rank1:plain": [53],
+      "rank1:luckyHit": [43],
+      "rank2:plain": [43],
+      "rank2:luckyHit": [33]
     });
+    // Rank 3 must agree everywhere.
+    expect(Object.keys(disagreements).some((k) => k.startsWith("rank3"))).toBe(false);
   });
 
   it("VATS AP cost matches the frozen contract at every catalog base AP", () => {

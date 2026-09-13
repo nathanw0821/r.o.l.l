@@ -220,7 +220,7 @@ export function buildVatsEmbed(opts: CalcOptions): DiscordEmbed {
 }
 
 /**
- * `/calc crit` — crit meter fill and cycle length. Options: luck (req), savvy, fill_star.
+ * `/calc crit` — crit meter fill and cycle length. Options: luck (req), savvy, lucky_hit.
  */
 export function buildCritEmbed(opts: CalcOptions): DiscordEmbed {
   const luck = Math.round(num(opts.luck, NaN));
@@ -228,8 +228,8 @@ export function buildCritEmbed(opts: CalcOptions): DiscordEmbed {
     return errorEmbed("🍀 CRITICAL METER CALCULATOR", "Luck must be a whole number of at least 1.");
   }
   const savvy = Math.max(0, Math.min(3, Math.round(num(opts.savvy, 3))));
-  const fillStar = bool(opts.fill_star);
-  const crit = calculateCritFrequency(luck, savvy, fillStar);
+  const luckyHit = bool(opts.lucky_hit);
+  const crit = calculateCritFrequency(luck, savvy, luckyHit);
 
   return {
     title: "🍀 CRITICAL METER CALCULATOR",
@@ -243,7 +243,7 @@ export function buildCritEmbed(opts: CalcOptions): DiscordEmbed {
         name: "📟 METER READOUT",
         value: readout([
           `LUCK      ${luck}`,
-          `FILL/HIT  (${luck} × 1.5) + 5${fillStar ? " + 15" : ""} = ${pct(crit.fillPerShotPct)}`,
+          `FILL/HIT  round((${luck} × 1.5) + 5${luckyHit ? " + 15" : ""}) = ${pct(crit.fillPerShotPct)}`,
           `SAVVY R${savvy}  ${pct(crit.meterPreservedPct)} preserved after crit`,
           `= 1 crit every ${crit.shotsPerCritCycle} shots`
         ]),
@@ -251,7 +251,7 @@ export function buildCritEmbed(opts: CalcOptions): DiscordEmbed {
       },
       {
         name: "📐 Breakpoints",
-        value: "Luck 33 + Critical Savvy 3 → every other shot. Luck 23 with the 15% Faster Crit Fill star also reaches it.",
+        value: "Luck 33 + Critical Savvy 3 → every other shot. Luck 23 with the 3★ Lucky Hit legendary also reaches it.",
         inline: false
       }
     ],

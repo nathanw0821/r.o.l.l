@@ -41,11 +41,12 @@ describe("Creation Engine math — 6 golden benchmarks", () => {
     expect(result).toEqual({
       luck: 33,
       critSavvyRank: 3,
-      fillPerShotPct: 54.5,
-      meterPreservedPct: 55,
+      fillPerShotPct: 55, // round(54.5) half-up; the meter is integer-valued
+      meterPreservedPct: 45, // Critical Savvy 3 consumes 55, preserves 45
       shotsPerCritCycle: 2,
       everyOtherShot: true
     });
+    expect(calculateCritFrequency(32, 3).everyOtherShot).toBe(false);
   });
 
   it("5. Earle Williams: 380 paper DMG vs 350 DR (Tank Killer 36%) with 80% flat reduction => 46.12", () => {
@@ -84,8 +85,9 @@ describe("Creation Engine math — reference parity edge cases", () => {
     expect(effectiveDr).toBe(10);
   });
 
-  it("Luck 23 with the 15% crit fill star also reaches every-other-shot", () => {
+  it("Luck 23 with the 3★ Lucky Hit legendary also reaches every-other-shot", () => {
     expect(calculateCritFrequency(23, 3, true).everyOtherShot).toBe(true);
+    expect(calculateCritFrequency(22, 3, true).everyOtherShot).toBe(false);
     expect(calculateCritFrequency(20, 3).shotsPerCritCycle).toBe(3);
   });
 

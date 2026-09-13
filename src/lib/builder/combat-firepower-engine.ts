@@ -1,6 +1,11 @@
 import type { BuilderModDTO, BuilderWeaponInnateCrafting } from "@/lib/builder/types";
 import { calculateWeaponInnateAggregate } from "@/lib/builder/weapon-piece-mods";
-import { calculateEffectiveArmor, calculateMitigatedDamage, calculatePaperDamage } from "@/lib/calculator/creation-engine-math";
+import {
+  calculateCritFrequency,
+  calculateEffectiveArmor,
+  calculateMitigatedDamage,
+  calculatePaperDamage
+} from "@/lib/calculator/creation-engine-math";
 import {
   TARGET_DUMMY_CATALOG,
   WEAPON_ALIASES,
@@ -308,25 +313,19 @@ export function calculateVatsCritQualification(params: {
   const { luck, critSavvyRank, hasLucky15Fill, hasVatsOptimized = false, fourLeafCloverRank = 0 } = params;
 
   // Meter cost per crit in Fallout 76 (Critical Savvy: 15/30/45% less meter used):
-  // Rank 3 = 55%, Rank 2 = 70%, Rank 1 = 85%, None (0) = 100%
-  //
-  // Deliberately NOT delegated to calculateCritFrequency in creation-engine-math:
-  // its rank-3 meterPreserved value (55) is the complement of the real figure (45),
-  // so it reports every-other-shot from Luck 27 (17 with Lucky) instead of the
-  // game-verified 33 (23). The Luck table below is authoritative. The golden test
-  // pins that disagreement window and will fail once the calculator is corrected,
-  // which is the signal to revisit delegation.
-  const fillCostPct =
-    critSavvyRank >= 3 ? 55 : critSavvyRank === 2 ? 70 : critSavvyRank === 1 ? 85 : 100;
+  // Rank 3 = 55%, Rank 2 = 70%, Rank 1 = 85%, None (0) = 100%.
+  // Crit fill per shot comes from creation-engine-math (rounded half-up, +15 with the
+  // 3★ Lucky Hit legendary); fillCostPct is 100 − meterPreservedPct.
+  const critFill = calculateCritFrequency(luck, critSavvyRank, hasLucky15Fill);
+  const fillCostPct = 100 - critFill.meterPreservedPct;
+  const fillPerShotPct = critFill.fillPerShotPct;
 
-  // Fill per shot: (Luck * 1.5) + 5 + (Lucky 15% ? 15 : 0)
-  const fillPerShotPct = Math.round(luck * 1.5 + (hasLucky15Fill ? 15 : 0) + 5);
-
-  // Canonical FO76 Luck Thresholds for 1:1 Crit-Every-Other-Shot:
-  // Rank 3 (55% cost): 33 Luck without Lucky, 23 Luck with Lucky
-  // Rank 2 (70% cost): 44 Luck without Lucky, 34 Luck with Lucky
-  // Rank 1 (85% cost): 54 Luck without Lucky, 44 Luck with Lucky
-  // Rank 0 (100% cost): 64 Luck without Lucky, 54 Luck with Lucky
+  // Canonical FO76 Luck Thresholds for 1:1 Crit-Every-Other-Shot (kept as the
+  // authoritative table because the UI needs requiredLuck / missingLuck):
+  // Rank 3 (55% cost): 33 Luck, 23 Luck with Lucky Hit  (game-verified)
+  // Rank 2 (70% cost): 44 Luck, 34 Luck with Lucky Hit
+  // Rank 1 (85% cost): 54 Luck, 44 Luck with Lucky Hit
+  // Rank 0 (100% cost): 64 Luck, 54 Luck with Lucky Hit
   let requiredLuck = 64;
   if (critSavvyRank >= 3) {
     requiredLuck = hasLucky15Fill ? 23 : 33;
@@ -347,14 +346,14 @@ export function calculateVatsCritQualification(params: {
   if (everySecondShotReady) {
     summary = `QUALIFIED: 1:1 Crit Cycle active (${luck}/${requiredLuck} Luck with ${
       critSavvyRank > 0 ? `Crit Savvy R${critSavvyRank}` : "No Crit Savvy"
-    }${hasLucky15Fill ? " + 3★ Lucky" : ""}).`;
+    }${hasLucky15Fill ? " + 3★ Lucky Hit" : ""}).`;
     recommendation = "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot.";
   } else {
     summary = `LOCKED: Need ${requiredLuck} Luck (Current: ${luck}, Missing: +${missingLuck}).`;
     if (critSavvyRank < 3 && !hasLucky15Fill) {
-      recommendation = `Equip Critical Savvy Rank 3 to lower Luck threshold from ${requiredLuck} down to 33, or add a 3★ Lucky weapon to drop it to 23.`;
+      recommendation = `Equip Critical Savvy Rank 3 to lower Luck threshold from ${requiredLuck} down to 33, or add a 3★ Lucky Hit weapon to drop it to 23.`;
     } else if (critSavvyRank >= 3 && !hasLucky15Fill) {
-      recommendation = `Add +${missingLuck} Luck (via Unyielding armor, Legendary Luck, or buffs) or add 3★ Lucky weapon mod (-10 Luck requirement).`;
+      recommendation = `Add +${missingLuck} Luck (via Unyielding armor, Legendary Luck, or buffs) or add a 3★ Lucky Hit weapon mod (-10 Luck requirement).`;
     } else {
       recommendation = `Add +${missingLuck} Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality).`;
     }
