@@ -14,6 +14,7 @@ import {
   getDailyResetTimers,
 } from "@/lib/discord/vault-intel";
 import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
+import { buildCalcEmbed, optionsToRecord } from "@/lib/discord/calc-embed";
 
 // Web Crypto Ed25519 signature verification for Discord Webhooks
 async function verifyDiscordSignature(
@@ -766,6 +767,21 @@ export async function POST(req: Request) {
           ]
         }
       });
+    }
+
+    // Command: /calc <damage|vats|crit> — Creation Engine deterministic combat math
+    if (name === "calc") {
+      const sub = options?.find((o: { type?: number }) => o.type === 1) as
+        | { name: string; options?: Array<{ name: string; value?: string | number | boolean }> }
+        | undefined;
+      const embed = sub ? buildCalcEmbed(sub.name, optionsToRecord(sub.options)) : null;
+      if (!embed) {
+        return NextResponse.json({
+          type: 4,
+          data: { content: "☢️ Unknown calculator mode. Use `/calc damage`, `/calc vats`, or `/calc crit`.", flags: 64 }
+        });
+      }
+      return NextResponse.json({ type: 4, data: { embeds: [embed] } });
     }
 
     // Command 6: /build <slug>

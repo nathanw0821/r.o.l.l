@@ -148,6 +148,56 @@ const commands = [
     options: []
   },
   {
+    name: "calc",
+    description: "Creation Engine combat calculator: damage, armor penetration, V.A.T.S. AP & crit meter math",
+    options: [
+      {
+        name: "damage",
+        description: "Paper damage → armor penetration → 0.15/0.365 mitigation curve",
+        type: 1,
+        options: [
+          { name: "base", description: "Weapon base damage", type: 10, required: true },
+          { name: "additive", description: "Sum of additive perk/chem/legendary bonuses in % (e.g. 160)", type: 10, required: false },
+          { name: "multipliers", description: "Multiplicative bonuses in %, comma separated (e.g. 40, 10)", type: 3, required: false },
+          { name: "target_dr", description: "Enemy Damage Resistance (e.g. Earle 350)", type: 10, required: false },
+          { name: "penetration", description: "Armor penetration sources in %, comma separated (e.g. 50, 36)", type: 3, required: false },
+          { name: "flat_reduction", description: "Boss flat damage reduction in % (Earle 80, SBQ 70)", type: 10, required: false }
+        ]
+      },
+      {
+        name: "vats",
+        description: "V.A.T.S. AP cost per shot with weapon mods and 25% Less VATS Cost",
+        type: 1,
+        options: [
+          { name: "base_ap", description: "Weapon base AP cost", type: 10, required: true },
+          { name: "mod_reduction", description: "Sum of weapon mod AP reductions in % (e.g. 30)", type: 10, required: false },
+          { name: "lvc", description: "25% Less VATS Action Point Cost star equipped", type: 5, required: false }
+        ]
+      },
+      {
+        name: "crit",
+        description: "Critical meter fill per hit and shots per crit from Luck and Critical Savvy",
+        type: 1,
+        options: [
+          { name: "luck", description: "Character Luck (e.g. 33)", type: 4, required: true },
+          {
+            name: "savvy",
+            description: "Critical Savvy perk rank (default 3)",
+            type: 4,
+            required: false,
+            choices: [
+              { name: "Rank 0 (none)", value: 0 },
+              { name: "Rank 1", value: 1 },
+              { name: "Rank 2", value: 2 },
+              { name: "Rank 3", value: 3 }
+            ]
+          },
+          { name: "fill_star", description: "15% Faster V.A.T.S. Critical Fill star equipped", type: 5, required: false }
+        ]
+      }
+    ]
+  },
+  {
     name: "wiki",
     description: "Search 3,300+ Fallout 76 Truth Wiki articles, items, weak spots & mechanics",
     options: [

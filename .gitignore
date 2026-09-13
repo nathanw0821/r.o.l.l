@@ -25,4 +25,5 @@ data/extracted_swfs/
 data/*.strings
 data/*.dlstrings
 data/*.ilstrings
-
+# Cross-Agent Symlinks
+STATUS.md
