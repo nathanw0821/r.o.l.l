@@ -22,7 +22,6 @@ import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-mod
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 import type { LocalTransmissionRecord } from "@/components/transmissions/transmissions-vault-client";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
-import { type ActivePick } from "@/lib/builder/active-pick";
 import { BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import BuilderMasterTabNav from "@/components/builder/builder-master-tab-nav";
@@ -36,6 +35,7 @@ import AuxLogisticsColumn from "@/components/builder/tabs/gear/aux-logistics-col
 import ArmoryMatrixSection from "@/components/builder/tabs/gear/armory-matrix-section";
 import { useBuilderModCatalog } from "@/components/builder/hooks/use-builder-mod-catalog";
 import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals";
+import { useLegendaryBench } from "@/components/builder/hooks/use-legendary-bench";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
@@ -61,12 +61,10 @@ import {
 } from "@/lib/builder/base-gear";
 import {
   buildShoppingList,
-  filterModsForSlot,
   findModByIdOrSlug,
   stripGhoulBlockedLegendarySelections,
   weaponSubMatches,
 } from "@/lib/builder/compatibility";
-import { isGhoulDiscouragedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import {
   defaultPayload,
   emptyArmorLegendaryGrid,
@@ -77,7 +75,6 @@ import {
   type BuilderPayload,
 } from "@/lib/builder/types";
 import { useLocalProgress } from "@/components/use-local-progress";
-import { findLocalProgressEntry } from "@/lib/progress-lookup";
 import {
   defaultWeaponInnateCrafting,
   calculateWeaponInnateAggregate,
@@ -172,10 +169,6 @@ export default function BuilderExperimentClient({
     return defaultArm;
   });
 
-  const [undoPayload, setUndoPayload] = React.useState<BuilderPayload | null>(
-    null,
-  );
-
   React.useEffect(() => {
     if (isMounted) {
       triggerBuilderAchievement("diagnostic_access");
@@ -188,11 +181,7 @@ export default function BuilderExperimentClient({
 
   const { map: localProgress } = useLocalProgress(true);
   const [weaponSubMenu, setWeaponSubMenu] = React.useState<"attachments" | "stars" | "matrix">("attachments");
-  const [modalTrackerFilter, setModalTrackerFilter] = React.useState<"all" | "unlocked" | "stash">("all");
 
-  const [activePick, setActivePick] = React.useState<ActivePick>(null);
-  const [slotQuery, setSlotQuery] = React.useState("");
-  const deferredSlotQuery = React.useDeferredValue(slotQuery);
   const isCompactDensity = useDensityCompact();
   const [shareTitle, setShareTitle] = React.useState(sharedTransmissionTitle || "B.U.I.L.D. Loadout");
   const [shareBusy, setShareBusy] = React.useState(false);
@@ -515,25 +504,6 @@ export default function BuilderExperimentClient({
     };
   }, [targetTransmissionSlug, isMounted, currentUserId, isAdmin, activeTransmission?.slug]);
 
-  const clearAllSelections = React.useCallback(() => {
-    setUndoPayload(payload);
-    setPayload((p) => ({
-      ...p,
-      legendaryModIds: [null, null, null, null],
-      armorLegendaryModIds: emptyArmorLegendaryGrid(),
-      mutationIds: [],
-      legendaryPerkIds: [],
-      baseSpecial: {},
-    }));
-  }, [payload]);
-
-  const undoClear = React.useCallback(() => {
-    if (undoPayload) {
-      setPayload(undoPayload);
-      setUndoPayload(null);
-    }
-  }, [undoPayload]);
-
   const clearPiece = React.useCallback((payloadIndex: number) => {
     setPayload((prev) => {
       const nextCrafting = [...prev.armorPieceCrafting];
@@ -839,106 +809,29 @@ export default function BuilderExperimentClient({
     [equippedModsOrdered, payload.underarmor, piece.kind, isMultiPiece],
   );
 
-  const assignSlot = React.useCallback(
-    (modId: string) => {
-      if (!activePick) return;
-      if (activePick.scope === "single") {
-        setPayload((p) => {
-          const next = [...p.legendaryModIds];
-          next[activePick.starIndex] = modId;
-          return { ...p, legendaryModIds: next };
-        });
-      } else {
-        setPayload((p) => {
-          const grid = p.armorLegendaryModIds.map((row) => [...row]);
-          const row = [...grid[activePick.pieceIndex]!];
-          row[activePick.starIndex] = modId;
-          grid[activePick.pieceIndex] = row;
-          return { ...p, armorLegendaryModIds: grid };
-        });
-      }
-      setActivePick(null);
-      setSlotQuery("");
-    },
-    [activePick],
-  );
-
-  const recommendedIds = React.useMemo(() => {
-    const ids = new Set<string>();
-    if (!activePick) return ids;
-    if (activePick.scope === "armorSet") {
-      for (let i = 0; i < payload.armorLegendaryModIds.length; i++) {
-        if (i === activePick.pieceIndex) continue;
-        const id = payload.armorLegendaryModIds[i]?.[activePick.starIndex];
-        if (id) ids.add(id);
-      }
-    }
-    return ids;
-  }, [activePick, payload.armorLegendaryModIds]);
-
-  const optionsForActivePick = React.useMemo(() => {
-    if (!activePick) return [];
-    const slotIndex = activePick.starIndex;
-    const targetPiece = activePick.scope === "single" ? activeWeaponPiece : activeChassisPiece;
-    const filtered = filterModsForSlot(mods, targetPiece, slotIndex, {
-      ghoul: payload.ghoul,
-    }).filter((m) => {
-      const q = deferredSlotQuery.trim().toLowerCase();
-      if (q) {
-        const matchesQuery =
-          m.name.toLowerCase().includes(q) ||
-          m.description.toLowerCase().includes(q) ||
-          m.slug.toLowerCase().includes(q);
-        if (!matchesQuery) return false;
-      }
-
-      if (modalTrackerFilter !== "all") {
-        const entry = findLocalProgressEntry(localProgress, m.id, m.name, `${m.starRank} Star`);
-        const isUnlocked = entry?.unlocked ?? (m.trackerUnlock === "unlocked");
-        const stashCount = entry?.modCount ?? 0;
-
-        if (modalTrackerFilter === "unlocked" && !isUnlocked) return false;
-        if (modalTrackerFilter === "stash" && stashCount <= 0) return false;
-      }
-
-      return true;
-    });
-
-    return [...filtered].sort((a, b) => {
-      const entryA = findLocalProgressEntry(localProgress, a.id, a.name, `${a.starRank} Star`);
-      const entryB = findLocalProgressEntry(localProgress, b.id, b.name, `${b.starRank} Star`);
-      const unlockedA = (entryA?.unlocked ?? (a.trackerUnlock === "unlocked")) ? 1 : 0;
-      const unlockedB = (entryB?.unlocked ?? (b.trackerUnlock === "unlocked")) ? 1 : 0;
-      const stashA = (entryA?.modCount ?? 0) > 0 ? 1 : 0;
-      const stashB = (entryB?.modCount ?? 0) > 0 ? 1 : 0;
-
-      const recA = recommendedIds.has(a.id) ? 1 : 0;
-      const recB = recommendedIds.has(b.id) ? 1 : 0;
-      if (recA !== recB) return recB - recA;
-
-      // Status prioritization: unlocked > stash > locked
-      const statusScoreA = unlockedA * 2 + stashA;
-      const statusScoreB = unlockedB * 2 + stashB;
-      if (statusScoreA !== statusScoreB) return statusScoreB - statusScoreA;
-
-      if (payload.ghoul) {
-        const discA = isGhoulDiscouragedLegendarySlug(a.slug) ? 1 : 0;
-        const discB = isGhoulDiscouragedLegendarySlug(b.slug) ? 1 : 0;
-        if (discA !== discB) return discA - discB;
-      }
-      return a.name.localeCompare(b.name);
-    });
-  }, [
+  const {
+    activePick,
+    setActivePick,
+    slotQuery,
+    setSlotQuery,
+    deferredSlotQuery,
+    modalTrackerFilter,
+    setModalTrackerFilter,
+    undoPayload,
+    recommendedIds,
+    optionsForActivePick,
+    assignSlot,
+    clearStarSlot,
+    clearAllSelections,
+    undoClear,
+  } = useLegendaryBench({
+    payload,
+    setPayload,
     mods,
     activeWeaponPiece,
     activeChassisPiece,
-    activePick,
-    deferredSlotQuery,
-    modalTrackerFilter,
     localProgress,
-    payload.ghoul,
-    recommendedIds,
-  ]);
+  });
 
   const selectActiveWeapon = React.useCallback(
     (id: string) => {
@@ -980,7 +873,7 @@ export default function BuilderExperimentClient({
       });
       setActivePick(null);
     },
-    [activeWeaponId, mods]
+    [activeWeaponId, mods, setActivePick]
   );
 
   function setBase(id: string) {
@@ -1024,29 +917,6 @@ export default function BuilderExperimentClient({
         i === pieceIndex ? { ...row, [field]: value } : row,
       );
       return { ...p, armorPieceCrafting: nextCraft };
-    });
-  }
-
-  function clearStarSlot(
-    scope: "single" | "armorSet",
-    pieceIndex: number | undefined,
-    starIndex: number,
-  ) {
-    if (scope === "single") {
-      setPayload((p) => {
-        const next = [...p.legendaryModIds];
-        next[starIndex] = null;
-        return { ...p, legendaryModIds: next };
-      });
-      return;
-    }
-    if (pieceIndex === undefined) return;
-    setPayload((p) => {
-      const grid = p.armorLegendaryModIds.map((row) => [...row]);
-      const row = [...grid[pieceIndex]!];
-      row[starIndex] = null;
-      grid[pieceIndex] = row;
-      return { ...p, armorLegendaryModIds: grid };
     });
   }
 
