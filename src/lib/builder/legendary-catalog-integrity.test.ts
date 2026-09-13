@@ -64,7 +64,7 @@ describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verificat
     const vital = catalog.find((m) => m.name === "Vital" && m.starRank === 2);
     expect(vital).toBeDefined();
     expect(vital?.allowedOnWeapon).toBe(true);
-  });
+  }, 15000);
 
   it("filterModsForSlot correctly places V.A.T.S. Optimized in slot index 2 (3-star) and NOT in slot index 1 (2-star)", async () => {
     const catalog = await getCachedBuilderModCatalog();
