@@ -770,3 +770,24 @@ export function buildShoppingList(
 
   return { modules: logistics.legendaryModules, lines };
 }
+
+/** Resolves a stored legendary mod id or slug (including legacy `seed-`/`et-` prefixes) to a catalog row. */
+export function findModByIdOrSlug(
+  mods: BuilderModDTO[],
+  id: string | null | undefined,
+  starRank?: number
+): BuilderModDTO | null {
+  if (!id) return null;
+  const pool = typeof starRank === "number" ? mods.filter((m) => m.starRank === starRank) : mods;
+  const searchPool = pool.length > 0 ? pool : mods;
+  const direct = searchPool.find((m) => m.id === id || m.slug === id || m.id === id.replace(/^et-/, "") || m.slug === id.replace(/^et-/, ""));
+  if (direct) return direct;
+  const clean = id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
+  return (
+    searchPool.find((m) => {
+      const mCleanSlug = m.slug.replace(/\./g, "").toLowerCase();
+      const mCleanId = m.id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
+      return mCleanSlug === clean || mCleanId === clean;
+    }) ?? null
+  );
+}

@@ -40,6 +40,8 @@ import type { LocalTransmissionRecord } from "@/components/transmissions/transmi
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
+import { SLOT_LABELS, activePickLabel, type ActivePick } from "@/lib/builder/active-pick";
+import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import ModPickerOption from "@/components/builder/mod-picker-option";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,7 +57,6 @@ import BuilderGearSelector from "@/components/builder/builder-gear-selector";
 import { getEquipmentSynergies } from "@/lib/builder/synergy-engine";
 import RollHelperTooltip from "@/components/roll-helper-tooltip";
 import {
-  ARMOR_SET_SLOT_LABELS,
   ARMOR_SET_ROWS,
   getArmorSetRow,
   getArmorSetMaxLevel,
@@ -69,15 +70,15 @@ import {
 } from "@/lib/builder/armor-piece-mods";
 import {
   BASE_GEAR_PIECES,
+  formatBaseOptionLabel,
   getBaseGearPiece,
   getGroupedWeaponCategories,
   isPowerArmorTorsoBasePiece,
   isPowerArmorTorsoRowLearned,
   isTrackableBasePieceId,
   pairedPowerArmorHelmetId,
-  type BaseGearPiece,
 } from "@/lib/builder/base-gear";
-import { EXTENDED_LEGENDARY_MOD_SEEDS } from "@/lib/builder/legendary-mod-catalog-seeds";
+import { INITIAL_BUILDER_MODS } from "@/lib/builder/legendary-mod-catalog-seeds";
 import {
   aggregateEffectMath,
   BUILDER_SPECIAL_KEYS,
@@ -86,6 +87,7 @@ import {
   RESIST_FULL_NAMES,
   buildShoppingList,
   filterModsForSlot,
+  findModByIdOrSlug,
   getGroupedLegendaryEffects,
   listEquippedLegendariesWithBenchLabels,
   listEquippedModsInBenchOrder,
@@ -95,14 +97,13 @@ import {
 } from "@/lib/builder/compatibility";
 import { isGhoulDiscouragedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import {
-  defaultPowerArmorHelmetCrafting,
+  defaultPayload,
   emptyArmorLegendaryGrid,
   normalizeBuilderPayload,
 } from "@/lib/builder/normalize-builder-payload";
 import {
   getPowerArmorEquippedFlatStats,
   powerArmorFrameIntrinsicEffectMath,
-  POWER_ARMOR_PIECE_SLOT_LABELS,
 } from "@/lib/builder/power-armor-stats";
 import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
@@ -147,119 +148,6 @@ import {
 } from "@/lib/builder/underarmor";
 import { triggerBuilderAchievement } from "@/actions/builder-achievements";
 import { LEGENDARY_PERK_CARDS } from "@/lib/builder/compatibility";
-
-const SLOT_LABELS = ["1st star", "2nd star", "3rd star", "4th star"];
-
-type ActivePick =
-  | null
-  | { scope: "single"; starIndex: number }
-  | { scope: "armorSet"; pieceIndex: number; starIndex: number };
-
-function formatBaseOptionLabel(g: BaseGearPiece) {
-  if (g.kind === "underarmor") return `${g.label} (underarmor)`;
-  if (g.kind === "weapon" && g.weaponSub)
-    return `${g.label} (weapon · ${g.weaponSub})`;
-  if (g.kind === "armor" && g.armorSetKey) return g.label;
-  if (g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)) return g.label;
-  if (g.kind === "powerArmor" && g.powerArmorSlot === "helmet")
-    return `${g.label} (power armor · helmet)`;
-  return `${g.label} (${g.kind})`;
-}
-
-function defaultPayload(): BuilderPayload {
-  const first =
-    BASE_GEAR_PIECES.find((p) => p.kind === "armor") ?? BASE_GEAR_PIECES[0]!;
-  return {
-    version: 5,
-    basePieceId: first.id,
-    equipmentKind: first.kind,
-    weaponSub: first.weaponSub ?? null,
-    weaponCrafting: defaultWeaponInnateCrafting("fixer"),
-    legendaryModIds: [null, null, null, null],
-    armorLegendaryModIds: emptyArmorLegendaryGrid(),
-    armorPieceCrafting: defaultArmorPieceCrafting(),
-    powerArmorHelmetId: null,
-    powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
-    powerArmorPiecesEquipped: DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
-    ghoul: false,
-    underarmor: {
-      shellId: UNDERARMOR_SHELLS[0]!.id,
-      liningId: "none",
-      styleId: "none",
-    },
-    mutationIds: [],
-    ignoreMutationPenalties: false,
-    baseSpecial: { str: 1, per: 1, end: 1, cha: 1, int: 1, agi: 1, lck: 1 },
-    legendaryPerkIds: [],
-    hasStrangeInNumbers: false,
-  };
-}
-
-function activePickLabel(active: ActivePick, baseLabel: string, isPA?: boolean): string {
-  if (!active) return "";
-  if (active.scope === "single") {
-    const star = SLOT_LABELS[active.starIndex] ?? "";
-    return `${star} · ${baseLabel}`;
-  }
-  const labels = isPA ? POWER_ARMOR_PIECE_SLOT_LABELS : ARMOR_SET_SLOT_LABELS;
-  const slot = labels[active.pieceIndex] ?? "Piece";
-  const star = SLOT_LABELS[active.starIndex] ?? "";
-  return `${star} · ${slot} · ${baseLabel}`;
-}
-
-
-function useDensityCompact() {
-  const [compact, setCompact] = React.useState(false);
-  React.useEffect(() => {
-    const root = document.documentElement;
-    const read = () =>
-      setCompact(root.getAttribute("data-density") === "compact");
-    read();
-    const obs = new MutationObserver(read);
-    obs.observe(root, { attributes: true, attributeFilter: ["data-density"] });
-    return () => obs.disconnect();
-  }, []);
-  return compact;
-}
-
-const INITIAL_BUILDER_MODS: BuilderModDTO[] = EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
-  id: `seed-${r.slug}`,
-  slug: r.slug,
-  name: r.name,
-  starRank: r.starRank,
-  category: r.category,
-  subCategory: r.subCategory,
-  description: r.description,
-  effectMath: r.effectMath ?? {},
-  craftingCost: {},
-  allowedOnPowerArmor: r.allowedOnPowerArmor,
-  allowedOnArmor: r.allowedOnArmor,
-  allowedOnWeapon: r.allowedOnWeapon,
-  infestationOnly: false,
-  fifthStarEligible: r.fifthStarEligible,
-  ghoulSpecialCap: r.ghoulSpecialCap,
-  trackerUnlock: "unknown"
-}));
-
-function findModByIdOrSlug(
-  mods: BuilderModDTO[],
-  id: string | null | undefined,
-  starRank?: number
-): BuilderModDTO | null {
-  if (!id) return null;
-  const pool = typeof starRank === "number" ? mods.filter((m) => m.starRank === starRank) : mods;
-  const searchPool = pool.length > 0 ? pool : mods;
-  const direct = searchPool.find((m) => m.id === id || m.slug === id || m.id === id.replace(/^et-/, "") || m.slug === id.replace(/^et-/, ""));
-  if (direct) return direct;
-  const clean = id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
-  return (
-    searchPool.find((m) => {
-      const mCleanSlug = m.slug.replace(/\./g, "").toLowerCase();
-      const mCleanId = m.id.replace(/^seed-|^effect-\d+star-|^et-/, "").replace(/\./g, "").toLowerCase();
-      return mCleanSlug === clean || mCleanId === clean;
-    }) ?? null
-  );
-}
 
 export type BuilderExperimentClientProps = {
   initialLearnedBasePieceIds?: string[];
