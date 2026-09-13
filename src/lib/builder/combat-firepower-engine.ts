@@ -307,8 +307,15 @@ export function calculateVatsCritQualification(params: {
 }): VatsCritQualification {
   const { luck, critSavvyRank, hasLucky15Fill, hasVatsOptimized = false, fourLeafCloverRank = 0 } = params;
 
-  // Meter cost per crit in Fallout 76:
+  // Meter cost per crit in Fallout 76 (Critical Savvy: 15/30/45% less meter used):
   // Rank 3 = 55%, Rank 2 = 70%, Rank 1 = 85%, None (0) = 100%
+  //
+  // Deliberately NOT delegated to calculateCritFrequency in creation-engine-math:
+  // its rank-3 meterPreserved value (55) is the complement of the real figure (45),
+  // so it reports every-other-shot from Luck 27 (17 with Lucky) instead of the
+  // game-verified 33 (23). The Luck table below is authoritative. The golden test
+  // pins that disagreement window and will fail once the calculator is corrected,
+  // which is the signal to revisit delegation.
   const fillCostPct =
     critSavvyRank >= 3 ? 55 : critSavvyRank === 2 ? 70 : critSavvyRank === 1 ? 85 : 100;
 
