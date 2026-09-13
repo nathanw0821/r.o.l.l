@@ -1,3 +1,4 @@
+import type { BuilderModDTO } from "@/lib/builder/types";
 /**
  * Expanded Fallout 76–style legendary catalog for the loadout builder.
  * Sourced directly from the authoritative 148 Patch 69 legendary effects in `FALLBACK_LEGENDARY_EFFECTS`.
@@ -108,3 +109,23 @@ export const EXTENDED_LEGENDARY_MOD_SEEDS: BuilderLegendarySeedRow[] = FALLBACK_
     ghoulSpecialCap: ghoulCap
   };
 });
+
+/** Seed rows shaped as BuilderModDTOs so the builder renders before the catalog API responds. */
+export const INITIAL_BUILDER_MODS: BuilderModDTO[] = EXTENDED_LEGENDARY_MOD_SEEDS.map((r) => ({
+  id: `seed-${r.slug}`,
+  slug: r.slug,
+  name: r.name,
+  starRank: r.starRank,
+  category: r.category,
+  subCategory: r.subCategory,
+  description: r.description,
+  effectMath: r.effectMath ?? {},
+  craftingCost: {},
+  allowedOnPowerArmor: r.allowedOnPowerArmor,
+  allowedOnArmor: r.allowedOnArmor,
+  allowedOnWeapon: r.allowedOnWeapon,
+  infestationOnly: false,
+  fifthStarEligible: r.fifthStarEligible,
+  ghoulSpecialCap: r.ghoulSpecialCap,
+  trackerUnlock: "unknown"
+}));

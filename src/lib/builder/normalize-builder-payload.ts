@@ -1,6 +1,7 @@
 import { basePieceIdForArmorSet } from "@/lib/builder/armor-sets";
 import { defaultArmorPieceCrafting, sanitizeArmorPieceCraftingJetpack } from "@/lib/builder/armor-piece-mods";
-import { canonicalBasePieceId, getBaseGearPiece, isPowerArmorHelmetBasePiece } from "@/lib/builder/base-gear";
+import { BASE_GEAR_PIECES, canonicalBasePieceId, getBaseGearPiece, isPowerArmorHelmetBasePiece } from "@/lib/builder/base-gear";
+import { UNDERARMOR_SHELLS } from "@/lib/builder/underarmor";
 import {
   isKnownPowerArmorHelmetPieceId,
   sanitizePowerArmorPiecesEquipped
@@ -15,6 +16,7 @@ import type {
   BuilderWeaponInnateCrafting,
   BuilderWeaponSub
 } from "@/lib/builder/types";
+import { DEFAULT_POWER_ARMOR_PIECES_EQUIPPED } from "@/lib/builder/types";
 
 const STAR_SLOTS = 4;
 const EMPTY_STAR_ROW: (string | null)[] = Array.from({ length: STAR_SLOTS }, () => null);
@@ -414,4 +416,34 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
   }
 
   return null;
+}
+
+/** Fresh builder payload: first armor base piece, default crafting, empty stars, base SPECIAL of 1s. */
+export function defaultPayload(): BuilderPayload {
+  const first =
+    BASE_GEAR_PIECES.find((p) => p.kind === "armor") ?? BASE_GEAR_PIECES[0]!;
+  return {
+    version: 5,
+    basePieceId: first.id,
+    equipmentKind: first.kind,
+    weaponSub: first.weaponSub ?? null,
+    weaponCrafting: defaultWeaponInnateCrafting("fixer"),
+    legendaryModIds: [null, null, null, null],
+    armorLegendaryModIds: emptyArmorLegendaryGrid(),
+    armorPieceCrafting: defaultArmorPieceCrafting(),
+    powerArmorHelmetId: null,
+    powerArmorHelmetCrafting: defaultPowerArmorHelmetCrafting(),
+    powerArmorPiecesEquipped: DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
+    ghoul: false,
+    underarmor: {
+      shellId: UNDERARMOR_SHELLS[0]!.id,
+      liningId: "none",
+      styleId: "none",
+    },
+    mutationIds: [],
+    ignoreMutationPenalties: false,
+    baseSpecial: { str: 1, per: 1, end: 1, cha: 1, int: 1, agi: 1, lck: 1 },
+    legendaryPerkIds: [],
+    hasStrangeInNumbers: false,
+  };
 }

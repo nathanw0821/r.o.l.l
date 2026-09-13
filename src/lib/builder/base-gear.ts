@@ -529,3 +529,15 @@ export function getGroupedWeaponCategories(): WeaponCategoryGroup[] {
   return categories;
 }
 
+
+/** Human-readable label for a base gear option in the builder pickers. */
+export function formatBaseOptionLabel(g: BaseGearPiece) {
+  if (g.kind === "underarmor") return `${g.label} (underarmor)`;
+  if (g.kind === "weapon" && g.weaponSub)
+    return `${g.label} (weapon · ${g.weaponSub})`;
+  if (g.kind === "armor" && g.armorSetKey) return g.label;
+  if (g.kind === "powerArmor" && isPowerArmorTorsoBasePiece(g)) return g.label;
+  if (g.kind === "powerArmor" && g.powerArmorSlot === "helmet")
+    return `${g.label} (power armor · helmet)`;
+  return `${g.label} (${g.kind})`;
+}
