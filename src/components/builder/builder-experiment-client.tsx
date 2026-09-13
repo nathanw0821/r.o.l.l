@@ -41,6 +41,7 @@ import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
 import { SLOT_LABELS, activePickLabel, type ActivePick } from "@/lib/builder/active-pick";
+import { BUILDER_SESSION_KEYS, BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import ModPickerOption from "@/components/builder/mod-picker-option";
 import { Button } from "@/components/ui/button";
@@ -305,8 +306,8 @@ export default function BuilderExperimentClient({
     if (readOnly) return [];
     if (typeof window === "undefined") return [];
     try {
-      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
-      const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
+      const activePerkSlot = localStorage.getItem(BUILDER_STORAGE_KEYS.activePerkSlot) || "0";
+      const perkSlotStr = localStorage.getItem(perkLoadoutSlotKey(activePerkSlot));
       if (!perkSlotStr) return [];
       const perkData = JSON.parse(perkSlotStr);
       return Array.isArray(perkData.equippedCards) ? (perkData.equippedCards as { cardId: string; rank: number }[]) : [];
@@ -342,7 +343,7 @@ export default function BuilderExperimentClient({
       return;
     }
     try {
-      const saved = localStorage.getItem("roll-builder-payload");
+      const saved = localStorage.getItem(BUILDER_STORAGE_KEYS.payload);
       if (saved) {
         const parsed = JSON.parse(saved);
         const norm = normalizeBuilderPayload(parsed) || parsed;
@@ -351,7 +352,7 @@ export default function BuilderExperimentClient({
         }
       }
 
-      const savedSlots = localStorage.getItem("roll-builder-saves");
+      const savedSlots = localStorage.getItem(BUILDER_STORAGE_KEYS.saves);
       if (savedSlots) {
         const parsedSlots = JSON.parse(savedSlots);
         if (Array.isArray(parsedSlots)) {
@@ -361,8 +362,8 @@ export default function BuilderExperimentClient({
 
       // Sync P.E.R.K. punch card machine loadout into B.U.I.L.D.
       try {
-        const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
-        const perkSlotStr = localStorage.getItem(`roll_perk_loadout_slot_${activePerkSlot}`);
+        const activePerkSlot = localStorage.getItem(BUILDER_STORAGE_KEYS.activePerkSlot) || "0";
+        const perkSlotStr = localStorage.getItem(perkLoadoutSlotKey(activePerkSlot));
         if (perkSlotStr) {
           const perkData = JSON.parse(perkSlotStr);
           if (perkData) {
@@ -502,7 +503,7 @@ export default function BuilderExperimentClient({
         // Check ownership from session, server isOwner flag, or localStorage roll_my_transmissions
         let localToken: string | undefined;
         try {
-          const raw = localStorage.getItem("roll_my_transmissions");
+          const raw = localStorage.getItem(BUILDER_STORAGE_KEYS.myTransmissions);
           if (raw) {
             const list: LocalTransmissionRecord[] = JSON.parse(raw);
             const match = list.find(
@@ -689,13 +690,13 @@ export default function BuilderExperimentClient({
 
   React.useEffect(() => {
     if (isMounted && !readOnly) {
-      localStorage.setItem("roll-builder-payload", JSON.stringify(payload));
+      localStorage.setItem(BUILDER_STORAGE_KEYS.payload, JSON.stringify(payload));
     }
   }, [payload, isMounted, readOnly]);
 
   React.useEffect(() => {
     if (isMounted && !readOnly) {
-      localStorage.setItem("roll-builder-saves", JSON.stringify(savedLoadouts));
+      localStorage.setItem(BUILDER_STORAGE_KEYS.saves, JSON.stringify(savedLoadouts));
     }
   }, [savedLoadouts, isMounted, readOnly]);
 
@@ -713,11 +714,11 @@ export default function BuilderExperimentClient({
   }, [initialLearnedBasePieceIds]);
 
   const loadMods = React.useCallback((forceRefresh = false) => {
-    const MODS_CACHE_KEY = "roll-builder-mods-v6-patch69";
+    const MODS_CACHE_KEY = BUILDER_SESSION_KEYS.modsCache;
     try {
-      sessionStorage.removeItem("roll-builder-mods-cache");
-      sessionStorage.removeItem("roll-builder-mods-cache-v4");
-      sessionStorage.removeItem("roll-builder-mods-cache-v5");
+      for (const legacyKey of BUILDER_SESSION_KEYS.legacyModsCaches) {
+        sessionStorage.removeItem(legacyKey);
+      }
     } catch {
       // Ignore storage errors
     }
@@ -1411,7 +1412,7 @@ export default function BuilderExperimentClient({
       // Save to localStorage roll_my_transmissions for author tracking
       if (id && slug) {
         try {
-          const raw = localStorage.getItem("roll_my_transmissions");
+          const raw = localStorage.getItem(BUILDER_STORAGE_KEYS.myTransmissions);
           const list: LocalTransmissionRecord[] = raw ? JSON.parse(raw) : [];
           const updated = [
             {
@@ -1423,7 +1424,7 @@ export default function BuilderExperimentClient({
             },
             ...list.filter((x) => x.id !== id && x.slug !== slug),
           ];
-          localStorage.setItem("roll_my_transmissions", JSON.stringify(updated));
+          localStorage.setItem(BUILDER_STORAGE_KEYS.myTransmissions, JSON.stringify(updated));
         } catch {
           // ignore
         }
@@ -1471,7 +1472,7 @@ export default function BuilderExperimentClient({
 
       // Update title in localStorage roll_my_transmissions if present
       try {
-        const raw = localStorage.getItem("roll_my_transmissions");
+        const raw = localStorage.getItem(BUILDER_STORAGE_KEYS.myTransmissions);
         if (raw) {
           const list: LocalTransmissionRecord[] = JSON.parse(raw);
           const updated = list.map((item) =>
@@ -1479,7 +1480,7 @@ export default function BuilderExperimentClient({
               ? { ...item, title: shareTitle }
               : item
           );
-          localStorage.setItem("roll_my_transmissions", JSON.stringify(updated));
+          localStorage.setItem(BUILDER_STORAGE_KEYS.myTransmissions, JSON.stringify(updated));
         }
       } catch {
         // ignore
@@ -1588,9 +1589,9 @@ export default function BuilderExperimentClient({
     setImportedBuildForPerkBuilder({ build, timestamp: Date.now() });
 
     try {
-      const activePerkSlot = localStorage.getItem("roll_active_perk_slot") || "0";
+      const activePerkSlot = localStorage.getItem(BUILDER_STORAGE_KEYS.activePerkSlot) || "0";
       localStorage.setItem(
-        `roll_perk_loadout_slot_${activePerkSlot}`,
+        perkLoadoutSlotKey(activePerkSlot),
         JSON.stringify({
           specials: {
             S: build.specials.str,
@@ -1606,7 +1607,7 @@ export default function BuilderExperimentClient({
       );
       if (finalLegCards.length > 0) {
         localStorage.setItem(
-          "roll_legendary_perk_ids",
+          BUILDER_STORAGE_KEYS.legendaryPerkIds,
           JSON.stringify(finalLegCards.map((lp) => lp.cardId))
         );
       }
@@ -1894,10 +1895,10 @@ export default function BuilderExperimentClient({
                   onClick={() => {
                     try {
                       if (typeof window !== "undefined") {
-                        window.localStorage.setItem("roll_active_builder_payload", JSON.stringify(payload));
-                        window.localStorage.setItem("roll_equipped_perks", JSON.stringify(equippedPerkCards));
+                        window.localStorage.setItem(BUILDER_STORAGE_KEYS.activeBuilderPayload, JSON.stringify(payload));
+                        window.localStorage.setItem(BUILDER_STORAGE_KEYS.equippedPerks, JSON.stringify(equippedPerkCards));
                         if (switchboardState) {
-                          window.localStorage.setItem("roll_combat_switchboard_state", JSON.stringify(switchboardState));
+                          window.localStorage.setItem(BUILDER_STORAGE_KEYS.combatSwitchboardState, JSON.stringify(switchboardState));
                         }
                       }
                     } catch {}
