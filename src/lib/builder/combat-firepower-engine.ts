@@ -1,6 +1,6 @@
 import type { BuilderModDTO, BuilderWeaponInnateCrafting } from "@/lib/builder/types";
 import { calculateWeaponInnateAggregate } from "@/lib/builder/weapon-piece-mods";
-import { calculateEffectiveArmor, calculateMitigatedDamage } from "@/lib/calculator/creation-engine-math";
+import { calculateEffectiveArmor, calculateMitigatedDamage, calculatePaperDamage } from "@/lib/calculator/creation-engine-math";
 import {
   TARGET_DUMMY_CATALOG,
   WEAPON_ALIASES,
@@ -806,7 +806,11 @@ export function calculateCombatFirepower(
   }
 
   // Normal Damage Per Shot Calculation
-  const normalDamage = Math.round(base.baseDamage * (1 + additiveDamagePct));
+  // Post-Patch 22 rule via creation-engine-math: every perk, chem, mutation and legendary
+  // primary in this engine adds to BASE (additiveDamagePct is a fraction; the calculator takes
+  // percent). The multiplicative list is intentionally empty: sneak attack, Nocturnal and
+  // Stalker's stay linearised into the additive pool for parity (tracked as a follow-up).
+  const normalDamage = Math.round(calculatePaperDamage(base.baseDamage, additiveDamagePct * 100, []));
 
   // Explosive Area Damage
   let explosiveDamage = 0;
