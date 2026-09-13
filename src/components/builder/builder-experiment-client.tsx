@@ -32,7 +32,6 @@ import {
   AlertTriangle,
   GitFork,
 } from "lucide-react";
-import PerkBuilder from "@/components/perks/perk-builder";
 import { areEquippedCardsEqual } from "@/lib/perks/catalog";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
@@ -44,16 +43,18 @@ import { SLOT_LABELS, activePickLabel, type ActivePick } from "@/lib/builder/act
 import { BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import ModPickerOption from "@/components/builder/mod-picker-option";
+import PerkDeckTab from "@/components/builder/tabs/perk-deck-tab";
+import BiometricsTab from "@/components/builder/tabs/biometrics-tab";
+import CombatDpsTab from "@/components/builder/tabs/combat-dps-tab";
 import { useBuilderModCatalog } from "@/components/builder/hooks/use-builder-mod-catalog";
 import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import ProgressToggle from "@/components/progress-toggle";
-import BuilderCombatSwitchboard, { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
+import { type CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { calculateAggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
 import { calculateCombatFirepower, getWeaponMaxLevel } from "@/lib/builder/combat-firepower-engine";
-import BuilderFirepowerMatrix from "@/components/builder/builder-firepower-matrix";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
 import BuilderGearSelector from "@/components/builder/builder-gear-selector";
 import { getEquipmentSynergies } from "@/lib/builder/synergy-engine";
@@ -99,7 +100,6 @@ import {
 } from "@/lib/builder/normalize-builder-payload";
 import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
-  type BuilderModDTO,
   type BuilderPayload,
 } from "@/lib/builder/types";
 import { useLocalProgress } from "@/components/use-local-progress";
@@ -1945,55 +1945,34 @@ export default function BuilderExperimentClient({
         )}
       </div>
 
+
       {/* VIEWPORT: PERK DECK & SPECIAL (TAB 2) */}
-      <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "perks" ? "block" : "hidden")}>
-        <PerkBuilder
-          mode="live"
-          readOnly={readOnly}
-          initialSpecials={payload.baseSpecial}
-          initialEquippedCards={equippedPerkCards}
-          initialLegendaryPerks={payload.legendaryPerkIds}
-          externalImport={importedBuildForPerkBuilder}
-          onLoadoutChange={handlePerkLoadoutChange}
-        />
-      </div>
+      <PerkDeckTab
+        active={masterTab === "perks"}
+        readOnly={readOnly}
+        baseSpecial={payload.baseSpecial}
+        equippedPerkCards={equippedPerkCards}
+        legendaryPerkIds={payload.legendaryPerkIds}
+        importedBuildForPerkBuilder={importedBuildForPerkBuilder}
+        handlePerkLoadoutChange={handlePerkLoadoutChange}
+      />
+
 
       {/* VIEWPORT: BIOMETRICS & CHARACTER PANEL (TAB 3) */}
-      <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "biometrics" ? "block" : "hidden")}>
-        <BuilderCombatSwitchboard
-          readOnly={readOnly}
-          initialState={switchboardState || undefined}
-          rawDamage={weaponFirepowerResult?.damagePerShot.normal ?? 110}
-          isGhoul={payload.ghoul}
-          onSpeciesChange={(isGhoul) => setPayload((p) => ({ ...p, ghoul: isGhoul }))}
-          activeMutations={payload.mutationIds}
-          onMutationsChange={(nextMutations) =>
-            setPayload((p) => ({ ...p, mutationIds: nextMutations }))
-          }
-          hasStrangeInNumbers={payload.hasStrangeInNumbers}
-          onStrangeInNumbersChange={(enabled) =>
-            setPayload((p) => ({ ...p, hasStrangeInNumbers: enabled }))
-          }
-          ignoreMutationPenalties={payload.ignoreMutationPenalties}
-          onIgnoreMutationPenaltiesChange={(enabled) =>
-            setPayload((p) => ({ ...p, ignoreMutationPenalties: enabled }))
-          }
-          onStateChange={setSwitchboardState}
-          activeTacticalTags={stanceAndBiometricsLayer.activeTacticalTags}
-          critQualification={weaponFirepowerResult?.critCycle}
-        />
-      </div>
+      <BiometricsTab
+        active={masterTab === "biometrics"}
+        readOnly={readOnly}
+        switchboardState={switchboardState}
+        setSwitchboardState={setSwitchboardState}
+        weaponFirepowerResult={weaponFirepowerResult}
+        payload={payload}
+        setPayload={setPayload}
+        activeTacticalTags={stanceAndBiometricsLayer.activeTacticalTags}
+      />
+
 
       {/* VIEWPORT: COMBAT DPS & VATS (TAB 4) */}
-      <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "combat" ? "block" : "hidden")}>
-        {weaponFirepowerResult ? (
-          <BuilderFirepowerMatrix firepower={weaponFirepowerResult} />
-        ) : (
-          <div className="rounded-xl border border-slate-800 bg-slate-950/90 p-8 text-center text-slate-400 font-mono">
-            &gt;&gt; NO WEAPON CONFIGURED. Switch to [ 1. GEAR &amp; ARMORY ] to select your weapon and mods.
-          </div>
-        )}
-      </div>
+      <CombatDpsTab active={masterTab === "combat"} weaponFirepowerResult={weaponFirepowerResult} />
 
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}
       <div className={cn("space-y-6 animate-in fade-in duration-200", masterTab === "gear" ? "block" : "hidden")}>
