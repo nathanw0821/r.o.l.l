@@ -35,7 +35,7 @@ import type { LocalTransmissionRecord } from "@/components/transmissions/transmi
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
-import { SLOT_LABELS, activePickLabel, type ActivePick } from "@/lib/builder/active-pick";
+import { SLOT_LABELS, type ActivePick } from "@/lib/builder/active-pick";
 import { BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import BuilderMasterTabNav from "@/components/builder/builder-master-tab-nav";
@@ -111,13 +111,6 @@ import {
 } from "@/lib/builder/weapon-piece-mods";
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
 import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   BuilderBetaGate,
   useBuilderBetaAccess,
