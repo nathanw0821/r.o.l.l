@@ -305,7 +305,7 @@ describe("combat-firepower-engine", () => {
     expect(withAA.targetDummy.normalLanded).toBeGreaterThan(withoutAA.targetDummy.normalLanded);
   });
 
-  it("returns 100% passthrough for raw-unarmored target dummy", () => {
+  it("lands the 99% engine cap against the raw-unarmored target dummy", () => {
     const rawRes = calculateCombatFirepower({
       weaponId: "the-fixer",
       equippedMods: [],
@@ -315,8 +315,11 @@ describe("combat-firepower-engine", () => {
     });
 
     expect(rawRes.targetDummy.effectiveDR).toBe(0);
-    expect(rawRes.targetDummy.normalLanded).toBe(rawRes.damagePerShot.totalPerShot);
-    expect(rawRes.targetDummy.criticalLanded).toBe(rawRes.damagePerShot.critical);
+    // Zero DR is the limit of the continuous curve: coefficient sits on the 0.99 cap.
+    expect(rawRes.targetDummy.mitigationRatio).toBe(0.99);
+    expect(rawRes.targetDummy.armorMitigationPct).toBe(1);
+    expect(rawRes.targetDummy.normalLanded).toBe(Math.round(rawRes.damagePerShot.totalPerShot * 0.99));
+    expect(rawRes.targetDummy.criticalLanded).toBe(Math.round(rawRes.damagePerShot.critical * 0.99));
   });
 
   it("evaluates the authoritative Fallout 76 Luck & Critical Savvy chart across all tiers", () => {
