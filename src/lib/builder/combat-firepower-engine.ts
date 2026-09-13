@@ -372,6 +372,26 @@ export function calculateVatsCritQualification(params: {
 }
 
 /**
+ * Integer VATS AP cost per shot. Same model as calculateVatsApCost in
+ * creation-engine-math: attachments reduce base AP additively (floored at 10% of
+ * base) and the 25% Less VATS Cost star multiplies by 0.75.
+ *
+ * Deliberately NOT delegated to the calculator: it rounds to one decimal before
+ * this function rounds to a whole number, and that double rounding flips 7 of the
+ * 384 catalog contract points (e.g. 18 AP x 0.85 x 0.75 = 11.475 -> 11.5 -> 12
+ * instead of 11). The ap-fuzz fixture pins this formula; keep the two in step by
+ * hand if the model ever changes.
+ */
+export function resolveVatsApCost(baseVatsApCost: number, innateApCostPct: number, hasVatsOptimized: boolean): number {
+  let apMultiplier = 1.0;
+  if (hasVatsOptimized) {
+    apMultiplier *= 0.75;
+  }
+  apMultiplier *= Math.max(0.1, 1.0 + innateApCostPct);
+  return Math.max(2, Math.round(baseVatsApCost * apMultiplier));
+}
+
+/**
  * Calculates complete Live Weapon Firepower, Damage per Shot, Burst/Sustained DPS,
  * and V.A.T.S. AP Cost in strict adherence to Fallout 76 live patch mechanics.
  */
@@ -887,21 +907,17 @@ export function calculateCombatFirepower(
   const effectiveMag = hasQuad ? baseMag * 4 : baseMag;
 
   // 7. VATS AP Cost per Shot
-  let apMultiplier = 1.0;
   if (hasVatsOptimized) {
-    apMultiplier *= 0.75;
     vatsBreakdown.push({ source: "VATS Optimized 3★ (-25% AP)", value: "×0.75" });
   }
   if (innateMods.apCostPct !== 0) {
-    const innateApFactor = 1.0 + innateMods.apCostPct;
-    apMultiplier *= Math.max(0.1, innateApFactor);
     vatsBreakdown.push({
       source: "Attachments (Reflex / Stock / Barrel AP)",
       value: `${innateMods.apCostPct > 0 ? "+" : ""}${Math.round(innateMods.apCostPct * 100)}% AP`,
     });
   }
 
-  const vatsApCost = Math.max(2, Math.round(base.baseVatsApCost * apMultiplier));
+  const vatsApCost = resolveVatsApCost(base.baseVatsApCost, innateMods.apCostPct, hasVatsOptimized);
   const totalApPool = 100 + input.playerStats.agility * 10;
   const maxShotsInPool = Math.floor(totalApPool / vatsApCost);
 
