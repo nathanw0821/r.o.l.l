@@ -58,14 +58,15 @@ function getStaticFallbackModCatalog(): BuilderModCatalogRow[] {
 }
 
 async function loadBuilderModCatalogUncached() {
-  const isDummyOrCiDb =
-    Boolean(process.env.CI) ||
-    !process.env.DATABASE_URL ||
-    process.env.DATABASE_URL.includes("127.0.0.1") ||
-    process.env.DATABASE_URL.includes("localhost") ||
-    process.env.DATABASE_URL.includes("placeholder");
+  // Test and CI runs have no reachable database (CI points DATABASE_URL at a dummy
+  // Postgres and Prisma would hang on connect until the test timeout). Bail to the
+  // static catalog on those signals only. This loader also serves the live
+  // /api/builder/mods and Discord routes, so it must never key off the database
+  // hostname: a developer running against a local Postgres expects real rows.
+  const isTestOrCiRun =
+    Boolean(process.env.CI) || Boolean(process.env.VITEST) || process.env.NODE_ENV === "test";
 
-  if (isDummyOrCiDb) {
+  if (isTestOrCiRun) {
     return getStaticFallbackModCatalog();
   }
 
