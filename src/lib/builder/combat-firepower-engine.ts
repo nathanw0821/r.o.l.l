@@ -323,18 +323,18 @@ export function calculateVatsCritQualification(params: {
   // Canonical FO76 Luck Thresholds for 1:1 Crit-Every-Other-Shot (kept as the
   // authoritative table because the UI needs requiredLuck / missingLuck):
   // Rank 3 (55% cost): 33 Luck, 23 Luck with Lucky Hit  (game-verified)
-  // Rank 2 (70% cost): 44 Luck, 34 Luck with Lucky Hit
-  // Rank 1 (85% cost): 54 Luck, 44 Luck with Lucky Hit
-  // Rank 0 (100% cost): 64 Luck, 54 Luck with Lucky Hit
-  let requiredLuck = 64;
+  // Rank 2 (70% cost): 43 Luck, 33 Luck with Lucky Hit
+  // Rank 1 (85% cost): 53 Luck, 43 Luck with Lucky Hit
+  // Rank 0 (100% cost): 63 Luck, 53 Luck with Lucky Hit
+  let requiredLuck = 63;
   if (critSavvyRank >= 3) {
     requiredLuck = hasLucky15Fill ? 23 : 33;
   } else if (critSavvyRank === 2) {
-    requiredLuck = hasLucky15Fill ? 34 : 44;
+    requiredLuck = hasLucky15Fill ? 33 : 43;
   } else if (critSavvyRank === 1) {
-    requiredLuck = hasLucky15Fill ? 44 : 54;
+    requiredLuck = hasLucky15Fill ? 43 : 53;
   } else {
-    requiredLuck = hasLucky15Fill ? 54 : 64;
+    requiredLuck = hasLucky15Fill ? 53 : 63;
   }
 
   const everySecondShotReady = luck >= requiredLuck;
