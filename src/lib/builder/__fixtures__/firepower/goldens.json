@@ -904,8 +904,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 15,
-        "requiredLuck": 64,
-        "missingLuck": 49,
+        "requiredLuck": 63,
+        "missingLuck": 48,
         "fillCostPct": 100,
         "fillPerShotPct": 28,
         "critSavvyRank": 0,
@@ -914,8 +914,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 15, Missing: +49).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1037,8 +1037,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 15,
-        "requiredLuck": 64,
-        "missingLuck": 49,
+        "requiredLuck": 63,
+        "missingLuck": 48,
         "fillCostPct": 100,
         "fillPerShotPct": 28,
         "critSavvyRank": 0,
@@ -1047,8 +1047,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 15, Missing: +49).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1170,8 +1170,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 15,
-        "requiredLuck": 64,
-        "missingLuck": 49,
+        "requiredLuck": 63,
+        "missingLuck": 48,
         "fillCostPct": 100,
         "fillPerShotPct": 28,
         "critSavvyRank": 0,
@@ -1180,8 +1180,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 15, Missing: +49).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1303,8 +1303,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 15,
-        "requiredLuck": 64,
-        "missingLuck": 49,
+        "requiredLuck": 63,
+        "missingLuck": 48,
         "fillCostPct": 100,
         "fillPerShotPct": 28,
         "critSavvyRank": 0,
@@ -1313,8 +1313,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 15, Missing: +49).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1436,8 +1436,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 15,
-        "requiredLuck": 64,
-        "missingLuck": 49,
+        "requiredLuck": 63,
+        "missingLuck": 48,
         "fillCostPct": 100,
         "fillPerShotPct": 28,
         "critSavvyRank": 0,
@@ -1446,8 +1446,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 15, Missing: +49).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1579,8 +1579,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -1589,8 +1589,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
@@ -1712,8 +1712,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -1722,8 +1722,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
@@ -1845,8 +1845,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -1855,8 +1855,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
@@ -1978,8 +1978,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -1988,8 +1988,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
@@ -2111,8 +2111,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -2121,8 +2121,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
@@ -2242,8 +2242,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -2252,8 +2252,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
@@ -2371,8 +2371,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -2381,8 +2381,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
@@ -2500,8 +2500,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -2510,8 +2510,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
@@ -2629,8 +2629,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -2639,8 +2639,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
@@ -2758,8 +2758,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -2768,8 +2768,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
@@ -2897,8 +2897,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 20,
-        "requiredLuck": 34,
-        "missingLuck": 14,
+        "requiredLuck": 33,
+        "missingLuck": 13,
         "fillCostPct": 70,
         "fillPerShotPct": 50,
         "critSavvyRank": 2,
@@ -2907,8 +2907,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 34 Luck (Current: 20, Missing: +14).",
-        "recommendation": "Add +14 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
+        "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
+        "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
@@ -3034,8 +3034,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 20,
-        "requiredLuck": 34,
-        "missingLuck": 14,
+        "requiredLuck": 33,
+        "missingLuck": 13,
         "fillCostPct": 70,
         "fillPerShotPct": 50,
         "critSavvyRank": 2,
@@ -3044,8 +3044,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 34 Luck (Current: 20, Missing: +14).",
-        "recommendation": "Add +14 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
+        "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
+        "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
@@ -3171,8 +3171,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 20,
-        "requiredLuck": 34,
-        "missingLuck": 14,
+        "requiredLuck": 33,
+        "missingLuck": 13,
         "fillCostPct": 70,
         "fillPerShotPct": 50,
         "critSavvyRank": 2,
@@ -3181,8 +3181,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 34 Luck (Current: 20, Missing: +14).",
-        "recommendation": "Add +14 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
+        "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
+        "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
@@ -3308,8 +3308,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 20,
-        "requiredLuck": 34,
-        "missingLuck": 14,
+        "requiredLuck": 33,
+        "missingLuck": 13,
         "fillCostPct": 70,
         "fillPerShotPct": 50,
         "critSavvyRank": 2,
@@ -3318,8 +3318,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 34 Luck (Current: 20, Missing: +14).",
-        "recommendation": "Add +14 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
+        "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
+        "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
@@ -3445,8 +3445,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 20,
-        "requiredLuck": 34,
-        "missingLuck": 14,
+        "requiredLuck": 33,
+        "missingLuck": 13,
         "fillCostPct": 70,
         "fillPerShotPct": 50,
         "critSavvyRank": 2,
@@ -3455,8 +3455,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 34 Luck (Current: 20, Missing: +14).",
-        "recommendation": "Add +14 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
+        "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
+        "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
@@ -3579,8 +3579,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -3589,8 +3589,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -3706,8 +3706,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -3716,8 +3716,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -3833,8 +3833,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -3843,8 +3843,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -3960,8 +3960,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -3970,8 +3970,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4087,8 +4087,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -4097,8 +4097,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4217,8 +4217,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -4227,8 +4227,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4345,8 +4345,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -4355,8 +4355,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4473,8 +4473,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -4483,8 +4483,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4601,8 +4601,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -4611,8 +4611,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4729,8 +4729,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -4739,8 +4739,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -5510,8 +5510,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -5520,8 +5520,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -5655,8 +5655,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -5665,8 +5665,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -5800,8 +5800,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -5810,8 +5810,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -5945,8 +5945,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -5955,8 +5955,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -6090,8 +6090,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 8,
-        "requiredLuck": 64,
-        "missingLuck": 56,
+        "requiredLuck": 63,
+        "missingLuck": 55,
         "fillCostPct": 100,
         "fillPerShotPct": 17,
         "critSavvyRank": 0,
@@ -6100,8 +6100,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 8, Missing: +56).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -6237,8 +6237,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -6247,8 +6247,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
@@ -6374,8 +6374,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -6384,8 +6384,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
@@ -6511,8 +6511,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -6521,8 +6521,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
@@ -6648,8 +6648,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -6658,8 +6658,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
@@ -6785,8 +6785,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 12,
-        "requiredLuck": 64,
-        "missingLuck": 52,
+        "requiredLuck": 63,
+        "missingLuck": 51,
         "fillCostPct": 100,
         "fillPerShotPct": 23,
         "critSavvyRank": 0,
@@ -6795,8 +6795,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 12, Missing: +52).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
@@ -6916,8 +6916,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -6926,8 +6926,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -7045,8 +7045,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -7055,8 +7055,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -7174,8 +7174,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -7184,8 +7184,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -7303,8 +7303,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -7313,8 +7313,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -7432,8 +7432,8 @@
       "critCycle": {
         "everySecondShotReady": false,
         "currentLuck": 10,
-        "requiredLuck": 64,
-        "missingLuck": 54,
+        "requiredLuck": 63,
+        "missingLuck": 53,
         "fillCostPct": 100,
         "fillPerShotPct": 20,
         "critSavvyRank": 0,
@@ -7442,8 +7442,8 @@
         "hasVatsOptimized": false,
         "hasFourLeafClover": false,
         "fourLeafCloverRank": 0,
-        "summary": "LOCKED: Need 64 Luck (Current: 10, Missing: +54).",
-        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 64 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+        "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
+        "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,

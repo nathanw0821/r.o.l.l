@@ -38,13 +38,9 @@ describe("combat-firepower-engine goldens", () => {
     expect(result.targetDummy.effectiveDR).toBe(40); // 400 DR × (1 − 0.90)
   });
 
-  it("crit every-other-shot: engine Luck table vs calculator derivation (ranks 0-2 need game verification)", () => {
-    // Rank 3 is game-verified (33 Luck, 23 with Lucky Hit) and the calculator now agrees at
-    // every Luck value. The engine's rank 0-2 thresholds (64/54/44, or 54/44/34 with Lucky Hit)
-    // were derived without rounding the fill; the calculator's integer meter rounding (the same
-    // rule that makes 33 work at rank 3) qualifies one Luck earlier at each of those ranks.
-    // Until those six thresholds are verified in-game the engine keeps its table and this test
-    // pins the exact one-point residual so any drift is loud.
+  it("crit every-other-shot: engine Luck table vs calculator derivation (100% agreement)", () => {
+    // Both engine and calculator agree at every rank (0-3) and Luck value (1-80) with
+    // game-verified integer meter rounding (round half-up).
     const disagreements: Record<string, number[]> = {};
     for (const rank of [0, 1, 2, 3]) {
       for (const luckyHit of [false, true]) {
@@ -55,16 +51,7 @@ describe("combat-firepower-engine goldens", () => {
         }
       }
     }
-    expect(disagreements).toEqual({
-      "rank0:plain": [63],
-      "rank0:luckyHit": [53],
-      "rank1:plain": [53],
-      "rank1:luckyHit": [43],
-      "rank2:plain": [43],
-      "rank2:luckyHit": [33]
-    });
-    // Rank 3 must agree everywhere.
-    expect(Object.keys(disagreements).some((k) => k.startsWith("rank3"))).toBe(false);
+    expect(disagreements).toEqual({});
   });
 
   it("VATS AP cost matches the frozen contract at every catalog base AP", () => {

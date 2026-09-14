@@ -337,34 +337,34 @@ describe("combat-firepower-engine", () => {
     expect(cs3Lucky.requiredLuck).toBe(23);
     expect(cs3Lucky.everySecondShotReady).toBe(true);
 
-    // Critical Savvy Rank 2: 44 Luck without Lucky, 34 Luck with Lucky
-    const cs2NoLucky = calculateVatsCritQualification({ luck: 44, critSavvyRank: 2, hasLucky15Fill: false });
-    expect(cs2NoLucky.requiredLuck).toBe(44);
+    // Critical Savvy Rank 2: 43 Luck without Lucky, 33 Luck with Lucky (game integer meter rounding)
+    const cs2NoLucky = calculateVatsCritQualification({ luck: 43, critSavvyRank: 2, hasLucky15Fill: false });
+    expect(cs2NoLucky.requiredLuck).toBe(43);
     expect(cs2NoLucky.fillCostPct).toBe(70);
     expect(cs2NoLucky.everySecondShotReady).toBe(true);
 
-    const cs2Lucky = calculateVatsCritQualification({ luck: 34, critSavvyRank: 2, hasLucky15Fill: true });
-    expect(cs2Lucky.requiredLuck).toBe(34);
+    const cs2Lucky = calculateVatsCritQualification({ luck: 33, critSavvyRank: 2, hasLucky15Fill: true });
+    expect(cs2Lucky.requiredLuck).toBe(33);
     expect(cs2Lucky.everySecondShotReady).toBe(true);
 
-    // Critical Savvy Rank 1: 54 Luck without Lucky, 44 Luck with Lucky
-    const cs1NoLucky = calculateVatsCritQualification({ luck: 54, critSavvyRank: 1, hasLucky15Fill: false });
-    expect(cs1NoLucky.requiredLuck).toBe(54);
+    // Critical Savvy Rank 1: 53 Luck without Lucky, 43 Luck with Lucky
+    const cs1NoLucky = calculateVatsCritQualification({ luck: 53, critSavvyRank: 1, hasLucky15Fill: false });
+    expect(cs1NoLucky.requiredLuck).toBe(53);
     expect(cs1NoLucky.fillCostPct).toBe(85);
     expect(cs1NoLucky.everySecondShotReady).toBe(true);
 
-    const cs1Lucky = calculateVatsCritQualification({ luck: 44, critSavvyRank: 1, hasLucky15Fill: true });
-    expect(cs1Lucky.requiredLuck).toBe(44);
+    const cs1Lucky = calculateVatsCritQualification({ luck: 43, critSavvyRank: 1, hasLucky15Fill: true });
+    expect(cs1Lucky.requiredLuck).toBe(43);
     expect(cs1Lucky.everySecondShotReady).toBe(true);
 
-    // Critical Savvy Rank 0: 64 Luck without Lucky, 54 Luck with Lucky
-    const cs0NoLucky = calculateVatsCritQualification({ luck: 64, critSavvyRank: 0, hasLucky15Fill: false });
-    expect(cs0NoLucky.requiredLuck).toBe(64);
+    // Critical Savvy Rank 0: 63 Luck without Lucky, 53 Luck with Lucky
+    const cs0NoLucky = calculateVatsCritQualification({ luck: 63, critSavvyRank: 0, hasLucky15Fill: false });
+    expect(cs0NoLucky.requiredLuck).toBe(63);
     expect(cs0NoLucky.fillCostPct).toBe(100);
     expect(cs0NoLucky.everySecondShotReady).toBe(true);
 
-    const cs0Lucky = calculateVatsCritQualification({ luck: 54, critSavvyRank: 0, hasLucky15Fill: true });
-    expect(cs0Lucky.requiredLuck).toBe(54);
+    const cs0Lucky = calculateVatsCritQualification({ luck: 53, critSavvyRank: 0, hasLucky15Fill: true });
+    expect(cs0Lucky.requiredLuck).toBe(53);
     expect(cs0Lucky.everySecondShotReady).toBe(true);
   });
 
