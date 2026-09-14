@@ -20,7 +20,6 @@ import {
 import { areEquippedCardsEqual } from "@/lib/perks/catalog";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
-import { updateLearnedBasePiece } from "@/actions/learned-base-piece";
 import { BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import BuilderMasterTabNav from "@/components/builder/builder-master-tab-nav";
@@ -36,6 +35,7 @@ import { useBuilderModCatalog } from "@/components/builder/hooks/use-builder-mod
 import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals";
 import { useLegendaryBench } from "@/components/builder/hooks/use-legendary-bench";
 import { useBuilderShare } from "@/components/builder/hooks/use-builder-share";
+import { useLearnedBasePieces } from "@/components/builder/hooks/use-learned-base-pieces";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
@@ -54,10 +54,6 @@ import {
   BASE_GEAR_PIECES,
   formatBaseOptionLabel,
   getBaseGearPiece,
-  isPowerArmorTorsoBasePiece,
-  isPowerArmorTorsoRowLearned,
-  isTrackableBasePieceId,
-  pairedPowerArmorHelmetId,
 } from "@/lib/builder/base-gear";
 import {
   buildShoppingList,
@@ -187,15 +183,6 @@ export default function BuilderExperimentClient({
   const [isNdImportOpen, setIsNdImportOpen] = React.useState(false);
   const [importedBuildForPerkBuilder, setImportedBuildForPerkBuilder] =
     React.useState<{ build: NukesDragonsParsedBuild; timestamp: number } | null>(null);
-  const [learnedBasePieceIds, setLearnedBasePieceIds] = React.useState(
-    () => new Set(initialLearnedBasePieceIds),
-  );
-  const [learnedToggleError, setLearnedToggleError] = React.useState<
-    string | null
-  >(null);
-  const [pendingLearnedPieceId, setPendingLearnedPieceId] = React.useState<
-    string | null
-  >(null);
 
   const [activeLoadoutIndex, setActiveLoadoutIndex] = React.useState<
     number | null
@@ -497,12 +484,6 @@ export default function BuilderExperimentClient({
     setActiveLoadoutIndex(null);
   }, [payload, isMounted]);
 
-  React.useEffect(() => {
-    setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
-  }, [initialLearnedBasePieceIds]);
-
-
-
   const piece = getBaseGearPiece(payload.basePieceId) ?? BASE_GEAR_PIECES[0]!;
   
   const pieceMaxLevel = React.useMemo(() => {
@@ -564,43 +545,17 @@ export default function BuilderExperimentClient({
     return formatBaseOptionLabel(activeChassisPiece);
   }, [activeChassisPiece]);
 
-  const currentBaseLearned =
-    isTrackableBasePieceId(piece.id) &&
-    (piece.kind === "powerArmor" && isPowerArmorTorsoBasePiece(piece)
-      ? isPowerArmorTorsoRowLearned(piece.id, learnedBasePieceIds)
-      : learnedBasePieceIds.has(piece.id));
-
-  async function toggleLearnedBasePiece(pieceId: string, learned: boolean) {
-    setLearnedToggleError(null);
-    if (!isSignedIn) return;
-    const row = getBaseGearPiece(pieceId);
-    const ids =
-      row && isPowerArmorTorsoBasePiece(row)
-        ? [pieceId, pairedPowerArmorHelmetId(pieceId)].filter(
-            (x): x is string => Boolean(x),
-          )
-        : [pieceId];
-    setPendingLearnedPieceId(pieceId);
-    try {
-      for (const id of ids) {
-        await updateLearnedBasePiece({ basePieceId: id, learned });
-      }
-      setLearnedBasePieceIds((prev) => {
-        const next = new Set(prev);
-        for (const id of ids) {
-          if (learned) next.add(id);
-          else next.delete(id);
-        }
-        return next;
-      });
-    } catch {
-      setLearnedToggleError(
-        "Could not update learned bases. Try signing in again.",
-      );
-    } finally {
-      setPendingLearnedPieceId(null);
-    }
-  }
+  const {
+    learnedBasePieceIds,
+    learnedToggleError,
+    pendingLearnedPieceId,
+    currentBaseLearned,
+    toggleLearnedBasePiece,
+  } = useLearnedBasePieces({
+    initialLearnedBasePieceIds,
+    isSignedIn,
+    piece,
+  });
 
   React.useEffect(() => {
     setPayload((prev) => ({
