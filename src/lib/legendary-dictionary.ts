@@ -35,7 +35,7 @@ export const LEGENDARY_MOD_DICTIONARY = {
     "Fracturer's", "Hauler's", "Icemen's", "Limit-Breaking", "Miasma's", "Pin-Pointer's", 
     "Polished", "Pounder's", "Propelling", "Pyromaniac's", "Radioactive-Powered", 
     "Raging", "Ranger's", "Reflective", "Rejuvenator's", "Runner's", "Satiated", "Sawbones's", 
-    "Scanner's", "Stabilizer's", "Stalwart's", "Tanky's", "Tarnished", "Thrill-Seeker's", "Vector", "Viper's"
+    "Scanner's", "Severing", "Stabilizer's", "Stalwart's", "Tanky's", "Tarnished", "Thrill-Seeker's", "Vector", "Viper's"
   ]
 };
 

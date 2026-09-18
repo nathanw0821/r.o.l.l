@@ -33,7 +33,7 @@ export default async function OverviewReadmePage() {
             <h3 className="text-sm font-bold uppercase tracking-wider">Legendary Tracker</h3>
           </div>
           <p className="text-xs text-foreground/70 leading-relaxed">
-            Track 148 legendary mod effects across 1★ to 4★ tiers per character.
+            Track every legendary mod effect in the game (149 as of Patch 70) across 1★ to 4★ tiers per character.
           </p>
         </div>
 

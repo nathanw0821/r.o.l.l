@@ -1,3 +1,5 @@
+import gameVersion from "@/data/truth/game-version.json";
+import { FALLBACK_LEGENDARY_EFFECTS } from "@/lib/static-fallback-catalog";
 import * as React from "react";
 import type { BuilderModDTO } from "@/lib/builder/types";
 import { INITIAL_BUILDER_MODS } from "@/lib/builder/legendary-mod-catalog-seeds";
@@ -25,7 +27,7 @@ export function useBuilderModCatalog() {
           const parsed = JSON.parse(cached);
           const isValid =
             Array.isArray(parsed) &&
-            parsed.length >= 148 &&
+            parsed.length >= FALLBACK_LEGENDARY_EFFECTS.length &&
             parsed.some((m: BuilderModDTO) => m.slug.includes("pin-pointer")) &&
             parsed.some((m: BuilderModDTO) => m.slug === "rapid") &&
             parsed.some((m: BuilderModDTO) => m.slug === "vital") &&
@@ -42,13 +44,13 @@ export function useBuilderModCatalog() {
       }
     }
 
-    fetch("/api/builder/mods?v=69", { cache: "no-cache" })
+    fetch(`/api/builder/mods?v=${gameVersion.patch}`, { cache: "no-cache" })
       .then((r) => r.json() as Promise<{ success?: boolean; data?: { mods?: BuilderModDTO[] } }>)
       .then((body) => {
         const candidate = body?.data?.mods;
         const isValid =
           Array.isArray(candidate) &&
-          candidate.length >= 148 &&
+          candidate.length >= FALLBACK_LEGENDARY_EFFECTS.length &&
           candidate.some((m: BuilderModDTO) => m.slug.includes("pin-pointer")) &&
           candidate.some((m: BuilderModDTO) => m.slug === "rapid") &&
           candidate.some((m: BuilderModDTO) => m.slug === "vital");

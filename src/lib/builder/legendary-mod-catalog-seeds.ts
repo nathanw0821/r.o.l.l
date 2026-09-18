@@ -1,7 +1,8 @@
 import type { BuilderModDTO } from "@/lib/builder/types";
 /**
  * Expanded Fallout 76–style legendary catalog for the loadout builder.
- * Sourced directly from the authoritative 148 Patch 69 legendary effects in `FALLBACK_LEGENDARY_EFFECTS`.
+ * Sourced directly from the authoritative legendary effects in `FALLBACK_LEGENDARY_EFFECTS`
+ * (148 Patch 69 effects + Severing from Patch 70 "The Slasher"; the count is asserted in legendary-catalog-integrity.test.ts).
  * Star ranks follow canonical 4-star bench grouping (1–4).
  * `effectMath` models the active simulation sandbox subset (damage, resists, SPECIAL, AP regen).
  */

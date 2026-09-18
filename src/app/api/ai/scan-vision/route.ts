@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
     const prompt = `You are Vault-Tec's S.C.A.N. Optical Character Recognition system for Fallout 76.
 Analyze this Fallout 76 Pip-Boy, crafting bench, or inventory screenshot.
-Extract all visible Fallout 76 1-Star, 2-Star, 3-Star, and 4-Star Legendary Mod names (e.g., "Unyielding", "Bloodied", "Explosive", "VATS Enhanced", "Overeater's", "Powered", "Sentinel's", "Warming", "Arms Keeper's", "Quad", "Anti-armor", "Two Shot", "Vampire's").
+Extract all visible Fallout 76 1-Star, 2-Star, 3-Star, and 4-Star Legendary Mod names (e.g., "Unyielding", "Bloodied", "Explosive", "VATS Enhanced", "Overeater's", "Powered", "Sentinel's", "Warming", "Arms Keeper's", "Quad", "Anti-armor", "Two Shot", "Vampire's", "Viper's", "Severing").
 
 Return a valid JSON object matching this schema:
 {

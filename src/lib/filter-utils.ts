@@ -1,3 +1,6 @@
+import gameVersion from "@/data/truth/game-version.json";
+import { FALLBACK_LEGENDARY_EFFECTS } from "@/lib/static-fallback-catalog";
+
 export type SelectionSource = "default" | "imported" | "edited";
 
 export type FilterState = {
@@ -406,7 +409,18 @@ export function toggleSelection<T extends string>(current: T[], value: T) {
   return current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
 }
 
-export const NEW_MODS = new Set(["hauler's", "raging", "satiated", "tarnished", "vector"]);
+/** Live game patch from src/data/truth/game-version.json (Patch 70 "The Slasher" at time of writing). */
+export const CURRENT_GAME_PATCH: number = gameVersion.patch;
+
+/** An effect counts as NEW while it was introduced in the current patch or the one before it. */
+export const NEW_MOD_PATCH_FLOOR: number = CURRENT_GAME_PATCH - 1;
+
+/** Lower-cased effect names whose `introducedIn` is at or above NEW_MOD_PATCH_FLOOR (derived, not hand-maintained). */
+export const NEW_MODS: ReadonlySet<string> = new Set(
+  FALLBACK_LEGENDARY_EFFECTS.filter(
+    (row) => typeof row.introducedIn === "number" && row.introducedIn >= NEW_MOD_PATCH_FLOOR
+  ).map((row) => row.effectName.trim().toLowerCase())
+);
 
 export function isNewMod(name: string): boolean {
   return NEW_MODS.has(name.trim().toLowerCase());
