@@ -8,7 +8,9 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only here: defensive numbers live in src/data/truth/defensive-perks.json and the defensive layer."
   },
   {
     "id": "nailer",
@@ -41,7 +43,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "camden-whacker",
@@ -52,7 +56,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "acceptable-overkill",
@@ -85,7 +91,16 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "damage-per-crippled-limb",
+      "perUnit": 0.1,
+      "maxUnits": 4,
+      "cap": 0.4,
+      "condition": "target has at least one crippled limb (four limbs max, as Bully's)",
+      "confidence": "verified",
+      "source": "Patch 70 Daily Ops rare-reward innate text"
+    }
   },
   {
     "id": "disorderly-conduct",
@@ -96,7 +111,14 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "attack-speed-multiplier",
+      "value": 1.2,
+      "condition": "always",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (Nuka Knights table)"
+    }
   },
   {
     "id": "kingfisher",
@@ -140,7 +162,9 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only here: defensive numbers live in src/data/truth/defensive-perks.json and the defensive layer."
   },
   {
     "id": "resolute-veteran",
@@ -151,7 +175,14 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "bullet-storm-min-stacks",
+      "value": 5,
+      "condition": "always; raises the Bullet Storm stack floor",
+      "confidence": "verified",
+      "source": "Patch 70 Daily Ops rare-reward innate text"
+    }
   },
   {
     "id": "the-guarantee",
@@ -162,7 +193,15 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "grants-perk-rank",
+      "perkId": "demolition-expert",
+      "perkRank": 3,
+      "condition": "always; only raises the rank when the equipped card is lower",
+      "confidence": "verified",
+      "source": "Patch 70 Daily Ops rare-reward innate text"
+    }
   },
   {
     "id": "unstoppable-monster",
@@ -173,7 +212,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only here: defensive numbers live in src/data/truth/defensive-perks.json and the defensive layer."
   },
   {
     "id": "the-quick-fix",
@@ -184,7 +225,15 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "swing-speed-per-addiction",
+      "perUnit": 0.05,
+      "cap": 1.0,
+      "condition": "one or more addictions; the Patch 70 swing-speed ceiling is +100%",
+      "confidence": "verified",
+      "source": "Patch 70 Daily Ops rare-reward innate text"
+    }
   },
   {
     "id": "whistle-in-the-dark",
@@ -228,7 +277,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no weak-spot or hit-location input."
   },
   {
     "id": "cultist-piercer",
@@ -239,7 +290,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no target-type input (target dummies are Earle and the Scorchbeast Queen)."
   },
   {
     "id": "elders-mark",
@@ -250,7 +303,15 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "crit-damage-per-onslaught-stack",
+      "perUnit": 0.02,
+      "maxUnits": 10,
+      "condition": "Onslaught stacks are active; adds to the V.A.T.S. critical multiplier",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (Nuka Knights table)"
+    }
   },
   {
     "id": "holy-fire",
@@ -294,7 +355,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "branding-iron",
@@ -305,7 +368,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "face-breaker",
@@ -316,7 +381,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no weak-spot or hit-location input."
   },
   {
     "id": "boiling-point",
@@ -327,7 +394,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "cauterizer",
@@ -338,7 +407,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "drill-fist",
@@ -349,7 +420,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "flatliner",
@@ -382,7 +455,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "boomstick",
@@ -404,7 +479,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no target-distance input."
   },
   {
     "id": "overkill",
@@ -426,7 +503,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number."
   },
   {
     "id": "daisycutter",
@@ -437,7 +516,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the engine has no radiation-resistance input."
   },
   {
     "id": "pyrolyzer",
@@ -459,7 +540,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no target-distance input."
   },
   {
     "id": "the-fact-finder",
@@ -470,7 +553,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no weak-spot or hit-location input."
   },
   {
     "id": "v63-bertha",
@@ -503,7 +588,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the engine takes Bullet Storm stacks as an input and has no kill events to add one on."
   },
   {
     "id": "the-v-a-t-s-unknown",
@@ -525,7 +612,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the engine has no action-point regeneration over time, only the pool and the cost per shot."
   },
   {
     "id": "oathbreaker",
@@ -580,7 +669,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "doctors-orders",
@@ -602,7 +693,15 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "bullet-storm-bonus-stacks-below-health",
+      "value": 5,
+      "healthThreshold": 0.25,
+      "condition": "health is under 25%",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (Nuka Knights table)"
+    }
   },
   {
     "id": "pirate-punch",
@@ -624,7 +723,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: limb damage is not modelled."
   },
   {
     "id": "tone-death",
@@ -646,7 +747,9 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the engine reads SPECIAL once and never recomputes it from kills."
   },
   {
     "id": "molerat-bat",
@@ -657,7 +760,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no target-type input (target dummies are Earle and the Scorchbeast Queen)."
   },
   {
     "id": "grand-finale",
@@ -668,7 +773,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "the-farmhand",
@@ -679,7 +786,9 @@
     "sourceNotes": "Daily Ops rare reward (Patch 70)",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number."
   },
   {
     "id": "western-spirit",
@@ -701,7 +810,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: reload speed is not modelled (the engine has no reload phase in its damage-per-second maths)."
   },
   {
     "id": "whacker-smacker",
@@ -712,7 +823,15 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "power-attack-damage-per-onslaught-stack",
+      "perUnit": 0.05,
+      "maxUnits": 10,
+      "condition": "power attacking with Onslaught stacks active",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (Nuka Knights table)"
+    }
   },
   {
     "id": "shattered-grounds",
@@ -723,7 +842,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "anchorage-ace",
@@ -745,7 +866,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "ticket-to-revenge",
@@ -756,7 +879,15 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "armor-pen-per-onslaught-stack",
+      "perUnit": 3,
+      "maxUnits": 10,
+      "condition": "Onslaught stacks are active; percentage points of armor penetration",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (Nuka Knights table)"
+    }
   },
   {
     "id": "v63-olga",
@@ -789,7 +920,14 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": {
+      "kind": "flat-action-points",
+      "value": 50,
+      "condition": "always; adds to the V.A.T.S. action point pool",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (Nuka Knights table)"
+    }
   },
   {
     "id": "relic-reaper",
@@ -811,7 +949,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "meadow-breeze-sprayer",
@@ -855,7 +995,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: max health is a defensive stat, not a firepower one."
   },
   {
     "id": "black-diamond",
@@ -866,7 +1008,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "super-slasher",
@@ -877,7 +1021,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the innate text gives no number for the elemental damage it adds."
   },
   {
     "id": "cryptid-jawbone-knife",
@@ -888,7 +1034,9 @@
     "sourceNotes": "Reworked in Patch 70; source per Nuka Knights unique-weapons table",
     "moddable": true,
     "fourthStar": true,
-    "introducedIn": 70
+    "introducedIn": 70,
+    "model": null,
+    "modelNote": "Reference only: the firepower engine has no target-type input (target dummies are Earle and the Scorchbeast Queen)."
   },
   {
     "id": "minty-breather",

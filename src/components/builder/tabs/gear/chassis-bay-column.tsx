@@ -35,6 +35,7 @@ import {
   type WeaponInnateSlotKey,
   type WeaponInnateAggregateEffects,
 } from "@/lib/builder/weapon-piece-mods";
+import { resolveUniqueForBuilderId } from "@/lib/truth/unique-items";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 import type { LocalProgressMap } from "@/components/use-local-progress";
 
@@ -90,6 +91,11 @@ export default function ChassisBayColumn({
   readOnly,
 }: ChassisBayColumnProps) {
   const groupedWeaponCategories = React.useMemo(() => getGroupedWeaponCategories(), []);
+  // Named unique in the weapon bay: its innate text is read-only reference copy.
+  const activeWeaponUnique = React.useMemo(
+    () => resolveUniqueForBuilderId(activeWeaponPiece.id),
+    [activeWeaponPiece.id],
+  );
 
   // Gear schematic card generator for multi-piece view
   function renderGearSlotCard(
@@ -389,6 +395,33 @@ export default function ChassisBayColumn({
                 </span>
               </div>
             </div>
+
+            {/* UNIQUE INNATE EFFECT (read-only reference from the Patch 70 truth pack) */}
+            {activeWeaponUnique && (
+              <div className="rounded-lg border border-amber-500/25 bg-slate-950/70 p-2.5 space-y-1.5 font-mono">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[0.66rem] font-black uppercase tracking-widest text-amber-300">
+                    Unique effect
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[0.62rem] px-1.5 py-0.2 rounded border font-bold shrink-0",
+                      activeWeaponUnique.model
+                        ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
+                        : "bg-slate-500/15 border-slate-500/40 text-slate-300",
+                    )}
+                  >
+                    {activeWeaponUnique.model ? "Modelled in damage numbers" : "Shown for reference"}
+                  </span>
+                </div>
+                <p className="text-[0.7rem] text-slate-200 leading-relaxed">
+                  {activeWeaponUnique.innateEffect}
+                </p>
+                <p className="text-[0.64rem] text-foreground/45 leading-relaxed">
+                  Mods can be changed and a 4th star added since Patch 70 (10x scrip).
+                </p>
+              </div>
+            )}
 
             {/* WEAPON SUB-NAVIGATION: ATTACHMENTS vs LEGENDARY STARS vs MATRIX */}
             <div className="flex items-center justify-between gap-1 border-b border-border/15 pb-2">

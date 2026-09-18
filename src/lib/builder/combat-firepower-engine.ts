@@ -6,6 +6,13 @@ import {
   calculateMitigatedDamage,
   calculatePaperDamage
 } from "@/lib/calculator/creation-engine-math";
+import { requireEffectNumber } from "@/lib/truth/legendary-effect-model";
+import {
+  resolveUniqueForBuilderId,
+  type UniqueEffectKind,
+  type UniqueEffectModel,
+  type UniqueItem,
+} from "@/lib/truth/unique-items";
 import {
   TARGET_DUMMY_CATALOG,
   WEAPON_ALIASES,
@@ -13,6 +20,60 @@ import {
   type BossTargetDummy,
   type WeaponCombatBaseStats
 } from "./combat-firepower-catalog";
+
+/**
+ * Every legendary-effect number this engine uses comes from the truth pack
+ * `src/data/truth/legendary-effect-model.json` (loader: `@/lib/truth/legendary-effect-model`).
+ * Nothing below is a second copy of a game value — change the pack, not this file,
+ * and regenerate `__fixtures__/firepower/goldens.json` on purpose when a number moves.
+ *
+ * Perk, consumable, mutation and sneak-attack numbers are NOT legendary effects
+ * and stay in this file until they get packs of their own.
+ *
+ * Unique-weapon innates come from the truth pack `src/data/truth/unique-items.json`
+ * (loader: `@/lib/truth/unique-items`). The engine applies the `model` block of
+ * the equipped unique and nothing else; a unique whose innate is reference-only
+ * (`model: null`) is shown as text on the gear card and never touches a number.
+ */
+const LEG = {
+  bloodiedCap: requireEffectNumber("bloodied", "cap"),
+  bloodiedCapAtMissingHealth: requireEffectNumber("bloodied", "capAtMissingHealth"),
+  antiArmorPenPct: requireEffectNumber("anti-armor", "value"),
+  aristocratsMax: requireEffectNumber("aristocrats", "value"),
+  aristocratsCapAtCaps: requireEffectNumber("aristocrats", "capThreshold"),
+  twoShot: requireEffectNumber("two-shot", "value"),
+  quadMagMultiplier: requireEffectNumber("quad", "value"),
+  rapidFireRateMultiplier: requireEffectNumber("rapid", "value"),
+  explosiveBaseFraction: requireEffectNumber("explosive", "value"),
+  vitalCrit: requireEffectNumber("vital", "value"),
+  vatsOptimizedApMultiplier: requireEffectNumber("vats-optimized", "value"),
+  nocturnal: requireEffectNumber("nocturnal", "value"),
+  stalkers: requireEffectNumber("stalkers", "value"),
+  hitmans: requireEffectNumber("hitmans", "value"),
+  heavyHitters: requireEffectNumber("heavy-hitters", "value"),
+  steady: requireEffectNumber("steady", "value"),
+  junkiesPerAddiction: requireEffectNumber("junkies", "perUnit"),
+  junkiesCap: requireEffectNumber("junkies", "cap"),
+  juggernautsCap: requireEffectNumber("juggernauts", "cap"),
+  juggernautsThreshold: requireEffectNumber("juggernauts", "threshold"),
+  juggernautsSlope: requireEffectNumber("juggernauts", "perUnit"),
+  gourmandsPerState: requireEffectNumber("gourmands", "perUnit"),
+  mutantsPerMutation: requireEffectNumber("mutants", "perUnit"),
+  mutantsMaxMutations: requireEffectNumber("mutants", "maxStacks"),
+  lucid: requireEffectNumber("lucid", "value"),
+  lucidThreshold: requireEffectNumber("lucid", "threshold"),
+  furiousPerStack: requireEffectNumber("furious", "perUnit"),
+  furiousMaxStacks: requireEffectNumber("furious", "maxStacks"),
+  poundersPerStack: requireEffectNumber("pounders", "perUnit"),
+  poundersMaxStacks: requireEffectNumber("pounders", "maxStacks"),
+  adrenalPerKill: requireEffectNumber("adrenal", "perUnit"),
+  adrenalMaxKills: requireEffectNumber("adrenal", "maxStacks"),
+  severing: requireEffectNumber("severing", "value"),
+  pyromaniacs: requireEffectNumber("pyromaniacs", "value"),
+  vipers: requireEffectNumber("vipers", "value"),
+  bullysPerLimb: requireEffectNumber("bullys", "perUnit"),
+  bullysCap: requireEffectNumber("bullys", "cap"),
+} as const;
 
 export {
   TARGET_DUMMY_CATALOG,
@@ -399,10 +460,20 @@ export function calculateVatsCritQualification(params: {
 export function resolveVatsApCost(baseVatsApCost: number, innateApCostPct: number, hasVatsOptimized: boolean): number {
   let apMultiplier = 1.0;
   if (hasVatsOptimized) {
-    apMultiplier *= 0.65;
+    apMultiplier *= LEG.vatsOptimizedApMultiplier;
   }
   apMultiplier *= Math.max(0.1, 1.0 + innateApCostPct);
   return Math.max(2, Math.round(baseVatsApCost * apMultiplier));
+}
+
+/**
+ * The equipped unique's innate model when it is of the asked-for kind, else null.
+ * Every unique branch below goes through this, so an innate can only ever do
+ * what its pack entry says it does.
+ */
+function uniqueModelOfKind(item: UniqueItem | undefined, kind: UniqueEffectKind): UniqueEffectModel | null {
+  const model = item?.model ?? null;
+  return model && model.kind === kind ? model : null;
 }
 
 /**
@@ -445,6 +516,25 @@ export function calculateCombatFirepower(
     perkRanks.set(p.cardId.toLowerCase().trim(), p.rank);
   }
 
+  // Unique innate effects (src/data/truth/unique-items.json). Only the equipped
+  // weapon's own row counts; a shared chassis id never inherits a unique.
+  const uniqueItem = resolveUniqueForBuilderId(input.weaponId);
+  const uniqueName = uniqueItem?.name ?? "";
+
+  // Bullet Storm stack grants: Resolute Veteran raises the floor, Foundation's
+  // Vengeance adds stacks while the player is under its health threshold.
+  const minStacksModel = uniqueModelOfKind(uniqueItem, "bullet-storm-min-stacks");
+  const uniqueMinBulletStormStacks = minStacksModel?.value ?? 0;
+  const bonusStacksModel = uniqueModelOfKind(uniqueItem, "bullet-storm-bonus-stacks-below-health");
+  const uniqueBonusBulletStormStacks =
+    bonusStacksModel && healthPct < (bonusStacksModel.healthThreshold ?? 0) ? (bonusStacksModel.value ?? 0) : 0;
+  if (uniqueBonusBulletStormStacks > 0 && bonusStacksModel) {
+    breakdown.push({
+      source: `${uniqueName} (under ${Math.round((bonusStacksModel.healthThreshold ?? 0) * 100)}% HP)`,
+      value: `+${uniqueBonusBulletStormStacks} Bullet Storm Stacks`,
+    });
+  }
+
   // Weapon Class Perks
   if (base.weaponClass === "commando" && effectiveIsAutomatic) {
     const c1 = perkRanks.get("commando") || 0;
@@ -475,11 +565,10 @@ export function calculateCombatFirepower(
     // Bullet Storm: 3%/6%/9% per 30 rounds fired, 10 max stacks (doubled to 20 with Bringing the Big Guns)
     // Modeled as mid-combat sustained bonus (60% of max stacks) when not explicitly provided
     const maxStacks = hasBigGuns ? 20 : 10;
-    const isResoluteVeteran = input.weaponId === "resolute-veteran";
-    const minStacks = isResoluteVeteran ? 5 : 0;
-    const rawStacks = input.playerStats.bulletStormStacks !== undefined
+    const minStacks = uniqueMinBulletStormStacks;
+    const rawStacks = (input.playerStats.bulletStormStacks !== undefined
       ? input.playerStats.bulletStormStacks
-      : (maxStacks * 0.6);
+      : (maxStacks * 0.6)) + uniqueBonusBulletStormStacks;
     const activeStacks = Math.max(minStacks, Math.min(maxStacks, rawStacks));
     const bulletStormBonus = bulletStormRank > 0 ? (bulletStormRank * 0.03) * activeStacks : 0;
 
@@ -606,15 +695,15 @@ export function calculateCombatFirepower(
   // Kill Streak (Burning Springs): Adrenaline perk (single rank) and the Adrenal 1★ weapon mod each
   // give +10% damage per kill while on a Kill Streak, max 10 kills. A streak alone gives nothing.
   const rawAdrenalineKills = input.playerStats.killStreak ?? input.playerStats.adrenalineStacks;
-  const killStreakKills = Math.min(10, Math.max(0, rawAdrenalineKills ?? 0));
+  const killStreakKills = Math.min(LEG.adrenalMaxKills, Math.max(0, rawAdrenalineKills ?? 0));
   const hasAdrenalMod = (input.equippedMods || []).some((m) => m && typeof m.slug === "string" && m.slug.toLowerCase() === "adrenal");
   if (killStreakKills > 0 && (perkRanks.get("adrenaline") || 0) > 0) {
     additiveDamagePct += killStreakKills * 0.10;
     breakdown.push({ source: `Adrenaline (${killStreakKills} kills)`, value: `+${killStreakKills * 10}%` });
   }
   if (killStreakKills > 0 && hasAdrenalMod) {
-    additiveDamagePct += killStreakKills * 0.10;
-    breakdown.push({ source: `Adrenal 1★ (${killStreakKills} kills)`, value: `+${killStreakKills * 10}%` });
+    additiveDamagePct += killStreakKills * LEG.adrenalPerKill;
+    breakdown.push({ source: `Adrenal 1★ (${killStreakKills} kills)`, value: `+${Math.round(killStreakKills * LEG.adrenalPerKill * 100)}%` });
   }
 
   // 2. Legendary Stars Analysis
@@ -634,18 +723,23 @@ export function calculateCombatFirepower(
     if (slug === "bloodied") {
       // Bloodied: up to +130% as health decreases (cap reached at 5% HP; verified in game 2026-09-18,
       // Patch 60 rebalance). Linear in missing health, scaled so 5% HP hits the cap.
-      const bloodiedBonus = Math.min(1.3, Math.max(0, (1 - healthPct) * (1.3 / 0.95)));
+      const bloodiedBonus = Math.min(
+        LEG.bloodiedCap,
+        Math.max(0, (1 - healthPct) * (LEG.bloodiedCap / LEG.bloodiedCapAtMissingHealth))
+      );
       additiveDamagePct += bloodiedBonus;
       breakdown.push({ source: `Bloodied (${Math.round((1 - healthPct) * 100)}% Missing HP)`, value: `+${Math.round(bloodiedBonus * 100)}%` });
     } else if (slug === "anti-armor" || slug === "anti_armor") {
       hasAntiArmor = true;
     } else if (slug === "aristocrats" || slug === "aristocrat-s") {
-      const aristoBonus = caps >= 29000 ? 0.5 : (caps / 29000) * 0.5;
+      const aristoBonus = caps >= LEG.aristocratsCapAtCaps
+        ? LEG.aristocratsMax
+        : (caps / LEG.aristocratsCapAtCaps) * LEG.aristocratsMax;
       additiveDamagePct += aristoBonus;
       breakdown.push({ source: "Aristocrat's (29k+ Caps)", value: `+${Math.round(aristoBonus * 100)}%` });
     } else if (slug === "two-shot" || slug === "two_shot") {
-      additiveDamagePct += 0.75;
-      breakdown.push({ source: "Two Shot (+75% Base, Patch 60)", value: "+75%" });
+      additiveDamagePct += LEG.twoShot;
+      breakdown.push({ source: "Two Shot (+75% Base, Patch 60)", value: `+${Math.round(LEG.twoShot * 100)}%` });
     } else if (slug === "quad") {
       hasQuad = true;
     } else if (slug === "rapid" || slug.includes("25-weapon-speed") || slug.includes("faster-fire-rate")) {
@@ -662,45 +756,45 @@ export function calculateCombatFirepower(
       const isNight = input.playerStats.timeOfDay === "night";
       const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
       if (isNight || isCrouched) {
-        additiveDamagePct += 0.50;
+        additiveDamagePct += LEG.nocturnal;
         breakdown.push({
           source: isCrouched ? "Nocturnal (Crouched / Stealthed)" : "Nocturnal (Nighttime)",
-          value: "+50%"
+          value: `+${Math.round(LEG.nocturnal * 100)}%`
         });
       }
     } else if (slug === "stalkers" || slug === "stalker-s") {
       const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
       if (isCrouched) {
-        additiveDamagePct += 1.0;
-        breakdown.push({ source: "Stalker's (Crouched / Stealthed)", value: "+100% Sneak Attack" });
+        additiveDamagePct += LEG.stalkers;
+        breakdown.push({ source: "Stalker's (Crouched / Stealthed)", value: `+${Math.round(LEG.stalkers * 100)}% Sneak Attack` });
       }
     } else if (slug === "hitmans" || slug === "hitman-s" || slug.includes("damage-while-aiming")) {
       const isInVats = Boolean(input.playerStats.isInVats);
       if (input.playerStats.isAiming && !isInVats) {
-        additiveDamagePct += 0.25;
-        breakdown.push({ source: "Hitman's 2★ (Aiming Down Sights)", value: "+25%" });
+        additiveDamagePct += LEG.hitmans;
+        breakdown.push({ source: "Hitman's 2★ (Aiming Down Sights)", value: `+${Math.round(LEG.hitmans * 100)}%` });
       }
     } else if (slug === "heavy-hitters" || slug === "heavy-hitter-s" || slug.includes("power-attack-damage")) {
       if (input.playerStats.isPowerAttacking) {
-        additiveDamagePct += 0.40;
-        breakdown.push({ source: "Heavy Hitter's 2★ (Power Attack)", value: "+40%" });
+        additiveDamagePct += LEG.heavyHitters;
+        breakdown.push({ source: "Heavy Hitter's 2★ (Power Attack)", value: `+${Math.round(LEG.heavyHitters * 100)}%` });
       }
     } else if (slug === "steady" || slug.includes("damage-while-not-moving")) {
       if (!input.playerStats.isSprinting) {
-        additiveDamagePct += 0.25;
-        breakdown.push({ source: "Steady 2★ (Stationary / Not Moving)", value: "+25%" });
+        additiveDamagePct += LEG.steady;
+        breakdown.push({ source: "Steady 2★ (Stationary / Not Moving)", value: `+${Math.round(LEG.steady * 100)}%` });
       }
     } else if (slug === "junkies" || slug === "junkie-s") {
       const addictions = input.playerStats.addictionsCount || 0;
       // Junkie's: +10% per addiction, up to +100% at 10 addictions (Patch 60 rebalance)
-      const jBonus = Math.min(1.0, addictions * 0.10);
+      const jBonus = Math.min(LEG.junkiesCap, addictions * LEG.junkiesPerAddiction);
       if (jBonus > 0) {
         additiveDamagePct += jBonus;
         breakdown.push({ source: `Junkie's (${addictions} Addictions)`, value: `+${Math.round(jBonus * 100)}%` });
       }
     } else if (slug === "juggernauts" || slug === "juggernaut-s") {
-      if (healthPct >= 0.75) {
-        const juggBonus = Math.min(0.25, (healthPct - 0.75) * 1.0);
+      if (healthPct >= LEG.juggernautsThreshold) {
+        const juggBonus = Math.min(LEG.juggernautsCap, (healthPct - LEG.juggernautsThreshold) * LEG.juggernautsSlope);
         if (juggBonus > 0) {
           additiveDamagePct += juggBonus;
           breakdown.push({ source: `Juggernaut's (${Math.round(healthPct * 100)}% HP)`, value: `+${Math.round(juggBonus * 100)}%` });
@@ -709,23 +803,23 @@ export function calculateCombatFirepower(
     } else if (slug === "gourmands" || slug === "gourmand-s") {
       const isWellFed = input.playerStats.foodState === "well_fed" || input.playerStats.foodState === "fully_fed";
       const isWellHydrated = input.playerStats.thirstState === "well_hydrated" || input.playerStats.thirstState === "fully_hydrated";
-      const gourmandBonus = (isWellFed ? 0.12 : 0) + (isWellHydrated ? 0.12 : 0);
+      const gourmandBonus = (isWellFed ? LEG.gourmandsPerState : 0) + (isWellHydrated ? LEG.gourmandsPerState : 0);
       if (gourmandBonus > 0) {
         additiveDamagePct += gourmandBonus;
         breakdown.push({ source: "Gourmand's (Fed & Hydrated)", value: `+${Math.round(gourmandBonus * 100)}%` });
       }
     } else if (slug === "mutants" || slug === "mutant-s") {
-      const mutationCount = Math.min(5, input.activeBuffs?.activeMutations?.length || 0);
-      const mutBonus = mutationCount * 0.05;
+      const mutationCount = Math.min(LEG.mutantsMaxMutations, input.activeBuffs?.activeMutations?.length || 0);
+      const mutBonus = mutationCount * LEG.mutantsPerMutation;
       if (mutBonus > 0) {
         additiveDamagePct += mutBonus;
         breakdown.push({ source: `Mutant's (${mutationCount} Mutations)`, value: `+${Math.round(mutBonus * 100)}%` });
       }
     } else if (slug === "lucid") {
       const feral = input.playerStats.feralPct ?? 100;
-      if (feral >= 80) {
-        additiveDamagePct += 0.40;
-        breakdown.push({ source: "Lucid (High Lucidity 80%+)", value: "+40%" });
+      if (feral >= LEG.lucidThreshold) {
+        additiveDamagePct += LEG.lucid;
+        breakdown.push({ source: "Lucid (High Lucidity 80%+)", value: `+${Math.round(LEG.lucid * 100)}%` });
       }
     }
   }
@@ -773,19 +867,33 @@ export function calculateCombatFirepower(
   );
   if (onslaughtStacks > 0) {
     if (onslaughtModSlugs.has("furious")) {
-      const st = Math.min(9, onslaughtStacks);
-      additiveDamagePct += st * 0.05;
-      breakdown.push({ source: `Furious 1★ (${st} Onslaught stacks)`, value: `+${st * 5}%` });
+      const st = Math.min(LEG.furiousMaxStacks, onslaughtStacks);
+      additiveDamagePct += st * LEG.furiousPerStack;
+      breakdown.push({ source: `Furious 1★ (${st} Onslaught stacks)`, value: `+${Math.round(st * LEG.furiousPerStack * 100)}%` });
     }
     if (onslaughtModSlugs.has("pounders") && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
-      const st = Math.min(10, onslaughtStacks);
-      additiveDamagePct += st * 0.10;
-      breakdown.push({ source: `Pounder's 4★ (${st} Onslaught stacks)`, value: `+${st * 10}%` });
+      const st = Math.min(LEG.poundersMaxStacks, onslaughtStacks);
+      additiveDamagePct += st * LEG.poundersPerStack;
+      breakdown.push({ source: `Pounder's 4★ (${st} Onslaught stacks)`, value: `+${Math.round(st * LEG.poundersPerStack * 100)}%` });
     }
     if ((perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0) > 0 && base.weaponClass === "guerrilla") {
       const st = Math.min(5, onslaughtStacks);
       additiveDamagePct += st * 0.05;
       breakdown.push({ source: `Guerrilla Master (${st} Onslaught stacks, close targets)`, value: `+${st * 5}%` });
+    }
+
+    // Unique innate: power-attack damage per Onslaught stack (Whacker Smacker).
+    const powerAttackModel = uniqueModelOfKind(uniqueItem, "power-attack-damage-per-onslaught-stack");
+    if (powerAttackModel && input.playerStats.isPowerAttacking) {
+      const st = Math.min(powerAttackModel.maxUnits ?? onslaughtStacks, onslaughtStacks);
+      const bonus = st * (powerAttackModel.perUnit ?? 0);
+      if (bonus > 0) {
+        additiveDamagePct += bonus;
+        breakdown.push({
+          source: `${uniqueName} (${st} Onslaught stacks, Power Attack)`,
+          value: `+${Math.round(bonus * 100)}%`,
+        });
+      }
     }
   }
 
@@ -808,8 +916,8 @@ export function calculateCombatFirepower(
 
   // Severing 4★: +50% damage against bleeding targets
   if (targetBleeding && modSlugs.includes("severing")) {
-    additiveDamagePct += 0.50;
-    breakdown.push({ source: "Severing 4★ (vs Bleeding)", value: "+50%" });
+    additiveDamagePct += LEG.severing;
+    breakdown.push({ source: "Severing 4★ (vs Bleeding)", value: `+${Math.round(LEG.severing * 100)}%` });
   }
 
   // Wound Salter Perk: +10%/+20%/+30% damage against bleeding targets
@@ -825,19 +933,19 @@ export function calculateCombatFirepower(
 
   // Pyromaniac's 4★: +50% damage against burning targets
   if (targetBurning && (modSlugs.includes("pyromaniacs") || modSlugs.includes("pyromaniac-s"))) {
-    additiveDamagePct += 0.50;
-    breakdown.push({ source: "Pyromaniac's 4★ (vs Burning)", value: "+50%" });
+    additiveDamagePct += LEG.pyromaniacs;
+    breakdown.push({ source: "Pyromaniac's 4★ (vs Burning)", value: `+${Math.round(LEG.pyromaniacs * 100)}%` });
   }
 
   // Viper's 4★: +50% damage against poisoned targets
   if (targetPoisoned && (modSlugs.includes("vipers") || modSlugs.includes("viper-s"))) {
-    additiveDamagePct += 0.50;
-    breakdown.push({ source: "Viper's 4★ (vs Poisoned)", value: "+50%" });
+    additiveDamagePct += LEG.vipers;
+    breakdown.push({ source: "Viper's 4★ (vs Poisoned)", value: `+${Math.round(LEG.vipers * 100)}%` });
   }
 
   // Bully's 4★: +25% damage per crippled limb the target has (max 4 limbs = +100%)
   if (targetCrippledLimbs > 0 && (modSlugs.includes("bullys") || modSlugs.includes("bully-s"))) {
-    const bullyBonus = Math.min(1.0, targetCrippledLimbs * 0.25);
+    const bullyBonus = Math.min(LEG.bullysCap, targetCrippledLimbs * LEG.bullysPerLimb);
     additiveDamagePct += bullyBonus;
     breakdown.push({
       source: `Bully's 4★ (${targetCrippledLimbs} Crippled Limbs)`,
@@ -845,12 +953,14 @@ export function calculateCombatFirepower(
     });
   }
 
-  // Crushing Blow Innate: +10% damage per crippled limb (max 40%)
-  if (targetCrippledLimbs > 0 && (input.weaponId === "crushing-blow" || input.weaponId === "crushing_blow")) {
-    const cbBonus = Math.min(0.40, targetCrippledLimbs * 0.10);
+  // Unique innate: damage per crippled limb the target has (Crushing Blow, +10% each, max 40%).
+  const crippledLimbModel = uniqueModelOfKind(uniqueItem, "damage-per-crippled-limb");
+  if (targetCrippledLimbs > 0 && crippledLimbModel) {
+    const limbs = Math.min(crippledLimbModel.maxUnits ?? targetCrippledLimbs, targetCrippledLimbs);
+    const cbBonus = Math.min(crippledLimbModel.cap ?? Number.POSITIVE_INFINITY, limbs * (crippledLimbModel.perUnit ?? 0));
     additiveDamagePct += cbBonus;
     breakdown.push({
-      source: `Crushing Blow Innate (${targetCrippledLimbs} Crippled Limbs)`,
+      source: `${uniqueName} Innate (${targetCrippledLimbs} Crippled Limbs)`,
       value: `+${Math.round(cbBonus * 100)}%`,
     });
   }
@@ -950,13 +1060,16 @@ export function calculateCombatFirepower(
   // Explosive Area Damage
   let explosiveDamage = 0;
   if (hasExplosive || base.isExplosiveInherent) {
-    const isTheGuarantee = input.weaponId === "the-guarantee";
-    const demoRank = Math.max(perkRanks.get("demolition-expert") || 0, isTheGuarantee ? 3 : 0);
+    // Unique innate: a granted perk rank (The Guarantee grants Demolition Expert 3).
+    const grantModel = uniqueModelOfKind(uniqueItem, "grants-perk-rank");
+    const grantedDemoRank = grantModel?.perkId === "demolition-expert" ? (grantModel.perkRank ?? 0) : 0;
+    const equippedDemoRank = perkRanks.get("demolition-expert") || 0;
+    const demoRank = Math.max(equippedDemoRank, grantedDemoRank);
     const demoScale = 1 + (demoRank > 0 ? 0.2 + (demoRank - 1) * 0.1 : 0);
-    explosiveDamage = Math.round(base.baseDamage * 0.2 * demoScale);
+    explosiveDamage = Math.round(base.baseDamage * LEG.explosiveBaseFraction * demoScale);
     breakdown.push({
-      source: isTheGuarantee && (perkRanks.get("demolition-expert") || 0) < 3
-        ? "Explosive Impact (The Guarantee: Demo Exp Rank 3)"
+      source: grantedDemoRank > 0 && equippedDemoRank < grantedDemoRank
+        ? `Explosive Impact (${uniqueName}: Demo Exp Rank ${grantedDemoRank})`
         : `Explosive Impact (Demo Exp Rank ${demoRank})`,
       value: `+${explosiveDamage}`,
     });
@@ -966,10 +1079,13 @@ export function calculateCombatFirepower(
   // Base Crit = +100% of Base Damage
   let critBonusPct = 1.0;
 
-  if (input.weaponId === "elders-mark" && onslaughtStacks > 0) {
-    const emBonus = Math.min(10, onslaughtStacks) * 0.02;
+  // Unique innate: V.A.T.S. critical damage per Onslaught stack (Elder's Mark, +2% each).
+  const critStackModel = uniqueModelOfKind(uniqueItem, "crit-damage-per-onslaught-stack");
+  if (critStackModel && onslaughtStacks > 0) {
+    const st = Math.min(critStackModel.maxUnits ?? onslaughtStacks, onslaughtStacks);
+    const emBonus = st * (critStackModel.perUnit ?? 0);
     critBonusPct += emBonus;
-    breakdown.push({ source: `Elder's Mark (${Math.min(10, onslaughtStacks)} Onslaught stacks)`, value: `+${Math.round(emBonus * 100)}% Crit` });
+    breakdown.push({ source: `${uniqueName} (${st} Onslaught stacks)`, value: `+${Math.round(emBonus * 100)}% Crit` });
   }
 
   if (innateMods.critDamagePct !== 0) {
@@ -988,8 +1104,8 @@ export function calculateCombatFirepower(
   }
 
   if (hasVitalCrit) {
-    critBonusPct += 0.5;
-    breakdown.push({ source: "Vital 2★ (+50% Crit)", value: "+50% Crit" });
+    critBonusPct += LEG.vitalCrit;
+    breakdown.push({ source: "Vital 2★ (+50% Crit)", value: `+${Math.round(LEG.vitalCrit * 100)}% Crit` });
   }
 
   if (buffs) {
@@ -1033,11 +1149,29 @@ export function calculateCombatFirepower(
 
   // 5. Fire Rate & DPS
   const innateFireRateFactor = 1.0 + innateMods.fireRatePct;
-  let fireRateMultiplier = (hasRapid ? 1.25 : 1.0) * Math.max(0.2, innateFireRateFactor);
+  let fireRateMultiplier = (hasRapid ? LEG.rapidFireRateMultiplier : 1.0) * Math.max(0.2, innateFireRateFactor);
 
-  if (input.weaponId === "disorderly-conduct") {
-    fireRateMultiplier *= 1.20;
-    dpsBreakdown.push({ source: "Disorderly Conduct (+20% Attack Speed)", value: "+20% Fire Rate" });
+  // Unique innate: flat attack-speed multiplier (Disorderly Conduct, ×1.20).
+  const attackSpeedModel = uniqueModelOfKind(uniqueItem, "attack-speed-multiplier");
+  if (attackSpeedModel) {
+    const multiplier = attackSpeedModel.value ?? 1;
+    fireRateMultiplier *= multiplier;
+    const pct = Math.round((multiplier - 1) * 100);
+    dpsBreakdown.push({ source: `${uniqueName} (+${pct}% Attack Speed)`, value: `+${pct}% Fire Rate` });
+  }
+
+  // Unique innate: swing speed per addiction (The Quick Fix, +5% each, capped at +100%).
+  const swingSpeedModel = uniqueModelOfKind(uniqueItem, "swing-speed-per-addiction");
+  if (swingSpeedModel) {
+    const addictions = Math.max(0, input.playerStats.addictionsCount || 0);
+    const bonus = Math.min(swingSpeedModel.cap ?? Number.POSITIVE_INFINITY, addictions * (swingSpeedModel.perUnit ?? 0));
+    if (bonus > 0) {
+      fireRateMultiplier *= 1 + bonus;
+      dpsBreakdown.push({
+        source: `${uniqueName} (${addictions} Addictions)`,
+        value: `+${Math.round(bonus * 100)}% Swing Speed`,
+      });
+    }
   }
 
   // Melee & Unarmed swing speed cap: +100% max (multiplier capped at 2.0x) since Patch 70
@@ -1052,7 +1186,7 @@ export function calculateCombatFirepower(
   const effectiveRPM = Math.round(effectiveRPS * 60);
 
   if (hasRapid) {
-    dpsBreakdown.push({ source: "Rapid 2★ Weapon Speed", value: "+25% Fire Rate" });
+    dpsBreakdown.push({ source: "Rapid 2★ Weapon Speed", value: `+${Math.round((LEG.rapidFireRateMultiplier - 1) * 100)}% Fire Rate` });
   }
   if (innateMods.fireRatePct !== 0) {
     dpsBreakdown.push({
@@ -1076,11 +1210,11 @@ export function calculateCombatFirepower(
   if (innateMods.magCapacityPct !== 0) {
     baseMag = Math.max(1, Math.round(baseMag * (1.0 + innateMods.magCapacityPct)));
   }
-  const effectiveMag = hasQuad ? baseMag * 4 : baseMag;
+  const effectiveMag = hasQuad ? baseMag * LEG.quadMagMultiplier : baseMag;
 
   // 7. VATS AP Cost per Shot
   if (hasVatsOptimized) {
-    vatsBreakdown.push({ source: "V.A.T.S. Optimized 3★ (-35% AP)", value: "×0.65" });
+    vatsBreakdown.push({ source: "V.A.T.S. Optimized 3★ (-35% AP)", value: `×${LEG.vatsOptimizedApMultiplier}` });
   }
   if (innateMods.apCostPct !== 0) {
     vatsBreakdown.push({
@@ -1089,12 +1223,19 @@ export function calculateCombatFirepower(
     });
   }
 
+  // Unique innate: flat action points added to the pool (Civil Unrest, +50 AP).
+  const apPoolModel = uniqueModelOfKind(uniqueItem, "flat-action-points");
+  const uniqueApPoolBonus = apPoolModel?.value ?? 0;
+
   const vatsApCost = resolveVatsApCost(base.baseVatsApCost, innateMods.apCostPct, hasVatsOptimized);
-  const totalApPool = 100 + input.playerStats.agility * 10;
+  const totalApPool = 100 + input.playerStats.agility * 10 + uniqueApPoolBonus;
   const maxShotsInPool = Math.floor(totalApPool / vatsApCost);
 
   vatsBreakdown.push({ source: "Base VATS AP Cost", value: `${base.baseVatsApCost} AP` });
   vatsBreakdown.push({ source: "Total Action Points", value: `${totalApPool} AP (${input.playerStats.agility} AGI)` });
+  if (uniqueApPoolBonus > 0) {
+    vatsBreakdown.push({ source: `${uniqueName} (Innate)`, value: `+${uniqueApPoolBonus} AP` });
+  }
 
   // 8. Critical Fill & Every-2nd-Shot Status (FO76 Luck & Critical Savvy Chart)
   const critSavvyRank = perkRanks.get("critical-savvy") || 0;
@@ -1122,8 +1263,8 @@ export function calculateCombatFirepower(
   // by calculateEffectiveArmor (creation-engine-math is the source of truth).
   const penetrationSourcesPct: number[] = [];
   if (hasAntiArmor) {
-    penetrationSourcesPct.push(50);
-    apBreakdown.push({ source: "Anti-Armor 1★", value: "50% Penetration" });
+    penetrationSourcesPct.push(LEG.antiArmorPenPct);
+    apBreakdown.push({ source: "Anti-Armor 1★", value: `${LEG.antiArmorPenPct}% Penetration` });
   }
 
   if (innateMods.armorPenetrationPct > 0) {
@@ -1135,10 +1276,13 @@ export function calculateCombatFirepower(
     });
   }
 
-  if (input.weaponId === "ticket-to-revenge" && onslaughtStacks > 0) {
-    const ttrPen = Math.min(10, onslaughtStacks) * 3;
+  // Unique innate: armor penetration per Onslaught stack (Ticket to Revenge, +3 points each).
+  const penStackModel = uniqueModelOfKind(uniqueItem, "armor-pen-per-onslaught-stack");
+  if (penStackModel && onslaughtStacks > 0) {
+    const st = Math.min(penStackModel.maxUnits ?? onslaughtStacks, onslaughtStacks);
+    const ttrPen = st * (penStackModel.perUnit ?? 0);
     penetrationSourcesPct.push(ttrPen);
-    apBreakdown.push({ source: `Ticket to Revenge (${Math.min(10, onslaughtStacks)} Onslaught stacks)`, value: `${ttrPen}% Penetration` });
+    apBreakdown.push({ source: `${uniqueName} (${st} Onslaught stacks)`, value: `${ttrPen}% Penetration` });
   }
 
   const tankKillerRank = perkRanks.get("tank-killer") || 0;
