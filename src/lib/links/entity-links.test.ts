@@ -10,6 +10,7 @@ import {
   planLinkSegments
 } from "@/lib/links/entity-links";
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
+import { buildEntityLinks } from "@/lib/links/entity-links-build";
 import { UPDATE_PATCH_IDS } from "@/lib/wiki/update-patches";
 
 const names = (text: string) => findEntityMatches(text).map((m) => m.entity.name);
@@ -133,5 +134,11 @@ describe("planLinkSegments", () => {
       "Photosynthetic",
       "Lone Wanderer"
     ]);
+  });
+});
+
+describe("generated entity-link-index.json", () => {
+  it("matches the catalogs (run scripts/truth/build-entity-links.ts if this fails)", () => {
+    expect(ENTITY_LINKS).toEqual(buildEntityLinks());
   });
 });
