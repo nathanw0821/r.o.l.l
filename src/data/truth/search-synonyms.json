@@ -1,0 +1,20 @@
+{
+  "$comment": "Player shorthand for the Guides search (src/lib/wiki/search-wiki-articles.ts). Reviewed list: only shorthand that is unambiguous in FO76 community usage. A query (or a whole-word run of words inside a query) equal to one of `terms` also searches for each `expandsTo` value; the literal query is always searched as well (expansion adds alternatives, never replaces). Terms and targets are compared after the search normalisation (lower case, apostrophes and dots dropped, other punctuation as spaces, so '25% LVC' = '25 lvc' and 'Overeater's' = 'overeaters'). Cross-checked against the tracker's shorthand map in src/lib/filter-utils.ts and the effect/perk names in src/lib/links/entity-link-index.json. Skipped as ambiguous: 'ss' alone (Secret Service or Super Sledge), 'cs' alone, 'ce' alone, 'ac' (Atlantic City or armor), 'gb' (Gold Bullion or Great Bend), 'b' and 'q' (single letters), 'tse' (a combination, Two Shot + Explosive, would OR into every Explosive guide), '15c' (obsolete name, not Lucky Hit).",
+  "entries": [
+    { "terms": ["aa"], "expandsTo": ["Anti-armor"], "note": "Anti-armor legendary effect (1-star weapon); tracker map 'aa'." },
+    { "terms": ["25 lvc", "25lvc", "lvc", "25v", "vats opt", "vatsopt", "vats optimised"], "expandsTo": ["V.A.T.S. Optimized"], "note": "Old name '25% less V.A.T.S. Action Point cost'; renamed V.A.T.S. Optimized (now -35% AP, x0.65, verified 2026-09-18)." },
+    { "terms": ["ffr", "25ffr", "faster fire rate"], "expandsTo": ["Rapid"], "note": "Old name '25% faster fire rate'; renamed Rapid. Tracker map 'ffr'." },
+    { "terms": ["wwr", "weapon weight reduction"], "expandsTo": ["Arms Keeper's", "weapon weight reduced"], "note": "3-star armor effect 'weapons weigh less', named Arms Keeper's. Not the Arms Keeper perk card (a different thing), so that is not a target. Tracker map 'wwr'." },
+    { "terms": ["sbq"], "expandsTo": ["Scorchbeast Queen"], "note": "Universal FO76 shorthand for the Scorchbeast Queen boss." },
+    { "terms": ["pa"], "expandsTo": ["power armor"], "note": "Power armor. Also applies inside longer queries ('ultracite pa', 'raider pa')." },
+    { "terms": ["ultracite pa"], "expandsTo": ["Ultracite power armor"], "note": "Explicit entry; the 'pa' rule would also produce it." },
+    { "terms": ["cs3", "crit savvy"], "expandsTo": ["Critical Savvy"], "note": "Critical Savvy perk card at rank 3. 'cs' alone is skipped as ambiguous." },
+    { "terms": ["bloody"], "expandsTo": ["Bloodied"], "note": "Bloodied legendary effect / low-health builds; tracker map 'b'." },
+    { "terms": ["ss armor", "ss armour"], "expandsTo": ["Secret Service"], "note": "Secret Service armor set. 'ss' alone is skipped (Super Sledge)." },
+    { "terms": ["ce armor", "ce armour"], "expandsTo": ["Civil Engineer"], "note": "Civil Engineer armor set. 'ce' alone is skipped." },
+    { "terms": ["uny", "unyi"], "expandsTo": ["Unyielding"], "note": "Unyielding legendary armor effect; tracker map 'uny'." },
+    { "terms": ["oe"], "expandsTo": ["Overeater's"], "note": "Overeater's legendary armor effect (+40 Max HP per piece since Patch 66); tracker map 'oe'." },
+    { "terms": ["ts"], "expandsTo": ["Two Shot"], "note": "Two Shot legendary weapon effect; tracker map 'ts'." },
+    { "terms": ["gat plas", "gat plasma", "gatplas", "gatling plas"], "expandsTo": ["Gatling Plasma"], "note": "Gatling plasma heavy weapon." }
+  ]
+}

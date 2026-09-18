@@ -65,6 +65,21 @@ const CATEGORY_LIST: ReadonlyArray<{ id: string; label: string; desc: string }> 
 const CATEGORY_LABELS = new Map(CATEGORY_LIST.map((c) => [c.id, c.label]));
 const categoryLabel = (id: string) => CATEGORY_LABELS.get(id) ?? id;
 
+/** `X-Suggestions`: comma-separated, URI-encoded category ids; unknown ids are dropped. */
+function parseSuggestionsHeader(raw: string | null): string[] {
+  if (!raw) return [];
+  const ids: string[] = [];
+  for (const part of raw.split(",")) {
+    try {
+      const id = decodeURIComponent(part.trim());
+      if (CATEGORY_LABELS.has(id) && id !== "all" && !ids.includes(id)) ids.push(id);
+    } catch {
+      // malformed entry: skip it
+    }
+  }
+  return ids.slice(0, 3);
+}
+
 /** Committed counts; "all" follows the archive toggle so it matches what the list shows. */
 function categoryCount(id: string, includeArchive: boolean): number {
   if (id === "all") return includeArchive ? TOTAL_ARTICLES : TOTAL_ARTICLES - ARCHIVED_ARTICLES;
@@ -912,6 +927,8 @@ function TruthWikiContent() {
   const [sortBy, setSortBy] = React.useState<SortOption>("newest");
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [total, setTotal] = React.useState<number | null>(null);
+  /** Category ids from the API's X-Suggestions header when a query matches nothing. */
+  const [suggestions, setSuggestions] = React.useState<string[]>([]);
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [loadingContent, setLoadingContent] = React.useState(false);
@@ -1119,6 +1136,7 @@ function TruthWikiContent() {
         const header = Number(res.headers.get("X-Total-Count"));
         setArticles(list);
         setTotal(Number.isFinite(header) && res.headers.has("X-Total-Count") ? header : list.length);
+        setSuggestions(parseSuggestionsHeader(res.headers.get("X-Suggestions")));
         setLoading(false);
       })
       .catch((err) => {
@@ -1126,6 +1144,7 @@ function TruthWikiContent() {
         console.error("Failed to fetch guides:", err);
         setArticles([]);
         setTotal(0);
+        setSuggestions([]);
         setLoading(false);
       });
     return () => controller.abort();
@@ -1278,6 +1297,9 @@ function TruthWikiContent() {
     const qs = serializeGuideListState({ ...listState, page });
     return qs ? `${pathname}?${qs}` : pathname;
   };
+  /** A suggested category starts a fresh browse of that category (the query found nothing). */
+  const suggestionState = (id: string): GuideListState => ({ ...clearAllFilters(), archive: listState.archive, category: id });
+  const suggestionHref = (id: string) => `${pathname}?${serializeGuideListState(suggestionState(id))}`;
   const firstShown = total ? pageOffset(listState.page) + 1 : 0;
   const lastShown = total ? Math.min(total, pageOffset(listState.page) + articles.length) : 0;
 
@@ -1423,7 +1445,31 @@ function TruthWikiContent() {
             {/* EMPTY STATE */}
             {!loading && articles.length === 0 ? (
               <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
-                <p className="guides-mono text-[15px] text-[var(--text-primary)]">No guides match these filters.</p>
+                {suggestions.length > 0 ? (
+                  <p data-guide-suggestions className="guides-mono text-[15px] text-[var(--text-primary)]">
+                    No guides match. Try{" "}
+                    {suggestions.map((id, i) => (
+                      <React.Fragment key={id}>
+                        {i > 0 ? ", " : null}
+                        <a
+                          href={suggestionHref(id)}
+                          onClick={(e) => {
+                            if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                            e.preventDefault();
+                            setQueryInput("");
+                            applyFilters(suggestionState(id));
+                          }}
+                          className="text-[var(--color-accent)] underline underline-offset-2"
+                        >
+                          {categoryLabel(id)}
+                        </a>
+                      </React.Fragment>
+                    ))}{" "}
+                    or clear filters.
+                  </p>
+                ) : (
+                  <p className="guides-mono text-[15px] text-[var(--text-primary)]">No guides match these filters.</p>
+                )}
                 <button type="button" onClick={clearAll} className="guides-mono text-[13px] text-[var(--color-accent)] underline underline-offset-2">
                   Clear all filters and search
                 </button>
