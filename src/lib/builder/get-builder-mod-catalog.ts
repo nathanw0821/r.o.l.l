@@ -1,3 +1,4 @@
+import gameVersion from "@/data/truth/game-version.json";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { BUILDER_MODS_CACHE_TAG, ROLL_CATALOG_CACHE_TAG } from "@/lib/cache-tags";
@@ -151,7 +152,7 @@ export async function getCachedBuilderModCatalog() {
     return loadBuilderModCatalogUncached();
   }
   try {
-    const loader = unstable_cache(loadBuilderModCatalogUncached, ["builder-mod-catalog", "v6-patch69-canonical"], {
+    const loader = unstable_cache(loadBuilderModCatalogUncached, ["builder-mod-catalog", `v7-patch${gameVersion.patch}-canonical`], {
       revalidate: 3600,
       tags: [BUILDER_MODS_CACHE_TAG, ROLL_CATALOG_CACHE_TAG]
     });

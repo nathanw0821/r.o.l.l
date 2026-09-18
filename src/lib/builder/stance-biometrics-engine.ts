@@ -167,7 +167,7 @@ export function calculateStanceAndBiometricModifiers(
 
   // 4. Compute Unyielding Armor Biometric Modifier
   // In Fallout 76: Up to +3 to all SPECIAL stats (except END) per piece when health is <= 20%.
-  // Scales: <=20% HP = +3/piece; 21-40% HP = +2/piece; 41-60% HP = +1/piece.
+  // Scales (Patch 70 inclusive thresholds): <=20% HP = +3/piece; <=40% HP = +2/piece; <=60% HP = +1/piece.
   // Blocked / ineffective for Ghouls in 76.
   if (unyieldingArmorCount > 0 && !isGhoul) {
     let unyieldingPerPiece = 0;
@@ -297,11 +297,11 @@ export function calculateStanceAndBiometricModifiers(
     activeTacticalTags.push(`Mutant's (+${totalRes} DR/ER)`);
   }
 
-  // 9. Compute Overeater's Armor Mitigation Tag
-  // 6% damage reduction per piece when fully fed & hydrated (30% on 5-piece).
+  // 9. Overeater's tag. Since Patch 66 (The Backwoods, 2026-03-03) Overeater's grants up to
+  // +40 Max Health per piece as hunger/thirst fill and no longer reduces incoming damage.
   if (overeatersArmorCount > 0 && !isGhoul && isWellFedAndHydrated) {
-    const mitigationPct = overeatersArmorCount * 6;
-    activeTacticalTags.push(`Overeater's (-${mitigationPct}% Dmg Taken · Well Fed/Hydrated)`);
+    const maxHpBonus = overeatersArmorCount * 40;
+    activeTacticalTags.push(`Overeater's (+${maxHpBonus} Max HP · Well Fed/Hydrated)`);
   }
 
   // 10. Compute Sentinel's & Cavalier's Tactical Tags

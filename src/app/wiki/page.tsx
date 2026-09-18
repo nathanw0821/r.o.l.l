@@ -5,6 +5,18 @@ import { Search, BookOpen, ExternalLink, Shield, ChevronRight, ArrowUpDown, Filt
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
+
+const TOTAL_ARTICLES = FALLBACK_WIKI_ARTICLES.length;
+const CATEGORY_COUNTS: Record<string, number> = FALLBACK_WIKI_ARTICLES.reduce<Record<string, number>>((acc, a) => {
+  acc[a.category] = (acc[a.category] ?? 0) + 1;
+  return acc;
+}, {});
+function countFor(category: string): string {
+  const n = category === "all" ? TOTAL_ARTICLES : (CATEGORY_COUNTS[category] ?? 0);
+  return `${n.toLocaleString()} ${category === "all" ? "Entries" : "Guides"}`;
+}
+
 interface ArticleItem {
   id: number;
   source: string;
@@ -18,14 +30,14 @@ interface ArticleItem {
 }
 
 const CATEGORY_CARDS = [
-  { id: "all", label: "All Vault Records", count: "3,399 Entries", iconName: "book", desc: "Complete Fallout 76 Vault-Tec database.", color: "from-amber-500/20 to-amber-600/5 border-amber-500/40" },
-  { id: "Weapons & Mods", label: "Weapons & Legendary Mods", count: "1,240 Guides", iconName: "crosshair", desc: "Drop odds, crafting costs & mod matrices.", color: "from-red-500/20 to-red-600/5 border-red-500/40" },
-  { id: "Armor & Power Armor", label: "Armor & Power Armor", count: "680 Guides", iconName: "shield", desc: "Resist values, set bonuses & PA schematics.", color: "from-blue-500/20 to-blue-600/5 border-blue-500/40" },
-  { id: "Perks & Mutations", label: "Perks & Mutations", count: "310 Guides", iconName: "layers", desc: "S.P.E.C.I.A.L. card ranks & serum effects.", color: "from-purple-500/20 to-purple-600/5 border-purple-500/40" },
-  { id: "Vendors & Minerva", label: "Vendors & Minerva Sales", count: "190 Guides", iconName: "coins", desc: "Minerva inventory schedules & Gold Bullion.", color: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/40" },
-  { id: "Events & Expeditions", label: "Events & Expeditions", count: "420 Guides", iconName: "compass", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
-  { id: "Builds & Mechanics", label: "Build Mechanics & Damage", count: "350 Guides", iconName: "activity", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
-  { id: "Crafting & Resources", label: "Crafting & Materials", count: "209 Guides", iconName: "wrench", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
+  { id: "all", label: "All Vault Records", count: countFor("all"), iconName: "book", desc: "Complete Fallout 76 Vault-Tec database.", color: "from-amber-500/20 to-amber-600/5 border-amber-500/40" },
+  { id: "Weapons & Mods", label: "Weapons & Legendary Mods", count: countFor("Weapons & Mods"), iconName: "crosshair", desc: "Drop odds, crafting costs & mod matrices.", color: "from-red-500/20 to-red-600/5 border-red-500/40" },
+  { id: "Armor & Power Armor", label: "Armor & Power Armor", count: countFor("Armor & Power Armor"), iconName: "shield", desc: "Resist values, set bonuses & PA schematics.", color: "from-blue-500/20 to-blue-600/5 border-blue-500/40" },
+  { id: "Perks & Mutations", label: "Perks & Mutations", count: countFor("Perks & Mutations"), iconName: "layers", desc: "S.P.E.C.I.A.L. card ranks & serum effects.", color: "from-purple-500/20 to-purple-600/5 border-purple-500/40" },
+  { id: "Vendors & Minerva", label: "Vendors & Minerva Sales", count: countFor("Vendors & Minerva"), iconName: "coins", desc: "Minerva inventory schedules & Gold Bullion.", color: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/40" },
+  { id: "Events & Expeditions", label: "Events & Expeditions", count: countFor("Events & Expeditions"), iconName: "compass", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
+  { id: "Builds & Mechanics", label: "Build Mechanics & Damage", count: countFor("Builds & Mechanics"), iconName: "activity", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
+  { id: "Crafting & Resources", label: "Crafting & Materials", count: countFor("Crafting & Resources"), iconName: "wrench", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
 ];
 
 const UPDATE_PATCHES = [
@@ -36,6 +48,7 @@ const UPDATE_PATCHES = [
   { id: "milepost-zero", label: "Milepost Zero" },
   { id: "backwoods", label: "Backwoods 2026" },
   { id: "burning-springs", label: "Burning Springs" },
+  { id: "the-slasher", label: "The Slasher (Patch 70, Sep 2026)" },
   { id: "nuka-world", label: "Nuka-World on Tour" },
   { id: "invaders", label: "Invaders from Beyond" },
 ];
@@ -650,7 +663,7 @@ function TruthWikiContent() {
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">
               <Terminal className="h-4 w-4 text-amber-400" />
-              <span>VAULT-TEC KNOWLEDGE PORTAL</span> • <span>3,399 INDEXED GUIDES</span>
+              <span>VAULT-TEC KNOWLEDGE PORTAL</span> • <span>{TOTAL_ARTICLES.toLocaleString()} INDEXED GUIDES</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-amber-400 uppercase">
               FALLOUT 76 TRUTH BIBLE CODEX
@@ -685,7 +698,7 @@ function TruthWikiContent() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search 3,399 Vault guides by title, item name, or quest objective..."
+            placeholder={`Search ${TOTAL_ARTICLES.toLocaleString()} Vault guides by title, item name, or quest objective...`}
             className="w-full pl-14 pr-4 py-4 bg-[#060a10] border-2 border-slate-700 rounded-xl text-slate-100 placeholder:text-slate-500 font-mono text-sm md:text-base focus:outline-none focus:border-amber-400 shadow-inner transition-colors"
           />
         </div>

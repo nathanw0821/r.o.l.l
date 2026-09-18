@@ -49,7 +49,7 @@ export function getArticleOutdatedStatus(article: { title: string; content?: str
       reason: "Legacy random 3-star weapon and armor rerolling was replaced in Milepost Zero by targeted Legendary Box Mods and Item Scrapping.",
       patchVersion: "Patch 54 (Milepost Zero)",
       replacementTitle: "Legendary Box Mods & Scrapping Hub",
-      replacementHref: "/crafting",
+      replacementHref: "/all-effects",
     };
   }
 

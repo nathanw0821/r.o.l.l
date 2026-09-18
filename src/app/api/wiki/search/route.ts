@@ -38,6 +38,7 @@ export async function GET(req: Request) {
     if (kw.includes("burning")) kw = "burning";
     if (kw.includes("nuka")) kw = "nuka";
     if (kw.includes("invader")) kw = "invader";
+    if (kw.includes("slasher")) kw = "slasher";
 
     list = list.filter(
       (a) =>
