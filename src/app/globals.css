@@ -1418,12 +1418,17 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 
 @media (max-width: 860px) {
   .app-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr); /* 1fr alone lets wide content stretch the column past the viewport */
+  }
+  .app-main {
+    min-width: 0;
   }
   .app-sidebar {
     flex-direction: row;
+    flex-wrap: wrap; /* brand row first, then nav and auth on their own full-width rows (no horizontal overflow at 360px) */
     align-items: center;
     gap: 1rem;
+    max-width: 100vw;
     border-right: none;
     border-bottom: 1px solid var(--sidebar-border);
     position: sticky;
@@ -1454,14 +1459,18 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   .app-sidebar__auth {
     flex-direction: row;
     flex-wrap: wrap;
+    flex: 1 1 100%;
+    min-width: 0;
   }
   .app-sidebar__auth-provider-slot {
-    min-width: 11.5rem;
+    min-width: min(11.5rem, 100%);
     flex: 1 1 11.5rem;
   }
   .app-nav {
     flex-direction: row;
     flex-wrap: wrap;
+    flex: 1 1 100%;
+    min-width: 0;
   }
   .app-nav__link span {
     display: inline;

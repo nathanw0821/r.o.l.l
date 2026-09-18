@@ -732,7 +732,7 @@ export default function BuilderExperimentClient({
 
 
       {/* VIEWPORT: COMBAT DPS & VATS (TAB 4) */}
-      <CombatDpsTab active={masterTab === "combat"} weaponFirepowerResult={weaponFirepowerResult} />
+      <CombatDpsTab active={masterTab === "combat"} weaponFirepowerResult={weaponFirepowerResult} weaponLabel={activeWeaponPiece?.label} />
 
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}
       <div className={cn("space-y-6 animate-in fade-in duration-200", masterTab === "gear" ? "block" : "hidden")}>
