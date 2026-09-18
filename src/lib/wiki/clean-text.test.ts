@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { cleanBody, cleanSnippet, cleanTitle } from "@/lib/wiki/clean-text";
+import { bodyHasImages, cleanBody, cleanSnippet, cleanTitle } from "@/lib/wiki/clean-text";
 import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
 
 /**
@@ -173,12 +173,15 @@ describe("cleanBody", () => {
     expect(out).not.toMatch(/\n{3,}/);
   });
 
-  it("keeps an image that stands on its own line, verbatim (the reader renders it)", () => {
+  it("removes every image, even a standalone one, so nothing is hotlinked from another site", () => {
     const out = cleanBody(RAW_BODY);
-    expect(out.split("\n")).toContain(HERO_IMAGE);
+    expect(out).not.toContain("![");
+    expect(out).not.toContain("wixstatic");
+    // Removing the image leaves the prose around it readable.
+    expect(out).toContain("Mac is on the ground floor");
   });
 
-  it("keeps the image after a Player Title block, so the badge still renders", () => {
+  it("keeps the Player Title text when its badge image is removed", () => {
     const raw = [
       '"Psycho" Player Title Prefix: Psycho',
       "",
@@ -186,7 +189,13 @@ describe("cleanBody", () => {
       "",
       "Earned at rank 40.",
     ].join("\n");
-    expect(cleanBody(raw)).toBe(raw);
+    expect(cleanBody(raw)).toBe('"Psycho" Player Title Prefix: Psycho\n\nEarned at rank 40.');
+  });
+
+  it("bodyHasImages reports whether the source page had pictures", () => {
+    expect(bodyHasImages(RAW_BODY)).toBe(true);
+    expect(bodyHasImages(cleanBody(RAW_BODY))).toBe(false);
+    expect(bodyHasImages("Plain prose, no pictures.")).toBe(false);
   });
 
   it("drops images the reader cannot render and bare fragments", () => {
@@ -209,13 +218,12 @@ describe("cleanBody", () => {
     expect(out).toContain("The loop can be escaped.");
   });
 
-  it("is idempotent, images included", () => {
+  it("is idempotent", () => {
     const once = cleanBody(RAW_BODY);
-    expect(once).toContain(HERO_IMAGE);
     expect(cleanBody(once)).toBe(once);
     const withImages = `Intro text here.\n\n${HERO_IMAGE}\n\n![Alt [with] brackets](/uploads//tn_teaser_1.jpg)\n\nOutro.`;
     const first = cleanBody(withImages);
-    expect(first).toBe(withImages);
+    expect(first).toBe("Intro text here.\n\nOutro.");
     expect(cleanBody(first)).toBe(first);
   });
 });
@@ -321,10 +329,10 @@ describe("the committed corpus is clean", () => {
     expect(tooLong).toEqual([]);
   });
 
-  it("has no broken image fragments, boilerplate or read times in any body (images themselves are kept)", () => {
+  it("has no images (no hotlinking), boilerplate or read times in any body", () => {
     const dir = path.join(process.cwd(), "public/data/wiki");
-    // A `![` that does not open a complete `![alt](url)`.
-    const brokenImage = /!\[(?![^\n]*?\]\([^)\s]+\))/;
+    // Any image or image fragment. Third-party images are linked from the reader instead.
+    const brokenImage = /!\[/;
     const dirty: string[] = [];
     let bodies = 0;
     for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".json"))) {
@@ -347,5 +355,13 @@ describe("the committed corpus is clean", () => {
         cleanTitle(a.title, a.source, a.snippet) !== a.title,
     ).map((a) => a.id);
     expect(changed).toEqual([]);
+  });
+});
+
+describe("sourceImages flag", () => {
+  it("marks the guides whose original page has pictures, so the reader can link out", () => {
+    const flagged = FALLBACK_WIKI_ARTICLES.filter((a) => a.sourceImages === true);
+    expect(flagged.length).toBeGreaterThan(1000);
+    for (const a of flagged) expect(a.url).toMatch(/^https?:\/\//);
   });
 });

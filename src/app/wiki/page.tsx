@@ -3,9 +3,11 @@
 import * as React from "react";
 import { Search, BookOpen, ExternalLink, Shield, ChevronRight, ArrowUpDown, Filter, Terminal, FileText, ArrowLeft, Layers, Compass, Crosshair, Coins, Activity, Wrench, AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { createLinkPlanState, linkifyToNodes } from "@/components/linkified-text";
 
 import wikiCategoryCounts from "@/lib/wiki/wiki-category-counts.json";
+import { UPDATE_PATCHES, UPDATE_PATCH_IDS } from "@/lib/wiki/update-patches";
 
 const TOTAL_ARTICLES = (wikiCategoryCounts as Record<string, number>).all ?? 0;
 const ARCHIVED_ARTICLES = (wikiCategoryCounts as Record<string, number>).archived ?? 0;
@@ -26,6 +28,8 @@ interface ArticleItem {
   updatedAt?: string;
   archived?: boolean;
   stub?: boolean;
+  /** The original article has pictures; they are linked, not embedded. */
+  sourceImages?: boolean;
 }
 
 const CATEGORY_CARDS = [
@@ -41,18 +45,19 @@ const CATEGORY_CARDS = [
   { id: "Atomic Shop archive", label: "Atomic Shop archive", count: countFor("Atomic Shop archive"), iconName: "coins", desc: "Weekly Atomic Shop offers and bundle rundowns.", color: "from-fuchsia-500/20 to-fuchsia-600/5 border-fuchsia-500/40" },
 ];
 
-const UPDATE_PATCHES = [
-  { id: "all", label: "All Major Updates" },
-  { id: "the-pitt", label: "The Pitt (Expedition 1)" },
-  { id: "atlantic-city", label: "Atlantic City (Expedition 2)" },
-  { id: "skyline-valley", label: "Skyline Valley" },
-  { id: "milepost-zero", label: "Milepost Zero" },
-  { id: "backwoods", label: "Backwoods 2026" },
-  { id: "burning-springs", label: "Burning Springs" },
-  { id: "the-slasher", label: "The Slasher (Patch 70, Sep 2026)" },
-  { id: "nuka-world", label: "Nuka-World on Tour" },
-  { id: "invaders", label: "Invaders from Beyond" },
-];
+const CATEGORY_IDS: ReadonlySet<string> = new Set(CATEGORY_CARDS.map((card) => card.id));
+
+/** `?category=` value if it names a category card, else null (unknown values are ignored). */
+function readCategoryParam(raw: string | null | undefined): string | null {
+  const value = raw?.trim();
+  return value && CATEGORY_IDS.has(value) ? value : null;
+}
+
+/** `?update=` value if it names an update chip, else null (unknown values are ignored). */
+function readUpdateParam(raw: string | null | undefined): string | null {
+  const value = raw?.trim().toLowerCase();
+  return value && UPDATE_PATCH_IDS.has(value) ? value : null;
+}
 
 function toHighResImageUrl(url: string | null): string {
   if (!url) return "";
@@ -83,9 +88,21 @@ function cleanTitle(title: string): string {
   return cleanArticleTitle(title);
 }
 
-function renderFormattedInlineText(text: string): React.ReactNode[] {
+/**
+ * `linkify` (plain paragraphs of the reader only) links game terms in the text between the
+ * bold/italic runs: first occurrence per paragraph, never to `currentPath`.
+ */
+function renderFormattedInlineText(text: string, linkify?: { currentPath: string | null }): React.ReactNode[] {
   const parts: React.ReactNode[] = [];
   let keyIdx = 0;
+  const linkState = linkify ? createLinkPlanState() : null;
+  const pushPlain = (plain: string) => {
+    if (!linkify || !linkState) {
+      parts.push(plain);
+      return;
+    }
+    parts.push(...linkifyToNodes(plain, { currentPath: linkify.currentPath, state: linkState, keyPrefix: `lk${keyIdx++}` }));
+  };
 
   const mdPattern = /(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/g;
   let match;
@@ -93,7 +110,7 @@ function renderFormattedInlineText(text: string): React.ReactNode[] {
 
   while ((match = mdPattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(text.substring(lastIndex, match.index));
+      pushPlain(text.substring(lastIndex, match.index));
     }
     const matchedStr = match[0];
     if (matchedStr.startsWith("***") && matchedStr.endsWith("***")) {
@@ -118,13 +135,19 @@ function renderFormattedInlineText(text: string): React.ReactNode[] {
     lastIndex = mdPattern.lastIndex;
   }
   if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex));
+    pushPlain(text.substring(lastIndex));
   }
 
   return parts.length > 0 ? parts : [text];
 }
 
-function parseCleanArticleContent(content: string) {
+/** Images we may embed: served from this site only. Third-party images are linked, never hotlinked. */
+function isSameSiteImage(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return url.startsWith("/") && !url.startsWith("//");
+}
+
+function parseCleanArticleContent(content: string, currentPath: string | null = null) {
   if (!content) return null;
 
   const blocks = content.split(/\n\s*\n/);
@@ -195,6 +218,11 @@ function parseCleanArticleContent(content: string) {
     if (imgMatch) {
       const altText = imgMatch[1] || "";
       const rawImgUrl = imgMatch[2];
+      // Never embed an image served by another site (no hotlinking). Bodies are cleaned
+      // image-free; this guards against a future dirty import.
+      if (!isSameSiteImage(rawImgUrl)) {
+        return null;
+      }
       const hdUrl = toHighResImageUrl(rawImgUrl);
 
       const imgKey = hdUrl.toLowerCase();
@@ -335,7 +363,7 @@ function parseCleanArticleContent(content: string) {
     // 7. Standard Paragraph
     return (
       <p key={idx} className="text-slate-200 whitespace-pre-line leading-relaxed font-sans text-sm md:text-base tracking-normal">
-        {renderFormattedInlineText(trimmed)}
+        {renderFormattedInlineText(trimmed, { currentPath })}
       </p>
     );
   });
@@ -399,14 +427,15 @@ function getEquipmentKeyFromTitle(title: string, content: string): string {
 
 function TruthWikiContent() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const initialQ = searchParams?.get("q") || searchParams?.get("query") || "";
   const initialArticleId = searchParams?.get("id") || searchParams?.get("article") || "";
 
   const [query, setQuery] = React.useState(initialQ);
-  const [category, setCategory] = React.useState("all");
+  const [category, setCategory] = React.useState(() => readCategoryParam(searchParams?.get("category")) ?? "all");
   const [sortBy, setSortBy] = React.useState<"newest" | "oldest" | "title-asc" | "title-desc">("newest");
-  const [updateFilter, setUpdateFilter] = React.useState("all");
-  const [includeArchive, setIncludeArchive] = React.useState(false);
+  const [updateFilter, setUpdateFilter] = React.useState(() => readUpdateParam(searchParams?.get("update")) ?? "all");
+  const [includeArchive, setIncludeArchive] = React.useState(() => searchParams?.get("archive") === "1");
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -449,6 +478,16 @@ function TruthWikiContent() {
         return prev;
       });
     }
+  }, [searchParams]);
+
+  // Deep links: ?category=, ?update= and ?archive=1 (read on load and on client navigation).
+  // Only params that are present and valid are applied, so chips the user clicked stay put.
+  React.useEffect(() => {
+    const cat = readCategoryParam(searchParams?.get("category"));
+    if (cat) setCategory(cat);
+    const upd = readUpdateParam(searchParams?.get("update"));
+    if (upd) setUpdateFilter(upd);
+    if (searchParams?.get("archive") === "1") setIncludeArchive(true);
   }, [searchParams]);
 
   const searchArticles = React.useCallback(async (q: string, cat: string, sort: string, upd: string, archive: boolean) => {
@@ -564,6 +603,11 @@ function TruthWikiContent() {
                 <ExternalLink className="h-3.5 w-3.5" />
                 View Original Guide Source on {selectedArticle.source} ↗
               </a>
+              {selectedArticle.sourceImages ? (
+                <p className="mt-1 text-xs text-slate-400 font-mono">
+                  This guide has pictures on the original page. We link to them rather than copy them.
+                </p>
+              ) : null}
             </div>
 
             {/* Outdated Archival Advisory Banner */}
@@ -605,7 +649,7 @@ function TruthWikiContent() {
                     <span className="text-sm font-bold tracking-wider">RETRIEVING VAULT-TEC TERMINAL ARCHIVE...</span>
                   </div>
                 ) : (
-                  parseCleanArticleContent(selectedArticle.content || selectedArticle.snippet)
+                  parseCleanArticleContent(selectedArticle.content || selectedArticle.snippet, pathname)
                 )}
               </div>
 
@@ -616,7 +660,7 @@ function TruthWikiContent() {
                   <Shield className="h-4 w-4 text-amber-400/70" />
                 </div>
 
-                {selectedArticle.main_image && (
+                {selectedArticle.main_image && !/^(?:https?:)?\/\//i.test(selectedArticle.main_image) && (
                   <a
                     href={selectedArticle.url}
                     target="_blank"
