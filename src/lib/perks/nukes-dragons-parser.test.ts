@@ -75,6 +75,16 @@ describe("nukes-dragons-parser", () => {
     expect(result.mutations).toContain("eagle-eyes");
   });
 
+  it("clamps pre-Patch 70 Night Person / Solar Powered ranks to the new single rank", () => {
+    // N&D still encodes the legacy 3-rank versions (p2 = night-person, er = solar-powered).
+    const result = parseNukesDragonsBuild("https://nukesdragons.com/fallout-76/character?s=aa547aa&p=p23er3");
+    expect(result.unknownTokens).toEqual([]);
+    expect(result.equippedCards).toEqual([
+      { cardId: "night-person", rank: 1 },
+      { cardId: "solar-powered", rank: 1 },
+    ]);
+  });
+
   it("handles empty or malformed strings gracefully", () => {
     const emptyResult = parseNukesDragonsBuild("");
     expect(emptyResult.equippedCards).toEqual([]);
