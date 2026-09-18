@@ -44,6 +44,13 @@ export type BiometricsCharacterState = {
   adrenalineStacks: number; // 0 to 6
   furiousStacks: number; // 0 to 9
   bulletStormStacks: number; // 0 to 50
+  onslaughtStacks?: number; // 0 to 30
+  killStreak?: number; // 0 to 10
+  tenderizerStacks?: number; // 0 to 100 hits
+  targetBleeding?: boolean;
+  targetBurning?: boolean;
+  targetPoisoned?: boolean;
+  targetCrippledLimbs?: number; // 0 to 4 limbs
   combatStance: {
     isSneaking: boolean;
     isSprinting: boolean;
@@ -113,6 +120,13 @@ export const DEFAULT_BIOMETRICS_CHARACTER_STATE: BiometricsCharacterState = {
   adrenalineStacks: 0,
   furiousStacks: 0,
   bulletStormStacks: 0,
+  onslaughtStacks: 0,
+  killStreak: 0,
+  tenderizerStacks: 0,
+  targetBleeding: false,
+  targetBurning: false,
+  targetPoisoned: false,
+  targetCrippledLimbs: 0,
   combatStance: {
     isSneaking: false,
     isSprinting: false,

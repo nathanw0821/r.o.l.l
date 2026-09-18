@@ -270,6 +270,7 @@ export function useBuilderTotals({
       equippedModSlugs: armorModSlugs,
       mutationCount: payload.mutationIds.length,
       bulletStormStacks: switchboardState?.bulletStormStacks ?? 0,
+      killStreak: switchboardState?.killStreak ?? switchboardState?.adrenalineStacks ?? 0,
       // Unverified innate PA reduction: 0 unless the switchboard toggle sets it.
       powerArmorInnatePct: switchboardState?.powerArmorInnatePct ?? 0,
     });

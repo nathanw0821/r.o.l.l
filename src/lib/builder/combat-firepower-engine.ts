@@ -250,6 +250,14 @@ export type CombatFirepowerCalculationInput = {
     timeOfDay?: "day" | "night";
     addictionsCount?: number;
     adrenalineStacks?: number;
+    bulletStormStacks?: number;
+    onslaughtStacks?: number;
+    killStreak?: number;
+    tenderizerStacks?: number;
+    targetBleeding?: boolean;
+    targetBurning?: boolean;
+    targetPoisoned?: boolean;
+    targetCrippledLimbs?: number;
     feralPct?: number;
     foodState?: string;
     thirstState?: string;
@@ -465,15 +473,23 @@ export function calculateCombatFirepower(
     const legacyTotal = (h1 > 0 ? 0.1 + (h1 - 1) * 0.05 : 0) + (h2 > 0 ? 0.1 + (h2 - 1) * 0.05 : 0) + (h3 > 0 ? 0.1 + (h3 - 1) * 0.05 : 0);
 
     // Bullet Storm: 3%/6%/9% per 30 rounds fired, 10 max stacks (doubled to 20 with Bringing the Big Guns)
-    // Modeled as mid-combat sustained bonus (60% of max stacks)
+    // Modeled as mid-combat sustained bonus (60% of max stacks) when not explicitly provided
     const maxStacks = hasBigGuns ? 20 : 10;
-    const bulletStormBonus = bulletStormRank > 0 ? (bulletStormRank * 0.03) * (maxStacks * 0.6) : 0;
+    const isResoluteVeteran = input.weaponId === "resolute-veteran";
+    const minStacks = isResoluteVeteran ? 5 : 0;
+    const rawStacks = input.playerStats.bulletStormStacks !== undefined
+      ? input.playerStats.bulletStormStacks
+      : (maxStacks * 0.6);
+    const activeStacks = Math.max(minStacks, Math.min(maxStacks, rawStacks));
+    const bulletStormBonus = bulletStormRank > 0 ? (bulletStormRank * 0.03) * activeStacks : 0;
 
     const total = bulletStormBonus > 0 ? bulletStormBonus : legacyTotal;
     if (total > 0) {
       additiveDamagePct += total;
       breakdown.push({
-        source: bulletStormBonus > 0 ? "Bullet Storm (Heavy Sustained)" : "Heavy Gunner Perks (Legacy)",
+        source: bulletStormBonus > 0
+          ? (input.playerStats.bulletStormStacks !== undefined ? `Bullet Storm (${activeStacks} Stacks)` : "Bullet Storm (Heavy Sustained)")
+          : "Heavy Gunner Perks (Legacy)",
         value: `+${Math.round(total * 100)}%`,
       });
     }
@@ -495,7 +511,10 @@ export function calculateCombatFirepower(
 
     // 2-Handed Slugger (Patch 62+ Rework: bonus damage against crippled targets: +10%/+20%/+30%)
     const sluggerRank = perkRanks.get("slugger") || 0;
-    const sluggerBonus = sluggerRank > 0 ? sluggerRank * 0.10 : 0;
+    const sluggerActive = input.playerStats.targetCrippledLimbs !== undefined
+      ? input.playerStats.targetCrippledLimbs > 0
+      : true;
+    const sluggerBonus = (sluggerRank > 0 && sluggerActive) ? sluggerRank * 0.10 : 0;
 
     // Legacy Slugger support (Expert & Master Slugger if equipped in legacy loadouts)
     const legS2 = perkRanks.get("expert-slugger") || 0;
@@ -581,11 +600,23 @@ export function calculateCombatFirepower(
     breakdown.push({ source: `Nerd Rage (<20% HP)`, value: `+${Math.round(nr * 100)}%` });
   }
 
+  const rawAdrenalineKills = input.playerStats.killStreak ?? input.playerStats.adrenalineStacks;
   const adrenalineRank = perkRanks.get("adrenaline") || 0;
   if (adrenalineRank > 0) {
-    const adr = adrenalineRank === 1 ? 0.36 : adrenalineRank === 2 ? 0.42 : adrenalineRank === 3 ? 0.48 : adrenalineRank === 4 ? 0.54 : 0.6;
-    additiveDamagePct += adr;
-    breakdown.push({ source: `Adrenaline (Max Stacks)`, value: `+${Math.round(adr * 100)}%` });
+    const perKill = 0.05 + adrenalineRank * 0.01;
+    const kills = rawAdrenalineKills !== undefined ? Math.min(6, Math.max(0, rawAdrenalineKills)) : 6;
+    const adrBonus = kills * perKill;
+    if (adrBonus > 0) {
+      additiveDamagePct += adrBonus;
+      breakdown.push({
+        source: rawAdrenalineKills !== undefined ? `Adrenaline (${kills} Kills)` : "Adrenaline (Max Stacks)",
+        value: `+${Math.round(adrBonus * 100)}%`,
+      });
+    }
+  } else if (rawAdrenalineKills !== undefined && rawAdrenalineKills > 0) {
+    const adrKillsBonus = Math.min(6, rawAdrenalineKills) * 0.10;
+    additiveDamagePct += adrKillsBonus;
+    breakdown.push({ source: `Kill Streak (${rawAdrenalineKills} Kills)`, value: `+${Math.round(adrKillsBonus * 100)}%` });
   }
 
   // 2. Legendary Stars Analysis
@@ -733,11 +764,102 @@ export function calculateCombatFirepower(
     }
   }
 
-  // Dynamic Adrenaline Kill Streak scaling (if provided directly via switchboard)
-  if (input.playerStats.adrenalineStacks !== undefined && input.playerStats.adrenalineStacks > 0 && adrenalineRank === 0) {
-    const adrKillsBonus = input.playerStats.adrenalineStacks * 0.10;
-    additiveDamagePct += adrKillsBonus;
-    breakdown.push({ source: `Adrenaline (${input.playerStats.adrenalineStacks} Kills)`, value: `+${Math.round(adrKillsBonus * 100)}%` });
+  // Onslaught Stacks (+5% additive damage per stack)
+  const onslaughtStacks = input.playerStats.onslaughtStacks || 0;
+  if (onslaughtStacks > 0) {
+    const onslaughtBonus = onslaughtStacks * 0.05;
+    additiveDamagePct += onslaughtBonus;
+    breakdown.push({
+      source: `Onslaught (${onslaughtStacks} Stacks)`,
+      value: `+${Math.round(onslaughtBonus * 100)}%`,
+    });
+  }
+
+  // Tenderizer Stacks (+0.1% damage taken per hit, stacks to +100%)
+  const tenderizerHits = input.playerStats.tenderizerStacks || 0;
+  if (tenderizerHits > 0) {
+    const tendBonus = Math.min(1.0, tenderizerHits * 0.001);
+    if (tendBonus > 0) {
+      additiveDamagePct += tendBonus;
+      breakdown.push({
+        source: `Tenderizer (${tenderizerHits} Hits)`,
+        value: `+${(tendBonus * 100).toFixed(1)}% Target Debuff`,
+      });
+    }
+  }
+
+  // Target Impairments (Enemy Conditions) & Dependent Perks/Mods
+  const targetBleeding = Boolean(input.playerStats.targetBleeding);
+  const targetBurning = Boolean(input.playerStats.targetBurning);
+  const targetPoisoned = Boolean(input.playerStats.targetPoisoned);
+  const targetCrippledLimbs = input.playerStats.targetCrippledLimbs ?? 0;
+
+  // Severing 4★: +50% damage against bleeding targets
+  if (targetBleeding && modSlugs.includes("severing")) {
+    additiveDamagePct += 0.50;
+    breakdown.push({ source: "Severing 4★ (vs Bleeding)", value: "+50%" });
+  }
+
+  // Wound Salter Perk: +10%/+20%/+30% damage against bleeding targets
+  const woundSalterRank = perkRanks.get("wound-salter") || 0;
+  if (targetBleeding && woundSalterRank > 0) {
+    const wsBonus = woundSalterRank * 0.10;
+    additiveDamagePct += wsBonus;
+    breakdown.push({
+      source: `Wound Salter (Rank ${woundSalterRank} vs Bleeding)`,
+      value: `+${Math.round(wsBonus * 100)}%`,
+    });
+  }
+
+  // Pyromaniac's 4★: +50% damage against burning targets
+  if (targetBurning && (modSlugs.includes("pyromaniacs") || modSlugs.includes("pyromaniac-s"))) {
+    additiveDamagePct += 0.50;
+    breakdown.push({ source: "Pyromaniac's 4★ (vs Burning)", value: "+50%" });
+  }
+
+  // Viper's 4★: +50% damage against poisoned targets
+  if (targetPoisoned && (modSlugs.includes("vipers") || modSlugs.includes("viper-s"))) {
+    additiveDamagePct += 0.50;
+    breakdown.push({ source: "Viper's 4★ (vs Poisoned)", value: "+50%" });
+  }
+
+  // Bully's 4★: +25% damage per crippled limb the target has (max 4 limbs = +100%)
+  if (targetCrippledLimbs > 0 && (modSlugs.includes("bullys") || modSlugs.includes("bully-s"))) {
+    const bullyBonus = Math.min(1.0, targetCrippledLimbs * 0.25);
+    additiveDamagePct += bullyBonus;
+    breakdown.push({
+      source: `Bully's 4★ (${targetCrippledLimbs} Crippled Limbs)`,
+      value: `+${Math.round(bullyBonus * 100)}%`,
+    });
+  }
+
+  // Crushing Blow Innate: +10% damage per crippled limb (max 40%)
+  if (targetCrippledLimbs > 0 && (input.weaponId === "crushing-blow" || input.weaponId === "crushing_blow")) {
+    const cbBonus = Math.min(0.40, targetCrippledLimbs * 0.10);
+    additiveDamagePct += cbBonus;
+    breakdown.push({
+      source: `Crushing Blow Innate (${targetCrippledLimbs} Crippled Limbs)`,
+      value: `+${Math.round(cbBonus * 100)}%`,
+    });
+  }
+
+  // Deal Sealer Perk: +10% damage for each impairment your target has (bleeding, burning, poisoned, crippled)
+  const dealSealerRank = perkRanks.get("deal-sealer") || 0;
+  if (dealSealerRank > 0) {
+    const impairmentsCount = [
+      targetBleeding,
+      targetBurning,
+      targetPoisoned,
+      targetCrippledLimbs > 0,
+    ].filter(Boolean).length;
+    if (impairmentsCount > 0) {
+      const dsBonus = impairmentsCount * 0.10;
+      additiveDamagePct += dsBonus;
+      breakdown.push({
+        source: `Deal Sealer (${impairmentsCount} Impairments)`,
+        value: `+${Math.round(dsBonus * 100)}%`,
+      });
+    }
   }
 
   // 3. Consumable Buffs
@@ -814,10 +936,16 @@ export function calculateCombatFirepower(
   // Explosive Area Damage
   let explosiveDamage = 0;
   if (hasExplosive || base.isExplosiveInherent) {
-    const demoRank = perkRanks.get("demolition-expert") || 0;
+    const isTheGuarantee = input.weaponId === "the-guarantee";
+    const demoRank = Math.max(perkRanks.get("demolition-expert") || 0, isTheGuarantee ? 3 : 0);
     const demoScale = 1 + (demoRank > 0 ? 0.2 + (demoRank - 1) * 0.1 : 0);
     explosiveDamage = Math.round(base.baseDamage * 0.2 * demoScale);
-    breakdown.push({ source: `Explosive Impact (Demo Exp Rank ${demoRank})`, value: `+${explosiveDamage}` });
+    breakdown.push({
+      source: isTheGuarantee && (perkRanks.get("demolition-expert") || 0) < 3
+        ? "Explosive Impact (The Guarantee: Demo Exp Rank 3)"
+        : `Explosive Impact (Demo Exp Rank ${demoRank})`,
+      value: `+${explosiveDamage}`,
+    });
   }
 
   // 4. Critical Damage Multiplier Pool
@@ -885,7 +1013,21 @@ export function calculateCombatFirepower(
 
   // 5. Fire Rate & DPS
   const innateFireRateFactor = 1.0 + innateMods.fireRatePct;
-  const fireRateMultiplier = (hasRapid ? 1.25 : 1.0) * Math.max(0.2, innateFireRateFactor);
+  let fireRateMultiplier = (hasRapid ? 1.25 : 1.0) * Math.max(0.2, innateFireRateFactor);
+
+  if (input.weaponId === "disorderly-conduct") {
+    fireRateMultiplier *= 1.20;
+    dpsBreakdown.push({ source: "Disorderly Conduct (+20% Attack Speed)", value: "+20% Fire Rate" });
+  }
+
+  // Melee & Unarmed swing speed cap: +100% max (multiplier capped at 2.0x) since Patch 70
+  if (base.weaponClass === "melee" || base.weaponClass === "unarmed") {
+    if (fireRateMultiplier > 2.0) {
+      fireRateMultiplier = 2.0;
+      dpsBreakdown.push({ source: "Melee Swing Speed Cap (Patch 70)", value: "Capped at +100% (2.0× max)" });
+    }
+  }
+
   const effectiveRPS = base.fireRate * fireRateMultiplier;
   const effectiveRPM = Math.round(effectiveRPS * 60);
 
