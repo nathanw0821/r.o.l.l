@@ -67,9 +67,10 @@ async function HomeSummaryOverview() {
           {!user?.username && sampleBuild && (
             <Link
               href={`/l/${sampleBuild.slug}`}
-              className="flex items-center gap-2 px-4 py-2 border border-accent/60 text-accent rounded-lg text-xs font-mono font-bold hover:bg-accent/10 transition shrink-0"
+              title={sampleBuild.title}
+              className="inline-flex max-w-full items-center gap-2 px-4 py-2 border border-accent/60 text-accent rounded-lg text-xs font-mono font-bold hover:bg-accent/10 transition"
             >
-              Open a sample build: {sampleBuild.title}
+              Open a sample build
             </Link>
           )}
           {user?.username && (
@@ -121,7 +122,7 @@ function HomeSummaryOverviewFallback() {
       <CardHeader>
         <CardTitle>Summary</CardTitle>
         <CardDescription>
-          Track legendary crafting unlocks across tiers with a compact, high-signal view.
+          Track which legendary mods you have learned, build loadouts, and check damage against the current patch.
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -575,7 +575,7 @@ interface AccountLinksResponse {
             {/* Global Active Build Bar (Persistent Navigation Pill) */}
             <div className="my-4 pip-terminal-panel p-3 rounded-xl border border-amber-500/30 bg-slate-950/90 flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-xs shadow-xl">
               <div className="flex items-center gap-2.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 <div>
                   <span className="font-bold text-amber-400">Active loadout: </span>
                   <span className="text-slate-200">Civil Engineer / Fixer Build Stack</span>
