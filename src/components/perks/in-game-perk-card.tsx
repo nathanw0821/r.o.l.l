@@ -16,6 +16,7 @@ import {
   getInGamePerkCardImage,
 } from "@/lib/perks/clean-perk-assets";
 import { Sparkles, Star, Info, X, ExternalLink, AlertTriangle } from "lucide-react";
+import gameVersion from "@/data/truth/game-version.json";
 
 export interface InGamePerkCardProps {
   cardId?: string;
@@ -803,7 +804,7 @@ function InGamePerkCardComponent({
               <div className="rounded-xl border border-sky-500/40 bg-sky-950/40 p-3 space-y-1 text-slate-200">
                 <div className="text-[0.72rem] font-bold uppercase text-sky-400 flex items-center gap-1.5">
                   <Info className="h-3.5 w-3.5 text-sky-400 shrink-0" />
-                  PATCH 69 LIVE GROUND TRUTH: Formerly &quot;{effectiveReworkedFrom.formerName}&quot;
+                  {`PATCH ${gameVersion.patch} LIVE GROUND TRUTH`}: Formerly &quot;{effectiveReworkedFrom.formerName}&quot;
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed font-mono">
                   {effectiveReworkedFrom.summary} <span className="text-sky-300">({effectiveReworkedFrom.patchVersion})</span>

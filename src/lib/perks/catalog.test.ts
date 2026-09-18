@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
-import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getGenderedPerkName, areEquippedCardsEqual } from "./catalog";
+import { getPerkCardById, searchPerkCards, filterPerksBySpecial, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getGenderedPerkName, areEquippedCardsEqual, REWORKED_MODERN_MAP } from "./catalog";
 import { getInGamePerkCardImage } from "./clean-perk-assets";
 
 describe("Perk Catalog Utilities", () => {
@@ -208,6 +208,87 @@ describe("1:1 In-Game Perk Card Asset Resolution Engine", () => {
 
       const kneeCapper = getPerkCardById("knee-capper");
       expect(kneeCapper?.reworkedFrom?.formerName).toBe("Expert Slugger");
+    });
+
+    describe("Patch 70 (The Slasher) day/night and Lone Wanderer reworks", () => {
+      const PATCH_70_IDS = ["night-person", "solar-powered", "nocturnal-fortitude", "photosynthetic", "lone-wanderer"] as const;
+
+      it("should compress Night Person and Solar Powered into single Rank (Cost 2) cards", () => {
+        const nightPerson = getPerkCardById("night-person");
+        expect(nightPerson?.special).toBe("P");
+        expect(nightPerson?.maxRank).toBe(1);
+        expect(nightPerson?.ranks).toHaveLength(1);
+        expect(nightPerson?.ranks[0]).toMatchObject({
+          rank: 1,
+          cost: 2,
+          description: "Gain +5 INT and PER between the hours of 6:00 p.m. and 6:00 a.m.",
+          imageUrl: "/images/in_game_cards/night_person_r1.png",
+        });
+
+        const solarPowered = getPerkCardById("solar-powered");
+        expect(solarPowered?.special).toBe("E");
+        expect(solarPowered?.maxRank).toBe(1);
+        expect(solarPowered?.ranks).toHaveLength(1);
+        expect(solarPowered?.ranks[0]).toMatchObject({
+          rank: 1,
+          cost: 2,
+          description: "Gain +5 STR and END between the hours of 6:00 a.m. and 6:00 p.m.",
+          imageUrl: "/images/in_game_cards/solar_powered_r1.png",
+        });
+
+        // Capacity must use the rank's real cost (2), not the rank number (1)
+        expect(calculateSpecialCapacity([{ cardId: "night-person", rank: 1 }]).P).toBe(2);
+        expect(calculateSpecialCapacity([{ cardId: "solar-powered", rank: 1 }]).E).toBe(2);
+      });
+
+      it("should carry the new Nocturnal Fortitude and Photosynthetic values with unchanged 1/2 costs", () => {
+        const nocturnal = getPerkCardById("nocturnal-fortitude");
+        expect(nocturnal?.maxRank).toBe(2);
+        expect(nocturnal?.ranks.map((r) => [r.rank, r.cost, r.description])).toEqual([
+          [1, 1, "Gain +50 to Max Health between the hours of 6:00 p.m. and 6:00 a.m."],
+          [2, 2, "Gain +100 to Max Health between the hours of 6:00 p.m. and 6:00 a.m."],
+        ]);
+
+        const photo = getPerkCardById("photosynthetic");
+        expect(photo?.maxRank).toBe(2);
+        expect(photo?.ranks.map((r) => [r.rank, r.cost, r.description])).toEqual([
+          [1, 1, "Gain 3 HP/s regen between the hours of 6:00 a.m. and 6:00 p.m."],
+          [2, 2, "Gain 6 HP/s regen between the hours of 6:00 a.m. and 6:00 p.m."],
+        ]);
+      });
+
+      it("should keep Lone Wanderer on the in-game card text (mechanic changed in Patch 70, card text did not)", () => {
+        const lone = getPerkCardById("lone-wanderer");
+        expect(lone?.special).toBe("C");
+        expect(lone?.maxRank).toBe(1);
+        expect(lone?.ranks).toHaveLength(1);
+        expect(lone?.ranks[0].cost).toBe(2);
+        expect(lone?.ranks[0].description).toBe(
+          "Gain Resistances and AP Regen based on your CHA while not on a team."
+        );
+      });
+
+      it("should register all five Patch 70 cards in REWORKED_MODERN_MAP and attach reworkedFrom", () => {
+        for (const id of PATCH_70_IDS) {
+          expect(REWORKED_MODERN_MAP[id], `REWORKED_MODERN_MAP missing ${id}`).toBeDefined();
+          expect(REWORKED_MODERN_MAP[id].patchVersion).toBe("Patch 70 (The Slasher)");
+          expect(REWORKED_MODERN_MAP[id].formerId).toBe(id);
+          expect(REWORKED_MODERN_MAP[id].summary.length).toBeGreaterThan(0);
+          expect(getPerkCardById(id)?.reworkedFrom?.patchVersion).toBe("Patch 70 (The Slasher)");
+        }
+      });
+
+      it("should still resolve an on-disk bitmap for every remaining rank of the Patch 70 cards", () => {
+        for (const id of PATCH_70_IDS) {
+          const card = getPerkCardById(id)!;
+          for (const r of card.ranks) {
+            const url = r.imageUrl ?? getInGamePerkCardImage(id, r.rank);
+            expect(url, `${id} rank ${r.rank} has no image`).toBeTruthy();
+            const fullPath = path.join(publicDir, url!.replace(/^\//, ""));
+            expect(fs.existsSync(fullPath), `Expected asset to exist: ${fullPath}`).toBe(true);
+          }
+        }
+      });
     });
 
     it("should verify all legendary perks have 0 SPECIAL cost across all ranks", () => {

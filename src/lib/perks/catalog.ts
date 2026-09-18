@@ -85,7 +85,7 @@ export function isGhoulPerkCard(cardIdOrName?: string): boolean {
 }
 
 /**
- * Authoritative Patch 62–69 Rework Metadata for modern replacement perks.
+ * Authoritative Patch 62–70 Rework Metadata for modern replacement perks.
  */
 export const REWORKED_MODERN_MAP: Record<string, ReworkedPerkMeta> = {
   "bullet-storm": {
@@ -145,7 +145,7 @@ export const REWORKED_MODERN_MAP: Record<string, ReworkedPerkMeta> = {
   "portable-power": {
     formerName: "Portable Power (Legacy Weight)",
     formerId: "portable-power",
-    patchVersion: "Patch 68 (The Backwoods)",
+    patchVersion: "Patch 66 (The Backwoods)",
     summary: "Moved from Intelligence to Strength; reworked from PA chassis weight reduction into +10%/+20%/+30% Power Armor movement speed.",
   },
   "tormentor": {
@@ -159,6 +159,36 @@ export const REWORKED_MODERN_MAP: Record<string, ReworkedPerkMeta> = {
     formerId: "good-with-salt",
     patchVersion: "Patch 62 (CAMP Revamp)",
     summary: "Moved from Luck to Intelligence; compressed from 3 ranks to 2 ranks (-45% / -90% food spoil rate).",
+  },
+  "night-person": {
+    formerName: "Night Person (3-rank +1/+2/+3)",
+    formerId: "night-person",
+    patchVersion: "Patch 70 (The Slasher)",
+    summary: "Compressed from 3 ranks (+1/+2/+3 INT and PER) into a single Rank (Cost 2) granting +5 INT and +5 PER from 6:00 p.m. to 6:00 a.m.",
+  },
+  "solar-powered": {
+    formerName: "Solar Powered (3-rank +1/+2/+3)",
+    formerId: "solar-powered",
+    patchVersion: "Patch 70 (The Slasher)",
+    summary: "Compressed from 3 ranks (+1/+2/+3 STR and END) into a single Rank (Cost 2) granting +5 STR and +5 END from 6:00 a.m. to 6:00 p.m.",
+  },
+  "nocturnal-fortitude": {
+    formerName: "Nocturnal Fortitude (+20/+40 Max HP)",
+    formerId: "nocturnal-fortitude",
+    patchVersion: "Patch 70 (The Slasher)",
+    summary: "Night-time Max Health bonus raised from +20/+40 to +50/+100 (6:00 p.m. to 6:00 a.m.); costs unchanged.",
+  },
+  "photosynthetic": {
+    formerName: "Photosynthetic (unquantified Health regen)",
+    formerId: "photosynthetic",
+    patchVersion: "Patch 70 (The Slasher)",
+    summary: "Daytime Health regen is now a fixed 3 HP/s (Rank 1) or 6 HP/s (Rank 2) from 6:00 a.m. to 6:00 p.m.; costs unchanged.",
+  },
+  "lone-wanderer": {
+    formerName: "Lone Wanderer (Resistances)",
+    formerId: "lone-wanderer",
+    patchVersion: "Patch 70 (The Slasher)",
+    summary: "Solo bonus changed from CHA-scaled Resistances to CHA-scaled damage reduction against all damage types; AP Regen bonus unchanged.",
   },
 };
 

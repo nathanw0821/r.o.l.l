@@ -31,6 +31,12 @@ export function calculatePerkDeckDefensiveLayer(
 
     const { isPowerArmor, strVal = 1, agiVal = 1 } = options;
 
+    // Lone Wanderer (Patch 70 "The Slasher", 2026-09-15): the solo bonus is now
+    // CHA-scaled damage reduction against ALL damage types (plus AP Regen), not a
+    // flat Resistance value. Damage reduction is a post-mitigation multiplier and
+    // the per-CHA coefficient is not published, so it is intentionally NOT folded
+    // into the DR/ER/FR/PR/RR totals below.
+
     for (const card of equippedPerkCards) {
       const id = (card.cardId || "").toLowerCase();
       const rank = card.rank || 1;

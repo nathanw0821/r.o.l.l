@@ -148,25 +148,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Produce 50% more ammo when crafting.",
+        "description": "Produce 50% more rounds when crafting ammunition.",
         "imageUrl": "/images/in_game_cards/ammo_factory_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Produce 75% more ammo when crafting.",
+        "description": "Produce 75% more rounds when crafting ammunition.",
         "imageUrl": "/images/in_game_cards/ammo_factory_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Produce 100% more ammo when crafting.",
+        "description": "Produce 100% more rounds when crafting ammunition.",
         "imageUrl": "/images/in_game_cards/ammo_factory_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Produce 150% more ammo when crafting.",
+        "description": "Produce 150% more rounds when crafting ammunition.",
         "imageUrl": "/images/in_game_cards/ammo_factory_r4.png"
       }
     ]
@@ -538,25 +538,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "When you die, teammates gain +40 DR and heal 70 HP/sec for 10s.",
+        "description": "Using AP in VATS now consumes HP instead at 150% more cost.",
         "imageUrl": "/images/in_game_cards/blood_sacrifice_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Teammates gain +40 DR and heal 70 HP/sec for 20s.",
+        "description": "Using AP in VATS now consumes HP instead at 125% more cost.",
         "imageUrl": "/images/in_game_cards/blood_sacrifice_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Teammates gain +40 DR and heal 70 HP/sec for 30s.",
+        "description": "Using AP in VATS now consumes HP instead at 100% more cost.",
         "imageUrl": "/images/in_game_cards/blood_sacrifice_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Teammates gain +40 DR and heal 70 HP/sec for 40s.",
+        "description": "Using AP in VATS now consumes HP instead at 50% more cost.",
         "imageUrl": "/images/in_game_cards/blood_sacrifice_r4.png"
       }
     ]
@@ -582,7 +582,7 @@
     "name": "Bloody Mess",
     "special": "L",
     "minLevel": 42,
-    "maxRank": 3,
+    "maxRank": 1,
     "imageUrl": "/images/in_game_cards/bloody_mess_r1.png",
     "ranks": [
       {
@@ -590,18 +590,6 @@
         "cost": 1,
         "description": "Bleeding enemies you kill have a chance to explode based on your LCK.",
         "imageUrl": "/images/in_game_cards/bloody_mess_r1.png"
-      },
-      {
-        "rank": 2,
-        "cost": 2,
-        "description": "Bleeding enemies you kill have a chance to explode for more damage based on your LCK.",
-        "imageUrl": "/images/in_game_cards/bloody_mess_r2.png"
-      },
-      {
-        "rank": 3,
-        "cost": 3,
-        "description": "Bleeding enemies you kill have a chance to explode for even more damage based on your LCK.",
-        "imageUrl": "/images/in_game_cards/bloody_mess_r3.png"
       }
     ]
   },
@@ -738,25 +726,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Generates 1 combat-enhancing chemical every 60 minutes.",
+        "description": "Generate 1 combat enhancing chem every hour. Up to a max of 3.",
         "imageUrl": "/images/in_game_cards/brawling_chemist_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Generates 1 combat chemical every 50 minutes.",
+        "description": "Generate 1 combat enhancing chem every 50 minutes. Up to a max of 4.",
         "imageUrl": "/images/in_game_cards/brawling_chemist_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Generates 1 combat chemical every 40 minutes.",
+        "description": "Generate 1 combat enhancing chem every 40 minutes. Up to a max of 5.",
         "imageUrl": "/images/in_game_cards/brawling_chemist_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Generates 1 combat chemical every 30 minutes.",
+        "description": "Generate 2 combat enhancing chems every 40 minutes. Up to a max of 5.",
         "imageUrl": "/images/in_game_cards/brawling_chemist_r4.png"
       }
     ]
@@ -816,7 +804,7 @@
       {
         "rank": 1,
         "cost": 3,
-        "description": "Your Bullet Storm stack limit is doubled.",
+        "description": "Your Bullet Storm stack limit is increased by 10.",
         "imageUrl": "/images/in_game_cards/bringing_the_big_guns_r1.png"
       }
     ]
@@ -1124,25 +1112,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Enemies killed with melee weapon have a 10% chance to explode.",
+        "description": "Enemies killed with a melee weapon have a 10% chance to explode.",
         "imageUrl": "/images/in_game_cards/collateral_damage_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Enemies killed with melee weapon have a 13% chance to explode.",
+        "description": "Enemies killed with a melee weapon have a 13% chance to explode.",
         "imageUrl": "/images/in_game_cards/collateral_damage_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Enemies killed with melee weapon have a 16% chance to explode.",
+        "description": "Enemies killed with a melee weapon have a 16% chance to explode.",
         "imageUrl": "/images/in_game_cards/collateral_damage_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Enemies killed with melee weapon have a 20% chance to explode.",
+        "description": "Enemies killed with a melee weapon have a 20% chance to explode.",
         "imageUrl": "/images/in_game_cards/collateral_damage_r4.png"
       }
     ]
@@ -1390,25 +1378,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Thrown explosives deal +50% damage and have a 10% chance to detonate nearby enemies.",
+        "description": "Enemies killed with a thrown explosive have a 20% chance to explode.",
         "imageUrl": "/images/in_game_cards/detonation_contagion_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Thrown explosives deal +50% damage and have a 20% chance to detonate nearby enemies.",
+        "description": "Enemies killed with a thrown explosive have a 30% chance to explode.",
         "imageUrl": "/images/in_game_cards/detonation_contagion_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Thrown explosives deal +50% damage and have a 30% chance to detonate nearby enemies.",
+        "description": "Enemies killed with a thrown explosive have a 40% chance to explode.",
         "imageUrl": "/images/in_game_cards/detonation_contagion_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Thrown explosives deal +50% damage and have a 40% chance to detonate nearby enemies.",
+        "description": "Enemies killed with a thrown explosive have a 50% chance to explode.",
         "imageUrl": "/images/in_game_cards/detonation_contagion_r4.png"
       }
     ]
@@ -1550,25 +1538,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Enemy energy attacks have a 10% chance to recharge your Fusion Core and heal you.",
+        "description": "10% chance energy damage will recharge your power armor's fusion core and restore health.",
         "imageUrl": "/images/in_game_cards/electric_absorption_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "13% chance to recharge core & heal.",
+        "description": "13% chance energy damage will recharge your power armor's fusion core and restore health.",
         "imageUrl": "/images/in_game_cards/electric_absorption_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "16% chance to recharge core & heal.",
+        "description": "16% chance energy damage will recharge your power armor's fusion core and restore health.",
         "imageUrl": "/images/in_game_cards/electric_absorption_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "20% chance to recharge core & heal.",
+        "description": "20% chance energy damage will recharge your power armor's fusion core and restore health.",
         "imageUrl": "/images/in_game_cards/electric_absorption_r4.png"
       }
     ]
@@ -1644,25 +1632,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Unarmed attacks have a 5% chance to trigger an explosion.",
+        "description": "5% chance for Fists Weapons to trigger an explosion on attack hits.",
         "imageUrl": "/images/in_game_cards/exploding_palm_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Unarmed attacks have a 10% chance to trigger an explosion.",
+        "description": "10% chance for Fists Weapons to trigger an explosion on attack hits.",
         "imageUrl": "/images/in_game_cards/exploding_palm_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Unarmed attacks have a 15% chance to trigger an explosion.",
+        "description": "15% chance for Fists Weapons to trigger an explosion on attack hits.",
         "imageUrl": "/images/in_game_cards/exploding_palm_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Unarmed attacks have a 20% chance to trigger an explosion.",
+        "description": "20% chance for Fists Weapons to trigger an explosion on attack hits.",
         "imageUrl": "/images/in_game_cards/exploding_palm_r4.png"
       }
     ]
@@ -1916,25 +1904,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Ranged sneak attacks increase target's damage taken by 10% for 10s.",
+        "description": "Ranged sneak damage increases damage to target by 10% for 10 seconds.",
         "imageUrl": "/images/in_game_cards/follow_through_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Ranged sneak attacks increase target's damage taken by 20% for 10s.",
+        "description": "Ranged sneak damage increases damage to target by 20% for 10 seconds.",
         "imageUrl": "/images/in_game_cards/follow_through_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Ranged sneak attacks increase target's damage taken by 30% for 10s.",
+        "description": "Ranged sneak damage increases damage to target by 30% for 10 seconds.",
         "imageUrl": "/images/in_game_cards/follow_through_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Ranged sneak attacks increase target's damage taken by 40% for 10s.",
+        "description": "Ranged sneak damage increases damage to target by 40% for 10 seconds.",
         "imageUrl": "/images/in_game_cards/follow_through_r4.png"
       }
     ]
@@ -2032,25 +2020,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Gain +50 Poison Resistance when wearing a matching set of armor.",
+        "description": "+50 Poison Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/funky_duds_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Gain +100 Poison Resistance when wearing a matching set of armor.",
+        "description": "+100 Poison Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/funky_duds_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Gain +150 Poison Resistance when wearing a matching set of armor.",
+        "description": "+150 Poison Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/funky_duds_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Gain +200 Poison Resistance when wearing a matching set of armor.",
+        "description": "+200 Poison Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/funky_duds_r4.png"
       }
     ]
@@ -2578,25 +2566,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "V.A.T.S. melee attacks have a 20% chance to deal area damage.",
+        "description": "Melee attacks deal 20% of their damage in a small area. (No Power Tools)",
         "imageUrl": "/images/in_game_cards/hack_and_slash_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "V.A.T.S. melee attacks have a 30% chance to deal area damage.",
+        "description": "Melee attacks deal 30% of their damage in a small area. (No Power Tools)",
         "imageUrl": "/images/in_game_cards/hack_and_slash_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "V.A.T.S. melee attacks have a 40% chance to deal area damage.",
+        "description": "Melee attacks deal 40% of their damage in a small area. (No Power Tools)",
         "imageUrl": "/images/in_game_cards/hack_and_slash_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "V.A.T.S. melee attacks have a 50% chance to deal area damage.",
+        "description": "Melee attacks deal 60% of their damage in a large area. (No Power Tools)",
         "imageUrl": "/images/in_game_cards/hack_and_slash_r4.png"
       }
     ]
@@ -3108,25 +3096,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "+1 AGI and +1 AGI Perk Point capacity. (Cap at 15).",
+        "description": "+1 AGI and +1 AGI Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_agility_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "+2 AGI and +2 AGI Perk Point capacity. (Cap at 15).",
+        "description": "+2 AGI and +2 AGI Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_agility_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "+3 AGI and +3 AGI Perk Point capacity. (Cap at 15).",
+        "description": "+3 AGI and +3 AGI Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_agility_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "+5 AGI and +5 AGI Perk Point capacity. (Cap at 15).",
+        "description": "+5 AGI and +5 AGI Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_agility_r4.png"
       }
     ]
@@ -3142,25 +3130,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "+1 CHA and +1 CHA Perk Point capacity. (Cap at 15).",
+        "description": "+1 CHA and +1 CHA Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_charisma_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "+2 CHA and +2 CHA Perk Point capacity. (Cap at 15).",
+        "description": "+2 CHA and +2 CHA Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_charisma_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "+3 CHA and +3 CHA Perk Point capacity. (Cap at 15).",
+        "description": "+3 CHA and +3 CHA Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_charisma_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "+5 CHA and +5 CHA Perk Point capacity. (Cap at 15).",
+        "description": "+5 CHA and +5 CHA Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_charisma_r4.png"
       }
     ]
@@ -3176,25 +3164,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "+1 END and +1 END Perk Point capacity. (Cap at 15).",
+        "description": "+1 END and +1 END Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_endurance_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "+2 END and +2 END Perk Point capacity. (Cap at 15).",
+        "description": "+2 END and +2 END Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_endurance_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "+3 END and +3 END Perk Point capacity. (Cap at 15).",
+        "description": "+3 END and +3 END Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_endurance_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "+5 END and +5 END Perk Point capacity. (Cap at 15).",
+        "description": "+5 END and +5 END Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_endurance_r4.png"
       }
     ]
@@ -3210,25 +3198,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "+1 INT and +1 INT Perk Point capacity. (Cap at 15).",
+        "description": "+1 INT and +1 INT Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_intelligence_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "+2 INT and +2 INT Perk Point capacity. (Cap at 15).",
+        "description": "+2 INT and +2 INT Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_intelligence_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "+3 INT and +3 INT Perk Point capacity. (Cap at 15).",
+        "description": "+3 INT and +3 INT Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_intelligence_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "+5 INT and +5 INT Perk Point capacity. (Cap at 15).",
+        "description": "+5 INT and +5 INT Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_intelligence_r4.png"
       }
     ]
@@ -3244,25 +3232,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "+1 LUK and +1 LUK Perk Point capacity. (Cap at 15).",
+        "description": "+1 LCK and +1 LCK Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_luck_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "+2 LUK and +2 LUK Perk Point capacity. (Cap at 15).",
+        "description": "+2 LCK and +2 LCK Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_luck_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "+3 LUK and +3 LUK Perk Point capacity. (Cap at 15).",
+        "description": "+3 LCK and +3 LCK Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_luck_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "+5 LUK and +5 LUK Perk Point capacity. (Cap at 15).",
+        "description": "+5 LCK and +5 LCK Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_luck_r4.png"
       }
     ]
@@ -3278,25 +3266,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "+1 PER and +1 PER Perk Point capacity. (Cap at 15).",
+        "description": "+1 PER and +1 PER Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_perception_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "+2 PER and +2 PER Perk Point capacity. (Cap at 15).",
+        "description": "+2 PER and +2 PER Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_perception_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "+3 PER and +3 PER Perk Point capacity. (Cap at 15).",
+        "description": "+3 PER and +3 PER Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_perception_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "+5 PER and +5 PER Perk Point capacity. (Cap at 15).",
+        "description": "+5 PER and +5 PER Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_perception_r4.png"
       }
     ]
@@ -3312,25 +3300,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "+1 STR and +1 STR Perk Point capacity. (Cap at 15).",
+        "description": "+1 STR and +1 STR Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_strength_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "+2 STR and +2 STR Perk Point capacity. (Cap at 15).",
+        "description": "+2 STR and +2 STR Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_strength_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "+3 STR and +3 STR Perk Point capacity. (Cap at 15).",
+        "description": "+3 STR and +3 STR Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_strength_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "+5 STR and +5 STR Perk Point capacity. (Cap at 15).",
+        "description": "+5 STR and +5 STR Perk Points. Perk Points cap at 15.",
         "imageUrl": "/images/in_game_cards/legendary_strength_r4.png"
       }
     ]
@@ -3676,25 +3664,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Auto-pick level 1 locks and hack level 1 terminals. Lockpicking/Hacking +3.",
+        "description": "Auto-unlock skill 0 terminals and locks.+3 Lockpick and Hacking skills.",
         "imageUrl": "/images/in_game_cards/master_infiltrator_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Auto-pick level 2 locks and hack level 2 terminals.",
+        "description": "Auto-unlock skill 1 terminals and locks.+3 Lockpick and Hacking skills.",
         "imageUrl": "/images/in_game_cards/master_infiltrator_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Auto-pick level 3 locks and hack level 3 terminals.",
+        "description": "Auto-unlock skill 2 terminals and locks.+3 Lockpick and Hacking skills.",
         "imageUrl": "/images/in_game_cards/master_infiltrator_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Auto-pick level 3 locks & hack terminals instantly without entering interface.",
+        "description": "Auto-unlock skill 3 terminals and locks.+3 Lockpick and Hacking skills.",
         "imageUrl": "/images/in_game_cards/master_infiltrator_r4.png"
       }
     ]
@@ -3968,26 +3956,14 @@
     "name": "Night Person",
     "special": "P",
     "minLevel": 24,
-    "maxRank": 3,
+    "maxRank": 1,
     "imageUrl": "/images/in_game_cards/night_person_r1.png",
     "ranks": [
       {
         "rank": 1,
-        "cost": 1,
-        "description": "Gain +1 INT and +1 PER between the hours of 6:00 p.m. and 6:00 a.m.",
-        "imageUrl": "/images/in_game_cards/night_person_r1.png"
-      },
-      {
-        "rank": 2,
         "cost": 2,
-        "description": "Gain +2 INT and +2 PER between the hours of 6:00 p.m. and 6:00 a.m.",
-        "imageUrl": "/images/in_game_cards/night_person_r2.png"
-      },
-      {
-        "rank": 3,
-        "cost": 3,
-        "description": "Gain +3 INT and +3 PER between the hours of 6:00 p.m. and 6:00 a.m.",
-        "imageUrl": "/images/in_game_cards/night_person_r3.png"
+        "description": "Gain +5 INT and PER between the hours of 6:00 p.m. and 6:00 a.m.",
+        "imageUrl": "/images/in_game_cards/night_person_r1.png"
       }
     ]
   },
@@ -4024,13 +4000,13 @@
       {
         "rank": 1,
         "cost": 1,
-        "description": "Gain +20 to Max Health between the hours of 6:00 p.m. and 6:00 a.m.",
+        "description": "Gain +50 to Max Health between the hours of 6:00 p.m. and 6:00 a.m.",
         "imageUrl": "/images/in_game_cards/nocturnal_fortitude_r1.png"
       },
       {
         "rank": 2,
         "cost": 2,
-        "description": "Gain +40 to Max Health between the hours of 6:00 p.m. and 6:00 a.m.",
+        "description": "Gain +100 to Max Health between the hours of 6:00 p.m. and 6:00 a.m.",
         "imageUrl": "/images/in_game_cards/nocturnal_fortitude_r2.png"
       }
     ]
@@ -4314,13 +4290,13 @@
       {
         "rank": 1,
         "cost": 1,
-        "description": "Gain Health regen between the hours of 6:00 a.m. and 6:00 p.m.",
+        "description": "Gain 3 HP/s regen between the hours of 6:00 a.m. and 6:00 p.m.",
         "imageUrl": "/images/in_game_cards/photosynthetic_r1.png"
       },
       {
         "rank": 2,
         "cost": 2,
-        "description": "Gain improved Health regen between the hours of 6:00 a.m. and 6:00 p.m.",
+        "description": "Gain 6 HP/s regen between the hours of 6:00 a.m. and 6:00 p.m.",
         "imageUrl": "/images/in_game_cards/photosynthetic_r2.png"
       }
     ]
@@ -4412,25 +4388,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "15% chance to revive with full Health when downed in Power Armor.",
+        "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 10 minutes.",
         "imageUrl": "/images/in_game_cards/power_armor_reboot_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "20% chance to revive with full Health.",
+        "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 8 minutes.",
         "imageUrl": "/images/in_game_cards/power_armor_reboot_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "25% chance to revive with full Health.",
+        "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 6 minutes.",
         "imageUrl": "/images/in_game_cards/power_armor_reboot_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "30% chance to revive with full Health.",
+        "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 2 minutes.",
         "imageUrl": "/images/in_game_cards/power_armor_reboot_r4.png"
       }
     ]
@@ -4490,25 +4466,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Sprinting in Power Armor consumes 20% less Action Points.",
+        "description": "While in Power Armor, Sprinting consumes 20% fewer Action Points.",
         "imageUrl": "/images/in_game_cards/power_sprinter_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Sprinting in Power Armor consumes 30% less Action Points.",
+        "description": "While in Power Armor, Sprinting consumes 30% fewer Action Points.",
         "imageUrl": "/images/in_game_cards/power_sprinter_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Sprinting in Power Armor consumes 40% less Action Points.",
+        "description": "While in Power Armor, Sprinting consumes 40% fewer Action Points.",
         "imageUrl": "/images/in_game_cards/power_sprinter_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Sprinting in Power Armor consumes 50% less Action Points.",
+        "description": "While in Power Armor, Sprinting consumes 50% fewer Action Points.",
         "imageUrl": "/images/in_game_cards/power_sprinter_r4.png"
       }
     ]
@@ -4830,25 +4806,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Blocking a melee attack restores 20 HP and 20 AP.",
+        "description": "Blocking a melee attack restores 1 HP and 1 AP for 15 seconds.",
         "imageUrl": "/images/in_game_cards/retribution_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Blocking a melee attack restores 30 HP and 30 AP.",
+        "description": "Blocking a melee attack restores 2 HP and 2 AP for 15 seconds.",
         "imageUrl": "/images/in_game_cards/retribution_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Blocking a melee attack restores 40 HP and 40 AP.",
+        "description": "Blocking a melee attack restores 3 HP and 3 AP for 15 seconds.",
         "imageUrl": "/images/in_game_cards/retribution_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Blocking a melee attack restores 50 HP and 50 AP.",
+        "description": "Blocking a melee attack restores 4 HP and 4 AP for 15 seconds.",
         "imageUrl": "/images/in_game_cards/retribution_r4.png"
       }
     ]
@@ -5092,25 +5068,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Gain +50 Fire Resistance when wearing a matching set of armor.",
+        "description": "+50 Fire Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/sizzling_style_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Gain +100 Fire Resistance when wearing a matching set of armor.",
+        "description": "+100 Fire Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/sizzling_style_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Gain +150 Fire Resistance when wearing a matching set of armor.",
+        "description": "+150 Fire Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/sizzling_style_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Gain +200 Fire Resistance when wearing a matching set of armor.",
+        "description": "+200 Fire Damage Resist when wearing a matching set of armor.",
         "imageUrl": "/images/in_game_cards/sizzling_style_r4.png"
       }
     ]
@@ -5246,26 +5222,14 @@
     "name": "Solar Powered",
     "special": "E",
     "minLevel": 22,
-    "maxRank": 3,
+    "maxRank": 1,
     "imageUrl": "/images/in_game_cards/solar_powered_r1.png",
     "ranks": [
       {
         "rank": 1,
-        "cost": 1,
-        "description": "Gain +1 to STR and END between the hours of 6:00 a.m. and 6:00 p.m.",
-        "imageUrl": "/images/in_game_cards/solar_powered_r1.png"
-      },
-      {
-        "rank": 2,
         "cost": 2,
-        "description": "Gain +2 to STR and END between the hours of 6:00 a.m. and 6:00 p.m.",
-        "imageUrl": "/images/in_game_cards/solar_powered_r2.png"
-      },
-      {
-        "rank": 3,
-        "cost": 3,
-        "description": "Gain +3 to STR and END between the hours of 6:00 a.m. and 6:00 p.m.",
-        "imageUrl": "/images/in_game_cards/solar_powered_r3.png"
+        "description": "Gain +5 STR and END between the hours of 6:00 a.m. and 6:00 p.m.",
+        "imageUrl": "/images/in_game_cards/solar_powered_r1.png"
       }
     ]
   },
@@ -5492,19 +5456,19 @@
       {
         "rank": 1,
         "cost": 1,
-        "description": "When you craft anything, there is a 10% chance you will get double results! (Excludes Legendary Mod Crafting and Canning Machine)",
+        "description": "When you craft anything, there is a 10% chance you'll get double results!",
         "imageUrl": "/images/in_game_cards/super_duper_r1.png"
       },
       {
         "rank": 2,
         "cost": 2,
-        "description": "When you craft anything, there is a 20% chance you will get double results! (Excludes Legendary Mod Crafting and Canning Machine)",
+        "description": "When you craft anything, there is a 20% chance you'll get double results!",
         "imageUrl": "/images/in_game_cards/super_duper_r2.png"
       },
       {
         "rank": 3,
         "cost": 3,
-        "description": "When you craft anything, there is a 30% chance you will get double results! (Excludes Legendary Mod Crafting and Canning Machine)",
+        "description": "When you craft anything, there is a 30% chance you'll get double results!",
         "imageUrl": "/images/in_game_cards/super_duper_r3.png"
       }
     ]
@@ -5548,25 +5512,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Generates 1 Survival Syringe every 30 minutes. (Max 5).",
+        "description": "Generate 1 survival aiding chem every 30 minutes. Up to a max of 5.",
         "imageUrl": "/images/in_game_cards/survival_shortcut_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Generates 1 Survival Syringe every 20 minutes.",
+        "description": "Generate 1 survival aiding chem every 25 minutes. Up to a max of 6.",
         "imageUrl": "/images/in_game_cards/survival_shortcut_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Generates 1 Survival Syringe every 15 minutes.",
+        "description": "Generate 1 survival aiding chem every 20 minutes. Up to a max of 7.",
         "imageUrl": "/images/in_game_cards/survival_shortcut_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Generates 1 Survival Syringe every 10 minutes.",
+        "description": "Generate 2 survival aiding chem every 20 minutes. Up to a max of 10.",
         "imageUrl": "/images/in_game_cards/survival_shortcut_r4.png"
       }
     ]
@@ -5582,25 +5546,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Enemies take 10% more damage when attacking you on a team.",
+        "description": "Enemies take 10% more damage when they attack you, if you're on a team.",
         "imageUrl": "/images/in_game_cards/taking_one_for_the_team_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Enemies take 20% more damage when attacking you on a team.",
+        "description": "Enemies take 20% more damage when they attack you, if you're on a team.",
         "imageUrl": "/images/in_game_cards/taking_one_for_the_team_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Enemies take 30% more damage when attacking you on a team.",
+        "description": "Enemies take 30% more damage when they attack you, if you're on a team.",
         "imageUrl": "/images/in_game_cards/taking_one_for_the_team_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Enemies take 40% more damage when attacking you on a team.",
+        "description": "Enemies take 40% more damage when they attack you, if you're on a team.",
         "imageUrl": "/images/in_game_cards/taking_one_for_the_team_r4.png"
       }
     ]
@@ -5918,25 +5882,25 @@
       {
         "rank": 1,
         "cost": 0,
-        "description": "Gain +50 Rad Resistance and restore 1 Rad/sec.",
+        "description": "+50 Rad Resist, restore 1 Rad per second.",
         "imageUrl": "/images/in_game_cards/what_rads_r1.png"
       },
       {
         "rank": 2,
         "cost": 0,
-        "description": "Gain +100 Rad Resistance and restore 2 Rads/sec.",
+        "description": "+75 Rad Resist, restore 2 Rads per second.",
         "imageUrl": "/images/in_game_cards/what_rads_r2.png"
       },
       {
         "rank": 3,
         "cost": 0,
-        "description": "Gain +200 Rad Resistance and restore 4 Rads/sec.",
+        "description": "+100 Rad Resist, restore 3 Rads per second.",
         "imageUrl": "/images/in_game_cards/what_rads_r3.png"
       },
       {
         "rank": 4,
         "cost": 0,
-        "description": "Gain +300 Rad Resistance and restore 6 Rads/sec.",
+        "description": "+300 Rad Resist, restore 6 Rads per second.",
         "imageUrl": "/images/in_game_cards/what_rads_r4.png"
       }
     ]
