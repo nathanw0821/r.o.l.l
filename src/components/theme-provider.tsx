@@ -1,12 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { resolveSeasonAttribute } from "@/lib/season";
 
 type ThemeMode = "light" | "dark" | "system";
 type ColorBlindMode = "none" | "deuteranopia" | "protanopia" | "tritanopia" | "high-contrast";
 type ScanlineMode = "off" | "soft" | "balanced" | "strong";
 type UiTone = "neutral" | "vault" | "copper" | "olive" | "rose";
 type UiMode = "tactical" | "retro";
+type SeasonPreference = "auto" | "on" | "off";
 
 type ThemeContextValue = {
   theme: ThemeMode;
@@ -17,7 +19,9 @@ type ThemeContextValue = {
   scanlineMode: ScanlineMode;
   uiTone: UiTone;
   fontScale: number;
+  season: SeasonPreference;
   setTheme: (theme: ThemeMode) => void;
+  setSeason: (season: SeasonPreference) => void;
   setAccent: (accent: string) => void;
   setColorBlind: (mode: ColorBlindMode) => void;
   setDensity: (density: "comfortable" | "compact") => void;
@@ -37,6 +41,7 @@ const UI_MODE_KEY = "roll-ui-mode";
 const SCANLINE_KEY = "roll-scanline-mode";
 const UI_TONE_KEY = "roll-ui-tone";
 const FONT_SCALE_KEY = "roll-font-scale";
+const SEASON_KEY = "roll-season";
 
 function readStoredValue(key: string) {
   if (typeof window === "undefined") return null;
@@ -143,6 +148,10 @@ export function ThemeProvider({
   );
   const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>(() => readStoredScanline());
   const [uiTone, setUiToneState] = React.useState<UiTone>(() => readStoredUiTone());
+  const [season, setSeasonState] = React.useState<SeasonPreference>(() => {
+    const stored = readStoredValue(SEASON_KEY);
+    return stored === "on" || stored === "off" || stored === "auto" ? stored : "auto";
+  });
   const [fontScale, setFontScaleState] = React.useState<number>(() => {
     const stored = readStoredValue(FONT_SCALE_KEY);
     return stored ? parseFloat(stored) : 1.0;
@@ -280,6 +289,13 @@ export function ThemeProvider({
   }, [uiTone]);
 
   React.useEffect(() => {
+    document.documentElement.setAttribute("data-season", resolveSeasonAttribute(season));
+    if (isMounted.current) {
+      window.localStorage.setItem(SEASON_KEY, season);
+    }
+  }, [season]);
+
+  React.useEffect(() => {
     document.documentElement.style.setProperty("--base-font-scale", String(fontScale));
     if (isMounted.current) {
       window.localStorage.setItem(FONT_SCALE_KEY, String(fontScale));
@@ -296,7 +312,9 @@ export function ThemeProvider({
       scanlineMode,
       uiTone,
       fontScale,
+      season,
       setTheme: setThemeState,
+      setSeason: setSeasonState,
       setAccent: setAccentState,
       setColorBlind: setColorBlindState,
       setDensity: setDensityState,

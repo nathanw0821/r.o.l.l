@@ -1,0 +1,21 @@
+{
+  "season": { "number": 26, "name": "Beware the Blood Moon", "start": "2026-09-15" },
+  "legacySeason": { "number": 4, "name": "Armor Ace and the Power Patrol in Cold Steel" },
+  "event": {
+    "id": "the-slasher",
+    "name": "The Slasher",
+    "start": "2026-09-15",
+    "end": "2026-11-10",
+    "seasonalLook": "blood-moon",
+    "phases": [
+      { "week": 1, "start": "2026-09-15", "title": "Masked Truth", "note": "Collect Pint-Sized Slasher masks" },
+      { "week": 2, "start": "2026-09-22", "title": "Secrets to the Grave", "note": "Disturbed Grave repeatable; fall fish arrive" },
+      { "week": 3, "start": "2026-09-29", "title": "Pint-Sized Phantoms in Daily Ops", "note": "" },
+      { "week": 4, "start": "2026-10-06", "title": "Out of the Shadows", "note": "Infestations join the story" },
+      { "week": 5, "start": "2026-10-13", "title": "Mischief Night", "note": "Slasher enemies in the event" },
+      { "week": 7, "start": "2026-10-27", "title": "Spooky Scorched", "note": "" },
+      { "week": 9, "start": "2026-11-10", "title": "Blood Will Have Blood", "note": "Head Hunts, Super Slasher, Pint-Sized Slasher power armor paint" }
+    ]
+  },
+  "source": "Bethesda Slasher season overview; falloutbuilds.com Slasher update page"
+}

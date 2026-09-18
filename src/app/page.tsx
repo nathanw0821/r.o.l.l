@@ -11,6 +11,7 @@ import { ExternalLink } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import AppalachianRadar from "@/components/appalachian-radar";
 import PatchChangesPanel from "@/components/patch-changes-panel";
+import SeasonBanner from "@/components/season-banner";
 
 async function HomeSummaryOverview() {
   let session = null;
@@ -186,6 +187,7 @@ function HomeSummaryTrackerFallback() {
 export default function HomePage() {
   return (
     <div className="space-y-6 summary-page-container">
+      <SeasonBanner />
       <AppalachianRadar />
       <Suspense fallback={<HomeSummaryOverviewFallback />}>
         <HomeSummaryOverview />

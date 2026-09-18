@@ -2061,3 +2061,31 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 }
 
 
+
+/* Seasonal look: blood-moon (Season 26 "Beware the Blood Moon", The Slasher event 2026-09-15 to 2026-11-10).
+   Enabled by data-season on <html>; auto during the event window, user override in Appearance.
+   One memorable element (the moon), everything else unchanged. No motion. */
+html[data-season="blood-moon"] {
+  --shell-glow-a: color-mix(in srgb, #7f1d1d 22%, transparent);
+  --shell-glow-b: color-mix(in srgb, #3b0764 16%, transparent);
+  --shell-vignette: rgba(80, 10, 20, 0.22);
+}
+html[data-season="blood-moon"] .pip-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 86% 6%, rgba(248, 113, 113, 0.55) 0, rgba(220, 38, 38, 0.42) 70px, rgba(127, 29, 29, 0.28) 120px, rgba(127, 29, 29, 0.10) 200px, transparent 320px),
+    linear-gradient(180deg, transparent 0%, transparent 70%, rgba(60, 8, 16, 0.28) 100%);
+  opacity: 0.9;
+}
+html[data-season="blood-moon"][data-theme="light"] .pip-shell::after {
+  background:
+    radial-gradient(circle at 86% 6%, rgba(220, 38, 38, 0.28) 0, rgba(185, 28, 28, 0.18) 90px, rgba(127, 29, 29, 0.06) 200px, transparent 320px);
+  opacity: 0.8;
+}
+html[data-season="blood-moon"] .app-sidebar {
+  border-right-color: color-mix(in srgb, #7f1d1d 35%, var(--sidebar-border));
+}
