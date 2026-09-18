@@ -12,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 import AppalachianRadar from "@/components/appalachian-radar";
 import PatchChangesPanel from "@/components/patch-changes-panel";
 import SeasonBanner from "@/components/season-banner";
+import AtomicShopCard from "@/components/atomic-shop-card";
 
 async function HomeSummaryOverview() {
   let session = null;
@@ -192,7 +193,10 @@ export default function HomePage() {
       <Suspense fallback={<HomeSummaryOverviewFallback />}>
         <HomeSummaryOverview />
       </Suspense>
-      <PatchChangesPanel />
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <PatchChangesPanel />
+        <AtomicShopCard />
+      </div>
       <Suspense fallback={<HomeSummaryTrackerFallback />}>
         <HomeSummaryTracker />
       </Suspense>

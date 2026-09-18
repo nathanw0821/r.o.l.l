@@ -625,6 +625,8 @@ interface AccountLinksResponse {
                   <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">NukaKnights Datamines</a>
                   <span>•</span>
                   <a href="https://fallout.fandom.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">Fallout Wiki</a>
+                  <span>•</span>
+                  <a href="https://uf.atomicshop.fyi" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">Atomic Shop tracker (uf.atomicshop.fyi)</a>
                 </div>
               </div>
             </footer>
