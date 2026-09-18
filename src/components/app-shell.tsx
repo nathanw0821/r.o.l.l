@@ -1,5 +1,6 @@
 "use client";
 
+import gameVersion from "@/data/truth/game-version.json";
 import * as React from "react";
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
@@ -599,6 +600,7 @@ interface AccountLinksResponse {
             <footer className="mt-auto border-t border-border/40 pt-6 pb-6 text-xs text-slate-400 font-mono space-y-3">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <span className="text-[0.70rem] text-slate-300 font-bold">© 2026 R.O.L.L. RECORD OF LEGENDARY LOADOUTS</span>
+                <span className="text-[0.68rem] text-slate-400" title={`Build ${gameVersion.build}, released ${gameVersion.released}`}>Game data: Patch {gameVersion.patch} · {gameVersion.name} · checked {gameVersion.verifiedAt}</span>
                 <div className="flex items-center gap-3 text-[0.68rem]">
                   <Link href="/rules" className="hover:text-amber-400 transition-colors">&gt; COMMUNITY RULES</Link>
                   <span className="text-slate-700">|</span>

@@ -1,5 +1,6 @@
 "use client";
 
+import gameVersion from "@/data/truth/game-version.json";
 import * as React from "react";
 import { Radio, Copy, Check, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import type { MinervaIntel, NukeCodes } from "@/lib/discord/vault-intel";
@@ -100,7 +101,7 @@ export default function AppalachianRadar() {
             Appalachian Live Recon Radar
           </span>
           <span className="hidden sm:inline-block text-[0.68rem] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
-            PATCH 69 LIVE INTEL
+            PATCH {gameVersion.patch} LIVE INTEL
           </span>
         </div>
 

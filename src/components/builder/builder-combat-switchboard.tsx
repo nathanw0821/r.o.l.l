@@ -973,7 +973,7 @@ export default function BuilderCombatSwitchboard({
                       updateField("thirstState", "fully_hydrated");
                     }}
                     className="flex-1 py-1 rounded border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 text-[0.65rem] font-bold uppercase hover:bg-emerald-900/50 transition-colors cursor-pointer text-center truncate"
-                    title="Set Hunger & Thirst to 100% (Triggers Overeater's 30% mitigation & Gourmand's +24% damage)"
+                    title="Set Hunger & Thirst to 100% (Overeater's: +40 Max HP per piece since Patch 66; Gourmand's +24% damage)"
                   >
                     🍖💧 Max Overeater&apos;s
                   </button>

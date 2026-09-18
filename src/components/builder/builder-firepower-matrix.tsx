@@ -243,10 +243,10 @@ export default function BuilderFirepowerMatrix({
                     Fallout 76 Luck &amp; Critical Savvy Chart:
                   </div>
                   <div className="text-[0.68rem] text-slate-300 space-y-0.5">
-                    <div>• Crit Savvy Rank 3: 33 Luck (23 with 3★ Lucky)</div>
-                    <div>• Crit Savvy Rank 2: 44 Luck (34 with 3★ Lucky)</div>
-                    <div>• Crit Savvy Rank 1: 54 Luck (44 with 3★ Lucky)</div>
-                    <div>• No Crit Savvy: 64 Luck (54 with 3★ Lucky)</div>
+                    <div>• Crit Savvy Rank 3: 33 Luck (23 with 3★ Lucky Hit)</div>
+                    <div>• Crit Savvy Rank 2: 43 Luck (33 with 3★ Lucky Hit)</div>
+                    <div>• Crit Savvy Rank 1: 53 Luck (43 with 3★ Lucky Hit)</div>
+                    <div>• No Crit Savvy: 63 Luck (53 with 3★ Lucky Hit)</div>
                   </div>
                   <div className="border-t border-slate-800 pt-1 text-[0.65rem] text-slate-400">
                     Fill/Shot = (Luck × 1.5) + 5 + (Lucky ? 15 : 0)

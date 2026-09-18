@@ -1,5 +1,6 @@
 "use client";
 
+import gameVersion from "@/data/truth/game-version.json";
 import * as React from "react";
 import {
   AlertTriangle,
@@ -100,14 +101,14 @@ export default function PtsClient() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                ⚠️ PROVISIONAL DATA NOTICE
+                TEST SERVER TRACKER
               </span>
               <span className="text-[10px] bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 text-amber-300 font-bold">
-                VOLATILE / UNRELEASED TEST SERVER
+                NO ACTIVE PTS · LAST CYCLE: PATCH {gameVersion.patch} ({gameVersion.name})
               </span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed max-w-3xl">
-              The data presented on this tab is scraped from active Bethesda PTS test builds and datamined files. Stats, Scrip costs, module crafting requirements, and legendary mod effects are experimental and subject to tuning, balance changes, or removal before official live deployment.
+              Bethesda runs a Public Test Server before each major update. The Patch {gameVersion.patch} cycle ended when {gameVersion.name} went live on {gameVersion.released}; everything below has shipped and is marked with the patch it arrived in. This page updates when the next PTS opens.
             </p>
           </div>
         </div>
@@ -115,14 +116,14 @@ export default function PtsClient() {
         {ptsTab === "sandbox" ? (
           <div className="space-y-4 pt-6">
             <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs font-mono text-amber-300">
-              🧟 <strong>PTS GHOUL EXPERIMENTAL SANDBOX ACTIVE</strong> — Test Playable Ghoul race mutation multipliers and S.P.E.C.I.A.L. scaling before Patch 70 live release!
+              <strong>Sandbox</strong> — the same builder as B.U.I.L.D., using live Patch {gameVersion.patch} data. Ghoul characters have been live since Patch 58 (March 2025).
             </div>
             <BuilderExperimentClient />
           </div>
         ) : ptsTab === "perks" ? (
           <div className="space-y-4 pt-6">
             <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs font-mono text-amber-300">
-              🃏 <strong>PTS P.E.R.K. MATRIX ACTIVE</strong> — Experiment with PTS perk cards and Feral Gauge synergies under standard 15-cap rules!
+              <strong>Perk deck</strong> — live Patch {gameVersion.patch} perk cards (no test-server perk data is loaded right now).
             </div>
             <PerkBuilder mode="pts" />
           </div>
@@ -293,9 +294,11 @@ function PtsCard({ item }: { item: PtsItem }) {
           ) : (
             <span className="text-slate-400">Official Bethesda PTS</span>
           )}
-          <span className="text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30 font-bold flex items-center gap-1">
-            🔬 BINARY VERIFIED (SeventySix.esm)
-          </span>
+          {item.binaryVerified ? (
+            <span className="text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30 font-bold flex items-center gap-1">
+              Verified against SeventySix.esm
+            </span>
+          ) : null}
         </div>
       </div>
     </div>
