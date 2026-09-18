@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Community Transmissions Vault | R.O.L.L.",
   description:
-    "Explore, filter, and 1-click clone community character builds, weapons, armor sets, and 37-card perk decks for Fallout 76.",
+    "Browse and clone Fallout 76 character builds shared by other players: weapons, armor, full perk decks and biometrics.",
 };
 
 export default async function TransmissionsPage() {

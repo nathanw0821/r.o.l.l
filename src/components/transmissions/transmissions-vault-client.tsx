@@ -212,7 +212,7 @@ export default function TransmissionsVaultClient({
             Community Transmissions Vault
           </h1>
           <p className="text-sm text-slate-400 max-w-2xl">
-            Browse, inspect, and 1-click clone battle-tested character builds published by Wasteland survivors. Complete with weapons, armor frames, 37-card perk decks, and biometrics.
+            Browse builds other players have shared, open one to see its gear, perk deck and biometrics, and clone it into your own builder in one click.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">

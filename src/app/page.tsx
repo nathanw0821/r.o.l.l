@@ -43,9 +43,9 @@ async function HomeSummaryOverview() {
       <div className="p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <h1 className="text-xl font-mono font-bold uppercase tracking-wider text-foreground">SUMMARY</h1>
+            <h1 className="text-xl font-mono font-bold text-foreground">Legendary tracker</h1>
             <p className="text-sm font-mono text-foreground/60 leading-relaxed">
-              Track legendary crafting unlocks across tiers with a compact, high-signal view.
+              Track which legendary mods you have learned, build loadouts, and check damage against the current patch.
             </p>
           </div>
           {user?.username && (
@@ -54,14 +54,14 @@ async function HomeSummaryOverview() {
               className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-xs font-mono font-bold uppercase hover:bg-accent/90 transition shrink-0"
             >
               <ExternalLink className="h-4 w-4" />
-              Share Resume
+              Share profile
             </Link>
           )}
         </div>
         
         <div className="space-y-1.5 pt-1">
           <div className="flex items-center justify-between text-xs font-mono font-bold uppercase tracking-wider text-foreground/70">
-            <span>Overall Completion Progress</span>
+            <span>Learned so far</span>
             <span className="text-accent font-mono">{summary.percent}% ({summary.unlocked}/{summary.total})</span>
           </div>
           <div className="h-2.5 w-full bg-background/50 rounded-full overflow-hidden border border-border/30 p-0.5">
@@ -74,15 +74,15 @@ async function HomeSummaryOverview() {
         
         <div className="pt-3 border-t border-border/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-            <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Total Effects</span>
+            <span className="text-[0.72rem] font-mono text-foreground/50">Mod effects in the game</span>
             <span className="text-2xl font-mono font-bold text-foreground mt-1">{summary.total}</span>
           </div>
           <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-            <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Unlocked</span>
+            <span className="text-[0.72rem] font-mono text-foreground/50">Learned</span>
             <span className="text-2xl font-mono font-bold text-foreground mt-1">{summary.unlocked}</span>
           </div>
           <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-            <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Completion</span>
+            <span className="text-[0.72rem] font-mono text-foreground/50">Complete</span>
             <span className="text-2xl font-mono font-bold text-foreground mt-1">{summary.percent}%</span>
           </div>
         </div>

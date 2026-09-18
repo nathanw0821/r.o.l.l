@@ -5,8 +5,8 @@ import ScreenshotAssistClient from "@/components/screenshot-assist-client";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "S.C.A.N. | R.O.L.L.",
-  description: "Screen Capture & Analysis Network. Synchronize your learned legendary mods from Fallout 76 crafting bench screenshots using client-side OCR.",
+  title: "Screenshot import | R.O.L.L.",
+  description: "Paste a screenshot of your Fallout 76 legendary crafting bench and R.O.L.L. reads which mods you have learned, on your device.",
 };
 
 export default async function ScreenshotAssistPage() {
@@ -16,7 +16,7 @@ export default async function ScreenshotAssistPage() {
   return (
     <div className="space-y-6">
       <p className="text-sm text-foreground/65">
-        <strong>S.C.A.N.</strong> (Screen Capture & Analysis Network) is optimized for <strong>Legendary Crafting Bench</strong> tabs (1*-4*). Snip, Paste, and Sync your learned mods.
+        Paste a screenshot of the <strong>Legendary Crafting Bench</strong> (any star tab) and R.O.L.L. reads which mods you have learned, then you confirm the matches. Reading happens in your browser; nothing is uploaded unless you choose the vision option. (This tool is also called S.C.A.N.)
       </p>
       <ScreenshotAssistClient rows={rows} />
     </div>

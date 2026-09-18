@@ -659,13 +659,13 @@ function TruthWikiContent() {
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">
               <Terminal className="h-4 w-4 text-amber-400" />
-              <span>VAULT-TEC KNOWLEDGE PORTAL</span> • <span>{TOTAL_ARTICLES.toLocaleString()} INDEXED GUIDES</span>
+              <span>Guide library</span> · <span>{TOTAL_ARTICLES.toLocaleString()} guides</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-amber-400 uppercase">
-              FALLOUT 76 TRUTH BIBLE CODEX
+              Fallout 76 guides
             </h1>
             <p className="text-sm text-slate-300 font-sans leading-relaxed">
-              Comprehensive Vault database covering legendary drop odds, Minerva sales schedules, title rewards, public event checklists, and damage calculations.
+              Patch notes, drop odds, Minerva schedules, event checklists and damage math, searchable in one place. Older guides are flagged when a patch has changed them.
             </p>
           </div>
 

@@ -39,8 +39,8 @@ export default function SignInPage() {
         <p className="text-sm text-foreground/70 text-center">
           {googleOAuthConfigured
             ? allowPublicRegistration
-              ? "Use Google or another provider below, or sign in with your username or email and password. If Google is down, use password sign-in or the email link on this page to set one. New accounts are created on the sign-up page."
-              : "Use Google or another provider below if shown, or sign in with your username or email and password. If Google is down, use password sign-in or the email link on this page to set one. Local access is limited to existing or pre-provisioned accounts."
+              ? "An account saves your legendary tracker, keeps it in sync across devices, lets you share builds and export your progress. Everything else works without one. Sign in with Google or another provider below, or with your username or email and password."
+              : "An account saves your legendary tracker, keeps it in sync across devices, lets you share builds and export your progress. Sign in with a provider below if shown, or with your username or email and password. Local access is limited to existing accounts."
             : allowPublicRegistration
               ? "Sign in with your username or email and password. New accounts are created on the sign-up page."
               : "Sign in with your username or email and password. Local access is limited to existing or pre-provisioned accounts."}

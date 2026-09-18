@@ -592,7 +592,7 @@ export default function EffectTable({
                           title={row.unlocked ? "Mark as Locked" : "Mark as Learned"}
                         >
                           <Check className="w-3 h-3" />
-                          {row.unlocked ? "LEARNED" : "LEARN"}
+                          {row.unlocked ? "Learned" : "Mark learned"}
                         </button>
 
                         <button
@@ -605,7 +605,7 @@ export default function EffectTable({
                           title={row.isSeeking ? "Remove from Seeking" : "Add to Wishlist"}
                         >
                           <Bookmark className="w-3 h-3" />
-                          {row.isSeeking && !row.unlocked ? "SEEKING" : "SEEK"}
+                          {row.isSeeking && !row.unlocked ? "Wanted" : "Mark wanted"}
                         </button>
 
                         {/* Mod Inventory Counter */}

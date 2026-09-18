@@ -28,7 +28,7 @@ export default async function SummaryPage() {
             <div className="space-y-1">
               <h1 className="text-xl font-mono font-bold uppercase tracking-wider text-foreground">SUMMARY</h1>
               <p className="text-sm font-mono text-foreground/60 leading-relaxed">
-                Track legendary crafting unlocks across tiers with a compact, high-signal view.
+                Track which legendary mods you have learned, build loadouts, and check damage against the current patch.
               </p>
             </div>
             {user?.username && (
@@ -37,7 +37,7 @@ export default async function SummaryPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-xs font-mono font-bold uppercase hover:bg-accent/90 transition shrink-0"
               >
                 <ExternalLink className="h-4 w-4" />
-                Share Resume
+                Share profile
               </Link>
             )}
           </div>
