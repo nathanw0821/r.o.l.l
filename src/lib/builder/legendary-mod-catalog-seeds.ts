@@ -7,7 +7,8 @@ import type { BuilderModDTO } from "@/lib/builder/types";
  * `effectMath` models the active simulation sandbox subset (damage, resists, SPECIAL, AP regen).
  */
 
-import { FALLBACK_LEGENDARY_EFFECTS } from "@/lib/static-fallback-catalog";
+import { FALLBACK_LEGENDARY_EFFECTS, type StaticEffectRow } from "@/lib/static-fallback-catalog";
+import { getCatalogEffectMath } from "@/lib/truth/legendary-effect-model";
 
 export type BuilderLegendarySeedRow = {
   slug: string;
@@ -24,41 +25,35 @@ export type BuilderLegendarySeedRow = {
   ghoulSpecialCap: number | null;
 };
 
-const SPECIAL_MATH_LOOKUP: Record<string, Record<string, number>> = {
-  "anti-armor": { damagePct: 0.12 },
-  // aristocrats (armor): 10% damage reflect at 40K caps since Patch 66; no flat resists.
-  "bloodied": { damagePct: 0.25 },
-  // bolstering / vanguards / mutants / sentinels: multiplicative damage reducers since Patch 66, modelled in perk-defensive-layer.ts.
-  "nocturnal": { per: 4, agi: 4 },
-  "overeaters": { hp: 40 },
-  "two-shot": { damagePct: 0.25 },
-  "unyielding": { specialBonus: 3 },
-  "powered": { apRegen: 0.05 },
-  "poisoners": { pr: 50 },
-  "fireproof": { fr: 50 },
-  "warming": { cr: 50 },
-  "hazmat": { rr: 50 },
-  // hardy: 7% less explosion damage (reducer), no flat resist.
-  "rapid": { damagePct: 0.05 },
-  "explosive": { damagePct: 0.2 },
-  "strength-2": { str: 2 },
-  "perception-2": { per: 2 },
-  "endurance-2": { end: 2 },
-  "charisma-2": { cha: 2 },
-  "intelligence-2": { int: 2 },
-  "agility-2": { agi: 2 },
-  "luck-2": { lck: 2 },
-  "strength-3": { str: 3 },
-  "perception-3": { per: 3 },
-  "endurance-3": { end: 3 },
-  "charisma-3": { cha: 3 },
-  "intelligence-3": { int: 3 },
-  "agility-3": { agi: 3 },
-  "luck-3": { lck: 3 }
-};
+/**
+ * `effectMath` per slug, derived from `src/data/truth/legendary-effect-model.json`.
+ * Effects with no `catalogMath` block in the pack seed as `{}`.
+ *
+ * Not in the pack on purpose:
+ *  - aristocrats (armor): 10% damage reflect at 40K caps since Patch 66; no flat resists.
+ *  - bolstering / vanguards / mutants / sentinels / hardy: multiplicative damage
+ *    reducers since Patch 66, modelled from defensive-perks.json in perk-defensive-layer.ts.
+ */
+const SPECIAL_MATH_LOOKUP: Record<string, Record<string, number>> = getCatalogEffectMath();
+
+const SPECIAL_STAT_SLUGS = ["strength", "perception", "endurance", "charisma", "intelligence", "agility", "luck"];
+
+/** Star rank of a fallback catalog row (1–4), read from its tier label. */
+export function deriveSeedStar(row: StaticEffectRow): 1 | 2 | 3 | 4 {
+  return parseInt(row.tier.label.replace(/\D/g, ""), 10) as 1 | 2 | 3 | 4;
+}
+
+/**
+ * Catalog slug of a fallback catalog row. SPECIAL effects exist at two star
+ * ranks under one name, so they carry their star (e.g. `strength-3`).
+ */
+export function deriveSeedSlug(row: StaticEffectRow): string {
+  const slug = row.id.replace(/^effect-\d+star-/, "").replace(/\./g, "");
+  return SPECIAL_STAT_SLUGS.includes(slug) ? `${slug}-${deriveSeedStar(row)}` : slug;
+}
 
 export const EXTENDED_LEGENDARY_MOD_SEEDS: BuilderLegendarySeedRow[] = FALLBACK_LEGENDARY_EFFECTS.map((row) => {
-  const star = parseInt(row.tier.label.replace(/\D/g, ""), 10) as 1 | 2 | 3 | 4;
+  const star = deriveSeedStar(row);
   const catStr = typeof row.categories === "string" ? row.categories.toLowerCase() : "";
   const hasWeapon = catStr.includes("weapon");
   const hasPA = catStr.includes("power armor");
@@ -84,10 +79,7 @@ export const EXTENDED_LEGENDARY_MOD_SEEDS: BuilderLegendarySeedRow[] = FALLBACK_
     else if (isRanged && !isMelee) subCategory = "Ranged";
   }
 
-  let slug = row.id.replace(/^effect-\d+star-/, "").replace(/\./g, "");
-  if (["strength", "perception", "endurance", "charisma", "intelligence", "agility", "luck"].includes(slug)) {
-    slug = `${slug}-${star}`;
-  }
+  const slug = deriveSeedSlug(row);
 
   const math = SPECIAL_MATH_LOOKUP[slug] || {};
   const ghoulCap = slug === "unyielding" ? 2 : null;

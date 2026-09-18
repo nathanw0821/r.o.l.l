@@ -694,3 +694,111 @@ describe("combat-firepower-engine", () => {
     });
   });
 });
+
+describe("unique innate effects (src/data/truth/unique-items.json)", () => {
+  const basePlayer = { agility: 10, luck: 10, strength: 10 };
+  const run = (
+    weaponId: string,
+    playerStats: Partial<Parameters<typeof calculateCombatFirepower>[0]["playerStats"]> = {},
+    equippedMods: Parameters<typeof calculateCombatFirepower>[0]["equippedMods"] = [],
+    equippedPerks: Parameters<typeof calculateCombatFirepower>[0]["equippedPerks"] = [],
+  ) =>
+    calculateCombatFirepower({
+      weaponId,
+      equippedMods,
+      equippedPerks,
+      playerStats: { ...basePlayer, ...playerStats },
+    });
+
+  const damageRow = (result: ReturnType<typeof calculateCombatFirepower>, prefix: string) =>
+    result.damagePerShot.breakdown.find((row) => row.source.startsWith(prefix));
+  const dpsRow = (result: ReturnType<typeof calculateCombatFirepower>, prefix: string) =>
+    result.dps.breakdown.find((row) => row.source.startsWith(prefix));
+
+  it("keeps the five pre-pack uniques on exactly the same numbers and labels", () => {
+    const crushing = run("crushing-blow", { targetCrippledLimbs: 2 });
+    expect(damageRow(crushing, "Crushing Blow Innate (2 Crippled Limbs)")?.value).toBe("+20%");
+    expect(crushing.damagePerShot.normal).toBe(54);
+
+    const ticket = run("ticket-to-revenge", { onslaughtStacks: 4 });
+    expect(
+      ticket.armorPenetration.breakdown.find((row) => row.source.startsWith("Ticket to Revenge (4 Onslaught stacks)"))?.value
+    ).toBe("12% Penetration");
+    expect(ticket.armorPenetration.effectiveArmorPenetrationPct).toBe(12);
+
+    const elders = run("elders-mark", { onslaughtStacks: 4 });
+    expect(damageRow(elders, "Elder's Mark (4 Onslaught stacks)")?.value).toBe("+8% Crit");
+    expect(elders.damagePerShot.critical).toBe(79);
+
+    const guarantee = run("the-guarantee", {}, [{ slug: "explosive" }]);
+    expect(damageRow(guarantee, "Explosive Impact (The Guarantee: Demo Exp Rank 3)")?.value).toBe("+13");
+    expect(guarantee.damagePerShot.totalPerShot).toBe(58);
+
+    const disorderly = run("disorderly-conduct", {}, [{ slug: "rapid" }]);
+    expect(dpsRow(disorderly, "Disorderly Conduct (+20% Attack Speed)")?.value).toBe("+20% Fire Rate");
+    expect(disorderly.fireRate.fireRateMultiplier).toBe(1.5);
+
+    // An equipped Demolition Expert 3 keeps the plain label (the grant adds nothing).
+    const guaranteeWithPerk = run("the-guarantee", {}, [{ slug: "explosive" }], [{ cardId: "demolition-expert", rank: 3 }]);
+    expect(damageRow(guaranteeWithPerk, "Explosive Impact (Demo Exp Rank 3)")?.value).toBe("+13");
+  });
+
+  it("adds Whacker Smacker power-attack damage per Onslaught stack, capped at 10", () => {
+    const powerAttack = run("whacker-smacker", { onslaughtStacks: 4, isPowerAttacking: true });
+    expect(damageRow(powerAttack, "Whacker Smacker (4 Onslaught stacks, Power Attack)")?.value).toBe("+20%");
+    expect(powerAttack.damagePerShot.normal).toBe(187);
+
+    const capped = run("whacker-smacker", { onslaughtStacks: 14, isPowerAttacking: true });
+    expect(damageRow(capped, "Whacker Smacker (10 Onslaught stacks, Power Attack)")?.value).toBe("+50%");
+
+    // No power attack, no row and no damage.
+    const swinging = run("whacker-smacker", { onslaughtStacks: 4 });
+    expect(damageRow(swinging, "Whacker Smacker")).toBeUndefined();
+    expect(swinging.damagePerShot.normal).toBe(165);
+  });
+
+  it("adds The Quick Fix swing speed per addiction and holds it at the +100% cap", () => {
+    const four = run("the-quick-fix", { addictionsCount: 4 });
+    expect(dpsRow(four, "The Quick Fix (4 Addictions)")?.value).toBe("+20% Swing Speed");
+    expect(four.fireRate.fireRateMultiplier).toBeCloseTo(1.2, 10);
+
+    const capped = run("the-quick-fix", { addictionsCount: 30 });
+    expect(dpsRow(capped, "The Quick Fix (30 Addictions)")?.value).toBe("+100% Swing Speed");
+    expect(capped.fireRate.fireRateMultiplier).toBe(2);
+
+    const clean = run("the-quick-fix", { addictionsCount: 0 });
+    expect(dpsRow(clean, "The Quick Fix")).toBeUndefined();
+    expect(clean.fireRate.fireRateMultiplier).toBe(1);
+  });
+
+  it("adds Civil Unrest's +50 action points to the V.A.T.S. pool", () => {
+    const civil = run("civil-unrest");
+    expect(civil.vats.totalApPool).toBe(250);
+    expect(civil.vats.maxShotsInPool).toBe(10);
+    expect(civil.vats.breakdown.find((row) => row.source === "Civil Unrest (Innate)")?.value).toBe("+50 AP");
+
+    const plain = run("the-fixer");
+    expect(plain.vats.totalApPool).toBe(200);
+    expect(plain.vats.breakdown.some((row) => row.source.includes("Innate"))).toBe(false);
+  });
+
+  it("grants Foundation's Vengeance its five Bullet Storm stacks only under 25% health", () => {
+    const wounded = run("foundations-vengeance", { healthPct: 0.2 });
+    expect(damageRow(wounded, "Foundation's Vengeance (under 25% HP)")?.value).toBe("+5 Bullet Storm Stacks");
+
+    const healthy = run("foundations-vengeance", { healthPct: 0.9 });
+    expect(damageRow(healthy, "Foundation's Vengeance")).toBeUndefined();
+
+    // The stacks reach the Bullet Storm maths: Resolute Veteran's floor of 5 still holds.
+    const resolute = run("resolute-veteran", { bulletStormStacks: 0 }, [], [{ cardId: "bullet-storm", rank: 3 }]);
+    expect(damageRow(resolute, "Bullet Storm (5 Stacks)")?.value).toBe("+45%");
+  });
+
+  it("ignores a reference-only unique and a shared chassis id", () => {
+    // Molerat Bat is +50% damage to Molerats (model: null) and is built on the Baseball Bat.
+    const molerat = run("molerat-bat", { onslaughtStacks: 10, targetCrippledLimbs: 4, isPowerAttacking: true });
+    const plainBat = run("baseball-bat", { onslaughtStacks: 10, targetCrippledLimbs: 4, isPowerAttacking: true });
+    expect(molerat.damagePerShot.breakdown.some((row) => row.source.includes("Molerat"))).toBe(false);
+    expect(plainBat.damagePerShot.breakdown.some((row) => row.source.includes("Molerat"))).toBe(false);
+  });
+});
