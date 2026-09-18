@@ -1,0 +1,19 @@
+{
+  "patch": 70,
+  "patchName": "The Slasher",
+  "releaseDate": "2026-09-15",
+  "source": "Official Fallout 76 Patch 70 release notes (Bethesda)",
+  "notes": "Legendary mod change scrip is a flat fee since Patch 70 (no per-slot escalation). Unique items pay 10x scrip and additionally need Legendary modules + Vault Steel per craft.",
+  "modChangeScripByStar": { "1": 50, "2": 50, "3": 50, "4": 100 },
+  "uniqueScripMultiplier": 10,
+  "uniqueCraftingByStar": {
+    "3": { "legendaryModules": 30, "vaultSteel": 40 },
+    "4": { "legendaryModules": 65, "vaultSteel": 80 }
+  },
+  "moduleCraftingCostByStar": { "1": 15, "2": 30, "3": 60, "4": 120 },
+  "randomRollModulesByStar": { "1": 5, "2": 10, "3": 15 },
+  "legendaryModuleWeight": 0.05,
+  "scripSaleValueByStar": { "1": 15, "2": 25, "3": 50, "4": 150 },
+  "scrappingScripByStar": { "1": 3, "2": 5, "3": 10, "4": 30 },
+  "purveyorPriceCapsByStar": { "1": 25, "2": 35, "3": 60 }
+}

@@ -1,0 +1,4647 @@
+{
+ "source": "https://nukesdragons.com/fallout-76/db/perks",
+ "fetchedAt": "2026-09-18",
+ "patch": 70,
+ "perks": [
+  {
+   "slug": "action-boy",
+   "name": "Action Boy",
+   "special": null,
+   "level": 2,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Action Points regenerate 15% faster."
+    },
+    {
+     "rank": 2,
+     "description": "Action Points regenerate 30% faster."
+    },
+    {
+     "rank": 3,
+     "description": "Action Points regenerate 45% faster."
+    }
+   ]
+  },
+  {
+   "slug": "action-diet",
+   "name": "Action Diet",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "On kills, heal 2 HP and reduce how feral you are by 2%."
+    },
+    {
+     "rank": 2,
+     "description": "On kills, heal 4 HP and reduce how feral you are by 3%."
+    },
+    {
+     "rank": 3,
+     "description": "On kills, heal 6 HP and reduce how feral you are by 4%."
+    },
+    {
+     "rank": 4,
+     "description": "On kills, heal 8 HP and reduce how feral you are by 5%."
+    }
+   ]
+  },
+  {
+   "slug": "action-ghoul",
+   "name": "Action Ghoul",
+   "special": null,
+   "level": 50,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The power of Glow makes your AP regenerate 15% faster."
+    },
+    {
+     "rank": 2,
+     "description": "The power of Glow makes your AP regenerate 30% faster."
+    },
+    {
+     "rank": 3,
+     "description": "The power of Glow makes your AP regenerate 45% faster."
+    }
+   ]
+  },
+  {
+   "slug": "adamantium-skeleton",
+   "name": "Adamantium Skeleton",
+   "special": null,
+   "level": 21,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Limb Damage Reduction based on your END."
+    }
+   ]
+  },
+  {
+   "slug": "adrenaline",
+   "name": "Adrenaline",
+   "special": null,
+   "level": 49,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +10% damage per kill while on a Kill Streak (Max 10)."
+    }
+   ]
+  },
+  {
+   "slug": "all-night-long",
+   "name": "All Night Long",
+   "special": null,
+   "level": 41,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The positive effects of pre-war alcohol last twice as long."
+    }
+   ]
+  },
+  {
+   "slug": "ammo-factory",
+   "name": "Ammo Factory",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Produce 50% more rounds when crafting ammunition."
+    },
+    {
+     "rank": 2,
+     "description": "Produce 75% more rounds when crafting ammunition."
+    },
+    {
+     "rank": 3,
+     "description": "Produce 100% more rounds when crafting ammunition."
+    },
+    {
+     "rank": 4,
+     "description": "Produce 150% more rounds when crafting ammunition."
+    }
+   ]
+  },
+  {
+   "slug": "ammosmith",
+   "name": "Ammosmith",
+   "special": null,
+   "level": 34,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Produce 40% more rounds when crafting ammunition."
+    },
+    {
+     "rank": 2,
+     "description": "Produce 80% more rounds when crafting ammunition."
+    }
+   ]
+  },
+  {
+   "slug": "animal-friend",
+   "name": "Animal Friend",
+   "special": null,
+   "level": 30,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Aim your gun at an Animal for a 25% chance to pacify it."
+    },
+    {
+     "rank": 2,
+     "description": "Aim your gun at an Animal for a 50% chance to pacify it."
+    },
+    {
+     "rank": 3,
+     "description": "Aim your gun at an Animal for a 75% chance to pacify it."
+    }
+   ]
+  },
+  {
+   "slug": "anti-epidemic",
+   "name": "Anti-Epidemic",
+   "special": null,
+   "level": 34,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your disease cures have a 50% chance to cure a disease on nearby teammates."
+    },
+    {
+     "rank": 2,
+     "description": "Your disease cures always cure a disease from nearby teammates too."
+    }
+   ]
+  },
+  {
+   "slug": "aquaboy",
+   "name": "Aquaboy",
+   "special": null,
+   "level": 26,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You no longer take Rad damage from swimming and can breathe underwater."
+    }
+   ]
+  },
+  {
+   "slug": "armorer",
+   "name": "Armorer",
+   "special": null,
+   "level": 15,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your crafted armor has improved durability and costs fewer materials."
+    }
+   ]
+  },
+  {
+   "slug": "arms-keeper",
+   "name": "Arms Keeper",
+   "special": null,
+   "level": 28,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your weapons weigh 50% less."
+    },
+    {
+     "rank": 2,
+     "description": "Your weapons weigh 75% less."
+    }
+   ]
+  },
+  {
+   "slug": "arms-of-steel",
+   "name": "Arms of Steel",
+   "special": null,
+   "level": 70,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your arms allow you to handle ranged weapons better, increasing accuracy by 15%."
+    },
+    {
+     "rank": 2,
+     "description": "Your arms allow you to handle ranged weapons better, increasing accuracy by 30%."
+    }
+   ]
+  },
+  {
+   "slug": "awareness",
+   "name": "Awareness",
+   "special": null,
+   "level": 20,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain more VATS accuracy based on your PER."
+    }
+   ]
+  },
+  {
+   "slug": "bandolier",
+   "name": "Bandolier",
+   "special": null,
+   "level": 22,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Ballistic weapon ammo weighs 45% less."
+    },
+    {
+     "rank": 2,
+     "description": "Ballistic weapon ammo weighs 90% less."
+    }
+   ]
+  },
+  {
+   "slug": "barbarian",
+   "name": "Barbarian",
+   "special": null,
+   "level": 14,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Damage Resistance based on your STR. Doubled when not wearing armor."
+    }
+   ]
+  },
+  {
+   "slug": "basher",
+   "name": "Basher",
+   "special": null,
+   "level": 11,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gun bashing does +25% damage and +35% limb damage."
+    },
+    {
+     "rank": 2,
+     "description": "Gun bashing does +50% damage and +75% limb damage."
+    }
+   ]
+  },
+  {
+   "slug": "batteries-included",
+   "name": "Batteries Included",
+   "special": null,
+   "level": 28,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Energy weapon ammo weighs 45% less."
+    },
+    {
+     "rank": 2,
+     "description": "Energy weapon ammo weighs 90% less."
+    }
+   ]
+  },
+  {
+   "slug": "battle-genes",
+   "name": "Battle-Genes",
+   "special": null,
+   "level": 80,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain 2 HP per second while in combat."
+    },
+    {
+     "rank": 2,
+     "description": "Gain 4 HP per second while in combat."
+    }
+   ]
+  },
+  {
+   "slug": "bear-arms",
+   "name": "Bear Arms",
+   "special": null,
+   "level": 35,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Each stack of Bullet Storm increases your bash damage by 5%."
+    }
+   ]
+  },
+  {
+   "slug": "better-criticals",
+   "name": "Better Criticals",
+   "special": null,
+   "level": 47,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "V.A.T.S. criticals now do +50% damage."
+    },
+    {
+     "rank": 2,
+     "description": "V.A.T.S. criticals now do +75% damage."
+    },
+    {
+     "rank": 3,
+     "description": "V.A.T.S. criticals now do +100% damage."
+    }
+   ]
+  },
+  {
+   "slug": "blocker",
+   "name": "Blocker",
+   "special": null,
+   "level": 21,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Block 15% more damage from your opponents' melee attacks."
+    },
+    {
+     "rank": 2,
+     "description": "Block 20% more damage from your opponents' melee attacks."
+    },
+    {
+     "rank": 3,
+     "description": "Block 25% more damage from your opponents' melee attacks."
+    }
+   ]
+  },
+  {
+   "slug": "blood-luster",
+   "name": "Blood Luster",
+   "special": null,
+   "level": 35,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your bleed effects have 35% more damage and 25% less duration."
+    }
+   ]
+  },
+  {
+   "slug": "blood-sacrifice",
+   "name": "Blood Sacrifice!",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Using AP in VATS now consumes HP instead at 150% more cost."
+    },
+    {
+     "rank": 2,
+     "description": "Using AP in VATS now consumes HP instead at 125% more cost."
+    },
+    {
+     "rank": 3,
+     "description": "Using AP in VATS now consumes HP instead at 100% more cost."
+    },
+    {
+     "rank": 4,
+     "description": "Using AP in VATS now consumes HP instead at 50% more cost."
+    }
+   ]
+  },
+  {
+   "slug": "bloodsucker",
+   "name": "Bloodsucker",
+   "special": null,
+   "level": 11,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Bloodpacks and Cannibal now satisfy thirst, no longer irradiate, and heal twice as much."
+    }
+   ]
+  },
+  {
+   "slug": "bloody-mess",
+   "name": "Bloody Mess",
+   "special": null,
+   "level": 42,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Bleeding enemies you kill have a chance to explode based on your LCK."
+    }
+   ]
+  },
+  {
+   "slug": "bodyguards",
+   "name": "Bodyguards",
+   "special": null,
+   "level": 5,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Damage & Energy Resistance based on your CHA and number of teammates."
+    }
+   ]
+  },
+  {
+   "slug": "bomb-scientist",
+   "name": "Bomb Scientist",
+   "special": null,
+   "level": 80,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Expending Glow makes your thrown grenades deal +20% damage."
+    },
+    {
+     "rank": 2,
+     "description": "Expending Glow makes your thrown grenades deal +35% damage."
+    },
+    {
+     "rank": 3,
+     "description": "Expending Glow makes your thrown grenades deal +50% damage."
+    }
+   ]
+  },
+  {
+   "slug": "bone-shatterer",
+   "name": "Bone shatterer",
+   "special": null,
+   "level": 90,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your melee weapon attacks have +25% limb damage."
+    },
+    {
+     "rank": 2,
+     "description": "Your melee weapon attacks have +50% limb damage."
+    },
+    {
+     "rank": 3,
+     "description": "Your melee weapon attacks have +75% limb damage."
+    }
+   ]
+  },
+  {
+   "slug": "born-survivor",
+   "name": "Born Survivor",
+   "special": null,
+   "level": 3,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Falling below 20% health will automatically use a Stimpak, once every 20s."
+    },
+    {
+     "rank": 2,
+     "description": "Falling below 30% health will automatically use a Stimpak, once every 20s."
+    },
+    {
+     "rank": 3,
+     "description": "Falling below 40% health will automatically use a Stimpak, once every 20s."
+    }
+   ]
+  },
+  {
+   "slug": "bow-before-me",
+   "name": "Bow Before Me",
+   "special": null,
+   "level": 6,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your bows and crossbows ignore 20% armor and have a 5% chance to stagger."
+    },
+    {
+     "rank": 2,
+     "description": "Your bows and crossbows ignore 40% armor and have a 10% chance to stagger."
+    }
+   ]
+  },
+  {
+   "slug": "brawling-chemist",
+   "name": "Brawling Chemist",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Generate 1 combat enhancing chem every hour. Up to a max of 3."
+    },
+    {
+     "rank": 2,
+     "description": "Generate 1 combat enhancing chem every 50 minutes. Up to a max of 4."
+    },
+    {
+     "rank": 3,
+     "description": "Generate 1 combat enhancing chem every 40 minutes. Up to a max of 5."
+    },
+    {
+     "rank": 4,
+     "description": "Generate 2 combat enhancing chems every 40 minutes. Up to a max of 5."
+    }
+   ]
+  },
+  {
+   "slug": "breathe-it-in",
+   "name": "Breathe It In",
+   "special": null,
+   "level": 60,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Rad Resistance is reduced by 50. (Up to 0)"
+    },
+    {
+     "rank": 2,
+     "description": "Rad Resistance is reduced by 100.  (Up to 0)"
+    },
+    {
+     "rank": 3,
+     "description": "Rad Resistance is reduced by 150.  (Up to 0)"
+    }
+   ]
+  },
+  {
+   "slug": "brick-wall",
+   "name": "Brick Wall",
+   "special": null,
+   "level": 100,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "When your Glow is high, makes you immune to staggering attacks."
+    }
+   ]
+  },
+  {
+   "slug": "bringing-the-big-guns",
+   "name": "Bringing the Big Guns",
+   "special": null,
+   "level": 50,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your Bullet Storm stack limit is increased by 10."
+    }
+   ]
+  },
+  {
+   "slug": "bullet-shield",
+   "name": "Bullet Shield",
+   "special": null,
+   "level": 39,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain 5% Deflect chance for 6 sec when firing a heavy gun."
+    },
+    {
+     "rank": 2,
+     "description": "Gain 10% Deflect chance for 6 sec when firing a heavy gun."
+    },
+    {
+     "rank": 3,
+     "description": "Gain 15% Deflect chance for 6 sec when firing a heavy gun."
+    }
+   ]
+  },
+  {
+   "slug": "bullet-storm",
+   "name": "Bullet Storm",
+   "special": null,
+   "level": 30,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain 3% damage per 30 ammo spent. 10 max stacks."
+    },
+    {
+     "rank": 2,
+     "description": "Gain 6% damage per 30 ammo spent. 10 max stacks."
+    },
+    {
+     "rank": 3,
+     "description": "Gain 9% damage per 30 ammo spent. 10 max stacks."
+    }
+   ]
+  },
+  {
+   "slug": "butchers-bounty",
+   "name": "Butcher's Bounty",
+   "special": null,
+   "level": 3,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "40% chance to find extra meat from animal corpses."
+    },
+    {
+     "rank": 2,
+     "description": "60% chance to find extra meat from animal corpses."
+    },
+    {
+     "rank": 3,
+     "description": "80% chance to find extra meat from animal corpses."
+    }
+   ]
+  },
+  {
+   "slug": "can-do",
+   "name": "Can Do!",
+   "special": null,
+   "level": 7,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Find more canned goods based on your LCK."
+    }
+   ]
+  },
+  {
+   "slug": "cannibal",
+   "name": "Cannibal",
+   "special": null,
+   "level": 15,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Eating human, Ghoul, Super Mutant, Scorched, or Mole Miner corpses restores Health and hunger."
+    }
+   ]
+  },
+  {
+   "slug": "cap-collector",
+   "name": "Cap Collector",
+   "special": null,
+   "level": 16,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You find more bottle caps based on your LCK."
+    }
+   ]
+  },
+  {
+   "slug": "center-masochist",
+   "name": "Center Masochist",
+   "special": null,
+   "level": 5,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+25% ranged damage when attacking the torso."
+    },
+    {
+     "rank": 2,
+     "description": "+50% ranged damage when attacking the torso."
+    },
+    {
+     "rank": 3,
+     "description": "+75% ranged damage when attacking the torso."
+    }
+   ]
+  },
+  {
+   "slug": "chem-diet",
+   "name": "Chem Diet",
+   "special": null,
+   "level": 55,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Chems are 25% more effective at reducing how feral you are."
+    },
+    {
+     "rank": 2,
+     "description": "Chems are 50% more effective at reducing how feral you are."
+    },
+    {
+     "rank": 3,
+     "description": "Chems are 75% more effective at reducing how feral you are."
+    }
+   ]
+  },
+  {
+   "slug": "chem-fiend",
+   "name": "Chem Fiend",
+   "special": null,
+   "level": 23,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Any chems you take last 100% longer."
+    }
+   ]
+  },
+  {
+   "slug": "chem-resistant",
+   "name": "Chem Resistant",
+   "special": null,
+   "level": 43,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You're half as likely to get addicted when consuming Chems."
+    },
+    {
+     "rank": 2,
+     "description": "You gain complete immunity to chem addiction."
+    }
+   ]
+  },
+  {
+   "slug": "chemist",
+   "name": "Chemist",
+   "special": null,
+   "level": 34,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You get double the quantity when you craft chems!"
+    }
+   ]
+  },
+  {
+   "slug": "class-freak",
+   "name": "Class Freak",
+   "special": null,
+   "level": 46,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The negative effects of your mutations are reduced by 25%."
+    },
+    {
+     "rank": 2,
+     "description": "The negative effects of your mutations are reduced by 50%."
+    },
+    {
+     "rank": 3,
+     "description": "The negative effects of your mutations are reduced by 75%."
+    }
+   ]
+  },
+  {
+   "slug": "cola-nut",
+   "name": "Cola Nut",
+   "special": null,
+   "level": 14,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Nuka-Cola drinks are now twice as beneficial."
+    },
+    {
+     "rank": 2,
+     "description": "Nuka-Cola drinks are now three times as beneficial."
+    }
+   ]
+  },
+  {
+   "slug": "collateral-damage",
+   "name": "Collateral Damage",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Enemies killed with a melee weapon have a 10% chance to explode."
+    },
+    {
+     "rank": 2,
+     "description": "Enemies killed with a melee weapon have a 13% chance to explode."
+    },
+    {
+     "rank": 3,
+     "description": "Enemies killed with a melee weapon have a 16% chance to explode."
+    },
+    {
+     "rank": 4,
+     "description": "Enemies killed with a melee weapon have a 20% chance to explode."
+    }
+   ]
+  },
+  {
+   "slug": "concentrated-fire",
+   "name": "Concentrated Fire",
+   "special": null,
+   "level": 2,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Focus fire to gain +1% accuracy and damage per shot."
+    },
+    {
+     "rank": 2,
+     "description": "Focus fire to gain +2% accuracy and damage per shot."
+    },
+    {
+     "rank": 3,
+     "description": "Focus fire to gain +3% accuracy and damage per shot."
+    }
+   ]
+  },
+  {
+   "slug": "contractor",
+   "name": "Contractor",
+   "special": null,
+   "level": 18,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Crafting workshop items now costs 25% fewer materials."
+    },
+    {
+     "rank": 2,
+     "description": "Crafting workshop items now costs 50% fewer materials."
+    }
+   ]
+  },
+  {
+   "slug": "covert-operative",
+   "name": "Covert Operative",
+   "special": null,
+   "level": 27,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your ranged attacks do an additional 15% sneak attack damage."
+    },
+    {
+     "rank": 2,
+     "description": "Your ranged attacks do an additional 30% sneak attack damage."
+    },
+    {
+     "rank": 3,
+     "description": "Your ranged attacks do an additional 50% sneak attack damage."
+    }
+   ]
+  },
+  {
+   "slug": "crack-shot",
+   "name": "Crack Shot",
+   "special": null,
+   "level": 7,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Small guns have 10% more range and 10% more accuracy when aiming down sights."
+    },
+    {
+     "rank": 2,
+     "description": "Small guns have 20% more range and 20% more accuracy when aiming down sights."
+    },
+    {
+     "rank": 3,
+     "description": "Small guns have 30% more range and 30% more accuracy when aiming down sights."
+    }
+   ]
+  },
+  {
+   "slug": "critical-savvy",
+   "name": "Critical Savvy",
+   "special": null,
+   "level": 44,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Critical Hits now only consume 85% of your critical meter."
+    },
+    {
+     "rank": 2,
+     "description": "Critical Hits now only consume 70% of your critical meter."
+    },
+    {
+     "rank": 3,
+     "description": "Critical Hits now only consume 55% of your critical meter."
+    }
+   ]
+  },
+  {
+   "slug": "cryologist",
+   "name": "Cryologist",
+   "special": null,
+   "level": 40,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increase cryo damage based on your INT."
+    }
+   ]
+  },
+  {
+   "slug": "curator",
+   "name": "Curator",
+   "special": null,
+   "level": 19,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The benefits of bobbleheads and magazines last twice as long."
+    }
+   ]
+  },
+  {
+   "slug": "dead-man-sprinting",
+   "name": "Dead Man Sprinting",
+   "special": null,
+   "level": 8,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Sprint 10% faster at increased AP cost when your health is below 40%."
+    },
+    {
+     "rank": 2,
+     "description": "Sprint 20% faster at increased AP cost when your health is below 50%."
+    }
+   ]
+  },
+  {
+   "slug": "deal-sealer",
+   "name": "Deal Sealer",
+   "special": null,
+   "level": 15,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Deal +10% damage for each impairment your target has."
+    }
+   ]
+  },
+  {
+   "slug": "demolition-expert",
+   "name": "Demolition Expert",
+   "special": null,
+   "level": 10,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your explosives do +20% damage."
+    },
+    {
+     "rank": 2,
+     "description": "Your explosives do +40% damage."
+    },
+    {
+     "rank": 3,
+     "description": "Your explosives do +60% damage."
+    }
+   ]
+  },
+  {
+   "slug": "detonation-contagion",
+   "name": "Detonation Contagion",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Enemies killed with a thrown explosive have a 20% chance to explode."
+    },
+    {
+     "rank": 2,
+     "description": "Enemies killed with a thrown explosive have a 30% chance to explode."
+    },
+    {
+     "rank": 3,
+     "description": "Enemies killed with a thrown explosive have a 40% chance to explode."
+    },
+    {
+     "rank": 4,
+     "description": "Enemies killed with a thrown explosive have a 50% chance to explode."
+    }
+   ]
+  },
+  {
+   "slug": "dodgy",
+   "name": "Dodgy",
+   "special": null,
+   "level": 45,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+5% chance to Evade. Evade no longer has a cooldown. Instead it costs AP."
+    }
+   ]
+  },
+  {
+   "slug": "down-ranger",
+   "name": "Down Ranger",
+   "special": null,
+   "level": 2,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You do +10% ranged damage to far enemies."
+    },
+    {
+     "rank": 2,
+     "description": "You do +15% ranged damage to far enemies."
+    },
+    {
+     "rank": 3,
+     "description": "You do +20% ranged damage to far enemies."
+    }
+   ]
+  },
+  {
+   "slug": "dromedary",
+   "name": "Dromedary",
+   "special": null,
+   "level": 3,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "All drinks quench thirst by an additional 50%."
+    },
+    {
+     "rank": 2,
+     "description": "All drinks quench thirst by an additional 100%."
+    }
+   ]
+  },
+  {
+   "slug": "dry-nurse",
+   "name": "Dry Nurse",
+   "special": null,
+   "level": 23,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You have a 50% chance to keep your Stimpak when you revive another player."
+    }
+   ]
+  },
+  {
+   "slug": "e-m-t",
+   "name": "E.M.T.",
+   "special": null,
+   "level": 9,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Automatically revive downed teammates once every 3 minutes and grant them increased healing for 1 minute."
+    }
+   ]
+  },
+  {
+   "slug": "easy-target",
+   "name": "Easy Target",
+   "special": null,
+   "level": 5,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+25% ranged damage to crippled targets."
+    },
+    {
+     "rank": 2,
+     "description": "+50% ranged damage to crippled targets."
+    },
+    {
+     "rank": 3,
+     "description": "+75% ranged damage to crippled targets."
+    }
+   ]
+  },
+  {
+   "slug": "electric-absorption",
+   "name": "Electric Absorption",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "10% chance energy damage will recharge your power armor's fusion core and restore health."
+    },
+    {
+     "rank": 2,
+     "description": "13% chance energy damage will recharge your power armor's fusion core and restore health."
+    },
+    {
+     "rank": 3,
+     "description": "16% chance energy damage will recharge your power armor's fusion core and restore health."
+    },
+    {
+     "rank": 4,
+     "description": "20% chance energy damage will recharge your power armor's fusion core and restore health."
+    }
+   ]
+  },
+  {
+   "slug": "enforcer",
+   "name": "Enforcer",
+   "special": null,
+   "level": 30,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your small guns gain a 5% stagger chance and +25% limb damage."
+    },
+    {
+     "rank": 2,
+     "description": "Your small guns gain a 10% stagger chance and +50% limb damage."
+    },
+    {
+     "rank": 3,
+     "description": "Your small guns gain a 15% stagger chance and +75% limb damage."
+    }
+   ]
+  },
+  {
+   "slug": "escape-artist",
+   "name": "Escape Artist",
+   "special": null,
+   "level": 35,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Sneak to lose enemies, and running no longer affects stealth."
+    }
+   ]
+  },
+  {
+   "slug": "evasive",
+   "name": "Evasive",
+   "special": null,
+   "level": 17,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Chance to Evade attacks based on AGI. (No Power Armor)"
+    }
+   ]
+  },
+  {
+   "slug": "exploding-palm",
+   "name": "Exploding Palm",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "5% chance for Fists Weapons to trigger an explosion on attack hits."
+    },
+    {
+     "rank": 2,
+     "description": "10% chance for Fists Weapons to trigger an explosion on attack hits."
+    },
+    {
+     "rank": 3,
+     "description": "15% chance for Fists Weapons to trigger an explosion on attack hits."
+    },
+    {
+     "rank": 4,
+     "description": "20% chance for Fists Weapons to trigger an explosion on attack hits."
+    }
+   ]
+  },
+  {
+   "slug": "exterminator",
+   "name": "Exterminator",
+   "special": null,
+   "level": 14,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your attacks ignore 25% armor of any insect."
+    },
+    {
+     "rank": 2,
+     "description": "Your attacks ignore 50% armor of any insect."
+    },
+    {
+     "rank": 3,
+     "description": "Your attacks ignore 75% armor of any insect."
+    }
+   ]
+  },
+  {
+   "slug": "eye-of-the-hunter",
+   "name": "Eye of the Hunter",
+   "special": null,
+   "level": 85,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your vision grants you +20% accuracy in V.A.T.S. from a slightly longer distance."
+    },
+    {
+     "rank": 2,
+     "description": "Your vision grants you +25% accuracy in V.A.T.S. from a longer distance."
+    },
+    {
+     "rank": 3,
+     "description": "Your vision grants you +30% accuracy in V.A.T.S. from a very long distance."
+    }
+   ]
+  },
+  {
+   "slug": "far-flung-fireworks",
+   "name": "Far-Flung Fireworks",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Enemies killed with a ranged weapon have a 10% chance to explode."
+    },
+    {
+     "rank": 2,
+     "description": "Enemies killed with a ranged weapon have a 13% chance to explode."
+    },
+    {
+     "rank": 3,
+     "description": "Enemies killed with a ranged weapon have a 16% chance to explode."
+    },
+    {
+     "rank": 4,
+     "description": "Enemies killed with a ranged weapon have a 20% chance to explode."
+    }
+   ]
+  },
+  {
+   "slug": "fast-fighter",
+   "name": "Fast Fighter",
+   "special": null,
+   "level": 20,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain 50% of your bonus movement speed as reload speed."
+    }
+   ]
+  },
+  {
+   "slug": "faulty-spots",
+   "name": "Faulty Spots",
+   "special": null,
+   "level": 75,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Weak point damage is increased by 15%."
+    }
+   ]
+  },
+  {
+   "slug": "feral-presence",
+   "name": "Feral Presence",
+   "special": null,
+   "level": 80,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While Feral, Reduce your target's damage output by 15% after you attack for 5 seconds."
+    },
+    {
+     "rank": 2,
+     "description": "While Feral, Reduce your target's damage output by 30% after you attack for 5 seconds."
+    }
+   ]
+  },
+  {
+   "slug": "feral-rage",
+   "name": "Feral Rage",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "When feral, all Glow perk abilities cost 20% less Glow."
+    },
+    {
+     "rank": 2,
+     "description": "When feral, all Glow perk abilities cost 30% less Glow."
+    },
+    {
+     "rank": 3,
+     "description": "When feral, all Glow perk abilities cost 40% less Glow."
+    },
+    {
+     "rank": 4,
+     "description": "When feral, all Glow perk abilities cost 50% less Glow."
+    }
+   ]
+  },
+  {
+   "slug": "field-surgeon",
+   "name": "Field Surgeon",
+   "special": null,
+   "level": 15,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Stimpaks and RadAway heal 60% faster."
+    }
+   ]
+  },
+  {
+   "slug": "first-aid",
+   "name": "First Aid",
+   "special": null,
+   "level": 2,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Stimpaks restore more HP based on your INT."
+    }
+   ]
+  },
+  {
+   "slug": "fix-it-good",
+   "name": "Fix It Good",
+   "special": null,
+   "level": 27,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You can repair armor and Power Armor to 130% of normal maximum condition."
+    },
+    {
+     "rank": 2,
+     "description": "You can repair armor and Power Armor to 160% of normal maximum condition."
+    },
+    {
+     "rank": 3,
+     "description": "You can repair armor and Power Armor to 200% of normal maximum condition."
+    }
+   ]
+  },
+  {
+   "slug": "follow-through",
+   "name": "Follow Through",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Ranged sneak damage increases damage to target by 10% for 10 seconds."
+    },
+    {
+     "rank": 2,
+     "description": "Ranged sneak damage increases damage to target by 20% for 10 seconds."
+    },
+    {
+     "rank": 3,
+     "description": "Ranged sneak damage increases damage to target by 30% for 10 seconds."
+    },
+    {
+     "rank": 4,
+     "description": "Ranged sneak damage increases damage to target by 40% for 10 seconds."
+    }
+   ]
+  },
+  {
+   "slug": "fortune-finder",
+   "name": "Fortune Finder",
+   "special": null,
+   "level": 22,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You hear directional audio when in range of a Caps Stash."
+    }
+   ]
+  },
+  {
+   "slug": "four-leaf-clover",
+   "name": "Four Leaf Clover",
+   "special": null,
+   "level": 29,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Misses in V.A.T.S. now contribute to the Critical Meter based on your LCK."
+    }
+   ]
+  },
+  {
+   "slug": "friendly-fire",
+   "name": "Friendly Fire",
+   "special": null,
+   "level": 48,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Teammates hit by your flame weapons regen health briefly (no grenades)."
+    },
+    {
+     "rank": 2,
+     "description": "Teammates hit by your flame weapons regen more health briefly (no grenades)."
+    },
+    {
+     "rank": 3,
+     "description": "Teammates hit by your flame weapons regen even more health (no grenades)."
+    }
+   ]
+  },
+  {
+   "slug": "full-charge",
+   "name": "Full Charge",
+   "special": null,
+   "level": 33,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Sprinting in Power Armor consumes half as much Fusion Core energy."
+    },
+    {
+     "rank": 2,
+     "description": "Sprinting in Power Armor consumes no extra Fusion Core energy."
+    }
+   ]
+  },
+  {
+   "slug": "funky-duds",
+   "name": "Funky Duds",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+50 Poison Damage Resist when wearing a matching set of armor."
+    },
+    {
+     "rank": 2,
+     "description": "+100 Poison Damage Resist when wearing a matching set of armor."
+    },
+    {
+     "rank": 3,
+     "description": "+150 Poison Damage Resist when wearing a matching set of armor."
+    },
+    {
+     "rank": 4,
+     "description": "+200 Poison Damage Resist when wearing a matching set of armor."
+    }
+   ]
+  },
+  {
+   "slug": "ghoulish",
+   "name": "Ghoulish",
+   "special": null,
+   "level": 36,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Radiation now regenerates your lost Health."
+    },
+    {
+     "rank": 2,
+     "description": "Radiation now regenerates more of your lost Health."
+    },
+    {
+     "rank": 3,
+     "description": "Radiation now regenerates even more of your lost Health!"
+    }
+   ]
+  },
+  {
+   "slug": "glow-sight",
+   "name": "Glow Sight",
+   "special": null,
+   "level": 33,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Deal +20% damage to Glowing Enemies."
+    },
+    {
+     "rank": 2,
+     "description": "Deal +40% damage to Glowing Enemies."
+    },
+    {
+     "rank": 3,
+     "description": "Deal +60% damage to Glowing Enemies."
+    }
+   ]
+  },
+  {
+   "slug": "glowing-criticals",
+   "name": "Glowing Criticals",
+   "special": null,
+   "level": 100,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "When your Glow is high, Gain 20% bonus Critical damage in V.A.T.S."
+    },
+    {
+     "rank": 2,
+     "description": "When your Glow is high, Gain 35% bonus Critical damage in V.A.T.S."
+    },
+    {
+     "rank": 3,
+     "description": "When your Glow is high, Gain 50% bonus Critical damage in V.A.T.S."
+    }
+   ]
+  },
+  {
+   "slug": "glowing-gut",
+   "name": "Glowing Gut",
+   "special": null,
+   "level": 80,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Irradiated food and drink grant 100% more rads."
+    },
+    {
+     "rank": 2,
+     "description": "Irradiated food and drink grant 200% more rads."
+    },
+    {
+     "rank": 3,
+     "description": "Irradiated food and drink grant 300% more rads."
+    }
+   ]
+  },
+  {
+   "slug": "glowing-hunter",
+   "name": "Glowing Hunter",
+   "special": null,
+   "level": 75,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Traces of glowing blood now have a 50% chance to appear on animal corpses."
+    }
+   ]
+  },
+  {
+   "slug": "glowing-one",
+   "name": "Glowing One",
+   "special": null,
+   "level": 50,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Holding Large amounts of Glow provides Glow to nearby ghouls on your team."
+    },
+    {
+     "rank": 2,
+     "description": "Holding Large amounts of Glow provides greater Glow to nearby ghouls on your team."
+    }
+   ]
+  },
+  {
+   "slug": "goat-legs",
+   "name": "Goat Legs",
+   "special": null,
+   "level": 32,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Take no damage from falling."
+    }
+   ]
+  },
+  {
+   "slug": "good-doggy",
+   "name": "Good Doggy",
+   "special": null,
+   "level": 8,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Eating dog food is now three times as beneficial."
+    }
+   ]
+  },
+  {
+   "slug": "good-with-salt",
+   "name": "Good With Salt",
+   "special": null,
+   "level": 9,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Food in your inventory will spoil 45% slower."
+    },
+    {
+     "rank": 2,
+     "description": "Food in your inventory will spoil 90% slower."
+    }
+   ]
+  },
+  {
+   "slug": "green-thumb",
+   "name": "Green Thumb",
+   "special": null,
+   "level": 4,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Reap twice as much when harvesting flora."
+    }
+   ]
+  },
+  {
+   "slug": "grenadier",
+   "name": "Grenadier",
+   "special": null,
+   "level": 35,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your explosives detonate with a 50% larger radius."
+    },
+    {
+     "rank": 2,
+     "description": "Your explosives detonate with twice the radius."
+    }
+   ]
+  },
+  {
+   "slug": "grim-reapers-sprint",
+   "name": "Grim Reaper's Sprint",
+   "special": null,
+   "level": 33,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Any kill in V.A.T.S. restores Action Points, based on your LCK."
+    }
+   ]
+  },
+  {
+   "slug": "ground-pounder",
+   "name": "Ground Pounder",
+   "special": null,
+   "level": 18,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your small guns reload 10% faster and have 10% more hip fire accuracy."
+    },
+    {
+     "rank": 2,
+     "description": "Your small guns reload 20% faster and have 20% more hip fire accuracy."
+    },
+    {
+     "rank": 3,
+     "description": "Your small guns reload 30% faster and have 30% more hip fire accuracy."
+    }
+   ]
+  },
+  {
+   "slug": "guerrilla",
+   "name": "Guerrilla",
+   "special": null,
+   "level": 5,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You do +10% ranged damage to close enemies."
+    },
+    {
+     "rank": 2,
+     "description": "You do +15% ranged damage to close enemies."
+    },
+    {
+     "rank": 3,
+     "description": "You do +20% ranged damage to close enemies."
+    }
+   ]
+  },
+  {
+   "slug": "guerrilla-expert",
+   "name": "Guerrilla Expert",
+   "special": null,
+   "level": 20,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1% reload speed per Onslaught stack, +3 max stacks."
+    }
+   ]
+  },
+  {
+   "slug": "guerrilla-master",
+   "name": "Guerrilla Master",
+   "special": null,
+   "level": 40,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+5% ranged damage to close enemies per Onslaught stack, +5 max stacks."
+    }
+   ]
+  },
+  {
+   "slug": "gun-fu",
+   "name": "Gun Fu",
+   "special": null,
+   "level": 50,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "V.A.T.S. swaps targets on kill with +30% damage to your next target."
+    },
+    {
+     "rank": 2,
+     "description": "V.A.T.S. swaps targets on kill with +60% damage up to 2 targets."
+    },
+    {
+     "rank": 3,
+     "description": "V.A.T.S. swaps targets on kill with +90% damage up to 3 targets."
+    }
+   ]
+  },
+  {
+   "slug": "gun-runner",
+   "name": "Gun Runner",
+   "special": null,
+   "level": 4,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your running speed is increased by 10% when you have a ranged weapon equipped."
+    },
+    {
+     "rank": 2,
+     "description": "Your running speed is increased by 20% when you have a ranged weapon equipped."
+    }
+   ]
+  },
+  {
+   "slug": "gun-tricks",
+   "name": "Gun Tricks",
+   "special": null,
+   "level": 80,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your enhanced reflexes allow you to reload weapons 10% faster."
+    },
+    {
+     "rank": 2,
+     "description": "Your enhanced reflexes allow you to reload weapons 20% faster."
+    },
+    {
+     "rank": 3,
+     "description": "Your enhanced reflexes allow you to reload weapons 30% faster."
+    }
+   ]
+  },
+  {
+   "slug": "gunslinger",
+   "name": "Gunslinger",
+   "special": null,
+   "level": 2,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your ranged weapons do +6% weak spot damage."
+    },
+    {
+     "rank": 2,
+     "description": "Your ranged weapons do +9% weak spot damage."
+    },
+    {
+     "rank": 3,
+     "description": "Your ranged weapons do +12% weak spot damage."
+    }
+   ]
+  },
+  {
+   "slug": "gunslinger-expert",
+   "name": "Gunslinger Expert",
+   "special": null,
+   "level": 15,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1% ranged weak spot damage per Onslaught stack, +3 max stacks."
+    }
+   ]
+  },
+  {
+   "slug": "gunslinger-master",
+   "name": "Gunslinger Master",
+   "special": null,
+   "level": 35,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Onslaught stacks over time and spend them on attacks, +10 max stacks."
+    }
+   ]
+  },
+  {
+   "slug": "gunsmith",
+   "name": "Gunsmith",
+   "special": null,
+   "level": 11,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Guns break 20% slower."
+    },
+    {
+     "rank": 2,
+     "description": "Guns break 35% slower."
+    },
+    {
+     "rank": 3,
+     "description": "Guns break 50% slower."
+    }
+   ]
+  },
+  {
+   "slug": "hack-and-slash",
+   "name": "Hack and Slash",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Melee attacks deal 20% of their damage in a small area. (No Power Tools)"
+    },
+    {
+     "rank": 2,
+     "description": "Melee attacks deal 30% of their damage in a small area. (No Power Tools)"
+    },
+    {
+     "rank": 3,
+     "description": "Melee attacks deal 40% of their damage in a small area. (No Power Tools)"
+    },
+    {
+     "rank": 4,
+     "description": "Melee attacks deal 60% of their damage in a large area. (No Power Tools)"
+    }
+   ]
+  },
+  {
+   "slug": "hacker",
+   "name": "Hacker",
+   "special": null,
+   "level": 4,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +1 hacking skill, and terminal lock-out time is reduced."
+    }
+   ]
+  },
+  {
+   "slug": "hacker-expert",
+   "name": "Hacker Expert",
+   "special": null,
+   "level": 22,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +1 hacking skill, and terminal lock-out time is reduced."
+    }
+   ]
+  },
+  {
+   "slug": "hacker-master",
+   "name": "Hacker Master",
+   "special": null,
+   "level": 38,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +1 hacking skill, and terminal lock-out time is reduced."
+    }
+   ]
+  },
+  {
+   "slug": "happy-camper",
+   "name": "Happy Camper",
+   "special": null,
+   "level": 3,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Hunger and thirst grow 40% slower when in camp or in a team workshop."
+    },
+    {
+     "rank": 2,
+     "description": "Hunger and thirst grow 80% slower when in camp or in a team workshop."
+    }
+   ]
+  },
+  {
+   "slug": "happy-go-lucky",
+   "name": "Happy-Go-Lucky",
+   "special": null,
+   "level": 17,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your Luck is increased by 2 while under the influence of alcohol."
+    },
+    {
+     "rank": 2,
+     "description": "Your Luck is increased by 3 while under the influence of alcohol."
+    }
+   ]
+  },
+  {
+   "slug": "hard-bargain",
+   "name": "Hard Bargain",
+   "special": null,
+   "level": 7,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain 7 CHA when bartering at non-player vendors."
+    }
+   ]
+  },
+  {
+   "slug": "hardy",
+   "name": "Hardy",
+   "special": null,
+   "level": 27,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Take 15% less damage from explosions."
+    },
+    {
+     "rank": 2,
+     "description": "Take 30% less damage from explosions."
+    },
+    {
+     "rank": 3,
+     "description": "Take 45% less damage from explosions."
+    }
+   ]
+  },
+  {
+   "slug": "hat-trick",
+   "name": "Hat Trick",
+   "special": null,
+   "level": 2,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Arrows and throwing weapons bounce towards an additional target dealing 70% damage."
+    },
+    {
+     "rank": 2,
+     "description": "Arrows and throwing weapons bounce towards two additional targets dealing 70% damage per bounce."
+    },
+    {
+     "rank": 3,
+     "description": "Arrows and throwing weapons bounce towards three additional targets dealing 70% damage."
+    }
+   ]
+  },
+  {
+   "slug": "healing-hands",
+   "name": "Healing Hands",
+   "special": null,
+   "level": 28,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Players you revive are fully healed."
+    }
+   ]
+  },
+  {
+   "slug": "heavy-hitter",
+   "name": "Heavy Hitter",
+   "special": null,
+   "level": 35,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Melee weapons deal +25% power attack damage. (No Power Tools)"
+    }
+   ]
+  },
+  {
+   "slug": "home-defense",
+   "name": "Home Defense",
+   "special": null,
+   "level": 22,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Workshop turrets do +50% damage and you can disarm better traps."
+    },
+    {
+     "rank": 2,
+     "description": "Workshop turrets do +75% damage and you can disarm advanced traps."
+    },
+    {
+     "rank": 3,
+     "description": "Workshop turrets do +100% damage and you can disarm expert traps."
+    }
+   ]
+  },
+  {
+   "slug": "homebody",
+   "name": "Homebody",
+   "special": null,
+   "level": 19,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While in a C.A.M.P. or Workshop, gain HP & Limb regen. Improves well rested benefits."
+    }
+   ]
+  },
+  {
+   "slug": "hydro-fix",
+   "name": "Hydro Fix",
+   "special": null,
+   "level": 11,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Chems restore thirst."
+    },
+    {
+     "rank": 2,
+     "description": "Chems restore twice as much thirst."
+    }
+   ]
+  },
+  {
+   "slug": "hyper-reflexes",
+   "name": "Hyper Reflexes",
+   "special": null,
+   "level": 100,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "When your Glow is high, gain a 10% evasion chance. (No Power Armor)"
+    },
+    {
+     "rank": 2,
+     "description": "When your Glow is high, gain a 15% evasion chance. (No Power Armor)"
+    },
+    {
+     "rank": 3,
+     "description": "When your Glow is high, gain a 20% evasion chance. (No Power Armor)"
+    }
+   ]
+  },
+  {
+   "slug": "incisor",
+   "name": "Incisor",
+   "special": null,
+   "level": 34,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your Melee and Fists weapons ignore 25% of your target's armor."
+    },
+    {
+     "rank": 2,
+     "description": "Your Melee and Fists weapons ignore 50% of your target's armor."
+    },
+    {
+     "rank": 3,
+     "description": "Your Melee and Fists weapons ignore 75% of your target's armor."
+    }
+   ]
+  },
+  {
+   "slug": "injector",
+   "name": "Injector",
+   "special": null,
+   "level": 19,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Players you revive have +18 Action Point regen for 1 minute."
+    }
+   ]
+  },
+  {
+   "slug": "inspirational",
+   "name": "Inspirational",
+   "special": null,
+   "level": 2,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain more XP while on a team based on your CHA."
+    }
+   ]
+  },
+  {
+   "slug": "iron-fist",
+   "name": "Iron Fist",
+   "special": null,
+   "level": 2,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your Fists deal more damage based on your DR."
+    }
+   ]
+  },
+  {
+   "slug": "iron-stomach",
+   "name": "Iron Stomach",
+   "special": null,
+   "level": 4,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increased Damage and Energy Resistance based on END while not diseased."
+    }
+   ]
+  },
+  {
+   "slug": "ironclad",
+   "name": "Ironclad",
+   "special": null,
+   "level": 30,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Armor provides 15% more protection. Double if wearing a matching set."
+    },
+    {
+     "rank": 2,
+     "description": "Armor provides 20% more protection. Double if wearing a matching set."
+    },
+    {
+     "rank": 3,
+     "description": "Armor provides 25% more protection. Double if wearing a matching set."
+    }
+   ]
+  },
+  {
+   "slug": "jaguar-speed",
+   "name": "Jaguar Speed",
+   "special": null,
+   "level": 60,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You now sprint 10% faster when your Glow is high."
+    },
+    {
+     "rank": 2,
+     "description": "You now sprint 20% faster when your Glow is high."
+    }
+   ]
+  },
+  {
+   "slug": "junk-shield",
+   "name": "Junk Shield",
+   "special": null,
+   "level": 10,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Resistances based on your LCK and amount of junk held."
+    }
+   ]
+  },
+  {
+   "slug": "knee-capper",
+   "name": "Knee-Capper",
+   "special": null,
+   "level": 15,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Melee weapons deal +50% limb damage. (No Power Tools)"
+    }
+   ]
+  },
+  {
+   "slug": "last-laugh",
+   "name": "Last Laugh",
+   "special": null,
+   "level": 27,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You drop a live grenade from your inventory when you die."
+    }
+   ]
+  },
+  {
+   "slug": "lead-belly",
+   "name": "Lead Belly",
+   "special": null,
+   "level": 2,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You take less radiation from eating or drinking based on your END."
+    }
+   ]
+  },
+  {
+   "slug": "legendary-agility",
+   "name": "Legendary Agility",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1 AGI and +1 AGI Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 2,
+     "description": "+2 AGI and +2 AGI Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 3,
+     "description": "+3 AGI and +3 AGI Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 4,
+     "description": "+5 AGI and +5 AGI Perk Points. Perk Points cap at 15."
+    }
+   ]
+  },
+  {
+   "slug": "legendary-charisma",
+   "name": "Legendary Charisma",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1 CHA and +1 CHA Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 2,
+     "description": "+2 CHA and +2 CHA Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 3,
+     "description": "+3 CHA and +3 CHA Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 4,
+     "description": "+5 CHA and +5 CHA Perk Points. Perk Points cap at 15."
+    }
+   ]
+  },
+  {
+   "slug": "legendary-endurance",
+   "name": "Legendary Endurance",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1 END and +1 END Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 2,
+     "description": "+2 END and +2 END Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 3,
+     "description": "+3 END and +3 END Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 4,
+     "description": "+5 END and +5 END Perk Points. Perk Points cap at 15."
+    }
+   ]
+  },
+  {
+   "slug": "legendary-intelligence",
+   "name": "Legendary Intelligence",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1 INT and +1 INT Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 2,
+     "description": "+2 INT and +2 INT Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 3,
+     "description": "+3 INT and +3 INT Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 4,
+     "description": "+5 INT and +5 INT Perk Points. Perk Points cap at 15."
+    }
+   ]
+  },
+  {
+   "slug": "legendary-luck",
+   "name": "Legendary Luck",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1 LCK and +1 LCK Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 2,
+     "description": "+2 LCK and +2 LCK Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 3,
+     "description": "+3 LCK and +3 LCK Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 4,
+     "description": "+5 LCK and +5 LCK Perk Points. Perk Points cap at 15."
+    }
+   ]
+  },
+  {
+   "slug": "legendary-perception",
+   "name": "Legendary Perception",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1 PER and +1 PER Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 2,
+     "description": "+2 PER and +2 PER Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 3,
+     "description": "+3 PER and +3 PER Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 4,
+     "description": "+5 PER and +5 PER Perk Points. Perk Points cap at 15."
+    }
+   ]
+  },
+  {
+   "slug": "legendary-strength",
+   "name": "Legendary Strength",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+1 STR and +1 STR Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 2,
+     "description": "+2 STR and +2 STR Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 3,
+     "description": "+3 STR and +3 STR Perk Points. Perk Points cap at 15."
+    },
+    {
+     "rank": 4,
+     "description": "+5 STR and +5 STR Perk Points. Perk Points cap at 15."
+    }
+   ]
+  },
+  {
+   "slug": "licensed-plumber",
+   "name": "licensed-plumber",
+   "special": null,
+   "level": 5,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your pipe weapons break 20% slower and are cheaper to repair."
+    },
+    {
+     "rank": 2,
+     "description": "Your pipe weapons break 40% slower and are cheaper to repair."
+    },
+    {
+     "rank": 3,
+     "description": "Your pipe weapons break 60% slower and are cheaper to repair."
+    }
+   ]
+  },
+  {
+   "slug": "life-giver",
+   "name": "LifeGiver",
+   "special": null,
+   "level": 50,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain more max HP per point in END."
+    }
+   ]
+  },
+  {
+   "slug": "light-footed",
+   "name": "Light Footed",
+   "special": null,
+   "level": 29,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While sneaking, you never trigger mines or floor-based traps."
+    }
+   ]
+  },
+  {
+   "slug": "lock-and-load",
+   "name": "Lock and Load",
+   "special": null,
+   "level": 37,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You keep half of your Bullet Storm stacks when you reload. +1% reload speed per stack."
+    }
+   ]
+  },
+  {
+   "slug": "lone-wanderer",
+   "name": "Lone Wanderer",
+   "special": null,
+   "level": 4,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Resistances and AP Regen based on your CHA while not on a team."
+    }
+   ]
+  },
+  {
+   "slug": "long-shot",
+   "name": "Long Shot",
+   "special": null,
+   "level": 37,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your scoped weapons have 30% more range and accuracy when aiming."
+    }
+   ]
+  },
+  {
+   "slug": "love-the-spread",
+   "name": "Love the Spread",
+   "special": null,
+   "level": 20,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Weapons that fire 3 or more projectiles gain 30% range."
+    }
+   ]
+  },
+  {
+   "slug": "luck-of-the-draw",
+   "name": "Luck of the Draw",
+   "special": null,
+   "level": 14,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Slight chance your weapon will repair itself when hitting an enemy."
+    },
+    {
+     "rank": 2,
+     "description": "Chance your weapon will repair itself even more when hitting an enemy."
+    },
+    {
+     "rank": 3,
+     "description": "Chance your weapon will greatly repair itself when hitting an enemy."
+    }
+   ]
+  },
+  {
+   "slug": "lucky-break",
+   "name": "Lucky Break",
+   "special": null,
+   "level": 24,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Slight chance your equipped armor will repair itself when struck."
+    },
+    {
+     "rank": 2,
+     "description": "Chance your equipped armor will repair itself even more when struck."
+    },
+    {
+     "rank": 3,
+     "description": "Chance your equipped armor will greatly repair itself when struck."
+    }
+   ]
+  },
+  {
+   "slug": "mad-scientist",
+   "name": "Mad Scientist",
+   "special": null,
+   "level": 60,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Energy Weapons expend a small amount of Glow per attack for +10% Damage."
+    },
+    {
+     "rank": 2,
+     "description": "Energy Weapons expend a small amount of Glow per attack for +15% Damage."
+    },
+    {
+     "rank": 3,
+     "description": "Energy Weapons expend a small amount of Glow per attack for +20% Damage."
+    }
+   ]
+  },
+  {
+   "slug": "magnetic-personality",
+   "name": "Magnetic Personality",
+   "special": null,
+   "level": 13,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain 1 Charisma for each teammate, excluding yourself."
+    },
+    {
+     "rank": 2,
+     "description": "Gain 2 Charisma for each teammate, excluding yourself."
+    }
+   ]
+  },
+  {
+   "slug": "makeshift-warrior",
+   "name": "Makeshift Warrior",
+   "special": null,
+   "level": 9,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Melee weapons break 40% slower."
+    },
+    {
+     "rank": 2,
+     "description": "Melee weapons break 60% slower."
+    },
+    {
+     "rank": 3,
+     "description": "Melee weapons break 80% slower."
+    }
+   ]
+  },
+  {
+   "slug": "marathoner",
+   "name": "Marathoner",
+   "special": null,
+   "level": 13,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Sprinting consumes 20% fewer Action Points. (No Power Armor)"
+    },
+    {
+     "rank": 2,
+     "description": "Sprinting consumes 30% fewer Action Points. (No Power Armor)"
+    },
+    {
+     "rank": 3,
+     "description": "Sprinting consumes 40% fewer Action Points. (No Power Armor)"
+    }
+   ]
+  },
+  {
+   "slug": "martial-artist",
+   "name": "Martial Artist",
+   "special": null,
+   "level": 16,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your melee weapons weigh 20% less, and you can swing them 10% faster."
+    },
+    {
+     "rank": 2,
+     "description": "Your melee weapons weigh 40% less, and you can swing them 20% faster."
+    },
+    {
+     "rank": 3,
+     "description": "Your melee weapons weigh 60% less, and you can swing them 30% faster."
+    }
+   ]
+  },
+  {
+   "slug": "master-archer",
+   "name": "Master Archer",
+   "special": null,
+   "level": 35,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Arrows and thrown melee weapons pierce targets."
+    }
+   ]
+  },
+  {
+   "slug": "master-infiltrator",
+   "name": "Master Infiltrator",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Auto-unlock skill 0 terminals and locks.+3 Lockpick and Hacking skills."
+    },
+    {
+     "rank": 2,
+     "description": "Auto-unlock skill 1 terminals and locks.+3 Lockpick and Hacking skills."
+    },
+    {
+     "rank": 3,
+     "description": "Auto-unlock skill 2 terminals and locks.+3 Lockpick and Hacking skills."
+    },
+    {
+     "rank": 4,
+     "description": "Auto-unlock skill 3 terminals and locks.+3 Lockpick and Hacking skills."
+    }
+   ]
+  },
+  {
+   "slug": "mister-sandman",
+   "name": "Mister Sandman",
+   "special": null,
+   "level": 37,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your silenced weapons do an additional 50% sneak attack damage."
+    },
+    {
+     "rank": 2,
+     "description": "Your silenced weapons do an additional 100% sneak attack damage."
+    }
+   ]
+  },
+  {
+   "slug": "modern-renegade",
+   "name": "Modern Renegade",
+   "special": null,
+   "level": 18,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Small guns gain +10% hip fire accuracy and +25% limb damage."
+    },
+    {
+     "rank": 2,
+     "description": "Small guns gain +20% hip fire accuracy and +50% limb damage."
+    },
+    {
+     "rank": 3,
+     "description": "Small guns gain +30% hip fire accuracy and +75% limb damage."
+    }
+   ]
+  },
+  {
+   "slug": "moral-support",
+   "name": "Moral Support",
+   "special": null,
+   "level": 70,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "When on a team, you become feral 50% slower."
+    }
+   ]
+  },
+  {
+   "slug": "moving-target",
+   "name": "Moving Target",
+   "special": null,
+   "level": 5,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +5% chance to Evade while sprinting. (No Power Armor)"
+    },
+    {
+     "rank": 2,
+     "description": "Gain +10% chance to Evade while sprinting. (No Power Armor)"
+    },
+    {
+     "rank": 3,
+     "description": "Gain +15% chance to Evade while sprinting. (No Power Armor)"
+    }
+   ]
+  },
+  {
+   "slug": "munchy-resistance",
+   "name": "Munchy Resistance",
+   "special": null,
+   "level": 17,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Chems restore hunger."
+    },
+    {
+     "rank": 2,
+     "description": "Chems restore twice as much hunger."
+    }
+   ]
+  },
+  {
+   "slug": "mysterious-savior",
+   "name": "Mysterious Savior",
+   "special": null,
+   "level": 49,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "A Mysterious Savior will occasionally appear to revive you when downed."
+    },
+    {
+     "rank": 2,
+     "description": "A Mysterious Savior will more frequently appear to revive you when downed."
+    },
+    {
+     "rank": 3,
+     "description": "The Mysterious Savior will regularly appear to revive you when downed."
+    }
+   ]
+  },
+  {
+   "slug": "mysterious-stranger",
+   "name": "Mysterious Stranger",
+   "special": null,
+   "level": 26,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The Mysterious Stranger will appear occasionally in V.A.T.S. to lend a hand."
+    },
+    {
+     "rank": 2,
+     "description": "The Mysterious Stranger appears more often when using V.A.T.S."
+    },
+    {
+     "rank": 3,
+     "description": "The Mysterious Stranger appears so much in V.A.T.S., he knows you by name."
+    }
+   ]
+  },
+  {
+   "slug": "mystery-meat",
+   "name": "Mystery Meat",
+   "special": null,
+   "level": 12,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Stimpaks may generate edible meat tissue. Higher Rads improve the chance."
+    },
+    {
+     "rank": 2,
+     "description": "Stimpaks generate more edible meat tissue. Higher Rads improve the chance."
+    },
+    {
+     "rank": 3,
+     "description": "Stimpaks generate excessive, edible meat. Higher Rads improve the chance."
+    }
+   ]
+  },
+  {
+   "slug": "natural-resistance",
+   "name": "Natural Resistance",
+   "special": null,
+   "level": 10,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increased Elemental Resistances based on END while not diseased."
+    }
+   ]
+  },
+  {
+   "slug": "natural-stance",
+   "name": "Natural Stance",
+   "special": null,
+   "level": 15,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While equipping a melee weapon, reduce Incoming Stagger by 25%."
+    }
+   ]
+  },
+  {
+   "slug": "nerd-rage",
+   "name": "Nerd Rage!",
+   "special": null,
+   "level": 46,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While your Health is low, gain increased damage and AP regen."
+    }
+   ]
+  },
+  {
+   "slug": "night-eyes",
+   "name": "Night Eyes",
+   "special": null,
+   "level": 50,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Night Vision while sneaking."
+    }
+   ]
+  },
+  {
+   "slug": "night-person",
+   "name": "Night Person",
+   "special": null,
+   "level": 24,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +5 INT and PER between the hours of 6:00 p.m. and 6:00 a.m."
+    }
+   ]
+  },
+  {
+   "slug": "ninja",
+   "name": "Ninja",
+   "special": null,
+   "level": 15,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Bows, throwing, and melee weapons do +50% sneak attack damage."
+    },
+    {
+     "rank": 2,
+     "description": "Bows, throwing, and melee weapons do +100% sneak attack damage."
+    }
+   ]
+  },
+  {
+   "slug": "nocturnal-fortitude",
+   "name": "Nocturnal Fortitude",
+   "special": null,
+   "level": 29,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +50 to Max Health between the hours of 6:00 p.m. and 6:00 a.m."
+    },
+    {
+     "rank": 2,
+     "description": "Gain +100 to Max Health between the hours of 6:00 p.m. and 6:00 a.m."
+    }
+   ]
+  },
+  {
+   "slug": "number-cruncher",
+   "name": "Number Cruncher",
+   "special": null,
+   "level": 40,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your weapons have 2% increased damage per AP cost."
+    }
+   ]
+  },
+  {
+   "slug": "one-gun-army",
+   "name": "One Gun Army",
+   "special": null,
+   "level": 31,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Heavy guns gain a 4% stagger chance and +25% limb damage."
+    },
+    {
+     "rank": 2,
+     "description": "Heavy guns gain a 8% stagger chance and +50% limb damage."
+    },
+    {
+     "rank": 3,
+     "description": "Heavy guns gain a 12% stagger chance and +75% limb damage."
+    }
+   ]
+  },
+  {
+   "slug": "ordnance-express",
+   "name": "Ordnance Express",
+   "special": null,
+   "level": 31,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Explosives weigh 45% less."
+    },
+    {
+     "rank": 2,
+     "description": "Explosives weigh 90% less."
+    }
+   ]
+  },
+  {
+   "slug": "overly-generous",
+   "name": "Overly Generous",
+   "special": null,
+   "level": 32,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Rads increase your chance to inflict 25 Rads with melee attacks!"
+    },
+    {
+     "rank": 2,
+     "description": "Rads increase your chance to inflict 50 Rads with melee attacks!"
+    }
+   ]
+  },
+  {
+   "slug": "pack-rat",
+   "name": "Pack Rat",
+   "special": null,
+   "level": 7,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The weight of all junk items is reduced by 50%."
+    },
+    {
+     "rank": 2,
+     "description": "The weight of all junk items is reduced by 75%."
+    }
+   ]
+  },
+  {
+   "slug": "packin-light",
+   "name": "Packin' Light",
+   "special": null,
+   "level": 9,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your Action Points regenerate faster when not over encumbered."
+    }
+   ]
+  },
+  {
+   "slug": "pain-train",
+   "name": "Pain Train",
+   "special": null,
+   "level": 41,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Damage and stagger enemies by sprinting into them with Power Armor."
+    },
+    {
+     "rank": 2,
+     "description": "Smash and stagger enemies by sprinting into them with Power Armor."
+    },
+    {
+     "rank": 3,
+     "description": "Devastate and stagger enemies by sprinting into them with Power Armor."
+    }
+   ]
+  },
+  {
+   "slug": "pannapictagraphist",
+   "name": "Pannapictagraphist",
+   "special": null,
+   "level": 12,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You hear directional audio when in range of a Magazine."
+    }
+   ]
+  },
+  {
+   "slug": "party-boy",
+   "name": "Party Boy",
+   "special": null,
+   "level": 24,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The positive effects of pre-war alcohol are doubled."
+    },
+    {
+     "rank": 2,
+     "description": "The positive effects of pre-war alcohol are tripled."
+    }
+   ]
+  },
+  {
+   "slug": "percepti-bobble",
+   "name": "Percepti-Bobble",
+   "special": null,
+   "level": 16,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You hear directional audio when in range of a Bobblehead."
+    }
+   ]
+  },
+  {
+   "slug": "pharma-farma",
+   "name": "Pharma Farma",
+   "special": null,
+   "level": 2,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Find more first aid Chems based on your LCK."
+    }
+   ]
+  },
+  {
+   "slug": "pharmacist",
+   "name": "Pharmacist",
+   "special": null,
+   "level": 6,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "RadAway removes more radiation based on your INT."
+    }
+   ]
+  },
+  {
+   "slug": "philanthropist",
+   "name": "Philanthropist",
+   "special": null,
+   "level": 39,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Restore some of your team's hunger and thirst when you eat or drink."
+    },
+    {
+     "rank": 2,
+     "description": "Restore more of your team's hunger and thirst when you eat or drink."
+    },
+    {
+     "rank": 3,
+     "description": "Restore much more of your team's hunger and thirst when you eat or drink."
+    }
+   ]
+  },
+  {
+   "slug": "photosynthetic",
+   "name": "Photosynthetic",
+   "special": null,
+   "level": 47,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain 3 HP/s regen between the hours of 6:00 a.m. and 6:00 p.m."
+    },
+    {
+     "rank": 2,
+     "description": "Gain 6 HP/s regen between the hours of 6:00 a.m. and 6:00 p.m."
+    }
+   ]
+  },
+  {
+   "slug": "picklock",
+   "name": "Picklock",
+   "special": null,
+   "level": 5,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +1 lockpicking skill, and the lockpicking 'sweet spot' is 10% larger."
+    }
+   ]
+  },
+  {
+   "slug": "picklock-expert",
+   "name": "Picklock Expert",
+   "special": null,
+   "level": 19,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +1 lockpicking skill, and the lockpicking 'sweet spot' is 10% larger."
+    }
+   ]
+  },
+  {
+   "slug": "picklock-master",
+   "name": "Picklock Master",
+   "special": null,
+   "level": 40,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +1 lockpicking skill, and the lockpicking 'sweet spot' is 10% larger."
+    }
+   ]
+  },
+  {
+   "slug": "portable-power",
+   "name": "Portable Power",
+   "special": null,
+   "level": 24,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+10% movement speed while wearing Power Armor."
+    },
+    {
+     "rank": 2,
+     "description": "+20% movement speed while wearing Power Armor."
+    },
+    {
+     "rank": 3,
+     "description": "+30% movement speed while wearing Power Armor."
+    }
+   ]
+  },
+  {
+   "slug": "power-armor-reboot",
+   "name": "Power Armor Reboot",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 10 minutes."
+    },
+    {
+     "rank": 2,
+     "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 8 minutes."
+    },
+    {
+     "rank": 3,
+     "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 6 minutes."
+    },
+    {
+     "rank": 4,
+     "description": "Automatically revive using a Stimpak if you're downed in Power Armor once every 2 minutes."
+    }
+   ]
+  },
+  {
+   "slug": "power-patcher",
+   "name": "Power Patcher",
+   "special": null,
+   "level": 44,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your Power Armor breaks 20% slower and is cheaper to repair."
+    },
+    {
+     "rank": 2,
+     "description": "Your Power Armor breaks 40% slower and is cheaper to repair."
+    },
+    {
+     "rank": 3,
+     "description": "Your Power Armor breaks 60% slower and is cheaper to repair."
+    }
+   ]
+  },
+  {
+   "slug": "power-smith",
+   "name": "Power Smith",
+   "special": null,
+   "level": 41,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your crafted Power Armor now has improved durability and costs fewer materials."
+    }
+   ]
+  },
+  {
+   "slug": "power-sprinter",
+   "name": "Power Sprinter",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While in Power Armor, Sprinting consumes 20% fewer Action Points."
+    },
+    {
+     "rank": 2,
+     "description": "While in Power Armor, Sprinting consumes 30% fewer Action Points."
+    },
+    {
+     "rank": 3,
+     "description": "While in Power Armor, Sprinting consumes 40% fewer Action Points."
+    },
+    {
+     "rank": 4,
+     "description": "While in Power Armor, Sprinting consumes 50% fewer Action Points."
+    }
+   ]
+  },
+  {
+   "slug": "power-user",
+   "name": "Power User",
+   "special": null,
+   "level": 50,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Fusion Cores now last 30% longer."
+    },
+    {
+     "rank": 2,
+     "description": "Fusion Cores now last 60% longer."
+    },
+    {
+     "rank": 3,
+     "description": "Fusion Core duration is now doubled."
+    }
+   ]
+  },
+  {
+   "slug": "professional-drinker",
+   "name": "Professional Drinker",
+   "special": null,
+   "level": 39,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "There's no chance you'll get addicted to alcohol."
+    }
+   ]
+  },
+  {
+   "slug": "psychopath",
+   "name": "Psychopath",
+   "special": null,
+   "level": 20,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Hits outside V.A.T.S. refill your Critical Meter at 10% contribution."
+    }
+   ]
+  },
+  {
+   "slug": "pyro-technician",
+   "name": "Pyro-Technician",
+   "special": null,
+   "level": 30,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increase fire damage based on your INT."
+    }
+   ]
+  },
+  {
+   "slug": "quack-surgeon",
+   "name": "Quack Surgeon",
+   "special": null,
+   "level": 22,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Revive other players with liquor!"
+    }
+   ]
+  },
+  {
+   "slug": "quick-hands",
+   "name": "Quick Hands",
+   "special": null,
+   "level": 40,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain a 6% chance to instantly reload when your clip is empty."
+    },
+    {
+     "rank": 2,
+     "description": "Gain a 12% chance to instantly reload when your clip is empty."
+    },
+    {
+     "rank": 3,
+     "description": "Gain a 18% chance to instantly reload when your clip is empty."
+    }
+   ]
+  },
+  {
+   "slug": "rad-reaver",
+   "name": "Rad-Reaver",
+   "special": null,
+   "level": 100,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Dealing Melee damage provides a small amount of Glow. (No Power Tools)"
+    }
+   ]
+  },
+  {
+   "slug": "rad-resistant",
+   "name": "Rad Resistant",
+   "special": null,
+   "level": 34,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Radiation Resistance based on your END."
+    }
+   ]
+  },
+  {
+   "slug": "rad-specialist",
+   "name": "Rad Specialist",
+   "special": null,
+   "level": 70,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increase Environment Glow intake by 10% on Armors, Double if wearing a matching set."
+    },
+    {
+     "rank": 2,
+     "description": "Increase Environment Glow intake by 20% on Armors, Double if wearing a matching set."
+    },
+    {
+     "rank": 3,
+     "description": "Increase Environment Glow intake by 30% on Armors, Double if wearing a matching set."
+    }
+   ]
+  },
+  {
+   "slug": "rad-sponge",
+   "name": "Rad Sponge",
+   "special": null,
+   "level": 44,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Absorb 20% of RADs taken and restore Hunger and Thirst."
+    }
+   ]
+  },
+  {
+   "slug": "radiation-power",
+   "name": "Radiation Power",
+   "special": null,
+   "level": 50,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Expend a small amount of Glow per hit to deal 10% bonus damage to targets."
+    },
+    {
+     "rank": 2,
+     "description": "Expend a small amount of Glow per hit to deal 15% bonus damage to targets."
+    },
+    {
+     "rank": 3,
+     "description": "Expend a small amount of Glow per hit to deal 20% bonus damage to targets."
+    }
+   ]
+  },
+  {
+   "slug": "radicool",
+   "name": "Radicool",
+   "special": null,
+   "level": 38,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "The greater your Rads, the greater your Strength (max +5 STR)!"
+    }
+   ]
+  },
+  {
+   "slug": "radioactive-strength",
+   "name": "Radioactive Strength",
+   "special": null,
+   "level": 80,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Expend a Moderate amount of Glow to deal 50% more damage with Power Attacks & Bashing."
+    },
+    {
+     "rank": 2,
+     "description": "Expend a Moderate amount of Glow to deal 100% more damage with Power Attacks & Bashing."
+    },
+    {
+     "rank": 3,
+     "description": "Expend a Moderate amount of Glow to deal 150% more damage with Power Attacks & Bashing."
+    }
+   ]
+  },
+  {
+   "slug": "refractor",
+   "name": "Refractor",
+   "special": null,
+   "level": 32,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain Energy Resistance based on your PER."
+    }
+   ]
+  },
+  {
+   "slug": "rejuvenated",
+   "name": "Rejuvenated",
+   "special": null,
+   "level": 12,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You gain increased benefits from being Well Fed or Hydrated."
+    },
+    {
+     "rank": 2,
+     "description": "Benefits of being Well Fed or Hydrated are further increased when you have less than 10% RADS."
+    }
+   ]
+  },
+  {
+   "slug": "retribution",
+   "name": "Retribution",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Blocking a melee attack restores 1 HP and 1 AP for 15 seconds."
+    },
+    {
+     "rank": 2,
+     "description": "Blocking a melee attack restores 2 HP and 2 AP for 15 seconds."
+    },
+    {
+     "rank": 3,
+     "description": "Blocking a melee attack restores 3 HP and 3 AP for 15 seconds."
+    },
+    {
+     "rank": 4,
+     "description": "Blocking a melee attack restores 4 HP and 4 AP for 15 seconds."
+    }
+   ]
+  },
+  {
+   "slug": "revenant",
+   "name": "Revenant",
+   "special": null,
+   "level": 32,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Players you revive have +25% damage for 2 min."
+    }
+   ]
+  },
+  {
+   "slug": "ricochet",
+   "name": "Ricochet",
+   "special": null,
+   "level": 38,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain a chance to Deflect ranged attacks based on LCK."
+    }
+   ]
+  },
+  {
+   "slug": "robotics-expert",
+   "name": "Robotics Expert",
+   "special": null,
+   "level": 48,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Hack an enemy robot for a 25% chance to pacify it."
+    },
+    {
+     "rank": 2,
+     "description": "Hack an enemy robot for a 50% chance to pacify it."
+    },
+    {
+     "rank": 3,
+     "description": "Hack an enemy robot for a 75% chance to pacify it."
+    }
+   ]
+  },
+  {
+   "slug": "scattershot",
+   "name": "Scattershot",
+   "special": null,
+   "level": 18,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "20% of the damage dealt to a limb is applied to all limbs on your target."
+    }
+   ]
+  },
+  {
+   "slug": "science",
+   "name": "Science!",
+   "special": null,
+   "level": 20,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increase energy damage based on your INT."
+    }
+   ]
+  },
+  {
+   "slug": "science-monster",
+   "name": "Science Monster",
+   "special": null,
+   "level": 100,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While you have Glow, gain 5% bonus damage for 10 seconds upon getting hit."
+    },
+    {
+     "rank": 2,
+     "description": "While you have Glow, gain 10% bonus damage for 10 seconds upon getting hit."
+    },
+    {
+     "rank": 3,
+     "description": "While you have Glow, gain 15% bonus damage for 10 seconds upon getting hit."
+    }
+   ]
+  },
+  {
+   "slug": "scoped-up",
+   "name": "Scoped-up",
+   "special": null,
+   "level": 15,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your scoped weapons have 50% more range when aiming."
+    }
+   ]
+  },
+  {
+   "slug": "scrapper",
+   "name": "Scrapper",
+   "special": null,
+   "level": 13,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Obtain more components when you scrap weapons and armor."
+    }
+   ]
+  },
+  {
+   "slug": "scrounger",
+   "name": "Scrounger",
+   "special": null,
+   "level": 3,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Find more non-explosive ammo based on your LCK."
+    }
+   ]
+  },
+  {
+   "slug": "secret-agent",
+   "name": "Secret Agent",
+   "special": null,
+   "level": 47,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Stealth Boys last twice as long!"
+    },
+    {
+     "rank": 2,
+     "description": "Stealth Boys last three times as long!"
+    },
+    {
+     "rank": 3,
+     "description": "Stealth Boys last four times as long!"
+    }
+   ]
+  },
+  {
+   "slug": "serendipity",
+   "name": "Serendipity",
+   "special": null,
+   "level": 5,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While below 30% health, gain a chance to Evade based on LCK. (No Power Armor)"
+    }
+   ]
+  },
+  {
+   "slug": "shotgun-champ",
+   "name": "Shotgun Champ",
+   "special": null,
+   "level": 40,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+10% damage to crippled targets per projectile your weapon fires."
+    }
+   ]
+  },
+  {
+   "slug": "sizzling-style",
+   "name": "Sizzling Style",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+50 Fire Damage Resist when wearing a matching set of armor."
+    },
+    {
+     "rank": 2,
+     "description": "+100 Fire Damage Resist when wearing a matching set of armor."
+    },
+    {
+     "rank": 3,
+     "description": "+150 Fire Damage Resist when wearing a matching set of armor."
+    },
+    {
+     "rank": 4,
+     "description": "+200 Fire Damage Resist when wearing a matching set of armor."
+    }
+   ]
+  },
+  {
+   "slug": "skeet-shooter",
+   "name": "Skeet Shooter",
+   "special": null,
+   "level": 10,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your small guns have 45% better accuracy and spread."
+    }
+   ]
+  },
+  {
+   "slug": "slow-metabolizer",
+   "name": "Slow Metabolizer",
+   "special": null,
+   "level": 5,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "All food satisfies hunger by an additional 50%."
+    },
+    {
+     "rank": 2,
+     "description": "All food satisfies hunger by an additional 100%."
+    }
+   ]
+  },
+  {
+   "slug": "slugger",
+   "name": "Slugger",
+   "special": null,
+   "level": 2,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your melee weapons do +10% damage to crippled targets."
+    },
+    {
+     "rank": 2,
+     "description": "Your melee weapons do +20% damage to crippled targets."
+    },
+    {
+     "rank": 3,
+     "description": "Your melee weapons do +30% damage to crippled targets."
+    }
+   ]
+  },
+  {
+   "slug": "smart-shot",
+   "name": "Smart Shot",
+   "special": null,
+   "level": 35,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Deal +25% weak spot damage while aiming a scoped weapon."
+    }
+   ]
+  },
+  {
+   "slug": "sneak",
+   "name": "Sneak",
+   "special": null,
+   "level": 20,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You are 25% harder to detect while sneaking."
+    },
+    {
+     "rank": 2,
+     "description": "You are 50% harder to detect while sneaking."
+    },
+    {
+     "rank": 3,
+     "description": "You are 75% harder to detect while sneaking."
+    }
+   ]
+  },
+  {
+   "slug": "sniper",
+   "name": "Sniper",
+   "special": null,
+   "level": 28,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain improved control and hold your breath 75% longer while aiming scopes."
+    }
+   ]
+  },
+  {
+   "slug": "solar-powered",
+   "name": "Solar Powered",
+   "special": null,
+   "level": 22,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain +5 STR and END between the hours of 6:00 a.m. and 6:00 p.m."
+    }
+   ]
+  },
+  {
+   "slug": "spiritual-healer",
+   "name": "Spiritual Healer",
+   "special": null,
+   "level": 36,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Regenerate HP while on a team based on your CHA."
+    }
+   ]
+  },
+  {
+   "slug": "squad-maneuvers",
+   "name": "Squad Maneuvers",
+   "special": null,
+   "level": 37,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Run 10% faster when part of a team."
+    },
+    {
+     "rank": 2,
+     "description": "Run 20% faster when part of a team."
+    }
+   ]
+  },
+  {
+   "slug": "stabilized",
+   "name": "Stabilized",
+   "special": null,
+   "level": 36,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Big guns gain 30% accuracy. Double in Power Armor."
+    }
+   ]
+  },
+  {
+   "slug": "stable-tools",
+   "name": "Stable Tools",
+   "special": null,
+   "level": 39,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Power Tools break 10% slower."
+    },
+    {
+     "rank": 2,
+     "description": "Power Tools break 25% slower."
+    },
+    {
+     "rank": 3,
+     "description": "Power Tools break 40% slower."
+    }
+   ]
+  },
+  {
+   "slug": "starched-genes",
+   "name": "Starched Genes",
+   "special": null,
+   "level": 30,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You will never mutate from rads and RadAway will never cure mutations."
+    }
+   ]
+  },
+  {
+   "slug": "storm-chaser",
+   "name": "Storm Chaser",
+   "special": null,
+   "level": 35,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain health regeneration while outside during rain or Rad Storms."
+    },
+    {
+     "rank": 2,
+     "description": "Gain high health regeneration while outside during rain or Rad Storms."
+    }
+   ]
+  },
+  {
+   "slug": "strange-in-numbers",
+   "name": "Strange In Numbers",
+   "special": null,
+   "level": 42,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Positive mutation effects are +25% stronger if teammates are mutated too."
+    }
+   ]
+  },
+  {
+   "slug": "strong-arm",
+   "name": "Strong Arm",
+   "special": null,
+   "level": 5,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "50% increased throwing range."
+    }
+   ]
+  },
+  {
+   "slug": "strong-back",
+   "name": "Strong Back",
+   "special": null,
+   "level": 26,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Gain more carry weight based on your STR."
+    }
+   ]
+  },
+  {
+   "slug": "sturdy-frame",
+   "name": "Sturdy Frame",
+   "special": null,
+   "level": 13,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You are 25% harder to stagger."
+    },
+    {
+     "rank": 2,
+     "description": "You are 50% harder to stagger."
+    }
+   ]
+  },
+  {
+   "slug": "sun-kissed",
+   "name": "Sun Kissed",
+   "special": null,
+   "level": 45,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Slowly regen radiation damage between the hours of 6:00 a.m. and 6:00 p.m."
+    },
+    {
+     "rank": 2,
+     "description": "Quickly regen radiation damage between the hours of 6:00 a.m. and 6:00 p.m."
+    }
+   ]
+  },
+  {
+   "slug": "super-duper",
+   "name": "Super Duper",
+   "special": null,
+   "level": 50,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "When you craft anything, there is a 10% chance you'll get double results!"
+    },
+    {
+     "rank": 2,
+     "description": "When you craft anything, there is a 20% chance you'll get double results!"
+    },
+    {
+     "rank": 3,
+     "description": "When you craft anything, there is a 30% chance you'll get double results!"
+    }
+   ]
+  },
+  {
+   "slug": "suppressor",
+   "name": "Suppressor",
+   "special": null,
+   "level": 40,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Reduce your target's damage output by 10% for 2 seconds after you attack."
+    },
+    {
+     "rank": 2,
+     "description": "Reduce your target's damage output by 20% for 2 seconds after you attack."
+    },
+    {
+     "rank": 3,
+     "description": "Reduce your target's damage output by 30% for 2 seconds after you attack."
+    }
+   ]
+  },
+  {
+   "slug": "survival-shortcut",
+   "name": "Survival Shortcut",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Generate 1 survival aiding chem every 30 minutes. Up to a max of 5."
+    },
+    {
+     "rank": 2,
+     "description": "Generate 1 survival aiding chem every 25 minutes. Up to a max of 6."
+    },
+    {
+     "rank": 3,
+     "description": "Generate 1 survival aiding chem every 20 minutes. Up to a max of 7."
+    },
+    {
+     "rank": 4,
+     "description": "Generate 2 survival aiding chem every 20 minutes. Up to a max of 10."
+    }
+   ]
+  },
+  {
+   "slug": "taking-one-for-the-team",
+   "name": "Taking One For The Team",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Enemies take 10% more damage when they attack you, if you're on a team."
+    },
+    {
+     "rank": 2,
+     "description": "Enemies take 20% more damage when they attack you, if you're on a team."
+    },
+    {
+     "rank": 3,
+     "description": "Enemies take 30% more damage when they attack you, if you're on a team."
+    },
+    {
+     "rank": 4,
+     "description": "Enemies take 40% more damage when they attack you, if you're on a team."
+    }
+   ]
+  },
+  {
+   "slug": "tank-killer",
+   "name": "Tank Killer",
+   "special": null,
+   "level": 30,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your ranged weapons ignore 20% armor."
+    },
+    {
+     "rank": 2,
+     "description": "Your ranged weapons ignore 40% armor."
+    }
+   ]
+  },
+  {
+   "slug": "team-medic",
+   "name": "Team Medic",
+   "special": null,
+   "level": 20,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your stimpaks now also heal nearby teammates for half the normal strength."
+    },
+    {
+     "rank": 2,
+     "description": "Your stimpaks now also heal nearby teammates for 75% of normal strength."
+    },
+    {
+     "rank": 3,
+     "description": "Your stimpaks now also heal nearby teammates for their full strength."
+    }
+   ]
+  },
+  {
+   "slug": "tenderizer",
+   "name": "Tenderizer",
+   "special": null,
+   "level": 46,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Each attack makes your target take increased damage."
+    }
+   ]
+  },
+  {
+   "slug": "thick-skin",
+   "name": "Thick Skin",
+   "special": null,
+   "level": 60,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You take 4% less damage from Ballistic attacks. (No Power Armor)"
+    },
+    {
+     "rank": 2,
+     "description": "You take 6% less damage from Ballistic attacks. (No Power Armor)"
+    },
+    {
+     "rank": 3,
+     "description": "You take 10% less damage from Ballistic attacks. (No Power Armor)"
+    }
+   ]
+  },
+  {
+   "slug": "thirst-quencher",
+   "name": "Thirst Quencher",
+   "special": null,
+   "level": 6,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increased Max AP based on END while not diseased."
+    }
+   ]
+  },
+  {
+   "slug": "thru-hiker",
+   "name": "Thru-hiker",
+   "special": null,
+   "level": 7,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Food and drink weights are reduced by 45%."
+    },
+    {
+     "rank": 2,
+     "description": "Food and drink weights are reduced by 90%."
+    }
+   ]
+  },
+  {
+   "slug": "tightly-wound",
+   "name": "Tightly Wound",
+   "special": null,
+   "level": 40,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Weapons spin up 60% faster."
+    }
+   ]
+  },
+  {
+   "slug": "tormentor",
+   "name": "Tormentor",
+   "special": null,
+   "level": 37,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You deal 20% more damage per crippled limb your target has."
+    }
+   ]
+  },
+  {
+   "slug": "travel-agent",
+   "name": "Travel Agent",
+   "special": null,
+   "level": 26,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You can Fast Travel while over encumbered at an increased cost."
+    }
+   ]
+  },
+  {
+   "slug": "traveling-pharmacy",
+   "name": "Traveling Pharmacy",
+   "special": null,
+   "level": 3,
+   "topCost": 2,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Weights of all Chems (including Stimpaks) are reduced by 45%."
+    },
+    {
+     "rank": 2,
+     "description": "Weights of all Chems (including Stimpaks) are reduced by 90%."
+    }
+   ]
+  },
+  {
+   "slug": "united-ordeal",
+   "name": "United Ordeal",
+   "special": null,
+   "level": 60,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "While in a team with another ghoul, you gain +1 to all S.P.E.C.I.A.L. stats."
+    },
+    {
+     "rank": 2,
+     "description": "While in a team with another ghoul, you gain +2 to all S.P.E.C.I.A.L. stats."
+    },
+    {
+     "rank": 3,
+     "description": "While in a team with another ghoul, you gain +3 to all S.P.E.C.I.A.L. stats."
+    }
+   ]
+  },
+  {
+   "slug": "vaccinated",
+   "name": "Vaccinated",
+   "special": null,
+   "level": 16,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Increased Disease Resistance based on END."
+    }
+   ]
+  },
+  {
+   "slug": "wasteland-whisperer",
+   "name": "Wasteland Whisperer",
+   "special": null,
+   "level": 50,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Aim your gun at some creatures for a 25% chance to pacify it."
+    },
+    {
+     "rank": 2,
+     "description": "Aim your gun at some creatures for a 50% chance to pacify it."
+    },
+    {
+     "rank": 3,
+     "description": "Aim your gun at some creatures for a 75% chance to pacify it."
+    }
+   ]
+  },
+  {
+   "slug": "weapon-artisan",
+   "name": "Weapon Artisan",
+   "special": null,
+   "level": 40,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You can repair any weapon to 130% of normal maximum condition."
+    },
+    {
+     "rank": 2,
+     "description": "You can repair any weapon to 160% of normal maximum condition."
+    },
+    {
+     "rank": 3,
+     "description": "You can repair any weapon to 200% of normal maximum condition."
+    }
+   ]
+  },
+  {
+   "slug": "what-rads",
+   "name": "What Rads?",
+   "special": null,
+   "level": 50,
+   "topCost": null,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+50 Rad Resist, restore 1 Rad per second."
+    },
+    {
+     "rank": 2,
+     "description": "+75 Rad Resist, restore 2 Rads per second."
+    },
+    {
+     "rank": 3,
+     "description": "+100 Rad Resist, restore 3 Rads per second."
+    },
+    {
+     "rank": 4,
+     "description": "+300 Rad Resist, restore 6 Rads per second."
+    }
+   ]
+  },
+  {
+   "slug": "white-knight",
+   "name": "White Knight",
+   "special": null,
+   "level": 39,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Your armor breaks 20% slower and is cheaper to repair."
+    },
+    {
+     "rank": 2,
+     "description": "Your armor breaks 40% slower and is cheaper to repair."
+    },
+    {
+     "rank": 3,
+     "description": "Your armor breaks 60% slower and is cheaper to repair."
+    }
+   ]
+  },
+  {
+   "slug": "wild-west-hands",
+   "name": "Wild West Hands",
+   "special": null,
+   "level": 65,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "12% chance to instantly reload your entire magazine when empty."
+    },
+    {
+     "rank": 2,
+     "description": "24% chance to instantly reload your entire magazine when empty."
+    },
+    {
+     "rank": 3,
+     "description": "36% chance to instantly reload your entire magazine when empty."
+    }
+   ]
+  },
+  {
+   "slug": "wood-chucker",
+   "name": "WoodChucker",
+   "special": null,
+   "level": 17,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "Collect twice as much when harvesting wood."
+    }
+   ]
+  },
+  {
+   "slug": "wound-salter",
+   "name": "Wound Salter",
+   "special": null,
+   "level": 2,
+   "topCost": 3,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "+10% damage against bleeding targets."
+    },
+    {
+     "rank": 2,
+     "description": "+20% damage against bleeding targets."
+    },
+    {
+     "rank": 3,
+     "description": "+30% damage against bleeding targets."
+    }
+   ]
+  },
+  {
+   "slug": "wrecking-ball",
+   "name": "Wrecking Ball",
+   "special": null,
+   "level": 29,
+   "topCost": 1,
+   "ranks": [
+    {
+     "rank": 1,
+     "description": "You deal +100% damage to objects and now damage your own objects."
+    }
+   ]
+  }
+ ]
+}
