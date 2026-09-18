@@ -17,7 +17,7 @@ const accents = [
 ] as const;
 
 export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
-  const { theme, accent, colorBlind, uiMode, setTheme, setAccent, setColorBlind, setUiMode } = useThemeSettings();
+  const { theme, accent, colorBlind, uiMode, setTheme, setAccent, setColorBlind, setUiMode, season, setSeason } = useThemeSettings();
 
   async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string }) {
     if (!canPersist) return;
@@ -134,6 +134,22 @@ export default function ThemeSettings({ canPersist }: { canPersist: boolean }) {
         </div>
         <p className="mt-2 text-xs text-foreground/60">
           Adjusts status colors to remain distinct under common color-vision deficiencies.
+        </p>
+      </div>
+      <div>
+        <label className="text-sm font-semibold" htmlFor="season-pref">Seasonal look</label>
+        <select
+          id="season-pref"
+          value={season}
+          onChange={(e) => setSeason(e.target.value as "auto" | "on" | "off")}
+          className="mt-2 w-full rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm text-foreground"
+        >
+          <option value="auto">Auto (Blood Moon during The Slasher, 15 Sep to 10 Nov)</option>
+          <option value="on">Always on</option>
+          <option value="off">Off</option>
+        </select>
+        <p className="mt-2 text-xs text-foreground/60">
+          A blood moon and fog behind the interface for Season 26. Colors and layout stay the same.
         </p>
       </div>
       {!canPersist ? (

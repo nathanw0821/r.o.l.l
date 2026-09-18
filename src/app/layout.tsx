@@ -11,6 +11,7 @@ import { getAppSession } from "@/lib/auth";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 
 import { VT323, Share_Tech_Mono } from "next/font/google";
+import { resolveSeasonAttribute } from "@/lib/season";
 
 const fontVT323 = VT323({
   weight: "400",
@@ -61,6 +62,10 @@ function buildUiBootstrapScript() {
       const scanlineMode = read("roll-scanline-mode", "balanced");
       const uiTone = read("roll-ui-tone", "neutral");
       const sidebarCollapsed = read("roll-sidebar-collapsed", "0");
+      const seasonPref = read("roll-season", "auto");
+      const seasonNow = Date.now();
+      const seasonOpen = seasonNow >= Date.parse("2026-09-15T00:00:00Z") && seasonNow < Date.parse("2026-11-10T00:00:00Z") + 86400000;
+      const seasonAttr = seasonPref === "on" ? "blood-moon" : seasonPref === "off" ? "" : (seasonOpen ? "blood-moon" : "");
       const resolvedTheme =
         theme === "light" || theme === "dark"
           ? theme
@@ -73,6 +78,7 @@ function buildUiBootstrapScript() {
       root.setAttribute("data-scanlines", scanlineMode);
       root.setAttribute("data-ui-tone", uiTone);
       root.setAttribute("data-sidebar-collapsed", sidebarCollapsed === "1" ? "1" : "0");
+      root.setAttribute("data-season", seasonAttr);
     } catch {
       // Keep server defaults if storage is unavailable.
     }
@@ -134,6 +140,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-scanlines="balanced"
       data-ui-tone="neutral"
       data-sidebar-collapsed="0"
+      data-season={resolveSeasonAttribute("auto")}
       className={`${fontVT323.variable} ${fontShareTechMono.variable}`}
     >
       <head>
