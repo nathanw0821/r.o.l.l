@@ -301,6 +301,35 @@ test.describe("guest smoke", () => {
     await expectPageSane(page);
   });
 
+  // The corpus has no Arms Keeper's guide for "wwr" (only the unrelated Arms Keeper perk card), so this
+  // uses "25lvc", the old name of V.A.T.S. Optimized, whose guide exists.
+  test("guides search: shorthand 25lvc lists the V.A.T.S. Optimized guide in the first 5 rows", async ({ page }) => {
+    await page.goto("/wiki?q=25lvc");
+    // A ?q= deep link opens the best match in the reader; back to the list shows the ranking.
+    await expect(page.getByRole("heading", { name: "V.A.T.S. Optimized Legendary mod", level: 1 })).toBeVisible({
+      timeout: 20_000
+    });
+    await page.getByRole("button", { name: "Back to results" }).click();
+    const rows = page.locator("[data-guide-row]");
+    await expect(rows.first()).toBeVisible({ timeout: 20_000 });
+    const firstFive = (await rows.allTextContents()).slice(0, 5).join(" | ");
+    expect(firstFive).toContain("V.A.T.S. Optimized Legendary mod");
+  });
+
+  test("guides search: a query with no matches suggests categories", async ({ page }) => {
+    await page.goto("/wiki");
+    await expect(page.getByText(/Showing [\d,]+ guides?/)).toBeVisible({ timeout: 20_000 });
+    await page.locator("#guides-search").fill("zzqx plasma");
+    const help = page.locator("[data-guide-suggestions]");
+    await expect(help).toBeVisible({ timeout: 10_000 });
+    await expect(help).toContainText("No guides match. Try");
+    await expect(page.getByRole("button", { name: "Clear all filters and search" })).toBeVisible();
+    await help.getByRole("link").first().click();
+    await expect(page).toHaveURL(/[?&]category=/);
+    await expect(page).not.toHaveURL(/[?&]q=/);
+    await expect(page.locator("[data-guide-row]").first()).toBeVisible({ timeout: 20_000 });
+  });
+
   test("test server page shows the last shipped cycle", async ({ page }) => {
     await page.goto("/pts");
 
