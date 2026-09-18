@@ -230,5 +230,5 @@ export const GOLDEN_BUILDS: GoldenBuild[] = [
   }
 ];
 
-/** AP-cost contract grid: every catalog base AP × innate reduction × 25 LVC star. */
+/** AP-cost contract grid: every catalog base AP × innate reduction × V.A.T.S. Optimized star (x0.65). */
 export const AP_FUZZ_REDUCTIONS = [0, -0.05, -0.1, -0.15, -0.2, -0.25, -0.3, -0.35, -0.4, -0.5, -0.9, -1.0];

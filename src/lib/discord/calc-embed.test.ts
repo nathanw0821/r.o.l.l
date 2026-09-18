@@ -50,9 +50,9 @@ describe("/calc embed builders", () => {
     expect(buildDamageEmbed({ base: 50, multipliers: "lots" }).color).toBe(PIPBOY_AMBER);
   });
 
-  it("vats: 30 AP with -30% mods and 25 LVC reads 15.8 AP", () => {
-    const embed = buildVatsEmbed({ base_ap: 30, mod_reduction: 30, lvc: true });
-    expect(embed.fields[0].value).toContain("= 15.8 AP / shot");
+  it("vats: 40 AP with -30% mods and V.A.T.S. Optimized reads 18.2 AP", () => {
+    const embed = buildVatsEmbed({ base_ap: 40, mod_reduction: 30, lvc: true });
+    expect(embed.fields[0].value).toContain("= 18.2 AP / shot");
     expect(buildVatsEmbed({ base_ap: 0 }).color).toBe(PIPBOY_AMBER);
   });
 

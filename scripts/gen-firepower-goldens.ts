@@ -29,7 +29,7 @@ for (const build of GOLDEN_BUILDS) {
 // the calculator adapter must reproduce exactly.
 function legacyVatsApCost(baseAp: number, innateApCostPct: number, hasVatsOptimized: boolean): number {
   let apMultiplier = 1.0;
-  if (hasVatsOptimized) apMultiplier *= 0.75;
+  if (hasVatsOptimized) apMultiplier *= 0.65; // V.A.T.S. Optimized is -35% AP since Patch 60 (was 0.75; regenerated 2026-09-18)
   apMultiplier *= Math.max(0.1, 1.0 + innateApCostPct);
   return Math.max(2, Math.round(baseAp * apMultiplier));
 }

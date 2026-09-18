@@ -35,6 +35,7 @@ import { useLegendaryBench } from "@/components/builder/hooks/use-legendary-benc
 import { useBuilderShare } from "@/components/builder/hooks/use-builder-share";
 import { useLearnedBasePieces } from "@/components/builder/hooks/use-learned-base-pieces";
 import { isUniqueBaseItem } from "@/lib/truth/unique-items";
+import { getArmorSetBonusTags } from "@/lib/builder/armor-set-bonuses";
 import { useBuilderPayload } from "@/components/builder/hooks/use-builder-payload";
 import { useBuilderBootstrap } from "@/components/builder/hooks/use-builder-bootstrap";
 import { Button } from "@/components/ui/button";
@@ -724,7 +725,7 @@ export default function BuilderExperimentClient({
         weaponFirepowerResult={weaponFirepowerResult}
         payload={payload}
         setPayload={setPayload}
-        activeTacticalTags={stanceAndBiometricsLayer.activeTacticalTags}
+        activeTacticalTags={[...stanceAndBiometricsLayer.activeTacticalTags, ...getArmorSetBonusTags(payload.armorPieceSetKeys)]}
         defensiveProfile={defensiveProfile}
         playerResists={{ dr: totals.dr, er: totals.er }}
       />

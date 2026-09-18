@@ -1815,10 +1815,10 @@ export const TARGET_DUMMY_CATALOG: Record<string, BossTargetDummy> = {
     name: "Earle Williams (Colossal Problem)",
     shortName: "Earle",
     category: "boss",
-    damageResistance: 400,
-    energyResistance: 400,
+    damageResistance: 300,
+    energyResistance: 300,
     flatDamageReductionPct: 0.80,
-    description: "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)",
+    description: "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)",
   },
   "ultracite-titan": {
     id: "ultracite-titan",

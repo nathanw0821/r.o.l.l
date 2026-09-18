@@ -101,7 +101,7 @@ export type CombatSwitchboardState = {
 export const TARGET_ENEMIES: Record<string, { name: string; dr: number; pctReduction: number }> = {
   superMutant: { name: "Super Mutant Firestarter (150 DR)", dr: 150, pctReduction: 0 },
   earle: { name: "Earle Williams (Boss 80% Mitigation + 300 DR)", dr: 300, pctReduction: 0.80 },
-  sbq: { name: "Scorchbeast Queen (Boss 80% Mitigation + 300 DR)", dr: 300, pctReduction: 0.80 },
+  sbq: { name: "Scorchbeast Queen (Boss 70% Mitigation + 300 DR)", dr: 300, pctReduction: 0.70 },
   titan: { name: "Ultracite Titan (Boss 70% Mitigation + 350 DR)", dr: 350, pctReduction: 0.70 },
   standardScorched: { name: "Standard Scorched (40 DR)", dr: 40, pctReduction: 0 },
 };
@@ -1295,7 +1295,7 @@ export default function BuilderCombatSwitchboard({
                   <div className="text-[0.62rem] text-slate-400 pt-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <span>💡 {critQualification.recommendation}</span>
                     <span className="text-slate-500 shrink-0">
-                      3★ Lucky: {critQualification.hasLucky15Fill ? "Active (-10 Luck)" : "Off"} · VATS Opt: {critQualification.hasVatsOptimized ? "Active (-25% AP)" : "Off"}
+                      3★ Lucky: {critQualification.hasLucky15Fill ? "Active (-10 Luck)" : "Off"} · VATS Opt: {critQualification.hasVatsOptimized ? "Active (-35% AP)" : "Off"}
                     </span>
                   </div>
                 </div>

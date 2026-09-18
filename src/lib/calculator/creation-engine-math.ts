@@ -10,7 +10,7 @@
  * 1. Post-Patch 22 (One Wasteland) additive base vs multiplicative total damage scaling
  * 2. Multiplicative sequential armor penetration stacking (Anti-Armor, Tank Killer, mags)
  * 3. Non-linear Bethesda damage resistance (DR/ER) mitigation power curve (0.15 / 0.365)
- * 4. VATS AP cost mod multipliers and -25% Less VATS Cost (LVC)
+ * 4. VATS AP cost mod multipliers and the V.A.T.S. Optimized star (-35% AP cost, x0.65)
  * 5. Critical meter fill and Luck breakpoints (Critical Savvy rank 1-3, Lucky Hit)
  */
 
@@ -171,20 +171,20 @@ export function calculateMitigatedDamage(
  * Weapon mods (Reflex sight -15%, Aligned barrel -5%, Forceful stock -5%,
  * Swift mag -5%) sum additively to reduce base AP cost (floored at 10% of base).
  * The 3rd-star legendary "25% Less VATS Action Point Cost" then multiplies the
- * modded cost by 0.75. Result is rounded to 1 decimal and never below 1 AP.
+ * modded cost by 0.65 (verified 2026-09-18). Result is rounded to 1 decimal and never below 1 AP.
  *
  * @param baseAp Weapon base AP cost.
  * @param weaponModReductionsPct Sum of weapon mod AP reductions, in percent.
- * @param has25Lvc Whether the 25% Less VATS Cost legendary star is present.
+ * @param hasVatsOptimized Whether the V.A.T.S. Optimized (-35% AP) legendary star is present.
  */
 export function calculateVatsApCost(
   baseAp: number,
   weaponModReductionsPct: number,
-  has25Lvc = false
+  hasVatsOptimized = false
 ): number {
   let moddedAp = baseAp * Math.max(0.1, 1 - weaponModReductionsPct / 100);
-  if (has25Lvc) {
-    moddedAp *= 0.75;
+  if (hasVatsOptimized) {
+    moddedAp *= 0.65;
   }
   return roundTo(Math.max(1, moddedAp), 1);
 }

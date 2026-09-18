@@ -388,7 +388,7 @@ export function calculateVatsCritQualification(params: {
 /**
  * Integer VATS AP cost per shot. Same model as calculateVatsApCost in
  * creation-engine-math: attachments reduce base AP additively (floored at 10% of
- * base) and the 25% Less VATS Cost star multiplies by 0.75.
+ * base) and the V.A.T.S. Optimized star (-35% AP cost) multiplies by 0.65.
  *
  * Deliberately NOT delegated to the calculator: it rounds to one decimal before
  * this function rounds to a whole number, and that double rounding flips 7 of the
@@ -399,7 +399,7 @@ export function calculateVatsCritQualification(params: {
 export function resolveVatsApCost(baseVatsApCost: number, innateApCostPct: number, hasVatsOptimized: boolean): number {
   let apMultiplier = 1.0;
   if (hasVatsOptimized) {
-    apMultiplier *= 0.75;
+    apMultiplier *= 0.65;
   }
   apMultiplier *= Math.max(0.1, 1.0 + innateApCostPct);
   return Math.max(2, Math.round(baseVatsApCost * apMultiplier));
@@ -632,8 +632,9 @@ export function calculateCombatFirepower(
 
   for (const slug of modSlugs) {
     if (slug === "bloodied") {
-      // Bloodied gives up to +95% (80% at 20% HP)
-      const bloodiedBonus = Math.min(0.95, Math.max(0, (1 - healthPct) * 1.0));
+      // Bloodied: up to +130% as health decreases (cap reached at 5% HP; verified in game 2026-09-18,
+      // Patch 60 rebalance). Linear in missing health, scaled so 5% HP hits the cap.
+      const bloodiedBonus = Math.min(1.3, Math.max(0, (1 - healthPct) * (1.3 / 0.95)));
       additiveDamagePct += bloodiedBonus;
       breakdown.push({ source: `Bloodied (${Math.round((1 - healthPct) * 100)}% Missing HP)`, value: `+${Math.round(bloodiedBonus * 100)}%` });
     } else if (slug === "anti-armor" || slug === "anti_armor") {
@@ -643,8 +644,8 @@ export function calculateCombatFirepower(
       additiveDamagePct += aristoBonus;
       breakdown.push({ source: "Aristocrat's (29k+ Caps)", value: `+${Math.round(aristoBonus * 100)}%` });
     } else if (slug === "two-shot" || slug === "two_shot") {
-      additiveDamagePct += 0.25;
-      breakdown.push({ source: "Two Shot (+25% Base)", value: "+25%" });
+      additiveDamagePct += 0.75;
+      breakdown.push({ source: "Two Shot (+75% Base, Patch 60)", value: "+75%" });
     } else if (slug === "quad") {
       hasQuad = true;
     } else if (slug === "rapid" || slug.includes("25-weapon-speed") || slug.includes("faster-fire-rate")) {
@@ -691,7 +692,8 @@ export function calculateCombatFirepower(
       }
     } else if (slug === "junkies" || slug === "junkie-s") {
       const addictions = input.playerStats.addictionsCount || 0;
-      const jBonus = Math.min(0.50, addictions * 0.10);
+      // Junkie's: +10% per addiction, up to +100% at 10 addictions (Patch 60 rebalance)
+      const jBonus = Math.min(1.0, addictions * 0.10);
       if (jBonus > 0) {
         additiveDamagePct += jBonus;
         breakdown.push({ source: `Junkie's (${addictions} Addictions)`, value: `+${Math.round(jBonus * 100)}%` });
@@ -1078,7 +1080,7 @@ export function calculateCombatFirepower(
 
   // 7. VATS AP Cost per Shot
   if (hasVatsOptimized) {
-    vatsBreakdown.push({ source: "VATS Optimized 3★ (-25% AP)", value: "×0.75" });
+    vatsBreakdown.push({ source: "V.A.T.S. Optimized 3★ (-35% AP)", value: "×0.65" });
   }
   if (innateMods.apCostPct !== 0) {
     vatsBreakdown.push({
