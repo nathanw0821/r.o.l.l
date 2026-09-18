@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 
 /** Every guest page must show the truth-pack footer stamp: "Game data: Patch 70 · ...". */
 async function expectFooterDataStamp(page: Page) {
@@ -27,6 +27,26 @@ async function expectNoHorizontalScroll(page: Page) {
     `Horizontal overflow: documentElement.scrollWidth=${scrollWidth}px > window.innerWidth=${innerWidth}px on ${page.url()}. See the AppShell mobile sidebar defect noted above this function.`
   );
   expect(scrollWidth).toBeLessThanOrEqual(innerWidth + 1);
+}
+
+/** Resolves once the element's page position has not changed for 30 consecutive animation frames. */
+async function waitForStablePosition(locator: Locator) {
+  await locator.evaluate(
+    (el) =>
+      new Promise<void>((resolve) => {
+        let last = "";
+        let still = 0;
+        const tick = () => {
+          const rect = el.getBoundingClientRect();
+          const position = `${rect.left + window.scrollX},${rect.top + window.scrollY}`;
+          still = position === last ? still + 1 : 0;
+          last = position;
+          if (still >= 30 || !el.isConnected) resolve();
+          else requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      })
+  );
 }
 
 async function expectPageSane(page: Page) {
@@ -390,6 +410,91 @@ test.describe("guest smoke", () => {
     await expectPageSane(page);
   });
 
+  test("tracker 'All' view groups rows into four tier sections with learned counts", async ({ page }) => {
+    await page.goto("/all-effects");
+    await expect(page.locator('[data-tier-controls="ready"]')).toBeVisible({ timeout: 30_000 });
+
+    // Tier sizes of the 149-effect catalog (src/lib/static-fallback-catalog.ts; pinned in tracker-tier-groups.test.ts).
+    const expected: [string, number][] = [["1-star", 39], ["2-star", 32], ["3-star", 40], ["4-star", 38]];
+    const toggles = page.locator("[data-tier-group] button[aria-expanded]");
+    await expect(toggles).toHaveCount(expected.length);
+    for (const [index, [title, total]] of expected.entries()) {
+      const toggle = toggles.nth(index);
+      await expect(toggle).toContainText(title);
+      await expect(toggle).toContainText(new RegExp(`\\b\\d+ of ${total} learned`));
+      await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    }
+    await expect(page.getByRole("button", { name: "Expand all" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Collapse all" })).toBeVisible();
+
+    await expectPageSane(page);
+  });
+
+  test("tracker: collapsing the 4-star section hides its rows and survives a reload", async ({ page }) => {
+    await page.goto("/all-effects");
+    const ready = page.locator('[data-tier-controls="ready"]');
+    await expect(ready).toBeVisible({ timeout: 30_000 });
+
+    const fourStar = page.getByRole("button", { name: /^4-star/ });
+    const fourStarRows = page.locator('[data-tier-group="4 Star"] [data-effect-id]');
+    const oneStarRows = page.locator('[data-tier-group="1 Star"] [data-effect-id]');
+    await expect(fourStarRows.first()).toBeVisible();
+
+    await fourStar.click();
+    await expect(fourStar).toHaveAttribute("aria-expanded", "false");
+    await expect(fourStarRows.filter({ visible: true })).toHaveCount(0);
+    await expect(oneStarRows.first()).toBeVisible();
+
+    await page.reload();
+    await expect(ready).toBeVisible({ timeout: 30_000 });
+    await expect(fourStar).toHaveAttribute("aria-expanded", "false");
+    await expect(fourStarRows.filter({ visible: true })).toHaveCount(0);
+    await expect(oneStarRows.first()).toBeVisible();
+
+    await page.getByRole("button", { name: "Expand all" }).click();
+    await expect(fourStar).toHaveAttribute("aria-expanded", "true");
+    await expect(fourStarRows.first()).toBeVisible();
+  });
+
+  test("tracker: searching 'Severing' shows only the 4-star section with 1 match, expanded", async ({ page }) => {
+    await page.goto("/all-effects");
+    await expect(page.locator('[data-tier-controls="ready"]')).toBeVisible({ timeout: 30_000 });
+
+    // Collapse 4-star first: a search opens it without overwriting the saved state.
+    const fourStar = page.getByRole("button", { name: /^4-star/ });
+    await fourStar.click();
+    await expect(fourStar).toHaveAttribute("aria-expanded", "false");
+
+    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...");
+    await search.fill("Severing");
+    const sections = page.locator("[data-tier-group]");
+    await expect(sections).toHaveCount(1);
+    await expect(sections.first()).toHaveAttribute("data-tier-group", "4 Star");
+    await expect(fourStar).toContainText("1 match");
+    await expect(fourStar).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible();
+
+    await search.fill("");
+    await expect(sections).toHaveCount(4);
+    await expect(fourStar).toHaveAttribute("aria-expanded", "false");
+    await expect(fourStar).not.toContainText("match");
+  });
+
+  test("tracker: ?focus= on a row in a collapsed section opens that section", async ({ page }) => {
+    await page.goto("/all-effects");
+    const ready = page.locator('[data-tier-controls="ready"]');
+    await expect(ready).toBeVisible({ timeout: 30_000 });
+    const id = await page.locator('[data-tier-group="3 Star"] [data-effect-id]').nth(5).getAttribute("data-effect-id");
+    expect(id).toBeTruthy();
+    await page.getByRole("button", { name: "Collapse all" }).click();
+    await expect(page.getByRole("button", { name: /^3-star/ })).toHaveAttribute("aria-expanded", "false");
+
+    await page.goto(`/all-effects?focus=${encodeURIComponent(id ?? "")}`);
+    await expect(page.locator(`[data-effect-id="${id}"]`)).toBeInViewport({ timeout: 30_000 });
+    await expect(page.getByRole("button", { name: /^3-star/ })).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("button", { name: /^1-star/ })).toHaveAttribute("aria-expanded", "false");
+  });
+
   test("perks deep link ?q= pre-fills the perk search", async ({ page }) => {
     await page.goto("/perks?q=Night%20Person");
 
@@ -410,13 +515,19 @@ test.describe("guest smoke", () => {
       has: page.getByRole("heading", { name: /What changed in Patch/, level: 2 })
     });
     const severing = panel.getByRole("link", { name: "Severing", exact: true });
-    await expect(severing).toBeVisible();
+    await expect(severing).toBeVisible({ timeout: 20_000 });
+    // The home page shifts this link down by several hundred px right after first paint (banners
+    // that mount on the client). A click aimed during that shift lands on whatever moved under the
+    // pointer and the page never navigates, which was the flake: click only once it has settled.
+    await waitForStablePosition(severing);
     await severing.click();
 
-    // Client navigation waits for the target route; under `next dev` its first compile can be slow.
-    await expect(page).toHaveURL(/\/all-effects\?q=Severing$/, { timeout: 20_000 });
+    // Client navigation waits for the target route; under `next dev` its first compile (and the
+    // tracker's data load) can be slow, so every wait here is on a condition, never a fixed delay.
+    // Waiting for the row first means the table has rendered and the ?q= sync has run.
+    await expect(page).toHaveURL(/\/all-effects\?q=Severing$/, { timeout: 30_000 });
+    await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible({ timeout: 30_000 });
     await expect(page.getByPlaceholder("Search mod name, effect, or catalyst...")).toHaveValue("Severing");
-    await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible();
   });
 
   test("sign-in explains why an account helps", async ({ page }) => {
@@ -425,5 +536,102 @@ test.describe("guest smoke", () => {
     await expect(page.getByText(/saves your legendary tracker/)).toBeVisible();
 
     await expectPageSane(page);
+  });
+});
+
+/**
+ * Phone chrome (<= 860px): content starts near the top, the cloud-backup notice is one slim
+ * block, and the floating Feedback / Quick filters buttons never cover the end of the page.
+ * Runs on the `mobile` project (360x800) only; desktop layout is unchanged by design.
+ */
+test.describe("phone layout", () => {
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== "mobile", "Phone chrome only applies at <= 860px.");
+  });
+
+  test("guides heading starts in the top half of the screen for a guest", async ({ page }) => {
+    await page.goto("/wiki");
+    // Wait for the late-loading chrome (the notice renders after the session check) before measuring.
+    await expect(page.locator('[data-guest-banner="slim"]')).toBeVisible({ timeout: 20_000 });
+    const heading = page.getByRole("heading", { name: "Fallout 76 guides", level: 1 });
+    await expect(heading).toBeVisible({ timeout: 20_000 });
+
+    // Poll: the phone menu collapses in a client effect after hydration, so the first frame can be taller.
+    await expect
+      .poll(() => heading.evaluate((el) => el.getBoundingClientRect().top), { timeout: 10_000 })
+      .toBeLessThan(400);
+    // The tall desktop card is not shown on phones; the slim notice keeps every action.
+    await expect(page.locator('[data-guest-banner="full"]')).toBeHidden();
+    const slim = page.locator('[data-guest-banner="slim"]');
+    await expect(slim.getByRole("button", { name: "Create account" })).toBeVisible();
+    await expect(slim.getByRole("link", { name: "Privacy" })).toBeVisible();
+    await expect(slim.getByRole("button", { name: "Don't show again" })).toBeVisible();
+    await expect(slim.getByRole("button", { name: "Dismiss banner" })).toBeVisible();
+
+    await expectNoHorizontalScroll(page);
+  });
+
+  test("floating buttons do not cover the pagination or the last footer line", async ({ page }) => {
+    await page.goto("/wiki");
+    await expect(page.locator("[data-guide-row]").first()).toBeVisible({ timeout: 20_000 });
+    const feedback = page.getByRole("button", { name: "Feedback", exact: true });
+    const quickFilters = page.getByRole("button", { name: "Open Command Hub Filters" });
+    await expect(feedback).toBeVisible({ timeout: 20_000 });
+    await expect(quickFilters).toBeVisible({ timeout: 20_000 });
+
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    const next = page.getByRole("navigation", { name: "Pagination" }).getByRole("link", { name: "Next" });
+    await expect(next).toBeInViewport();
+
+    // Whatever sits at the centre of "Next" must be the link itself (or inside it), not a floating button.
+    const nextIsOnTop = await next.evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+      return hit !== null && (hit === el || el.contains(hit));
+    });
+    expect(nextIsOnTop).toBe(true);
+
+    // The last footer line ends above both floating buttons.
+    const lastLine = page.getByRole("link", { name: /Atomic Shop tracker/ });
+    const lineBottom = await lastLine.evaluate((el) => el.getBoundingClientRect().bottom);
+    const feedbackBox = await feedback.boundingBox();
+    const quickBox = await quickFilters.boundingBox();
+    expect(feedbackBox && quickBox).toBeTruthy();
+    expect(lineBottom).toBeLessThanOrEqual(Math.min(feedbackBox!.y, quickBox!.y));
+
+    // The two buttons sit side by side without overlapping.
+    expect(feedbackBox!.x + feedbackBox!.width).toBeLessThanOrEqual(quickBox!.x);
+  });
+
+  test("Feedback and Quick filters stay visible and open their panels", async ({ page }) => {
+    await page.goto("/wiki");
+    const feedback = page.getByRole("button", { name: "Feedback", exact: true });
+    await expect(feedback).toBeVisible({ timeout: 20_000 });
+    await feedback.click();
+    await expect(page.getByRole("heading", { name: "Feedback", level: 3 })).toBeVisible();
+    await page.getByRole("button", { name: "Close feedback" }).click();
+    await expect(feedback).toBeVisible();
+
+    const quickFilters = page.getByRole("button", { name: "Open Command Hub Filters" });
+    await expect(quickFilters).toBeVisible({ timeout: 20_000 });
+    await quickFilters.click();
+    await expect(page.getByText("[ COMMAND CENTER ]")).toBeVisible();
+    await page.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(quickFilters).toBeVisible();
+
+    await expectNoHorizontalScroll(page);
+  });
+
+  test("'Don't show again' on the slim notice hides it after a reload", async ({ page }) => {
+    await page.goto("/wiki");
+    const slim = page.locator('[data-guest-banner="slim"]');
+    await expect(slim).toBeVisible({ timeout: 20_000 });
+    await slim.getByRole("button", { name: "Don't show again" }).click();
+    await expect(slim).toBeHidden();
+    expect(await page.evaluate(() => localStorage.getItem("roll-dismissed-signup-banner-perm"))).toBe("true");
+
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "Fallout 76 guides", level: 1 })).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator("[data-guest-banner]")).toHaveCount(0);
   });
 });

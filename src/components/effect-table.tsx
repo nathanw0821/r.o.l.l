@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { createLinkPlanState, linkifyToNodes } from "@/components/linkified-text";
 import { cn } from "@/lib/utils";
-import { Target, Plus, Minus, Check, Bookmark, Search, Sparkles } from "lucide-react";
+import { Target, Plus, Minus, Check, Bookmark, Search, Sparkles, ChevronDown } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
 import { useProgressHistory } from "@/components/progress-history-provider";
 import { useLocalProgress } from "@/components/use-local-progress";
@@ -16,6 +16,17 @@ import { getCraftComponentKind } from "@/lib/legendary-mod-sources";
 import { subscribeProgressChange, emitProgressChange } from "@/lib/progress-events";
 import { formatTierStarsWithLabel } from "@/lib/tier-format";
 import { updateProgress } from "@/actions/progress";
+import {
+  formatLearnedOf,
+  formatMatchCount,
+  groupRowsByTier,
+  learnedPercent,
+  parseCollapsedTiers,
+  serializeCollapsedTiers,
+  shouldGroupByTier,
+  TRACKER_COLLAPSED_STORAGE_KEY,
+  type TierGroup
+} from "@/lib/tracker-tier-groups";
 
 export type EffectTierRow = {
   id: string;
@@ -101,6 +112,10 @@ function TrackerUrlQuerySync({ ready, onQuery }: { ready: boolean; onQuery: (q: 
     onQuery(urlQuery);
   }, [ready, urlQuery, onQuery]);
   return null;
+}
+
+function tierBodyId(key: string): string {
+  return `tracker-tier-${key.toLowerCase().replace(/\s+/g, "-")}`;
 }
 
 export default function EffectTable({
@@ -209,6 +224,71 @@ export default function EffectTable({
     return list;
   }, [localRows, query, sourceFilters, statusFilters, originFilters, categoryFilters, selectedStarTab, selectedCategoryTab, selectedStatusTab]);
 
+  // ---- Tier sections (All view of a multi-tier table only; single-tier pages and tier tabs are unchanged) ----
+  const groupByTier = shouldGroupByTier(localRows, selectedStarTab);
+  const tierGroups = React.useMemo(
+    () => (groupByTier ? groupRowsByTier(filteredRows, localRows) : []),
+    [groupByTier, filteredRows, localRows]
+  );
+  const searchActive = query.trim().length > 0;
+  const filterActive =
+    searchActive ||
+    sourceFilters.length > 0 ||
+    statusFilters.length > 0 ||
+    originFilters.length > 0 ||
+    categoryFilters.length > 0 ||
+    selectedCategoryTab !== "ALL" ||
+    selectedStatusTab !== "ALL";
+  const visibleTierGroups = filterActive ? tierGroups.filter((group) => group.rows.length > 0) : tierGroups;
+
+  // Saved collapsed sections (localStorage). Read after mount so server and client markup match.
+  const [collapsedTiers, setCollapsedTiers] = React.useState<Set<string>>(() => new Set());
+  // Set once the saved state has been read (also marks the controls as interactive for tests).
+  const [collapsedLoaded, setCollapsedLoaded] = React.useState(false);
+  React.useEffect(() => {
+    let stored: string | null = null;
+    try {
+      stored = window.localStorage.getItem(TRACKER_COLLAPSED_STORAGE_KEY);
+    } catch {
+      stored = null;
+    }
+    const parsed = parseCollapsedTiers(stored);
+    if (parsed.size > 0) setCollapsedTiers(parsed);
+    setCollapsedLoaded(true);
+  }, []);
+  // While a search query is present every section starts expanded; collapsing one then only lasts
+  // for that query and never touches the saved state.
+  const [searchCollapsed, setSearchCollapsed] = React.useState<{ query: string; keys: Set<string> }>(() => ({
+    query: "",
+    keys: new Set()
+  }));
+  const searchCollapsedKeys = searchCollapsed.query === query ? searchCollapsed.keys : null;
+
+  const isTierExpanded = React.useCallback(
+    (key: string) => (searchActive ? !(searchCollapsedKeys?.has(key) ?? false) : !collapsedTiers.has(key)),
+    [searchActive, searchCollapsedKeys, collapsedTiers]
+  );
+
+  const setTierKeysCollapsed = React.useCallback(
+    (keys: string[], collapse: boolean) => {
+      if (searchActive) {
+        const next = new Set(searchCollapsedKeys ?? []);
+        keys.forEach((key) => (collapse ? next.add(key) : next.delete(key)));
+        setSearchCollapsed({ query, keys: next });
+        return;
+      }
+      const next = new Set(collapsedTiers);
+      keys.forEach((key) => (collapse ? next.add(key) : next.delete(key)));
+      setCollapsedTiers(next);
+      try {
+        window.localStorage.setItem(TRACKER_COLLAPSED_STORAGE_KEY, serializeCollapsedTiers(next));
+      } catch {
+        // Storage blocked (private mode etc.): the state still applies for this visit.
+      }
+    },
+    [searchActive, searchCollapsedKeys, query, collapsedTiers]
+  );
+
   React.useEffect(() => {
     if (!focusId) return;
     if (handledFocusRef.current === focusId) return;
@@ -224,6 +304,18 @@ export default function EffectTable({
       setSelectedStatusTab("ALL");
     }
 
+    // ?focus= on a row inside a collapsed tier section: open that section first (this effect
+    // runs again once it has rendered, then scrolls).
+    if (groupByTier) {
+      // Wait for the saved collapsed state, or a section could close again after scrolling.
+      if (!collapsedLoaded) return;
+      const focusGroup = tierGroups.find((group) => group.rows.some((row) => row.id === focusId));
+      if (focusGroup && !isTierExpanded(focusGroup.key)) {
+        setTierKeysCollapsed([focusGroup.key], false);
+        return;
+      }
+    }
+
     const raf = window.requestAnimationFrame(() => {
       const safeId = typeof CSS !== "undefined" && "escape" in CSS ? CSS.escape(focusId) : focusId;
       const target = document.querySelector<HTMLElement>(`[data-effect-id="${safeId}"]`);
@@ -235,7 +327,7 @@ export default function EffectTable({
     });
 
     return () => window.cancelAnimationFrame(raf);
-  }, [focusId, localRows, filteredRows, clearFilters]);
+  }, [focusId, localRows, filteredRows, clearFilters, groupByTier, collapsedLoaded, tierGroups, isTierExpanded, setTierKeysCollapsed]);
 
   async function toggleRow(row: EffectTierRow) {
     const nextUnlocked = !row.unlocked;
@@ -319,6 +411,318 @@ export default function EffectTable({
         <span className="truncate max-w-[130px]">{value}</span>
         <span className="text-[0.65rem] text-amber-400/70 group-hover/comp:text-amber-300">↗</span>
       </Link>
+    );
+  }
+
+  /** Section header button: title, "N of M learned", a thin progress bar and, while filtering, "N matches". */
+  function renderTierToggle(group: TierGroup<EffectTierRow>, expanded: boolean, inTable: boolean) {
+    const pct = learnedPercent(group.learned, group.total);
+    return (
+      <button
+        type="button"
+        aria-expanded={expanded}
+        aria-controls={tierBodyId(group.key)}
+        onClick={() => setTierKeysCollapsed([group.key], expanded)}
+        className="block w-full text-left font-mono hover:bg-[#121a24] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber-400"
+      >
+        <span
+          className={cn(
+            "flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2.5",
+            // Inside the horizontally scrolling table, keep the header text in view on phones.
+            inTable && "sticky left-0 w-fit max-w-[calc(100vw-2rem)]"
+          )}
+        >
+          <ChevronDown aria-hidden="true" className={cn("h-4 w-4 shrink-0 text-amber-400", !expanded && "-rotate-90")} />
+          <span className="text-sm font-bold text-white">{group.title}</span>
+          {/* Separators keep the button's accessible name readable ("4-star, 1 match, 0 of 38 learned"). */}
+          <span className="sr-only">, </span>
+          {filterActive ? (
+            <>
+              <span className="text-xs text-amber-300" data-tier-matches>
+                {formatMatchCount(group.rows.length)}
+              </span>
+              <span className="sr-only">, </span>
+            </>
+          ) : null}
+          <span className="text-xs text-slate-300" data-tier-progress>
+            {formatLearnedOf(group.learned, group.total)}
+          </span>
+          <span aria-hidden="true" className="block h-1 w-20 overflow-hidden bg-slate-800">
+            <span className="block h-full bg-amber-400" style={{ width: `${pct}%` }} />
+          </span>
+        </span>
+      </button>
+    );
+  }
+
+  function renderTableRow(row: EffectTierRow, hidden = false) {
+    let rawCats: string[] = [];
+    if (Array.isArray(row.categories)) {
+      rawCats = row.categories.map((c: unknown) => (typeof c === "string" ? c : (c as { category?: { name?: string } })?.category?.name || "")).filter(Boolean);
+    } else if (typeof row.categories === "string") {
+      rawCats = (row.categories as string).split("•").map((s) => s.trim()).filter(Boolean);
+    }
+    const categoryList = rawCats.length > 0 ? rawCats : ((row as unknown as { categoriesRel?: { category?: { name?: string } }[] }).categoriesRel?.map((c) => c?.category?.name || "").filter(Boolean) || []);
+    const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
+    const isPending = pendingId === row.id;
+
+    return (
+      <tr
+        key={row.id}
+        id={`effect-${row.id}`}
+        data-effect-id={row.id}
+        hidden={hidden || undefined}
+        className={`hover:bg-[#121a24] transition group ${
+          row.unlocked ? "bg-emerald-950/15" : row.isSeeking ? "bg-amber-950/15" : ""
+        } ${isPending ? "opacity-60" : ""}`}
+      >
+        {/* Tier */}
+        <td className="py-2 px-3 text-center">
+          <span className="inline-block font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/30 text-[11px]">
+            {tierDisplay.stars || row.tier?.label?.replace(" Star", "★") || "1★"}
+          </span>
+        </td>
+
+        {/* Mod Name */}
+        <td className="py-2 px-4 font-bold text-white group-hover:text-amber-400 transition">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Link
+              href={`/wiki?q=${encodeURIComponent(cleanEffectName(row.effect.name))}`}
+              className="hover:underline flex items-center gap-1"
+              title={`Search ${cleanEffectName(row.effect.name)} in Truth Wiki`}
+            >
+              <span>{cleanEffectName(row.effect.name)}</span>
+              <span className="text-[0.65rem] text-amber-400/80 font-mono">↗</span>
+            </Link>
+            {isNewMod(row.effect.name) && (
+              <span className="rounded border border-amber-400/50 bg-amber-400/20 px-1 py-0.2 text-[9px] uppercase tracking-wider text-amber-300 font-black animate-pulse">
+                New
+              </span>
+            )}
+          </div>
+        </td>
+
+        {/* Equipment Slot */}
+        <td className="py-2 px-3 text-slate-400 text-[11px]">
+          {categoryList.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {categoryList.map((c) => (
+                <span key={c} className="bg-[#111720] border border-slate-800 px-1.5 py-0.5 text-[10px] text-slate-300">
+                  {c}
+                </span>
+              ))}
+            </div>
+          ) : (
+            "-"
+          )}
+        </td>
+
+        {/* Tactical Effect */}
+        <td className="py-2 px-4 text-slate-300 font-sans text-xs leading-relaxed">
+          {renderInlineMarkdown(row.description, { currentPath: pathname })}
+          {row.origins && row.origins.length > 0 && (
+            <div className="text-[10px] text-slate-500 font-mono mt-1">
+              <span className="text-amber-500/70 font-bold">Source: </span>
+              {row.origins.join(" • ")}
+            </div>
+          )}
+        </td>
+
+        {/* Modules Cost */}
+        <td className="py-2 px-3 text-center">
+          {renderModules(row.legendaryModules)}
+        </td>
+
+        {/* Craft Catalyst */}
+        <td className="py-2 px-4 text-slate-400 text-[11px]">
+          {renderComponent(row.extraComponent)}
+        </td>
+
+        {/* Interactive Tracking Action */}
+        <td className="py-2 px-3 text-center">
+          <div className="inline-flex items-center gap-1.5 justify-center">
+            <button
+              onClick={() => toggleRow(row)}
+              className={`px-2 py-1 text-[10px] font-bold border transition flex items-center gap-1 ${
+                row.unlocked
+                  ? "bg-emerald-500 text-black border-emerald-400 font-black shadow-sm"
+                  : "bg-[#111720] text-slate-400 border-slate-700 hover:text-emerald-300 hover:border-emerald-600"
+              }`}
+              title={row.unlocked ? "Mark as Locked" : "Mark as Learned"}
+            >
+              <Check className="w-3 h-3" />
+              {row.unlocked ? "Learned" : "Mark learned"}
+            </button>
+
+            <button
+              onClick={() => updateSeeking(row, !row.isSeeking)}
+              className={`px-2 py-1 text-[10px] font-bold border transition flex items-center gap-1 ${
+                row.isSeeking && !row.unlocked
+                  ? "bg-amber-400 text-black border-amber-300 font-black shadow-sm"
+                  : "bg-[#111720] text-slate-400 border-slate-700 hover:text-amber-300 hover:border-amber-600"
+              }`}
+              title={row.isSeeking ? "Remove from Seeking" : "Add to Wishlist"}
+            >
+              <Bookmark className="w-3 h-3" />
+              {row.isSeeking && !row.unlocked ? "Wanted" : "Mark wanted"}
+            </button>
+
+            {/* Mod Inventory Counter */}
+            <div className="flex items-center border border-slate-800 bg-[#070a0e] px-1 py-0.5">
+              <button
+                type="button"
+                onClick={() => updateCount(row, row.modCount - 1)}
+                className="text-slate-500 hover:text-white px-0.5"
+              >
+                <Minus className="w-2.5 h-2.5" />
+              </button>
+              <input
+                type="number"
+                min="0"
+                value={row.modCount === 0 ? "" : row.modCount}
+                onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
+                placeholder="0"
+                className="w-5 text-center text-[10px] font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-slate-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              <button
+                type="button"
+                onClick={() => updateCount(row, row.modCount + 1)}
+                className="text-slate-500 hover:text-white px-0.5"
+              >
+                <Plus className="w-2.5 h-2.5" />
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  function renderTile(row: EffectTierRow) {
+    const categoryList = row.categories.map((c) => (typeof c === "string" ? c : c.category?.name || "")).filter(Boolean);
+    const isPending = pendingId === row.id;
+    const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
+
+    return (
+      <div
+        key={`tile-${row.id}`}
+        id={`effect-${row.id}-tile`}
+        data-effect-id={row.id}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleRow(row);
+          }
+        }}
+        onClick={() => toggleRow(row)}
+        aria-pressed={row.unlocked}
+        data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
+        className={cn("effect-tile effect-tile--button summary-status-card cursor-pointer", isPending && "opacity-60 pointer-events-none")}
+      >
+        <div className="effect-tile__header">
+          <div className="min-w-0 flex-1">
+            <div className="font-semibold flex items-center gap-1.5 flex-wrap min-w-0 w-full">
+              <span className="break-words" style={{ overflowWrap: "anywhere" }}>{cleanEffectName(row.effect.name)}</span>
+              {isNewMod(row.effect.name) && (
+                <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
+                  New
+                </span>
+              )}
+            </div>
+            {tierDisplay.stars ? (
+              <div className="mt-1 text-base font-semibold leading-none tracking-[0.14em] text-foreground/65" title={tierDisplay.label}>
+                {tierDisplay.stars}
+              </div>
+            ) : null}
+          </div>
+          <div className="effect-tile__status">
+            {isPending ? "Saving..." : row.isSeeking && !row.unlocked ? "Seeking" : row.unlocked ? "Unlocked" : "Locked"}
+          </div>
+        </div>
+        <div className="summary-status-card__controls summary-status-card__controls--inline summary-status-card__controls--tile" onClick={(e) => e.stopPropagation()}>
+          <div className="summary-status-card__count">
+            <button
+              type="button"
+              onClick={() => updateCount(row, row.modCount - 1)}
+              className="summary-status-card__count-btn shrink-0"
+            >
+              <Minus className="h-2.5 w-2.5" />
+            </button>
+            <input
+              type="number"
+              min="0"
+              value={row.modCount === 0 ? "" : row.modCount}
+              onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
+              placeholder="0"
+              className="min-w-[1.8rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <button
+              type="button"
+              onClick={() => updateCount(row, row.modCount + 1)}
+              className="summary-status-card__count-btn shrink-0"
+            >
+              <Plus className="h-2.5 w-2.5" />
+            </button>
+          </div>
+          <button
+            type="button"
+            title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+            onClick={() => updateSeeking(row, !row.isSeeking)}
+            data-active={row.isSeeking}
+            className="summary-status-card__seeking-btn"
+          >
+            <Target className="h-4 w-4" />
+          </button>
+        </div>
+        {categoryList.length > 0 ? (
+          <div className="effect-tile__chips">
+            {categoryList.slice(0, 4).map((category) => (
+              <span
+                key={category}
+                className="rounded-full border border-border px-2 py-0.5 text-[0.84rem] text-foreground/70"
+              >
+                {category}
+              </span>
+            ))}
+          </div>
+        ) : null}
+
+        {/* Tactical Effect Description */}
+        {row.description ? (
+          <div className="effect-tile__description text-xs text-slate-300 leading-relaxed font-sans mt-1 p-2 rounded bg-black/40 border border-slate-800/80">
+            {renderInlineMarkdown(row.description)}
+          </div>
+        ) : null}
+
+        {/* Crafting Costs & Catalyst */}
+        <div className="effect-tile__costs flex flex-wrap items-center gap-2 mt-1">
+          {row.legendaryModules !== null && row.legendaryModules !== undefined ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
+              {renderModules(row.legendaryModules)}
+            </span>
+          ) : null}
+          {row.extraComponent ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-slate-800/60 border border-slate-700/60 text-slate-300" onClick={(e) => e.stopPropagation()}>
+              <span className="text-slate-500 text-[9px] uppercase font-bold">Catalyst:</span>
+              {renderComponent(row.extraComponent)}
+            </span>
+          ) : null}
+        </div>
+
+        {/* Origins / Scrapping Source */}
+        {row.origins && row.origins.length > 0 ? (
+          <div className="effect-tile__origins text-[10px] text-slate-400 font-mono mt-1 flex items-center gap-1.5 flex-wrap">
+            <span className="text-amber-400/80 font-bold uppercase text-[9px]">Source:</span>
+            <span>{row.origins.join(" • ")}</span>
+          </div>
+        ) : row.notes ? (
+          <div className="effect-tile__notes text-[10px] text-slate-400 font-mono mt-1">
+            {renderInlineMarkdown(row.notes)}
+          </div>
+        ) : null}
+      </div>
     );
   }
 
@@ -515,6 +919,30 @@ export default function EffectTable({
         </div>
       </div>
 
+      {groupByTier && visibleTierGroups.length > 0 ? (
+        <div
+          className="flex flex-wrap items-center gap-2 font-mono text-xs"
+          data-tier-controls={collapsedLoaded ? "ready" : "loading"}
+        >
+          <button
+            type="button"
+            onClick={() => setTierKeysCollapsed(tierGroups.map((group) => group.key), false)}
+            disabled={visibleTierGroups.every((group) => isTierExpanded(group.key))}
+            className="border border-slate-700 bg-[#0b1017] px-2.5 py-1.5 text-slate-200 hover:border-amber-400 hover:text-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 disabled:cursor-default disabled:opacity-50 disabled:hover:border-slate-700 disabled:hover:text-slate-200"
+          >
+            Expand all
+          </button>
+          <button
+            type="button"
+            onClick={() => setTierKeysCollapsed(tierGroups.map((group) => group.key), true)}
+            disabled={visibleTierGroups.every((group) => !isTierExpanded(group.key))}
+            className="border border-slate-700 bg-[#0b1017] px-2.5 py-1.5 text-slate-200 hover:border-amber-400 hover:text-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 disabled:cursor-default disabled:opacity-50 disabled:hover:border-slate-700 disabled:hover:text-slate-200"
+          >
+            Collapse all
+          </button>
+        </div>
+      ) : null}
+
       {/* =========================================================================
           TACTICAL ARMORY HIGH-DENSITY TABLE (CONCEPT 4)
          ========================================================================= */}
@@ -532,294 +960,81 @@ export default function EffectTable({
                 <th className="py-2 px-3 w-40 text-center">Tracking Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
-              {filteredRows.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-500">
-                    No legendary mods match your active search and filter criteria.
-                  </td>
-                </tr>
-              ) : null}
-              {filteredRows.map((row) => {
-                let rawCats: string[] = [];
-                if (Array.isArray(row.categories)) {
-                  rawCats = row.categories.map((c: unknown) => (typeof c === "string" ? c : (c as { category?: { name?: string } })?.category?.name || "")).filter(Boolean);
-                } else if (typeof row.categories === "string") {
-                  rawCats = (row.categories as string).split("•").map((s) => s.trim()).filter(Boolean);
-                }
-                const categoryList = rawCats.length > 0 ? rawCats : ((row as unknown as { categoriesRel?: { category?: { name?: string } }[] }).categoriesRel?.map((c) => c?.category?.name || "").filter(Boolean) || []);
-                const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
-                const isPending = pendingId === row.id;
-
-                return (
-                  <tr
-                    key={row.id}
-                    id={`effect-${row.id}`}
-                    data-effect-id={row.id}
-                    className={`hover:bg-[#121a24] transition group ${
-                      row.unlocked ? "bg-emerald-950/15" : row.isSeeking ? "bg-amber-950/15" : ""
-                    } ${isPending ? "opacity-60" : ""}`}
-                  >
-                    {/* Tier */}
-                    <td className="py-2 px-3 text-center">
-                      <span className="inline-block font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/30 text-[11px]">
-                        {tierDisplay.stars || row.tier?.label?.replace(" Star", "★") || "1★"}
-                      </span>
-                    </td>
-
-                    {/* Mod Name */}
-                    <td className="py-2 px-4 font-bold text-white group-hover:text-amber-400 transition">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <Link
-                          href={`/wiki?q=${encodeURIComponent(cleanEffectName(row.effect.name))}`}
-                          className="hover:underline flex items-center gap-1"
-                          title={`Search ${cleanEffectName(row.effect.name)} in Truth Wiki`}
-                        >
-                          <span>{cleanEffectName(row.effect.name)}</span>
-                          <span className="text-[0.65rem] text-amber-400/80 font-mono">↗</span>
-                        </Link>
-                        {isNewMod(row.effect.name) && (
-                          <span className="rounded border border-amber-400/50 bg-amber-400/20 px-1 py-0.2 text-[9px] uppercase tracking-wider text-amber-300 font-black animate-pulse">
-                            New
-                          </span>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Equipment Slot */}
-                    <td className="py-2 px-3 text-slate-400 text-[11px]">
-                      {categoryList.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {categoryList.map((c) => (
-                            <span key={c} className="bg-[#111720] border border-slate-800 px-1.5 py-0.5 text-[10px] text-slate-300">
-                              {c}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-
-                    {/* Tactical Effect */}
-                    <td className="py-2 px-4 text-slate-300 font-sans text-xs leading-relaxed">
-                      {renderInlineMarkdown(row.description, { currentPath: pathname })}
-                      {row.origins && row.origins.length > 0 && (
-                        <div className="text-[10px] text-slate-500 font-mono mt-1">
-                          <span className="text-amber-500/70 font-bold">Source: </span>
-                          {row.origins.join(" • ")}
-                        </div>
-                      )}
-                    </td>
-
-                    {/* Modules Cost */}
-                    <td className="py-2 px-3 text-center">
-                      {renderModules(row.legendaryModules)}
-                    </td>
-
-                    {/* Craft Catalyst */}
-                    <td className="py-2 px-4 text-slate-400 text-[11px]">
-                      {renderComponent(row.extraComponent)}
-                    </td>
-
-                    {/* Interactive Tracking Action */}
-                    <td className="py-2 px-3 text-center">
-                      <div className="inline-flex items-center gap-1.5 justify-center">
-                        <button
-                          onClick={() => toggleRow(row)}
-                          className={`px-2 py-1 text-[10px] font-bold border transition flex items-center gap-1 ${
-                            row.unlocked
-                              ? "bg-emerald-500 text-black border-emerald-400 font-black shadow-sm"
-                              : "bg-[#111720] text-slate-400 border-slate-700 hover:text-emerald-300 hover:border-emerald-600"
-                          }`}
-                          title={row.unlocked ? "Mark as Locked" : "Mark as Learned"}
-                        >
-                          <Check className="w-3 h-3" />
-                          {row.unlocked ? "Learned" : "Mark learned"}
-                        </button>
-
-                        <button
-                          onClick={() => updateSeeking(row, !row.isSeeking)}
-                          className={`px-2 py-1 text-[10px] font-bold border transition flex items-center gap-1 ${
-                            row.isSeeking && !row.unlocked
-                              ? "bg-amber-400 text-black border-amber-300 font-black shadow-sm"
-                              : "bg-[#111720] text-slate-400 border-slate-700 hover:text-amber-300 hover:border-amber-600"
-                          }`}
-                          title={row.isSeeking ? "Remove from Seeking" : "Add to Wishlist"}
-                        >
-                          <Bookmark className="w-3 h-3" />
-                          {row.isSeeking && !row.unlocked ? "Wanted" : "Mark wanted"}
-                        </button>
-
-                        {/* Mod Inventory Counter */}
-                        <div className="flex items-center border border-slate-800 bg-[#070a0e] px-1 py-0.5">
-                          <button
-                            type="button"
-                            onClick={() => updateCount(row, row.modCount - 1)}
-                            className="text-slate-500 hover:text-white px-0.5"
-                          >
-                            <Minus className="w-2.5 h-2.5" />
-                          </button>
-                          <input
-                            type="number"
-                            min="0"
-                            value={row.modCount === 0 ? "" : row.modCount}
-                            onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
-                            placeholder="0"
-                            className="w-5 text-center text-[10px] font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-slate-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => updateCount(row, row.modCount + 1)}
-                            className="text-slate-500 hover:text-white px-0.5"
-                          >
-                            <Plus className="w-2.5 h-2.5" />
-                          </button>
-                        </div>
-                      </div>
+            {groupByTier ? (
+              <>
+                {filteredRows.length === 0 ? (
+                  <tbody>
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-slate-500">
+                        No legendary mods match your active search and filter criteria.
+                      </td>
+                    </tr>
+                  </tbody>
+                ) : null}
+                {visibleTierGroups.map((group) => {
+                  const expanded = isTierExpanded(group.key);
+                  return (
+                    <tbody
+                      key={group.key}
+                      id={tierBodyId(group.key)}
+                      data-tier-group={group.key}
+                      className="divide-y divide-slate-800/80 border-t border-slate-700"
+                    >
+                      <tr className="bg-[#0d131b]">
+                        <th colSpan={7} scope="rowgroup" className="p-0 text-left font-normal">
+                          {renderTierToggle(group, expanded, true)}
+                        </th>
+                      </tr>
+                      {group.rows.map((row) => renderTableRow(row, !expanded))}
+                    </tbody>
+                  );
+                })}
+              </>
+            ) : (
+              <tbody className="divide-y divide-slate-800/80">
+                {filteredRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-slate-500">
+                      No legendary mods match your active search and filter criteria.
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
+                ) : null}
+                {filteredRows.map((row) => renderTableRow(row))}
+              </tbody>
+            )}
           </table>
         </div>
       ) : (
         /* Classic Retro / Tile View */
-        <div className="effect-table-tiles">
-          {filteredRows.length === 0 ? (
-            <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
-              No effects match your filters yet.
-            </div>
-          ) : null}
-          {filteredRows.map((row) => {
-            const categoryList = row.categories.map((c) => (typeof c === "string" ? c : c.category?.name || "")).filter(Boolean);
-            const isPending = pendingId === row.id;
-            const tierDisplay = formatTierStarsWithLabel(row.tier?.label ?? null);
-
-            return (
-              <div
-                key={`tile-${row.id}`}
-                id={`effect-${row.id}-tile`}
-                data-effect-id={row.id}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    toggleRow(row);
-                  }
-                }}
-                onClick={() => toggleRow(row)}
-                aria-pressed={row.unlocked}
-                data-status={row.isSeeking && !row.unlocked ? "seeking" : row.unlocked ? "unlocked" : "locked"}
-                className={cn("effect-tile effect-tile--button summary-status-card cursor-pointer", isPending && "opacity-60 pointer-events-none")}
-              >
-                <div className="effect-tile__header">
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold flex items-center gap-1.5 flex-wrap min-w-0 w-full">
-                      <span className="break-words" style={{ overflowWrap: "anywhere" }}>{cleanEffectName(row.effect.name)}</span>
-                      {isNewMod(row.effect.name) && (
-                        <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
-                          New
-                        </span>
-                      )}
-                    </div>
-                    {tierDisplay.stars ? (
-                      <div className="mt-1 text-base font-semibold leading-none tracking-[0.14em] text-foreground/65" title={tierDisplay.label}>
-                        {tierDisplay.stars}
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="effect-tile__status">
-                    {isPending ? "Saving..." : row.isSeeking && !row.unlocked ? "Seeking" : row.unlocked ? "Unlocked" : "Locked"}
-                  </div>
-                </div>
-                <div className="summary-status-card__controls summary-status-card__controls--inline summary-status-card__controls--tile" onClick={(e) => e.stopPropagation()}>
-                  <div className="summary-status-card__count">
-                    <button
-                      type="button"
-                      onClick={() => updateCount(row, row.modCount - 1)}
-                      className="summary-status-card__count-btn shrink-0"
-                    >
-                      <Minus className="h-2.5 w-2.5" />
-                    </button>
-                    <input
-                      type="number"
-                      min="0"
-                      value={row.modCount === 0 ? "" : row.modCount}
-                      onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
-                      placeholder="0"
-                      className="min-w-[1.8rem] w-8 text-center font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => updateCount(row, row.modCount + 1)}
-                      className="summary-status-card__count-btn shrink-0"
-                    >
-                      <Plus className="h-2.5 w-2.5" />
-                    </button>
-                  </div>
-                  <button
-                    type="button"
-                    title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
-                    onClick={() => updateSeeking(row, !row.isSeeking)}
-                    data-active={row.isSeeking}
-                    className="summary-status-card__seeking-btn"
-                  >
-                    <Target className="h-4 w-4" />
-                  </button>
-                </div>
-                {categoryList.length > 0 ? (
-                  <div className="effect-tile__chips">
-                    {categoryList.slice(0, 4).map((category) => (
-                      <span
-                        key={category}
-                        className="rounded-full border border-border px-2 py-0.5 text-[0.84rem] text-foreground/70"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-
-                {/* Tactical Effect Description */}
-                {row.description ? (
-                  <div className="effect-tile__description text-xs text-slate-300 leading-relaxed font-sans mt-1 p-2 rounded bg-black/40 border border-slate-800/80">
-                    {renderInlineMarkdown(row.description)}
-                  </div>
-                ) : null}
-
-                {/* Crafting Costs & Catalyst */}
-                <div className="effect-tile__costs flex flex-wrap items-center gap-2 mt-1">
-                  {row.legendaryModules !== null && row.legendaryModules !== undefined ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
-                      {renderModules(row.legendaryModules)}
-                    </span>
-                  ) : null}
-                  {row.extraComponent ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-slate-800/60 border border-slate-700/60 text-slate-300" onClick={(e) => e.stopPropagation()}>
-                      <span className="text-slate-500 text-[9px] uppercase font-bold">Catalyst:</span>
-                      {renderComponent(row.extraComponent)}
-                    </span>
-                  ) : null}
-                </div>
-
-                {/* Origins / Scrapping Source */}
-                {row.origins && row.origins.length > 0 ? (
-                  <div className="effect-tile__origins text-[10px] text-slate-400 font-mono mt-1 flex items-center gap-1.5 flex-wrap">
-                    <span className="text-amber-400/80 font-bold uppercase text-[9px]">Source:</span>
-                    <span>{row.origins.join(" • ")}</span>
-                  </div>
-                ) : row.notes ? (
-                  <div className="effect-tile__notes text-[10px] text-slate-400 font-mono mt-1">
-                    {renderInlineMarkdown(row.notes)}
-                  </div>
-                ) : null}
+        groupByTier ? (
+          <div className="space-y-4">
+            {filteredRows.length === 0 ? (
+              <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
+                No effects match your filters yet.
               </div>
-            );
-          })}
-        </div>
+            ) : null}
+            {visibleTierGroups.map((group) => {
+              const expanded = isTierExpanded(group.key);
+              return (
+                <section key={group.key} data-tier-group={group.key}>
+                  <h2 className="border border-slate-800 bg-[#0d131b]">{renderTierToggle(group, expanded, false)}</h2>
+                  <div id={tierBodyId(group.key)} hidden={!expanded} className="mt-2">
+                    <div className="effect-table-tiles">{group.rows.map((row) => renderTile(row))}</div>
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="effect-table-tiles">
+            {filteredRows.length === 0 ? (
+              <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-6 text-sm text-foreground/70">
+                No effects match your filters yet.
+              </div>
+            ) : null}
+            {filteredRows.map((row) => renderTile(row))}
+          </div>
+        )
       )}
 
       {/* Tactical Footer Telemetry */}
