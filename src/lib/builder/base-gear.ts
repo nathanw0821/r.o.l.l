@@ -17,6 +17,11 @@ export type BaseGearPiece = {
    * Omit for non–power-armor; omit or `torso` for PA torso/chest entries.
    */
   powerArmorSlot?: "torso" | "helmet";
+  /**
+   * Named unique item (Patch 70 crafting economy: scrip ×10, modules + Vault Steel per craft).
+   * See `src/data/truth/unique-items.json`.
+   */
+  isUnique?: true;
 };
 
 const ARMOR_SET_PIECES: BaseGearPiece[] = ARMOR_SET_ROWS.map((row) => ({
@@ -64,38 +69,38 @@ export const POWER_ARMOR_HELMET_PIECES: BaseGearPiece[] = [
 
 export const WEAPON_BASE_PIECES: BaseGearPiece[] = [
   // --- NAMED UNIQUE WEAPONS ---
-  { id: "elders-mark", label: "Elder's Mark (Submachine Gun · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "holy-fire", label: "Holy Fire (Flamer · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "anchorage-ace", label: "Anchorage Ace (10mm SMG · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "cold-shoulder", label: "Cold Shoulder (Double-Barrel · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "red-terror", label: "Red Terror (LMG · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "v63-bertha", label: "V63 Bertha (Tesla Rifle · Unique)", kind: "weapon", weaponSub: "energy" },
-  { id: "v63-helga", label: "V63 Helga (Gatling Laser · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "v63-olga", label: "V63 Olga (Laser Rifle · Unique)", kind: "weapon", weaponSub: "energy" },
-  { id: "v63-zweihander", label: "V63 Zweihänder (Super Sledge · Unique)", kind: "weapon", weaponSub: "melee" },
-  { id: "v63-shock-baton", label: "V63 Shock Baton (Security Baton · Unique)", kind: "weapon", weaponSub: "melee" },
-  { id: "ticket-to-revenge", label: "Ticket to Revenge (Railway Rifle · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "shattered-grounds", label: "Shattered Grounds (Handmade · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "love-tap", label: "Love Tap (Submachine Gun · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "western-spirit", label: "Western Spirit (Lever Action · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "gunthers-big-iron", label: "Gunther's Big Iron (Single Action · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "the-fact-finder", label: "The Fact Finder (.44 Pistol · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "the-kabloom", label: "The Kabloom (Pump Shotgun · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "grand-finale", label: "Grand Finale (Broadsider · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "boomstick", label: "Boomstick (Missile Launcher · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "overkill", label: "Overkill (Fat Man · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "sole-survivor", label: "Sole Survivor (Lever Action · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "face-breaker", label: "Face Breaker (Power Fist · Unique)", kind: "weapon", weaponSub: "melee" },
-  { id: "unstoppable-monster", label: "Unstoppable Monster (Deathclaw Gauntlet · Unique)", kind: "weapon", weaponSub: "melee" },
-  { id: "the-gutter", label: "The Gutter (Chinese Officer Sword · Unique)", kind: "weapon", weaponSub: "melee" },
-  { id: "whacker-smacker", label: "Whacker Smacker (Super Sledge · Unique)", kind: "weapon", weaponSub: "melee" },
-  { id: "crowd-control", label: "Crowd Control (Combat Shotgun · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "medical-malpractice", label: "Medical Malpractice (.44 Pistol · Unique)", kind: "weapon", weaponSub: "ranged" },
-  { id: "mechanics-best-friend", label: "Mechanic's Best Friend (Pipe Wrench · Unique)", kind: "weapon", weaponSub: "melee" },
-  { id: "the-action-hero", label: "The Action Hero (.50 Cal · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "resolute-veteran", label: "Resolute Veteran (Gatling Gun · Unique)", kind: "weapon", weaponSub: "heavy" },
-  { id: "night-light", label: "Night Light (Tesla Rifle · Unique)", kind: "weapon", weaponSub: "energy" },
-  { id: "doctors-orders", label: "Doctor's Orders (Hunting Rifle · Unique)", kind: "weapon", weaponSub: "ranged" },
+  { id: "elders-mark", label: "Elder's Mark (Submachine Gun · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "holy-fire", label: "Holy Fire (Flamer · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "anchorage-ace", label: "Anchorage Ace (10mm SMG · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "cold-shoulder", label: "Cold Shoulder (Double-Barrel · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "red-terror", label: "Red Terror (LMG · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "v63-bertha", label: "V63 Bertha (Tesla Rifle · Unique)", kind: "weapon", isUnique: true, weaponSub: "energy" },
+  { id: "v63-helga", label: "V63 Helga (Gatling Laser · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "v63-olga", label: "V63 Olga (Laser Rifle · Unique)", kind: "weapon", isUnique: true, weaponSub: "energy" },
+  { id: "v63-zweihander", label: "V63 Zweihänder (Super Sledge · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "v63-shock-baton", label: "V63 Shock Baton (Security Baton · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "ticket-to-revenge", label: "Ticket to Revenge (Railway Rifle · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "shattered-grounds", label: "Shattered Grounds (Handmade · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "love-tap", label: "Love Tap (Submachine Gun · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "western-spirit", label: "Western Spirit (Lever Action · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "gunthers-big-iron", label: "Gunther's Big Iron (Single Action · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "the-fact-finder", label: "The Fact Finder (.44 Pistol · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "the-kabloom", label: "The Kabloom (Pump Shotgun · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "grand-finale", label: "Grand Finale (Broadsider · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "boomstick", label: "Boomstick (Missile Launcher · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "overkill", label: "Overkill (Fat Man · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "sole-survivor", label: "Sole Survivor (Lever Action · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "face-breaker", label: "Face Breaker (Power Fist · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "unstoppable-monster", label: "Unstoppable Monster (Deathclaw Gauntlet · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "the-gutter", label: "The Gutter (Chinese Officer Sword · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "whacker-smacker", label: "Whacker Smacker (Super Sledge · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "crowd-control", label: "Crowd Control (Combat Shotgun · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "medical-malpractice", label: "Medical Malpractice (.44 Pistol · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "mechanics-best-friend", label: "Mechanic's Best Friend (Pipe Wrench · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "the-action-hero", label: "The Action Hero (.50 Cal · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "resolute-veteran", label: "Resolute Veteran (Gatling Gun · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
+  { id: "night-light", label: "Night Light (Tesla Rifle · Unique)", kind: "weapon", isUnique: true, weaponSub: "energy" },
+  { id: "doctors-orders", label: "Doctor's Orders (Hunting Rifle · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
 
   // --- STANDARD RIFLES & COMMANDO ---
   { id: "fixer", label: "The Fixer", kind: "weapon", weaponSub: "ranged" },

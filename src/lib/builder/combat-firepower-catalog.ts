@@ -192,6 +192,8 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isRanged": false,
     "isEnergy": false
   },
+  // TODO(patch-70): re-derive magazineSize from the new Railway Rifle base capacity (16) once the
+  // unique's in-game value is verified; 20 was set against the pre-Patch-70 base of 10.
   "ticket-to-revenge": {
     "id": "ticket-to-revenge",
     "label": "Ticket to Revenge (Railway Rifle · Unique)",
@@ -572,7 +574,7 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "damageType": "ballistic",
     "fireRate": 10,
     "baseVatsApCost": 20,
-    "magazineSize": 10,
+    "magazineSize": 16, // Patch 70 "The Slasher" (2026-09-15): base ammo capacity 10 -> 16; semi-auto fire delay reduced; spike weight 0.2 -> 0.15
     "weaponClass": "commando",
     "isAutomatic": true,
     "isRanged": true,
@@ -586,7 +588,7 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "damageType": "ballistic",
     "fireRate": 10,
     "baseVatsApCost": 20,
-    "magazineSize": 10,
+    "magazineSize": 16, // Patch 70 "The Slasher" (2026-09-15): base ammo capacity 10 -> 16; semi-auto fire delay reduced; spike weight 0.2 -> 0.15
     "weaponClass": "commando",
     "isAutomatic": true,
     "isRanged": true,
@@ -642,7 +644,7 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "damageType": "ballistic",
     "fireRate": 2.5,
     "baseVatsApCost": 25,
-    "magazineSize": 5,
+    "magazineSize": 6, // Patch 70: lever action clip 5 -> 6
     "weaponClass": "rifleman",
     "isAutomatic": false,
     "isRanged": true,

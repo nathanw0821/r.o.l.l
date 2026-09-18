@@ -3,6 +3,7 @@ import {
   EXTENDED_LEGENDARY_MOD_SEEDS,
   type BuilderLegendarySeedRow
 } from "@/lib/builder/legendary-mod-catalog-seeds";
+import { STAR_MODULE_COSTS } from "@/lib/builder/crafting-costs";
 
 type SeedMod = {
   slug: string;
@@ -21,7 +22,7 @@ type SeedMod = {
 };
 
 function seedRowToMod(r: BuilderLegendarySeedRow): SeedMod {
-  const modules = r.starRank === 1 ? 15 : r.starRank === 2 ? 30 : r.starRank === 3 ? 60 : 120;
+  const modules = STAR_MODULE_COSTS[r.starRank] ?? STAR_MODULE_COSTS[4]!;
   return {
     slug: r.slug,
     name: r.name,

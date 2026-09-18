@@ -1,3 +1,4 @@
+import gameVersion from "@/data/truth/game-version.json";
 import { NextResponse } from "next/server";
 import { getCachedBuilderModCatalog } from "@/lib/builder/get-builder-mod-catalog";
 import { getLegendaryScripCost } from "@/lib/builder/crafting-costs";
@@ -737,25 +738,33 @@ export async function POST(req: Request) {
       const countOption = options?.find((o: { name: string; value: number }) => o.name === "mods");
       const modCount = Math.max(1, Math.min(50, Number(countOption?.value || 1)));
 
-      const scripPerMod = getLegendaryScripCost(modCount - 1);
+      const scripPerMod = getLegendaryScripCost({ starRank: 3 });
+      const scripPer4Star = getLegendaryScripCost({ starRank: 4 });
+      const uniqueScrip = getLegendaryScripCost({ starRank: 3, isUnique: true });
+      const uniqueScrip4 = getLegendaryScripCost({ starRank: 4, isUnique: true });
 
       return NextResponse.json({
         type: 4,
         data: {
           embeds: [
             {
-              title: `🧪 Scrip & Legendary Module Crafting Cost Calculator`,
-              description: `Cost breakdown for attaching **${modCount}** modular legendary mod box(es) at the Tinkerer's Bench:`,
+              title: `Scrip and Legendary Module cost calculator`,
+              description: `Cost to change **${modCount}** legendary mod(s) at a workbench (Patch ${gameVersion.patch} rules):`,
               color: 0x50c878,
               fields: [
                 {
-                  name: `Modification #${modCount} Scrip Cost`,
-                  value: `${scripPerMod} Scrip (Capped at 1,000 Scrip after 21 modifications)`,
+                  name: `Scrip for ${modCount} mod change(s)`,
+                  value: `${scripPerMod * modCount} Scrip for 1-3 star mods (${scripPerMod} each) or ${scripPer4Star * modCount} Scrip for 4-star mods (${scripPer4Star} each). Cost is fixed; it no longer escalates.`,
                   inline: false
                 },
                 {
-                  name: "Modular Rules",
-                  value: "• Mods 1 to 20 scale dynamically from 10 to 960 scrip.\n• Modification #21 onwards stays capped at 1,000 scrip per craft.",
+                  name: "Unique weapons and armor",
+                  value: `Since Patch 70 named uniques can change mods too, at 10x: ${uniqueScrip} Scrip (1-3 star) or ${uniqueScrip4} Scrip (4-star). Crafting onto a unique also needs 30 modules + 40 Vault Steel (3-star) or 65 modules + 80 Vault Steel (4-star).`,
+                  inline: false
+                },
+                {
+                  name: "Crafting a mod box",
+                  value: "15 / 30 / 60 / 120 Legendary Modules for a 1 / 2 / 3 / 4-star mod, plus its material.",
                   inline: false
                 }
               ],
