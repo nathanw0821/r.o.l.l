@@ -24,7 +24,7 @@ export interface PtsItem {
 }
 
 export const PTS_SECTIONS: { id: PtsSectionId; label: string; icon: string; description: string }[] = [
-  { id: "all", label: "All PTS Updates", icon: "🧪", description: "Everything tracked through the last test cycle, with the patch it shipped in" },
+  { id: "all", label: "All changes", icon: "🧪", description: "Everything tracked through the last test cycle, with the patch it shipped in" },
   { id: "4-star-mods", label: "4-Star Mods", icon: "⭐", description: "4th star legendary effects and where they drop" },
   { id: "modified-effects", label: "Modified Effects", icon: "⚡", description: "Rebalanced mods and reworked perks" },
   { id: "crafting-rules", label: "Crafting Overhauls", icon: "⚙️", description: "Scrip costs, Vault Steel and unique item modding" },

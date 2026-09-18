@@ -397,7 +397,7 @@ function TruthWikiContent() {
   const [updateFilter, setUpdateFilter] = React.useState("all");
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [loadingContent, setLoadingContent] = React.useState(false);
   const hasAutoOpenedRef = React.useRef(false);
 
@@ -800,13 +800,13 @@ function TruthWikiContent() {
               <span className="text-amber-300 font-bold uppercase"> • Patch: {updateFilter}</span>
             )}
           </div>
-          {loading && <div className="text-amber-400 animate-pulse font-bold">⚡ Querying Codex...</div>}
+          {loading && <div className="text-amber-400 font-bold">Loading guides…</div>}
         </div>
 
         {articles.length === 0 && !loading && (
           <div className="p-16 text-center text-slate-500 font-mono space-y-3 rounded-2xl bg-[#0f172a] border border-slate-700">
             <BookOpen className="h-12 w-12 mx-auto text-amber-500/30" />
-            <div className="text-sm font-bold text-slate-300">No Overseer records found matching your filter.</div>
+            <div className="text-sm font-bold text-slate-300">No guides match this filter.</div>
             <button
               onClick={() => {
                 setCategory("all");
