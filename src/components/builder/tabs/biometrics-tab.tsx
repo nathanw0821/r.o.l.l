@@ -18,6 +18,8 @@ export type BiometricsTabProps = {
   payload: BuilderPayload;
   setPayload: React.Dispatch<React.SetStateAction<BuilderPayload>>;
   activeTacticalTags: SwitchboardProps["activeTacticalTags"];
+  defensiveProfile?: SwitchboardProps["defensiveProfile"];
+  playerResists?: SwitchboardProps["playerResists"];
 };
 
 export default function BiometricsTab({
@@ -29,6 +31,8 @@ export default function BiometricsTab({
   payload,
   setPayload,
   activeTacticalTags,
+  defensiveProfile,
+  playerResists,
 }: BiometricsTabProps) {
   return (
 <div className={cn("space-y-4 animate-in fade-in duration-200", active ? "block" : "hidden")}>
@@ -53,6 +57,8 @@ export default function BiometricsTab({
     onStateChange={setSwitchboardState}
     activeTacticalTags={activeTacticalTags}
     critQualification={weaponFirepowerResult?.critCycle}
+    defensiveProfile={defensiveProfile}
+    playerResists={playerResists}
   />
 </div>
   );

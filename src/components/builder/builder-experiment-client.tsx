@@ -203,6 +203,7 @@ export default function BuilderExperimentClient({
     equippedModsOrdered,
     groupedLegendaryEffects,
     perkDeckDefensiveLayer,
+    defensiveProfile,
     intrinsicBenchTotals,
     stanceAndBiometricsLayer,
     totals,
@@ -214,6 +215,7 @@ export default function BuilderExperimentClient({
     isPA,
     equippedPerkCards,
     switchboardState,
+    isFiringHeavyGun: activeWeaponPiece?.weaponSub === "heavy",
   });
 
   const weaponFirepowerResult = React.useMemo(() => {
@@ -715,6 +717,8 @@ export default function BuilderExperimentClient({
         payload={payload}
         setPayload={setPayload}
         activeTacticalTags={stanceAndBiometricsLayer.activeTacticalTags}
+        defensiveProfile={defensiveProfile}
+        playerResists={{ dr: totals.dr, er: totals.er }}
       />
 
 

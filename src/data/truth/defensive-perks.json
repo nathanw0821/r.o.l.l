@@ -1,0 +1,340 @@
+{
+  "$comment": "Every defensive-perk and defensive-legendary number used by src/lib/builder/perk-defensive-layer.ts. Patch 62 renamed/reworked the cards, Patch 66 changed the order of operations (armor curve first, then multiplicative reducers), Patch 70 made Lone Wanderer apply to all damage types. 'special-scaled' entries are linear over SPECIAL 1..15 between min and max; when only the endpoints are public the entry is 'approximate' and any UI string must say so.",
+  "patch": 70,
+  "verifiedAt": "2026-09-18",
+  "orderOfOperations": {
+    "since": "Patch 66",
+    "formula": "delivered = curve(paper, DR * (1 - pen)) * PRODUCT(1 - reducer_i); Evade/Deflect are a chance layer before damage",
+    "curve": "src/lib/calculator/creation-engine-math.ts calculateMitigatedDamage (0.15 / 0.365, 99% cap, boss flat reduction after the curve)"
+  },
+  "specialRange": { "min": 1, "max": 15 },
+  "perks": {
+    "ironclad": {
+      "id": "ironclad",
+      "label": "Ironclad",
+      "model": "armor-pct",
+      "ranks": 3,
+      "values": [15, 20, 25],
+      "matchingSetMultiplier": 2,
+      "appliesTo": ["dr", "er"],
+      "allowedInPowerArmor": true,
+      "confidence": "verified",
+      "source": "Patch 62 card text: 'Armor provides 15/20/25% more protection. Double if wearing a matching set.' No Power Armor exclusion since Patch 62."
+    },
+    "hardy": {
+      "id": "hardy",
+      "label": "Hardy",
+      "model": "pct-reducer",
+      "condition": "explosion",
+      "ranks": 3,
+      "values": [15, 30, 45],
+      "confidence": "verified",
+      "source": "Patch 62 (ex-Fireproof): 'Take 15/30/45% less damage from explosions.' No fire resistance."
+    },
+    "thick-skin": {
+      "id": "thick-skin",
+      "label": "Thick Skin",
+      "model": "pct-reducer",
+      "condition": "ballistic",
+      "ranks": 3,
+      "values": [4, 6, 10],
+      "noPowerArmor": true,
+      "confidence": "verified",
+      "source": "Ghoul card: 'You take 4/6/10% less damage from Ballistic attacks. (No Power Armor)'"
+    },
+    "blocker": {
+      "id": "blocker",
+      "label": "Blocker",
+      "model": "block-pct",
+      "ranks": 3,
+      "values": [15, 20, 25],
+      "baseBlockPct": 60,
+      "confidence": "verified",
+      "source": "Card text 'Block 15/20/25% more damage from melee attacks'; default block 60% since Patch 66."
+    },
+    "barbarian": {
+      "id": "barbarian",
+      "label": "Barbarian",
+      "model": "special-scaled",
+      "special": "str",
+      "resists": ["dr"],
+      "ranks": 1,
+      "min": 18,
+      "max": 175,
+      "unarmoredMultiplier": 2,
+      "confidence": "approximate",
+      "endpointsVerified": true,
+      "source": "Nukes & Dragons range +18 (STR 1) to +175 (STR 15); intermediate values interpolated linearly. Doubled when wearing no armor."
+    },
+    "evasive": {
+      "id": "evasive",
+      "label": "Evasive",
+      "model": "evade",
+      "special": "agi",
+      "ranks": 1,
+      "min": 2,
+      "max": 14,
+      "noPowerArmor": true,
+      "notOverEncumbered": true,
+      "confidence": "approximate",
+      "endpointsVerified": true,
+      "source": "Evade chance from AGI, 2% (AGI 1) to 14% (AGI 15); no Power Armor; not while over-encumbered."
+    },
+    "moving-target": {
+      "id": "moving-target",
+      "label": "Moving Target",
+      "model": "evade",
+      "condition": "sprinting",
+      "ranks": 3,
+      "values": [5, 10, 15],
+      "noPowerArmor": true,
+      "confidence": "verified",
+      "source": "Card text '+5/10/15% chance to Evade while sprinting. (No Power Armor)'"
+    },
+    "dodgy": {
+      "id": "dodgy",
+      "label": "Dodgy",
+      "model": "evade",
+      "ranks": 1,
+      "values": [5],
+      "confidence": "verified",
+      "source": "Card text '+5% chance to Evade. Evade no longer has a cooldown. Instead it costs AP.'"
+    },
+    "serendipity": {
+      "id": "serendipity",
+      "label": "Serendipity",
+      "model": "evade",
+      "special": "lck",
+      "condition": "low-health",
+      "healthBelowPct": 30,
+      "ranks": 1,
+      "min": 0,
+      "max": 15,
+      "noPowerArmor": true,
+      "confidence": "approximate",
+      "source": "Card text 'While below 30% health, gain a chance to Evade based on LCK. (No Power Armor)'; range unpublished, modelled 0..15%."
+    },
+    "ricochet": {
+      "id": "ricochet",
+      "label": "Ricochet",
+      "model": "deflect",
+      "special": "lck",
+      "ranks": 1,
+      "min": 0,
+      "max": 18,
+      "confidence": "approximate",
+      "source": "Card text 'Gain a chance to Deflect ranged attacks based on LCK.'; range unpublished, ceiling set to the pre-Patch-62 rank-3 value (18%)."
+    },
+    "bullet-shield": {
+      "id": "bullet-shield",
+      "label": "Bullet Shield",
+      "model": "deflect",
+      "condition": "firing-heavy-gun",
+      "durationSec": 6,
+      "ranks": 3,
+      "values": [5, 10, 15],
+      "confidence": "verified",
+      "source": "Card text 'Gain 5/10/15% Deflect chance for 6 sec when firing a heavy gun.'"
+    },
+    "lone-wanderer": {
+      "id": "lone-wanderer",
+      "label": "Lone Wanderer",
+      "model": "pct-reducer",
+      "condition": "solo",
+      "special": "cha",
+      "ranks": 1,
+      "min": 1,
+      "max": 20,
+      "confidence": "approximate",
+      "endpointsVerified": true,
+      "source": "Patch 70: incoming damage x0.99 (CHA 1) to x0.80 (CHA 15) against all damage types while not on a team; intermediate values interpolated linearly. AP regen part not modelled here."
+    },
+    "bodyguards": {
+      "id": "bodyguards",
+      "label": "Bodyguards",
+      "model": "special-scaled",
+      "special": "cha",
+      "resists": ["dr", "er"],
+      "condition": "team",
+      "ranks": 1,
+      "min": 6,
+      "max": 12,
+      "perTeammate": true,
+      "maxTeammates": 3,
+      "confidence": "approximate",
+      "source": "Card text 'DR & ER based on CHA and number of teammates'; new curve unpublished, kept the old 6..12 per teammate (max 3 teammates, 36 total)."
+    },
+    "refractor": {
+      "id": "refractor",
+      "label": "Refractor",
+      "model": "special-scaled",
+      "special": "per",
+      "resists": ["er"],
+      "ranks": 1,
+      "min": 0,
+      "max": 40,
+      "confidence": "approximate",
+      "source": "Card text 'Energy Resistance based on PER'; range unpublished, modelled 0..40 (old rank 4 total)."
+    },
+    "rad-resistant": {
+      "id": "rad-resistant",
+      "label": "Rad Resistant",
+      "model": "special-scaled",
+      "special": "end",
+      "resists": ["rr"],
+      "ranks": 1,
+      "min": 0,
+      "max": 40,
+      "confidence": "approximate",
+      "source": "Card text 'Radiation Resistance based on END'; range unpublished, modelled 0..40 (old rank 4 total)."
+    },
+    "junk-shield": {
+      "id": "junk-shield",
+      "label": "Junk Shield",
+      "model": "special-scaled",
+      "special": "lck",
+      "resists": ["dr", "er"],
+      "condition": "holding-junk",
+      "ranks": 1,
+      "min": 0,
+      "max": 30,
+      "confidence": "approximate",
+      "source": "Card text 'Resistances based on LCK and amount of junk held'; range unpublished, modelled 0..30 (old rank 3 total) with junk held."
+    },
+    "lifegiver": {
+      "id": "lifegiver",
+      "label": "Lifegiver",
+      "model": "max-hp-pct",
+      "special": "end",
+      "ranks": 1,
+      "min": 0,
+      "max": 45,
+      "confidence": "approximate",
+      "source": "Card text 'max HP based on END'; range unpublished, modelled +0..+45%."
+    },
+    "nerd-rage": {
+      "id": "nerd-rage",
+      "label": "Nerd Rage",
+      "model": "note-only",
+      "ranks": 1,
+      "confidence": "verified",
+      "source": "Patch 62: damage 0..+80% and AP regen as HP drops below 20%; no Damage Resistance any more."
+    },
+    "tenderizer": {
+      "id": "tenderizer",
+      "label": "Tenderizer",
+      "model": "note-only",
+      "ranks": 1,
+      "perHitPct": 0.1,
+      "maxPct": 100,
+      "confidence": "verified",
+      "source": "+0.1% damage taken by the target per hit, stacks to +100%, no expiry, not PvP. Offensive: not part of the defensive profile."
+    }
+  },
+  "legendaryMods": {
+    "vanguards": {
+      "id": "vanguards",
+      "label": "Vanguard's",
+      "model": "pct-reducer",
+      "condition": "always",
+      "maxPct": 10,
+      "scaling": "health-high",
+      "fullAtHealthPct": 100,
+      "confidence": "approximate",
+      "source": "Up to 10% damage reduction, full at 1000 max HP; modelled as full at 100% current HP, linear. Stacking across pieces unverified: modelled once per set."
+    },
+    "bolstering": {
+      "id": "bolstering",
+      "label": "Bolstering",
+      "model": "pct-reducer",
+      "condition": "always",
+      "maxPct": 10,
+      "scaling": "health-low",
+      "fullAtHealthPct": 5,
+      "confidence": "approximate",
+      "source": "Up to 10% damage reduction, full at 5% HP, linear towards 0 at 100% HP. Stacking across pieces unverified: modelled once per set."
+    },
+    "mutants": {
+      "id": "mutants",
+      "label": "Mutant's",
+      "model": "pct-reducer",
+      "condition": "always",
+      "perMutationPct": 1,
+      "maxPct": 5,
+      "confidence": "verified",
+      "source": "1% damage reduction per mutation, up to 5%. Stacking across pieces unverified: modelled once per set."
+    },
+    "cavaliers": {
+      "id": "cavaliers",
+      "label": "Cavalier's",
+      "model": "pct-reducer",
+      "condition": "sprinting",
+      "pct": 10,
+      "confidence": "verified",
+      "source": "10% less damage while sprinting (was 15% chance of 75% reduction before Patch 66)."
+    },
+    "sentinels": {
+      "id": "sentinels",
+      "label": "Sentinel's",
+      "model": "pct-reducer",
+      "condition": "stationary",
+      "pct": 5,
+      "confidence": "verified",
+      "source": "5% less damage while standing still, per current datamine text."
+    },
+    "unstoppable-monster": {
+      "id": "unstoppable-monster",
+      "label": "Unstoppable Monster",
+      "model": "pct-reducer",
+      "condition": "always",
+      "basePct": 5,
+      "perKillStreakPct": 1,
+      "confidence": "approximate",
+      "source": "5% damage reduction plus 1% per kill-streak stack; cap unpublished, modelled uncapped."
+    },
+    "reflex": {
+      "id": "reflex",
+      "label": "Reflex",
+      "model": "evade",
+      "perPiecePct": 2,
+      "confidence": "verified",
+      "source": "3-star armor mod: 2% Evade per piece."
+    },
+    "last-stand": {
+      "id": "last-stand",
+      "label": "Last Stand",
+      "model": "evade-to-reducer",
+      "evadeToReductionMultiplier": 0.5,
+      "confidence": "verified",
+      "source": "Unique chest: converts Evade chance x0.5 into damage reduction and disables Evade."
+    },
+    "old-guard": {
+      "id": "old-guard",
+      "label": "Old Guard",
+      "model": "deflect",
+      "pct": 10,
+      "confidence": "verified",
+      "source": "+10% Deflect chance."
+    },
+    "the-action-hero": {
+      "id": "the-action-hero",
+      "label": "The Action Hero",
+      "model": "deflect",
+      "perBulletStormStackPct": 1,
+      "confidence": "verified",
+      "source": "+1% Deflect chance per Bullet Storm stack."
+    }
+  },
+  "evadeDeflect": {
+    "deflectHeavyArmorMultiplier": 1.5,
+    "deflectDamageTakenPct": 50,
+    "chanceCapPct": 100,
+    "source": "Deflect reflects 100% of a ranged hit and the player takes 50% of it; +50% Deflect chance multiplier in heavy armor or Power Armor."
+  },
+  "powerArmorInnate": {
+    "perPiecePct": 0,
+    "claimedPerPiecePct": [7, 15],
+    "confidence": "unverified",
+    "source": "Claimed 7%/15% innate reduction per Power Armor piece is unverified; constant kept at 0 and exposed as a toggle labelled unverified."
+  }
+}
