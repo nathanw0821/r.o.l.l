@@ -26,8 +26,8 @@ async function AllEffectsRegistry({
       rows={rows}
       canEdit={true}
       focusId={focusId}
-      title="ALL LEGENDARY EFFECTS"
-      description="Complete directory of all Fallout 76 legendary effects across all star tiers."
+      title="All legendary effects"
+      description="Every legendary mod effect in the game, by star tier. Mark the ones you have learned."
     />
   );
 }

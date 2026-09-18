@@ -635,11 +635,11 @@ export default function ScreenshotAssistClient({
         <div className="flex items-center justify-between rounded-lg border border-accent/20 bg-accent/5 px-4 py-2.5 font-mono text-[0.84rem] uppercase tracking-widest text-accent shadow-sm">
           <div className="flex items-center gap-2">
             <Terminal className="h-4 w-4 animate-pulse text-accent" />
-            <span>S.C.A.N. // SCREEN CAPTURE & ANALYSIS NETWORK</span>
+            <span>Screenshot import</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-accent animate-ping" />
-            <span className="text-[0.78rem] text-accent/70">DIAGNOSTIC STATE: OK</span>
+            <span className="text-[0.78rem] text-accent/70">Ready</span>
           </div>
         </div>
 
@@ -880,7 +880,7 @@ export default function ScreenshotAssistClient({
           <div className="mt-4 rounded-md border border-accent/20 bg-black/75 p-3.5 font-mono text-[0.84rem] text-accent/85 space-y-1.5 shadow-inner">
             <div className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-              <span>&gt; S.C.A.N. NETWORK INITIALIZED // CLIENT_OCR_STANDBY</span>
+              <span>Ready. Paste a screenshot to begin.</span>
             </div>
             {ocrPending && (
               <div className="text-accent/60 leading-relaxed pl-3.5">
@@ -996,7 +996,7 @@ export default function ScreenshotAssistClient({
               <div className="flex flex-col items-center p-6 text-center">
                 <Terminal className="h-8 w-8 text-foreground/20 mb-2" />
                 <div className="font-mono text-xs text-foreground/40">Nothing to preview yet.</div>
-                <div className="text-[0.78rem] text-foreground/30 mt-0.5 font-mono">&gt; waiting_for_screenshot_sync.img</div>
+                <div className="text-[0.78rem] text-foreground/30 mt-0.5 font-mono">Your pasted image will appear here.</div>
               </div>
             )}
           </div>
@@ -1088,7 +1088,7 @@ export default function ScreenshotAssistClient({
             ) : null}
 
             <div className="font-mono text-[0.72rem] text-foreground/40 uppercase tracking-widest leading-normal text-center">
-              registry cache: local draft + active session. DB commits persistant.
+              Matches stay in this session until you commit them; committed unlocks are saved to your account.
             </div>
           </div>
         </div>

@@ -76,7 +76,7 @@ export default function AppalachianRadar() {
       <div className="w-full rounded-xl border border-emerald-500/20 bg-slate-950/80 p-4 font-mono animate-pulse">
         <div className="flex items-center gap-2 text-emerald-400/70 text-xs">
           <Radio className="h-4 w-4 animate-spin" />
-          <span>INITIALIZING APPALACHIAN RECON RADAR...</span>
+          <span>Loading live game timers…</span>
         </div>
       </div>
     );

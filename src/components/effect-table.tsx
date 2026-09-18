@@ -314,7 +314,7 @@ export default function EffectTable({
             <div>
               <div className="text-[10px] font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Tactical Modification Registry // Live Codex</span>
+                <span>Legendary mod effects, live catalog</span>
               </div>
               <h1 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight mt-0.5">
                 {title}

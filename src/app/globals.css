@@ -2033,6 +2033,9 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
     top: 1.5rem;
     margin-right: 43.5rem; /* leaves room for command-hub on the right side */
   }
+  .season-banner {
+    margin-right: 43.5rem; /* same reserved column as the header */
+  }
   .summary-tab-header {
     position: sticky;
     top: 1.5rem;
