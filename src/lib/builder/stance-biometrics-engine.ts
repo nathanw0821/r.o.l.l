@@ -5,10 +5,17 @@
  * based on the character's physical combat stance (Crouched/Stealthed, Aiming ADS,
  * Power Attacking, Sprinting, Stationary) and biometric status (Health %, Rads %,
  * Feral Instinct, Time of Day, Hunger/Thirst).
+ *
+ * Since Patch 66 the health-scaled armor effects (Vanguard's, Bolstering, Mutant's)
+ * and the stance effects (Cavalier's, Sentinel's) are percentage damage reducers,
+ * not flat resistances. Their numbers come from `calculateDefensiveProfile`
+ * (single source: `src/data/truth/defensive-perks.json`) and surface here as
+ * tactical tags only.
  */
 
 import type { BuilderModDTO } from "./types";
 import type { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
+import { calculateDefensiveProfile } from "./perk-defensive-layer";
 
 export interface StanceBiometricsInput {
   switchboard: CombatSwitchboardState | null;
@@ -71,19 +78,13 @@ export function calculateStanceAndBiometricModifiers(
     (foodState === "well_fed" || foodState === "fully_fed") &&
     (thirstState === "well_hydrated" || thirstState === "fully_hydrated");
 
-  const hasMutations = activeMutations.length > 0;
-
   // Track armor piece counts for affixes
   let nocturnalArmorCount = 0;
   let chameleonArmorCount = 0;
   let unyieldingArmorCount = 0;
-  let bolsteringArmorCount = 0;
-  let vanguardArmorCount = 0;
   let steadfastArmorCount = 0;
-  let mutantsArmorCount = 0;
   let overeatersArmorCount = 0;
-  let sentinelsArmorCount = 0;
-  let cavaliersArmorCount = 0;
+  const armorModSlugs: string[] = [];
 
   // Track weapon affixes
   let hasNocturnalWeapon = false;
@@ -99,6 +100,8 @@ export function calculateStanceAndBiometricModifiers(
     const isArmorOrPA = mod.allowedOnArmor || mod.allowedOnPowerArmor || mod.category === "Armor";
     const isWeapon = mod.allowedOnWeapon || mod.category === "Weapon";
 
+    if (isArmorOrPA) armorModSlugs.push(slug);
+
     if (slug.includes("nocturnal") || name.includes("nocturnal")) {
       if (isArmorOrPA && !slug.includes("weapon")) nocturnalArmorCount++;
       if (isWeapon || slug.includes("weapon")) hasNocturnalWeapon = true;
@@ -106,20 +109,10 @@ export function calculateStanceAndBiometricModifiers(
       if (isArmorOrPA) chameleonArmorCount++;
     } else if (slug.includes("unyielding") || name.includes("unyielding")) {
       if (isArmorOrPA) unyieldingArmorCount++;
-    } else if (slug.includes("bolstering") || name.includes("bolstering")) {
-      if (isArmorOrPA) bolsteringArmorCount++;
-    } else if (slug.includes("vanguard") || name.includes("vanguard")) {
-      if (isArmorOrPA) vanguardArmorCount++;
     } else if (slug.includes("steadfast") || name.includes("steadfast")) {
       if (isArmorOrPA) steadfastArmorCount++;
-    } else if (slug.includes("mutant") && !slug.includes("mutant-slayer") && name.includes("mutant's")) {
-      if (isArmorOrPA) mutantsArmorCount++;
     } else if (slug.includes("overeater") || name.includes("overeater")) {
       if (isArmorOrPA) overeatersArmorCount++;
-    } else if (slug.includes("sentinel") || name.includes("sentinel")) {
-      if (isArmorOrPA) sentinelsArmorCount++;
-    } else if (slug.includes("cavalier") || name.includes("cavalier")) {
-      if (isArmorOrPA) cavaliersArmorCount++;
     }
 
     if (isWeapon) {
@@ -198,80 +191,7 @@ export function calculateStanceAndBiometricModifiers(
     }
   }
 
-  // 5. Compute Bolstering Armor Biometric Modifier
-  // Up to +35 DR and +35 ER per piece as health decreases.
-  if (bolsteringArmorCount > 0) {
-    let drPerPiece = 0;
-    let label = "";
-
-    if (healthPct <= 20) {
-      drPerPiece = 35;
-      label = "≤20% HP";
-    } else if (healthPct <= 40) {
-      drPerPiece = 28;
-      label = "≤40% HP";
-    } else if (healthPct <= 60) {
-      drPerPiece = 21;
-      label = "≤60% HP";
-    } else if (healthPct <= 80) {
-      drPerPiece = 14;
-      label = "≤80% HP";
-    } else {
-      drPerPiece = 7;
-      label = ">80% HP";
-    }
-
-    // Seed catalog already provides baseline +10 DR/ER; we add the scaling bonus beyond 10 if applicable
-    const extraPerPiece = Math.max(0, drPerPiece - 10);
-    if (extraPerPiece > 0) {
-      const totalDr = bolsteringArmorCount * extraPerPiece;
-      layer.dr += totalDr;
-      layer.er += totalDr;
-
-      const sourceLabel = `Bolstering (${bolsteringArmorCount}x · ${label})`;
-      resistanceBreakdowns.push(
-        { res: "dr", source: sourceLabel, val: totalDr },
-        { res: "er", source: sourceLabel, val: totalDr }
-      );
-      activeTacticalTags.push(`Bolstering (+${bolsteringArmorCount * drPerPiece} DR/ER)`);
-    }
-  }
-
-  // 6. Compute Vanguard's Armor Biometric Modifier
-  // Up to +35 DR and +35 ER per piece as health increases (max at >= 80% HP).
-  if (vanguardArmorCount > 0) {
-    let drPerPiece = 0;
-    let label = "";
-
-    if (healthPct >= 80) {
-      drPerPiece = 35;
-      label = "≥80% HP";
-    } else if (healthPct >= 60) {
-      drPerPiece = 28;
-      label = "≥60% HP";
-    } else if (healthPct >= 40) {
-      drPerPiece = 21;
-      label = "≥40% HP";
-    } else if (healthPct >= 20) {
-      drPerPiece = 14;
-      label = "≥20% HP";
-    }
-
-    if (drPerPiece > 0) {
-      const totalDr = vanguardArmorCount * drPerPiece;
-      layer.dr += totalDr;
-      layer.er += totalDr;
-
-      const sourceLabel = `Vanguard's (${vanguardArmorCount}x · ${label})`;
-      resistanceBreakdowns.push(
-        { res: "dr", source: sourceLabel, val: totalDr },
-        { res: "er", source: sourceLabel, val: totalDr }
-      );
-      activeTacticalTags.push(`Vanguard's (+${totalDr} DR/ER)`);
-    }
-  }
-
-  // 7. Compute Steadfast Armor Stance Modifier
+  // 5. Compute Steadfast Armor Stance Modifier
   // +50 DR per piece while aiming down sights.
   if (steadfastArmorCount > 0 && isAiming) {
     const totalDr = steadfastArmorCount * 50;
@@ -282,40 +202,56 @@ export function calculateStanceAndBiometricModifiers(
     activeTacticalTags.push(`Steadfast (+${totalDr} DR While Aiming)`);
   }
 
-  // 8. Compute Mutant's Armor Biometric Modifier
-  // +10 DR & +10 ER per piece if player is mutated.
-  if (mutantsArmorCount > 0 && hasMutations) {
-    const totalRes = mutantsArmorCount * 10;
-    layer.dr += totalRes;
-    layer.er += totalRes;
-
-    const sourceLabel = `Mutant's (${mutantsArmorCount}x · Mutated)`;
-    resistanceBreakdowns.push(
-      { res: "dr", source: sourceLabel, val: totalRes },
-      { res: "er", source: sourceLabel, val: totalRes }
-    );
-    activeTacticalTags.push(`Mutant's (+${totalRes} DR/ER)`);
-  }
-
-  // 9. Overeater's tag. Since Patch 66 (The Backwoods, 2026-03-03) Overeater's grants up to
+  // 6. Overeater's tag. Since Patch 66 (The Backwoods, 2026-03-03) Overeater's grants up to
   // +40 Max Health per piece as hunger/thirst fill and no longer reduces incoming damage.
   if (overeatersArmorCount > 0 && !isGhoul && isWellFedAndHydrated) {
     const maxHpBonus = overeatersArmorCount * 40;
     activeTacticalTags.push(`Overeater's (+${maxHpBonus} Max HP · Well Fed/Hydrated)`);
   }
 
-  // 10. Compute Sentinel's & Cavalier's Tactical Tags
-  if (sentinelsArmorCount > 0 && isStationary) {
-    const mitigationPct = sentinelsArmorCount * 15;
-    activeTacticalTags.push(`Sentinel's (-${mitigationPct}% Dmg Taken · Stationary)`);
+  // 7. Percentage damage reducers from armor legendary mods (Patch 66 order of operations:
+  // applied after the armor curve). Vanguard's / Bolstering / Mutant's / Cavalier's / Sentinel's
+  // no longer add flat DR/ER here; the values come from the defensive-perk truth file.
+  if (armorModSlugs.length > 0) {
+    const profile = calculateDefensiveProfile([], {
+      isPowerArmor: Boolean(switchboard?.inPowerArmor),
+      equippedModSlugs: armorModSlugs,
+      healthPct,
+      mutationCount: activeMutations.length,
+      isSprinting,
+      isStationary,
+      bulletStormStacks: switchboard?.bulletStormStacks ?? 0,
+    });
+
+    const detailFor = (id: string): string => {
+      switch (id) {
+        case "vanguards":
+        case "bolstering":
+          return `${Math.round(healthPct)}% HP`;
+        case "mutants":
+          return `${activeMutations.length} mutation${activeMutations.length === 1 ? "" : "s"}`;
+        case "cavaliers":
+          return "sprinting";
+        case "sentinels":
+          return "standing still";
+        default:
+          return "";
+      }
+    };
+
+    for (const r of profile.reducers) {
+      const detail = detailFor(r.id);
+      activeTacticalTags.push(`${r.label} (-${r.pct}% damage taken${detail ? ` · ${detail}` : ""})`);
+    }
+    if (profile.evadeChance > 0) {
+      activeTacticalTags.push(`Armor mods (+${profile.evadeChance}% Evade)`);
+    }
+    if (profile.deflectChance > 0) {
+      activeTacticalTags.push(`Armor mods (+${profile.deflectChance}% Deflect)`);
+    }
   }
 
-  if (cavaliersArmorCount > 0 && isSprinting) {
-    const mitigationPct = cavaliersArmorCount * 15;
-    activeTacticalTags.push(`Cavalier's (-${mitigationPct}% Dmg Taken · Sprinting)`);
-  }
-
-  // 11. Compute Weapon Tactical Stance & Biometric Tags
+  // 8. Compute Weapon Tactical Stance & Biometric Tags
   if (hasNocturnalWeapon && nocturnalActive) {
     activeTacticalTags.push("Nocturnal (+50% Weapon Dmg · Stealthed/Night)");
   }

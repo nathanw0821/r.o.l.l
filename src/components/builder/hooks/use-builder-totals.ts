@@ -16,7 +16,7 @@ import {
 } from "@/lib/builder/power-armor-stats";
 import { sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import {
-  calculatePerkDeckDefensiveLayer,
+  calculateDefensiveProfile,
   type EquippedPerkCardItem,
 } from "@/lib/builder/perk-defensive-layer";
 import { calculateStanceAndBiometricModifiers } from "@/lib/builder/stance-biometrics-engine";
@@ -35,6 +35,8 @@ export interface UseBuilderTotalsParams {
   isPA: boolean;
   equippedPerkCards: EquippedPerkCardItem[];
   switchboardState: CombatSwitchboardState | null;
+  /** Bullet Shield only counts while a heavy gun is being fired. */
+  isFiringHeavyGun?: boolean;
 }
 
 export function useBuilderTotals({
@@ -45,6 +47,7 @@ export function useBuilderTotals({
   isPA,
   equippedPerkCards,
   switchboardState,
+  isFiringHeavyGun = false,
 }: UseBuilderTotalsParams) {
   const equippedModsOrdered = React.useMemo(
     () => listEquippedModsInBenchOrder(payload, mods),
@@ -61,9 +64,12 @@ export function useBuilderTotals({
     [equippedLegendaryBenchLines],
   );
 
+  const inPowerArmor =
+    isPA || activeChassisPiece.kind === "powerArmor" || piece.kind === "powerArmor";
+
   const underLayers = React.useMemo(() => {
     // Underarmor resistances (lining) and SPECIAL bonuses (style) are strictly SUPPRESSED when in Power Armor!
-    if (isPA || activeChassisPiece.kind === "powerArmor" || piece.kind === "powerArmor") return [];
+    if (inPowerArmor) return [];
     const layers: Record<string, number>[] = [];
     const shell = findUnderarmorOption(
       UNDERARMOR_SHELLS,
@@ -81,7 +87,7 @@ export function useBuilderTotals({
     if (lining?.effectMath) layers.push(lining.effectMath);
     if (style?.effectMath) layers.push(style.effectMath);
     return layers;
-  }, [payload.underarmor, isPA, activeChassisPiece.kind, piece.kind]);
+  }, [payload.underarmor, inPowerArmor]);
 
   const armorCraftingLayers = React.useMemo(() => {
     return armorCraftingEffectLayers(
@@ -137,14 +143,6 @@ export function useBuilderTotals({
     ],
   );
 
-  const perkDeckDefensiveLayer = React.useMemo(() => {
-    return calculatePerkDeckDefensiveLayer(equippedPerkCards, {
-      isPowerArmor: piece.kind === "powerArmor",
-      strVal: payload.baseSpecial?.str || 1,
-      agiVal: payload.baseSpecial?.agi || 1,
-    });
-  }, [piece.kind, payload.baseSpecial, equippedPerkCards]);
-
   const intrinsicBenchTotals = React.useMemo(
     () =>
       aggregateEffectMath([], {
@@ -176,19 +174,133 @@ export function useBuilderTotals({
     });
   }, [switchboardState, equippedModsOrdered, payload.ghoul, payload.mutationIds]);
 
+  const preDefenseLayers = React.useMemo(
+    () => [
+      ...(piece.kind !== "powerArmor" ? underLayers : []),
+      ...armorCraftingLayers,
+      ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : []),
+      ...(mutationLayer ? [mutationLayer] : []),
+      stanceAndBiometricsLayer.layer,
+    ],
+    [
+      piece.kind,
+      underLayers,
+      armorCraftingLayers,
+      powerArmorFrameIntrinsicLayer,
+      mutationLayer,
+      stanceAndBiometricsLayer.layer,
+    ],
+  );
+
+  /**
+   * Totals before the perk deck's defensive layer: the SPECIAL-scaled defensive
+   * perks (Barbarian, Evasive, Lone Wanderer, ...) read the buffed SPECIAL from
+   * here, and the perk layer only ever adds resistances, so there is no cycle.
+   */
+  const preDefenseTotals = React.useMemo(
+    () =>
+      aggregateEffectMath(equippedModsOrdered, {
+        ghoul: payload.ghoul,
+        extraLayers: preDefenseLayers,
+        baseArmorStats,
+        armorPieceSetKeys: payload.armorPieceSetKeys,
+        baseSpecial: payload.baseSpecial,
+        legendaryPerkIds: payload.legendaryPerkIds,
+      }),
+    [
+      equippedModsOrdered,
+      payload.ghoul,
+      preDefenseLayers,
+      baseArmorStats,
+      payload.armorPieceSetKeys,
+      payload.baseSpecial,
+      payload.legendaryPerkIds,
+    ],
+  );
+
+  const armorModSlugs = React.useMemo(
+    () =>
+      equippedModsOrdered
+        .filter((m) => m.allowedOnArmor || m.allowedOnPowerArmor || m.category === "Armor")
+        .map((m) => m.slug),
+    [equippedModsOrdered],
+  );
+
+  const matchingSet = React.useMemo(() => {
+    if (activeChassisPiece.kind === "powerArmor") {
+      return payload.powerArmorPiecesEquipped.every(Boolean);
+    }
+    if (activeChassisPiece.kind === "armor") {
+      const setKey = activeChassisPiece.armorSetKey;
+      if (!setKey) return false;
+      return (payload.armorPieceSetKeys ?? []).every((k) => !k || k === setKey);
+    }
+    return false;
+  }, [activeChassisPiece, payload.powerArmorPiecesEquipped, payload.armorPieceSetKeys]);
+
+  const defensiveProfile = React.useMemo(() => {
+    const stance = switchboardState?.combatStance;
+    const isOnTeam = (switchboardState?.teamState ?? "casual") !== "solo";
+    return calculateDefensiveProfile(equippedPerkCards, {
+      isPowerArmor: inPowerArmor,
+      special: {
+        str: preDefenseTotals.str,
+        per: preDefenseTotals.per,
+        end: preDefenseTotals.end,
+        cha: preDefenseTotals.cha,
+        int: preDefenseTotals.int,
+        agi: preDefenseTotals.agi,
+        lck: preDefenseTotals.lck,
+      },
+      healthPct: switchboardState?.healthPct ?? 100,
+      isOnTeam,
+      teammates: isOnTeam ? 3 : 0,
+      isSprinting: Boolean(stance?.isSprinting),
+      isStationary: Boolean(stance?.isStationary),
+      isFiringHeavyGun,
+      armorPieceCount: inPowerArmor
+        ? payload.powerArmorPiecesEquipped.filter(Boolean).length
+        : 5,
+      matchingSet,
+      wearingNoArmor:
+        activeChassisPiece.kind !== "armor" && activeChassisPiece.kind !== "powerArmor",
+      isOverEncumbered: false,
+      // Ironclad multiplies the worn armor's own DR/ER (base table + crafting + PA frame).
+      baseArmor: { dr: intrinsicBenchTotals.dr, er: intrinsicBenchTotals.er },
+      equippedModSlugs: armorModSlugs,
+      mutationCount: payload.mutationIds.length,
+      bulletStormStacks: switchboardState?.bulletStormStacks ?? 0,
+      // Unverified innate PA reduction: 0 unless the switchboard toggle sets it.
+      powerArmorInnatePct: switchboardState?.powerArmorInnatePct ?? 0,
+    });
+  }, [
+    equippedPerkCards,
+    inPowerArmor,
+    preDefenseTotals,
+    switchboardState,
+    isFiringHeavyGun,
+    payload.powerArmorPiecesEquipped,
+    payload.mutationIds.length,
+    matchingSet,
+    activeChassisPiece.kind,
+    intrinsicBenchTotals.dr,
+    intrinsicBenchTotals.er,
+    armorModSlugs,
+  ]);
+
+  /** Flat resist adds from the perk deck (old shape kept for the HUD breakdown). */
+  const perkDeckDefensiveLayer = React.useMemo(
+    () => (equippedPerkCards.length > 0 ? defensiveProfile.flat : null),
+    [equippedPerkCards.length, defensiveProfile.flat],
+  );
+
   const totals = React.useMemo(
     () =>
       aggregateEffectMath(equippedModsOrdered, {
         ghoul: payload.ghoul,
         extraLayers: [
-          ...(piece.kind !== "powerArmor" ? underLayers : []),
-          ...armorCraftingLayers,
-          ...(powerArmorFrameIntrinsicLayer
-            ? [powerArmorFrameIntrinsicLayer]
-            : []),
-          ...(mutationLayer ? [mutationLayer] : []),
+          ...preDefenseLayers,
           ...(perkDeckDefensiveLayer ? [perkDeckDefensiveLayer] : []),
-          stanceAndBiometricsLayer.layer,
         ],
         baseArmorStats,
         armorPieceSetKeys: payload.armorPieceSetKeys,
@@ -198,17 +310,12 @@ export function useBuilderTotals({
     [
       equippedModsOrdered,
       payload.ghoul,
-      underLayers,
-      armorCraftingLayers,
-      powerArmorFrameIntrinsicLayer,
-      mutationLayer,
+      preDefenseLayers,
       perkDeckDefensiveLayer,
-      stanceAndBiometricsLayer.layer,
       baseArmorStats,
       payload.armorPieceSetKeys,
       payload.baseSpecial,
       payload.legendaryPerkIds,
-      piece.kind,
     ],
   );
 
@@ -222,6 +329,7 @@ export function useBuilderTotals({
     powerArmorFrameIntrinsicLayer,
     mutationLayer,
     perkDeckDefensiveLayer,
+    defensiveProfile,
     intrinsicBenchTotals,
     stanceAndBiometricsLayer,
     totals,

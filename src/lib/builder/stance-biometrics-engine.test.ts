@@ -294,4 +294,97 @@ describe("stance-biometrics-engine", () => {
     expect(res.layer.dr).toBe(100);
     expect(res.resistanceBreakdowns.some((r) => r.res === "dr" && r.val === 100)).toBe(true);
   });
+
+  const baseSwitchboard = (extra: Partial<CombatSwitchboardState>): CombatSwitchboardState => ({
+    healthPct: 100,
+    inPowerArmor: false,
+    activeFood: null,
+    activeFoods: {},
+    activeDrug: null,
+    activeBobblehead: null,
+    activeMagazine: null,
+    activeAlcohol: null,
+    activeNukaCola: null,
+    activeCompanion: null,
+    activeCampBuffs: [],
+    targetEnemy: "superMutant",
+    ...extra,
+  });
+
+  it("Cavalier's tag states -10% damage taken while sprinting (Patch 66 value; the old -75% chance roll is gone)", () => {
+    const res = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({
+        combatStance: { isSneaking: false, isSprinting: true, isAiming: false, isPowerAttacking: false },
+      }),
+      equippedMods: [createMockMod("cavaliers", "Cavalier's")],
+      isGhoul: false,
+    });
+    expect(res.activeTacticalTags).toContain("Cavalier's (-10% damage taken · sprinting)");
+    expect(res.layer.dr).toBe(0);
+  });
+
+  it("Sentinel's tag states -5% damage taken while standing still (current datamine text; was 15% per piece)", () => {
+    const res = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({
+        combatStance: { isSneaking: false, isSprinting: false, isAiming: false, isPowerAttacking: false, isStationary: true },
+      }),
+      equippedMods: [createMockMod("sentinels", "Sentinel's"), createMockMod("sentinels", "Sentinel's")],
+      isGhoul: false,
+    });
+    expect(res.activeTacticalTags).toContain("Sentinel's (-5% damage taken · standing still)");
+  });
+
+  it("Bolstering no longer adds flat DR/ER: Patch 66 made it a reducer that is full (-10%) at 5% HP", () => {
+    const mods = [createMockMod("bolstering", "Bolstering"), createMockMod("bolstering", "Bolstering")];
+    const low = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({ healthPct: 5 }),
+      equippedMods: mods,
+      isGhoul: false,
+    });
+    expect(low.layer.dr).toBe(0);
+    expect(low.layer.er).toBe(0);
+    expect(low.resistanceBreakdowns).toHaveLength(0);
+    expect(low.activeTacticalTags).toContain("Bolstering (approx.) (-10% damage taken · 5% HP)");
+
+    const full = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({ healthPct: 100 }),
+      equippedMods: mods,
+      isGhoul: false,
+    });
+    expect(full.activeTacticalTags.some((t) => t.startsWith("Bolstering"))).toBe(false);
+  });
+
+  it("Vanguard's no longer adds flat DR/ER: Patch 66 made it a reducer that is full (-10%) at full HP", () => {
+    const res = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({ healthPct: 100 }),
+      equippedMods: [createMockMod("vanguards", "Vanguard's")],
+      isGhoul: false,
+    });
+    expect(res.layer.dr).toBe(0);
+    expect(res.activeTacticalTags).toContain("Vanguard's (approx.) (-10% damage taken · 100% HP)");
+    const half = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({ healthPct: 50 }),
+      equippedMods: [createMockMod("vanguards", "Vanguard's")],
+      isGhoul: false,
+    });
+    expect(half.activeTacticalTags).toContain("Vanguard's (approx.) (-5% damage taken · 50% HP)");
+  });
+
+  it("Mutant's no longer adds +10 DR/ER per piece: it is 1% damage taken per mutation, capped at 5%", () => {
+    const res = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({}),
+      equippedMods: [createMockMod("mutants", "Mutant's")],
+      isGhoul: false,
+      activeMutations: ["marsupial", "speed-demon", "eagle-eyes", "bird-bones", "herbivore", "egg-head", "adrenal-reaction"],
+    });
+    expect(res.layer.dr).toBe(0);
+    expect(res.activeTacticalTags).toContain("Mutant's (-5% damage taken · 7 mutations)");
+    const none = calculateStanceAndBiometricModifiers({
+      switchboard: baseSwitchboard({}),
+      equippedMods: [createMockMod("mutants", "Mutant's")],
+      isGhoul: false,
+      activeMutations: [],
+    });
+    expect(none.activeTacticalTags.some((t) => t.startsWith("Mutant's"))).toBe(false);
+  });
 });

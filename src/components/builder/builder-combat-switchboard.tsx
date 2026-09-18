@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Skull,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -36,6 +37,11 @@ import type {
   TeamCategory,
 } from "@/lib/builder/unified-builder-state";
 import type { VatsCritQualification } from "@/lib/builder/combat-firepower-engine";
+import {
+  calculateDamageTaken,
+  type DefensiveProfile,
+  type IncomingDamageType,
+} from "@/lib/builder/perk-defensive-layer";
 
 export type CombatSwitchboardState = {
   isGhoul?: boolean;
@@ -63,6 +69,14 @@ export type CombatSwitchboardState = {
     vatsCritEveryOtherShot?: boolean;
   };
   caps?: number;
+  /** Damage-taken preview: size of the incoming hit and its damage type. */
+  incomingDamage?: number;
+  incomingDamageType?: IncomingDamageType;
+  /**
+   * Innate Power Armor reduction per piece (percent). Unverified claim (7% / 15%);
+   * off by default and labelled unverified in the UI.
+   */
+  powerArmorInnatePct?: number;
 
   inPowerArmor: boolean;
   activeFood: string | null;
@@ -182,6 +196,10 @@ interface BuilderCombatSwitchboardProps {
   onStateChange?: (state: CombatSwitchboardState) => void;
   activeTacticalTags?: string[];
   critQualification?: VatsCritQualification;
+  /** Perk deck + armor mod defensive profile (reducers, Evade, Deflect). */
+  defensiveProfile?: DefensiveProfile | null;
+  /** The build's total DR / ER after every layer, for the damage-taken preview. */
+  playerResists?: { dr: number; er: number };
   readOnly?: boolean;
   initialState?: Partial<CombatSwitchboardState>;
 }
@@ -195,6 +213,8 @@ export default function BuilderCombatSwitchboard({
   onStateChange,
   activeTacticalTags,
   critQualification,
+  defensiveProfile = null,
+  playerResists,
   readOnly = false,
   initialState,
 }: BuilderCombatSwitchboardProps) {
@@ -264,6 +284,9 @@ export default function BuilderCombatSwitchboard({
         vatsCritEveryOtherShot: false,
       },
       caps: 30000,
+      incomingDamage: 100,
+      incomingDamageType: "ballistic",
+      powerArmorInnatePct: 0,
 
       inPowerArmor: false,
       activeFood: isHerbivore ? "plant-company-tea" : isCarnivore ? "meat-scorchbeast-brain" : null,
@@ -469,6 +492,20 @@ export default function BuilderCombatSwitchboard({
   const currentFoodDef = FOOD_STATES.find((f) => f.id === (switchboard.foodState || "fully_fed")) || FOOD_STATES[4];
   const currentThirstDef = THIRST_STATES.find((t) => t.id === (switchboard.thirstState || "fully_hydrated")) || THIRST_STATES[4];
   const currentTeamDef = TEAM_STATES.find((t) => t.id === (switchboard.teamState || "casual")) || TEAM_STATES[1];
+
+  // Damage-taken preview (Patch 66 order of operations): armor curve on the
+  // build's DR (ballistic / explosion) or ER (energy), then every applicable
+  // reducer multiplied together. The player is not a boss, so no flat reduction.
+  const incomingDamage = switchboard.incomingDamage ?? 100;
+  const incomingDamageType: IncomingDamageType = switchboard.incomingDamageType ?? "ballistic";
+  const damageTaken = React.useMemo(() => {
+    if (!defensiveProfile) return null;
+    const resist = incomingDamageType === "energy" ? playerResists?.er ?? 0 : playerResists?.dr ?? 0;
+    return {
+      resist,
+      ...calculateDamageTaken(incomingDamage, resist, 0, defensiveProfile.reducers, incomingDamageType),
+    };
+  }, [defensiveProfile, incomingDamage, incomingDamageType, playerResists?.dr, playerResists?.er]);
 
   const currentFeralPct = switchboard.feralPct || 0;
   const currentFeralStage = FERAL_STAGES.find((s) => currentFeralPct >= s.min && currentFeralPct <= s.max) || FERAL_STAGES[0];
@@ -1087,7 +1124,7 @@ export default function BuilderCombatSwitchboard({
                 >
                   <span>{switchboard.combatStance?.isSprinting ? "🏃 Sprinting" : "🚶 Walking"}</span>
                   <span className="text-[0.62rem] font-normal text-slate-500">
-                    {switchboard.combatStance?.isSprinting ? "Cavalier's (-75% Dmg)" : "Standard Speed"}
+                    {switchboard.combatStance?.isSprinting ? "Cavalier's (-10% damage taken)" : "Standard Speed"}
                   </span>
                 </button>
 
@@ -1103,7 +1140,7 @@ export default function BuilderCombatSwitchboard({
                 >
                   <span>{switchboard.combatStance?.isStationary ? "🛑 Stationary" : "🏃 Moving"}</span>
                   <span className="text-[0.62rem] font-normal text-slate-500">
-                    {switchboard.combatStance?.isStationary ? "Sentinel's / Steady (+25%)" : "Dynamic Movement"}
+                    {switchboard.combatStance?.isStationary ? "Sentinel's -5% taken · Steady +25%" : "Dynamic Movement"}
                   </span>
                 </button>
 
@@ -1269,6 +1306,81 @@ export default function BuilderCombatSwitchboard({
               </span>
             </div>
           </div>
+
+          {/* Damage taken preview (armor curve first, then multiplicative reducers) */}
+          {defensiveProfile && (
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-2">
+              <div className="text-xs text-slate-400 font-bold uppercase flex items-center justify-between gap-2">
+                <span className="flex items-center gap-1.5">
+                  <Shield className="h-3.5 w-3.5 text-sky-400" /> Damage taken
+                </span>
+                <span className="text-[0.62rem] text-slate-500 normal-case font-normal text-right">
+                  Armor curve first, then reducers multiply (Patch 66)
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+                <label className="flex flex-col gap-1 text-[0.68rem] text-slate-400">
+                  <span>Incoming hit</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={100000}
+                    value={incomingDamage}
+                    onChange={(e) => updateField("incomingDamage", Math.max(1, parseInt(e.target.value, 10) || 1))}
+                    className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-white font-mono focus:border-sky-500 outline-none"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-[0.68rem] text-slate-400">
+                  <span>Incoming damage type</span>
+                  <select
+                    value={incomingDamageType}
+                    onChange={(e) => updateField("incomingDamageType", e.target.value as IncomingDamageType)}
+                    className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-white focus:border-sky-500 outline-none cursor-pointer"
+                  >
+                    <option value="ballistic">Ballistic</option>
+                    <option value="energy">Energy</option>
+                    <option value="explosion">Explosion</option>
+                  </select>
+                </label>
+                <div className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono flex items-baseline justify-between gap-2">
+                  <span className="text-slate-500">Taken</span>
+                  <span>
+                    <span className="text-sky-300 font-black text-base">{damageTaken ? Math.round(damageTaken.delivered) : "—"}</span>
+                    <span className="text-slate-500"> / {incomingDamage}</span>
+                  </span>
+                </div>
+              </div>
+              {damageTaken && (
+                <div className="text-[0.68rem] text-slate-400 font-mono flex flex-wrap gap-x-3 gap-y-0.5">
+                  <span>
+                    Curve vs {damageTaken.resist} {incomingDamageType === "energy" ? "ER" : "DR"}: {damageTaken.afterCurve.toFixed(1)} ({damageTaken.damageCoefficientPct}%)
+                  </span>
+                  <span className="text-emerald-300">
+                    Evade {defensiveProfile.evadeChance}% · Deflect {defensiveProfile.deflectChance}%
+                  </span>
+                  {damageTaken.appliedReducers.length > 0 ? (
+                    <span>
+                      Reducers ×{(1 - damageTaken.totalReducerPct / 100).toFixed(3)}:{" "}
+                      {damageTaken.appliedReducers.map((r) => `${r.label} −${r.pct}%`).join(" · ")}
+                    </span>
+                  ) : (
+                    <span>No reducers apply to this hit</span>
+                  )}
+                </div>
+              )}
+              {switchboard.inPowerArmor && (
+                <label className="flex items-center gap-1.5 text-[0.68rem] text-slate-400 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={(switchboard.powerArmorInnatePct ?? 0) > 0}
+                    onChange={(e) => updateField("powerArmorInnatePct", e.target.checked ? 7 : 0)}
+                    className="rounded bg-slate-900 border-slate-700 text-sky-500 focus:ring-0 cursor-pointer"
+                  />
+                  <span>Assume 7% innate Power Armor reduction per piece (unverified, off by default)</span>
+                </label>
+              )}
+            </div>
+          )}
 
           {/* Dynamic Counters & Aristocrat's Caps Slider */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
