@@ -40,14 +40,14 @@ export default function PtsClient() {
             <div className="flex items-center gap-2">
               <span className="text-[10px] uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1.5">
                 <FlaskConical className="h-3.5 w-3.5" />
-                <span>P.T.S. TEST SERVER // EXPERIMENTAL DATAMINE</span>
+                <span>Public Test Server (P.T.S.)</span>
               </span>
             </div>
             <h1 className="text-2xl font-black tracking-tight mt-0.5 text-white uppercase flex items-center gap-2">
-              <span>Provisional Testing System</span>
+              <span>Test server</span>
             </h1>
             <p className="text-xs text-slate-400 mt-0.5 max-w-2xl leading-relaxed">
-              Track upcoming 4-star legendary mods, raid catalyst recipes, and datamined test balance changes.
+              What the last test cycle brought, and the patch each change shipped in. Updates when the next test server opens.
             </p>
           </div>
           <BrandStack />
@@ -65,7 +65,7 @@ export default function PtsClient() {
             }`}
           >
             <FlaskConical className="h-3.5 w-3.5" />
-            <span>PTS Datamines Catalog</span>
+            <span>Shipped changes</span>
           </button>
           <button
             type="button"
@@ -76,7 +76,7 @@ export default function PtsClient() {
                 : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
-            <span>PTS Ghoul Sandbox</span>
+            <span>Sandbox</span>
           </button>
           <button
             type="button"
@@ -87,7 +87,7 @@ export default function PtsClient() {
                 : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
             }`}
           >
-            <span>PTS Perk Matrix</span>
+            <span>Perk deck</span>
           </button>
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function PtsClient() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search PTS datamines..."
+                    placeholder="Search test-server changes..."
                     className="w-full h-8 pl-8 pr-3 text-xs bg-panel border border-border rounded-lg focus:outline-none focus:border-accent text-foreground placeholder:text-foreground/40 font-mono"
                   />
                 </div>
