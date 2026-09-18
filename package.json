@@ -15,6 +15,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "prisma:validate": "prisma validate",
     "patch:check": "tsx scripts/patch-sync.ts",
     "release:check": "npm run lint && npm run prisma:validate && npm run test && npm run build && npm run typecheck",
@@ -25,7 +27,9 @@
     "db:seed:builder": "tsx src/scripts/seed-builder-only.ts",
     "db:sync-to-tsv": "tsx src/scripts/sync-database-to-tsv.ts",
     "discord:sync": "tsx scripts/sync-discord-vault.ts",
-    "discord:register": "tsx scripts/register-discord-commands.ts"
+    "discord:register": "tsx scripts/register-discord-commands.ts",
+    "wiki:clean": "tsx scripts/truth/clean-wiki-corpus.ts",
+    "wiki:counts": "tsx scripts/truth/build-wiki-counts.ts"
   },
   "prisma": {
     "seed": "tsx src/seed.ts"
@@ -81,6 +85,7 @@
   },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.19.11",
+    "@playwright/test": "^1.63.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
