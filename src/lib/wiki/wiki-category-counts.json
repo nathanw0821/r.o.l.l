@@ -1,10 +1,14 @@
 {
   "all": 3384,
-  "Weapons & Mods": 430,
-  "Armor & Power Armor": 183,
+  "Weapons & Mods": 434,
+  "Armor & Power Armor": 181,
   "Perks & Mutations": 229,
-  "Vendors & Minerva": 515,
-  "Events & Expeditions": 367,
-  "Build Mechanics & Damage": 471,
-  "Crafting & Resources": 164
+  "Vendors & Minerva": 537,
+  "Events & Expeditions": 450,
+  "Build Mechanics & Damage": 465,
+  "Crafting & Resources": 363,
+  "Patch notes & news": 108,
+  "Atomic Shop archive": 54,
+  "archived": 219,
+  "stub": 414
 }

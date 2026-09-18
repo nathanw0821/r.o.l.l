@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import wikiCategoryCounts from "@/lib/wiki/wiki-category-counts.json";
 
 const TOTAL_ARTICLES = (wikiCategoryCounts as Record<string, number>).all ?? 0;
+const ARCHIVED_ARTICLES = (wikiCategoryCounts as Record<string, number>).archived ?? 0;
 function countFor(category: string): string {
   const n = (wikiCategoryCounts as Record<string, number>)[category] ?? 0;
   return `${n.toLocaleString()} ${category === "all" ? "Entries" : "Guides"}`;
@@ -23,6 +24,8 @@ interface ArticleItem {
   category: string;
   snippet: string;
   updatedAt?: string;
+  archived?: boolean;
+  stub?: boolean;
 }
 
 const CATEGORY_CARDS = [
@@ -34,6 +37,8 @@ const CATEGORY_CARDS = [
   { id: "Events & Expeditions", label: "Events & Expeditions", count: countFor("Events & Expeditions"), iconName: "compass", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
   { id: "Build Mechanics & Damage", label: "Build Mechanics & Damage", count: countFor("Build Mechanics & Damage"), iconName: "activity", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
   { id: "Crafting & Resources", label: "Crafting & Materials", count: countFor("Crafting & Resources"), iconName: "wrench", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
+  { id: "Patch notes & news", label: "Patch notes & news", count: countFor("Patch notes & news"), iconName: "filetext", desc: "Update notes, hotfixes, test server datamines.", color: "from-slate-400/20 to-slate-500/5 border-slate-400/40" },
+  { id: "Atomic Shop archive", label: "Atomic Shop archive", count: countFor("Atomic Shop archive"), iconName: "coins", desc: "Weekly Atomic Shop offers and bundle rundowns.", color: "from-fuchsia-500/20 to-fuchsia-600/5 border-fuchsia-500/40" },
 ];
 
 const UPDATE_PATCHES = [
@@ -65,11 +70,17 @@ function toHighResImageUrl(url: string | null): string {
   return clean;
 }
 
-import { sanitizeTitle } from "@/lib/utils/clean-formatting";
 import { getArticleOutdatedStatus } from "@/lib/wiki/outdated-articles";
+import { cleanTitle as cleanArticleTitle } from "@/lib/wiki/clean-text";
 
+/**
+ * Render-time safety net only: the corpus titles are cleaned at build time by
+ * scripts/truth/clean-wiki-corpus.ts, so this is a no-op on current data. It replaces
+ * the old `sanitizeTitle` call, which turned every hyphen into a space ("T-51b" became
+ * "T 51b"). Source and snippet are deliberately omitted so nothing is re-cased here.
+ */
 function cleanTitle(title: string): string {
-  return sanitizeTitle(title);
+  return cleanArticleTitle(title);
 }
 
 function renderFormattedInlineText(text: string): React.ReactNode[] {
@@ -395,6 +406,7 @@ function TruthWikiContent() {
   const [category, setCategory] = React.useState("all");
   const [sortBy, setSortBy] = React.useState<"newest" | "oldest" | "title-asc" | "title-desc">("newest");
   const [updateFilter, setUpdateFilter] = React.useState("all");
+  const [includeArchive, setIncludeArchive] = React.useState(false);
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -439,10 +451,10 @@ function TruthWikiContent() {
     }
   }, [searchParams]);
 
-  const searchArticles = React.useCallback(async (q: string, cat: string, sort: string, upd: string) => {
+  const searchArticles = React.useCallback(async (q: string, cat: string, sort: string, upd: string, archive: boolean) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/wiki/search?q=${encodeURIComponent(q)}&category=${encodeURIComponent(cat)}&sort=${encodeURIComponent(sort)}&update=${encodeURIComponent(upd)}&limit=100`);
+      const res = await fetch(`/api/wiki/search?q=${encodeURIComponent(q)}&category=${encodeURIComponent(cat)}&sort=${encodeURIComponent(sort)}&update=${encodeURIComponent(upd)}&archive=${archive ? "1" : "0"}&limit=100`);
       const data = await res.json();
       let list: ArticleItem[] = Array.isArray(data) ? data : [];
 
@@ -508,10 +520,10 @@ function TruthWikiContent() {
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      searchArticles(query, category, sortBy, updateFilter);
+      searchArticles(query, category, sortBy, updateFilter, includeArchive);
     }, 150);
     return () => clearTimeout(timer);
-  }, [query, category, sortBy, updateFilter, searchArticles]);
+  }, [query, category, sortBy, updateFilter, includeArchive, searchArticles]);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-3 py-3 text-slate-100 font-sans">
@@ -684,6 +696,16 @@ function TruthWikiContent() {
                 <option value="title-desc" className="bg-[#0b121e] text-slate-200">🔲 Title (Z-A)</option>
               </select>
             </div>
+
+            <label className="flex items-center gap-2 bg-[#060a10] px-4 py-2.5 rounded-xl border border-slate-700 font-mono text-xs text-slate-300 shadow-inner cursor-pointer">
+              <input
+                type="checkbox"
+                checked={includeArchive}
+                onChange={(e) => setIncludeArchive(e.target.checked)}
+                className="h-3.5 w-3.5 accent-amber-400"
+              />
+              <span>Include archive ({ARCHIVED_ARTICLES.toLocaleString()})</span>
+            </label>
           </div>
         </div>
 
@@ -737,6 +759,7 @@ function TruthWikiContent() {
                       {card.iconName === "compass" && <Compass className="h-5 w-5 text-cyan-400" />}
                       {card.iconName === "activity" && <Activity className="h-5 w-5 text-amber-400" />}
                       {card.iconName === "wrench" && <Wrench className="h-5 w-5 text-teal-400" />}
+                      {card.iconName === "filetext" && <FileText className="h-5 w-5 text-slate-300" />}
                     </div>
                     <span
                       className={`text-[11px] font-mono font-bold px-3 py-0.5 rounded-full border shadow-sm ${

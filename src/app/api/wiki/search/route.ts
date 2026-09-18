@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
+import { cleanSnippet } from "@/lib/wiki/clean-text";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -7,9 +8,15 @@ export async function GET(req: Request) {
   const category = searchParams.get("category") || "all";
   const sort = searchParams.get("sort") || "newest";
   const updateFilter = searchParams.get("update") || "all";
+  const includeArchive = searchParams.get("archive") === "1";
   const limit = parseInt(searchParams.get("limit") || "500", 10);
 
   let list = [...FALLBACK_WIKI_ARTICLES];
+
+  // 0. Archive Filter (time-bound series posts; opt in with ?archive=1)
+  if (!includeArchive) {
+    list = list.filter((a) => !a.archived);
+  }
 
   // 1. Category Filter
   if (category && category.toLowerCase() !== "all") {
@@ -69,7 +76,18 @@ export async function GET(req: Request) {
     list.sort((a, b) => String(b.id).localeCompare(String(a.id)));
   }
 
-  return NextResponse.json(list.slice(0, limit), {
+  // 5. Stubs (cleaned body under 300 characters) always rank last.
+  list = [...list.filter((a) => !a.stub), ...list.filter((a) => a.stub)];
+
+  // 6. Render-time safety net: the corpus is cleaned by
+  //    scripts/truth/clean-wiki-corpus.ts, but a future dirty import must not be able
+  //    to leak scraped markup into a card.
+  const payload = list.slice(0, limit).map((a) => ({
+    ...a,
+    snippet: cleanSnippet(a.snippet, a.title),
+  }));
+
+  return NextResponse.json(payload, {
     headers: {
       "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800"
     }
