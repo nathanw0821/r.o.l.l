@@ -4,8 +4,8 @@
  * The corpus in `wiki-articles-data.ts` and `public/data/wiki/<id>.json` was scraped
  * from four sites and still carries their markup: Markdown images, asset/upload URLs,
  * author bylines, wiki maintenance notices, share/comment chrome and reference markers.
- * These functions turn that into readable text. Snippets and titles come out image-free;
- * bodies keep the standalone image lines the reader renders (see `cleanBody`).
+ * These functions turn that into readable text. Snippets, titles and bodies all come out
+ * image-free: embedding third-party images would hotlink other sites (see `cleanBody`).
  *
  * Contract:
  *  - every function is pure and deterministic (no I/O, no clock, no randomness);
@@ -481,60 +481,27 @@ function isTableRow(line: string): boolean {
 }
 
 /**
- * A line that is exactly one Markdown image, `![alt](url)`. This is the only image form
- * the Guides reader renders (`parseCleanArticleContent` in `src/app/wiki/page.tsx`
- * matches a whole block against `^!\[…\]\(…\)$`, and uses the image after a
- * "Player Title Prefix/Suffix" block as the badge background). The alt may not contain
- * "](", so two images on one line are never read as a single image.
+ * Whether a raw body references any image. Used to tell readers the original page has
+ * pictures, because bodies no longer embed them (see `cleanBody`).
  */
-const IMAGE_LINE = /^!\[((?:(?!\]\()[^\n])*)\]\(([^\s()]+)\)$/;
-
-/** Largest images.fallout.wiki thumbnail width treated as an inline icon (Icon_pc, 14px). */
-const ICON_MAX_PX = 20;
-
-/**
- * Whether an image URL is worth keeping in a body: a real http(s) or root-relative
- * address, and not a tiny wiki platform/map icon. `data:` URIs (lazy-load and tracking
- * placeholders) and empty URLs (`![Writer: Duchess Flame]()`) are dropped.
- */
-function isKeptBodyImage(url: string): boolean {
-  if (!/^(?:https?:\/\/|\/)/i.test(url)) return false;
-  const thumb = url.match(/images\.fallout\.wiki\/thumb\/.+\/(\d+)px-[^/]+$/i);
-  if (thumb && Number(thumb[1]) <= ICON_MAX_PX) return false;
-  return true;
+export function bodyHasImages(text: string): boolean {
+  return /!\[[^\]]*\]\([^)\s]+\)/.test(text || "");
 }
-
-/* Private-use delimiters: no stripper below matches them, and scraped text never has them. */
-const IMAGE_SLOT_OPEN = "";
-const IMAGE_SLOT_CLOSE = "";
-const IMAGE_SLOT = new RegExp(`${IMAGE_SLOT_OPEN}(\\d+)${IMAGE_SLOT_CLOSE}`, "g");
 
 /**
  * Cleans a full article body while keeping the Markdown structure the reader renders
- * (headings, lists, tables, blockquotes, and images that stand on their own line).
+ * (headings, lists, tables, blockquotes).
  *
- * Images embedded in a table row or a prose/list line are still stripped: the reader
- * never renders those as pictures, only as raw `![…](…)` text. So are empty-URL and
- * `data:` images, tiny wiki icons and bare `![` fragments left by truncation.
+ * Every image is removed. The corpus images live on other people's servers (Duchess
+ * Flame's Wix CDN, Bethesda's CDN, Nuka Knights) or are relative paths that were never
+ * valid here; embedding them would hotlink those sites' bandwidth. The reader links to
+ * the original article instead (`sourceImages` flag on the index entry).
  */
 export function cleanBody(text: string): string {
   if (!text) return "";
   let out = decodeEntities(text);
   out = out.replace(/\r\n?/g, "\n");
   out = out.replace(/<[^>]*>/g, " ");
-
-  // Park every standalone image line behind a placeholder so the strippers below
-  // cannot touch it, and put it back verbatim at the end.
-  const images: string[] = [];
-  out = out
-    .split("\n")
-    .map((line) => {
-      const match = line.trim().match(IMAGE_LINE);
-      if (!match || !isKeptBodyImage(match[2])) return line;
-      images.push(`![${match[1].trim()}](${match[2]})`);
-      return `${IMAGE_SLOT_OPEN}${images.length - 1}${IMAGE_SLOT_CLOSE}`;
-    })
-    .join("\n");
 
   out = stripMarkdownImages(out);
   out = unwrapMarkdownLinks(out);
@@ -567,8 +534,7 @@ export function cleanBody(text: string): string {
     .join("\n")
     .replace(/[ \t]+$/gm, "")
     .replace(/\n{3,}/g, "\n\n")
-    .trim()
-    .replace(IMAGE_SLOT, (_, index: string) => images[Number(index)]);
+    .trim();
 }
 
 /* -------------------------------------------------------------------------- */

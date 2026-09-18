@@ -5,8 +5,9 @@
  *   npx tsx scripts/truth/clean-wiki-corpus.ts --dry-run # report only
  *
  * What it does, in order:
- *  1. runs `cleanBody` over every `public/data/wiki/<id>.json` (standalone image lines
- *     are kept, because the reader renders them);
+ *  1. runs `cleanBody` over every `public/data/wiki/<id>.json`; every image is removed
+ *     (they are hotlinks to other sites or dead relative paths) and the index entry gets
+ *     `sourceImages: true` so the reader links to the original article for the pictures;
  *  2. runs `cleanSnippet` / `cleanTitle` over every entry of `FALLBACK_WIKI_ARTICLES`,
  *     falling back to the first prose of the cleaned body (never an image line) when
  *     the scraped snippet was nothing but chrome;
@@ -27,7 +28,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { cleanBody, cleanSnippet, cleanTitle } from "../../src/lib/wiki/clean-text";
+import { bodyHasImages, cleanBody, cleanSnippet, cleanTitle } from "../../src/lib/wiki/clean-text";
 import {
   FALLBACK_WIKI_ARTICLES,
   type WikiArticleItem,
@@ -239,7 +240,12 @@ function publicationDay(title: string, url: string, snippet: string): number | n
 /* Snippet fallback                                                           */
 /* -------------------------------------------------------------------------- */
 
-/** A cleaned body with its (standalone) image lines removed and blank runs collapsed. */
+/** Whether the index entry already records that its source page has images. */
+function hasSourceImagesFlag(article: WikiArticleItem): boolean {
+  return (article as { sourceImages?: unknown }).sourceImages === true;
+}
+
+/** A cleaned body with any leftover image lines removed and blank runs collapsed. */
 function withoutImageLines(body: string): string {
   return body
     .split("\n")
@@ -360,6 +366,7 @@ function main(): void {
     snippet: string;
     category: string;
     stub: boolean;
+    sourceImages: boolean;
     seriesKey: string | null;
     day: number | null;
   }
@@ -407,6 +414,8 @@ function main(): void {
       category,
       // Measured on the text alone: a body that is one picture and a caption is a stub.
       stub: withoutImageLines(newBody).length < STUB_BODY_LENGTH,
+      // Sticky: once a body's images are stripped, the flag is the only record they existed.
+      sourceImages: bodyHasImages(rawBody) || hasSourceImagesFlag(article),
       seriesKey: seriesKeyFor(title),
       // Derived from the CLEANED title and snippet, never the raw ones, so a rerun over
       // an already-cleaned corpus lands on exactly the same dates.
@@ -445,6 +454,7 @@ function main(): void {
     };
     if (archived) next.archived = true;
     if (draft.stub) next.stub = true;
+    if (draft.sourceImages) next.sourceImages = true;
     return next;
   });
 

@@ -14,6 +14,8 @@ export interface WikiArticleItem {
   /** Set by scripts/truth/clean-wiki-corpus.ts when the cleaned body is under 300
    *  characters. Stubs are ranked last in search results. */
   stub?: boolean;
+  /** The original article has images; they are not embedded here (no hotlinking), so the reader links out. */
+  sourceImages?: boolean;
   [key: string]: unknown;
 }
 
@@ -248,7 +250,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Fallout 76 Event Calendar Dates Overview Ends in 8 hours Minerva (List 21)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 9,
@@ -278,7 +281,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 Roadmap Archive Here you can find the old roadmaps from previous years. Both the community calendars for the quarters and the annual roadmaps. You can find the current r…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 45,
@@ -321,7 +325,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 is a post-apocalyptic multiplayer online role-playing game developed by Bethesda Game Studios and published by Bethesda Softworks. The story is set in Appalachian region…",
     "main_image": "static/images/f994d1260eb770e2c7726f399219182b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 53,
@@ -351,7 +356,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Game version Update cycle Release date Official patch notes PC Xbox One…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 56,
@@ -361,7 +367,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "This page lists all Fallout 76 World Objects. World objects are items that appear in the game's environment but cannot be acquired by the Player Character. The converse to world ob…",
     "main_image": "static/images/02287388436951d83d9ca46a081227c1.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 57,
@@ -381,7 +388,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Legendary Weapons are weapons equipped with one or more legendary mods in Fallout 76. Name Description Notes Form ID Adrenal +10% damage per kill while on a Kill Streak. Limit on w…",
     "main_image": "static/images/6babb4b3454c4abe5f27e75ba33d52fe.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 59,
@@ -401,7 +409,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "This page lists all Fallout 76 Weapons. Nearly every weapon in Fallout 76 may be modified by attaching various Weapon Mods at a Weapons Workbench. While each modification will impa…",
     "main_image": "static/images/d749e1ef4cb2ecc0678c6b8f3bcb8e3d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 61,
@@ -411,7 +420,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "A comparison of weapons in Fallout 76. Weapons that can be configured as either rifles or pistols, depending on the grip/stock modification. Pistol/Rifle Name Form ID…",
     "main_image": "static/images/952a1b657fc9c50d29661fc616743725.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 62,
@@ -421,7 +431,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Perk Characteristic SPECIAL Effect Weapons Basher Increased weapon bash damage and chance to…",
     "main_image": "static/images/952a1b657fc9c50d29661fc616743725.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 63,
@@ -431,7 +442,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (2) Oil (2) Screw (6) Steel (16) Build at:Learn Method:Learned from plan/recipe Plan.44 Revolver Snubnosed.44 pistol Lv 5 (1) The.44…",
     "main_image": "static/images/3103d0e38249eabff8f7702fb793c52a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 64,
@@ -441,7 +453,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Gears (14) Oil (10) Rubber (16) Screw (21) Spring (17) Steel (31) Wood (12) Build at:Learn Method:Learned from plan/recipe Plan.50 cal machine…",
     "main_image": "static/images/362af7e6c290e84044361bebbd7ea86c.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 65,
@@ -461,7 +474,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (9) Gears (11) Oil (8) Screw (12) Spring (14) Steel (32) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: 10mm…",
     "main_image": "static/images/6ce11796cd14ef86ea76734420988537.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 68,
@@ -481,7 +495,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (13) Circuitry (9) Fiber Optics (8) Glass (9) Plastic (22) Screw (14) Build at:Learn Method:Learned from plan/recipe Plan…",
     "main_image": "static/images/77a3a501005be20b1ac28db86922b27d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 70,
@@ -501,7 +516,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "All Rise is a melee weapon in Fallout 76. It is a Super Sledge with unique modifications. Gameplay This unique super sledge has one legendary effect: 90% reduced weight. It a…",
     "main_image": "static/images/45570ad5666bfb0fe95ece8586cd9456.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 72,
@@ -533,7 +549,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Anti-Scorched Training Pistol is an automatic pistol i…",
     "main_image": "static/images/58751187af7810ef9f518ea178c8609a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 75,
@@ -593,7 +610,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "This page describes the legendary effects applicable to melee weapons. For ranged, see Fallout 76 legendary weapon effects. Legendary weapon effects - Note:for specific technical…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 82,
@@ -613,7 +631,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Tile view Icon legend Weapon type bonuses Ammunition Legendary effects Weapon mods Weapons that can be configured as either rifles or pistols, depending on the grip/stock…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 102,
@@ -643,7 +662,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Tired of healing wounded arms and legs? The Adamantium Skeleton Perk will reduce all limb damage received.”— Loading screen perk description Adamantium Skeleton is an Endurance-ba…",
     "main_image": "static/images/1635b0953a11f2fed50334a004ff8d5f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 105,
@@ -733,7 +753,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Awareness is a Perception-based perk in Fallout 76. Provides up to +50% V.A.T.S. accuracy based on current Perception. It stacks additively with bonuses provided from Orange Mentat…",
     "main_image": "static/images/f4cfb3ea3160ee7fc5b99a9047903ea2.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 114,
@@ -753,7 +774,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Channel your inner Grognak!” Barbarian is a Strength-based perk in Fallout 76. Provides Damage Resistance based on current Strength. Bonus is doubled when not wearing any armor, p…",
     "main_image": "static/images/1f317b5d6b20a356e151864118015af0.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 116,
@@ -843,7 +865,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Subject to change pending porting to live servers Fast Travel to the Highway Town Map Marker and Select Highway Town > Main Entrance Walk up to the motorbike statue and turn west.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 149,
@@ -853,7 +876,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Shotgun Champ perk increases damage against crippled targets based on the number of projectiles your weapon fires.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 150,
@@ -863,7 +887,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "A weak spot is a part of a creature that takes either more or less damage than usual when hit. Some areas, such as heads or exposed fuel cells, are vulnerable and take additional damage.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 158,
@@ -873,7 +898,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Dedicated to Sergeant. Thank you for once again breaking my heart. Speaking with you is bittersweet every time </3 XD There are two types of condiment spawns in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 159,
@@ -883,7 +909,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Most Wanted Guide Nuka-Cade Guide Seismic Activity Guide Spin the Wheel Guide Tunnel of Love Guide Vendor Guide Zip File Contents Reward…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 160,
@@ -893,7 +920,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to SpaceLime Subject to change pending porting to live servers Rewards Abraxodyne Briefcase Unlocks once 1 Abraxodyne Intel Briefcase has been collected Abraxodyne Stash Box Unlocks once 3 Abraxodyne Intel Briefcases have been…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 170,
@@ -903,7 +931,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "If you're seeking to elevate your gameplay in Fallout 76 through the power of food buffs, look no further. This group is your ultimate resource for delving into the world of sustenance-enhanced survival.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 171,
@@ -1023,7 +1052,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This page lists all Aid in Fallout 76. Image Name Rads Disease Food Water Weight Value Form ID…",
     "main_image": "static/images/36dc261c3cdcabb2221ec73f82b16b11.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 188,
@@ -1043,7 +1073,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Fancy Single Action Revolver is a non-automatic pistol in Fallout 76, introduced in the Wastelanders update. Gameplay An ornate weapon with a golden receiver, white grip…",
     "main_image": "static/images/a5d207fb0d6189197bc78dc2b36aa4dc.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 190,
@@ -1073,7 +1104,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Image Name Abstract Acquired…",
     "main_image": "static/images/b7a265124db3f391773453db5514defa.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 193,
@@ -1083,7 +1115,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "“Scavenged and restored by Appalachia's vicious and anarchistic gangs, Raider Power Armor features crude plating, rusty spikes, and significant battlefield protection.”— Fallout 76…",
     "main_image": "static/images/b7a265124db3f391773453db5514defa.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 194,
@@ -1093,7 +1126,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The X-01 power armor is a set of Power Armor in Fallout 76. The X-01 protects against…",
     "main_image": "static/images/b7a265124db3f391773453db5514defa.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 195,
@@ -1144,7 +1178,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Aha, you could have gone to any old merchant, but you, my friend, have that special refined taste.",
     "main_image": "static/images/f790bfefa210e9296517a323503bf359.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 200,
@@ -1154,7 +1189,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Civil Engineer Armor is a set of armor in Fallout 76. Image Name Form ID…",
     "main_image": "static/images/546acaeeecefc5df722d9457febfa7fb.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 201,
@@ -1164,7 +1200,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Atlantic City America's Playground is the 18th major update for Fallout 76. It was released o…",
     "main_image": "static/images/73401137ca778412d9917177c749eac0.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 202,
@@ -1204,7 +1241,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "This page lists all mutations in Fallout 76. Mutations are acquired by the player when exposed to Radiation. They provide both positive and negative effects. Mutations are semi-per…",
     "main_image": "static/images/40068efc631d09155500c88e0f0e0b53.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 206,
@@ -1214,7 +1252,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "This page lists all conditions in Fallout 76. Condition can refer to two things — either the condition of the character or the condition of their equipment. The most common charact…",
     "main_image": "static/images/f994d1260eb770e2c7726f399219182b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 207,
@@ -1254,7 +1293,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "This page lists all Fallout 76 Perks. Perk cards in Fallout 76 replace skills from previous titles. Each perk card costs points in its SPECIAL attribute to equip. Cards of higher r…",
     "main_image": "static/images/35698ed925110145d44ad6a3a08b9f36.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 211,
@@ -1264,7 +1304,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Assault Rifle is a two-handed small gun in Fallout 3. The R91 Assault Rifle is a general-purpose automatic firearm. Its high spread and low damage per shot reduce its effec…",
     "main_image": "static/images/52c36baed2ef1299f62d568dee760ad2.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 213,
@@ -1274,7 +1315,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Charisma is one of the seven primary statistics in the SPECIAL system. Modifies: Rewards from Group Quests, Barter Bonus. Sharing a perk card requires the player character to have…",
     "main_image": "static/images/bb4716611b54e61290485b5b44617b86.gif",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 214,
@@ -1405,7 +1447,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Minerva's Emporium is a Community Event in Fallout 76, introduced in the Steel Reign update.",
     "main_image": "static/images/d0a07e9f71bd4eab94e7fb7c21b21f6d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 228,
@@ -1415,7 +1458,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Name Unlocks Obtained Value Type Form ID Plan: Brotherhood Recon Jet Pack Brotherhood Recon Armor chest Armor Mod…",
     "main_image": "static/images/5f3086c20564224133b1ac7519deb481.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 229,
@@ -1425,7 +1469,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Nuclear Winter is the second major update for Fallout 76, it added a battle royale gamemode and endgame team dungeons, both of which were removed again in later updates. It follows Wild Appalachia and was followed by Wastelanders.",
     "main_image": "static/images/1ebca3f8e75db5cee3db9df7a3cac7fb.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 230,
@@ -1531,7 +1576,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Unyielding is a first star armor legendary mod in Fallout 76, introduced in the Milepost Zero update. Effects The effect provides bonus to all S.P.E.C.I.A.L. stats (except Endura…",
     "main_image": "static/images/8b80c8f1785f6e9bd82a4f31e4d0e1d6.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 241,
@@ -1571,7 +1617,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "This page describes the Legendary effects applicable to armor. Legendary armor effects In addition to listed effects, each equipped Legendary mod increases the item value by +10%…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 245,
@@ -1601,7 +1648,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "This page describes the Legendary effects applicable to power armor. This page is reflective of the Public Test Server for Steel Reign. Legendary power armor effects 1-star 2-s…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 253,
@@ -1611,7 +1659,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "In Fallout 76, Legendary items are weapons, armor, and power armor that have 1 or more Legendary mods slotted into them. Legendary items are identified by one or more stars (★) in…",
     "main_image": "static/images/ec1353d1ff5dd96950758373cb3fa00a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 255,
@@ -1651,7 +1700,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Ultracite power armor is a set of power armor in Fallout 76. The Ultracite power armor was developed by the Brotherhood of Steel after the Great War as an attempt to take advan…",
     "main_image": "static/images/8c63e08ee3772a3f891f4428a7b08964.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 267,
@@ -1661,7 +1711,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The United States Secret Service (or simply Secret Service) is a law enforcement agency operating under the Treasury Department of the United States government, encountered in Appa…",
     "main_image": "static/images/6709874198a940351cd089b61cdf4017.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 268,
@@ -1754,7 +1805,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Wikify Wikifying means to format it using Wiki markup, add…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 281,
@@ -1764,7 +1816,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "This page lists all legendary perks available in Fallout 76. The perks were fully released with One Wasteland For All. The feature was heavily tested in the game's public test serv…",
     "main_image": "static/images/9bfc06ad1e0b1f01a6b11be4df1733cf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 282,
@@ -1784,7 +1837,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "In Fallout 76, all players begin with 1 point in each SPECIAL attribute. Each time a player levels up, they can, at their leisure via the Pip-Boy, choose 1 SPECIAL attribute to inc…",
     "main_image": "static/images/060e3849f2e12780bcb5a4863c8f45a8.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 284,
@@ -1864,7 +1918,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Minerva is a gold bullion vendor in Fallout 76, introduced in the Steel Reign update. She appears as part of a weekly community event. Minerva will set up camp at one of four rotat…",
     "main_image": "static/images/a48aef13145270ece718c8031873b0ba.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 297,
@@ -1884,7 +1939,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Minos is a pack brahmin for the Blue Ridge Caravan Company, owned by Minerva in Appalachia. Minos is a pack animal for gold bullion vendor Minerva and her bodyguard Tommy Ten-Toes…",
     "main_image": "static/images/d54f00a1e2f26b96cbc062e5cdd2b1cc.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 299,
@@ -1994,7 +2050,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Mo, 10.08.2026 (18:00) - Mi, 12.08.2026 (18:00) Ort: Foundation Jetzt aktiv. Endet i…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 333,
@@ -2004,7 +2061,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thu, August 13th, 2026 (6:00 p.m.) - Mon, August…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 334,
@@ -2014,7 +2072,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Mon, 08/17/2026 (6:00 p.m.) - Wed, 08/19/2026 (6:00 p.m.) Location: Craters Launch in 5 d…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 335,
@@ -2024,7 +2083,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Di, 18.08.2026 (18:00) - Di…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 336,
@@ -2034,7 +2094,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Starting in 8 days 7 hours",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 337,
@@ -2044,7 +2105,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Mon, 08/24/2026 (6:00 p.m.) - Wed, 08/26/2026 (6:00 p.m.) Location: Fort Atlas Start…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 338,
@@ -2054,7 +2116,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thu, August 27th, 2026 (6:00 p.m.) - Mon, August 31st…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 339,
@@ -2064,7 +2127,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thu, September 3rd, 2026 (6:00 p.m.) - Mon, September 7th, 2026 (6:00 p.m.) Location: Whitespring…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 340,
@@ -2074,7 +2138,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Event: Mottenmann Äquinoktium Di, 08.09.2026 (18:00) - Di, 22.09.2026 (…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 341,
@@ -2084,7 +2149,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Sham blessings and double mutations Thu, September 10th, 2026 (6:00 p.m.) - Mon…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 342,
@@ -2094,7 +2160,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thu, September 17th, 2026 (6:00 p.m.) - Mon, September 21st, 2026 (6:00 p.m.) Starti…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 343,
@@ -2104,7 +2171,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thu, September 24th, 2026 (6:00 p.m.) - Mon…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 344,
@@ -2114,7 +2182,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Mutierte Öffentliche Events Di, 29.09.2026 (…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 360,
@@ -2124,7 +2193,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. SUBJECT TO CHANGE WHEN PORTING TO LIVE SERVERS Rampage through Rapidan Camp! A rowdy Eyebot called JES-2R is leading a crew of mischief-makers to wreak havoc on Rapidan Camp.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 361,
@@ -2134,7 +2204,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. Subject to change pending porting to live servers Gearin' Up is part of the Burning Springs DLC that drops in December 2025 This event will be permanently added to the Public Event list.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 362,
@@ -2144,7 +2215,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers This route is meant to be run from Some spawns are out of the way and rely on the previous spawn to reach the next one.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 363,
@@ -2154,7 +2226,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With Thanks to Garust and SugarBombs.RADS Complete Lifetime Challenges to unlock these mods. Note: You’ll need to complete the challenges on every character you want to fish with, the same way unlocking the backpack works.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 364,
@@ -2164,7 +2237,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Having a bad day? Have a Nuka-Cola! Don’t have any Nuka-Cola? Let this Collectron find some for you! The Nuka-Cola Collectron Station sends out a themed robot to gather various Nuka-Cola beverages from across Appalachia.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 365,
@@ -2174,7 +2248,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Star Size Sunset Sarsaparilla +10% Ballistic Weapon Damage This boosts the damage of Non-Heavy, Non-Energy guns.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 366,
@@ -2184,7 +2259,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers This route is meant to be run from Some spawns are out of the way and rely on the previous spawn to reach the next one.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 367,
@@ -2194,7 +2270,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Subject to change pending porting to live servers The Boss says we got to start making space in the storage house; that means throwing stuff out. Thing is though, I'm not one for charity. If you want something, you gotta work for it!",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 368,
@@ -2204,7 +2281,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Axolotls are set up a bit differently—only one type spawns each month, and only in two specific regions.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 369,
@@ -2214,7 +2292,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Company Repair Bot Station Every booming business needs their own! The Company Repair Bot Station restores health to damaged C.A.M.P. objects over time.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 380,
@@ -2224,7 +2303,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "top of page Home: Welcome…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 381,
@@ -2234,7 +2314,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Used for: Camp Building - Prefabs Camp Building - Decorations Camp Building - Defense Barriers, Fences, and Guard Posts Camp Building…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 382,
@@ -2255,7 +2336,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "\"Best walkin' foods... dried meat, dried meat, roast meat, charred meat, skewered meat, squishy meat, crispy meat, fishy meat, stinky meat...rotten meat, icky meat, browned meat, seasoned meat, salty meat, slimey meat, sticky meat, sugary…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 384,
@@ -2265,7 +2347,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.... As of the 12th of April 2024, Del Lawson's inventory is bugged. The below information is the correct information but does not reflect…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 386,
@@ -2286,7 +2369,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With thanks to SpaceLime Each Head Hunt boss comes with a distinct weapon setup and a signature mechanic, and their side-kick group follows a similar theme.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 388,
@@ -2296,7 +2380,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "top of page Home: Welcome…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 389,
@@ -2306,7 +2391,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The buffs you receive from these camp items will stack on top of buffs from food, chems, drinks, armour, etc. You can not stack camp... Image cr edit: M ette & Cassi.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 400,
@@ -2337,7 +2423,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "I’m passionate about partnering with brands and creators to bring high-quality, engaging content to gaming communities.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 403,
@@ -2358,7 +2445,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 405,
@@ -2379,7 +2467,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "top of page Flamingo Unit Spreadsheet A Flamingo Unit (FU) is a fun way to measure the camp…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 407,
@@ -2389,7 +2478,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "top of page Useful Spreadsheets To use: File > Make a Copy > Enter your values into the copy…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 409,
@@ -2450,7 +2540,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (11) Gear (11) Oil (8) Screw (21) Spring (16) Steel (38) Built or Scrapped:Plan: Assault Rifle (1) The Assault Rifle is a ranged weapon…",
     "main_image": "static/images/f1ff129085717bb4461a67dc86a664c9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 585,
@@ -2470,7 +2561,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Gears (10) Oil (10) Screw (10) Steel (19) Build at:Learn Method:Learned from plan/recipe Plan: Auto Axe Auto Axe (1)",
     "main_image": "static/images/91718613deff289c2f58467e2de6571d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 587,
@@ -2521,7 +2613,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Plastic (9) Rubber (13) Steel (14) Build at:Learn Method:Learned from plan/recipe Plan: Baton Baton (1) A Baton is a melee weapon in Fallout 76.",
     "main_image": "static/images/54bc417889511c5b9c5518c6d6767fc5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 592,
@@ -2531,7 +2624,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (9) Bone (17) Screw (11) Steel (14) Build at:Learn Method:Learned from plan/recipe Plan: Bear Arm Bear Arm (1)",
     "main_image": "static/images/fad3796eef2c3d85b4eec31fc4de3d44.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 593,
@@ -2552,7 +2646,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Binoculars are a weapon in Fallout 76. While classified as a weapon, and desp…",
     "main_image": "static/images/27d238d2fc8d8b69ea63716fa6ecdee0.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 595,
@@ -2592,7 +2687,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Black Powder Rifle is a non-automatic rifle in Fallout 76. Gameplay Produced in 1850 in Harpers Ferry, the weapon makes use of.50 Caliber Balls as ammunition and dea…",
     "main_image": "static/images/50450c81b1ad0d1c807cada5d86f9e7d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 599,
@@ -2612,7 +2708,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Blast Mine is a weapon in Fallout 76. A powerful incendiary mine made from an Inert Bomb recovered during the Daily: Idle Explosives daily quest. Crafting unlocked after completion of the quest Daily: Idle Explosives.",
     "main_image": "static/images/6ca1b2da21a1a3efa8f1b8421352f158.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 601,
@@ -2694,7 +2791,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (10) Plastic (14) Rubber (17) Screw (12) Wood (21) Build at:Learn Method:Learned from plan/recipe Plan: Bow Bow (1) The Bow…",
     "main_image": "static/images/f67945723b71d52d7fb016073e053456.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 609,
@@ -2704,7 +2802,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (2) Rubber (1) Screw (2) Steel (4) Build at:Weapons Workbench Edged melee weapons Level:5 Learn Method:Learned from plan/recipe Plan: Bo…",
     "main_image": "static/images/9f032ac807d53ae62ef9e6f9859b44f9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 610,
@@ -2724,7 +2823,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Oil (9) Plastic (13) Screw (20) Steel (52) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Broadsider Broadsider (1)",
     "main_image": "static/images/e89d0a4467b7bf18c4e554353948f08a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 612,
@@ -2807,7 +2907,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (8) Circuitry (9) Plastic (10) Rubber (15) Steel (15) Build at:Learn Method:Learned from plan/recipe Plan: Cattle Prod Elec…",
     "main_image": "static/images/c9cfc015d73f12fa903cd044e7b01275.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 621,
@@ -2817,7 +2918,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Chainsaw is an automatic two-handed melee weapon in Fallout 76. A Romington Super 76 Chainsaw found in Appalachia. It has a sleek red paintjob. Bar Mod Description Naming Effec…",
     "main_image": "static/images/0f52f8e3c1b46bfff2900f626d466209.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 622,
@@ -2827,7 +2929,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (7) Copper (7) Oil (7) Steel (24) Built or Scrapped:Plan: The Chinese Officer Sword is a melee weapon in Fallout 76. A People's Liberati…",
     "main_image": "static/images/a75de1d22eedb135fa3e896095524fa7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 623,
@@ -2837,7 +2940,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Gear (10) Oil (9) Screw (14) Steel (24) Wood (15) Build at:Learn Method:Learned from plan/recipe Plan: Circuit Breaker Circuit Break…",
     "main_image": "static/images/3a4bf862696a574dc4faec37ff1a64b9.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 624,
@@ -2867,7 +2971,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Cold Shoulder is a legendary Double-Barrel Shotgun in Fallout 76, introduced in the Rip Daring and the Cryptid Hunt season. Craftable legendary Double-Barrel Shotgun. Quad, Cry…",
     "main_image": "static/images/8d8d7bbc39e6f8a9bc0916fe4ae40fb9.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 627,
@@ -2877,7 +2982,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (10) Rubber (15) Steel (14) Build at:Learn Method:Known by default Combat Knife Lv 50 (1) The Combat Knife is a melee weapon i…",
     "main_image": "static/images/aeaa8ec9357d23afc0964536f0bb13df.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 628,
@@ -2887,7 +2993,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (12) Gears (9) Oil (9) Screw (17) Spring (16) Steel (31) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Combat rifle Sho…",
     "main_image": "static/images/9a4e58ed988407c36af8eea6f9c03219.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 629,
@@ -2897,7 +3004,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (11) Gears (10) Oil (9) Screw (15) Spring (15) Steel (29) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Combat shotgun…",
     "main_image": "static/images/43bc35ee0d8c6c880250ad9e1fd757c4.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 631,
@@ -2927,7 +3035,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (13) Gear (13) Plastic (20) Rubber (17) Screw (15) Steel (18) Build at:Learn Method:Learned from plan/recipe Plan: Compound…",
     "main_image": "static/images/9892a382cb6c9dae0c82a199d95e378f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 634,
@@ -2989,7 +3098,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Materials: Requirements: Produces: Aluminum (9) Adhesive (12) Oil (8) Screw (12) Spring (14) Steel (18) Build at:Learn Method:Learned from plan/recipe Plan: Crusader Pistol Crusade…",
     "main_image": "static/images/8c1c7136ea881f076d298330de7a9591.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 640,
@@ -3089,7 +3199,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Copper (9) Oil (7) Rubber (13) Steel (16) Build at:Learn Method:Learned from plan/recipe Plan: Death tambo Death Tambo (1) The Death Tambo is an…",
     "main_image": "static/images/0c6aadb82e2dabc7841e88a4bbc79009.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 650,
@@ -3119,7 +3230,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Doctor's Orders is a non-automatic rifle in Fallout 76. The weapon comes with the following effects: - Restore 2% health over 2 seconds when you hit an enemy - +50% limb damage - H…",
     "main_image": "static/images/5324dfb0234c446af1d6d9138f9587ba.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 653,
@@ -3129,7 +3241,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Oil (8) Screw (14) Steel (28) Wood (15) Build at:Learn Method: Dom Pedro (1) Dom Pedro is a pistol in Fallout 76, introduced in the…",
     "main_image": "static/images/5018a07831f63c8a3e29de3e1f5e19f6.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 654,
@@ -3139,7 +3252,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (9) Oil (8) Screw (13) Steel (23) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Double barrel shotgun Short D…",
     "main_image": "static/images/ac940eaf00f595d6f797e4e59d25f26e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 655,
@@ -3199,7 +3313,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Elder's Mark is an automatic rifle in Fallout 76, introduced in the Once in a Blue Moon update. It is a ★★★ legendary Submachine Gun that comes with a pre-attached mod that alt…",
     "main_image": "static/images/d00030a16f7ce2f884f89064c5f7193f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 661,
@@ -3219,7 +3334,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Enclave Plasma Gun is a modular ranged weapon in Fallout 76. A modified Plasma Gun used by the Appalachian Enclave. Compared to a normal plasma variant, the Enclave variant deals increased damage and is slightly more accurate.",
     "main_image": "static/images/528cdaea6b66e9d53f25f8013e8d512f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 663,
@@ -3249,7 +3365,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Fancy Pump Action Shotgun is a shotgun in Fallout 76, introduced in the Wastelanders update. Gameplay An ornate weapon made with a darker wood and painted black with gold…",
     "main_image": "static/images/17ab9adf21f612ec78b2dca6f347177c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 667,
@@ -3259,7 +3376,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (12) Circuitry (8) Nuclear Material (8) Rubber (16) Screw (18) Spring (21) Steel (31) Build at:Learn Method:Learned from plan/recipe Pla…",
     "main_image": "static/images/286dc6f9e5fb6e86b9e87247df790cc2.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 668,
@@ -3279,7 +3397,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Oil (7) Steel (16) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Fire axe Fire Axe (1) The Fire Axe is a melee weapon in Fallout…",
     "main_image": "static/images/7cbdab5af224c7ebb4028c8697f29310.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 670,
@@ -3299,7 +3418,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (13) Asbestos (17) Copper (12) Rubber (16) Screw (14) Spring (14) Steel (36) Build at:Learn Method:Learned from plan/recipe Plan: Flamer…",
     "main_image": "static/images/19262207f3e2cd631c3ce2cff3c5a656.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 672,
@@ -3319,7 +3439,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Flare Gun is a ranged weapon in Fallout 76. The flare gun is a break-action single-shot weapon that is designed for signaling (by firing skyward) as opposed to combat. Firing a…",
     "main_image": "static/images/976ebc037cca2cc230f8838adc031bac.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 674,
@@ -3430,7 +3551,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (13) Gears (18) Screw (16) Spring (16) Steel (39) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Gatling gun Gatling Gun…",
     "main_image": "static/images/54cc6e286c6e45170ea133890ba9db3d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 685,
@@ -3450,7 +3572,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (13) Circuitry (13) Copper (16) Gears (13) Nuclear Material (10) Rubber (21) Steel (28) Build at:Learn Method:Learned from plan/recipe P…",
     "main_image": "static/images/b401de168e00c9316e6ad8fa76f9a831.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 687,
@@ -3470,7 +3593,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Gauss Minigun is a ranged weapon in Fallout 76, introduced in the Wastelanders update. The Gauss Minigun is a powerful, automatic ballistic weapon that rapidly fires 2mm Electr…",
     "main_image": "static/images/796b870b33e1ce51b846d59d6364b262.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 689,
@@ -3480,7 +3604,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Materials: Requirements: Produces: Aluminum (15) Circuitry (11) Screw (19) Silver (9) Spring (15) Steel (21) Built or Scrapped:Plan: Gauss Pistol (1) The Gauss Pistol is a ranged w…",
     "main_image": "static/images/d749e1ef4cb2ecc0678c6b8f3bcb8e3d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 690,
@@ -3490,7 +3615,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (14) Circuitry (10) Screw (18) Silver (8) Spring (14) Steel (20) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Gauss ri…",
     "main_image": "static/images/c29f0bd920aba1a7f9a99583efaafd3c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 691,
@@ -3500,7 +3626,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Materials: Requirements: Produces: Aluminum (15) Circuitry (11) Screw (19) Silver (9) Spring (15) Steel (21) Wood (15) Build at:Learn Method:Learned from plan/recipe Plan: Gauss Sh…",
     "main_image": "static/images/eea834030ded11be03563757efd0af84.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 693,
@@ -3510,7 +3637,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (10) Oil (7) Plastic (8) Rubber (13) Steel (13) Built or Scrapped:Plan: Golf Club (1)",
     "main_image": "static/images/d8a49b4ac4fc2b2c501e9ccf78ca1b98.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 694,
@@ -3541,7 +3669,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (8) Bone (13) Oil (8) Screw (11) Steel (18) Built or Scrapped:Plan: Guitar Sword (1)",
     "main_image": "static/images/378ab5ed5ad758846018b68e72083810.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 833,
@@ -3581,7 +3710,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Copper (7) Gears (9) Oil (7) Screw (13) Spring (15) Steel (15) Wood (12) Build at:Learn Method:Learned from plan/recipe Plan: Handma…",
     "main_image": "static/images/d91955bfe998a93d13ac5b61d22956b2.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 837,
@@ -3601,7 +3731,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Oil (8) Screw (9) Steel (14) Wood (13) Build at:Learn Method:Known by default Hatchet (1) The Hatchet is a melee weapon in Fallout 76. Manufactur…",
     "main_image": "static/images/4738555c9519553207d069f439fac5be.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 839,
@@ -3622,7 +3753,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (12) Gears (14) Leather (10) Screw (22) Spring (20) Steel (41) Build at:Learn Method:Learned from plan/recipe Plan: Hellsto…",
     "main_image": "static/images/24266a89cb49b45ea4a32bac57859135.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 841,
@@ -3642,7 +3774,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Gears (10) Oil (8) Screw (15) Spring (15) Steel (18) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Hunting Rifle Hu…",
     "main_image": "static/images/5324dfb0234c446af1d6d9138f9587ba.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 843,
@@ -3712,7 +3845,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (12) Circuitry (8) Crystal (7) Fiber Optics (5) Nuclear Material (6) Plastic (21) Screw (12) Build at:Learn Method:Learned from plan/rec…",
     "main_image": "static/images/c97f5a6be08b0eedca795f419a87740e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 850,
@@ -3743,7 +3877,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (9) Oil (7) Screw (14) Spring (12) Steel (23) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Lever gun Short L…",
     "main_image": "static/images/d8f576537e041c4ea0ded8bd4030c444.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 853,
@@ -3826,7 +3961,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Leather (9) Plastic (13) Screw (11) Steel (19) Build at: Machete Lv 50 (1) The machete is a melee weapon in Fallout 76. The machete has a rusted…",
     "main_image": "static/images/583774acb7fea8cba33e150d637f36a9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 861,
@@ -3906,7 +4042,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (9) Gears (19) Oil (10) Screw (14) Spring (19) Steel (46) Build at:Learn Method:Learned from plan/recipe Plan: Minigun Mini…",
     "main_image": "static/images/cc2ae82179cba31cd0381fc7e253d7c3.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 869,
@@ -3916,7 +4053,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (12) Gears (14) Leather (10) Screw (22) Spring (20) Steel (41) Build at:Learn Method:Learned from plan/recipe Plan: Missile…",
     "main_image": "static/images/2b9999d01cb80e72b594b5478fa11cf7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 870,
@@ -3926,7 +4064,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (9) Gears (11) Leather (9) Oil (8) Screw (11) Spring (15) Steel (21) Build at:Learn Method:Learned from plan/recipe Plan: Mole Miner Gau…",
     "main_image": "static/images/9bacd2eec739c3cdf0c708cf08d21c59.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 871,
@@ -3946,7 +4085,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Mr. Handy Buzz Blade is a melee weapon in Fallout 76. Gameplay This weapon is a heavily modified buzz saw from a Mister Handy robot. The weapon consists of a circular saw…",
     "main_image": "static/images/a4f1514ec3ef8f46a707738652a7ce17.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 873,
@@ -3966,7 +4106,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Nailer is a melee weapon in Fallout 76. Gameplay An improvised weapon made from an antler piece combined with a piece of metal crudely formed into a serrated blade. In ad…",
     "main_image": "static/images/dfcb238821493250152845e1aa2673b5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 875,
@@ -4056,7 +4197,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Old Guard's 10mm SMG is a submachine gun in Fallout 76, introduced in the Wastelanders update. Gameplay Unlike the standard 10mm Submachine Gun, this unique legendary com…",
     "main_image": "static/images/20a7415f1749f1a0eb2c25e4780a47bb.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 884,
@@ -4148,7 +4290,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Pickaxe is a melee weapon in Fallout 76. A two-handed makeshift melee weapon with decent damage, but a slow swing speed. It consists of a wooden handle with an attached metal s…",
     "main_image": "static/images/8e42dd7b148ede838ead7821c9bbf38f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 893,
@@ -4158,7 +4301,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (10) Oil (8) Screw (10) Steel (21) Build at: Pipe Bolt-Action Pistol (1)",
     "main_image": "static/images/b27823e6e2ca2b8331f29f01374bb8a5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 894,
@@ -4178,7 +4322,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (10) Oil (8) Screw (10) Steel (21) Build at: Pipe Revolver (1)",
     "main_image": "static/images/985869b871766bf0ebeba2f5a77bb769.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 896,
@@ -4188,7 +4333,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Gears (11) Oil (8) Steel (18) Build at:Learn Method:Learned from plan/recipe Plan: Pipe Wrench Pipe Wrench (1) The Pipe Wrench is a melee weapon…",
     "main_image": "static/images/bd0fc348df47315ff94a0e9e28cc45c0.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 897,
@@ -4219,7 +4365,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Circuitry (9) Fiber Optics (7) Glass (9) Nuclear Material (7) Screw (14) Steel (32) Build at:Learn Method:Learned from plan/recipe P…",
     "main_image": "static/images/4faad6c47238a9e57d5ae240cdf70bc5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 900,
@@ -4229,7 +4376,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (8) Black Titanium (10) Circuitry (8) Rubber (14) Steel (15) Build at:Learn Method:Learned from plan/recipe Plan: Plasma cutter Plasma C…",
     "main_image": "static/images/129dd49dcab7817e9443f2c8282db86a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 901,
@@ -4309,7 +4457,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Presidential Gauss Rifle is an unused weapon in Fallout 76. A standard Gauss Rifle with a patriotic paint. The weapon has a gilded shield barrel and a stock with bright red whi…",
     "main_image": "static/images/189835045b06885293c2cb9984192509.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 909,
@@ -4329,7 +4478,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The ProSnap Deluxe Camera, also known as the SnapMatic!, is a utility weapon in Fallout 76, introduced in the Wild Appalachia update. It was added to the game in patch 8.5. A compa…",
     "main_image": "static/images/ea547e8f67a3a64e03ea2a398afdffa5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 911,
@@ -4339,7 +4489,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Protest Sign is a melee weapon in Fallout 76. Before the Great War, there was a major push for the complete automation of Appalachia's various mining and industrial operations…",
     "main_image": "static/images/627f8ce0e176ef0e5b1afe1dd0df2513.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 912,
@@ -4369,7 +4520,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (7) Oil (7) Screw (13) Steel (25) Build at:Learn Method:Learned from plan/recipe Plan: Pump-action shotgun Pump Action Shotgun (1) The P…",
     "main_image": "static/images/7e71ee0eb68b013495a0f7860b3aec57.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 916,
@@ -4419,7 +4571,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (11) Gears (11) Nuclear Material (9) Oil (11) Plastic (10) Screw (20) Steel (51) Build at:Learn Method:Learned from plan/recipe Plan: Ra…",
     "main_image": "static/images/b30ed76e60bc6fdda1c74aeb6b1293d8.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 921,
@@ -4459,7 +4612,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Screw (9) Steel (19) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Revolutionary War sword Revolutionary Sword (1)",
     "main_image": "static/images/077beed7cfcd5e57beb3e57a85e21296.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 925,
@@ -4509,7 +4663,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Salt of the Earth is a shotgun in Fallout 76, introduced in the Nuclear Winter update. It was available as a reward for completing the weekly challenge of \"Down on the farm\" in…",
     "main_image": "static/images/ac940eaf00f595d6f797e4e59d25f26e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 930,
@@ -4519,7 +4674,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Salvaged Assaultron Head is a ranged weapon in Fallout 76. Gameplay This salvaged head of an Assaultron is fired like a non-automatic energy pistol. Reloading repeatedly…",
     "main_image": "static/images/ce6ecdcf1dc626d383475a7b93bd2954.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 931,
@@ -4529,7 +4685,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Cleanup (Issue: Capitalization Needed) Please capitalize the title of this article and then remove this template! The scoped hunting rifle is a weapon in Fallout 76, introduced in…",
     "main_image": "static/images/ecc5eb567cf6b04e4a41fff049841500.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 932,
@@ -4539,7 +4696,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Shattered Grounds is a weapon in Fallout 76, introduced in the Skyline Valley update. Gameplay A unique, Legendary…",
     "main_image": "static/images/1ff9083926c648fdf6566cf349ea33d4.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 933,
@@ -4619,7 +4777,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Oil (8) Screw (14) Steel (28) Wood (15) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: Single-action revolver Single…",
     "main_image": "static/images/a6cb71d3a53bce23b70f758e0aa46aea.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 941,
@@ -4629,7 +4788,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Composite Ski (1) Rubber (13) Screw (11) Steel (16) Build at:Learn Method:Learned from plan/recipe Plan: Ski Sword Ski Sword Lv 45 (1) The Ski Sw…",
     "main_image": "static/images/b9363e4d0db0a0bc997566b57ac21a64.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 942,
@@ -4639,7 +4799,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive Screw Steel Wood Built or Scrapped:Plan: Sledgehammer (1) The Sledgehammer is a melee weapon in Fallout 76. A wooden handle…",
     "main_image": "static/images/ccf00dc8b2318ef60829525f74984bd7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 943,
@@ -4659,7 +4820,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Sole Survivor is a ranged weapon in Fallout 76, introduced in the Wild Appalachia update. It was made available for crafting via a Daily Ops plan with the Fallout Worlds update…",
     "main_image": "static/images/79f89e2cb67274f914dee13c06585178.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 945,
@@ -4711,7 +4873,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Gears (10) Oil (7) Screw (20) Spring (17) Steel (37) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Submachine gun Submachine Gun…",
     "main_image": "static/images/e9095a0852ed1a3402e36fab3c1f9434.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 950,
@@ -4721,7 +4884,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (10) Gears (11) Plastic (13) Screw (10) Spring (15) Steel (22) Build at:Learn Method:Learned from plan/recipe Plan: Super Sledge Super S…",
     "main_image": "static/images/6fedf20f3e79731def96d1b4cfd452c2.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 951,
@@ -4741,7 +4905,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Swords are melee weapons in Fallout 76. Image Name Abstract Acquired…",
     "main_image": "static/images/b9363e4d0db0a0bc997566b57ac21a64.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 953,
@@ -4761,7 +4926,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Materials: Requirements: Produces: Aluminum (13) Circuitry (9) Rubber (17) Screw (19) Spring (22) Steel (32) Built or Scrapped:Plan: Tesla Cannon (1) The Tesla Cannon is a ranged w…",
     "main_image": "static/images/003b44e511c35f46916f7d474fcf6f9a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 955,
@@ -4771,7 +4937,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Materials: Requirements: Produces: Adhesive (16) Circuitry (11) Crystal (8) Nuclear Material (7) Plastic (15) Screw (19) Steel (25) Build at:Learn Method:Learned from plan/recipe P…",
     "main_image": "static/images/2586001a1d5d12c2441a8d8121381457.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 956,
@@ -4801,7 +4968,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Debilitator is a two-handed melee weapon in Fallout 76. It is a unique Super Sledge with a fixed set of Legendary Mods.",
     "main_image": "static/images/6d526c3def60f23183e25eb7aab64365.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 959,
@@ -4811,7 +4979,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Dragon is a ranged weapon in Fallout 76. Background The Dragon is an antique, muzzle-loading Black Powder Rifle with four distinct barrels. It is loaded with.50 Caliber…",
     "main_image": "static/images/841729ff9303e49becb2f421384924cd.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 960,
@@ -4842,7 +5011,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (9) Gears (10) Oil (8) Screw (15) Spring (15) Steel (18) Wood (14) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: The Fix…",
     "main_image": "static/images/0c3f81c4d9bfeda3a98a18be1513479b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 963,
@@ -4913,7 +5083,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Tenderizer is a melee weapon in Fallout 76, introduced in the Nuclear Winter update. A large hammer that makes use of several world objects, including a street sign pole and beer keg, held together by a rope.",
     "main_image": "static/images/39d6615b1d713356b049644c7ef66daf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 971,
@@ -4954,7 +5125,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Steel (18) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: Tire iron Tire Iron (1) The Tire Iron is a melee weapon in Fallout 76. A…",
     "main_image": "static/images/10846ae44cd355eb9e3dfe6ecdec3984.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 975,
@@ -4964,7 +5136,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Tomahawk is a melee throwing weapon in Fallout 76. A single-handed throwing ax, composed of a steel ax head, and a wood shaft. Materials: Requirements: Produces: Steel (1) Wood…",
     "main_image": "static/images/67853227dff1c058f089dc97148d91be.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 976,
@@ -5035,7 +5208,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Unstoppable Monster is a melee weapon in Fallout 76, introduced in the Wild Appalachia update. Background It is currently available as a plan from Daily Ops, as one of th…",
     "main_image": "static/images/62a1e66ee0b3aef2a3bf600d970debbf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 983,
@@ -5142,7 +5316,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Additional electric damage vs. Robots.”— Weapon description The Voice of Set is a non-automatic pistol in Fallout 76. Background The Voice of Set is a revolver wielded by th…",
     "main_image": "static/images/22a8c8954c7f86d639a751ed27a0afe0.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 993,
@@ -5162,7 +5337,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Rubber (17) Wood (18) Built or Scrapped:Plan: Walking Cane (1) The Walking Cane is a melee weapon in Fallout 76. A simple wooden wal…",
     "main_image": "static/images/b017ba9b1980f73ae9220b37562febce.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 995,
@@ -5182,7 +5358,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Aluminum (8) Black Titanium (10) Circuitry (8) Rubber (14) Steel (15) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: War Glaive Wa…",
     "main_image": "static/images/17fedd55b12daddb21e4373384c618d9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 997,
@@ -5192,7 +5369,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Materials: Requirements: Produces: Adhesive (8) Oil (8) Screw (16) Steel (25) Wood (14) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: Revolver Western Revolver (1)",
     "main_image": "static/images/fcf50d286648ea954d36d965b744922f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 998,
@@ -5212,7 +5390,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Whistle in the Dark is a ranged weapon in Fallout 76, introduced in the Nuclear Winter update. The Whistle in the Dark is two unique versions of the Assault Rifle.",
     "main_image": "static/images/8e7ca52a95af0e1b8260dff3f252a881.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1003,
@@ -5222,7 +5401,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "This page lists all Fallout 76 Quests. Initially, the quests in Fallout 76 were akin to found-world quests. At release, quests were largely received through holotapes, terminals, a…",
     "main_image": "static/images/c114219095c7ba6db0040b4df04beac9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1004,
@@ -5252,7 +5432,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "A Fresh Pair of Genes is a quest that appears in Fallout 76, introduced in the Ghoul Within update. After assisting Leamon Price, the Vault Dwellers can choose to become ghouls. Pa…",
     "main_image": "static/images/21e6a723b278d93687fe683950fb11f1.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1007,
@@ -5302,7 +5483,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Bee's Treasure Hunt is an unmarked quest in Fallout 76, introduced in the Skyline Valley update. Unmarked Quest: Bee's Treasure Hunt Find Bee's Diary page 1 Travel counter clockwis…",
     "main_image": "static/images/13c7426f87cf3e8a0af27451070232e3.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1012,
@@ -5312,7 +5494,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Stage Status Description 100 I'm picking up a strange broadcast in the Mire region called 'Linda-Lee Shortwave Signal'. I should listen to the mysterious broadcast to see what's go…",
     "main_image": "static/images/246d80b60bc34bef8cf9b5347c9212e2.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1013,
@@ -5332,7 +5515,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Quest stages --- Stage Description Log Entry Status 100 Speak to Captain Raymond Captain Raymond wants to have a word with me. I should speak to him and see what he says. 251 Fish…",
     "main_image": "static/images/246d80b60bc34bef8cf9b5347c9212e2.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1015,
@@ -5362,7 +5546,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Wren needs parts to maintain Crater's communications.” Daily: The Importance of Communication is a daily quest in Fallout 76, introduced in the Wastelanders update. Walkthrough[ed…",
     "main_image": "static/images/664e473b4eb55b99baa2724de2f1887c.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1018,
@@ -5372,7 +5557,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Daily Ops: Decryption is a Daily Op in Fallout 76, introduced in the Locked & Loaded update. Daily Ops: Decryption Enter further into the location to start the quest timer. Track a…",
     "main_image": "static/images/3bfaecebc7864d0c7113c5819f22e728.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1019,
@@ -5382,7 +5568,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Dirty Laundry is a quest in Fallout 76, introduced in the Burning Springs update. To start this quest, the Vault Dweller has to pick up any case Abraxodyne Intel. They can be found…",
     "main_image": "static/images/83a1d005127b3620c31fa8d4a3b14ff7.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1020,
@@ -5422,7 +5609,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Leap of Faith is a quest that appears in Fallout 76, introduced in the Ghoul Within update. Quick Walkthrough The Vault Dwellers intercept a distress signal on their radio. T…",
     "main_image": "static/images/ac5da929d28b66feefb10f2942252580.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1024,
@@ -5472,7 +5660,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Quest Stages --- Stage Status Description Log Entry? Go to Van Lowe Taxidermy I've found a poster left by someone claiming that the \"Sheepsquatch\" ate their brother. It said I sho…",
     "main_image": "static/images/a05eaff31d142df88ba6da3c428ad3bf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1029,
@@ -5635,7 +5824,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Use the US Government Supply Requisition Holotape at a radio tower.” Request Government Air Drop is a repeatable quest in Fallout 76. Quick Walkthrough Detailed Walkthrough[…",
     "main_image": "static/images/2be20959055b37a602aa6617af30fc6d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1045,
@@ -5666,7 +5856,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "“Check on the Responder Supply caches around Morgantown Airport.” Safe for Work is a side quest in Fallout 76. Find and listen to these five holotapes that are all located around t…",
     "main_image": "static/images/634027d6b160bc2e1129b059cf15a161.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1048,
@@ -5939,7 +6130,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Treasure Unknown is an unmarked quest in Fallout 76, introduced as a teaser quest leading up to the release of the Wastelanders update. Find the six Mysterious Map Fragments spread…",
     "main_image": "static/images/9ba38dfcfc1eb4a4fed9bcc349cee151.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1075,
@@ -5949,7 +6141,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Daily Ops: Uplink is a Daily Op in Fallout 76, introduced in the One Wasteland For All update.",
     "main_image": "static/images/83cee25c930f610600c7af69f3d264ef.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1076,
@@ -5959,7 +6152,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Welcoming Commitee is a quest in Fallout 76, introduced in the Burning Springs update. From anywhere in Appalachia, the Vault Dweller can listen to the Ohio Distress Broadcast.",
     "main_image": "static/images/b96d6ad161f5cb60627045856f5228e1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1077,
@@ -5979,7 +6173,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Appalachia is the name given to an expanse within the pre-War state of West Virginia. The comprised stretch, of which there are several different regional names, serves as the game…",
     "main_image": "static/images/3d5804ad19dbc1f6ed6145fb879f5f53.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1079,
@@ -5989,7 +6184,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "This page lists all locations in Fallout 76. Appalachia, the setting of Fallout 76, is divided into eight distinct regions: Regions…",
     "main_image": "static/images/e371fe393376d14a5c482b5a6bb0cac1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1080,
@@ -6021,7 +6217,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "98 NAR Regional is a location in the Savage Divide region of Appalachia. The location is situated north of New Appalachian Central Trainyard. The site of a terrifying railway accid…",
     "main_image": "static/images/0c61125940020f45a863f19592463782.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1083,
@@ -6031,7 +6228,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Aaronholt Homestead is a location in The Forest region of Appalachia. [Pub 1] “Close to a section of sagging road are a group of farm structures. The three main structures (and…",
     "main_image": "static/images/6ec7d4177bc74e4ac98fc4c06953c7df.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1084,
@@ -6041,7 +6239,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Abandoned Bog Town, formerly known as Bog Town, is a location in the Cranberry Bog region of Appalachia. It is a Public Workshop with claim and defend event quests. The are…",
     "main_image": "static/images/6373d269da05ad4703a879cfcfd125ba.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1085,
@@ -6122,7 +6321,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Abandoned Mine Shaft 6 is a location in the Ash Heap region of Appalachia in Fallout 76. Part of the Hornwright Industrial mining complex at Mount Blair, [Pub 1] this is one of sev…",
     "main_image": "static/images/6b32f89e86aa24d3511c43daf119437a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1093,
@@ -6162,7 +6362,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Abbie's Bunker is a location in The Mire region of Appalachia. A pre-War bunker constructed by the family of Abigayle Singh, who were members of the Free States. It housed Abbie, h…",
     "main_image": "static/images/29e1c0612d7284d13945f5cbf4aceb74.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1097,
@@ -6172,7 +6373,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Abraxodyne Chemical Complex is an unmarked location appearing as part of The Trench in Fallout 76, introduced in the Expeditions: The Pitt update. A location belonging to Abraxodyn…",
     "main_image": "static/images/b8ad76c309f5545d4fb5e98ae8e6371d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1098,
@@ -6213,7 +6415,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Alpine River Cabins is a location in The Forest region of Appalachia. [Pub 1] Right off of Route 88, this area initially seems to be haunted. Screams can be heard and the ground sh…",
     "main_image": "static/images/2f6d1b7bf796ddbc1b8b264c3dab7ce3.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1102,
@@ -6243,7 +6446,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The AMS Testing Site is a location in the Ash Heap region of Appalachia. Its main purpose was to search for new veins of Ultracite. An abandoned testing site where Atomic Mining Se…",
     "main_image": "static/images/22cbbbe814194f86e7def8c02c9e8865.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1105,
@@ -6263,7 +6467,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Appalachian Antiques is a location in the Cranberry Bog region of Appalachia. It can be found just outside of Watoga. This antique shop was operated by a con lady selling \"antique\"",
     "main_image": "static/images/c2bc5570e8e91a58341886d529a15f6a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1107,
@@ -6293,7 +6498,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Arktos Pharma Biome Lab is a section of Arktos Pharma, located underground in The Forest region of Appalachia. The lab consists of several underground habitats, designed and ut…",
     "main_image": "static/images/f9687fb8d86e6446a3cd585cc75b757e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1110,
@@ -6335,7 +6541,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Ash Cave is a location in Fallout 76, introduced in the Burning Springs updat…",
     "main_image": "static/images/cd8fef560313d5e10e2c4f2a5589ce78.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1114,
@@ -6386,7 +6593,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "This page is about the location as it appeared before the re…",
     "main_image": "static/images/0660c3c93cf6a9f2bd4a320568a3f76d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1119,
@@ -6427,7 +6635,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Bailey Family Cabin is a location in the Savage Divide region of Appalachia. A small cabin, hidden in the remote wilderness of the Savage Divide. A couple, Henry and Nancy, liv…",
     "main_image": "static/images/22ff4a8276b0c8a6ba949b64ac416a14.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1123,
@@ -6437,7 +6646,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Bastion Park is a location in the Savage Divide region of Appalachia. Located up State Route 93, Bastion Park was once a scenic resting spot for children and adults alike, offering…",
     "main_image": "static/images/3416cf59b7cb7fa337a1df10d3a180cc.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1124,
@@ -6447,7 +6657,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Becker Farm is a location in the Toxic Valley region of Appalachia. Starting from the eastern corner of the farm, there is a mailbox that has \"Becker\" written on it, in front o…",
     "main_image": "static/images/8885cede66a1c426acb3720538df6b49.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1125,
@@ -6457,7 +6668,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Beckley is a town in the Ash Heap region of Appalachia. Founded in 1838, Beckley grew around the nearby coal mine until the mine closed and a museum opened nearby to showcase its h…",
     "main_image": "static/images/b858f362d1d412ac732f8087a1a56494.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1126,
@@ -6477,7 +6689,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Beckwith Farm is a location in the Savage Divide region of Appalachia. It is an abandoned farmstead that has now been inhabited by various creatures. A pre-War farm and homestead…",
     "main_image": "static/images/a16eee35703cd71730f541664a837eaf.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1128,
@@ -6528,7 +6741,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Berkeley Springs Station is a train station in the town of Berkeley Springs, situated in The Mire region of Appalachia.",
     "main_image": "static/images/b0884746b2d4eaeaa60c52feec06a3eb.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1133,
@@ -6548,7 +6762,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Big Al's Tattoo Parlor is a location within the city of Morgantown in The Forest region of Appalachia.",
     "main_image": "static/images/d7c805ea2ff1b79565d3ab46aef200ec.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1135,
@@ -6558,7 +6773,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Big B's Rest Stop is a location in The Mire region of Appalachia. This location consists of two buildings - a Super-Duper Mart and a Red Rocket. The Super-Duper Mart contains a sho…",
     "main_image": "static/images/1b28bcf52e2c7e1436c7ffb4d6fe6d00.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1136,
@@ -6598,7 +6814,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "“Big Fred's BBQ Shack was quite the misnomer. Despite the prefix, Big Fred wasn't that big. As I remember, the man stood 5 foot 10 inches and looked to weigh 180 pounds; lovely gen…",
     "main_image": "static/images/a0dc3a65448a97f4647c42134112b956.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1140,
@@ -6680,7 +6897,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Black Mountain Ordnance Works is a location in The Forest region of Appalachia. [Pub 1] This remote storage and waste disposal facility was operated by Cole & Parker Holdings Ltd., which leased secure, shielded domes to a variety of buyers.",
     "main_image": "static/images/6414de5a17513fde9defca3ba459ed12.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1148,
@@ -6691,7 +6909,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Black Powder is a shop in the Whitespring Mall. The store is located inside the Whitespring Mall, one of two fast travel points at the Whitespring Resort. The shop is managed by Raiders Vendor and Flintlock.",
     "main_image": "static/images/9d191056d29c624a506a80bc8b1ff092.webp",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 1149,
@@ -6873,7 +7092,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Brown House is a location in Fallout 76, introduced in the Skyline Valley update. The Brown House is the presidential residence located at Rapidan Camp. It was first used by Herber…",
     "main_image": "static/images/6964a5bd8d557ed2b24225b37306915f.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1167,
@@ -6893,7 +7113,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "For this location as it appears in 2103, see The Kill Box. B…",
     "main_image": "static/images/c16cbd1596543b808091686804f272a4.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1169,
@@ -6903,7 +7124,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Burning Mine is a location in the Ash Heap region of Appalachia. Located between Mount Blair and Lewisburg, the Burning Mine used to be a coal mine owned by the Garrahan Mining…",
     "main_image": "static/images/2d3ea40fcacb274f18baaa341cbd3514.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1170,
@@ -6935,7 +7157,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Camden Park is a location in the Ash Heap region of Appalachia. Camden Park was an amusement park that advertised rides, picnics, and \"fun for all\" before the Great War. The park m…",
     "main_image": "static/images/9332458814a383e41423f34860552f79.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1173,
@@ -7038,7 +7261,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Carleton Mine is a location in the Toxic Valley region of Appalachia. Once a Garrahan Mining Company mineshaft, now the caves are filled with makeshift buildings alongside contrapt…",
     "main_image": "static/images/ace904a1ae16c06c62358616400b78cd.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1183,
@@ -7089,7 +7313,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Charleston was the pre-War capital city of West Virginia. The capital and one of the largest cities of West Virginia became the heart of a major push towards automation throughout Appalachia before the Great War.",
     "main_image": "static/images/f3e1f3f4d6ce73a3f6bea2f0d76b4f8b.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1188,
@@ -7119,7 +7344,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Charleston Capitol Department of Motor Vehicles or DMV is a location in the city of Charleston, situated next to the main Capitol Building. The location has one main chamber fo…",
     "main_image": "static/images/4f1c4eea41d0b50a816340d7254ab1f7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1191,
@@ -7129,7 +7355,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "or the North Charleston Fire Department Station, is a location in the Appalachian city of Charleston. The Charleston Fire Department was the heart o…",
     "main_image": "static/images/6397eb587e51a4636219acb69f83bf5f.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1192,
@@ -7139,7 +7366,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Charleston Herald Building is a location in the Appalachian city of Charleston. A prominent feature of downtown, having fallen into disrepair in the years since the war. The gr…",
     "main_image": "static/images/97bc613e33ae43f68e83ea8b27f51b19.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1193,
@@ -7159,7 +7387,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Charleston Station is a train station in Charleston, situated in the Forest region of Appalachia. A part of the long-defunct network of train stations along the Red Line, the facility consists of a track-side platform and station building.",
     "main_image": "static/images/f28d2288e8ff629b3974f21ad9506e89.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1195,
@@ -7169,7 +7398,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Charleston Trainyard is a location in the Appalachian city of Charleston. Located just south of Charleston Station, Charleston Trainyard provided a loading and unloading point…",
     "main_image": "static/images/7d5514a5e9442180f03e9c40f245931d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1196,
@@ -7266,7 +7496,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Clancy Manor is a location in The Forest region of Appalachia. Hidden within the forests on the edge of the Toxic Valley, Clancy Manor was abandoned for most of its post-War histor…",
     "main_image": "static/images/db861fa04222438fb2cd2d6432e0b82a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1205,
@@ -7276,7 +7507,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Clarksburg is a town in the Toxic Valley region of Appalachia. Located in the northern region of Appalachia, the city had a grocery store, a post office, a hardware store, a gun st…",
     "main_image": "static/images/a49566c7941af7d0adea21e782406bec.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1206,
@@ -7296,7 +7528,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Cliffwatch is a location in the Savage Divide region of Appalachia. The location was originally inhabited by Raiders and then Scorched. As of 2103, Blood Eagles have occupied the a…",
     "main_image": "static/images/acc32508be4b288ba534239261b859b4.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1208,
@@ -7368,7 +7601,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Company Store is an unmarked location within Camden Park in Appalachia The store is located directly behind Sugar Heaps trading post within Camden Park. It is inhabited by the…",
     "main_image": "static/images/672a4b22305d56d1e1d15a2d0c308359.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1215,
@@ -7442,7 +7676,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Cranberry Bog is one of the eight regions of Appalachia. Cranberry Bog refers to the area in the southeastern part of West Virginia that took its name from its colorful red flora, including Cranberries, pitcher, and sundew plants.",
     "main_image": "static/images/f404c079260c4ca4d9a891a17a897f1d.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1222,
@@ -7452,7 +7687,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This page is about the location before the release of the On…",
     "main_image": "static/images/34f3bff14c66e6d031ba35bd7427fc9f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1223,
@@ -7472,7 +7708,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Crashed Space Station, also demarcated the Valiant-1 and referred to by Munch as Nova-Orbital-01, was a United States Space Administration space station that once orbit…",
     "main_image": "static/images/aac1d5ee9df9d7e610a552f49b64a5c2.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1225,
@@ -7523,7 +7760,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Crevasse Dam is a location in The Mire region of Appalachia. Crevasse Dam is named after the surrounding tall rock outcrops and low river. [Pub 1] Binding the two sides of a crevas…",
     "main_image": "static/images/1f470bfc194047eb5881130611532a97.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1230,
@@ -7533,7 +7771,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Crimson Prospect is a location in the Cranberry Bog region of Appalachia, occupied by Blood Eagles. An outpost created by the Blood Eagles after their arrival in Appalachia, Crimso…",
     "main_image": "static/images/e371fe393376d14a5c482b5a6bb0cac1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1231,
@@ -7554,7 +7793,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Crosshair is a location in The Forest region of Appalachia. It can be fou…",
     "main_image": "static/images/3d340afae093cb9165f8adaff8babf62.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1233,
@@ -7574,7 +7814,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "For this location as it appeared in 2102, see Hawke's Refuge…",
     "main_image": "static/images/0fe8ae2abc7cc17ca6bc037c391a1825.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1235,
@@ -7594,7 +7835,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Darling Sister's Lab is a location in The Forest region of Appalachia. It can be found southwest of Groves Family Cabin and north of Tyler County Fairgrounds. Overlooking Route 81…",
     "main_image": "static/images/a457fdd7189fa22bd388eb3f1b569307.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1237,
@@ -7604,7 +7846,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Deathclaw Island is a location in The Forest region of Appalachia. This island has been chosen by a Deathclaw for its residence. It has built a nest beneath the ground, only leapin…",
     "main_image": "static/images/016d1115bc3e7a4d2cf88de1a8706a6c.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1238,
@@ -7715,7 +7958,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Drop Site C2 is a location in the Cranberry Bog region of Appalachia. Drop Site C2 is one of several Atomic Mining Services drop sites scattered throughout the Cranberry Bog, where…",
     "main_image": "static/images/8248d27e92f1e0cbdebcd2cabec34d61.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1249,
@@ -7746,7 +7990,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Drop Site V9 is a location in the Cranberry Bog region of Appalachia. This is one of several Atomic Mining Services drop sites scattered throughout the Cranberry Bog, where the com…",
     "main_image": "static/images/fe041cdc0eb73272fc9b0b98f915df01.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1252,
@@ -7756,7 +8001,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Duncan & Duncan Robotics is an unmarked location within the town of Summersville. Before the Great War, Duncan & Duncan Robotics was a robotics shop owned by the Duncan brothers. W…",
     "main_image": "static/images/530a713eb9479cfdbfaaef18d10d3057.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1253,
@@ -7817,7 +8063,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Eastern Regional Penitentiary is a location in the Toxic Valley region of Appalachia. Eastern Regional Penitentiary was founded in 1866 and housed convicts from Appalachia as w…",
     "main_image": "static/images/ecc4b10821f35a733553e555381481b3.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1259,
@@ -7849,7 +8096,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Ella Ames' Bunker is a location in The Mire region of Appalachia. This is an abandoned concrete bunker that belonged to the family of Ella Ames, a medical doctor and member of the…",
     "main_image": "static/images/3b86a8b670fc6a8ae38e980081831517.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1262,
@@ -7869,7 +8117,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Site J or the Enclave Research Facility, is a location beneath Transmission Station 1AT-U03 in The Forest region of Appalachia. It was formerly utilized by the Appalachian division of the Enclave.",
     "main_image": "static/images/528cdaea6b66e9d53f25f8013e8d512f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1264,
@@ -7944,7 +8193,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The following roadways were once thoroughfares of their respective regions, seen or mentioned throughout Appalachia. The majority of named roads in Appalachia are state routes and…",
     "main_image": "static/images/47d56bf73c4948c65a70db4e7c93c63e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1271,
@@ -7995,7 +8245,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Firebase LT is a location in the Cranberry Bog region of Appalachia. Firebase LT has two tents with some random loot. There are two Automated Surface to Air Missiles (ASAMs). - Pot…",
     "main_image": "static/images/2acf23dcbcd450bdd2cafe35c20aaed4.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1276,
@@ -8005,7 +8256,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Firebase Major is a location in the Cranberry Bog region of Appalachia. A Brotherhood of Steel camp with a large open area, few trees, but a lot of trenches. The area is located no…",
     "main_image": "static/images/a499166409374dc35ff5b5669c849ebf.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1277,
@@ -8015,7 +8267,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Please help by uploading it. Fisherman's Rest is a location in Fallout 76, introduced in the Gone Fission update. This section has not been writte…",
     "main_image": "static/images/6781342835ca301f631e266642d86b5d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1278,
@@ -8025,7 +8278,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The fissure sites are locations in Appalachia. Fissure Sites are an integral…",
     "main_image": "static/images/72f79b5038324c396aaf8bb87ffcf2b7.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1279,
@@ -8055,7 +8309,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Flatwoods Church is an unmarked location in the Appalachian town of Flatwoods in Fallout 76. A community located near the Vault 76 construction site, Flatwoods establishments i…",
     "main_image": "static/images/a9bf9a6e53859d4e4caa71b375d4e29a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1282,
@@ -8065,7 +8320,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Flatwoods Lookout is a location in The Forest region of Appalachia. [Pub 1] This lookout and its surrounding cabins were previously occupied by Puppet Face, a Wastelander and t…",
     "main_image": "static/images/79631a3360491287acaa8930f3aaadb0.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1283,
@@ -8085,7 +8341,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Flatwoods Tavern is an unmarked location in the Appalachian town of Flatwoods. [Pub 1] A restaurant and bar, serving food and beverages before and after the Great War.",
     "main_image": "static/images/dec5a1c2cf34dbbf8c6845b0a20dd952.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1285,
@@ -8105,7 +8362,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Flooded Trainyard is a location in the Cranberry Bog region of Appalachia. The trainyard on the edge of the Cranberry Bog was severely affected by earthquakes and erosion befor…",
     "main_image": "static/images/3363cc12614f3a804d256785ea1a6390.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1287,
@@ -8126,7 +8384,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Fort Atlas is a location in the Savage Divide region of Appalachia, formerly known as ATLAS Observatory.",
     "main_image": "static/images/93143dd52f17a557537c37810a2105cc.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1289,
@@ -8166,7 +8425,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Forward Station Delta is a location in the Cranberry Bog region of Appalachia. Sitting on the edge of the bog, Delta was one of several positions set up to try and contain the Scor…",
     "main_image": "static/images/d0e45c07d17140d10b2ce9aaf5ef25aa.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1293,
@@ -8186,7 +8446,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "This page is about the current version of the location, as i…",
     "main_image": "static/images/ff0d371b8eb45a10f7e74fd702482c0a.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1295,
@@ -8196,7 +8457,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "This page is about the location after the Test Your Metal up…",
     "main_image": "static/images/70df63f258f60a53b9187cd9c318eb76.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1296,
@@ -8216,7 +8478,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "known in-game as the Foundation interior, is a location within Foundation in Appalachia. A large domed cavern beneath Spruce Knob, ideal for seeking shelter from Sc…",
     "main_image": "static/images/916d82ae3d6f861997f91992e2838bcf.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1298,
@@ -8256,7 +8519,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "“For all your Halloween needs!”— Poster advertisement Freddy Fear's House of Scares is a location in The Mire region of Appalachia. Freddy Fear's House of Scares was a pre-War store specializing in Halloween costumes.",
     "main_image": "static/images/4152ca5bfcb49b3de7472da2618362e8.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1302,
@@ -8317,7 +8581,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Garrahan Mining Headquarters is a location in the Ash Heap region of Appalachia, located south of Lewisburg Station. The headquarters of the affluent Garrahan Mining Company no…",
     "main_image": "static/images/574c5b42843cdda03fb8a8ab0597d601.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1308,
@@ -8348,7 +8613,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "The General's Steakhouse is a location in the Cranberry Bog region of Appalachia. The General's Steakhouse was one of the most popular culinary destinations in Appalachia, offering…",
     "main_image": "static/images/eb99bb979cb373e73ad5df310500de73.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1311,
@@ -8368,7 +8634,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Lumberjack Protectron does not want to lose lumberjack job to cheap human labor.”— Lumberjack Protectron Gilman Lumber Mill is a location in The Forest region of Appalachia. As of…",
     "main_image": "static/images/35d2230f4bbb9613e6da39b4913bbf16.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1313,
@@ -8388,7 +8655,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Glassed Cavern, known by the Brotherhood of Steel as Echo Lamda 1 and the End Zone, is a location in the Cranberry Bog region of Appalachia.",
     "main_image": "static/images/528cdaea6b66e9d53f25f8013e8d512f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1315,
@@ -8398,7 +8666,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Gleaming Depths, also known as the Vulcan Research Laboratory a location in the Ash Heap region of Appalachia. They are situated northwest of Striker's Row and due south of…",
     "main_image": "static/images/2f300a048b5c26f8549877950fed77a2.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1316,
@@ -8429,7 +8698,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Gorge Junkyard is a location in The Forest region of Appalachia. It is a Public Workshop with claim and defend event quests. Located just off Interstate 59, the Gorge Junkyard…",
     "main_image": "static/images/ce0e9fa28d5d1e7c84fbca2842d083f3.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1319,
@@ -8469,7 +8739,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Grafton Pawn Shop is an unmarked location in the town of Grafton. It is s…",
     "main_image": "static/images/a86b66ebb39e58ae9bacd51868f4572d.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1323,
@@ -8489,7 +8760,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Grafton Station is a train station in the Toxic Valley region of Appalachia. A part of the long-defunct network of train stations along the Red Line, the facility consists of a track-side platform and station building.",
     "main_image": "static/images/0a98d2eab5f18e3878b820ad01f42646.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1325,
@@ -8499,7 +8771,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Grafton Steel is a location in the Toxic Valley region of Appalachia. The steel mill was a contingent of Grafton Steel's greater Appalachia region. During the Resource Wars, th…",
     "main_image": "static/images/f64b6a42e4a59eb18753c6a301ff4738.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1326,
@@ -8550,7 +8823,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Green Country Lodge is a location in Appalachia. A small motel on the outskirts of Flatwoods. Near a bus stop and a namesake bridge, salvageable materials can still be found in sev…",
     "main_image": "static/images/c2979cf4662813686391842f8b339a33.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1331,
@@ -8560,7 +8834,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Green Line is a series of bus stops throughout Appalachia. Part of the transportation system of the region, the Green Line consists of bus stops in four cities. The shelters ar…",
     "main_image": "static/images/0573279bcf28b47b9270f0697a6c2cef.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1332,
@@ -8580,7 +8855,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "or Greg's Mining Supply Co. is a location in The Forest region of Appalachia. Prior to the Great War, Greg's Mine Supply sold mining-related tools and other nece…",
     "main_image": "static/images/b132f4c414e5f57ded07dc018e0fa1ec.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1334,
@@ -8601,7 +8877,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Groves Family Cabin is a location in The Forest region of Appalachia. It is located northeast of Darling Sister's Lab and southeast of WV Lumber Co. Before the Great War, this…",
     "main_image": "static/images/a13c0a26b59db9407763b8df00d882df.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1336,
@@ -8653,7 +8930,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Please help by uploading it. Harpers Ferry…",
     "main_image": "static/images/1ce5f7567174f48692d79d1a96f96159.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1341,
@@ -8663,7 +8941,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Haven Church is a location in The Mire region of Appalachia. A dilapidated church in the Mire, Haven Church was used as a stronghold by raiders in the winter of 2077.",
     "main_image": "static/images/b3020c62acc1c83be777ba0cc0e7b8dc.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1342,
@@ -8673,7 +8952,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "This page is about the location before it was converted into…",
     "main_image": "static/images/c8ac662efd64f95887aae919ed691325.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1343,
@@ -8693,7 +8973,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Helvetia is a town in The Forest region of Appalachia. It is currently inhabited by the Scorched. Settled by German and Swiss immigrants following the Civil War in 1869, Helvetia w…",
     "main_image": "static/images/14c5101346e5ea0748762abc85fa6bfc.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1345,
@@ -9008,7 +9289,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Hopewell Cave is a location in the Savage Divide region of Appalachia. Hopewell Cave was discovered in May 1816. It played some sort of role in the Native American Adena culture, w…",
     "main_image": "static/images/f1952e9d2f368594a7bb59bb5df23f50.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1376,
@@ -9018,7 +9300,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Horizon's Rest is a location in The Forest region of Appalachia. This settlement is constructed around a transmission tower using pieces scavenged from a Horizon Airlines airplane…",
     "main_image": "static/images/3382f981faf69e07acee6f5ec1866699.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1377,
@@ -9068,7 +9351,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Hornwright Estate is a location in the boundary between the Savage Divide and Ash Heap regions in Appalachia. One of the Mega Mansions, this estate is the seat of power of the Horn…",
     "main_image": "static/images/df2967efb03e01d7e27dc79b01f17ede.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1382,
@@ -9128,7 +9412,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Hunter's Ridge is a location in The Forest region of Appalachia, currently occupied by Blood Eagles. Hunter's Ridge was a network of tree-mounted vantage points used by hunters…",
     "main_image": "static/images/1bf88a35bfbb1e6523bf46e3d0b463db.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1388,
@@ -9211,7 +9496,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "For the location after the Atlantic City America's Playgroun…",
     "main_image": "static/images/b525088f54a38e50c828dac525420abb.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1396,
@@ -9253,7 +9539,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Isolated Cabin is a location in The Forest region of Appalachia. [Pub 1] “This modest shack is set in the woods; the inhabitant is long gone. Read the notes scattered about to…",
     "main_image": "static/images/acaf5aebae09de493fde134b4a31044d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1400,
@@ -9315,7 +9602,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Kanawha Nuka-Cola Plant is a location in The Forest region of Appalachia. Before the war, Kanawha Nuka-Cola Plant was the regional marketing and research and development facility to test how the people of Appalachia liked their…",
     "main_image": "static/images/c276a21d6eb9f28fb6d169330b8dd491.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1406,
@@ -9478,7 +9766,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Lewisburg Station is a location in the town of Lewisburg in Appalachia. Lewisburg Station was a part of the long-defunct network of train stations along the Red Line. Located on th…",
     "main_image": "static/images/c218261bee12ac87829c1a9a6976e55d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1422,
@@ -9540,7 +9829,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Mac's Farm is a location in the Cranberry Bog region of Appalachia. This small homestead was owned by Enola Walker, who lived here with her Dogs after the Great War until it was at…",
     "main_image": "static/images/97f165efe58ed167c5b0594790a4952b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1428,
@@ -9615,7 +9905,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "“This underground structure was originally intended to be someone's budget version of a Vault. Its new life as a supply cache for the Brotherhood of Steel is likely to attract unwa…",
     "main_image": "static/images/ba156e710fb2584c44ccddd1baf57fb2.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1435,
@@ -9625,7 +9916,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Mama Dolce's Food Processing is a location within Morgantown, Appalachia. Mama Dolce's was a front for Chinese intelligence and research operations on American soil.",
     "main_image": "static/images/89c0c4a6387bccbc3c248cc5b774a977.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1436,
@@ -9635,7 +9927,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Marigold Pavilion is a location in The Forest region of Appalachia. This location was once a small park, consisting of the central pavilion and a lake, acting as an attraction for tourists and hikers.",
     "main_image": "static/images/0cdf58d296bc0d3d90688aaecf426fa1.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1437,
@@ -9657,7 +9950,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Mass Grave is a location in Fallout 76, introduced in the Skyline Valley update. A large hole in the ground full of skeletons. Mass Grave appears in Fallout 76, introduced in the Skyline Valley update.",
     "main_image": "static/images/db359599b3f87c985af79d2dd43584a7.webp",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 1439,
@@ -9699,7 +9993,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Metal Dome is a location in the Savage Divide region of Appalachia. It is situated north of Fort Atlas. The Metal Dome was created by a gang of Blood Eagles, calling themselves…",
     "main_image": "static/images/b9fb043a65033c3ba30bbb4a781b211f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1443,
@@ -9709,7 +10004,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "This page is about the location before the release of the On…",
     "main_image": "static/images/6a94d9f03f38b1ddfd005ccad6cc949e.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1444,
@@ -9719,7 +10015,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "For the location as it appeared prior to Once in a Blue Moon…",
     "main_image": "static/images/1f680cf90d52515d6b1f983a7c2f7aa7.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1445,
@@ -9729,7 +10026,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Milepost Zero is a location within the Skyline Valley region of Appalachia. It is currently being used by the Blue Ridge Caravan Company as a home base for Caravan operations.",
     "main_image": "static/images/edeaa9ee01d8eecf10b4f6f92830d57a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1446,
@@ -9822,7 +10120,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Monongah Power Plant is a location in the Savage Divide region of Appalachia. It is the location of a Fusion Core Processor, which can be utilized by completing the event Powering Up Monongah as well as is a Public Workshop with claim and…",
     "main_image": "static/images/6e3b35970dc46c2366bc40f88e379b9f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1455,
@@ -9832,7 +10131,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Monongah Power Plant Yard is a location in the Savage Divide region of Appalachia. It is the exterior of Monongah Power Plant. Monongah Power Plant was one of three nuclear power plants providing power to the region.",
     "main_image": "static/images/ee7c3989465d0291fad3e7b8c4756209.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1456,
@@ -9892,7 +10192,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Moonshiner's Shack is a location in The Forest region of Appalachia, just south of Vault 76. The shack was built and occupied by Brad Hooper after the bombs dropped. He only ab…",
     "main_image": "static/images/ed8cfd7de17c69a86af498a04edcb58f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1462,
@@ -9912,7 +10213,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This page is about the exterior location. For the interior l…",
     "main_image": "static/images/74929d62df17a9c67002fc469be3d852.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1464,
@@ -9952,7 +10254,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Morgantown Station is a train station in The Forest region of Appalachia. Situated on the outskirts of Morgantown, the facility consists of a track-side platform and station building.",
     "main_image": "static/images/9c1488c81d2b3593fed0c027d203a405.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1468,
@@ -9962,7 +10265,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Morgantown Trainyard is a location in Morgantown. The trainyard was the freight yard for the city of Morgantown. Connected to the railway system spread out throughout Appalachi…",
     "main_image": "static/images/15c53383343f894c48d260c9ea1ebeaf.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1469,
@@ -9972,7 +10276,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Mosstown is a location in The Mire region of Appalachia. Mosstown was settled by the former residents of The Burrows, who relocated there following the Burrow Boys' takeover of the…",
     "main_image": "static/images/0438ba66dbcc022e8260f085b0cf70d9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1470,
@@ -9982,7 +10287,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Moth-Home is a location in The Mire region of Appalachia. This section ha…",
     "main_image": "static/images/c4eca93443746547e9c12c9b6f6e3524.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1471,
@@ -10042,7 +10348,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Mysterious Guidestones are an unmarked location in the Savage Divide region of Appalachia. They are located northeast of Federal Disposal Field HZ-21.",
     "main_image": "static/images/ac757637ea95d34ef255a008f70d7ced.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1477,
@@ -10073,7 +10380,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The NAR Repair Yard is a location in the Cranberry Bog region of Appalachia. A small repair yard owned by the New Appalachian Railroad, servicing Trains running east to west along…",
     "main_image": "static/images/9b1aaf4f3963ab15a965e5344b5836c8.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1480,
@@ -10083,7 +10391,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The National Isolated Radio Array (NIRA) is a location in the Savage Divide region of Appalachia. Situated at the heart of the National Radio Quiet Zone, this massive radio install…",
     "main_image": "static/images/be35b2fd41de5087fe2473b0cfe33bd4.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1481,
@@ -10123,7 +10432,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The New Appalachian Central Trainyard is a location in the Savage Divide region of Appalachia. Located in the lower mountains of the Savage Divide, the New Appalachian Central Trai…",
     "main_image": "static/images/7ddc037a5f2ecc1ec60e1f8fbea6dc45.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1485,
@@ -10143,7 +10453,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The New River Gorge Bridge is a location in The Forest region of Appalachia. The New River Gorge Bridge is a distinct teal-painted steel arch bridge that spans the New River. It is…",
     "main_image": "static/images/c2ee39384121231707faaede82cb51c5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1487,
@@ -10184,7 +10495,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "North Cutthroat Camp is a location in the Savage Divide region of Appalachia. The camp was constructed by the Cutthroats Raider gang as a northern checkpoint on Interstate 63 in th…",
     "main_image": "static/images/85deba8e81bb4aa02b3059cb2e6fedbd.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1491,
@@ -10194,7 +10506,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The North Kanawha Lookout is a location in The Forest region of Appalachia. It is located just east of Vault 76. [Pub 1] “Beware of Sickleman! At least, that’s what the graffiti in…",
     "main_image": "static/images/17085ac83f1975ba85745ddf30bbf093.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1492,
@@ -10244,7 +10557,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Nuka-World On Tour is a location in Fallout 76, introduced in the Nuka-World on Tour update. It is located southwest of Lewisburg, in the Ash Heap region of Appalachia. Nuka-World On Tour was a traveling show founded before the Great War.",
     "main_image": "static/images/142ea7168793fae96641461d3a2593b7.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1497,
@@ -10428,7 +10742,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Overlook Cabin is a location in The Forest region of Appalachia. The outer area of the Overlook Cabin contains a pool and a Cooking Station. Inside, the ground floor of the bui…",
     "main_image": "static/images/8f88f08f0f0679ebdc3b9070192a8238.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1515,
@@ -10488,7 +10803,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "“Today I'd like to tell you about Philippi's Battlefield Cemetery, where the first land battle of the Civil War took place.”— Dick Shale, Appalachia Landmarks - Philippi's Cemetery…",
     "main_image": "static/images/3b95794574900e541cd618933531be6e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1521,
@@ -10519,7 +10835,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Pioneer Scout Camp is a location in the Toxic Valley region of Appalachia. The Pioneer Scout Camp, also known as Camp Lewis, was a wilderness campsite located in northern Appal…",
     "main_image": "static/images/71c0c04b4fbdd1de4b6cf0b5141b7408.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1524,
@@ -10569,7 +10886,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Pleasant Valley Cabins are a location in the Savage Divide region of Appalachia. These cabins, with the largest called Black Diamond Lodge before the war, once housed the wealt…",
     "main_image": "static/images/8c8cb9ff0edb7c80af6585888344b24f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1529,
@@ -10579,7 +10897,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "“An authentic rustic experience.”— Pleasant Valley sign The Pleasant Valley Ski Resort is a location in the Savage Divide region of Appalachia. Once a luxurious resort catering to…",
     "main_image": "static/images/ad858f47f9ebcfe79d8cb55a8a59a494.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1530,
@@ -10589,7 +10908,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Pleasant Valley Station is a Train Station in the Savage Divide region of Appalachia. A part of the long-defunct network of Train Stations along the Blue Line, the facility consists of a track-side platform and station building.",
     "main_image": "static/images/1b15b0fab2eb82e02ef1ff01929752d5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1531,
@@ -10610,7 +10930,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Please help us improve the article! “According to local folklore - as well as a statue and museum in Point Pleasant, West Virginia - the M…",
     "main_image": "static/images/1cd47c52d3055d517174e2c8c74693d0.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1533,
@@ -10691,7 +11012,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "General Information Below is a list of over 80 verified power armor locations. The locations are listed by region. The regions are listed from least to most challenging. Powe…",
     "main_image": "static/images/76dacc00d85a9671e3c5bf08c53b46fe.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1541,
@@ -10711,7 +11033,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Prime Minister's Cabin is a location in Fallout 76, introduced in the Skyline Valley update. The cabin was named after Ramsy Mcdonald, the prime minister of Great Britain. He staye…",
     "main_image": "static/images/9f40ff4ab988ffb8f219c3c6ddc07fb1.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1543,
@@ -10762,7 +11085,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Quarry X3 is a location in the Cranberry Bog region of Appalachia. There is a flooded quarry surrounded on all sides by steep rock walls. The breaks in the wall are a ramp on the w…",
     "main_image": "static/images/d452406a6af375f7c06ace01fffa3e58.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1548,
@@ -10792,7 +11116,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "R&G Station is a Train Station in the Savage Divide region of Appalachia. A part of the long-defunct network of Train Stations, at the southernmost end of the Blue Line. The facility consists of a track-side platform and station building.",
     "main_image": "static/images/4958364905880072d1bbb48070a2fa56.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1551,
@@ -10883,7 +11208,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Rapidan Camp is a location in Fallout 76, introduced in the Skyline Valley update. Rapidan Camp was constructed in 1929 by former president Herbert Hoover and his wife Lou as their…",
     "main_image": "static/images/b8f82ba6e96023f89ff214a941d05822.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1560,
@@ -11005,7 +11331,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Red Rocket Filling Station is a location in the Ash Heap region of Appalachia.",
     "main_image": "static/images/c8fbc6d646981af91a580733d1bb6460.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1572,
@@ -11065,7 +11392,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Relay Tower HN-B1-12 is a location in The Forest region of Appalachia. This location is a standard radio relay tower with Machinegun Turrets guarding its entrances, formerly contro…",
     "main_image": "static/images/de3de274b121eec70c08f9db5199d87b.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1578,
@@ -11075,7 +11403,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Relay Tower LW-B1-22 is a location in the Savage Divide region of Appalachia. Located south of Sons of Dane Compound and east of ATLAS Observatory, this one-room relay tower is sim…",
     "main_image": "static/images/1a7242fe113ae4af299ba035527a4e15.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1579,
@@ -11171,7 +11500,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "RobCo Auto-Cache 001 is an unmarked location within Gauley Mine in Appalachia…",
     "main_image": "static/images/91718613deff289c2f58467e2de6571d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1588,
@@ -11181,7 +11511,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "RobCo Research Center is a location in the Cranberry Bog region of Appalachia…",
     "main_image": "static/images/91718613deff289c2f58467e2de6571d.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1589,
@@ -11201,7 +11532,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Rollins Labor Camp (formerly Rollins work camp) is a location in the Ash Heap region of Appalachia. The area has been turned into a Blood Eagles base. Built about the base of a…",
     "main_image": "static/images/6894a1c0911317c7749dc732a29b1ef8.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1591,
@@ -11529,7 +11861,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Route 95 is a roadway in Fallout 76. Formed near Morgantown, heads east through Bolton Greens and Monongah and moves north to the Palace of the Winding Path, where it merges with Route 98. Route 95 appears in Fallout 76.",
     "main_image": "static/images/a0488bfe6232388206d90bb85dfeff1b.png",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 1622,
@@ -11611,7 +11944,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Sacrament is a location in the Savage Divide region of Appalachia. It is…",
     "main_image": "static/images/b796f2abc38e1cf76e87340dbcd93945.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1630,
@@ -11621,7 +11955,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This page is about the location after the release of the Onc…",
     "main_image": "static/images/79aa6e58c03952ff604c951092f902e2.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1631,
@@ -11683,7 +12018,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "“The region of Appalachia known to survivors as the “Savage Divide” is a mountainous area whose rocky landscape is difficult to cross and easy to get lost in.",
     "main_image": "static/images/1d50e45a6cd5e8ddafb783df8be0d428.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1637,
@@ -11735,7 +12071,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Seneca Gang Camp is a location in the Savage Divide region of Appalachia. The camp sits on an overlook of Route 63 on the east side of the road, south of the ATLAS Observatory.",
     "main_image": "static/images/a963436aed34a7b3f2e3eb3b7f3a6406.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1642,
@@ -11858,7 +12195,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "The Silva Homestead is a location in The Forest region of Appalachia. The Silva farm was a participant in Arktos Pharma's trials of chemical compounds meant to accelerate the growt…",
     "main_image": "static/images/f2ab756426ac2ec780be846be7d7791c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1654,
@@ -11949,7 +12287,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Slocum's Joe is a location in The Forest region of Appalachia. A franchise shop of Boston's premier coffee shop brand, it was once used by a survivor as a refuge. Glen Ramos le…",
     "main_image": "static/images/3f1d7c27fab7ba8d37291a3f66fc8079.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1663,
@@ -11959,7 +12298,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "For similarly named location in Fallout 76, see The Sludge…",
     "main_image": "static/images/22b5b49b7ce174642d39aaa149c1e83a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1664,
@@ -11999,7 +12339,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Sons of Dane Compound is a location in the Savage Divide region of Appalachia. The Sons of Dane Automated Alert originated from this location. Originally an abandoned homestead…",
     "main_image": "static/images/9d07fdb991b85561355c9e45cbb9bda5.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1668,
@@ -12009,7 +12350,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The South Cutthroat Camp is a location in the Savage Divide region of Appalachia. It was once a camp used by the Cutthroats gang of Raiders, now used by the Blood Eagles Raider gan…",
     "main_image": "static/images/9cc01acf1597a794eaf522e4fe84c1e2.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1669,
@@ -12122,7 +12464,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This page is about the location as it appeared before Wastel…",
     "main_image": "static/images/6e69b39f5582bc64c3b0a52844eeb735.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1680,
@@ -12162,7 +12505,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Spruce Knob Lake is a location in the Savage Divide region of Appalachia. In the aftermath of the Great War, Taggerdy's Thunder set up a small camp in a cave at Spruce Knob Lake. T…",
     "main_image": "static/images/baf3e9067015643b25f47e3b42bd0cb3.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1684,
@@ -12183,7 +12527,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Starlight Drive-In is a location in Fallout 76, introduced in the Burning Spr…",
     "main_image": "static/images/ea4c135cb165af9602d9402ee4ae9eac.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1686,
@@ -12224,7 +12569,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Striker Row is a location in the Ash Heap region of Appalachia in Fallout 76. This campsite was used as a coordination area by union workers rebelling against automation in Appalac…",
     "main_image": "static/images/2e004de26183520bf5b9187d1aa69b74.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1690,
@@ -12326,7 +12672,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Sunnytop Ski Lanes Base Lodge is a location in the Savage Divide region of Appalachia. Part of Sunnytop Ski Lanes, this building was the base lodge for the ski slopes. The buil…",
     "main_image": "static/images/2f6215949b3d3b66fbe94e7e0824da8a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1700,
@@ -12336,7 +12683,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Sunnytop Station is a Train Station in the Savage Divide region of Appalachia. A part of the long-defunct network of Train Stations on the Blue Line, the location provided ancillary services such as a staffed ticket sales counter and…",
     "main_image": "static/images/0fa53bebaee468f48b83fbc6680d3dcf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1701,
@@ -12346,7 +12694,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Sunrise Field is a location in the Cranberry Bog region of Appalachia in Fallout 76. This once-prosperous farm and pond were all but ruined in the wake of the Atomic Mining Service…",
     "main_image": "static/images/855081992467640201a9c2fe994fb92e.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1702,
@@ -12397,7 +12746,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Survey Camp Alpha is a location in the Cranberry Bog region of Appalachia. It is one of several camps set up throughout the region by the Appalachian Brotherhood of Steel. A small…",
     "main_image": "static/images/b569c623b26124003f9515326c824f4a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1707,
@@ -12407,7 +12757,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "“.. Rich in history & hospitality..”— Entryway signage Sutton is a town in The Forest region of Appalachia. Established in 1824, the town of Sutton was known for its role in the…",
     "main_image": "static/images/5f0d477eb3f8bea026678fc89d8388c6.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1708,
@@ -12417,7 +12768,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Sutton Station is a train station in The Forest region of Appalachia. Situated up a hill on the southern outskirts of Sutton, the facility consists of a track-side platform and station building along the Red Line.",
     "main_image": "static/images/d7c156a8eb8d31e4a53d5e50529333c5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1709,
@@ -12427,7 +12779,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Sylvie & Sons Logging Camp is a location in the Savage Divide region of Appalachia. The Sylvie & Sons Logging Camp was a small logging camp in the mountains of the Savage Divid…",
     "main_image": "static/images/3370849f759a1f20b31961e8e9a4e23b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1710,
@@ -12479,7 +12832,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Bounty is a location in the Savage Divide region of Appalachia. It is sit…",
     "main_image": "static/images/65b5ed9b32fc379cae085f721b186b19.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1715,
@@ -12510,7 +12864,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Chop Shop is a location in Fallout 76, introduced in the Burning Springs…",
     "main_image": "static/images/ade445fa2c0fab7e42b3704df2f7b309.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1718,
@@ -12540,7 +12895,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "For the location as it were before the Wastelanders update…",
     "main_image": "static/images/d4b6a9a50c2023448c1013c4a2fa0756.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1721,
@@ -12550,7 +12906,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Deep is an underground location in The Forest and Savage Divide regions of Appalachia. Its main entrance is adjacent to the Blood Eagle camp The Pigsty. The Deep is an elaborat…",
     "main_image": "static/images/f1a22d317e0da9ed49db389c2c14f5ca.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1722,
@@ -12560,7 +12917,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Forest is one of the eight regions of Appalachia. It is the first region the Vault Dwellers explore after emerging from Vault 76. The Forest region of Appalachia is characteriz…",
     "main_image": "static/images/f8cb4f5061cb94f980c08f4ea7552310.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1723,
@@ -12580,7 +12938,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Kill Box is a location in The Forest region of Appalachia. It is located east of Summersville Dam and northwest of the Torrance House.",
     "main_image": "static/images/2621ff113eb3cf29ab780e46ce4c857d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1725,
@@ -12600,7 +12959,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Neapolitan Casino is a location in Fallout 76, introduced in the Atlantic City Boardwalk Paradise update. The casino and the accompanying hotel are run by the Lombardi Family.",
     "main_image": "static/images/8f0e55bae84dad536aa1b4191ba8d290.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1727,
@@ -12621,7 +12981,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Nukashine is a location in the basement of Morgantown's Big Al's Tattoo Parlor. Judy Lowell, the president of Vault-Tec University's Eta Psi Epsilon Tau fraternity, leased the…",
     "main_image": "static/images/3eaf23a105f1330ed0f21756328b5154.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1729,
@@ -12642,7 +13003,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Pigsty is a location in The Forest region of Appalachia. The encampment, inhabited by the Blood Eagles, consists of three connected shacks leaning in the salient of a cliff in…",
     "main_image": "static/images/e5311d1c92af63b34e3a2bd7bf170b41.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1731,
@@ -12652,7 +13014,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "For the location as it appears in the Fallout 3 add-onThe Pi…",
     "main_image": "static/images/bb4145acfc8ca2e98ecad11bbd2f6dbc.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1732,
@@ -12662,7 +13025,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Retreat is a location in The Mire region of Appalachia. Formerly known as the Treehouse Village, it was once a settlement run by the Free States, before Raiders attacked the survivors taking refuge there and taking over.",
     "main_image": "static/images/a0213283a860060a9766c72cd18b8411.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1733,
@@ -12672,7 +13036,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "For the location before the Atlantic City America's Playgrou…",
     "main_image": "static/images/d3f359ec87a004abcdcfa2d6ce8f7c69.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1734,
@@ -12753,7 +13118,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Whitespring Congressional Bunker 1, also known as Whitespring Shelter, is a location underneath The Whitespring Grounds in the Savage Divide. It is the primary headquarters of the Enclave in Appalachia.",
     "main_image": "static/images/528cdaea6b66e9d53f25f8013e8d512f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1742,
@@ -12763,7 +13129,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Whitespring Golf Club is a location on the grounds of the Whitespring. The two story clubhouse served as the administrative and recreation hub of the newly-redesigned Springhil…",
     "main_image": "static/images/6d1adb4f490aab77d8867139e1127822.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1743,
@@ -12803,7 +13170,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Thorn is a location on the western edge of the Cranberry Bog region of Appalachia. It was a Brotherhood of Steel encampment. Defending this makeshift camp is a neutral Automate…",
     "main_image": "static/images/84eb818214881b5a06cfca37b72205c7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1747,
@@ -12824,7 +13192,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Thunder Mountain Power Plant is a location in The Mire region of Appalachia. Thunder Mountain was one of three nuclear power plants in Appalachia, providing energy to the region.",
     "main_image": "static/images/51dac5f45e7e2572991792aeee0bbbb7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1749,
@@ -12874,7 +13243,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Top of the World is a location in the Savage Divide region of Appalachia. Before the Great War, it was part of a ski resort. Prior to the Great War, the Top of the World was a famous West Virginia tourist attraction.",
     "main_image": "static/images/10285beb4dd8b0b258335665e19333da.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1754,
@@ -12895,7 +13265,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Torrance House is a location in The Forest region of Appalachia. Once the childhood home of Brody Torrance, before he became a Raider, this grand mansion is now a ruined derelict…",
     "main_image": "static/images/5af247ea0769decda06c51b4ada55f81.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1756,
@@ -12936,7 +13307,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The Toxic Valley is one of the eight regions of Appalachia. The region known to survivors as Toxic Valley lies due north of The Forest, covered by a thin, industrial white powder a…",
     "main_image": "static/images/9609a819dd0eb3dc9d295bd767cb4f63.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1760,
@@ -12956,7 +13328,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Train Stations and Railroads are a series of locations and constructs in Fallout 76. The rail lines and stations are not operable in the same fashion as they were before the Great…",
     "main_image": "static/images/a18dfeb21bff4457766759accd651866.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1762,
@@ -12987,7 +13360,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "For location as of Steel Dawn, see The Retreat.For similarl…",
     "main_image": "static/images/776d591507503bb742d895123460afa8.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1765,
@@ -12997,7 +13371,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "For similarly named location, see Treehouse Village. Treetop…",
     "main_image": "static/images/38e27f8ea30f2fc2745ca8cfaae85589.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1766,
@@ -13068,7 +13443,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "or the Tygart Wastewater Treatment Plant is a location in The Forest region of Appalachia. Once a fully-functional water treatment facility on the shores of…",
     "main_image": "static/images/a67e32a24081b21f6fa9ba381354fe1c.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1773,
@@ -13088,7 +13464,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Tyler County Fairgrounds is a location in The Forest region of Appalachia in Fallout 76. [Pub 1] Sitting at the convergence of State Routes 81 and 90, the attraction served as…",
     "main_image": "static/images/bee59f343b8dd2fc96dfcc9b28877341.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1775,
@@ -13150,7 +13527,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "US-13C Bivouac is a location in the Savage Divide region of Appalachia. It can be found east of the West Tek Research Center. A wide variety of creatures can spawn at this abandone…",
     "main_image": "static/images/39ac4ee53bfc9bb33ffb347b5c7f2ba6.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1781,
@@ -13180,7 +13558,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Vault 1 is a location in the Wastelad holotape minigame. The home of Wastelad, Vault 1 is the starting point of his quest to defeat Chairman Cheng.",
     "main_image": "static/images/bcbfbe65c07ca7fcc901a2c8bd6464f9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1784,
@@ -13200,7 +13579,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Vault 29 is a mentioned only vault. A student named Trisha Miller attended Vault-Tec University, writing that she was concerned that her assignment would be a janitor in Vault 29, located on the West Coast with \"a bunch of obnoxious rich…",
     "main_image": "static/images/c89a379ddd4bc936a7a97b18521896ff.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1786,
@@ -13220,7 +13600,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Vault 63 is a Vault-Tec Vault located in the Ash Heap region of Appalachia. Prior to the Skyline Valley update, it was inaccessible.",
     "main_image": "static/images/ec940baddc9c609f587600bfc9386632.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1788,
@@ -13240,7 +13621,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Vault 76 is a Vault-Tec facility located in The Forest region of Appalachia. It is located north of Flatwoods and was designated as the \"Official Vault of the Tricentennial\" by Vau…",
     "main_image": "static/images/8e2758669fa57535f9f81921371427c0.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1790,
@@ -13280,7 +13662,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Vault 63 is a Vault-Tec vault located in the Ash Heap region of Appalachia. Prior to the Skyline Valley update, it was inaccessible. The vault door is sealed and inaccessible.",
     "main_image": "static/images/c16acc4b1476c8c01ec816abec92fd24.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1794,
@@ -13445,7 +13828,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Wade Airport is a location in The Forest region of Appalachia. Located just off of Interstate 59, outside of the capital city of Charleston, Wade Airport was the local airport for…",
     "main_image": "static/images/53617bb7bf53226e3566e6d1b6605757.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1810,
@@ -13509,7 +13893,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Watoga is a city in the Cranberry Bog region of Appalachia. Watoga was founded in 2042, built at the site of an old ghost town [Pub 1] in the state of West Virginia. Financed b…",
     "main_image": "static/images/14f45700ef7451afdfb63c3973bd2e21.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1816,
@@ -13519,7 +13904,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Watoga Civic Center is a building within the Appalachian city of Watoga. The civic center is a large pre-War public building, situated in northwest Watoga. The location served…",
     "main_image": "static/images/c58830ea8d32e3ad5ae37fa3e0ce590b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1817,
@@ -13529,7 +13915,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "“Watoga Emergency Medical Services is here to help! Speak to our friendly automated receptionist for immediate assistance.”— Voice of Watoga Watoga Emergency Services, also known a…",
     "main_image": "static/images/19a74d783ae4ae4c545ee1ca4da91b76.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1818,
@@ -13539,7 +13926,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "“Better than PERFECT!”— Watoga Estates signage The Watoga Estates are a building complex in the Appalachian city of Watoga. The primary housing complex of Watoga, the estates were…",
     "main_image": "static/images/0137c34d812835169ef54eb902a13c60.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1819,
@@ -13569,7 +13957,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Watoga Shopping Plaza is a location in the Appalachian city of Watoga. Occupying the entire northeastern part of Watoga, the shopping plaza served the affluent citizens of the…",
     "main_image": "static/images/506d3fc15e50e003c75265183383eecf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1822,
@@ -13579,7 +13968,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Watoga Station is a train station in the Cranberry Bog region of Appalachia. A part of the long-defunct network of train stations along the Red Line, the facility consists of a track-side platform and station building.",
     "main_image": "static/images/a9da1d6fd5fc769f28f46d14e1f72626.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1823,
@@ -13589,7 +13979,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "“Welcome to the Watoga Transit Hub! The future of travel!”— Voice of Watoga, promoting current-generation monorail services The Watoga Transit Hub is a location in the town of Wato…",
     "main_image": "static/images/f7a829a47289ed9c1e097467f4bbd80c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1824,
@@ -13609,7 +14000,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Wavy Willard's Water Park is a location in the Toxic Valley region of Appalachia. Wavy Willard's Water Park was a popular swimming and activity theme park before the Great War. Loc…",
     "main_image": "static/images/601378388e3f266b42dd9be236c32513.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1826,
@@ -13619,7 +14011,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Please help us improve the article! Welch is a town in the Ash Heap region of Appalachia. In 2077, the unemployment rate…",
     "main_image": "static/images/c1f86128e41066a9253cbd07e51a00c1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1827,
@@ -13629,7 +14022,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Welch Station is a location in the Ash Heap region of Appalachia. The station is occupied by Dylan Rhodes, a former miner.",
     "main_image": "static/images/a5efdf669ad71bbb29a73970f84a2c98.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1828,
@@ -13649,7 +14043,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "The West Tek Research Center is a location in the Savage Divide region of Appalachia.",
     "main_image": "static/images/0e8bf0557ad5d13d3197b71ff5439520.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1830,
@@ -13659,7 +14054,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Alaska • Arizona • California • Colorado • Connecticut • Florida • Georgia • Hawaii • Idaho • Illinois • Iowa • Kansas • Kentucky • Louisiana • Maine • Maryland • Massachusetts • M…",
     "main_image": "static/images/dc20ee7252aab775b85c9913239bba13.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1831,
@@ -13751,7 +14147,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Willard Corporate Housing is a location in the Toxic Valley region of Appalachia. Located southeast of Wavy Willard's Water Park, in the corrosive, toxic environment of the valley.",
     "main_image": "static/images/20f9d3e9158f15c1ef6d0f6ba587f75c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1840,
@@ -13761,7 +14158,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Wilson Brother's Auto Repair is a location in The Forest region of Appalachia in Fallout 76. A small pre-War auto shop owned by Rich Wilson, on the outskirts of Morgantown. [Pub 1]…",
     "main_image": "static/images/1cb8192dee0df45199314b9154b9701f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1841,
@@ -13771,7 +14169,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Wixon Homestead is a location in The Forest region of Appalachia. A sizable homestead in the valley near Vault 76, the Wixons were quite prosperous, with their own delivery flatbed used to deliver foodstuffs.",
     "main_image": "static/images/45e0f9a4405f56d20b871fbd80325f62.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1842,
@@ -13841,7 +14240,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Aliens are creatures in Appalachia in Fallout 76, introduced in the Steel Dawn update. Three alien corpses are located in the Z-05 specimen chamber of the Enclave Research Facility.",
     "main_image": "static/images/ee0799ac7490e88cee33d7266273ce5e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1849,
@@ -13851,7 +14251,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Alpha Thrashers are creatures found in Appalachia. Please help us improve the article! Image Name Appears…",
     "main_image": "static/images/620b563df1bc4f768aa24867d622c44a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1850,
@@ -13861,7 +14262,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Anglers are creatures found in Appalachia. The angler is an aggressive creature with the ability to spit out a fireball made of mucus, inflicting heavy incendiary damage to any target in a small radius.",
     "main_image": "static/images/fcac034d295e2e872b1ac8519555f71e.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1851,
@@ -14012,7 +14414,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Cats are creatures found in Appalachia. Before the Great War, domestic cats were a popular household pet. They were known for their companionship and for hunting common household p…",
     "main_image": "static/images/a4f2285ac9a8c1bc6f46ddd7649eff23.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1866,
@@ -14022,7 +14425,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "For the variants encountered in the Nuka-World add-on forFal…",
     "main_image": "static/images/220ac04f42a35904d307e70efe8289cd.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1867,
@@ -14032,7 +14436,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Chickens are creatures found in Appalachia and The Trading Post in Shenandoah National Park. Chickens are docile, fleeing as soon as combat breaks out in their vicinity. A staff me…",
     "main_image": "static/images/a21dc7d3664177a2450e073865942e42.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1868,
@@ -14063,7 +14468,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Dogs are creatures found in Appalachia. Two mutated counterparts of dogs can be found in Appalachia, including mongrels and the Mutant Hounds.",
     "main_image": "static/images/56256ef7b1e5166dd7a5fbca845d0eb0.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1871,
@@ -14114,7 +14520,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Fireflies are creatures found in Appalachia. Found throughout Appalachia in small groups. Fireflies are an enlarged variant of tiny pre-War insects. Fireflies are completely non-ho…",
     "main_image": "static/images/fcd50d691221072d01ce1bebcbc80c73.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1876,
@@ -14156,7 +14563,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Flatwoods Monsters are creatures found in Appalachia. Described as a hovering creature with glowing purple eyes, capable of abducting wastelanders. The wandering storytelle…",
     "main_image": "static/images/d43f4c4547928f825d0615fb73126b63.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1880,
@@ -14166,7 +14574,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Floaters are creatures found in Appalachia. Floaters are creatures mutated by the West Tek FEV experiments. Floaters are known to be friendly toward Super Mutants and behave almost…",
     "main_image": "static/images/fe21b944095bcc396f07e9e4ecf03e05.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1881,
@@ -14186,7 +14595,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Foxes are creatures found in Appalachia. Red foxes are native to North America. Foxes will not actually attack the player character, they will instead run away when approached.",
     "main_image": "static/images/71c3907d83f0dd2429d9a6757e8f6b87.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1883,
@@ -14196,7 +14606,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Frogs are creatures found in Appalachia. Usually found near bodies of water, these frogs have mutated from those living before the Great War. The front legs have developed into pow…",
     "main_image": "static/images/89541edeacb1ae685baa2359355b1249.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1884,
@@ -14206,7 +14617,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Glowing Ones are creatures found in Appalachia. Glowing Ones have a natural resilience to the Scorched Plague. They will attack charging and striking their opponents. Their attacks…",
     "main_image": "static/images/117d132def884e12006848f0401958f4.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1885,
@@ -14216,7 +14628,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Glowing Radhog Alpha is a creature in Fallout 76, introduced in the Burning Springs update. Radhogs are a form of mutated hog native to Burning Springs, Ohio. Operating in pack…",
     "main_image": "static/images/fa5c2a2f04aad7bf9e38f228233704ba.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1886,
@@ -14237,7 +14650,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Glowing Thrashers are creatures found in Shenandoah National Park. Image Name Appears…",
     "main_image": "static/images/fc6896765c88bf8a55fcd7da9fff0765.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1888,
@@ -14257,7 +14671,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Gruyere Radhog is a creature in Fallout 76, introduced in the Burning Springs update. Radhogs are a form of mutated hog native to Burning Springs, Ohio. Operating in packs led…",
     "main_image": "static/images/e05e93d389312b64f399de31ba90e278.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1890,
@@ -14267,7 +14682,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The gulper is a creature found in Appalachia. Gulpers are descendants of pre-War salamanders.",
     "main_image": "static/images/f61c1ca9908569ef902bd84cc44a2c97.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1891,
@@ -14297,7 +14713,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Honey Beasts are creatures in Fallout 76. The creatures are honey bees that have undergone severe mutations. Bee Swarms are found on their backs and help defend the Honey Beast. Th…",
     "main_image": "static/images/23269477d61200b4bb59d7a78974b6e5.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1894,
@@ -14397,7 +14814,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Mirelurk Queens are creatures found in Appalachia. A Mirelurk Queen is the largest enemy one can encounter in-game besides the Scorchbeast Queen and Super Mutant Behemoth. She will…",
     "main_image": "static/images/ac268ef7a82d1aec694fde921f7304eb.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1904,
@@ -14407,7 +14825,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Mirelurk Spawn are creatures found in Appalachia. A juvenile mirelurk that either hatches from eggs or spawned by mirelurk queens as a distraction. Mirelurk spawn and hatchlings ar…",
     "main_image": "static/images/cd72b36fe7651aa8de87ba43518d609d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1905,
@@ -14457,7 +14876,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Mothman, referred to as the Bright One and God by cultists, is a cryptid creature found in Appalachia. It has a museum dedicated to its mythology and is worshiped by the Cult o…",
     "main_image": "static/images/18a40e0bb9e1e45e60032f3a125097e8.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1910,
@@ -14527,7 +14947,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Owlet is a creature in Appalachia. They are flightless, live in caves and can hop along the ground to escape predators. Owlets are non-hostile creatures and will always flee combat…",
     "main_image": "static/images/d93a7d3a6ec37a5ffeffae95097b9e8c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1917,
@@ -14559,7 +14980,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Rabbits are creatures that appear in Fallout 76. Rabbits will not attack the player character, instead running away from any kind of combat. Unmutated Caged Rabbits are also found in Appalachia. Rabbits appear in Fallout 76.",
     "main_image": "static/images/13a5981f584582dfd9c1a7aa0be8a4ce.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1920,
@@ -14569,7 +14991,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Radhog or RadHog is a creature in Fallout 76, introduced in the Burning Springs update. Radhogs are a form of mutated hog native to Burning Springs, Ohio. Operating in packs le…",
     "main_image": "static/images/9fffbab2dfd2cf0b7a3f51cddc1a0440.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1921,
@@ -14579,7 +15002,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Radhog Alpha is a creature in Fallout 76, introduced in the Burning Springs update. Radhogs are a form of mutated hog native to Burning Springs, Ohio. Operating in packs led by…",
     "main_image": "static/images/2436a0307b2d63417893f1ef00661385.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1922,
@@ -14599,7 +15023,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Radroaches are creatures found in Appalachia. Radroaches are enlarged versions of pre-War Great American cockroaches. They remain largely free from mutations, barring a substantial…",
     "main_image": "static/images/91d2cc9ce795c72758b6b0f1c286f53f.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1924,
@@ -14609,7 +15034,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Please help by uploading it. Radscorpions are insects found in Appalachia. Radscorpions have venomous stingers, powerful claws, and have the a…",
     "main_image": "static/images/5d5ac56bb889db0b68e5824d1895edac.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1925,
@@ -14639,7 +15065,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Rooter Radhog is a creature in Fallout 76, introduced in the Burning Springs update. Radhogs are a form of mutated hog native to Burning Springs, Ohio. Operating in packs led b…",
     "main_image": "static/images/e371e3740006e2de3d06f706b18b12dd.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1928,
@@ -14660,7 +15087,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Scorchbeasts, also known by their code name Sierra Bravo by the Brotherhood of Steel, are creatures found in Appalachia.",
     "main_image": "static/images/482bd9819b540573eba92211893d289d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1930,
@@ -14690,7 +15118,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Scorched Radhog is a creature in Fallout 76, introduced in the Burning Springs update. Radhogs are a form of mutated hog native to Burning Springs, Ohio. Operating in packs led…",
     "main_image": "static/images/2436a0307b2d63417893f1ef00661385.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1933,
@@ -14700,7 +15129,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Scorched Thrashers are creatures found in Shenandoah National Park. Image Name Appears…",
     "main_image": "static/images/620b563df1bc4f768aa24867d622c44a.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1934,
@@ -14710,7 +15140,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Sheepsquatches are creatures found in Appalachia. A cryptid stalking the Appalachian mountains, the Sheepsquatch myth was an obsession for a cryptid hunter named Calvin van Lowe, who devoted his life to hunting it down.",
     "main_image": "static/images/40b8b68acc686462b634e3f4ad33bc0d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1936,
@@ -14731,7 +15162,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Squirrels are creatures found in Appalachia. Squirrels have retained the general size and form of their pre-War counterparts. The main differences between pre-War and post-War squi…",
     "main_image": "static/images/d5cd0d5ed31fc7e74459ff335ef68acf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1938,
@@ -14794,7 +15226,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Strangler Hearts are plant creatures native to The Mire found in Fallout 76. After the explosion and core meltdown of Vault 94's G.E.C.K., a thick fog poured from the vault's entrance and down into the surrounding forest.",
     "main_image": "static/images/b1c4ab376fe78aa2b3b9143f685f50c1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1944,
@@ -14804,7 +15237,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Super Mutants are creatures found in Appalachia. The Appalachia Super Mutants were created shortly before the Great War, when the local West Tek facility contaminated the river wat…",
     "main_image": "static/images/31894b55c629e193f47618b9ab3e4e97.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1945,
@@ -14814,7 +15248,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Super Mutant Behemoths are creatures found in Appalachia. Behemoths are powerful Super Mutants that have grown to an enormous size. Behemoths are armed with a fire hydrant still mo…",
     "main_image": "static/images/02861677db8685c2e44969905bcc34bf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1946,
@@ -14844,7 +15279,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Thrashers are creatures found in Appalachia. Please help us improve the article! Image Name Appears…",
     "main_image": "static/images/739abdf6a7c467535f1d9aab2005bb4e.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1949,
@@ -14865,7 +15301,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Ticks are creatures found in Appalachia. Following the Great War, these ticks mutated from the Ixodes scapularis variant. Scout Leader Jaggy shares advice about ticks, in that…",
     "main_image": "static/images/a8acfa1e28af8a6c1c9e4281f9880576.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1951,
@@ -14875,7 +15312,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Toxic Thrashers are creatures found in Appalachia. Image Name Appears…",
     "main_image": "static/images/9bb60eeda4d5e696d600ab5ca6b549ef.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1952,
@@ -14885,7 +15323,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Trogs are creatures in Fallout 76, introduced in the Expeditions: The Pitt update. Trogs appear in Fallout 76, introduced in the Expeditions: The Pitt update.",
     "main_image": "static/images/b5bfaa05767f43243c24a539cb14ffc8.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1953,
@@ -14946,7 +15385,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Article name is descriptive in nature and based on current available information. The Visitor is a creature in Fallout 76, introduced in the Wastelanders update. The creature is fo…",
     "main_image": "static/images/6e223d745a26747d998bbddb53b78c63.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1964,
@@ -14956,7 +15396,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Vulture is a deceased creature in Fallout 76. The body of a large, mutated vulture can be found pinned to a large cliff face at Seneca Rocks. It was originally unused, but…",
     "main_image": "static/images/24581a9a7e3e2121e4d6afb4ff1d3d94.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1965,
@@ -14967,7 +15408,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "A Wanamingo is a creature in Fallout 76, introduced in the Skyline Valley update. A deceased creature is found in the Vault 63 Organics Sector. A Wanamingo Plushie appeared in game before the creature itself.",
     "main_image": "static/images/b96d6ad161f5cb60627045856f5228e1.png",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 1966,
@@ -14977,7 +15419,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Wendigos are creatures found in Appalachia in Fallout 76. Wendigos are mutated humanoids encountered in post-apocalyptic Appalachia.",
     "main_image": "static/images/4b47a7ba8a04b471c3259fcb0b929f2f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1967,
@@ -14987,7 +15430,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "A Wendigo Colossus is a creature found in Appalachia. They are large and powerful wendigo variants, encountered infrequently in Appalachian Blast Zones and inside Monongah Mine.",
     "main_image": "static/images/406965ee6e6e079ace0d4fc32e422a95.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1968,
@@ -14997,7 +15441,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Whales are creatures found in Appalachia. Creatures that are found in the Aquarium of the Atlantic. Several are found deceased, whereas others can be seen swimming in tanks. There was a Beluga Whale Exhibit featuring Mary and Marty.",
     "main_image": "static/images/35901e9b548727b9767641aedccc4e80.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1969,
@@ -15007,7 +15452,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Please help by uploading it. Wolves are creatures found in Appalachia. Wolves usually travel in packs and charge hastily at enemies to attack.",
     "main_image": "static/images/e6bafb25ddb40cc2f77bf959fec4ae3d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1970,
@@ -15017,7 +15463,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Yao Guai are creatures found in Appalachia. When Yao Guai are encountered, there are typically two or three in the area. Yao Guai can outrun a player character unless the player ch…",
     "main_image": "static/images/4658aa991df72beee6c19df7b90472bf.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1971,
@@ -15037,7 +15484,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Name Unlocks Obtained Form ID Plan: Apocalyptic Farmer Headwear Apocalyptic Farmer Headwear…",
     "main_image": "static/images/48f68e610653ab783c37f17ae19abb03.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1974,
@@ -15077,7 +15525,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Name Unlocks Obtained Value Type Form ID Plan: 10mm submachine gun drum magazine Drum Magazine…",
     "main_image": "static/images/32af294ab4ed23520866079648c5fbb5.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1978,
@@ -15097,7 +15546,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Name Unlocks Obtained Form ID Plan: Advertisement Posters Advertisement posters Containers Treasure Maps Quests Merchants World spawns 003C94F6 Plan: Alien Target Practice Poster A…",
     "main_image": "static/images/5afbd1b5a0072209e344be07a2471947.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1980,
@@ -15258,7 +15708,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Beer is a consumable item in Fallout 76. Beer in a generic brown bottle. Similar to other fermentable pre-War beverages, beer is initially crafted as fermentable beer, offering no benefits, inflicting 30 rads, and having a significantly…",
     "main_image": "static/images/bb54a3b7707e9fe140e3e44b3c781116.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1997,
@@ -15299,7 +15750,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Blackberry Juice is a drink in Fallout 76. A beverage crafted by mixing wild blackberries and Boiled Water over a wood fire.",
     "main_image": "static/images/a6da74d2b74bddd834ecec66a77567f1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2001,
@@ -15489,7 +15941,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Brahmin Milk is a consumable item in Fallout 76, introduced in the Wild Appalachia update. Gameplay A wooden bucket filled with milk collected from a Brahmin. It can be consu…",
     "main_image": "static/images/71f2cacb3eb57383ff1d38a361d3c848.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2020,
@@ -15539,7 +15992,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Bubblegum is a consumable item in Fallout 76. In addition to being found in the world, different flavors can be found in every perk card pack. It is a simple package of Big Pops branded bubblegum.",
     "main_image": "static/images/e1451077b8fc271d5229d7b7d6f84b62.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2025,
@@ -15549,7 +16003,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Cajun Rice & Beans is a consumable item in Fallout 76. A can of preserved cajun rice and beans. - Four can be found on shelves at the South Mountain Lookout. - Three can be found i…",
     "main_image": "static/images/7fb2daeb872bc98ac2159d689d947329.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2026,
@@ -16053,7 +16508,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Corpse seed juice is a drink in Fallout 76. Corpse seed juice is a drink made from corpse seeds that increases maximum AP by 10 and restores a small amount of HP and thirst at the cost of minor rads.",
     "main_image": "static/images/49e7e2754020dda481a7f55cda47b61a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2076,
@@ -16104,7 +16560,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Please capitalize the title of this article and then remove this template!",
     "main_image": "static/images/d82f442122da2e9fb44c40480a8fa5fb.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2081,
@@ -16184,7 +16641,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "“Apples so good, they never go bad.” Dandy Boy Apples is a consumable item in Fallout 76. Dandy Boy Apples were made by a pre-War company.",
     "main_image": "static/images/6a2bd74a1419a803d1bad34326969277.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2089,
@@ -16194,7 +16652,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Deathclaw Egg is a consumable in Fallout 76. An unhatched, intact egg from a Deathclaw. It can be eaten raw to satisfy a small amount of hunger with a high chance of disease and a…",
     "main_image": "static/images/d93370ee1d992b8293101439a5ae9da6.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2090,
@@ -16234,7 +16693,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Deathclaw Wellington is a consumable item in Fallout 76. A slab of Deathclaw Meat which has been wrapped in dough and baked in a tin.",
     "main_image": "static/images/abf9c29a883f206d678e4c9baf538bda.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2094,
@@ -16294,7 +16754,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Image Name Appears \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\…",
     "main_image": "static/images/cb079ca0735fffdd819582f59581170b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2101,
@@ -16304,7 +16765,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This page lists all food and drink items in Fallout 76. Many foods and drink items found in Appalachia are slightly irradiated and can give the player character radiation poisoning…",
     "main_image": "static/images/a6a915df56b71774bc8c3bb0d0010327.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2102,
@@ -16314,7 +16776,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "“Fancy Lads, the best in town, that Fancy Lad really gets around...”— Pirate Radio Fancy Lads Snack Cakes is a consumable item in Fallout 76. “Small, frosted cakes, so laden with s…",
     "main_image": "static/images/823e2fd1927f36303bf34c10a1985f2e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2103,
@@ -16364,7 +16827,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Firecracker berry juice is a drink in Fallout 76. Firecracker berry juice is a drink made from firecracker berries that increases critical damage by 10% and restores a small amount of HP and thirst, at the cost of minor rads.",
     "main_image": "static/images/49e7e2754020dda481a7f55cda47b61a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2108,
@@ -16404,7 +16868,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Flux refers to crafting components and consumables in Fallout 76. Flux is harvested from mutated flora that briefly emerge in a blast zone. Before the Great War, flux was resea…",
     "main_image": "static/images/68d699f537b03d642325f335c7557504.jpg",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2112,
@@ -16649,7 +17114,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Glowing Resin is a consumable item in Fallout 76. Glowing Resin is an amber-colored bioluminescent sap that is found on the sides of various trees. It can be consumed raw to satisf…",
     "main_image": "static/images/dd93ccfeef5e90cdb9167b22f9a15fa2.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2136,
@@ -16801,7 +17267,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Gum drops is a consumable item in Fallout 76. A gray and black box with \"radioactive gumdrops\" written on the wrapper. - Several can spawn at Tyler County Fairgrounds in the basket…",
     "main_image": "static/images/113582a2099809b2cdc5fd14e0689827.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2151,
@@ -16891,7 +17358,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "For honeycomb, see Honeycomb. “I'll never understand this ob…",
     "main_image": "static/images/90fb558d03901b835d8b1fe81f54fd7b.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2160,
@@ -16921,7 +17389,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "A Hotdog is a consumable item in Fallout 76. Hotdogs are a food item dating back to before the Great War, mentioned in company names such as Hillfolk Hotdogs.",
     "main_image": "static/images/61033cc3817850a5d9a2e5b613451f84.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2163,
@@ -17091,7 +17560,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Lunchboxes are consumables in Fallout 76, introduced in The Legendary Run update.",
     "main_image": "static/images/adf13375eef01443675058bfb9147de1.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2180,
@@ -17372,7 +17842,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Please capitalize the title of this article and then remove this template!",
     "main_image": "static/images/75672278fd1e1baa60ed2493c6c1bbe9.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2208,
@@ -17515,7 +17986,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "“Made with 100% Appalachian cranberries, its light, and refreshing taste transforms how you experience life!Leo Petrov” Nuka-Cola Cranberry was a Nuka-Cola variant produced before…",
     "main_image": "static/images/a5a378c140655c9e4eb95e6930cabcc4.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2222,
@@ -17525,7 +17997,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Nuka-Cola Dark is a consumable item in Fallout 76. Nuka-Cola Dark was the Nuka-Cola Corporation's attempt at entering the alcoholic beverage market and appealing to the adult demog…",
     "main_image": "static/images/929098a9259ad6d98ed68d2875391ce3.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2223,
@@ -17535,7 +18008,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "also known as Nuka-Cola Vaccinated or Nuka-Cola Scorched, is a consumable and miscellaneous quest item in Fallout 76, introduced in the Wastelanders upd…",
     "main_image": "static/images/0e5e7878fc7e1f5839daf59d38d11ef1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2224,
@@ -17555,7 +18029,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Nuka-Cola Quantum is a consumable in Fallout 76. The drink restores 200 Hit Points as well as 100 Action Points but confers 10 points of Radiation. - Kanawha Nuka-Cola Plant - One…",
     "main_image": "static/images/2f525ddf62264c3424692cb382863ba1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2226,
@@ -17576,7 +18051,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "also known as Nuka-Cola My Blood's In It or Nuka-Cola Vaccinated, is a consumable and miscellaneous quest item in Fallout 76, introduced in the Wastelanders upd…",
     "main_image": "static/images/e298f915b53bb16cd8e371a1f4cfe1b1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2228,
@@ -17586,7 +18062,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Image Name Appears \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\…",
     "main_image": "static/images/83c0c3eecadcafe2f432bbfc68df33d2.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2229,
@@ -17596,7 +18073,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "also known as Nuka-Cola Scorched or Nuka-Cola My Blood's In It, is a consumable and miscellaneous quest item in Fallout 76, introduced in the Wastelanders upd…",
     "main_image": "static/images/63efa50eca02f5b9cbdb7c5a65635916.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2230,
@@ -17616,7 +18094,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Nuka-Grape is a variant of Nuka-Cola and a soft drink in Fallout 76. Nuka-Grape was originally Grape-Pearl Soda, a patent belonging to Joannie Cheng before its acquisition by the Nuka-Cola Corporation.",
     "main_image": "static/images/901d2ef4f0e294eea4cdfbac5f1be8a3.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2232,
@@ -17626,7 +18105,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Nukashine is a consumable item in Fallout 76, introduced in the Wild Appalachia update. Nukashine was created by Lewis of the Eta Psi fraternity at Vault-Tec University in November 2076.",
     "main_image": "static/images/8bec8425f4e14a5afe26f6703f5835d5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2233,
@@ -17706,7 +18186,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Pepper is a consumable item in Fallout 76. A shaker of pepper seasoning. It is used to make things taste better. - Six in Helvetia. - Four at the Freyja's Haus restaurant. - One at…",
     "main_image": "static/images/8e16d33aef33583c8795fb89a0269d53.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2241,
@@ -17746,7 +18227,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Perfectly Preserved Pie is a consumable item in Fallout 76. The pie's most significant difference from many other foodstuffs found throughout Appalachia is its preservative-filled…",
     "main_image": "static/images/aebef880dcea4f5c4555897b99e56645.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2245,
@@ -17756,7 +18238,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Phantom Device is a consumable item in Fallout 76. The Phantom Device is an item used by the fictional hero Mistress of Mystery, and part of her Regalia of Mystery.",
     "main_image": "static/images/003b04018b761df66b7a481c3eb27ca5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2246,
@@ -17806,7 +18289,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Pork n' Beans is a consumable item featured in Fallout 76. The label is red, white, and blue horizontally striped with the faded but still legible words 'Pork N' Beans' on the front.",
     "main_image": "static/images/5c1776869cfd08765b7bcd3aa479906d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2251,
@@ -17877,7 +18361,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Purified Water is a consumable in Fallout 76. Purified Water is kept in a cylinder-shaped container bearing the words \"Property U.S. Gov't\" near the top, and \"Emergency Drinking Wa…",
     "main_image": "static/images/09a3b6b1ddbf9ff0cb9cb547afe70166.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2258,
@@ -18179,7 +18664,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Roasted Ant is a consumable in Fallout 76. Chunks of Ant Meat that have been cooked. They give a 30 minute boost to Carry Weight while restoring a small amount of HP and hunger at the cost of a negligible dose of rads.",
     "main_image": "static/images/ed33819feded1011b31e6e416fc35353.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2288,
@@ -18189,7 +18675,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "For overview of Roasted mirelurk meat in the Fallout franchi…",
     "main_image": "static/images/f152197dd859f411151e985b7a3f4f4c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2289,
@@ -18220,7 +18707,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Royal Jelly is a consumable item in Fallout 76. An empty Buffout bottle that has been filled with a yellow, non-spoilable substance resembling honey.",
     "main_image": "static/images/3073ed12064cc57dbf9396aa3540f023.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2292,
@@ -18291,7 +18779,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Salisbury Steak is a consumable item in Fallout 76. Saddle Up Salisbury Steaks are found in big, subdued red boxes that heal 25 Hit Points upon consumption, and add 2 rads.",
     "main_image": "static/images/e7890f61ca295e7291d5bd1ea999f2df.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2299,
@@ -18301,7 +18790,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Salt is a consumable item in Fallout 76. A small salt shaker. It is used in various cooking recipes and can be consumed by itself. - Seven at The Whitespring Golf Club. - Five in H…",
     "main_image": "static/images/375680b0f6ac79925246bcb684c0f173.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2301,
@@ -18461,7 +18951,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The simple gut shroom tea is a drink introduced the Fallout 76 update Wild Appalachia. Gut shrooms which have been steeped in boiling water to make a tea. Consuming it increases Perception by 1 and heals for 10 Hit Points.",
     "main_image": "static/images/7da9a43f12314bec4e0a924bb57edb9c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2317,
@@ -18561,7 +19052,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Spices are consumable items in Fallout 76. A container of spices. It can be u…",
     "main_image": "static/images/777dc259e11df2447149d254875a7b24.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2327,
@@ -18795,7 +19287,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Sugar is a consumable in Fallout 76. A large container of sugar. It can be ea…",
     "main_image": "static/images/cb61e789ea44ef365f2d23923ae1872f.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2350,
@@ -18805,7 +19298,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Sugar Bombs is a consumable item in Fallout 76. A pack of sugary cereal that holds 100% of the recommended daily amount of sugar, Sugar Bombs have been preserved for 25 years after the Great War.",
     "main_image": "static/images/b354b6695a63137460b6f42f26933315.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2351,
@@ -18815,7 +19309,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Sugar-Free Nukashine is a consumable item in Fallout 76. A sugar-free version of Nukashine, with the lack of sugar allowing the beverage to be consumed without any risk of blackouts.",
     "main_image": "static/images/8bec8425f4e14a5afe26f6703f5835d5.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2352,
@@ -18905,7 +19400,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Tarberry Juice is a drink in Fallout 76. A drink made from tarberry that restores a small amount of HP and thirst and a moderate amount of maximum AP with a small amount of rads.",
     "main_image": "static/images/a6da74d2b74bddd834ecec66a77567f1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2361,
@@ -18965,7 +19461,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Tato juice is a drink in Fallout 76. Tato juice is a drink made from a Tato that increases maximum AP by 10, restores a small amount of HP and thirst, at the cost of minor rads.",
     "main_image": "static/images/05a063b52c8cd1c8b02fe9fbb46e97a3.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2367,
@@ -19137,7 +19634,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Whiskey is a consumable item in Fallout 76. “A triple-distilled alcoholic beverage made using grain mash. Pre-War versions were created across the United States and beyond.",
     "main_image": "static/images/ebb192ec94e62065dd9fa79f2e08f14e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2384,
@@ -19218,7 +19716,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "For overview of YumYum Deviled Eggs, see YumYum Deviled Eggs…",
     "main_image": "static/images/0c28d114300fe78ef1dd9a1a45c8dd31.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2393,
@@ -19388,7 +19887,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Events are shared quests that spawn around the world and are only available to be completed for a limited amount of time before they despawn and go back on cooldown. Every 20 minut…",
     "main_image": "static/images/f4be12e05829ea504f226264fe17fd44.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2465,
@@ -19398,7 +19898,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Legend Icon Name Description Level The minimum level which the player character must be in order to e…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2574,
@@ -19488,7 +19989,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "! is a Luck-based perk in Fallout 76. A chance to increase amount of packaged food found based on Luck. The chance is also based on Luck. Luck Trigger Chance 1 ≤ LCK < 15 20%…",
     "main_image": "static/images/b92f7b3a96c42112d2e2cf498696bb0c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2584,
@@ -19508,7 +20010,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“You've tapped the Wasteland's hidden wealth.”— Perk card description Cap Collector is a Luck-based perk in Fallout 76. A chance to increase amount of caps found based on Luck. The…",
     "main_image": "static/images/5a034a08a62b66b3dd3fdb846b02c007.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2586,
@@ -19628,7 +20131,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "formerly Science Master, is an Intelligence-based perk in Fallout 76, renamed and redesigned in the Gone Fission update. Increases Cryo damage based on current Intellig…",
     "main_image": "static/images/fc990bca8fc9d7e0348b7461dded96f1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2598,
@@ -19748,7 +20252,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Evasive is an Agility-based perk in Fallout 76. Increases Evade chance based on Agility. Does not work when overencumbered or in power armor. Stacks additively with other evade cha…",
     "main_image": "static/images/9d5c7ac1cf6fa101d9d69151530f387e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2610,
@@ -19788,7 +20293,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Is there a doctor in the house?” First Aid is an Intelligence-based perk in Fallout 76. Stimpaks restore more HP based on current Intelligence.",
     "main_image": "static/images/bd2d7daeaea439e335f88e164a1ab690.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2614,
@@ -19818,7 +20324,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Four Leaf Clover is a Luck-based perk in Fallout 76. V.A.T.S. misses contribute to the critical meter based on Luck.",
     "main_image": "static/images/fe5cd0e0f5c0b765dd19a2916ff600c7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2617,
@@ -20169,7 +20676,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Is tonight's dinner Rotting Roadkill Goulash Surprise? No problem!” Iron Stomach is an Endurance-based perk in Fallout 76. It is exclusive to human players and cannot be equipped…",
     "main_image": "static/images/4f080bc8757f1e12315065ed44d30351.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2652,
@@ -20189,7 +20697,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Who needs armor when you've got so much junk?” Junk Shield is a Luck-based perk in Fallout 76. Increases Damage Resistance and Energy Resistance based on Luck and amount of junk h…",
     "main_image": "static/images/5d5c6202938abfed8fa0ac62023af32d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2654,
@@ -20219,7 +20728,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Your digestive tract has adjusted to the weirdness of the Wasteland!” Lead Belly is an Endurance-based perk in Fallout 76. It is exclusive to human players and cannot be equipped…",
     "main_image": "static/images/d42d6dbab0f6369ec78ba312201afc98.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2657,
@@ -20429,7 +20939,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“You're healthy as a horse! Or deathclaw.” Natural Resistance is an Endurance-based perk in Fallout 76. It is exclusive to human players and cannot be equipped by ghoul players. Gr…",
     "main_image": "static/images/a210f292e4b5234d1dfaeb057e2385a7.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2679,
@@ -20600,7 +21111,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Chems don't grow on trees. Or do they?” Pharma Farma is a Luck-based perk in Fallout 76. A chance to increase amount of chems found based on Luck. The chance is also based on Luck…",
     "main_image": "static/images/8742ef90076569c70f506f32812a9b2c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2696,
@@ -20610,7 +21122,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Take 2 of these and never call me again.” Pharmacist is an Intelligence-based perk in Fallout 76. It is exclusive to human players and cannot be equipped by ghoul players. Increas…",
     "main_image": "static/images/a3dcfcb22f4ec975b1465f1c996da1e1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2697,
@@ -20731,7 +21244,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "formerly Science Expert, is an Intelligence-based perk in Fallout 76, renamed and redesigned in the Gone Fission update. Increases Fire damage based on current Int…",
     "main_image": "static/images/e76e82fe4daf1f1d9d73c606b196449a.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2710,
@@ -20761,7 +21275,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Exposure to the Wasteland has made you more resilient.” Rad Resistant is an Endurance-based perk in Fallout 76. It…",
     "main_image": "static/images/21b80bd7f74fd295a90275805eec2d25.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2713,
@@ -20812,7 +21327,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Ricochet is a Luck-based perk in Fallout 76. Increases Deflect chance based on Luck. Stacks additively with other deflect chance bonuses.",
     "main_image": "static/images/3e94309d2d2a3746c14c2f384615e116.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2718,
@@ -20842,7 +21358,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "! is an Intelligence-based perk in Fallout 76, renamed and redesigned in the Gone Fission update. Increases Energy damage based on current Intelligence.",
     "main_image": "static/images/3aa543c332cd5d63288fcd8c3b9c3de1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2721,
@@ -20872,7 +21389,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“Keep the fight going!” Scrounger is a Luck-based perk in Fallout 76. A chance to increase amount of ballistic and energy ammo found based on Luck. The chance is also based on Luck…",
     "main_image": "static/images/89c59bf8b5f7bfaf4cbd2a5e78a0dc3d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2724,
@@ -20892,7 +21410,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Serendipity is a Luck-based perk in Fallout 76. Increases Evade chance based on Luck while under 30% HP. Does not work when overencumbered or in power armor. Stacks additively with…",
     "main_image": "static/images/fa15ca0ca7dc1a588a300ebf8e0cea25.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2726,
@@ -21063,7 +21582,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "“What are you, part pack mule?” Strong Back is a Strength-based perk in Fallout 76. Increased Carry capacity based o…",
     "main_image": "static/images/0568755f586436064c6b7944aca06fc1.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2743,
@@ -21143,7 +21663,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thirst Quencher is an Endurance-based perk in Fallout 76. It is exclusive to human players and cannot be equipped by ghoul players. Increases maximum Action Points while not diseas…",
     "main_image": "static/images/9a1f9d05be640f957e17d649915d8e61.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2751,
@@ -21243,7 +21764,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Infobox incomplete The infobox template in You can help N…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2762,
@@ -21353,7 +21875,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Quest stages --- Stage Status Description Log Entry? Listen to Abbie I discovered an old bunker in the Mire. When I entered, a voice recording came over an intercom system. I shou…",
     "main_image": "static/images/d62b24c8c39c8740f97cfd01f6c2de4c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2775,
@@ -21373,7 +21896,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Infobox incomplete The infobox template in You can help N…",
     "main_image": "static/images/344bb21c8421000692a10f40affdaa62.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2777,
@@ -21383,7 +21907,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Quest stages --- Stage Status Description Log Entry? Track down the Overseer A robot named Pennington was waiting outside of Vault 76 -- it might know where the Overseer went, or…",
     "main_image": "static/images/54e4ef30b6744259240dd0aa08892a7e.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2778,
@@ -21513,7 +22038,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reclamation Day is a main quest in Fallout 76. Its associated achievement/trophy is Reclamation Day!. It is Reclamation Day for Vault 76 on October 23, 2102, and most of the Vault'…",
     "main_image": "static/images/3d3a5813ffe4564f27b2acad6337e25c.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2793,
@@ -21533,7 +22059,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Quest stages --- Stage Status Description Log Entry? Find Delbert Winters in Flatwoods I need to complete one last task for their automated system to grant me access to the Respon…",
     "main_image": "static/images/46cf1fcbdfd5a2199e6977f6c20e4dfa.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2797,
@@ -21573,7 +22100,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Quest stages --- Stage Status Description Log Entry? Locate Kesha McDermott If I become a volunteer for the Responders, I should be able to get access to their systems. Their trai…",
     "main_image": "static/images/f10038bf147c7754b2888a90dc20dd20.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2802,
@@ -21603,7 +22131,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The following information includes Fallout 76 world maps and external resources including…",
     "main_image": "static/images/928d2c6d59a052fef28a7f0a51edb829.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 2848,
@@ -21673,7 +22202,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "The treetop lookout is an unmarked location in the Skyline Valley region of Appalachia. Background…",
     "main_image": "static/images/5aa4dbdb583d19c7f4ff12ade6abb6ab.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3096,
@@ -21733,7 +22263,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Cleanup (Issue: Gallery, needs FO4 information) To meet Nukapedia 's quality standards…",
     "main_image": "static/images/4f9eb75b1cea6f663da3b76319bbf2ba.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3155,
@@ -21813,7 +22344,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Name Containers Random Encounters Enemies Seasonal content Treasure maps Quests Vendors World Spawns Weight Value Form ID Plan: T-60 rusty knuckles…",
     "main_image": "static/images/e013811fec9b3351312d9d69fd7e2b76.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3203,
@@ -21823,7 +22355,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Name Containers Random Encounters Enemies Seasonal content Treasure maps Quests Vendors World Spawns Weight Value Form ID Plan: Assault rifle fierce receiver…",
     "main_image": "static/images/e013811fec9b3351312d9d69fd7e2b76.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3204,
@@ -21843,7 +22376,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "This article lists all workshop object plans in Fallout 76. Plans are found throughout Appalachia, both in containers and out in the open. Some plans can be purchased from vendors…",
     "main_image": "static/images/47201c215f832093584e8e4d19e78798.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3255,
@@ -21873,7 +22407,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Detoxing salve is a medical consumable that was cut from Fallout 76. A salve that would have removed 75 rads. As no plans are obtainable, the salve is not craftable. Materials…",
     "main_image": "static/images/c5048cc7634a6b99f3d2cc1b2d8d75d0.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3306,
@@ -21933,7 +22468,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Activities are a sub-set of quests in Fallout 76; with The Backwoods update in 2026, smaller events were renamed to activities, while public events maintained their pre-existing te…",
     "main_image": null,
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3478,
@@ -21943,7 +22479,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Public events are a subset of quests in Fallout 76; with The Backwoods update in 2026, smaller events were renamed to activities, while public events maintained their pre-existing…",
     "main_image": "static/images/d54c0e73b310f82c1f2989b090d24f0d.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3506,
@@ -21953,7 +22490,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Atom Shop Every week on Tuesday and ofte…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3507,
@@ -21963,7 +22501,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "In Fallout 76 it is important to use the appropriate perk cards. This allows the full potential of weapons and armor to be used. You can also optimize your carrying capacity, get more XP, and much more.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3508,
@@ -21973,7 +22512,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Hier findet ihr Datamining Artikel. Die meisten Datamining Artikel bestehen aus Daten, die auf dem jeweils aktuellen PTS (Public Test Server) aus den öffentlich verfügbaren Spiele-Daten extrahiert wurden.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3509,
@@ -21983,7 +22523,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "You can find all the news about Fallout 76, but also Fallout in general or the popular Fallout series on Amazon Prime in this category. All articles in this category are based on official sources and are therefore official news.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3510,
@@ -21993,7 +22534,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "In this Fallout 76 article category you will find all articles with insider information about current and upcoming events, seasons, mini seasons or other content.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3511,
@@ -22003,7 +22545,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "In Fallout 76 it is often helpful to have a map to help you. Be it just to find an area or a location, or certain items. In this category you will find spawn cards of items and enemies in Fallout 76.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3512,
@@ -22013,7 +22556,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "In this category you will find articles and news about the Nuka Knights project. Here you can find out more about new functions of the website/app or the Discord Bot.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3513,
@@ -22023,7 +22567,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Bei jedem Live Update für Fallout 76 veröffentlicht Bethesda Patchnotes. Darin könnt ihr die offiziell aufgelisteten Änderungen nachlesen. Diese Patchnotes gibt es sowohl für große Content-Patches als auch für die meisten kleinen Hotfixes.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3514,
@@ -22033,7 +22578,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "PTS The Fallout 76 PTS (Public Test Server) is Beth…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3515,
@@ -22043,7 +22589,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "A Fallout 76 season usually lasts about 3 months. During this time, you can complete in-game challenges, receive tickets for them, and redeem rewards for these tickets.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3516,
@@ -22053,7 +22600,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "There are a lot of details in Fallout 76 that even experienced players keep looking up. It's just a lot. In this category you will find articles with tips on all possible details.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3517,
@@ -22063,7 +22611,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Starting August 11, some of your favorite bundles are available in the shop at a discount for a limited time!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3518,
@@ -22073,7 +22622,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Carnival & Bratsnacht - New glowing masks 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3519,
@@ -22083,7 +22633,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Super mutant spawns: All locations including a map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3520,
@@ -22093,7 +22644,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Grubenhauer Spawns: All locations including a map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3521,
@@ -22103,7 +22655,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Cultist spawns: All locations including map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3522,
@@ -22113,7 +22666,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Cranberries, Brain Mushroom & Bottle Gourd Places for cranberry sauce and brain bombs…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3523,
@@ -22123,7 +22677,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Teapot: Teapot locations for the challenges…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3524,
@@ -22133,7 +22688,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Pleasant Valley Collection Tickets: Best Pre-War Money Method…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3525,
@@ -22143,7 +22699,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Check out the featured bundles and weekly sales for the month of August! From August 4 – September 8, claim your free GNN News Van (Survival Tent) in the Atomic Shop. Available for Fallout 1st members only.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3526,
@@ -22153,7 +22710,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Datamining Saison 26 \"Hüte dich vor dem Blutmond\"",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3527,
@@ -22174,7 +22732,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Fallout 76: Infestation balance adjustment…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3529,
@@ -22184,7 +22743,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Ab dem 28. Juli ist das Teeparty-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome Teeparty-Paket 1.600 Partylöwe-Paket 1.900 Schleim-fürs-Heim-Paket 1.000 Teezauberer 700 Gedeck 500 Gasmaske (Offizier) 250 Moderne Wanduhr 250…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3530,
@@ -22194,7 +22754,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Mini Season: Summer Sock Hop (July 2026)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3531,
@@ -22204,7 +22765,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Mehr Community, Neue Features & Optimierungen im Juli 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3532,
@@ -22245,7 +22807,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Ab dem 21. Juli ist das Revierkrieg-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome Revierkrieg-Paket 1.400 Gartenparty-Paket 2.000 Schürfwunden-Paket 1.800 Geländefahrzeug 500 Automatik-Axt-Lackierung (Unkrautvernichtung) 500…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3536,
@@ -22255,7 +22818,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Wir veröffentlichen heute einen Patch zur Verbesserung eurer Erfahrung in Appalachia.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3537,
@@ -22265,7 +22829,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Modular Display Cubes (3x) Modular Display Cubes (3x) Modular Display Cubes (3x) Lab Experiment Note Board Lab Experiment Note Board Lab Experiment Note Board Slocum's Joe Donut Fryer Cooking Station BoS Advanced Power Armor Station…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3538,
@@ -22286,7 +22851,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Offizielle News: Fallout 76 Raven Rock, Fallout 3 & New Vegas Remaster bestätigt…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3540,
@@ -22296,7 +22862,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Ab dem 14. Juli gibt es im Shop nur für kurze Zeit einige eurer Lieblingspakete! Gegenstand Atome Nichts-als-Scherereien-Paket (Fallout 1st) 600 (-50 %) Flieger-Paket (Fallout 1st) 600 (-50 %) Höhlenjäger-Outfit-Paket (Fallout 1st) 600…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3541,
@@ -22337,7 +22904,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Blood Eagles are one of the most famous and feared raider factions in Fallout 76. Their origins go back to the time shortly after the Great War, when numerous survivors in Appalachia banded together to form various raider gangs.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3545,
@@ -22347,7 +22915,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Yao Guai Spawns: All locations including map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3546,
@@ -22357,7 +22926,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Squirrels are very popular among players with the \"Carnivore\" mutation for additional XP bonuses from Squirrel Stew. Squirrels are rarely found outside of events. The spawns in all of Appalachia can be counted on two hands.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3547,
@@ -22378,7 +22948,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Bangingberries - All locations including map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3549,
@@ -22388,7 +22959,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Snallygasters are cryptids and are probably one of the most famous FEV experiments that were bred and escaped from the West Tek Research Center.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3550,
@@ -22398,7 +22970,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Ab dem 30. Juni ist das Finsterer-Fang-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome Finsterer-Fang-Paket 1.800 Nichts-als-Knochen-Paket 1.800 Slocum's-Fat-Stack-Paket 1.800 Hausboot 800 Angelruten-Lackierung (Fuzzy-Schleuder)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3551,
@@ -22408,7 +22981,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "25% discount in the Nuka Knights Merchandising Shop until July 1st, 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3552,
@@ -22429,7 +23003,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "[Update 04/28/2026] New Rewards The Spooky Burnt Man seasonal event debuted on Halloween in 2021.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3554,
@@ -22449,7 +23024,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Ab dem 23. Juni gibt es im Shop nur für kurze Zeit einige eurer Lieblingspakete! Gegenstand Atome Freie-Staaten-Fraktionspaket (Bahnbrecher) 1.400 (-50 %) Gewerkschafts-Paket 650 (-50 %) Kommunisten-Bunker-C.A.M.P.-Paket 500 (-50 %)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3556,
@@ -22459,7 +23035,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Saisonaler Fisch, neue lokale Legende, neue Rezepte & Challenges (Patch 68)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3557,
@@ -22469,7 +23046,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fleischwoche: Grahm's Fleisch Happa Happa Event 2026 (Alle Belohnungen)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3558,
@@ -22479,7 +23057,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "P.R.O.T.E.C.T Protocol: Challenge Rewards…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3559,
@@ -22489,7 +23068,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Hinweis: Die P.R.O.T.E.C.T Protocol: Challenge Belohnungen sind nun noch einmal bis zum 23.06. kostenlos im Atom Shop zu erhältlich",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3560,
@@ -22499,7 +23079,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "From June 16th, the “Victory - this is what victory tastes like” package will be available in the shop for a short time!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3561,
@@ -22509,7 +23090,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "The GNN News Van is perfect for setting up where news is breaking, like on the outskirts of a nuclear blast! The Survival Tent can be placed through the Favorites Menu. This offer…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3562,
@@ -22519,7 +23101,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Infestations / Infestations / Infestations: New 4 Star Mods & Spawn Map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3563,
@@ -22539,7 +23122,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "(Community Name: NCR Bundle) [Xbox Offer]…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3565,
@@ -22549,7 +23133,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Ab dem 9. Juni ist das „Alles klar, mein Star?“-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3566,
@@ -22570,7 +23155,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Fallout 1st-Mitglieder können sich vom 2. Juni bis 7. Juli gratis ihr eigenes exklusives Ausgestopftes Megafaultier (stehend) sichern. Mehr darüber, wie ihr Fallout 1st-Mitglied werden könnt, erfahrt ihr hier.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3568,
@@ -22580,7 +23166,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "In addition to the free \"Infestations\" update for Fallout 76, the Deathclaw as a CAMP pet is now not available in the Atom Shop, but in a separate package. This bundle contains all possible Deathclaw gear and CAMP items.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3569,
@@ -22590,7 +23177,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 - Patch notes \"Infestations\" June 2, 2026 (Patch 68)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3570,
@@ -22600,7 +23188,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Expected changes for \"Infestations\" update (patch 68) on June 2nd, 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3571,
@@ -22621,7 +23210,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Free mask & outfit in Pringles Promotion 2026 (also DE/AT/CH)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3573,
@@ -22631,7 +23221,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Ab dem 26. Mai gibt es im Shop nur für kurze Zeit einige eurer Lieblingspakete! Gegenstand Atome Enklaven-Apokalypse-Paket (Fallout 1st) 2.000 Orbitalschlag-Paket (Fallout 1st) 1.500 Enklaven-Bunkerlabor-Paket (Fallout 1st) 900…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3574,
@@ -22662,7 +23253,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Starting May 19th, the Willow Mothman Pack will be available in the shop for a limited time!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3577,
@@ -22672,7 +23264,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Der neue PTS ist gestern Abend (10.04.2026) live gegangen und kommt mit diversen Änderungen. Hier sind die Patchnotes: Made some balancing changes to Infestations mobs and bosses. Quick respawn is now active when joining an Infestation.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3578,
@@ -22682,7 +23275,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Current treasure hunter dates: Starting in 43 days 7 hours Tip: Like this event to receive a notification when it starts or someone comments.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3579,
@@ -22692,7 +23286,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "\"Hunt for the Treasure Hunter\" / \"High Priests\" (Mothman Equinox) spawn map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3580,
@@ -22713,7 +23308,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Event \"Das große Blühen\": Alle Belohnungen Datamining 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3582,
@@ -22724,7 +23320,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 12. Mai ist das Abenteurer-Konservierungs-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3583,
@@ -22746,7 +23343,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Catching Axolotls: All regions & months (including map)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3585,
@@ -22756,7 +23354,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "This PTS data mining from the PTS version of May 1st, 2026 contains Atom Shop items that are expected to be released from patch 68 with season 25. Changes are possible at any time.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3586,
@@ -22766,7 +23365,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Update 06.05.2026] Belohnungen Vorschaubilder aktualisiert Das Update für Saison 25 im Update \"Befälle\" / Patch 68 wurde für den 02.06.2026 angekündigt. Siehe auch: Event Kalender.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3587,
@@ -22777,7 +23377,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fallout 1st-Mitglieder können sich vom 5. Mai bis 2. Juni im Atomic Shop gratis eine Betonstahl-Spulen-Ruten-Lackierung sichern. Mehr darüber, wie ihr Fallout 1st-Mitglied werden könnt, erfahrt ihr hier.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3588,
@@ -22787,7 +23388,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: Archer Katniss Everdeen 3.0…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3589,
@@ -22809,7 +23411,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Map for the \"Scary Burnt\" and \"Holiday Burnt\" events…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3591,
@@ -22820,7 +23423,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 28. April ist das Sperrgebiet-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome Sperrgebiet-Paket 2.000 Erbeutetes-UFO-Paket 1.500 Geheimlabor-Paket 900 Sperrgebiet-Unterkunft 1.500 Gatling-Plasma-Lackierung (Flatwoods) 500…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3592,
@@ -22830,7 +23434,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Datamining: PTS Patch 68 Atom Shop Items (04/24/2026)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3593,
@@ -22852,7 +23457,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Milestone Zero plans in Highway Town (Windy, Dom Pedro, V63 Laser Karabiner and others)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3595,
@@ -22862,7 +23468,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Dom Pedro: This is how you get the Ghoul Revolver (All Mods)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3596,
@@ -22872,7 +23479,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Update 22.04.2026] In-Game Screenshots hinzugefügt [Update 14.04.2026] Waffen Beispiele für die Challenges aufgelistet Wieder steht eine neue Mini Saison bevor. Bereits im Community Kalender wurde die Rip Daring Mini Saison angekündigt.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3597,
@@ -22883,7 +23491,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting April 21st, the Rust on Water Pack will be available in the shop for a limited time!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3598,
@@ -22893,7 +23502,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Underarmor Styles: New SPECIAL points system…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3599,
@@ -22903,7 +23513,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Eine deutsche Übersetzung der Patchnotes liegt aktuell nicht vor. Today we are releasing an update that brings more improvements to your Appalachia experience.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3600,
@@ -22913,7 +23524,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Play Style: Ghoul | V.A.T.S. | Critical Hits | crippling | High DPS | No sneak This build is a bounty hunter ghoul that doesn't hide. He doesn't rely on a stealth bonus, but rather on adrenaline and a quick finger on the trigger.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3601,
@@ -22924,7 +23536,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 14. April gibt es im Shop nur für kurze Zeit einige eurer Lieblingspakete im Angebot!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3602,
@@ -22934,7 +23547,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "PTS Datamining: Atom Shop Items Patch 67/68 (04/10/2026)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3603,
@@ -22956,7 +23570,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Anglers are a possible mutation of angler fish and frogs, sharing the \"lure\", in the form of a glowing fishing rod on the head, and the upturned jaw of the former and the limbs, proportions and habitat of the latter.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3605,
@@ -22966,7 +23581,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fishing: Guide & data mining of all fish & axolotls…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3606,
@@ -22976,7 +23592,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: Ghoul Commando with Charge (and Pistols)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3607,
@@ -22986,7 +23603,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: Heavy Weapons with Bullet Storm, VATS, Critical Hits, Cripple…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3608,
@@ -22997,7 +23615,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fallout 1st-Mitglieder können sich vom 7. April bis 5. Mai im Atomic Shop gratis eine Jolle sichern. Mehr darüber, wie ihr Fallout 1st-Mitglied werden könnt, erfahrt ihr hier.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3609,
@@ -23007,7 +23626,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: Small firearms with critical strikes, stealth and cripple!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3610,
@@ -23017,7 +23637,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Wendigo: All spawn locations for Wendigos including a map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3611,
@@ -23027,7 +23648,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The challenges in Fallout 76 often require you to find and kill an Aggressotron. There are various locations, instances and events where you can find Agressotrons. (friendly if quest \"Mayor for a Day\" is completed) Click on the map to zoom.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3612,
@@ -23049,7 +23671,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Insects: All 100% chance spawn locations including map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3614,
@@ -23059,7 +23682,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Terminals Level 0, Level 1, Level 2, Level 3: List and map with locations…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3615,
@@ -23069,7 +23693,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Raid \"Strahlende Tiefen\": Guide & Belohnungen (Gleaming Depths)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3616,
@@ -23079,7 +23704,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Wasteland Jamboree in Sutton / Flatwoods (West Viriginia) on May 2nd/3rd, 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3617,
@@ -23089,7 +23715,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "[April April] First DLSS5 screenshots of Fallout 76 surfaced…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3618,
@@ -23100,7 +23727,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 31. März ist das RNK-Soldaten-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome RNK-Soldaten-Paket 1.200 Westküstensommer-Paket 1.800 Pfadfinderführer-Camper-Paket 1.500 Ferienlager-Unterkunft 1.500 Powerrüstungs-Lackierung…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3619,
@@ -23122,7 +23750,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "New armor: Rage, Bulwark, Wayward, Wild Accident and more…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3621,
@@ -23132,7 +23761,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Jon Rush über Patch 76: \"Eure Köpfe werden explodieren\"",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3622,
@@ -23143,7 +23773,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Im Atomic Shop gibt es ab 24. März nur für kurze Zeit einige eurer Lieblingspakete im Angebot!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3623,
@@ -23153,7 +23784,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "New mining token rewards (Event: Danger of Collapse)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3624,
@@ -23174,7 +23806,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Sugar bombs are a pack of sweet cereals that claim to provide 100% of the daily recommended sugar requirement. Sugar bombs were preserved so that they could still be consumed 25 years after the Great War.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3626,
@@ -23185,7 +23818,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 17. März ist das Ödland-Diner-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome Ödland-Diner-Paket 1.500 Diner-Unternehmer-Paket 1.400 Ödland-Diner 700 Nachtstunden-Straßenlaterne 300 Diner-Schild 300 Diner-Buchstaben-Set…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3627,
@@ -23195,7 +23829,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 Patch Notes March 17, 2026 Hotfix Update…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3628,
@@ -23205,7 +23840,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Respawn of items & enemies / loot lists / burned books / book…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3629,
@@ -23227,7 +23863,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Raid EN06 Guardian Solo: 10 Sec Pro Guide…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3631,
@@ -23237,7 +23874,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Raid EN06 Guardian Solo: New Beginner Guide 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3632,
@@ -23247,7 +23885,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Attackers from Space Event: Rewards 2026 including carnival masks…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3633,
@@ -23258,7 +23897,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 10. März ist das Verlassenes-Anwesen-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3634,
@@ -23281,7 +23921,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "[Update 03/06/2026] 4 star mods updated With the “The Hinterland” update on March 3rd, 2026, a new cryptid is coming into the game: Bigfoot!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3636,
@@ -23291,7 +23932,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "CAMP Title: New reward in events, in season and Atom Shop…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3637,
@@ -23302,7 +23944,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fallout 1st-Mitglieder können sich vom 3. März bis 7. April im Atomic Shop gratis das Tiefe-Verbeugung-Emote sichern. Mehr darüber, wie ihr Fallout 1st-Mitglied werden könnt, erfahrt ihr hier.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3638,
@@ -23312,7 +23955,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fallout 76 Patch Notes “The Hinterland” March 3, 2026 (Patch 66)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3639,
@@ -23322,7 +23966,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Expected changes for “The Hinterland” update on March 3rd, 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3640,
@@ -23332,7 +23977,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Datamining: Saison 24 \"Kryptiden aus dem Weltall\"",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3641,
@@ -23365,7 +24011,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Im Atomic Shop gibt es ab 24. Februar nur für kurze Zeit einige eurer Lieblingspakete im Angebot!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3644,
@@ -23388,7 +24035,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 17. Februar ist das Powerrüstungs-Lackierungs-Set „Lady Liberty Prime“für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3646,
@@ -23421,7 +24069,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting February 10th, the Hometown Heroes Pack will be available in the shop for a limited time!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3649,
@@ -23431,7 +24080,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 Patch Notes (Patch 65 Bug Fix) February 9, 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3650,
@@ -23441,7 +24091,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "A new mini season is just around the corner. This time it was already announced in the community calendar. The Mini Season's motto is \"Love hurts\" and of course the period is placed around Valentine's Day.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3651,
@@ -23453,7 +24104,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
     "archived": true,
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 3652,
@@ -23463,7 +24115,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Bethesda: \"Kommendes Update Ankündigung\"",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3653,
@@ -23485,7 +24138,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "In the Mini Season \"Love Hurts\" one of the challenges is to collect chlorine bags. There may be challenges in the future that require this.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3655,
@@ -23496,7 +24150,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fallout 1st-Mitglieder können sich vom 3. Februar bis 3. März im Atomic Shop gratis die Vault-Tec-Hilfskiste (Kleiner Helfer) sichern. Mehr darüber, wie ihr Fallout 1st-Mitglied werden könnt, erfahrt ihr hier. Ab dem 3.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3656,
@@ -23506,7 +24161,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fishing Bobber Display (12 Bobbers) Fishing Bobber Display (12 Bobbers) Fishing Bobber Display (12 Bobbers) Fish Tank Display Case (2 small or medium fish) Fish Tank Display Case (2 small or medium fish) Fish Tank Display Case (2 small or…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3657,
@@ -23516,7 +24172,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Developer Note: While we originally had intended to disable Hordes with this patch, they will still activate at times when this update releases.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3658,
@@ -23538,7 +24195,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Falls ihr schon immer mal bei Fallout 76 reinschnuppern wolltet, ist nun wieder die Gelegenheit ohne Kosten einige Tage zu spielen. Fallout 76 ist aktuell bis zum 04.02.2026 kostenlos auf allen Plattformen erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3660,
@@ -23549,7 +24207,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fallout 76 is free to download and play! Celebrate with us by logging into Fallout 76 between January 27th and February 3rd and getting the Yao Guai Carpet from the Atomic Shop for free!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3661,
@@ -23559,7 +24218,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Mothman Equinox Event: All Rewards & Guide…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3662,
@@ -23582,7 +24242,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 20. Januar ist das Prospektoren-Saloon-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3664,
@@ -23592,7 +24253,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fallout 76 Patch Notes January 20, 2026 (Patch 65)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3665,
@@ -23602,7 +24264,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Floaters: You can find them in these places (including map)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3666,
@@ -23612,7 +24275,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "There is a simple method for all challenges where you have to use scrap to get a material from it. This method works with most Scrap Recycling Challenges, but not all of them in the same way.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3667,
@@ -23623,7 +24287,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fishing Bobber Display (6 Bobber) Weather Control Station (Outwaste) Weather Control Station (Outwaste) Weather Control Station (Outwaste) Weather Control Station (Outwaste) Cold Steel Paint (Combat Shotgun) Cold Steel Paint (Combat…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3668,
@@ -23645,7 +24310,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Collecting toilet paper is often a challenge in Fallout 76. There are numerous places where you can find toilet paper. Some places are waiting for you with up to 12 toilet paper rolls.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3670,
@@ -23655,7 +24321,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Wastelanders plans listed among raiders / settlers by merchants and reputation / gold plans of all factions…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3671,
@@ -23666,7 +24333,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting January 13, many of your favorite bundles are available at a discount in the shop for a limited time!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3672,
@@ -23676,7 +24344,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Update 12.01.2026] Cut Content Challenges, die dennoch aktiv sind hinzugefügt Auch im \"Burning Springs\" Update vom 02.12.2025 werden zahlreiche neue Challenges hinzugefügt.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3673,
@@ -23687,7 +24356,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "From January 6 - February 3, claim your free Vit-O-Matic Perk Card Machine in the Atomic Shop. Available for Fallout 1st members only. Learn how to become a Fallout 1st Member here.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3674,
@@ -23697,7 +24367,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Soap: All locations including map (Burning Springs & Appalachia)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3675,
@@ -23707,7 +24378,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Stingwing locations including map in Burning Springs & Appalachia…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3676,
@@ -23718,7 +24390,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 30. Dezember ist das Goldrausch-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome Goldrausch-Paket 1.800 Grünzeug-Paket 900 (-40 %) Skelett-Liebhaber-Paket 900 (-40 %) Verlassene-Mine-Unterkunft 1.200 (-20 %) Verlassene…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3677,
@@ -23728,7 +24401,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Teddys: You can find teddy bears in these places (including a map with instances)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3678,
@@ -23738,7 +24412,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "25% discount in the Nuka Knights Merchandising Shop until January 6th, 2026…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3679,
@@ -23748,7 +24423,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Feiertags Verbrannte 2025: Alle neuen Belohnungen (+ durchnässte Geschenke)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3680,
@@ -23758,7 +24434,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Mini Season: \"The Sunset Stranger\" - Sunset Sarsaparilla Theme (Dec 2025)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3681,
@@ -23769,7 +24446,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 23. Dezember ist das Atomic-Wrangler-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3682,
@@ -23780,7 +24458,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Dieser Beitrag zeigt Gegenstände, die im PTS Update des 18.12.2025 des \"Adventuring in Appalachia\" enthalten waren. Die Veröffentlichung ist aktuell für März 2026 geplant. Es ist a…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3683,
@@ -23790,7 +24469,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Neues kostenloses Gamepass Fallout 76 Paket 2025: Sunset Sarsaparilla Mr. Sassy & Neon Schild…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3684,
@@ -23800,7 +24480,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Event: Bounty Hunting: Head Hunting & Bounty Hunting: Routine Hunting…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3685,
@@ -23810,7 +24491,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Concrete: Here you can find garden gnomes and cement bags for the challenges…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3686,
@@ -23821,7 +24503,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 16. Dezember ist das Super-Duper-Sandsturm-Paket für kurze Zeit im Shop erhältlich! Probiert vom 16. bis 23. Dezember kostenlos das eingeschränkte Fallout 1st-Probeabo aus!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3687,
@@ -23831,7 +24514,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout: Season 2 - All broadcast dates for the first episodes on Amazon Prime…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3688,
@@ -23841,7 +24525,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Sidequest: Dirty Laundry (Meadow Breath Sprayer & Prototype ABX03)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3689,
@@ -23851,7 +24536,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Burning Springs: Spawn Map RAD Boar / RAD Scorpions / Deathclaws / Ogua & Rust Raider…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3690,
@@ -23861,7 +24547,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With the map expansion to Burning Springs, there are now numerous new resources in the new area. Many players like to build their camp on copper, aluminum, lead or iron veins in order to collect ores at the same time.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3691,
@@ -23871,7 +24558,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Tip for completing the Explore Places in Burning Springs Challenge…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3692,
@@ -23881,7 +24569,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "The year is coming to an end and a lot has happened in Fallout 76. There were a lot of perk changes and balancing, the ability to play as a ghoul, master new fishing challenges, the CAMP construction menu was completely revised and there…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3693,
@@ -23891,7 +24580,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 Patch Notes Hotfix December 11, 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3694,
@@ -23901,7 +24591,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Kostenloses In-Game Paket 2025: Vault 21 Anzug & Josuabaum…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3695,
@@ -23912,7 +24603,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting December 9th, the Holiday Decorations Pack will be available in the shop for a limited time! Note: The Burning Night Weather Control Station aurora is only visible at night.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3696,
@@ -23922,7 +24614,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The maintenance for Burning Springs took significantly longer than normal for a content update. There are still various other problems with the quests and challenges.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3697,
@@ -23933,7 +24626,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "[Update] Added screenshot of Retro Caravan Survival Tent (Season 17): 1200 Atoms Fallout 1st members can get the Der Madison emote for free in the Atomic Shop from December 2nd to January 6th.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3698,
@@ -23943,7 +24637,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "[Update 12/04/2025] Updated Mun-O-Matik description and intervals With the new Burning Springs update from December 2nd, 2025, a new bundle will now be released. This is now a little slimmer than the €30 bundles.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3699,
@@ -23953,7 +24648,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 “Burning Springs” patch notes from December 2nd, 2025 (Patch 64)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3700,
@@ -23963,7 +24659,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Datamining PTS: Season 23 \"Blood x Rust\" All Rewards…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3701,
@@ -23973,7 +24670,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "On December 2nd, 2025 the next and, according to Bethesda, largest content update since Wastelanders for Fallout 76 will be released.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3702,
@@ -23983,7 +24681,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "New legendary mods in the Burning Springs update…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3703,
@@ -23993,7 +24692,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Burning Springs update expands the map from Appalachia west into the Ohio desert. There are numerous changes, new quests, new enemies, new weapons and new events. One of the new public events is \"Senkenschlacht\".",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3704,
@@ -24003,7 +24703,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Burning Springs update expands the map from Appalachia west into the Ohio desert. There are numerous changes, new quests, new enemies, new weapons and new events. One of the new public events is \"Well Equipped\".",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3705,
@@ -24013,7 +24714,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Mutierte Events / Mutated Events: Alle Belohnungen aus Mutierten (Party) Paketen…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3706,
@@ -24024,7 +24726,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 25. November ist das Roadtrip-Paket für kurze Zeit im Shop erhältlich! Gegenstand Atome Roadtrip-Paket 1.200 Schädelfürst-Paket 1.300 Wildes-Leben-Paket 1.500 Poseidon-Energy-Tankstelle 700 Tankstellendach 500 Rostiger Händlerbot…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3707,
@@ -24044,7 +24747,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "PTS Patchnotes: \"Burning Springs\" (Patch 64)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3709,
@@ -24055,7 +24759,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 18. November ist das Zurückgewonnene-Zuflucht-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3710,
@@ -24066,7 +24771,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Dieser Artikel enthält neue Gegenstände seit dem letzten Atom Shop Datamining Artikel am 16.10.2025. Diese Gegenstände können ab dem Burning Springs Update am 02.12.2025 im Atom Sh…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3711,
@@ -24077,7 +24783,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Datamining: New collectors & collectors (Burning Springs PTS Update October 2, 2025)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3712,
@@ -24088,7 +24795,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 11. November ist das Reich-verpflegt-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3713,
@@ -24098,7 +24806,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Burning Springs: Map with all locations, regions & no-camp zones…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3714,
@@ -24109,7 +24818,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fallout 1st-Mitglieder können sich vom 4. November bis 2. Dezember im Atomic Shop gratis das Mischlings-Haustier sichern. Mehr darüber, wie ihr Fallout 1st-Mitglied werden könnt, erfahrt ihr hier. Ab dem 4.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3715,
@@ -24120,7 +24830,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 28. Oktober ist der Toxic-Bob-Kollektron für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3716,
@@ -24130,7 +24841,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Fallout Day: Burning Springs coming on December 2nd, 2025 & Next Gen versions for Fallout 76…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3717,
@@ -24140,7 +24852,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Find human skulls or skull parts (locations & map for challenges)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3718,
@@ -24151,7 +24864,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "[Update 22.10.2025] Screenshots for Coat of Arms Outfit mit leuchtenden Augen hinzugefügt Ab dem 21. Oktober ist das Nuklearer-Horror-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3719,
@@ -24161,7 +24875,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Unser neuestes Update für Fallout 76 bringt ab heute einige Verbesserungen nach Appalachia.Das heutige Update bringt neue Verbesserungen nach Appalachia.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3720,
@@ -24172,7 +24887,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "[Update October 21, 2025] 2 missing pictures of the autopsy table are now also in the article This new mini season is all about Halloween.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3721,
@@ -24182,7 +24898,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Kostüme: Was zählt alles? Eine vollständige Liste…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3722,
@@ -24193,7 +24910,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 14. Oktober ist das Tattooz-Set für kurze Zeit im Shop erhältlich! Gegenstand Atome Tattooz-Set 800 Schwarze RoboPfote-Katze 800 A&D-Händlerbot 560 (-20 %) Todeskrallen-Schmorgrill 560 (-20 %) Ghul-Pappaufsteller 500…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3723,
@@ -24204,7 +24922,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "The Burning Springs PTS is now available and many new interesting items and changes are already visible via data mining. The next new items I'm showing now are CAMP items like pets…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3724,
@@ -24215,7 +24934,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Fallout 1st-Mitglieder können sich im Atomic Shop vom 7. Oktober bis 4. November gratis ihre eigene exklusive Nuka-Cola-Neon-Uhr sichern. Mehr darüber, wie ihr Fallout 1st-Mitglied werden könnt, erfahrt ihr hier. Ab dem 7.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3725,
@@ -24225,7 +24945,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Night of Mischief Event: New New Rewards 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3726,
@@ -24236,7 +24957,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "The Burning Springs PTS is now available and many new interesting items and changes are already visible via data mining. The next new items I'll be showing off are outfits, headwea…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3727,
@@ -24246,7 +24968,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With Burning Springs, Fallout 76 is receiving the largest free update since 2020.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3728,
@@ -24257,7 +24980,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 30. September ist das Industriemacht-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3729,
@@ -24268,7 +24992,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 23. September ist das Gelände-Materialschlacht-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3730,
@@ -24278,7 +25003,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 patch notes September 23, 2025 (Patch 62 bug fix)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3731,
@@ -24289,7 +25015,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "[Update 17.09.2025] Neue Screenshots & Datamining: Befreiter-Kollektron-Station Ab dem 16. September ist das Axolotl-Plüschtier-Set für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3732,
@@ -24299,7 +25026,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Es gibt Neuigkeiten! Große Neuigkeiten erwarten uns! Dieses Jahr bin ich wieder zu einem exklusiven Fallout 76 Event eingeladen, auf dem Bethesda uns Content Creators die Inhalte des nächsten Updates vorstellen wird.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3733,
@@ -24310,7 +25038,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ab dem 9. September ist das Enklaven-Spezialist-Paket für kurze Zeit im Shop erhältlich!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3734,
@@ -24320,7 +25049,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Extended nuclear missile launch codes week September 9th - September 16th, 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3735,
@@ -24341,7 +25071,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting September 2nd, the Coal and Steel Pack will be available in the shop for a limited time!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3737,
@@ -24351,7 +25082,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Expected changes for CAMP Revision Update (Patch 62 / Season22) on September 2nd, 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3738,
@@ -24382,7 +25114,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Im Atomic Shop gibt es ab 26. August nur für kurze Zeit viele eurer Lieblingspakete im Angebot!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3741,
@@ -24392,7 +25125,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout on Prime: Season 2 - New Trailers & Images…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3742,
@@ -24403,7 +25137,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting August 19, the Raider Outpost Pack and Hot-Hot-Hot Pack will be available in the shop for a limited time.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3743,
@@ -24424,7 +25159,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting August 12th, the Corvega Car Dealership Pack and the Mr. Handy Fireworks Pack will be available in the shop for a limited time. Item Atoms Corvega Car Dealership Pack 1,500 Mr.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3745,
@@ -24434,7 +25170,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Datamining: Marshal-Mallow Mini Season Fishing Event 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3746,
@@ -24445,7 +25182,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "From August 5th, the weekly market package and the summer thunderstorm package will be available in the shop for a short time.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3747,
@@ -24455,7 +25193,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Update 04.08.2025] Steam & Playstation Angebot Passend zum Angeln Update und Saison 21 am 03.06.2025 liefert Bethesda nun für Fallout 76 ein neues Bundle mit kosmetischen Gegenständen.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3748,
@@ -24489,7 +25228,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Today’s update brings improvements to Appalachia. Check the download sizes below for today’s update on your platform of choice",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3751,
@@ -24499,7 +25239,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The next season will be dominated by all the well-known brands of the Fallout universe. From Abraxo to Garrahan & Nuka Cola to Sunset Sarsaparilla and Vault Tec. The name of the new season is: This can be done e.g.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3752,
@@ -24510,7 +25251,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Schön rühren, das gibt sonst Klumpen! Den Betonmischer gibt es bis 5. August kostenlos für alle Fallout 1st-Mitglieder! Das Landschafts-Gemälde ist für alle Spieler:innen bis 22. Juli gratis.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3753,
@@ -24521,7 +25263,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Stir well, otherwise there will be lumps! The Concrete Mixer is free for all Fallout 1st members until August 5th! The Pink Suit is free for all players until July 15th. Grab something free in the Atomic Shop this week too.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3754,
@@ -24531,7 +25274,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Datamining PTS: Atom Shop CAMP Gegenstände (Patch 61/62)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3755,
@@ -24541,7 +25285,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Raider Skull Pile (Dog Furniture)) Raider Skull Pile (Dog Furniture) Raider Skull Pile (Dog Furniture) The Specialist Power Armor Paint The Specialist Power Armor Paint The Specialist Power Armor Paint",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3756,
@@ -24551,7 +25296,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Boy Scouts: Opossum Theory Test Questions and Answers…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3757,
@@ -24562,7 +25308,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Es ist Zeit zum Angeln! Das „Petri Heil!“-Emote gibt es für alle Fallout 1st-Mitglieder bis 8. Juli kostenlos! Das „Kein Zutritt“-Schild ist für alle Spieler:innen bis 8. Juli gratis.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3758,
@@ -24582,7 +25329,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: Bloodstained Commando with Critical Hits and Cripple…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3760,
@@ -24593,7 +25341,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3761,
@@ -24603,7 +25352,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Antiseptic: Scrap & Ticks Locations with Map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3762,
@@ -24614,7 +25364,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3763,
@@ -24624,7 +25375,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "[Update June 13, 2025] Changed Mutations & Strengthened Genes Perk Card Here at Nuka Knights, we usually discuss mutations as a matter of course since most people know them inside out.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3764,
@@ -24634,7 +25386,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "[Perks active again] SPECIAL's punch card machine temporarily disabled!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3765,
@@ -24645,7 +25398,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Check out the daily deals this week in the Atomic Shop! Each of the items below is available until 12:00 p.m. ET the following day.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3766,
@@ -24655,7 +25409,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Improved Baits: Events & Container Datamining…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3767,
@@ -24666,7 +25421,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3768,
@@ -24677,7 +25433,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Im neuen Update für Saison 21 \"Leichte Wasser\" vom 03.06.2025 sind neben dem Angeln auch zahlreiche neue Challenges zu Fallout 76 hinzugefügt worden. Diese Challenges geben euch aber nicht einfach nur Spielertitel oder Atome.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3769,
@@ -24687,7 +25444,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 - Patch notes \"Light Water\" on June 3rd, 2025 (Patch 60)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3770,
@@ -24707,7 +25465,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Expected changes in the “Light Water” update (patch 60) on June 3rd, 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3772,
@@ -24717,7 +25476,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Datamining: Neue Werkbank \"Konservenfabrik\" / Cannery…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3773,
@@ -24727,7 +25487,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3774,
@@ -24748,7 +25509,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich. Inane stella:skywalkaTeam:Inane stella: 0 am 21.05.2025 um 14:01:25 Uhr",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3776,
@@ -24758,7 +25520,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Free in-game pack: Beelzebilly suit & head and Mr. Demonic backpack…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3777,
@@ -24769,7 +25532,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich. Inane stella:skywalkaTeam",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3778,
@@ -24779,7 +25543,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Just a few days ago @FalloutonPrime on X announced that filming of the second season of the Fallout series has been completed. Now there is already the next news. In the current Amazon Upfront Show it was announced that the 2.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3779,
@@ -24789,7 +25554,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout on Prime: Filming for the second season of the series has been completed…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3780,
@@ -24799,7 +25565,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The new PTS went live today on April 4th, 2025 and is available on Steam for PC. Here you can find the patch notes with numerous interesting changes to perks and legendary effects. Big things are coming to us! And fishing!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3781,
@@ -24810,7 +25577,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3782,
@@ -24820,7 +25588,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 Patch Notes May 6, 2025 (Hotfix)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3783,
@@ -24830,7 +25599,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Cranberry Bog Treasure Maps: Rewards Data Mining & All Locations…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3784,
@@ -24840,7 +25610,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Moor Treasure Maps: Rewards Data Mining & All Locations…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3785,
@@ -24850,7 +25621,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Ash Heap Treasure Maps: Rewards Data Mining & All Locations…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3786,
@@ -24860,7 +25632,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Toxic Valley Treasure Maps: Rewards Data Mining & All Locations…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3787,
@@ -24870,7 +25643,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Savage Divide Treasure Maps: Rewards Datamining & All Locations…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3788,
@@ -24880,7 +25654,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Forest Treasure Maps: Rewards Datamining & All Locations…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3789,
@@ -24890,7 +25665,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Legendäre Herstellung Anleitung - Effekte eurer Wahl (Patch 54 / Milepost Zero)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3790,
@@ -24901,7 +25677,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3791,
@@ -24912,7 +25689,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Check out the daily deals this week in the Atomic Shop! Each of the items below is available until 12:00 p.m. ET the following day.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3792,
@@ -24923,7 +25701,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "[Update April 23, 2025] New note: Challenges also possible in PA [Update April 22, 2025] Important note about receiving rewards updated The next challenge event is just around the corner.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3793,
@@ -24933,7 +25712,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 - Patch notes: Patch 59 (04/22/2025)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3794,
@@ -24943,7 +25723,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Immer wenn ich durch Appalachia ziehe, freue ich mich über all die CAMPs auf denen ich \"Nuka Knights\" lese. Vielen Dank für all eure Unterstützung!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3795,
@@ -24954,7 +25735,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3796,
@@ -24964,7 +25746,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Season 21 \"Light Waters\" Fishing / Fishing Rewards Preview Patch 60 (PTS Datamining)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3797,
@@ -24974,7 +25757,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount in the Nuka Knights Merchandising Shop until April 17, 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3798,
@@ -24984,7 +25768,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Power armor: All power armor in comparison…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3799,
@@ -24995,7 +25780,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3800,
@@ -25005,7 +25791,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Patriotic Picket Fence Fence Set Stars And Stripes Camping Canopies Stars And Stripes Camping Canopies Stars And Stripes Camping Canopies Patriot Popper Popcorn Machine Patriot Popper Popcorn Machine Patriot Popper Popcorn Machine Weather…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3801,
@@ -25015,7 +25802,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Floating Rusted Toxic Waste Barrel Floating Rusted Toxic Waste Barrel Floating Rusted Toxic Waste Barrel Fishing Cooler Cryo Freezer Fishing Cooler Cryo Freezer Fishing Cooler Cryo Freezer Shark Tooth Backpack Flair Shark Tooth Backpack…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3802,
@@ -25026,7 +25814,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Yesterday on April 4th, 2025 the new PTS went live. Fishing can now be tested there and there are various changes to the perks and legendary effects. There are also new items hidden under the hood.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3803,
@@ -25037,7 +25826,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MESZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3804,
@@ -25047,7 +25837,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "[April April] Neue Kooperation: Fallout 76 bekommt Fortnite Tänze als Emote…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3805,
@@ -25057,7 +25848,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Skyline Valley map with all the resources for your camp…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3806,
@@ -25067,7 +25859,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: Ghoul Rifleman with Reverse Charge (and Pistols/Revolvers)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3807,
@@ -25089,7 +25882,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "[Neue Angebote] Strahlende Tiefen Bundle \"Enclave Armory\": Inhalt & Angebote…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3809,
@@ -25099,7 +25893,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "[Update 03/24/2025] Discord links to 4 & 5 updated I hope you're all having fun being ghouls so far! In this article I would like to suggest a few changes that might be helpful for ghouls that don't exist yet.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3810,
@@ -25109,7 +25904,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Luminous bobbleheads / bobblehead guide including map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3811,
@@ -25119,7 +25915,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The “Glow of the Ghoul” update on March 18, 2025 brings with it a new mechanic that can buff your damage enormously. You can now find some new perk cards under the name “Onsturm” (English: “onslaught”). Or changed perk cards.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3812,
@@ -25151,7 +25948,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 patch notes \"Glow of the Ghoul\" on March 18, 2025 (Patch 58)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3815,
@@ -25161,7 +25959,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Ghoul: Bethesda Developer AMA (All Questions and Answers)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3816,
@@ -25171,7 +25970,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "PTS as of: March 13, 2025 | Release: March 18, 2025 The new playable ghoul can currently be tested on the current PTS (Public Test Server). You can become a ghoul yourself.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3817,
@@ -25181,7 +25981,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: Feral Ghoul Unarmed Melee (Reverse Charge)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3818,
@@ -25191,7 +25992,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Build Guide: Wild Ghoul Auto Ax Melee (with Charge)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3819,
@@ -25201,7 +26003,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Shine of the Ghoul Update: Expected changes for March 18, 2025 (Patch 58)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3820,
@@ -25211,7 +26014,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Note: Recently added rewards are marked in bold. Daily Operations are a new feature from Patch 22, which we have already reported on here at Nuka Knights. These operations are not an event and can be activated via the map view.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3821,
@@ -25255,7 +26059,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Datamining: PTS Saison 20 - Alle Belohnungen…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3825,
@@ -25276,7 +26081,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Dieser Artikel enthält alle Patchnotes des aktuellen \"Ghulvolution\" PTS (Public Test Server / Öffentlicher Test Server). Sobald es neue Patchnotes für diesen PTS gibt, werden diese hier ergänzt.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3827,
@@ -25309,7 +26115,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This February 2025, February will once again be about “love”. With the Challenges Event you can research the “Science of Love” for 2 weeks and receive some rewards.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3830,
@@ -25319,7 +26126,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout Prime (Season 2) New photos from the set…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3831,
@@ -25341,7 +26149,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Doctor`s Orders Cigarette Machine Doctor`s Orders Cigarette Machine Rotary Rifle Rack Display Case Rotary Rifle Rack Display Case Rotary Rifle Rack Display Case Mothman Cultist Candelabra Mothman Cultist Candelabra Mothman Cultist…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3833,
@@ -25363,7 +26172,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "A new feature is now available to you in Nuka Knights: This function is available on both the website and the app and does not require an update. All you need is an active login and a “Plus” or “Prime” subscription.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3835,
@@ -25373,7 +26183,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Rusted Chain Collar (Dog) Rusted Chain Collar (Dog) Rusted Chain Collar (Dog) Doctor`s Orders Cigarette Machine Doctor`s Orders Cigarette Machine Rotary Rifle Rack Display Case Mutated Vines (Floor Decor) Mutated Vines (Floor Decor)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3836,
@@ -25395,7 +26206,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Today’s update provides stability improvements across all platforms and brings more improvements to Appalachia.Read on for a full list of patch notes.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3838,
@@ -25405,7 +26217,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Doctor`s Orders Cigarette Machine (Collector) Doctor`s Orders Cigarette Machine (Collector) Mulch Barrel (Floor Decor) Mulch Barrel (Floor Decor) Mulch Barrel (Floor Decor) Full Service PA Workbench Fasnacht Fusion Core Recharger Fasnacht…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3839,
@@ -25450,7 +26263,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thank you for your support this year and in 2025 in the form of donations, video clicks, website views, premium subscriptions, merchandising purchases, etc!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3843,
@@ -25472,7 +26286,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Dieses Datamining enthält Vorschau Bilder aus dem aktuellen PTS Update vom 21.12.2024 mit dem Titel \"Ghulvolution\". Release einiger Gegenstände ist in Patch 57 (Mid-Season) oder au…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3845,
@@ -25482,7 +26297,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Ghoul update is coming in March 2025…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3846,
@@ -25492,7 +26308,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Ab 19.12.2024 um 18 Uhr spawnen keine Feiertags-Verbrannten mehr! Ihr könnt also weiterhin die Werkstätten einnehmen und eure Santatrons platzieren. In eurem Camp könnt ihr weiter eure Geschenke aus dem Santatron einsammeln.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3847,
@@ -25514,7 +26331,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "In contrast to the Grubenhauer Treasure Hunters, you can farm the Holiday Burnt Event very well. You don't need bottle caps for wrapping paper. The best way to do this is on a private server.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3849,
@@ -25536,7 +26354,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Faster leveling, Max XP buffs, tips for double XP weekends or the game board…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3851,
@@ -25546,7 +26365,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The popular Gatling Plasma gets 6 new mods with this update. The mods are available both loosely and as a blueprint.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3852,
@@ -25556,7 +26376,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "25% discount & free shipping in the Nuka Knights Merchandising Shop until December 8th, 2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3853,
@@ -25566,7 +26387,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Fallout 76 patch notes \"Radiant Depths\" (Patch 56) December 3, 2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3854,
@@ -25588,7 +26410,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Expected changes for the “Radiant Depths” update on December 3rd, 2024 (Patch 56)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3856,
@@ -25598,7 +26421,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "30% discount on everything in the Nuka Knights Merchandising Shop only TODAY (11/29/2024)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3857,
@@ -25642,7 +26466,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Legendary 4 Star Mods (“Radiant Depths” December Update)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3861,
@@ -25652,7 +26477,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76: Interview with Jonathan Rush in London 2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3862,
@@ -25675,7 +26501,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "An exclusive Fallout 76 Event will take place in London on November 12th, 2024, where content creators and press can see and test some new features.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3864,
@@ -25697,7 +26524,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Dieses Datamining enthält Atom Shop Vorschau Bilder des PTS Update vom 01.11.2024. Release ist mit dem \"Strahlende Tiefen\" Update (\"Gleaming Depths\") im Dezember zu erwarten.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3866,
@@ -25719,7 +26547,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Datamining: PTS Patch 56 Season 19 Enclave…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3868,
@@ -25740,7 +26569,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout Day: All Offers, Twitch Drops & Free To Play Week…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3870,
@@ -25750,7 +26580,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "[Neue Angebote] Skyline Valley Bundle \"Verlorene Schätze Paket\": Inhalt & Angebote…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3871,
@@ -25772,7 +26603,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fallout 76: Patch notes Patch 55 (October 22, 2024)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3873,
@@ -25782,7 +26614,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Milestone Zero / Milepost Zero Guide: All offers and upgrades…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3874,
@@ -25828,7 +26661,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "This data mining contains preview images of the current PTS from September 28, 2024 for patch 55/56 \"Gleaming Depths\". Some items may be released in the mid-Season 18 patch, or as…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3878,
@@ -25838,7 +26672,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "CAMP pets confirmed in Fallout 76 for late 2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3879,
@@ -25860,7 +26695,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Today we deployed a hotfix on all platforms to activate Caravans!The new quest “A Bump in the Road” will start your career as a caravan leader as you make your mark on Skyline Valley.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3881,
@@ -25881,7 +26717,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout Prime series wins Emmy Awards: Offers & Events…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3883,
@@ -25903,7 +26740,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Find the lost: All spawn locations with map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3885,
@@ -25913,7 +26751,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "New feature: \"Best Build\" for CAMP Builder (Best Builds)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3886,
@@ -25946,7 +26785,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "With the Milepost Zero update on September 3rd, 2024, the legendary cores were removed from the game. Previously, these were available as rewards at public events. Now there are legendary modules instead.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3889,
@@ -25956,7 +26796,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Erwartete Änderungen im Milepost Zero Update (Meilenstein Null) am 03.09.2024 (Patch 54)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3890,
@@ -25966,7 +26807,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Slocum Joes Survivor Outfit Slocum Joes Survivor Outfit Fall Foliage Weather Control Station Fall Foliage Weather Control Station Fall Foliage Weather Control Station Fall Foliage Weather Control Station Halloween Weather Control Station…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3891,
@@ -25986,7 +26828,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop until September 2nd, 2024!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3893,
@@ -26008,7 +26851,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Dieses Datamining enthält neue und geänderte Atom Shop Gegenstände, die im Milepost Zero Update am 03.09.2024 enthalten sein können.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3895,
@@ -26031,7 +26875,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Datamining: Season 18 (all rewards) PTS Patch 08/09/2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3897,
@@ -26041,7 +26886,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Überwucherte ist eine neue Art von Gegnern auch bekannt als Pflanzenvolk. Sie sind mit Patch 48 (am 05.12.2023) in den Atlantic City Expeditionen aufgetaucht.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3898,
@@ -26063,7 +26909,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Boy Scout Pioneer Challenge: Pioneers of the Wilderness event is again a challenge event as we already know it.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3900,
@@ -26085,7 +26932,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "RAD deer: All RAD deer spawn locations including map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3902,
@@ -26107,7 +26955,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "New Event in Skyline Valley: Dangerous Pastime (All Rewards)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3904,
@@ -26139,7 +26988,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "For the first time since 2018, today's Skyline Valley update now includes a map expansion. And this opens up a new area for us with new places and many new possibilities. To give you a better overview, we have created this map for you.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3907,
@@ -26149,7 +26999,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Games Cupboard (Board Game Collector) Games Cupboard (Board Game Collector) Triumph Terrace Screen Door Triumph Terrace Screen Door Triumph Terrace Screen Door Brahmin Feed Trough (Floor Decor) Brahmin Feed Trough (Floor Decor) Brahmin…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3908,
@@ -26159,7 +27010,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Dieses Datamining enthält Gegenstände für Saison 18, die auf dem PTS in den Daten enthalten sind. Die Gegenstände können sich noch ändern. Partikel wird es wohl nicht geben, da sie…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3909,
@@ -26182,7 +27034,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Wichtig:Diese Änderungen sind bereits live. Siehe: Mutierte Events / Mutated Events: Alle Belohnungen aus Mutierten (Party) Paketen [Update 12.07.2024] Erklärung zu Mutierten Paketen verbessert PTS Stand: 08.07.2024 | Voraussichtliches…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3911,
@@ -26204,7 +27057,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Jumpy Juice Company Tea Machine Jumpy Juice Company Tea Machine Jumpy Juice Company Tea Machine Moonshine Brewing Workbench Moonshine Brewing Workbench Moonshine Brewing Workbench Vault Tec Mineral Extractor Vault Tec Mineral Extractor Red…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3913,
@@ -26214,7 +27068,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build Guide: 'Katniss Everdeen' 2.0 Archers & Melee (Skyline Valley)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3914,
@@ -26236,7 +27091,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Zuerst einmal sollten wir erklären, was \"afk\" bedeutet. \"Afk\" bedeutet \"Away from Keyboard\", also nicht anwesend / inaktiv. In Spielen wie Fallout 76 werden Spieler, die afk sind normal nach ein paar Minuten vom Server gekickt.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3916,
@@ -26248,7 +27104,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
     "archived": true,
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 3917,
@@ -26258,7 +27115,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "25% discount on everything in our merchandising shop! Only on June 21, 2024!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3918,
@@ -26280,7 +27138,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "New Event: Neurological Warfare (All Rewards and Nuke Placement / Skyline Valley)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3920,
@@ -26312,7 +27171,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Welcome to Skyline Valley! Our first map expansion of the Appalachian region. Explore this new mysterious location, uncover the true location of Vault 63, and figure out the truth behind the Lost.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3923,
@@ -26323,7 +27183,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "This gallery contains new Atom Shop items since the last live patch. You will already know most of them from the PTS data mining articles. The Skyline Valley Bundle is also included.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 3924,
@@ -26333,7 +27194,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Expected changes in the Skyline Valley map expansion (Patch 52) on June 12, 2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3925,
@@ -26355,7 +27217,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "In the daily or weekly challenges it is sometimes necessary to find scrap that can be recycled into fiber optics. There are some items you can collect for this.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3927,
@@ -26377,7 +27240,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Tutorial: Starting nuclear missiles (better) (atomic bomb / nuke)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3929,
@@ -26399,7 +27263,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "PTS: New Daily Operations & New Minerva Plans (Skyline Valley Update)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3931,
@@ -26421,7 +27286,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Datamining: PTS Patch 52 Atom Shop (Skyline Valley) May 10, 2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3933,
@@ -26443,7 +27309,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Datamining: Frühjahrsputz Event (Challenges & Belohnungen / Spring Cleaning)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3935,
@@ -26453,7 +27320,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Dieses Datamining beinhaltet eine Vorschau auf mögliche Belohnungen in Saison 17 (ab Juni 2024), die man auf dem aktuellen PTS auslesen kann. Die tatsächlichen Belohnungen können sich bis dahin noch ändern.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3936,
@@ -26463,7 +27331,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Dieses Datamining enthält Vorschau Bilder von Atom Shop Gegenständen, die ab Patch 52 (Skyline Valley Update) im Juni verfügbar sein können.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3937,
@@ -26495,7 +27364,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fallout 76 Patch Notes April 30, 2024 (Patch 51)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3940,
@@ -26505,7 +27375,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Niedere Teufel (Englisch: Lesser Devil) sind neue Gegner in Atlantic City. Aktuell gibt es kaum Möglichkeiten sie anzutreffen, denn es spawnen nur wenige an zwei Stellen.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3941,
@@ -26527,7 +27398,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Alles über Fusionskerne Farming & Aufladung…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3943,
@@ -26537,7 +27409,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "PTS: First impression of the map expansion in the Skyline Valley update…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3944,
@@ -26567,7 +27440,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Illuminated letters / neon letters: Here you can get the “Symbols and letters” blueprint…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3947,
@@ -26577,7 +27451,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build How-To: \"The Ghoul\" Build (Bloodstained Revolvers & Rifles based on the Fallout Prime Series)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3948,
@@ -26599,7 +27474,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Fallout 76 reaches new all-time high in player numbers on Steam…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3950,
@@ -26609,7 +27485,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Get Vault 33 Backpack on Steam and PlayStation? (without Xbox Game Pass)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3951,
@@ -26619,7 +27496,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Fallout Serie: Vault 33 KOSTENLOS im Atom Shop & Fallout 76 Free to Play Woche…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3952,
@@ -26629,7 +27507,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Neues Angebote] Fallout 76: Atlantic City High Stakes Bundle Inhalt & Angebote…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3953,
@@ -26650,7 +27529,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "We are all very excited about the new Fallout series, which will air exclusively on Amazon Prime. As announced, all episodes of the first season will be available upon release.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3955,
@@ -26660,7 +27540,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Vorab: Alle Perks, legendären Perks, Stats und Mutationen findet ihr in den Bildern. Alle Screenshots wurden voll gebuffed, mit dem abgeschirmten Raider-Leder in einem Zwanglos-Team mit meinem Mule erstellt.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3956,
@@ -26682,7 +27563,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[April April] Nuclear Winter kommt als Expedition wieder!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3958,
@@ -26692,7 +27574,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Wie auch im ersten Teil von Atlantic City, haben wir auch bei im America's Playground Update für Fallout 76 wieder neue Erfolge / Achievements / Errungenschaften zum Freischalten erhalten.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3959,
@@ -26702,7 +27585,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Civil Engineer Armor: All information about the new armor (EN: Civil Engineer Armor / former Muni Armor)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3960,
@@ -26725,7 +27609,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "In diesem Datamining seht ihr die finalen neuen Atom Shop Vorschau Bilder aus Patch 50 \"America's Playground\". Diese Gegenstände werden voraussichtlich in den kommenden Wochen veröffentlicht.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 3962,
@@ -26735,7 +27620,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 - Patch notes for the \"America's Playground\" update (03/25/2024 / Patch 50)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3963,
@@ -26745,7 +27631,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The next Fallout 76 update called “Atlantic City - America`s Playground” (Patch 50) awaits us on March 26th, 2024. As with every content update, the current season 15 ends and the new season 16 begins.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3964,
@@ -26755,7 +27642,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Season 16: Fewer Atoms & final ticket prizes…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3965,
@@ -26765,7 +27653,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Crystal: This is how you find scrap with crystal for the challenges…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3966,
@@ -26775,7 +27664,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Pick the lock: Here you can find locks for challenges…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3967,
@@ -26797,7 +27687,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "All final season rewards from the Official Season 16 page. Unfortunately the atoms have been removed from the 2nd bonus rewards page.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 3969,
@@ -26819,7 +27710,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "A new trailer for the new Fallout TV show has just been released on Amazon Prime. The official release date of the series is now April 11, 2024. At this point you can watch all episodes of the first season on Amazon Prime.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3971,
@@ -26829,7 +27721,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop March 7th - March 12th, 2024…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3972,
@@ -26851,7 +27744,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Season 16: Ticket prices for rewards compared…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3974,
@@ -26861,7 +27755,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "In the coming season 16, the game board will no longer be used in its current form. Season 16 will go live on March 26, 2024 with the update “Atlantic City - America's Playground” (Patch 50) and will bring fundamental changes.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3975,
@@ -26883,7 +27778,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fiberglass: You can find it here for the challenges…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3977,
@@ -26893,7 +27789,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Dieses Datamining enthält Atom Shop Gegenstände, die nach dem 26.03.2024 veröffentlicht werden können.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3978,
@@ -26903,7 +27800,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Build How-To: Bloodstained High INT Commando Nerd…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3979,
@@ -26913,7 +27811,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Dieses Datamining enthält Atom Shop (ATX) Bilder sowie Spielbrett Saison 16 (SCORE).",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3980,
@@ -26935,7 +27834,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Honeybeasts: You can find them in these locations and events…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3982,
@@ -26957,7 +27857,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Dieses Datamining enthält neue Storefront Bilder seit dem vorigen PTS Release am 26.01.2024. Da hier nur 6 neue Atom Shop Bilder gefunden wurden, ist dieser Beitrag zusammengefasst…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3984,
@@ -26967,7 +27868,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "RAD Scorpions are large mutated scorpions that also often burrow underground. Their attacks also come from the ground. When they spot you, they hide under the ground and then attack you from below.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3985,
@@ -26977,7 +27879,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Fanatics are a faction in Fallout 76 that found their way into the game with the “The PITT” update on September 13th, 2022. However, you won't find them in Appalachia.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3986,
@@ -27000,7 +27903,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Heute am 26.01.2024 wurde in der aktuellen \"Inside the Vault\" bekannt gegeben, welche Belohnungen es im angekündigten Challenge Event \"Brennende Liebe\" geben wird.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 3988,
@@ -27010,7 +27914,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Everything about the new event: Packmules / Beasts of Burden…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3989,
@@ -27020,7 +27925,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Staatsanleihen: Als Belohnung bei Events (Zum Tausch gegen Gold)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3990,
@@ -27030,7 +27936,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Fallout 76 - Patch notes January 30, 2024 (Patch 49)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3991,
@@ -27052,7 +27959,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Dieses Datamining (Datamine) beinhaltet Gegenstände, die voraussichtlich bis zum nächsten Update am 26.03.2024 im Atom Shop veröffentlicht werden.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3993,
@@ -27062,7 +27970,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Shooting Gallery: Jersey Devil Shooting Gallery: Jersey Devil Shooting Gallery: Jersey Devil Stashbox: World of Cryptids Trunk Stashbox: World of Cryptids Trunk Stashbox: World of Cryptids Trunk Power Poster: Rip Daring 2 Power Poster: Rip…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3994,
@@ -27072,7 +27981,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "Butterfly Sanctuary Mothman Display Case: Stately Armoire Display Case: Stately Armoire Miniaturset Flatwoods Monster Honeycomb Valentines Heart Honeycomb Valentines Heart Honeycomb Valentines Heart Honeycomb Valentines Heart Honeycomb…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3995,
@@ -27082,7 +27992,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 plans in 2024: Map expansion in Shenandoah National Park, new seasonal events, new rewards…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3996,
@@ -27092,7 +28003,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Action Points (AP) Acceleration refers to the time in which your action points are completely replenished i.e. regenerated. This information is always given in seconds that are needed to fill the AP from 0% to 100%.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3997,
@@ -27102,7 +28014,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "All about canned coffee (Action Points Bonus)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3998,
@@ -27112,7 +28025,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "In Fallout 76 we regularly receive the daily or weekly challenge to extract asbestos from scrap. To do this, you need scrap items that contain asbestos and then have to dismantle them.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 3999,
@@ -27122,7 +28036,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Everything about the automatic ax / auto ax / auto axe…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4000,
@@ -27144,7 +28059,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With patch 28 (07/07/2021) a new weapon has been added to the game. The pepper shaker or pepper shaker (as it became known at the PTS). I already introduced the weapon in the article about the upcoming changes to the patch.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4002,
@@ -27154,7 +28070,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Tip: Guaranteed to force Queen (and firebeasts) to land…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4003,
@@ -27176,7 +28093,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "These events give you Legendary Cores for Legendary Crafting (Rolls)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4005,
@@ -27198,7 +28116,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Slingers are the descendants of pre-war salamanders. They usually stay near water and usually sleep hanging from trees. Slingers reside in Appalachia in the Swamp and Cranberry Bog. You do not enter any buildings or climb stairs.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4007,
@@ -27208,7 +28127,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Here at Nuka Knights we regularly discuss the optimal mods for rifles and pistols. Now I would like to get to the point and summarize it. Many rifles and pistols can be used with these mods for optimal AP consumption, i.e.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4008,
@@ -27218,7 +28138,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Our merchandising shop offers you the next discount promotion: 24% OFF everything from January 4th. until 07.01.2024 The Merchandising Shop is another channel to support us and donate in this form.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4009,
@@ -27228,7 +28149,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Cryptids (originating from Greek κρύπτω / krypto and meaning \"to hide\" / \"to hide\") are mystical types of animals and creatures that appear in local folklore and other contexts, but whose actual existence is questionable.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4010,
@@ -27274,7 +28196,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Circuit Breaker Build How-To: Bloodstained / Full Life Pistols (Energy & Ballistic)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4014,
@@ -27296,7 +28219,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Everything about the Enclave Plasma Rifle/Pistol and mods…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4016,
@@ -27306,7 +28230,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Atlantic City: All new blueprints and rewards at a glance…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4017,
@@ -27348,7 +28273,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Our latest update for Fallout 76 launches today, and it's bringing with it a new area, new quests, NPC's, rewards, Season and much more to the game. Read on for more details. Atlantic City – Boardwalk Paradise!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4021,
@@ -27358,7 +28284,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "[Update 12/01/2023] More stamps / rewards in all expeditions [Update 11/30/2023] Note on Snow Weather Control Station / Enclave Plasma Mods Picture of the “Blue Devil” carnival mask added [Update November 28, 2023] [Update November 28…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4022,
@@ -27368,7 +28295,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Weather Control Station: Snow Weather Control Station: Snow Weather Control Station: Snow Weather Control Station: Clear Sky Weather Control Station: Clear Sky Weather Control Station: Clear Sky Weather Control Station: Clear Sky Boardwalk…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4023,
@@ -27388,7 +28316,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "We already know that the new Fallout TV series will be available on Amazon Prime from April 12, 2024. Now there are the first official images of the series, which were shared by the @falloutonprime account on X (formerly Twitter).",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4025,
@@ -27399,7 +28328,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Vom 2. bis 5. Dezember könnt ihr im Atom Shop kostenlos einen Vault 33 Anzug beanspruchen. Siehe auch: Fallout TV Serie: Erste offizielle Bilder aus der kommenden Fallout Amazon Prime Serie I've got the power!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4026,
@@ -27409,7 +28339,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "30% discount on everything in our merchandising shop ONLY on November 24th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4027,
@@ -27419,7 +28350,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Update 22.11.2023] Neue Rabatte auf Steam (PC) bis 28.11.2023 Xbox 29,99€ (3€ Rabatt mit GamePass) Zum Angebot: https://www.xbox.com/de-DE/games/store/fallout-76-the-pitt-recruitment-bundle/9MVL7X65TWB1/0010 Zum Angebot…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4028,
@@ -27440,7 +28372,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop November 15th - November 19th, 2023!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4030,
@@ -27462,7 +28395,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Anläßlich des 5. Geburtstags von Fallout 76, bekommen wir das entsprechende Geburtstags-Challenge-Events. Wie auch bei den vorigen Challenges wie z.b.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4032,
@@ -27472,7 +28406,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Datamining: PTS Patch 48 Saison 15 Alle Belohnungen…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4033,
@@ -27494,7 +28429,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Ohio River Adventure Dock Ohio River Adventure Dock Ohio River Adventure Dock Utilitybox Generator: Fusion Utilitybox Generator: Large Utilitybox Generator: Medium Utilitybox Generator: Small Refrigerator: Meat Locker Refrigerator: Meat…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4035,
@@ -27504,7 +28440,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop November 2nd - November 5th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4036,
@@ -27526,7 +28463,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "In dieser Woche vom 31.10.2023 bis zum nächsten Reset am 07.11.2023 erhaltet ihr die Möglichkeit kostenlos Fallout 1st zu testen. Also schlagt zu und lagert euren Schrott und Munition von der Lagerkiste in die Unendlich Kisten!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4038,
@@ -27536,7 +28474,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Free bowling arcade machine with SPECIAL bonus (Bethesda in-game package)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4039,
@@ -27546,7 +28485,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Mole rats - spawn locations including map…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4040,
@@ -27556,7 +28496,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "25% discount on everything in our merchandising shop October 24th. -10/26/2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4041,
@@ -27566,7 +28507,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Fallout TV series starts on April 12, 2024 on Amazon Prime…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4042,
@@ -27588,7 +28530,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Offers for the “Day the Bombs Fell” anniversary…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4044,
@@ -27622,7 +28565,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Fallout 76 - Patch notes October 10, 2023 (Patch 47)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4047,
@@ -27632,7 +28576,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build How-To: Blutbefleckt Enklaven Plasma Sniper & Flamer \"Rocketgirl\"",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4048,
@@ -27642,7 +28587,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[PTS] Atlantic City: Comes with 4 new expeditions, new factions & new quests (70+ new screenshots)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4049,
@@ -27665,7 +28611,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "[Update November 8th, 2023] New post with list & gallery of all rewards from Season 15: Datamining: PTS Patch 48 Season 15 All rewards",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 4051,
@@ -27697,7 +28644,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop September 23rd-28th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4054,
@@ -27707,7 +28655,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76: Atlantic City - New update / expansion on December 5th, 2023 - Trailer and screenshots of the new expedition…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4055,
@@ -27730,7 +28679,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. Who has time to chop their own meat? The Butch-O-Bot is now until 3.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4057,
@@ -27752,7 +28702,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount from 2 items in our merchandising shop August 30th - September 4th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4059,
@@ -27796,7 +28747,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Fallout 76 - Patch notes August 22, 2023 (Patch 46)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4063,
@@ -27807,7 +28759,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Quelle: Nuka Knights Datamining Quelle für Galerie: DSJ (Twitter / Fallout 76 Datamining Discord)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "stub": true
+    "stub": true,
+    "sourceImages": true
   },
   {
     "id": 4064,
@@ -27817,7 +28770,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Update August 15th, 2023] Season 13 ends and update on August 22nd. have now been confirmed [Update August 9th, 2023] New player setups have been postponed to a later patch and are now at the bottom of the post; Added Season 14 rewards…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4065,
@@ -27827,7 +28781,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Build How-To: Bloodstained Overeater Power Armor with Heavy Weapons (50 Caliber/Minigun)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4066,
@@ -27837,7 +28792,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Kostenloses Xbox/Amazon Prime Gaming \"Essenszeit-Paket\" (Ab 17.08.2023 auch bei Xbox GamePass)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4067,
@@ -27860,7 +28816,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4069,
@@ -27870,7 +28827,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Wiki: https://fallout.fandom.com/wiki/Royal_jelly_(consumable) Wiki: https://fallout.fandom.com/wiki/Royal_jelly_(junk) The \"Junk Feed Juice\" can be found as loot from Honeybeasts, and you can find one next to a motorcycle on the highway…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4070,
@@ -27880,7 +28838,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Wie bereits im aktuellen Community Kalender angekündigt. Gibt es im Juli wieder ein Challenge - Event, wie ihr es auch schon einige Male erlebt habt. Zuletzt mit der Kalten Schulter. Dieses Mal unter dem Motto: Sommer-CAMP bzw Ferienlager.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4071,
@@ -27890,7 +28849,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop August 2nd - August 7th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4072,
@@ -27912,7 +28872,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. Requested from 25.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4074,
@@ -27922,7 +28883,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Grahm Route & Offers: How to find him immediately (Supermutant dealer)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4075,
@@ -27965,7 +28927,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Fallout 76 - Patch notes July 18, 2023 (Patch 45)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4079,
@@ -27975,7 +28938,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "[Updated] Possible changes for Patch 45 on July 18, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4080,
@@ -28005,7 +28969,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Every month we invest countless hours in Nuka Knights to keep you up to date and advance projects like the website. So you are always informed about all current topics and insider news in Fallout 76.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4083,
@@ -28027,7 +28992,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop July 8th - July 12th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4085,
@@ -28061,7 +29027,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Weekly Atomic Shop Update: June 27th to July 4th Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. Fireworks, there are fireworks here!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4088,
@@ -28072,7 +29039,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "The new “Healthy and Safe” event will be introduced with the Patch 44 update on June 20, 2023. It is a public event, so it rotates with the other public events and starts on the hour, at 8 p.m. and 40 p.m.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4089,
@@ -28082,7 +29050,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "New sidequest \"Costa's Affairs\" / \"Costa Business\"",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4090,
@@ -28115,7 +29084,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on to catch a preview of the latest and greatest items and offers that are currently available in the Atomic Shop, including this week's free items. Fireworks, get your fireworks here!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4093,
@@ -28125,7 +29095,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Fallout 76 - Patch notes June 20, 2023 (Patch 44)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4094,
@@ -28135,7 +29106,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "All items, tools, skill cards, mutations and armor create an overall picture of how “strong” your character is in the game It is not enough to have a specific weapon to survive against all opponents.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4095,
@@ -28145,7 +29117,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "New Heavy Overeater design & 25% discount on everything in our merchandising shop ONLY on June 21st, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4096,
@@ -28165,7 +29138,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Upcoming changes in the \"When the stars align\" update (\"Once in a blue moon\") in Patch 44 on June 20, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4098,
@@ -28188,7 +29162,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. Fireworks, there are fireworks here!",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4100,
@@ -28199,7 +29174,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. You're tired of people using your C.A.M.P. plunder?",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4101,
@@ -28210,7 +29186,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. You're tired of people using your C.A.M.P. plunder?",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4102,
@@ -28220,7 +29197,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Camera: This is the quickest way to get the ProSnap Deluxe camera…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4103,
@@ -28230,7 +29208,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "15% discount on everything in our merchandising shop May 20th - May 23rd, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4104,
@@ -28240,7 +29219,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Boy Scouts: Tadpole's Theory Test Questions and Answers…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4105,
@@ -28250,7 +29230,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Once again there will be a new challenge event with daily and weekly tasks. This time you need the double-barreled shotgun with cold damage: Cold Shoulder from Season 12 (current season) (See also: Tip: The 'Cold Shoulder' double-barreled…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4106,
@@ -28260,7 +29241,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Build How-To: Blutbefleckt Automatik-Axt / Kettensägen \"Leatherface\" (Zweihand Nahkampf)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4107,
@@ -28282,7 +29264,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Dieser Build spielt Blutbefleckt (niedrige TP / hohe Strahlung) Nahkampf Einhand Waffen mit Fokus auf \"Einfrieren\"-Effekt sowie eine dazu passende Arktische Marinerüstung in Unnachgiebig.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4109,
@@ -28305,7 +29288,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Tired of people raiding your CAMP? Give yourself a brake and grab this Gutted Car Gate, available for all Fallout 1st Members until June 6. Snap timeless photos with the Rounded Squares Frame, now available in the shop until May 9.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4111,
@@ -28337,7 +29321,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop April 23rd - April 26th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4114,
@@ -28368,7 +29353,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build How-To: Heavy Energy Weapons / Heavy Gunner Energy Weapons in Power Armor…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4117,
@@ -28378,7 +29364,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "This build specializes in the Gauss Minigun, a heavy rotating energy weapon with explosion damage from the EK 2mm cartridges. To get the most out of this heavy weapon, this build plays in Power Armor.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4118,
@@ -28389,7 +29376,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. Almost like the real thing, just made of wax.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4119,
@@ -28410,7 +29398,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Our latest update for Fallout 76 brings a variety of new bug fixes and improvements to the game. Read on to catch all the details.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4121,
@@ -28420,7 +29409,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Tip: The \"Cold Shoulder\" Double-Barreled Shotgun (Game Board / Season 12)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4122,
@@ -28431,7 +29421,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on to catch a preview of the latest and greatest items and offers that are currently available in the Atomic Shop, including this week's free items.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4123,
@@ -28441,7 +29432,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Tips for the daily and weekly challenges…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4124,
@@ -28452,7 +29444,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. FREE ITEMS…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4125,
@@ -28463,7 +29456,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. The “Cat” topiary hedge is the perfect addition to your garden – and free for all Fallout 76 players.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4126,
@@ -28473,7 +29467,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Everything about the event “Das Rad” / The Wheel (Nuka World on Tour Update)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4127,
@@ -28483,7 +29478,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop March 27th - April 2nd, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4128,
@@ -28504,7 +29500,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Build How-To: Bloodstained Pistols & Heavy Weapons (Energy Weapons & Critical Hits)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4130,
@@ -28515,7 +29512,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. Grab it by 28. March free demonstration pose.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4131,
@@ -28525,7 +29523,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Game Board 12 / Season 12: Preview for \"One More Time\" Emote & RIP Daring Jetpack (Secret Service Armor & Brotherhood Recon Armor)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4132,
@@ -28535,7 +29534,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop March 17th - March 22nd, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4133,
@@ -28546,7 +29546,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. Until 21.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4134,
@@ -28557,7 +29558,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. You are just really cool socks! That's why the greaser pose suits you perfectly.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4135,
@@ -28567,7 +29569,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "20% discount on everything in our merchandising shop March 4th - March 12th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4136,
@@ -28589,7 +29592,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4138,
@@ -28599,7 +29603,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Our latest update for Fallout 76 launches today, and it's bringing with it Daily Ops Mutations into Public Events, a new Season, accessibility improvements, the ability to re-roll Challenges and much more to the game. Read on for details.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4139,
@@ -28619,7 +29624,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "New Enemy Mutation: Reflective / Reflective in daily operations and mutant events…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4141,
@@ -28629,7 +29635,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "On Tuesday, February 28th, 2023 it's that time again. The next Update (Patch 42) brings some innovations to the live game Fallout 76.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4142,
@@ -28649,7 +29656,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "15% discount on everything in our merchandising shop February 23rd-27th, 2023…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4144,
@@ -28660,7 +29668,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. FREE ITEMS…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4145,
@@ -28670,7 +29679,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This year, new challenges can already be seen in the game files. The expected first one this year will be the “Love for All” Valentine’s Day Challenge.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4146,
@@ -28693,7 +29703,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including free items of the week. FREE ITEMS…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4148,
@@ -28703,7 +29714,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Build How-To: Bloodstained Max Crit Commando Sniper…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4149,
@@ -28714,7 +29726,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. FREE ITEMS…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4150,
@@ -28724,7 +29737,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "To celebrate 2023, Xbox Game Pass and Prime Gaming are offering you this free bundle. Available from 01/26/2023 to 03/26/2023 via Prime Gaming (active Prime Gaming membership required).",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4151,
@@ -28755,7 +29769,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "[Update January 24th, 2023] In Patch 41, almost all legendary legacy effects have now been deactivated. Explo energy weapons no longer have an Explo effect, Fatman has no FFR, etc.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4154,
@@ -28765,7 +29780,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Our latest update for Fallout 76 launches today, and it's bringing a host of bug fixes, gameplay improvements, and more. Read on for a full list of patch notes for today's update.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4155,
@@ -28797,7 +29813,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "All about the new Seismic Activity event in Ash Heap / Nuka World on Tour…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4158,
@@ -28807,7 +29824,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Upcoming changes in patch 41 on January 24th, 2023 (illegal weapons & mod removal)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4159,
@@ -28818,7 +29836,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "This Nuka-Cola fashion is currently very popular. Get the Nuka World Geyser shirt and matching jeans this week, until 24. January free for all Fallout 76 players. This time, Fallout 1st members can also register until 7.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4160,
@@ -28828,7 +29847,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Faction reputation system: This is how you constantly improve your reputation…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4161,
@@ -28838,7 +29858,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "In the community, abbreviations are always used for builds and in trade so as not to have to write out the complete perks. This can be confusing at first.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4162,
@@ -28849,7 +29870,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. FREE ITEMS…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4163,
@@ -28860,7 +29882,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Get excited for the New Year with the Looking Forward photo mode pose. For all Fallout 76 players through 10. January available free of charge. This time, Fallout 1st members can also register until 7. February seize the merchant bot.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4164,
@@ -28871,7 +29894,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Read on if you want to find out what new and great items are currently available in the Atomic Shop, including the free items of the week. FREE ITEMS…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4165,
@@ -28881,7 +29905,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Update 24.12.: Mehr Bilder hinzugefügt Dieser Beitrag zeigt ein Datamining der Saison 12 des zukünftigen Patch 42, der aktuell auf dem PTS (Public Test Server) zur Verfügung steht.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4166,
@@ -28891,7 +29916,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The Energy Explo Filter is also active again on the current PTS, which went online yesterday on December 21st, 2022. This time apparently without the previous errors. Enclave plasma rifles have e.g. nor their legendary effects.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4167,
@@ -28902,7 +29928,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Ticket gekauft und hereinspaziert! Im Gegensatz zu den Tickets ist der Feriendorf-Kartenschalter für alle Fallout 1st-Mitglieder bis zum 27. Dezember kostenlos. Achtung, der Santatron rutscht in euer C.A.M.P. Holt euch bis zum 3.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4168,
@@ -28912,7 +29939,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Alle neuen Pläne aus dem Nuka World on Tour Update als Übersicht…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4169,
@@ -28923,7 +29951,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Achtung, der Santatron rutscht in euer C.A.M.P. Holt euch bis zum 3. Januar die Santatron-Kollektron-Station kostenlos aus dem Atomic Shop.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4170,
@@ -28934,7 +29963,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "This event is one of the 4 public events that were released for free as an update for Fallout 76 with the Nuka World on Tour update on December 6th, 2022. The event takes place in a western town setting.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4171,
@@ -28944,7 +29974,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Everything about the “Tunnel of Love” event (Nuka World on Tour)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4172,
@@ -28954,7 +29985,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Everything about the thirst quencher / Thirst Zapper (Nuka World on Tour)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4173,
@@ -28965,7 +29997,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MEZ des Folgetages erhältlich. GegenstandAtomeErhältlich abErhältlich bisStählerne-Bruderschaft-C.A.M.P.-Kit (Fallout 1st)700 6.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4174,
@@ -28975,7 +30008,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "(Datamining) Battle Banners: Battle-Focused Lunchboxes (Scout Banners)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4175,
@@ -28995,7 +30029,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "[Update] Kommende Änderungen im \"Nuka World on Tour\"-Update am 06.12.2022…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4177,
@@ -29005,7 +30040,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "In our article [Update] Coming changes in the 'Nuka World on Tour' update on December 6th, 2022 you have already read a summary of what awaits you in the update.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4178,
@@ -29016,7 +30052,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Mit dem kommenden Nuka World on Tour Patch am 06.12.2022 kommen nicht nur zahlreiche Events und Änderungen auf uns zu. Es ist auch eine neue Freie-Kamera-Modus Challenge, ähnlich wie die Axtionismus Challenge in Sicht.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4179,
@@ -29027,7 +30064,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MEZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4180,
@@ -29038,7 +30076,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Diese Woche wartet der Atomic Shop wieder mit täglichen Angeboten auf! Jeder Gegenstand ist immer bis 18:00 Uhr MEZ des Folgetages erhältlich.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4181,
@@ -29058,7 +30097,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Datamining: \"Call to Axe-ion\" aka \"Axtionism\" challenges…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4183,
@@ -29068,7 +30108,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Free Power Armor Promo Skin: Heat Eater (Doritos/Rockstar/Microsoft)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4184,
@@ -29089,7 +30130,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Witch hat, witch costume, skeleton mask, skeleton costume and the civil war clothes.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4186,
@@ -29099,7 +30141,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "With today's update (September 8th, 2021), NW has been switched off and many of the rewards have now moved to adventure mode in the form of blueprints. The blueprints cannot be traded.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4187,
@@ -29109,7 +30152,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Overdrive (falls auf kritische Treffer gespielt wird) Psychotats (erst Overdrive, dann Psychotats) Kleine Waffen Wackelpuppe / oder Energiewaffen Ballistik Bock oder Hochspannungs Hefeweizen Psychotats (erst Overdrive, dann Psychotats)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4188,
@@ -29119,7 +30163,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "After joining the team, the bar will be filled for about 5 minutes until it is full and the team will then receive an additional bonus. (time factor) This means that the Team Bonus only becomes active when the blue bar is full, e.g.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4189,
@@ -29129,7 +30174,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Most people probably know that, in addition to collecting and capturing power plants, you can also create fusion cores at the chemical workbench. However, you need one of each stable flux to create a fusion core.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4190,
@@ -29139,7 +30185,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "We always get the question in the Nuke Knights group as to whether you need more than 1 piece of armor with HTD (Harder to Detect), in German \"harder to detect when sneaking\". The legendary perk does not stack.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4191,
@@ -29150,7 +30197,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Update December 8th, 2021: NPCs can again be healed with flame weapons e.g. kebab knives. Unfortunately, it very often happens that the event fails because the lowest reward level is not reached.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
-    "archived": true
+    "archived": true,
+    "sourceImages": true
   },
   {
     "id": 4192,
@@ -29160,7 +30208,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Effekt hält normal 15 Minuten an, mit \"Chem Connaisseur\" (Endurance) sogar 30 Minuten Es unterdrückt aktuell keine Mutationen (obwohl es so beschrieben ist) Stackt sich beliebig, dadurch kann man sogar in Nuke Zones ohne PA oder…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4193,
@@ -29170,7 +30219,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fallout 76 - Patch Notes – October 25, 2022 (Patch 39)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4194,
@@ -29180,7 +30230,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Schießziele (Flasche, Dose, Golfball / Ziele können kostenlos repariert werden) Lincoln's Repeater Unterhebel Skin",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4195,
@@ -29190,7 +30241,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Armor with AP regeneration: What exactly does that do?",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4196,
@@ -29200,7 +30252,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Nach nun fast 3 Jahren Fallout 76 haben sich viele Verhaltensweisen inzwischen wie eine Art \"Knigge\" international etabliert und gelten unter den meisten Spielern als \"höflich\" oder sogar selbstverständlich im netten Umgang miteinander.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4197,
@@ -29210,7 +30263,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "From our PTS thread here in the Nuka Knights group you already know many details of the upcoming changes in Patch 26 on April 27th, 2021. Here I'll explain how the long-awaited perk loadouts work.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4198,
@@ -29220,7 +30274,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "How To: 'Katniss Everdeen' Archer Build…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4199,
@@ -29230,7 +30285,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Build How-To: Legendary Explosive Blutbefleckt Waffenlos Nahkampf…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4200,
@@ -29240,7 +30296,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Update: \"Nach Wastelanders Update bis Patch 22\" - Variante (Ist durch Patch 22 extrem geschwächt worden) Dieser Build spielt blutbefleckt (niedrige TP, viel Strahlung) ohne Powerrüstung und primär mit Waffenlos-Waffen sowie mit…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4201,
@@ -29250,7 +30307,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Update: This build could only be played before Wastelanders (2020). New approach in the comments.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4202,
@@ -29260,7 +30318,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Update: As of June 30, 2020, the cooked buffs in connection with the \"Carnivore\" mutation are stronger Ready cooked (buff with carnivore mutation): Leg of Mutton (+25% melee damage) Mutton Pie (+37% melee damage) Shining Steak (+25% melee…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4203,
@@ -29270,7 +30329,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Perception now needs 6 points since Panzerkiller now also counts for pistols. The legendary perks Aftereffect and Full Commitment improve the build enormously. New video attached: BE 10mm vs Brandbeast This build only plays with pistols.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4204,
@@ -29280,7 +30340,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Build How-To: Bloodstained Sneaky (Commando) Sniper…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4205,
@@ -29290,7 +30351,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Hier möchte ich einmal meinen ersten Hybrid-Haupt-Char von 2020 vorstellen. Da ich immer gern mal verschiedene Spielweisen teste und so einfach mehr Abwechslung möglich ist, hat sich mein Haupt Char mittlerweile auf diesen Hybrid Build…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4206,
@@ -29300,7 +30362,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Mysteriöse Gegenstände: 25 Jahre Fallout…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4207,
@@ -29310,7 +30373,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Patch notes & news",
     "snippet": "Entstanden ist Nuka Knights vor allem durch meinen dauerhaften Informations-Hunger über Fallout 76 Hintergrundwissen, News, Updates und alltägliche Herausforderungen.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4208,
@@ -29320,7 +30384,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Pro tip: \"The Problem Solver's\" armor (against robots)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4209,
@@ -29330,7 +30395,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "There are 26 legendary perks. You can get and use a maximum of 6 slots. The slots are allocated depending on the level of your character. From level 50 you get one slot, the next at 75, then 100, 150, 200 and 300 up to a maximum of 6 slots.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4210,
@@ -29340,7 +30406,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Problem: In many places, glowing boulders suddenly fall from the ceiling. These cause fire damage and cause many players to die very quickly. This means you may not be able to loot Earle.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4211,
@@ -29350,7 +30417,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Rewards from the final Wastelanders quest (Vault 79) with the raiders and settlers…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4212,
@@ -29360,7 +30428,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "These are bills that you can get as loot from burnt people. You can then find these under \"Miscellaneous\" in your Pip-Boy.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4213,
@@ -29370,7 +30439,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76: The PITT patch notes - September 13, 2022 (Patch 38)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4214,
@@ -29380,7 +30450,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Fallout 76 - Patch notes – July 26, 2022 / Patch 37…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4215,
@@ -29390,7 +30461,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Fallout 76 - “Toughness Test” patch notes - Update – June 14, 2022 / Patch 36…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4216,
@@ -29400,7 +30472,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "All about Legendary Crafting/Legendary Crafting…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4217,
@@ -29410,7 +30483,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Fallout 76 - Patch notes – April 12, 2022 / Patch 35…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4218,
@@ -29420,7 +30494,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Fallout 76: Patch notes – March 1, 2022 / Patch 33/34…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4219,
@@ -29430,7 +30505,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Responder Bot / Grahm: Mögliche Angebote via Datamining…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4220,
@@ -29440,7 +30516,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Covers 6 perk points (First Aid Kit 3, Thru-Hiker 3). Ammunition weight reduction Covers 5 perk points (weapon belt 2, batteries included 3) Does not reduce the weight of grenades, rockets, mini nukes and 40mm grenades (explosive carriers)",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4221,
@@ -29450,7 +30527,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Blue Ridge Karavanen Outfit Blue Ridge Karavanen Gasmaske Bauplan: Blue Ridge Karavanen Rucksack Bauplan: Blue Ridge Karavanen Flagge Salamibrötchen (+Tragekapazität, wenn ihr keine Pflanzenfresser Mutation nutzt) Quelle…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4222,
@@ -29460,7 +30538,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "You've probably already met him in the Lucky Hole: The Interloper (the firstborn of the forest) But probably hardly anyone knows more about it.",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4223,
@@ -29480,7 +30559,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "As of PTS August 2025 New Perk Card Description: Classified as non-automatic weapons, Crossbows, Compound Bows, and Recurve Bows all benefit from this perk card.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4249,
@@ -29490,7 +30570,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Garust and SugarBombsRADS Perk Card Changes and Updates - June 2025 New Perk Card Description: Normally, when you use VATS, it costs AP (Action Points) based on the weapon’s base AP cost per attack.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4250,
@@ -29500,7 +30581,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "\"Build up your raider agility with the Raider Speed Bag.\" A decorative CAMP item that provides a temporary Agility buff when used. Crafting Requirements Love your food buffs? We’ve got you covered.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4251,
@@ -29510,7 +30592,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. Subject to change pending porting to live servers Sinkhole Solutions is part of the Burning Springs DLC that drops in December 2025 This event will be permanently added to the Public Event list.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4252,
@@ -29520,7 +30603,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With Thanks to Garust and SugarBombs.RADS The Fishing Hook Mods have a 20% chance to drop from the Pip-Boy Daily Quest \"Big Fish in a Small Pond.\" To apply the Fishing Hooks, go to the Tinker’s Workbench and select “Modify.” This will open…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4253,
@@ -29530,7 +30614,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Rewards for Gone Fission Update Downloadable & Printable copies can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4254,
@@ -29540,7 +30625,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Subject to change pending porting to live servers For every successful event, you will receive You receive up to 3 Legendary Modules: Event Legendary (reward screen) You always receive 1 legendary item.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4255,
@@ -29550,7 +30636,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers Each Head Hunt boss comes with a distinct weapon setup and a signature mechanic, and their side-kick group follows a similar theme.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4256,
@@ -29560,7 +30647,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Subject to change pending porting to live servers From Mac’s market stall, stand in front of the Punch Card Machine and face northwest. You’ll see a set of stairs next to the Lone Wanderer motorbike post.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4257,
@@ -29570,7 +30658,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This written guide was made with the support of Bethesda Softworks, a ZeniMax Media Company. Game™ content and references in this guide are based on the PC version of the game.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4258,
@@ -29580,7 +30669,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "\"With the Wall-mounted Oven, it's meat time, all the time.\" Crafting Requirements Love your food buffs? We’ve got you covered. Buffs n Brew is a community built around food buff farming, crafting, and sharing knowledge.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4259,
@@ -29590,7 +30680,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Subject to change pending porting to live servers How Random Encounters Work Once a random encounter is triggered, the location enters cooldown for about 18 minutes after all players leave the cell.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4260,
@@ -29600,7 +30691,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "+5% Ballistic Weapon Damage This boosts the damage of Non-Heavy, Non-Energy guns.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4261,
@@ -29610,7 +30702,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "\"What is old can be used for parts!\" Generates military-themed junk. Crafting Requirements Love your food buffs? We’ve got you covered. Buffs n Brew is a community built around food buff farming, crafting, and sharing knowledge.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4262,
@@ -29620,7 +30713,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers This route is meant to be run from Some spawns are out of the way and rely on the previous spawn to reach the next one.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4263,
@@ -29630,7 +30724,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Subject to change pending porting to live servers How to start Grunt Hunts There is no questline, cost, or requirements to start a Grunt Hunt.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4264,
@@ -29640,7 +30735,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Burning Springs update introduces 4 new fish to catch! IMPORTANT NOTE ABOUT SANDSTORMS If you are trying to catch a specific fish, such as a Local Legend or a Glowing Fish, Sandstorms are treated as Clear (No) Weather for spawn checks.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4265,
@@ -29650,7 +30746,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Irradiated Sunset Sarsaparilla +5% Ballistic Weapon Damage This boosts the damage of Non-Heavy, Non-Energy guns.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4266,
@@ -29660,7 +30757,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Whitesprings Enclave Data Center \"It only looks more expensive on the outside.\" A decorative CAMP resource that passively generates electronic parts.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4267,
@@ -29670,7 +30768,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Sunset Sarsaparilla Vending Machine Satisfy your thirst with a Sunset Sarsaparilla!",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4268,
@@ -29680,7 +30779,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Pyro-Technical perk increases fire damage based on your Intelligence (INT). Fire damage scales with INT, following a diminishing returns curve.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4269,
@@ -29690,7 +30790,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "In Fallout 76, the Rested system has four variants, all granting a +5% XP bonus, but the duration varies depending on where you sleep and who you sleep near.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4270,
@@ -29700,7 +30801,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Used for: SCORE Daily - Kill a Corrosive Stingwing (5) - EPIC - Kill a…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4271,
@@ -29710,7 +30812,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Subject to change pending porting to live servers A refreshing ice cold bottle of Nuka-Cola Quantum gifted from the Nuka-Queen. Drink it quickly, or there will be consequences.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4272,
@@ -29720,7 +30823,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "\"Chemically curious? Luckily, this Chem mystery machine is loaded with many different chems for all to try...\" Crafting Requirements Love your food buffs? We’ve got you covered.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4273,
@@ -29730,7 +30834,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Reward Checklist - SugarBombsRADs Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4274,
@@ -29740,7 +30845,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With Thanks to Garust and SugarBombsRADS Three types of weather conditions affect the catch and spawn rates of fish and axolotls: Rainy Weather Conditions Counts as Rainy Weather when any of the following are happening: Nuke Weather…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4275,
@@ -29750,7 +30856,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Subject to change pending porting to live servers How to start the quest Plan: Welcome to Ohio Sign Plan: Rust Raider Light Outfit How to start the quest • Complete 3 Test of Might challenges • Complete 4 Test of Dominance challenges • 1…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4276,
@@ -29760,7 +30867,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "\"Often used by Grafton Police for the disposing of problematic evidence.\" Crafting Requirements I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4277,
@@ -29770,7 +30878,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Subject to change pending porting to live servers Unlocks once 1 Abraxodyne Intel Briefcase has been collected Unlocks once 3 Abraxodyne Intel Briefcases have been collected Super Duper Mart Cooler Unlocks once 25 Abraxodyne Intel…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4278,
@@ -29780,7 +30889,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Liberated Collectron Station It's getting hard to tell who was liberated in this scenario... The Liberated Collectron Station sends out a heavily modified Liberator with a curious allegiance to the Mothman.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4279,
@@ -29790,7 +30900,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Fish, Small, Savage Divide, Sawgill Fish, Small, Cranberry Bog, Sawgill Fish, Small, Mire, Sawgill Fish, Small, Toxic…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4280,
@@ -29800,7 +30911,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers This route is meant to be run from Some spawns are out of the way and rely on the previous spawn to reach the next one.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4281,
@@ -29810,7 +30922,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "A suitable storage for all the aid you need to prescribe across the Wasteland! Included with membership in Fallout 1st. You must be an active Member to deposit aid items into the Aid Box.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4282,
@@ -29820,7 +30933,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers This route is meant to be run from Some spawns are out of the way and rely on the previous spawn to reach the next one.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4283,
@@ -29830,7 +30944,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Subject to change pending porting to live servers How to Start the Abraxodyne Intel Questline You can start the Abraxodyne Intel Briefcase questline in one of two ways: Option 1 – Pick up a Briefcase in Burning Springs Abraxodyne Intel…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4284,
@@ -29840,7 +30955,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Subject to change pending porting to live servers How Random Encounters Work Once a random encounter is triggered, the location enters cooldown for about 18 minutes after all players leave the cell.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4285,
@@ -29850,7 +30966,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This written guide was made with the support of Bethesda Softworks, a ZeniMax Media Company. Game™ content and references in this guide are based on the PC version of the game.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4286,
@@ -29860,7 +30977,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Iron Fist perk increases unarmed melee damage based on your Damage Resistance (DR).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4287,
@@ -29870,7 +30988,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Glowing Gut Perk Card Note: Carnivore mutation removes radiation from meat-based foods, so Grilled Radhog Chops will NOT give rads if the player has the Carnivore mutation. Learned the first time you pick up Radhog Meat.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4288,
@@ -29880,7 +30999,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Fixed Spawn Location - Wavy Willard’s Water Park Fish, Small, Local Legend Fixed Spawn Location - Organ Cave Fish…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4289,
@@ -29890,7 +31010,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "The Love Hurts Mini Season is a limited-time event in Fallout 76. Running from 3rd February 2026 to 17th February 2026 at 12 PM US EST (at Atom Shop changeover), players can claim the Tough Love Helmet for free from the Mini Seasons Board.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4290,
@@ -29900,7 +31021,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "\"Why pan for resources when this Rocker Box can do it for you?\" Crafting Requirements I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4291,
@@ -29910,7 +31032,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Whitespring's legendary service now comes home with the Whitesprings Robo Butler Collectron!",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4292,
@@ -29930,7 +31053,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Subject to change pending porting to live servers I’m not giving exact directions for these, since half the fun is tracking them down yourself. Below are the maps, along with a checklist to keep you on track. Good luck!",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4294,
@@ -29940,7 +31064,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Sunset Stranger Mini Season is a limited-time event in Fallout 76. Running from 23rd December 2025 to 6th January 2026 at 12 PM US EST (at Atom Shop changeover), players can claim the Sunset Sarsaparilla Deputy Hat for free from the…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4295,
@@ -29950,7 +31075,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Subject to change pending porting to live servers Fishing in Appalachia Guides Your progress will be automatically saved as you mark the boxes on the checklist below. I'm testing some new code to make this checklist more mobile-friendly.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4296,
@@ -29960,7 +31086,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Glowing Gut Perk Card Note: Herbivore mutation removes radiation from vegetable-based foods, so Prickeye Salad will NOT give rads if the player has the Herbivore mutation. Learned the first time you pick up a Prickeye.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4297,
@@ -29970,7 +31097,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Farming Tips and Tricks Scalpels are a per-server, pick-up history, world spawn item. This means they will only spawn once per location per server.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4298,
@@ -29980,7 +31108,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. SUBJECT TO CHANGE WHEN PORTING TO LIVE SERVERS #### TEXT CORRUPTED #### Mischief Night... Rises... #### UNKNOWN COMMAND ### Sow mayhem, chaos, mischief. Don costumes and seasonal accessories.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4299,
@@ -29990,7 +31119,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Glowing Gut Perk Card Note: Carnivore mutation removes radiation from meat-based foods, so Radhog Burnt Ends will NOT give rads if the player has the Carnivore mutation. Complete the Lifetime Challenge: Cook 30 meals that use Radhog Meat.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4300,
@@ -30000,7 +31130,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. Subject to change pending porting to live servers Downloadable and printable reward checklists can be found here. Providing the event does not fail, you will always receive a plan.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4301,
@@ -30010,7 +31141,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Subject to change pending porting to live servers Complete a Bounty Hunt at Ash Cave At the long gone man of science in Ash Cave Complete a Bounty Hunt at Athens At the watchful head of the party in the centre of Athens At the claw-mark…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4302,
@@ -30020,7 +31152,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust, Blobby, and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Once you’ve started fishing in Appalachia, you’ll quickly find yourself with piles of fish—and no clear use…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4303,
@@ -30030,7 +31163,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "With thanks to RevivalDan, NerdItBabe, and Trashy The XP buff stacks with: X can drop the following items No Humans or creatures drop Nuka Cola Cranberry.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4304,
@@ -30040,7 +31174,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Fish Spawn Rates - Black n White Reward Infographic - SugarBombs.RADS Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4305,
@@ -30050,7 +31185,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers Daily Score Challenges Weekly Score Challenges Catch any Fish in Burning Springs (3) Catch Fish in Burning Springs (15) Catch Fish in Burning Springs (76) Catch Fish in Burning Springs…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4306,
@@ -30060,7 +31196,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "This written guide was made with the support of Bethesda Softworks, a ZeniMax Media Company. Game™ content and references in this guide are based on the PC version of the game.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4307,
@@ -30070,7 +31207,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers This route is meant to be run from Some spawns are out of the way and rely on the previous spawn to reach the next one.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4308,
@@ -30080,7 +31218,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. Subject to change pending porting to live servers Downloadable and printable reward checklists can be found here. Providing the event does not fail, you will always receive a plan.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4309,
@@ -30090,7 +31229,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "\"Put a variety of spice into your life.\" A decorative CAMP Collector that passively generates common cooking seasonings used in food recipes. Does not require power or interaction to function.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4310,
@@ -30100,7 +31240,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Emergency Technician Repair Bot \"Every good C.A.M.P. needs their own Emergency Technician Repair Bot to keep things booming!\" The Emergency Technician Repair Bot Station restores health to damaged C.A.M.P. objects over time.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4311,
@@ -30110,7 +31251,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "\"Bring that 'Home Sweet Home' taste to the Vault with the Soul Soup Server!\" A decorative CAMP resource that passively generates herbivore-friendly soup buffs. Requires no power and can be locked.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4312,
@@ -30120,7 +31262,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Night at the Morgue Mini Season is a limited-time event in Fallout 76. Running from October 21, 2025 to November 4, 2025, ending at 12 PM US EST (Atom Shop changeover). There is no specific item to claim.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4313,
@@ -30130,7 +31273,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "\"Make sure to get a good dinner in before you go off raiding.\" A decorative CAMP resource that passively produces Mirelurk-based food buffs. Does not require power and can be locked. Crafting Requirements Love your food buffs?",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4314,
@@ -30140,7 +31284,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Farming Tips and Tricks Scalpels are a per-server, pick-up history, world spawn item. This means they will only spawn once per location per server.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4315,
@@ -30150,7 +31295,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Subject to change pending porting to live servers How to start Head Hunts You need a Wanted Poster to start a Head Hunt.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4316,
@@ -30160,7 +31306,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Subject to change pending porting to live servers How Random Encounters Work Once a random encounter is triggered, the location enters cooldown for about 18 minutes after all players leave the cell.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4317,
@@ -30170,7 +31317,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Marshal Mallow's Marvelous Fishing Excursion Mini Season is a limited-time event in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4318,
@@ -30180,7 +31328,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Subject to change pending porting to live servers From the spawn in this location, run forward and jump up onto the roof of the large red and white barn.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4319,
@@ -30190,7 +31339,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to NerdItBabe and SouthwardBook7 Cripple a Mirelurk's Limb x2 Cook Roasted Mirelurk Meat x3 Take a Camera Picture of a Mirelurk Hunter x1 EPIC - Kill a Mirelurk with a Blunt Weapon x15 EPIC - Take a Camera Picture of a Mirelurk…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4320,
@@ -30200,7 +31350,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Limited Time Challenges and Mini Season X can drop the following items Only drops if the player has not already learned the Plan: Pole Hook. Once learned, this plan stops dropping.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4321,
@@ -30210,7 +31361,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4322,
@@ -30220,7 +31372,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Cryo Damage perk increases cryo damage based on your Intelligence (INT). Cryo damage scales with INT, following a diminishing returns curve.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4323,
@@ -30230,7 +31383,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Toxic Bob Collectron Station Let this Collectron gather some of that toxic stuff you’d rather not touch. The Toxic Bob Collectron Station sends out Toxic Bob to collect hazardous materials that most wastelanders would rather avoid.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4324,
@@ -30240,7 +31394,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With thanks to SpaceLime Each Head Hunt boss comes with a distinct…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4325,
@@ -30250,7 +31405,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "In collaboration with Gamer Aviator You might’ve noticed that the percentages on the above spawn rate chart don’t add up to 100%.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4326,
@@ -30260,7 +31416,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "\"Gather round for a slice of the pie!\" Produces \"Slice of Pumpkin Pie\" Crafting Requirements Love your food buffs? We’ve got you covered. Buffs n Brew is a community built around food buff farming, crafting, and sharing knowledge.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4327,
@@ -30270,7 +31427,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "With thanks to MKLovecraft and SpaceLime for the guide suggestion. In Patch 62, the Rejuvenator Legendary Mod is receiving changes to how it functions, and the Rejuvenated Endurance perk card will play a larger role in boosting its…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4328,
@@ -30280,7 +31438,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Whatever that is, it ain't frosting... This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4329,
@@ -30290,7 +31449,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4330,
@@ -30300,7 +31460,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to vc59755, Nerditbabe, Trashy, Ratatumka, and Etulino. The Science of Love Challenge is a limited-time event in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4331,
@@ -30310,7 +31471,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Created in collaboration with u/thrillington89. You can find the original document here. I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4332,
@@ -30320,7 +31482,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Subject to change pending porting to live servers These perk cards will only unlock once you have turned into a Ghoul, and you will lose access to them if you revert back to being human.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4333,
@@ -30330,7 +31493,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Pour mes abonnés français: merci pour votre amour et votre soutien, ça compte énormément pour moi. 💖 Subject to change pending porting to live servers Your Glow Meter functions as a second health bar and a fuel tank.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4334,
@@ -30340,7 +31504,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Black-Eyed Susan's Soothin' Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4335,
@@ -30350,7 +31515,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack with buffs from food, chems, drinks, armor, and other sources.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4336,
@@ -30360,7 +31526,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Updated Meat Week Guides can be found here Reward Checklist - Black n White Reward Checklist - SugarBombsRAD's Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4337,
@@ -30370,7 +31537,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Farming Tips and Tricks Beakers are a per-server, pick-up history, world spawn item. This means they will only spawn once per location per server. If another player collects it before you, you won’t be able to collect it on the same server.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4338,
@@ -30380,7 +31548,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With thanks to Nerditbabe Fixed Spawn Locations Most Blood Eagle spawn locations can be identified by the Blood Eagle icon on the map. There are usually two \"waves\" of enemies at Blood Eagle camps.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4339,
@@ -30390,7 +31559,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With thanks to Nerditbabe Fixed Spawn Locations Most Cultist spawn locations can be identified by the Cultist icon on the map. I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4340,
@@ -30400,7 +31570,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Junk Shield perk increases your Damage and Energy Resistance based on two factors: Base Resistance = 0.71 × Junk Items + 4.29 (capped at 100 junk items).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4341,
@@ -30410,7 +31581,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Even this fouled well can serve a purpose. Generates Acid, Dirty Water, and Nuclear Waste. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4342,
@@ -30420,7 +31592,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Strong Back perk increases Carry Weight based on your Strength (STR). The carry weight scales with STR, following a diminishing returns curve.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4343,
@@ -30430,7 +31603,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Nothing beats a relaxing cigarette break, it's the doctors orders! Generates Cigarette related items with a chance for chems. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4344,
@@ -30440,7 +31614,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Note: I used a transcription program to help convert the video into text, so there may be a few odd lines or instances where the speakers don’t quite match the conversation.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4345,
@@ -30450,7 +31625,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Man's best friend meets nature's pillow for children. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4346,
@@ -30460,7 +31636,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Every cat needs a good place to scratch. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4347,
@@ -30470,7 +31647,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Keep your fish on ice with this Cryo Freezer. It will instantly freeze food and drink items, reducing spoilage rates to 0%.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4348,
@@ -30480,7 +31658,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Nerditbabe, Trashy, XmasGoddess, and Shades451 The Appalachian Outlaws Challenge is a limited-time event in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4349,
@@ -30490,7 +31669,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Lead Belly perk reduces the amount of radiation taken from consuming food and drinks.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4350,
@@ -30500,7 +31680,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Spiritual Healer perk provides HP regeneration based on your Charisma (CHR) while on any team (public or private).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4351,
@@ -30510,7 +31691,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Time to repaint the C.A.M.P. make sure you are well prepared! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4352,
@@ -30520,7 +31702,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Subject to change pending porting to live servers How to Start the Quest To begin the quest line, you must be at least level 50.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4353,
@@ -30530,7 +31713,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Nerditbabe, XmasGoddess, and Shades451 The Appalachian Outlaws Challenge is a limited-time event in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4354,
@@ -30540,7 +31724,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Reward Checklist - SugarBombsRAD's Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4355,
@@ -30550,7 +31735,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "X Can Drop the Following Items: Nuka Cola Twist is not dropped by any creatures or NPCs. Farming Tips and Tricks: There are no perk cards, magazines, or backpack mods that will increase your yields for Nuka Cola Twist.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4356,
@@ -30560,7 +31746,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "You'll never go thirsty with Biv Bev here to serve! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4357,
@@ -30570,7 +31757,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Refractor perk increases Energy Resistance based on your Perception (PER). Energy Resistance scales with PER, following a diminishing returns curve.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4358,
@@ -30580,7 +31768,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Blobby from The Fallout Network General Perk Card Changes and Updates - March 2025 Pistols now have increased base damage to compensate for the removal of the Gunslinger and Guerrilla perk cards.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4359,
@@ -30590,7 +31779,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "They may not have a lot of meat on 'em, but that doesn't mean they're not delicious. Generates meat based meals. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4360,
@@ -30600,7 +31790,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Subject to change pending porting to live servers What is the Onslaught System and How Does it Work?",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4361,
@@ -30610,7 +31801,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Updated Meat Week Guides can be found here Rewards for Meat Week Downloadable and Printable link here. Interactive checklist here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4362,
@@ -30620,7 +31812,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack with buffs from food, chems, drinks, armor, and other sources.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4363,
@@ -30630,7 +31823,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Nerd Rage perk increases your Damage Bonus and AP Regeneration based on your current HP%. Both bonuses follow a diminishing returns curve.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4364,
@@ -30640,7 +31834,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Inspirational perk increases the amount of experience points (XP) gained while on a team, scaling based on Charisma (CHR).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4365,
@@ -30650,7 +31845,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Allows you to consume the corpses of: Conditions for Perk Card to activate Note: This is currently bugged. During PvP, if a player is on ANY team, the option to consume them will be unavailable.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4366,
@@ -30660,7 +31856,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4367,
@@ -30670,7 +31867,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "With thanks to the Young Coffee888 SUBJECT TO CHANGE PORTING TO LIVE SERVERS A full breakdown of the rewards can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4368,
@@ -30680,7 +31878,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Pharmacist perk card in Fallout 76 increases the effectiveness of RadAway based on your Intelligence (INT) level.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4369,
@@ -30690,7 +31889,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack with buffs from food, chems, drinks, armor, and other sources.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4370,
@@ -30700,7 +31900,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides You can’t fish without bait, and the type you use makes a big difference.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4371,
@@ -30710,7 +31911,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "What counts as a Flower Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4372,
@@ -30720,7 +31922,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Fish Spawn Rates and Conditions Downloadable version here I'm an Aussie data miner who creates guides for farming…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4373,
@@ -30730,7 +31933,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Created in collaboration with u/thrillington89. You can find the original document here. How to Use the Legendary Mod Farming Tool: 1. Select Mod Options: 3.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4374,
@@ -30740,7 +31944,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The best oddities are made of porcelain. Generates Adhesive, Asbestos, and Ceramic. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4375,
@@ -30750,7 +31955,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "A good idea but these aren't the best copies of caps. Generates Lead and Aluminum. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4376,
@@ -30760,7 +31966,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "You must know the Plan: Gatling Plasma before any of its mod plans will start to drop.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4377,
@@ -30770,7 +31977,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Everyone loves to have a friend in your C.A.M.P. and now you can have a German Shepherd friend. Camp Pets cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4378,
@@ -30780,7 +31988,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Subject to change pending porting to live servers Chems are used to fill your Feral Meter, and the Ghoul Perk Card Chem Diet further increases the amount of Feral gained from each chem.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4379,
@@ -30790,7 +31999,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This Americana inspired Nuka-Cola Machine holds every Nuka-Cola variety you could ever want! But which one will you get? Be warned, there is a 5 minute restocking period before you will be able to quench your thirst again.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4380,
@@ -30800,7 +32010,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Have a fresh selection of fishing bait available in your C.A.M.P. to help you catch some fish. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4381,
@@ -30810,7 +32021,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4382,
@@ -30820,7 +32032,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Amy Mason, Sanne Kruhoffer Vedel Jensen, and Trashy. Treasure Hunters often spawn in Super Mutant locations, so you can also use this guide to farm for them. Let's be real, we only farm Super Mutants for their XP lol.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4383,
@@ -30830,7 +32043,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4384,
@@ -30840,7 +32054,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Rewards for Gone Fission Update Downloadable & Printable copies can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4385,
@@ -30850,7 +32065,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This marvelous Classic Nuka-Cola Machine holds every Nuka-Cola variety you could ever want! But which one will you get? Be warned, there is a 5 minute restocking period before you will be able to quench your thirst again.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4386,
@@ -30860,7 +32076,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Reward Infographic - SugarBombs.RADS Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4387,
@@ -30870,7 +32087,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4388,
@@ -30880,7 +32098,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Bodyguards perk card provides Damage Resistance (DR) and Energy Resistance (ER) based on your Charisma (CHR).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4389,
@@ -30890,7 +32109,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "With thanks to the Young Coffee888 Rewards for The Big Bloom Downloadable & Printable copies can be found here. Flower Crown Crafting Calculator can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4390,
@@ -30900,7 +32120,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Farming Tips and Tricks Microscopes are a per-server, pick-up history, world spawn item. This means they will only spawn once per location per server.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4391,
@@ -30910,7 +32131,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Fish, Medium, Ash Heap, Glowing Fish, Medium, Cranberry Bog, Glowing Fish, Large, Mire, Glowing Fish, Small, Forest…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4392,
@@ -30920,7 +32142,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Time to set up for a good ol' board game night. Who get's to pick the first one? Generates Pre-war board games, This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4393,
@@ -30930,7 +32153,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4394,
@@ -30940,7 +32164,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Each stage of the Raids has unique rewards and loot pools. Below is an outline to help you navigate this guide: Vulcan Power Armour and Mod Guide can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4395,
@@ -30950,7 +32175,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Map of all possible Fuel Container Spawn Locations There are 23 possible fuel container spawn points in total. Downloadable copy here. Fuel containers will always spawn near or next to a green metal lantern.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4396,
@@ -30960,7 +32186,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "List of Legendary Minors (4*) and Components. Effect: Fortifies Physical & Energy Resists by +50 and Poison, Cryo & Fire Resists by +20 for Wearer & Teammates Within a 50ft Radius (up to +250 Physical & Energy Resistance and +100 Poison…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4397,
@@ -30970,7 +32197,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Revive your depleted plasma cores with the Plasma Core Recharger! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4398,
@@ -30980,7 +32208,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Camp: Weather Control Station - Blooming Haze…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4399,
@@ -30990,7 +32219,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Why stand around when you can let the fish come to you with the Fish Trap. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4400,
@@ -31000,7 +32230,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "It's game night in the vault! Generates Pre-war board games, This item cannot be built inside of a Shelter. Vault-Tec Games Cupboard Catch the Commie Board Game Will count towards Score challenges when taken directly from the collector.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4401,
@@ -31010,7 +32241,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Might not be the safest place to drink from, but it works. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4402,
@@ -31020,7 +32252,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below I'm an Aussie data miner who creates guides for farming, events, and food…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4403,
@@ -31030,7 +32263,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombs.RADS Subject to change pending porting to live servers Fishing in Appalachia Guides Daily: Big Fish in a Small Pond Head to Fisherman's Rest and speak to Captain Raymond to start the Pip-Boy Daily.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4404,
@@ -31040,7 +32274,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Rad Resistant perk increases Rad Resistance based on your Endurance (END). Rad Resistance scales with END, following a diminishing returns curve.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4405,
@@ -31050,7 +32285,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Player Titles offer a new way to showcase what makes your Vault Dweller unique. Using your Pip-Boy, you can mix and match prefixes and suffixes to create a nickname that fits your style.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4406,
@@ -31060,7 +32296,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Save yourself a trip to a secret lab and get the good stuff right at home! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4407,
@@ -31070,7 +32307,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4408,
@@ -31080,7 +32318,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Everyone needs a fresh supply of blood sometimes. The Blood Transfusion Pump removes Rads from human players and gives Rads to ghoul players.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4409,
@@ -31090,7 +32329,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS With thanks to Young Coffee888 & Garust This guide is broken up into the following sections: The Big Bloom is a seasonal event that runs at the start of every Spring.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4410,
@@ -31100,7 +32340,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Glowing Bobbleheads are identical to normal Bobbleheads but come in a glowing variant. There is a 20% chance to obtain a Glowing Bobblehead from Mystery Bobblehead Boxes, with a 1% chance for a specific glowing bobblehead.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4411,
@@ -31110,7 +32351,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Sunshine is for the birds. Fill your C.A.M.P. with the joy of a Radstorm instead! Weather Control Station will change weather in the C.A.M.P. radius when connected to power.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4412,
@@ -31120,7 +32362,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "This guide will help Ghoul players figure out the best armor for their build. If you don’t want to get entirely new armor, it also covers which perk cards and ranks you’ll need to balance out your Rad Resistance.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4413,
@@ -31130,7 +32373,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Can Do! Cap Collector PharmaFarmer and Scrounger Perk Card Calculator…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4414,
@@ -31140,7 +32384,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Farming Tips and Tricks Junk items that contain gold are affected by the per-server pickup history system. This means once you pick them up, they won’t respawn on that server until it resets.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4415,
@@ -31150,7 +32395,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Awareness perk improves your VATS accuracy based on your Perception (PER). As your Perception increases, your accuracy improves, but the gains diminish after a soft cap at PER 60.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4416,
@@ -31160,7 +32406,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Get your C.A.M.P. ready to party with the Weather Control Station (Fireworks). Weather Control Station will change weather in the C.A.M.P. radius when connected to power.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4417,
@@ -31170,7 +32417,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76. I firmly believe that knowledge should be accessible to everyone, so my guides will always be free.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4418,
@@ -31180,7 +32428,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Subject to change pending porting to live servers When you become a Ghoul, your Food and Drink meters disappear and are replaced by the Feral Meter. However, food and drink buffs still function as usual.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4419,
@@ -31190,7 +32439,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Vulcan Power Armour Stats How to Obtain Vulcan Power Armour and Crafting Plans To obtain a full set of Vulcan Power Armour and its crafting plans, you’ll need to complete the Gleaming Depths Raids.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4420,
@@ -31200,7 +32450,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Rewards for Invaders from Beyond Downloadable & Printable copies can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4421,
@@ -31210,7 +32461,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Your dog will love a place to dig up the ground. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4422,
@@ -31220,7 +32472,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "2025 Guide to Fallout 76 Perk Card Changes…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4423,
@@ -31230,7 +32483,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Each fish yields a certain amount of Fish Bits, depending on its size and classification. Perk Cards and Effects I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4424,
@@ -31240,7 +32494,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Garust and SugarBombsRADS Subject to change pending porting to live servers Fishing in Appalachia Guides Fish, Large, Savage Divide, Uncommon Region Fish, Medium, Ash Heap, Uncommon Region Fish, Large, Forest, Uncommon…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4425,
@@ -31250,7 +32505,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Lucky for you this broken down Mix-O-Matic still has some Cement in the back. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4426,
@@ -31260,7 +32516,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Celebrate America and snacks with the Patriot Popper Popcorn Machine! This item cannot be built inside of a Shelter. Patriot Popper Popcorn Machine Popcorn counts as Candy and Pre-war food for Collect and Consume Score Challenges.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4427,
@@ -31270,7 +32527,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Barbarian perk card provides Damage Resistance (DR) based on your Strength (STR). If you are not wearing armor, the DR value is doubled.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4428,
@@ -31280,7 +32538,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Fallout 76 Bobblehead Locations Farming Guide: Skyline Valley…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4429,
@@ -31290,7 +32549,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Where to find and how to farm for Holotape Games in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4430,
@@ -31300,7 +32560,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Axel and their companion Gyro After being hired: From Marley’s desk, face north and follow the tunnel until you see the yellow forklift on your left. Turn west and enter the room.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4431,
@@ -31310,7 +32571,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Extend the life of your used fusion cores with this Fusion Core Recharger! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4432,
@@ -31320,7 +32582,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "With thanks to the Data Mining Discord SUBJECT TO CHANGE PORTING TO LIVE SERVERS How to Use the Legendary Mod Crafting Component Calculator Step 1: Select Item Type Begin by selecting the type of item you want to craft a mod for.",
     "main_image": "static/images/21c06b75c69f78805ac8d9c73bd158ff.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4433,
@@ -31330,7 +32593,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Ricochet perk increases your chance to deflect incoming ranged attacks based on your Luck (LCK).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4434,
@@ -31340,7 +32604,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Thanks to Mapex for the fine-tuning and Vityan for the suggestion. How to Use This Calculator Step 1: Select the Perk Card Use the dropdown menu to select one of the following perk cards: Once you select a perk card, the graph and table…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4435,
@@ -31350,7 +32615,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Track current and upcoming Daily Quests. WIP - I'm still working out some bugs. If you find an error with the dates, please send me a message on here. Thank you!",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4436,
@@ -31360,7 +32626,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Farming Tips and Tricks Avoid Explosive Weapons When farming for items, especially Bobbleheads, avoid using explosive weapons. These can displace the Bobbleheads, making them harder to locate and collect.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4437,
@@ -31370,7 +32637,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Naming Your Brahmin for the First Time To name your Brahmin, first hire Josie the Brahmin Tamer, which will cost you 100 supplies. You don’t need to upgrade Josie to set or change your Brahmin's name. Once Josie arrives, talk to her.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4438,
@@ -31380,7 +32648,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Thankfully someone already sorted this junk into Plastics for you. Red Rocket Dumpster generates Junk.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4439,
@@ -31390,7 +32659,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "This item cannot be built inside of a Shelter. Build limit per workshop Shares a build limit with Found under X in the camp build menu In-Game: Plan: Vintage Water Cooler - Holiday Gifts - Holiday Scorched Seasonal Event Produces X amount…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4440,
@@ -31400,7 +32670,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks Coffee888 and SugarBombsRads. SUBJECT TO CHANGE PORTING TO LIVE SERVERS This guide is broken up into the following sections: You'll need to complete a short questline to start and run your own caravans.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4441,
@@ -31410,7 +32681,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Farming Tips and Tricks The following perk cards, magazines, and/or backpack mods will increase your yields.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4442,
@@ -31420,7 +32692,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Lifetime Challenge - Take a Camera Picture of a Glowing Bloatfly Lifetime Challenge - Take a Camera Picture of a Bloatfly Lifetime Challenge - Kill a Bloatfly Lifetime Challenge - Kill Different Kinds of Insects and Bugs Lifetime Challenge…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4443,
@@ -31430,7 +32703,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "With thanks to Coffee888 and SugarBombsRADS SUBJECT TO CHANGE PORTING TO LIVE SERVERS Out of respect for the Game Devs and their hard work in writing and creating the storyline, this guide will not go into detail on the questline, nor have…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4444,
@@ -31440,7 +32714,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Because of the size of the Blue Devil and the Ogua, they will only spawn at certain Assault and Scene spawn locations that give them room to move and complete their animations.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4445,
@@ -31450,7 +32725,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "With the introduction of the Skyline Valley update, new Random Encounters and Locations have been added. Please note that these encounters are exclusive to the Shenandoah region.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4446,
@@ -31460,7 +32736,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Dedicated to Gage and Shelley - thank you for your support. With thanks to Keiji, Chraczil, and Scratchy.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4447,
@@ -31470,7 +32747,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Gilpo and Garlic. Your progress will be automatically saved as you mark the boxes on the checklist below. I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4448,
@@ -31480,7 +32758,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Rewards for Mutation Invasion Events Downloadable and Printable copies can be found here. Drop Rate Infographic When participating in mutated events, the rewards you receive depend on the number of Fallout 1st members in the event.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4449,
@@ -31490,7 +32769,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "After being hired: From Marley's desk, face north and walk straight ahead. Stop at the stairs on your right, go up the stairs, and turn left. Follow the hallway down to the grey metal door. Open the door and walk forward a few steps.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4450,
@@ -31500,7 +32780,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below. I'm an Aussie data miner who creates guides for farming, events, and food buffs in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4451,
@@ -31510,7 +32791,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "This item cannot be built inside of a Shelter. Build limit per workshop Shares a build limit with Found under X in the camp build menu In-Game Plan - Plan: Brahmin Pen Produces X amount per I'm an Australian data miner who writes farming…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4452,
@@ -31520,7 +32802,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Note: These are camp resource items designed to produce only one or two types of resources. Items that produce mixed resources or junk are listed separately under their respective headings for junk or collections.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4453,
@@ -31530,7 +32813,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Serendipity perk increases your chance to evade all incoming damage while your health is below 30%. The evade chance is based on your Luck (LCK).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4454,
@@ -31540,7 +32824,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Fallout 76 Magazine Locations Farming Guide: Skyline Valley…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4456,
@@ -31550,7 +32835,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The First Aid perk scales Stimpak healing with your Intelligence (INT). The higher your INT, the more lost health is restored when you use a Stimpak.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4457,
@@ -31560,7 +32846,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Have yourself a brilliant time with this White Shepherd! Camp Pets cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4458,
@@ -31570,7 +32857,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Evasive perk increases your chance to evade incoming damage based on your Agility (AGI). The higher your Agility, the better your chance to avoid damage from attacks.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4459,
@@ -31580,7 +32868,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Generates Electronic Parts This item cannot be built inside of a Shelter. Build limit per workshop Shares a build limit with Found under X in the camp build menu Atom Shop - Enclave Data Center - X Atoms Atom Shop - X Bundle - X Atoms…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4460,
@@ -31590,7 +32879,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Pioneer Scout's Uncharted Lands Challenge is a limited-time event in Fallout 76. On the 6th of August at 12pm US EST (Atom Shop changeover), you will be able to claim the Marshal Mallow T-Shirt & Shorts for free from the Atom Shop.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4461,
@@ -31600,7 +32890,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Nuka-Cola Candy right at your finger tips! This item cannot be built inside of a Shelter. Nuka Cola Candy Machine Nuka-Cola Candy counts as Candy and Pre-war food for Collect and Consume Score Challenges.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4462,
@@ -31610,7 +32901,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4463,
@@ -31620,7 +32912,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Dangerous Pastimes Guide Skyline Valley: All Rewards Reward Checklist - Black n White Reward Checklist - SugarBombsRAD's Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4464,
@@ -31630,7 +32923,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Please note this is an unmarked questline that has no reward or plan at the end. It is a quest designed to encourage players to explore the new region. You will need to complete the quest in the below order.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4465,
@@ -31640,7 +32934,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Time for a good old fashioned Deathclaw cookout! Generates meat based meals. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4466,
@@ -31650,7 +32945,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "After being hired: From Marley’s desk, face north and follow the tunnel all the way to the end. Theo can be found either sitting at the bar at the end of the tunnel or in his workshop, on a workbench to the right of the bar.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4467,
@@ -31660,7 +32956,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Adamantium Skeleton perk reduces Limb Damage based on your Endurance (END). This perk does not affect limb damage caused by falling.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4468,
@@ -31670,7 +32967,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Add a little life to your C.A.M.P. with the Grey Tabby Cat. Camp Pets cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4469,
@@ -31680,7 +32978,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888 and SugarBombsRADS SUBJECT TO CHANGE PORTING TO LIVE SERVERS Event: Dangerous Pastime A downloadable and printable copy can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4470,
@@ -31690,7 +32989,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Enclave Repair Bot Station Trust the Enclave to keep your C.A.M.P. in tip-top shape. The Enclave Repair Bot Station restores health to damaged C.A.M.P. objects over time.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4471,
@@ -31700,7 +33000,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "The Halloween Trick or Treat Challenge is a special event in Fallout 76 running from October 22 to November 5, 2024. Starting on October 22 at 12 PM US EST (Atom Shop reset), you can claim the Crania Candy Bowl for free from the Atom Shop.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4472,
@@ -31710,7 +33011,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Everyone loves birthday cake, so why not share it with friends! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4473,
@@ -31720,7 +33022,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "With thanks to Thaang and Mario_will_die How to Use the AP Regen Refresh Rate Calculator Base AP Refresh Rate: This is set to 6 by default and represents your character's basic Action Points (AP) regeneration rate.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4474,
@@ -31730,7 +33033,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below I'm an Aussie data miner who creates guides for farming, events, and food…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4475,
@@ -31740,7 +33044,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "List of Legendary Prefixs (1*) and Components. Effect: Ignores 50% of target's armor Applicable Weapons: Ranged, Heavy, Melee Effect: Increases damage per 1000 caps (up to 50%) Applicable Weapons: Ranged, Heavy, Melee Effect: +20 Energy &…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4476,
@@ -31750,7 +33055,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Add your very own rabbit to your C.A.M.P. with the Caged Rabbit. This item cannot be built inside of a Shelter. Build limit per workshop Shares a build limit with Caged Rabbit, Chicken Coop, and Rad-Pheasant Coop.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4477,
@@ -31760,7 +33066,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Get your fill of fermentable beer to start your own collection of alcohol-fueled goodness! Generates various fermentable alcoholic drinks. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4478,
@@ -31770,7 +33077,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "It's family game night in the C.A.M.P.! Generates Pre-war board games, This item cannot be built inside of a Shelter. Catch the Commie Board Game Will count towards Score challenges when taken directly from the collector.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4479,
@@ -31780,7 +33088,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to the DuchessFlame Community and a HUGE shout out to PanicThumbs and PumpkinSpice865. You guys and gals make me so proud.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4480,
@@ -31790,7 +33099,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Camp Pets cannot be built inside of a Shelter. Build limit per workshop Shares a build limit with (Does not count towards Camp Allies) Found Under in Camp Build Menu Atom Shop - X Bundle - X Atoms Your pet will gift you a Legendary Weapon…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4481,
@@ -31800,7 +33110,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This Weather Control Station will change weather in the C.A.M.P. radius when connected to power. Nuke Zone without the Rads!",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4482,
@@ -31810,7 +33121,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Rewards for the Treasure Hunters Event Downloadable and Printable copies can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4483,
@@ -31820,7 +33132,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Lucky for you this broken down Cement Truck still has some Cement in the back. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4484,
@@ -31830,7 +33143,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Rewards for the Mothman Equinox Event Downloadable and Printable copies can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4485,
@@ -31840,7 +33154,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Free Fast Travel Point Workbenches and Machines I'm an Australian data miner who writes farming, event, and food buff guides for Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4486,
@@ -31850,7 +33165,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Legendary Modules are only awarded if the event is fully completed successfully, or if certain conditions are met, such as having two distillers remaining.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4487,
@@ -31860,7 +33176,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Fuel your thirst to purify the wasteland with this Enclave Water Cooler! Generates Purified Water. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4488,
@@ -31870,7 +33187,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Keep this Cookie Jar in your C.A.M.P. for those tough times when you really need a Cookie. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4489,
@@ -31880,7 +33198,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "In collaboration with WreckIt Renee How to Obtain Hellcat Power Armour and Crafting Plans To acquire a set of Hellcat Power Armour and the associated crafting plans for each piece, you’ll need to complete a sequence of quests.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4490,
@@ -31890,7 +33209,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Four Leaf Clover perk causes misses in VATS to contribute to the Critical Meter based on your Luck (LCK).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4491,
@@ -31900,7 +33220,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Farming Tips and Tricks Avoid Explosive Weapons When farming for items, especially magazines, steer clear of using explosive weapons. These can displace the magazines, making them harder to locate and collect.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4492,
@@ -31910,7 +33231,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Keep your C.A.M.P. hydrated with this rustic Railroad Water Tower. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4493,
@@ -31920,7 +33242,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Become more self-sufficient with the Rain Water Collector. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4494,
@@ -31930,7 +33253,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Add your very own Rad-Pheasant to your C.A.M.P. with the Rad-Pheasant Coop. This item cannot be built inside of a Shelter. Build limit per workshop Shares a build limit with Caged Rabbit, Chicken Coop, and Rad-Pheasant Coop.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4495,
@@ -31940,7 +33264,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Produces Turbo-Fert Fertilizer which can be equipped and thrown like a grenade to instantly grow any Workshop plants! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4496,
@@ -31950,7 +33275,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Build decorative furnishings in Workshops and C.A.M.P.s Tier 1 - 76 Objects Built Tier 2 - 760 Objects Built Tier 3 - 7600 Objects Built What counts towards this challenge: Anything on the below Build Menu Tabs Does building on a custom…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4497,
@@ -31960,7 +33286,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Have your feline pal test their claws against a notoriously prickly plant. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4498,
@@ -31970,7 +33297,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The easiest locations to obtain these plans are listed below. Many of these plans can also be acquired through player vendors, events, and daily quests.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4499,
@@ -31980,7 +33308,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Being superstitious does not detract from how cute this Bombay Cat truly is! Camp Pets cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4501,
@@ -31990,7 +33319,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This Thrasher put up a fight but now you get to eat well! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4502,
@@ -32000,7 +33330,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Enjoy Nuka-Cola Quantum Candy right in your very own C.A.M.P. with this Nuka-Cola Quantum Candy Machine. This item cannot be built inside of a Shelter. Nuka Cola Quantum Candy Machine Consuming a candy gives you +2 Charisma for 10 minutes.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4503,
@@ -32010,7 +33341,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Reward Checklist - Black n White Reward Checklist - SugarBombsRAD's Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4504,
@@ -32020,7 +33352,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Reward Checklist - Black n White Reward Checklist - SugarBombsRAD's Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below I'm an Aussie data miner who creates guides…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4505,
@@ -32030,7 +33363,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "SUBJECT TO CHANGE PENDING PORTING TO LIVE SERVERS In the MilePost Zero update, Bethesda will introduce a new system for crafting legendary weapons, armor, and power armor.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4506,
@@ -32040,7 +33374,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Build a menacing Mothman Moth Sanctuary to escape the wasteland for a moment. This item cannot be built inside of a Shelter. Also comes with a static version that can be placed in shelters.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4507,
@@ -32050,7 +33385,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Load up the Brahmin for the next caravan run. Generates Brahmin related junk. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4508,
@@ -32060,7 +33396,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "After being hired: From Marley’s desk, face north and walk straight ahead. Stop at the stairs on your left. Josie will be standing next to the stairs, in front of the Brahmin shed.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4509,
@@ -32070,7 +33407,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS Caravan Event Discount You can run multiple events as a participant, and it will not affect the real-life hour timer.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4510,
@@ -32080,7 +33418,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Sorry, there is no usual infographic rewards checklist for this one. There are 82 plans, and I couldn’t fit them all onto one page. Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4511,
@@ -32090,7 +33429,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Lifegiver perk increases your maximum HP as your Endurance (END) increases. The more Endurance you have, the more HP you gain.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4512,
@@ -32100,7 +33440,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Need a beer but are not too concerned about which one, then this is the machine for you!",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4513,
@@ -32110,7 +33451,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "How sweet it is to harvest your own Honey! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4514,
@@ -32120,7 +33462,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Become more self-sufficient with the Morbid Well Collector. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4515,
@@ -32130,7 +33473,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "How to Use This Calculator Step 1: Understand the Perk The Lone Wanderer perk card provides three major bonuses: Step 2: Review the Graphs Step 3: Explore the Table The combined table lists: 2. The AP Regen bonus per second. 3.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4516,
@@ -32140,7 +33484,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "The Holiday Gift Boxes can be under \"Aid\" in your pip boy. Select it and press A to open it.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4517,
@@ -32150,7 +33495,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Drink deep! This Deep Well will dispense non-radiated water to keep your C.A.M.P. free from thirst. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4518,
@@ -32160,7 +33506,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "There are approximately 200 food items that qualify as cooked meals, so rather than clogging this guide with all of them, you can find the complete list here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4519,
@@ -32170,7 +33517,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Reward Checklist - Black n White Scorched Spawn Farming Map Reward Checklist - SugarBombsRAD's Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4520,
@@ -32180,7 +33528,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Credit to Ipnoze on Youtube Fast Travel to Camp Liberty and clear out the camp of enemies. Locate and read the note \"Pioneer Treasure Hunt Start\" From the fast travel point, face East and run forward.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4521,
@@ -32190,7 +33539,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The ArmCo Ammunition Construction Appliance will generate ammo of your choice and is only placeable at C.A.M.P. Can not be placed in Shelters.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4522,
@@ -32200,7 +33550,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Set up this Chicken Coop and generate some fertilizer for your farm! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4523,
@@ -32210,7 +33561,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Rewards for MilePost Zero Downloadable and Printable copies can be found here. Axel - Caravan Decorator Ineke - Imported Goods Merchant Plan: Rolled Persian Rugs Will continue to appear in the vendor's inventory once learned.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4524,
@@ -32220,7 +33572,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888, Mephiston, and Gaurst. SUBJECT TO CHANGE PORTING TO LIVE SERVERS There are 30 possible spawn locations for the Listening Bugs, with only 9 spawning per expedition.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4525,
@@ -32230,7 +33583,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS There are 8 possible spawn locations for the Lost Dossiers, with all 8 spawning per expedition. You only need to collect 5 to complete the additional objective.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4526,
@@ -32240,7 +33594,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Updated Guide can be found here What is Verdant Season? Verdant Season is a region-based \"event.\" When you are farming plants, such as Silt Beans, Ash Rose, or Pitcher Plants, in a region where Verdant Season is active, there is a 1 out of…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4527,
@@ -32250,7 +33605,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This marvelous Nuka-Cola Mystery Machine holds every Nuka-Cola variety you could ever want! But which one will you get? Be warned, there is a 5-minute restocking period before you will be able to quench your thirst again.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4528,
@@ -32260,7 +33616,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "With thanks to Eli - The Thing, McLovin, Reasonable Madness, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Katie. Dedicated to the camp builders, both new and long-term. Keep creating magic.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4529,
@@ -32270,7 +33627,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Keep hot boiled water conveniently at your fingertips with this Water Boiler. This item cannot be built inside of a Shelter. Also comes with a static version that can be placed in shelters.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4530,
@@ -32280,7 +33638,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888, Mephiston, and Gaurst. SUBJECT TO CHANGE PORTING TO LIVE SERVERS Collecting the Batsurri Twin's Teddy Bear is an optional objective during The Most Sensational Game expedition.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4531,
@@ -32290,7 +33649,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Lite Allies do not offer a daily/repeatable quest, they are most often vendors and offer buffs in return for you letting them sleep at your camp. She's Japanese. Sassy and grandmotherly in her dialog.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4532,
@@ -32300,7 +33660,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "With thanks to Eli - The Thing, McLovin, Reasonable Madness, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Katie. Dedicated to the camp builders, both new and long-term. Keep creating magic.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4533,
@@ -32310,7 +33671,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Enjoy a spot of tea in the comfort of your own C.A.M.P.! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4534,
@@ -32320,7 +33682,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Fixed Spawn Locations From the Veribird, turn and face South. Jump off the edge of the platform to the ground level. Face South and follow the road to the end. Stop when you get to the bus and jump on top of it.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4536,
@@ -32330,7 +33693,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This route covers forty (40) Starlight Berry Bushes. Fun and useful fact: Starlight Berry bushes are referred to as creepers in the game files. In real life, a creeper needs a form of support, be it a tree, a power pole, or a lamp post.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4537,
@@ -32340,7 +33704,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "To start this quest, speak to Leah at the Coe Heritage Museum in Cheyenne System/Akila/Akila City. Leah will ask you to find and return 6 books to add to the museum. Enter Aila City via the front gate and walk straight towards The Rock.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4539,
@@ -32350,7 +33715,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack on top of buffs from food, chems, drinks, armour, etc. You can not stack camp items that give the same buff ie Luck and Luck or Intelligence and Intelligence.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4540,
@@ -32360,7 +33726,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "With thanks to Eli - The Thing, McLovin, Reasonable Madness, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Katie. Dedicated to the camp builders, both new and long-term. Keep creating magic.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4541,
@@ -32370,7 +33737,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "With thanks to SugarBombsRads and Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS Out of respect for the Game Devs and their hard work in writing and creating the storyline, this guide will not go into detail on the questline, nor…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4542,
@@ -32380,7 +33748,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "With special thanks to Cassi and Souls. While there is a long list of creatures that use poison attacks, there are minimal options in relation to poison resistance.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4543,
@@ -32390,7 +33759,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Slocum's Joe Coffee Machine Add a jolt of caffeine to your C.A.M.P. with the Slocum's Joe Coffee Machine! Slocum's Joe Coffee Machine dispenses Canned Coffee. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4544,
@@ -32400,7 +33770,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Thanks to Blobby, Gilpo, and Serg from the Data Mining Discord. You do not have to complete the Wastelanders questline to farm for and turn in Treasury Notes. Treasury Notes can be converted into Gold Bullion.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4546,
@@ -32410,7 +33781,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "1 medium onion, quartered 3 carrots, peeled and cut into large pieces 3 celery ribs, cut into large pieces 1 Parmesan rind (about 2 inches) 8 oz pastina or any small pasta variety (such as orzo, acini di pepe, or alphabet pasta) Grated…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4547,
@@ -32420,7 +33792,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "MonaLisa gewidmet, vielen Dank für Ihre Liebe und Unterstützung. Mögen wir für immer Freunde von Google Translation sein. There are two types of condiment spawns in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4550,
@@ -32430,7 +33803,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Where to find and how to farm for Bloodbugs and Bloodbug meat in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4551,
@@ -32440,7 +33814,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Challenges - Daily - Kill a Floater Floaters can drop the following items: When scrapped, the Floater Flamer Pus Sac will yield Leather and Oil. When scrapped, the Floater Freezer Pus Sac will yield Leather and Crystal.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4552,
@@ -32450,7 +33825,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "“I’m sorry, sir, you’re not on the list.” Opossum's drop the following items Farming Tips and Tricks The following perk cards, magazines, and/or backpack mods will increase your yields.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4553,
@@ -32460,7 +33836,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Farming Tips and Tricks Mothman Eggs are part of your pick-up history list. If you don't know what a pick-up history list is, then you can find the guide about it here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4554,
@@ -32470,7 +33847,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Up and down the Nodding Donkey just cannot fall asleep! Generates Oil and Nuclear Waste. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4555,
@@ -32480,7 +33858,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This guide explains how to obtain a camera for the first time and how to replace it if you've lost your original one. There are two types of Cameras in the game.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4556,
@@ -32490,7 +33869,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Meat's back on the menu with this Radstag Field Dressing Station! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4557,
@@ -32500,7 +33880,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "With thanks to Eli - The Thing, McLovin, Reasonable Madness, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Katie. Dedicated to the camp builders, both new and long-term. Keep creating magic.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4558,
@@ -32510,7 +33891,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS There are 9 possible spawn locations for the Defence Terminals, with only 3 spawning per expedition.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4559,
@@ -32520,7 +33902,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS There are 5 possible spawn locations for the Security Camera Footage, with only 1 spawning per expedition.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4561,
@@ -32530,7 +33913,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Military Cryo Freezer What's cooler than cool? Ice cold! Instantly freeze food and drink items reducing spoilage rates to 0%.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4562,
@@ -32540,7 +33924,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack on top of buffs from food, chems, drinks, armour, etc. You can not stack camp items that give the same buff ie Luck and Luck or Intelligence and Intelligence.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4563,
@@ -32550,7 +33935,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Stick to the basics and harness nature's glue with this Tree Sap Collector! Tree Sap Collector dispenses Adhesive.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4564,
@@ -32560,7 +33946,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Spring Cleaning Challenge is a limited-time event in Fallout 76. On the 7th of May 2024 at 12pm EST (Atom Shop changeover), you will be able to claim the Abraxo Pip-Boy skin for free from the Atom Shop.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4566,
@@ -32570,7 +33957,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Tadpole and Possum Badges If you build your camp on top of or close to these spawn locations, then the critters may invade your camp and make themselves at home.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4567,
@@ -32580,7 +33968,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Dedicated to My PC Followers and Supporters. X Can Drop the Following Items: Nuka Cola Dark is not dropped by any creatures or NPCs.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4569,
@@ -32590,7 +33979,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Co-written by Robert Lee - AKA Hippnotic from Appalachian Hit Squad. With special thanks to the Data Miners: Chraczil, Blobby, and Mapex.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4570,
@@ -32600,7 +33990,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS Defend Atlantic City from Mother Nature's wrath.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4571,
@@ -32610,7 +34001,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This route covers Seventy (70) Starlight Berry Bushes. Fun and useful fact: Starlight Berry bushes are referred to as creepers in the game files. In real life, a creeper needs a form of support, be it a tree, a power pole, or a lamp post.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4572,
@@ -32620,7 +34012,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "In collaboration with Angry Turtle. Angry Turtle's Youtube channel can be found here. Angry Turtle's video version of this guide can be found here. With special thanks to Souls, McLovin, and Mapex.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4573,
@@ -32630,7 +34023,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Build a peaceful Butterfly Sanctuary to escape the wasteland for a moment. This item cannot be built inside of a Shelter. Also comes with a static version that can be placed in shelters.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4574,
@@ -32640,7 +34034,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Your C.A.M.P. has been blessed by the Mothman who rewards you with his eggs. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4575,
@@ -32650,7 +34045,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "When you need to throw another log on the fire just reach for this handy Firewood Pile! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4576,
@@ -32660,7 +34056,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "As of the 12th of April 2024, Del Lawson's inventory is bugged. The below information is the correct information but does not reflect what is currently in game.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4577,
@@ -32670,7 +34067,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Farming Tips and Tricks Junk items containing concrete and cement are a per server, pick-up history list item. You can find the guide here if you don't know what any of that means.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4578,
@@ -32680,7 +34078,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Lite Allies do not offer a daily/repeatable quest, they are most often vendors and offer buffs in return for you letting them sleep at your camp. Leo's background can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4579,
@@ -32690,7 +34089,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Squirrels can drop the following items Farming Tips and Tricks The following perk cards, magazines, and/or backpack mods will increase your yields.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4580,
@@ -32700,7 +34100,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Dedicated to Aux, farm your own Kaleidopore Flowers:p Formula P is a chem that provides +5 Charisma, +3 Luck, and improves gun accuracy for 5 minutes. Formula P can only be crafted or purchased from/traded with other players.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4581,
@@ -32710,7 +34111,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Family Serve Ingredients: Smaller Serve Ingredients: 1. Place the pork in a large saucepan, cover with water, and add a dash of salt. Optionally, salt and brown the pork before adding water. 2. Add onion, garlic, and spices to the pot.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4582,
@@ -32720,7 +34122,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack on top of buffs from food, chems, drinks, armour, etc. You can not stack camp items that give the same buff ie Luck and Luck or Intelligence and Intelligence.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4583,
@@ -32730,7 +34133,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Lite Allies do not offer a daily/repeatable quest, they are most often vendors and offer buffs in return for you letting them sleep at your camp. Adelaide's background can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4584,
@@ -32740,7 +34144,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Important Information All plans are character-locked and are non-tradeable. Some plans are locked to certain expeditions. Once you have learned a plan, it will remove it from the loot pool. This helps to make your loot pool smaller.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4585,
@@ -32750,7 +34155,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "With thanks to Jamie MachinegunGOGO and Cassi. Farming Tips and Tricks Royal Jelly is a player cell activated, per server spawn, pick up history list item.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4586,
@@ -32760,7 +34166,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Embrace great American lumber with your own Lumberjack Collectron. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4587,
@@ -32770,7 +34177,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "With thanks to Eli - The Thing, McLovin, Reasonable Madness, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Katie. Dedicated to the camp builders, both new and long-term. Keep creating magic.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4588,
@@ -32780,7 +34188,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Armor & Power Armor",
     "snippet": "Civil Engineer Armour The Set Bonus for Civil Engineering Armour: This can not be stacked for higher damage (ie 20% chance for 300 Fire Damage). You can only have one Fire Damage attack active on each enemy at any given time.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4589,
@@ -32790,7 +34199,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Where to find and how to farm for Strangler Blooms and Radshield in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4590,
@@ -32800,7 +34210,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS There are 12 possible spawn locations for the Muni Supplies, with only 3 spawning per expedition.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4591,
@@ -32810,7 +34221,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack on top of buffs from food, chems, drinks, armour, etc. You can not stack camp items that give the same buff ie Luck and Luck or Intelligence and Intelligence.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4592,
@@ -32820,7 +34232,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Challenge - Daily - Take a Camera Photo of a Stingwing Tadpole Badge - Gardener - Kill a Stingwing Tadpole Badge - Gardener - Take a Camera Photo of a Stingwing Tadpole Badge - Entomologist - Take a Camera Photo of a Stingwing Challenge…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4593,
@@ -32830,7 +34243,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Mistaken Identity Quest Purchase from Player's vendors or Trades Terminal Loot Pool and Drop Rates Mr. Fuzzy Pencil - 33% Drop Chance Yellow Mr.Fuzzy Pencil - 33% Drop Chance Spooky Mr.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4594,
@@ -32840,7 +34254,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "This item cannot be built inside of a Shelter. Build limit per workshop Shares a build limit with Found under X in the camp build menu 6 Pounds (12 Canned Dog Food) Plan: Weenie Wagon - Meat Week - Grahm's Meat Cook - Free Produces X…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4595,
@@ -32850,7 +34265,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Dedicated to WOTW, Thank you for your love and support <3 The Burning Love Challenge is the 2024 Valentine event in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4596,
@@ -32860,7 +34276,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Atomic Shop archive",
     "snippet": "How to request Atom shop items that are not currently in the Atom shop: Click on this link https://help.bethesda.net/#en/home Log in to your Bethesda account or sign up for one if you don't already have one.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4597,
@@ -32870,7 +34287,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888, Mephiston, and Gaurst. SUBJECT TO CHANGE PORTING TO LIVE SERVERS Aid Billy Beltbuckles in committing tax fraud.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4598,
@@ -32880,7 +34298,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "It looks like you waited too long to pick this fruit. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4600,
@@ -32890,7 +34309,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack on top of buffs from food, chems, drinks, armour, etc. You can not stack camp items that give the same buff ie Luck and Luck or Intelligence and Intelligence.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4601,
@@ -32900,7 +34320,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Have that perfectly prepared delicious Mirelurk meal of your dreams with the Mirelurk Steamer. A decorative CAMP resource that passively produces Mirelurk-based food buffs. Does not require power and can be locked.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4602,
@@ -32910,7 +34331,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Coffee888, Mephiston, and Gaurst. SUBJECT TO CHANGE PORTING TO LIVE SERVERS New Daily and Weekly Score Challenges Steam/PlayStation/Xbox Achievements Complete Tax Evasion and The Most Sensational Game while being a Team…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4603,
@@ -32920,7 +34342,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Need a little trail food for the long journey ahead? Take this Pemmican with you! This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4604,
@@ -32930,7 +34353,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Dedicated to Sergeant. Thank you for once again breaking my heart. Speaking with you is bittersweet every time </3 XD There are two types of condiment spawns in Fallout 76.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4605,
@@ -32940,7 +34364,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The buffs you receive from these camp items will stack on top of buffs from food, chems, drinks, armour, etc. You can not stack camp items that give the same buff ie Luck and Luck or Intelligence and Intelligence.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4606,
@@ -32950,7 +34375,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Try to find that seed you are looking for with the Budding Apothecary machine. This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4607,
@@ -32960,7 +34386,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Lite Allies do not offer a daily/repeatable quest, they are most often vendors and offer buffs in return for you letting them sleep at your camp. Sam's background can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4608,
@@ -32970,7 +34397,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Fresh Popcorn, who wants some Popcorn? This item cannot be built inside of a Shelter. Popcorn counts as Candy and Pre-war food for Collect and Consume Score Challenges.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4609,
@@ -32980,7 +34408,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Who needs a milk delivery when you have a Brahmin Milk Machine? This item cannot be built inside of a Shelter.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4610,
@@ -32990,7 +34419,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "This route covers Forty-Six (46) Starlight Berry Bushes. Fun and useful fact: Starlight Berry bushes are referred to as creepers in the game files. In real life, a creeper needs a form of support, be it a tree, a power pole, or a lamp post.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4612,
@@ -33000,7 +34430,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Camp items that buff Intelligence & XP and where to find them in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4613,
@@ -33010,7 +34441,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Build limit per workshop Shares a build limit with Found under X in the camp build menu Season 17 Scoreboard - - X Tickets Gold Bullion - Samuel - 4000 Bullion Produces X amount per Every 10 minutes and 12 seconds.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4614,
@@ -33020,7 +34452,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888, Mephiston, and Gaurst. SUBJECT TO CHANGE PORTING TO LIVE SERVERS Strive for victory in a deadly no-rules race to the finish.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4615,
@@ -33030,7 +34463,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Produces Cooking Oil over time This item cannot be built inside of a Shelter. Motorized Butter Churn Build limit per workshop Shares a build limit with Found under X in the camp build menu 6 Pounds (12 Cooking Oil) Plan: Motorized Butter…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4616,
@@ -33040,7 +34474,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888, Mephiston, and Gaurst. SUBJECT TO CHANGE PORTING TO LIVE SERVERS Purge the accounting records from the terminals.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4617,
@@ -33050,7 +34485,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Score Challenge - Weekly - Sell Pumpkin Pies to a Vendor Farming Tips and Tricks Pumpkin Pies are a player cell-activated, pick-up history spawn.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4618,
@@ -33060,7 +34496,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS There are 10 possible spawn locations for the Medical Supplies, with all 10 spawning per expedition. They can be collected by the Team Leader and Teammates in any order.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4619,
@@ -33070,7 +34507,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Farming Tips and Tricks Salt and Pepper are a per server, pick-up history list item. You can find the guide here if you don't know what any of that means. No perk cards or magazines affect the yield of Salt and Pepper.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4620,
@@ -33080,7 +34518,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "In collaboration with Fargassier Reputation levels are used to unlock plans that are sold by: You do not need to have any reputation to purchase plans from Minerva, however, there are some plans that Minerva does not sell, which only…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4621,
@@ -33090,7 +34529,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Dedicated to SpaceLime. Thanks for being an awesome supporter. This route covers thirty-six (36) Starlight Berry Bushes. Fun and useful fact: Starlight Berry bushes are referred to as creepers in the game files.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4623,
@@ -33100,7 +34540,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Lite Allies do not offer a daily/repeatable quest, they are most often vendors and offer buffs in return for you letting them sleep at your camp.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4624,
@@ -33110,7 +34551,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Where to find and how to farm for Scorchbeasts and Scorchbeast Meat in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4625,
@@ -33120,7 +34562,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Yao Guai drop the following items: Farming Tips and Tricks The following perk cards, magazines, and/or backpack mods will increase your yields.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4626,
@@ -33130,7 +34573,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS With thanks to Garust, Vicyorus, SugarBombs.Rads and Coffee888. This guide is broken up into the following sections: Most Wanted is part of the Nuka World on Tour DLC that drops in December 2022.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4627,
@@ -33140,7 +34584,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Thistles can be extremely difficult to harvest, combined with only 23 spawns in the game, of which only 22 are accessible and it's understandable why no one uses the buffs that have thistle as an ingredient.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4628,
@@ -33150,7 +34595,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "The Nuka World on Tour DLC brings 12 new food items, 9 new recipes and 1 new Nuka Cola flavour. Most of the food items can be purchased from Betty, the Ghoul NPC. Her trailer can be found next to the Tunnel of Love entrance.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4629,
@@ -33160,7 +34606,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Apart from the notes and terminal entries that come with each mini questline. There is a little bit of lore on the terminal in the main building at Black Mountain Ordnance Works.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4630,
@@ -33170,7 +34617,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Thank you to Gilpo, Mapex, and Zeek for their patience and for answering my consistent questions. SPECIALs define your character's core abilities, each representing a key aspect of their skills and strengths.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4631,
@@ -33180,7 +34628,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Apart from the notes and terminal entries that come with each mini questline. There is a little bit of lore on the terminal in the main building at Black Mountain Ordnance Works.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4632,
@@ -33190,7 +34639,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Where to find and how to farm for Sugar Bombs in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4633,
@@ -33200,7 +34650,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Co-written by Lesley and Jessicca. There are 8 Robots to collect: Eyebot Model - Counts toward the Epic Challenge Mr. Gutsy Model - Counts toward the Epic Challenge Mr.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4634,
@@ -33210,7 +34661,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Dedicated to Jeremy \"Grim Reaper\". Thank you for all you and your team do for the community. This guide is broken into the following sections: We are going to start with the boring bits first.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4635,
@@ -33220,7 +34672,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This guide is for The Foundry, a location that you visit during the Union Dues mission. This guide will cover all sections of the Foundry and all spawn locations for the Union Supply Crates. The Foundry itself is split into 7 areas.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4636,
@@ -33230,7 +34683,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Garust, Lady Emma, Eli - The Thing, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Thaang. There are 6 types of random encounters in-game and each encounter type has its own set of spawn locations.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4637,
@@ -33240,7 +34694,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This guide is for The Foundry, a location that you visit during the Union Dues mission. This guide will cover all sections of the Foundry, spawn locations for steel ingots, the Union supply crates and all the locked safes.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4638,
@@ -33250,7 +34705,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Where to find Honeybeasts and how to farm for Honeycomb in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4639,
@@ -33260,7 +34716,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "The Sheepsquatch can drop the following items: Farming Tips and Tricks The following perk cards, magazines, and/or backpack mods will increase your yields.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4640,
@@ -33270,7 +34727,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Wendigos can drop the following items: There is a 0.003% to 0.04% chance that Alpha Wendigo's (Wendigo's with a Crown next to their name) can drop armour plans, weapon plans, and mod plans such as Plan: Marine Wetsuit, Plan: Harness, Plan…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4641,
@@ -33280,7 +34738,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Garust, Lady Emma, Eli - The Thing, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Thaang. There are 6 types of random encounters in-game and each encounter type has its own set of spawn locations.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4642,
@@ -33290,7 +34749,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "While not as terrifying as their Fallout 3 counterparts, Deathclaws in Fallout 76 are definitely more useful plus they can be tamed as pets.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4643,
@@ -33300,7 +34760,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Dedicated to my beloved Buffs n Brew team. You test my sanity on the daily but I couldn't ask for a better family.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4644,
@@ -33310,7 +34771,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "My second favourite plant in this game, only followed by Starlight Berries. Ash Rose are used in the following recipes: Farming Tips and Tricks As with all farming, it is recommended that you run the following perk cards: Keep an eye out…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4645,
@@ -33320,7 +34782,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Ava Rose will ask you to Persuade the Fanatic Skeptic, as one of the additional objectives for mission 2, From Ashes to Fire. There are 5 different locations that this objective can spawn in. 3 in the Sanctum/Cathedral and 2 in the Trench.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4646,
@@ -33330,7 +34793,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Subject to change when porting to live servers This guide is for The Foundry, a location that you visit during the Union Dues mission.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4647,
@@ -33340,7 +34804,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Lite Allies do not offer a daily/repeatable quest, they are most often vendors and offer buffs in return for you letting them sleep at your camp. Yasmin's background can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4648,
@@ -33350,7 +34815,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Where to find and how to farm for Starlight Berries in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4649,
@@ -33360,7 +34826,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Dedicated to Lady Emma and Salli Sassi, you better be Ginseng experts after this;) There are only 26 Ginseng plant spawns in game, producing 26 Ginseng Roots (or 52 with Green Thumb).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4650,
@@ -33370,7 +34837,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS With thanks to Garust, Vicyorus, SugarBombs.Rads, Coffee888, and GamerMOM. This guide is broken up into the following sections: Beasts of Burden is part of the Once in a Blue Moon DLC that drops in…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4651,
@@ -33380,7 +34848,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "There are three rare coloured baseball bats in Fallout 76. Coloured baseball bats will always be modded when they spawn/drop ie bladed, spiked etc Coloured baseball bats are tradeable and can be made legendary using legendary crafting.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4652,
@@ -33390,7 +34859,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With credit to Vicyorus and thanks to Gilpo and Coffee888. This guide will cover all spawn locations for the prisoner collars, an additonal objective that can only be done during mission 2, From Ashes to Fire.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4653,
@@ -33400,7 +34870,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Dedicated to one meanasschic This route is intended to be run from start to finish. It does however depend on how many Gourd Blossoms you are needing.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4654,
@@ -33410,7 +34881,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With the hourly Invaders from Beyond event, comes alien-themed random encounters and a new TNT dome to unlock. *Third ending and new camper items to find have been permanently added.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4655,
@@ -33420,7 +34892,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "With thanks to the Brilliant Coffee888 and the Marvelous Miffy. Subject to change when porting to live servers Charleston Capitol Building Garrahan Mining Headquarters Enemies will glow white for 5 seconds at a time.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4656,
@@ -33430,7 +34903,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "This guide is for The Foundry, a location that you visit during the Union Dues mission. This guide will cover all sections of the Foundry and all spawn locations of the Fanatic battle plan locked safes.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4657,
@@ -33440,7 +34914,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Due to the changes in Patch 62, the perks, builds, and damage numbers in this guide are out of date. The where-to-find details are still correct. I’m working on updating the guide and appreciate your patience and understanding.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4658,
@@ -33450,7 +34925,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Where to find and how to farm for Brahmin and Brahmin Milk in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4659,
@@ -33460,7 +34936,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "How to change your pet variant in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4660,
@@ -33470,7 +34947,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Apart from the notes and terminal entries that come with each mini questline. There is a little bit of lore on the terminal in the main building at Black Mountain Ordnance Works.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4661,
@@ -33480,7 +34958,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 Seasonal Event Guide: Holiday Scorched…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4662,
@@ -33490,7 +34969,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "In Fallout 76, there are two main types of spawns: Fixed Spawns and Fixed Spawn Locations with a Chance to Spawn. Fixed spawns primarily apply to creatures, junk items, and certain consumables.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4663,
@@ -33500,7 +34980,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Grafton Monsters can drop the following items: From the fast travel point, follow the train tracks South until you get to the second red metal bridge.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4664,
@@ -33510,7 +34991,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "The ultimate and ONLY XP farming guide that you will ever need in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4665,
@@ -33520,7 +35002,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Credit: Jamie MachinegunGOGO Scroll down to the bottom of this guide for the interactive plan checklist. There are 13 Delbert recipes to collect in total.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4666,
@@ -33530,7 +35013,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Co-written by Kate Passmore If the baseball bat is not the colour you are looking for, DO NOT pick it up. If you leave it then you can server-hop and check them all again. This is not an efficient way to farm baseball bats.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4667,
@@ -33540,7 +35024,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 Seasonal Event Guide: Mothman Equinox…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4668,
@@ -33550,7 +35035,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Where to find and how to farm for Mirelurk Eggs in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4669,
@@ -33560,7 +35046,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Where to find and how to farm for Addictol in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4670,
@@ -33570,7 +35057,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Where to find and turn in Pleasant Valley Claim Tickets…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4671,
@@ -33580,7 +35068,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS With thanks to Garust, Vicyorus and SugarBombs.Rads and a HUGE thanks to Coffee888, you are the best PTS testing buddy a person could ask for.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4672,
@@ -33590,7 +35079,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Co-written by Eli - The Thing Vault 51 can be found in the top left-hand corner of the map. Previously only accessible via the Nuclear Winter mode, this vault was opened to the public on September the 8th 2021.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4673,
@@ -33600,7 +35090,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Garust, Lady Emma, Eli - The Thing, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Thaang. There are 6 types of random encounters in-game and each encounter type has its own set of spawn locations.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4674,
@@ -33610,7 +35101,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Dedicated to Jim. Now will you get off my case about it?! XD This guide is going to be a long read. The event itself is fairly complex and there are many tips and tricks to getting that sweet event success for all three habitats.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4675,
@@ -33620,7 +35112,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS With thanks to Garust, Vicyorus, SugarBombs.Rads, Coffee888, and GamerMOM. Once in a Blue Mood drops in June 2023, and with it comes two new cryptids, Public Events, Side Quests, Rewards, a new…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4676,
@@ -33630,7 +35123,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Dedicated to A Heroic Llama, the creator of Mappalachia. Sorry, there are no Llama's in the game but I thought that the wise and majestic Mega Sloth was a suitable replacement. Thank you for your endless work, time, and energy.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4677,
@@ -33640,7 +35134,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Lite Allies do not offer a daily/repeatable quest, they are most often vendors and offer buffs in return for you letting them sleep at your camp. Brotherhood of Steel (BOS) Solomon's background can be found here.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4678,
@@ -33650,7 +35145,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Radscorpions are used for: Radscorpions can drop the following items: Farming Tips and Tricks The following perk cards, magazines, and/or backpack mods will increase your yields.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4679,
@@ -33660,7 +35156,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Co-written by Kat Pender from Atomic Adoption Agency and Garust from the Data Mining Discord. An animal that you can find, tame, and have at your camp.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4680,
@@ -33670,7 +35167,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "X can drop the following items Farming Tips and Tricks Deathclaw Eggs are a per-server, player-cell activated spawn. If you do not know what that means, read the guide here first, then come back to this section.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4681,
@@ -33680,7 +35178,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS With thanks to Garust, Vicyorus, SugarBombs.Rads and Coffee888. This guide is broken up into the following sections: Tunnel of Love is part of the Nuka World on Tour DLC that drops in December 2022.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4682,
@@ -33690,7 +35189,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "With thanks to Garust, Lady Emma, Eli - The Thing, Cassi, Mette, Sanne, Jamie MachinegunGOGO, and Thaang. There are 6 types of random encounters in-game and each encounter type has its own set of spawn locations.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4683,
@@ -33700,7 +35200,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Where to find and how to farm for Melon Blooms in Fallout 76…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4684,
@@ -33710,7 +35211,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Weapons & Legendary Mods",
     "snippet": "Dedicated to Gilpo, hopefully, now you will be able to fast travel to the closest train station. Rad Ants can drop the following items: Rad Ant Lager is a carry-weight booster.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4685,
@@ -33720,7 +35222,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Dedicated to the Halloween Camp Builders. Keep doing amazing and creative things. This guide was written with player skill level in mind.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4686,
@@ -33730,7 +35233,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Fallout 76 Seasonal Event Guide: Meat Week and Primal Cuts…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4687,
@@ -33740,7 +35244,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Where to find and how to farm for Concrete and Cement in Fallout 76: The Mire…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4688,
@@ -33750,7 +35255,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "SUBJECT TO CHANGE PORTING TO LIVE SERVERS With thanks to Garust, Vicyorus, SugarBombs.Rads, Coffee888, and GamerMOM. Dedicated to Carl, thank you for your wild imagination. To start, head to Big Bend Tunnel East.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4689,
@@ -33760,7 +35266,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With credit to Vicyorus and thanks to Garust. This guide will have spoilers. I have done my best to limit them but they are still there. The following information will prepare you for The Pitt Expeditions - From Ashes to Fire (mission 2).",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4690,
@@ -33770,7 +35277,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "Nuka World on Tour: Spin the Wheel Event Guide…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4711,
@@ -33791,7 +35299,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. Subject to change pending porting to live servers Gearin' Up: All Rewards & Checklist Gearin' Up is part of the Burning Springs DLC that drops in December 2025 This event will be permanently…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4713,
@@ -33823,7 +35332,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "top of page Home: Welcome…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4716,
@@ -33844,7 +35354,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "Subject to change pending porting to live servers How Random Encounters Work Once a random encounter is triggered, the location enters cooldown for about 18 minutes after all players leave the cell.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4718,
@@ -33854,7 +35365,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "List of Legendary Prefixs (1*) and Components. Anti-Armor Effect: Ignores 50% of target's armor Components: - Black Titanium x5…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4719,
@@ -33875,7 +35387,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Used for: SCORE Daily Kill a Corrosive Stingwing (5) EPIC - Kill a Corrosive Stingwing (12) Weekly Kill a Corrosive Stingwing (25) EPIC - Kill a Corrosive Stingwing (35) Lifetime Challenge Kill a Corrosive Stingwing (5) Kill a Corrosive…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4721,
@@ -33896,7 +35409,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "Thank you to Gilpo, Mapex, and Zeek for their patience and for answering my consistent questions. SPECIALs and Stats SPECIALs define... Dedicated to my beloved Buffs n Brew team.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4723,
@@ -33906,7 +35420,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Cofffee888 and SugarBombsRADS. SUBJECT TO CHANGE WHEN PORTING TO LIVE SERVERS Rampage through Rapidan Camp! A rowdy Eyebot called JES-2R is leading a crew of mischief-makers to wreak havoc on Rapidan Camp.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4724,
@@ -33916,7 +35431,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Burning Springs update introduces 4 new fish to catch! IMPORTANT NOTE ABOUT SANDSTORMS If you are trying to catch a specific fish, such as a Local Legend or a Glowing Fish, Sandstorms are treated as Clear (No) Weather for spawn checks.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4725,
@@ -33926,7 +35442,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Events & Expeditions",
     "snippet": "With thanks to Coffee888. SUBJECT TO CHANGE PORTING TO LIVE SERVERS There are 5 possible spawn locations for the Security Camera... With thanks to Coffee888.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4726,
@@ -33936,7 +35453,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Build Mechanics & Damage",
     "snippet": "Thanks to Blobby, Gilpo, and Serg from the Data Mining Discord. You do not have to complete the Wastelanders questline to farm for and…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4727,
@@ -33957,7 +35475,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "Please note this is an unmarked questline that has no reward or plan at the end. It is a quest designed to encourage players to explore... Credit to Ipnoze on Youtube Step 1 Fast Travel to Camp Liberty and clear out the camp of enemies.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4730,
@@ -33978,7 +35497,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "top of page Home: Welcome…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4732,
@@ -33988,7 +35508,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Naming Your Brahmin for the First Time To name your Brahmin, first hire Josie the Brahmin Tamer, which will cost you 100 supplies. You…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4733,
@@ -34009,7 +35530,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "top of page Home: Welcome…",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4735,
@@ -34019,7 +35541,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Crafting & Materials",
     "snippet": "The Burning Springs update introduces 4 new fish to catch! IMPORTANT NOTE ABOUT SANDSTORMS If you are trying to catch a specific fish, such as a Local Legend or a Glowing Fish, Sandstorms are treated as Clear (No) Weather for spawn checks.",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 4753,
