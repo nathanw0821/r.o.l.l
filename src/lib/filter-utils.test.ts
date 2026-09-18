@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { applyFilters, expandQueryTokens, FilterState, FilterableRow, isNewMod } from "./filter-utils";
+import { applyFilters, expandQueryTokens, FilterState, FilterableRow, isNewMod, NEW_MODS, NEW_MOD_PATCH_FLOOR, CURRENT_GAME_PATCH } from "./filter-utils";
+import { FALLBACK_LEGENDARY_EFFECTS } from "./static-fallback-catalog";
 
 describe("filter-utils acronym expansions", () => {
   it("should expand community abbreviations correctly", () => {
@@ -120,24 +121,40 @@ describe("applyFilters with acronym matching", () => {
 });
 
 describe("isNewMod", () => {
-  it("should return true for the 5 new legendary mods", () => {
-    expect(isNewMod("Hauler's")).toBe(true);
-    expect(isNewMod("Raging")).toBe(true);
-    expect(isNewMod("Satiated")).toBe(true);
-    expect(isNewMod("Tarnished")).toBe(true);
-    expect(isNewMod("Vector")).toBe(true);
+  it("derives the NEW window from game-version.json (current patch and the one before)", () => {
+    expect(CURRENT_GAME_PATCH).toBe(70);
+    expect(NEW_MOD_PATCH_FLOOR).toBe(69);
+  });
+
+  it("flags Severing (Patch 70, The Slasher) as new", () => {
+    expect(isNewMod("Severing")).toBe(true);
   });
 
   it("should return true regardless of casing or extra whitespace", () => {
-    expect(isNewMod("  hauler's  ")).toBe(true);
-    expect(isNewMod("RAGING")).toBe(true);
-    expect(isNewMod("satiated")).toBe(true);
+    expect(isNewMod("  severing  ")).toBe(true);
+    expect(isNewMod("SEVERING")).toBe(true);
+  });
+
+  it("no longer flags the Patch 68 (Infestations) mods as new", () => {
+    expect(isNewMod("Hauler's")).toBe(false);
+    expect(isNewMod("Raging")).toBe(false);
+    expect(isNewMod("Satiated")).toBe(false);
+    expect(isNewMod("Tarnished")).toBe(false);
+    expect(isNewMod("Vector")).toBe(false);
   });
 
   it("should return false for old/existing mods", () => {
     expect(isNewMod("Aegis")).toBe(false);
     expect(isNewMod("Unyielding")).toBe(false);
     expect(isNewMod("Bloodied")).toBe(false);
+  });
+
+  it("NEW_MODS matches every catalog row whose introducedIn is inside the window", () => {
+    const expected = FALLBACK_LEGENDARY_EFFECTS.filter(
+      (r) => typeof r.introducedIn === "number" && r.introducedIn >= NEW_MOD_PATCH_FLOOR
+    ).map((r) => r.effectName.toLowerCase());
+    expect(Array.from(NEW_MODS).sort()).toEqual([...expected].sort());
+    expect(expected).toContain("severing");
   });
 });
 

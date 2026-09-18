@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
 import { getAllEffectTiers, getProgressSummary } from "@/lib/data";
+import { FALLBACK_LEGENDARY_EFFECTS } from "@/lib/static-fallback-catalog";
 
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
@@ -18,7 +19,7 @@ async function HomeSummaryOverview() {
     // Graceful session fallback
   }
 
-  let summary = { percent: 0, unlocked: 0, total: 110 };
+  let summary = { percent: 0, unlocked: 0, total: FALLBACK_LEGENDARY_EFFECTS.length };
   try {
     summary = await getProgressSummary(session?.user?.id);
   } catch (e) {

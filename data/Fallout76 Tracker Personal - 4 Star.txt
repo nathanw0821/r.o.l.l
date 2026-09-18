@@ -29,6 +29,7 @@ Rejuvenator's	Power Armor	Gradually restores wearer's & teammates Health & AP wi
 Runner's	Armor • Power Armor	Sprinting AP cost reduced by -20% (up to -100% on full stack).	10 Purified Water	120	Yes	RAID: Gleaming Depths (Stage 1 only)				
 Sawbones's	Armor • Power Armor	Health regenerates slowly (+1 Health/s; up to +5 Health/s on full stack).	1 Healing Factor Serum	120	No	RAID: Gleaming Depths (Stage 5 only)				
 Scanner's	Power Armor	V.A.T.S. attack AP cost reduced by -5% (up to -25% on full stack).	1 X-Cell	120	No	RAID: Gleaming Depths (Stage 1 only)				
+Severing	Weapon: Ranged • Weapon: Melee	+50% Damage to Bleeding Targets	1 Bobblehead: Melee	120	No	The Slasher (Patch 70) event drops				
 Stabilizer's	Weapon: Ranged	Improves Weapon Recoil & Stability by 50%.	25 Rubber	120	No	RAID: Gleaming Depths (only Stage 2) • Bigfoot				
 Stalwart's	Power Armor	Power Armor breaks 5% slower for owner & teammates within 50ft (up to 25% on full stack).	1 Bobblehead: Leader	120	Yes	RAID: Gleaming Depths (Stage 5 only)				
 Tanky's	Armor • Power Armor	+200 DR for 10s when standing still (20s cooldown; up to +1000 on full stack).	5 Ballistic Fiber	120	Yes	RAID: Gleaming Depths (Stage 2 only)				

@@ -33,7 +33,7 @@ Stalker's	Weapon: Ranged	+100% sneak attack damage.	1 Calmex	15	No
 Suppressor's	Weapon: Ranged • Weapon: Melee	Reduce your target's damage output by 25% for 5 seconds.	1 Grounded Serum	15	Yes					
 Troubleshooter's	Armor • Power Armor • Weapon: Ranged • Weapon: Melee	[Armor] -15% damage from Robots. [Weapon] +50% damage to Robots.	10 Circuitry	15	Yes					
 Two Shot	Weapon: Ranged	+1 projectile, +75% damage, -150% hip-fire accuracy, +100% recoil.	20 Lead	15	Yes					
-Unyielding	Armor	Gain up to +3 to all S.P.E.C.I.A.L. (except END) when Health is low.	5 X-Cell	15	No					
+Unyielding	Armor	Gain up to +3 to all S.P.E.C.I.A.L. (except END) when Health is low. Full effect at 20% HP or less, +2 at 40% or less, +1 at 60% or less (thresholds inclusive since Patch 70).	5 X-Cell	15	No					
 Vampire's	Weapon: Ranged • Weapon: Melee	Restore 2% Health over 2 seconds when you hit a target.	10 Bloodpacks	15	Yes					
 Vanguard's	Armor • Power Armor	Grants up to 6% Damage Reduction as Health Increases.	5 Blood Pack	15	Yes					
 Heavyweight	Armor	Grants up to 10% Damage Reduction at Higher Encumbrance (Max at 150% Encumbrance).	1 Bird Bones Serum	15	No					

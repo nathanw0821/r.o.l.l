@@ -308,7 +308,10 @@
       "Viper's",
       "Pyromaniac's"
     ],
-    "notes_version": "gleaming-depths-supported"
+    "slasher_4_star_targets": [
+      "Severing"
+    ],
+    "notes_version": "slasher-patch-70-supported"
   },
   "ui_theme": {
     "effect_cards": {

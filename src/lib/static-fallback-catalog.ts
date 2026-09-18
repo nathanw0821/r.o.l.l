@@ -22,6 +22,8 @@ export interface StaticEffectRow {
   effect: { name: string };
   tier: { label: string };
   categoriesRel: { category: { name: string } }[];
+  /** Game patch number that introduced this effect (drives the data-driven NEW badge; omitted for legacy effects). */
+  introducedIn?: number;
 }
 
 export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
@@ -1372,7 +1374,7 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
     "effectName": "Unyielding",
     "tierLabel": "1 Star",
     "categories": "Armor",
-    "description": "Gain up to +3 to all S.P.E.C.I.A.L. (except END) when Health is low.",
+    "description": "Gain up to +3 to all S.P.E.C.I.A.L. (except END) when Health is low. Full effect at 20% HP or less, +2 at 40% or less, +1 at 60% or less (thresholds inclusive since Patch 70).",
     "extraComponent": "5 X-Cell",
     "legendaryModules": 15,
     "notes": "",
@@ -4166,7 +4168,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Power Armor"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-battle-loaders",
@@ -4203,7 +4206,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Power Armor"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-bruisers",
@@ -4574,7 +4578,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Power Armor"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-icemens",
@@ -4746,7 +4751,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Weapon: Melee"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-pounders",
@@ -4809,7 +4815,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Power Armor"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-pyromaniacs",
@@ -4877,7 +4884,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Power Armor"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-raging",
@@ -4913,7 +4921,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Power Armor"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-rangers",
@@ -4985,7 +4994,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Weapon: Melee"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-reflective",
@@ -5153,6 +5163,43 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
     ]
   },
   {
+    "id": "effect-4star-severing",
+    "effectName": "Severing",
+    "tierLabel": "4 Star",
+    "categories": "Weapon: Ranged \u2022 Weapon: Melee",
+    "description": "+50% Damage to Bleeding Targets",
+    "extraComponent": "1 Bobblehead: Melee",
+    "legendaryModules": 120,
+    "notes": "The Slasher (Patch 70) event drops",
+    "origins": [
+      "The Slasher (Patch 70) event drops"
+    ],
+    "unlocked": false,
+    "isSeeking": false,
+    "modCount": 0,
+    "unlockedBy": [],
+    "selectionSource": "default",
+    "effect": {
+      "name": "Severing"
+    },
+    "tier": {
+      "label": "4 Star"
+    },
+    "categoriesRel": [
+      {
+        "category": {
+          "name": "Weapon: Ranged"
+        }
+      },
+      {
+        "category": {
+          "name": "Weapon: Melee"
+        }
+      }
+    ],
+    "introducedIn": 70
+  },
+  {
     "id": "effect-4star-stabilizers",
     "effectName": "Stabilizer's",
     "tierLabel": "4 Star",
@@ -5182,7 +5229,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Weapon: Ranged"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-stalwarts",
@@ -5285,7 +5333,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Weapon: Melee"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-thrill-seekers",
@@ -5321,7 +5370,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Weapon: Melee"
         }
       }
-    ]
+    ],
+    "introducedIn": 66
   },
   {
     "id": "effect-4star-vector",
@@ -5357,7 +5407,8 @@ export const FALLBACK_LEGENDARY_EFFECTS: StaticEffectRow[] = [
           "name": "Power Armor"
         }
       }
-    ]
+    ],
+    "introducedIn": 68
   },
   {
     "id": "effect-4star-vipers",

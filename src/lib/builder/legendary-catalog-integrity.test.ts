@@ -8,9 +8,27 @@ import {
 import type { BuilderPayload, BuilderModDTO } from "./types";
 import { FALLBACK_LEGENDARY_EFFECTS } from "../static-fallback-catalog";
 
+// 148 Patch 69 effects + Severing (Patch 70, The Slasher). Bump this only when a new effect lands in the catalog.
+const CANONICAL_EFFECT_COUNT = 149;
+
 describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verification", () => {
-  it("should contain all 148 canonical effects in FALLBACK_LEGENDARY_EFFECTS", () => {
-    expect(FALLBACK_LEGENDARY_EFFECTS.length).toBeGreaterThanOrEqual(148);
+  it(`should contain exactly ${CANONICAL_EFFECT_COUNT} canonical effects in FALLBACK_LEGENDARY_EFFECTS`, () => {
+    expect(FALLBACK_LEGENDARY_EFFECTS.length).toBe(CANONICAL_EFFECT_COUNT);
+    const ids = FALLBACK_LEGENDARY_EFFECTS.map((r) => r.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("should have Severing as a Patch 70 4-star ranged + melee weapon effect", () => {
+    const severing = FALLBACK_LEGENDARY_EFFECTS.find((r) => r.id === "effect-4star-severing");
+    expect(severing).toBeDefined();
+    expect(severing?.effectName).toBe("Severing");
+    expect(severing?.tierLabel).toBe("4 Star");
+    expect(severing?.categories).toContain("Weapon: Ranged");
+    expect(severing?.categories).toContain("Weapon: Melee");
+    expect(severing?.description).toBe("+50% Damage to Bleeding Targets");
+    expect(severing?.extraComponent).toBe("1 Bobblehead: Melee");
+    expect(severing?.legendaryModules).toBe(120);
+    expect(severing?.introducedIn).toBe(70);
   });
 
   it("should have Lucky Hit as canonical 3-star weapon effect in FALLBACK_LEGENDARY_EFFECTS", () => {
@@ -35,7 +53,16 @@ describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verificat
 
   it("should load a complete builder mod catalog with V.A.T.S. Optimized at 3-star and Lucky Hit at 3-star", async () => {
     const catalog = await getCachedBuilderModCatalog();
-    expect(catalog.length).toBeGreaterThanOrEqual(148);
+    expect(catalog.length).toBeGreaterThanOrEqual(FALLBACK_LEGENDARY_EFFECTS.length);
+
+    // Verify Severing (Patch 70) is generated as a 4-star weapon mod
+    const severing = catalog.find((m) => m.name === "Severing" || m.slug === "severing");
+    expect(severing).toBeDefined();
+    expect(severing?.starRank).toBe(4);
+    expect(severing?.category).toBe("Weapon");
+    expect(severing?.allowedOnWeapon).toBe(true);
+    expect(severing?.allowedOnArmor).toBe(false);
+    expect(severing?.allowedOnPowerArmor).toBe(false);
 
     // Verify V.A.T.S. Optimized
     const vatsOpt = catalog.find(
@@ -222,9 +249,9 @@ describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verificat
     expect(star3Names).not.toContain("Barbarian");
     expect(star3Names).not.toContain("Blocker");
 
-    // 4-star (Slot 3): 13 mods
+    // 4-star (Slot 3): 14 mods (13 Patch 69 + Severing from Patch 70)
     const star4 = filterModsForSlot(dtos, eldersMark, 3);
-    expect(star4.length).toBe(13);
+    expect(star4.length).toBe(14);
     const star4Names = star4.map(m => m.name);
     expect(star4Names).toContain("Pin-Pointer's");
     expect(star4Names).toContain("Polished");
@@ -236,6 +263,7 @@ describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verificat
     expect(star4Names).toContain("Fracturer's");
     expect(star4Names).toContain("Pyromaniac's");
     expect(star4Names).toContain("Satiated");
+    expect(star4Names).toContain("Severing");
     expect(star4Names).toContain("Stabilizer's");
     expect(star4Names).toContain("Thrill-Seeker's");
     expect(star4Names).toContain("Viper's");
@@ -293,6 +321,7 @@ describe("Legendary Catalog Integrity & V.A.T.S. Optimized / Lucky Hit Verificat
     expect(star4.map(m => m.name)).toContain("Fencer's");
     expect(star4.map(m => m.name)).toContain("Icemen's");
     expect(star4.map(m => m.name)).toContain("Pounder's");
+    expect(star4.map(m => m.name)).toContain("Severing");
     expect(star4.map(m => m.name)).not.toContain("Pin-Pointer's");
     expect(star4.map(m => m.name)).not.toContain("Stabilizer's");
     expect(star4.map(m => m.name)).not.toContain("Electrician's");
