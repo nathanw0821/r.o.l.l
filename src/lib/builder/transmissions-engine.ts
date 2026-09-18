@@ -6,6 +6,8 @@ export type TransmissionSummary = {
   title: string;
   description: string | null;
   createdAt: string;
+  /** Patch the build was shared on; null for builds shared before the stamp existed. */
+  gamePatch: number | null;
   author: {
     id?: string | null;
     name: string | null;

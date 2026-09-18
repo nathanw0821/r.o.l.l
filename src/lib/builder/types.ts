@@ -51,6 +51,8 @@ export const DEFAULT_POWER_ARMOR_PIECES_EQUIPPED: PowerArmorPiecesEquipped = [
 ];
 
 export type BuilderPayload = {
+  /** Live game patch the build was shared on (set server-side at share time). */
+  gamePatch?: number;
   version: 5;
   basePieceId: string;
   /** Active primary weapon piece ID (e.g. 'elders-mark', 'the-dragon', 'fixer') when base is armor or PA, or matches basePieceId if base is weapon. */

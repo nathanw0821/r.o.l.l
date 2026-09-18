@@ -539,6 +539,11 @@ export default function TransmissionsVaultClient({
                     </div>
                   </div>
 
+                  <div className="text-[0.68rem] text-slate-500">
+                    {t.gamePatch ? `Built on Patch ${t.gamePatch}` : "Built before the patch stamp (Patch 69 or earlier)"}
+                    {t.createdAt ? ` · ${new Date(t.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}` : ""}
+                  </div>
+
                   {/* Archetype Tag Badges */}
                   {t.archetypeTags.length > 0 && (
                     <div className="flex flex-wrap gap-1 pt-0.5">

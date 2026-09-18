@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import AppalachianRadar from "@/components/appalachian-radar";
+import PatchChangesPanel from "@/components/patch-changes-panel";
 
 async function HomeSummaryOverview() {
   let session = null;
@@ -168,6 +169,7 @@ export default function HomePage() {
       <Suspense fallback={<HomeSummaryOverviewFallback />}>
         <HomeSummaryOverview />
       </Suspense>
+      <PatchChangesPanel />
       <Suspense fallback={<HomeSummaryTrackerFallback />}>
         <HomeSummaryTracker />
       </Suspense>
