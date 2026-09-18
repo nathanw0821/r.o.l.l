@@ -52,38 +52,39 @@ interface AppNavLink {
 }
 
 const trackingLinks: AppNavLink[] = [
-  { href: "/wiki", label: "Truth Wiki", icon: BookOpen, activePaths: ["/wiki"] },
-  { href: "/", label: "Summary", icon: Sparkles, activePaths: ["/", "/summary"] },
+  { href: "/wiki", label: "Guides", icon: BookOpen, activePaths: ["/wiki"] },
+  { href: "/", label: "Tracker summary", icon: Sparkles, activePaths: ["/", "/summary"] },
   {
     href: "/all-effects",
-    label: "Legendary Tracking",
+    label: "Legendary tracker",
     icon: ListChecks,
     activePrefixes: ["/1-star", "/2-star", "/3-star", "/4-star", "/all-effects"],
     subLinks: [
-      { href: "/1-star", label: "★ 1 Star Mods", tierLabel: "1 Star" },
-      { href: "/2-star", label: "★★ 2 Star Mods", tierLabel: "2 Star" },
-      { href: "/3-star", label: "★★★ 3 Star Mods", tierLabel: "3 Star" },
-      { href: "/4-star", label: "★★★★ 4 Star Mods", tierLabel: "4 Star" },
-      { href: "/all-effects", label: "All Mod Effects" }
+      { href: "/1-star", label: "1-star mods", tierLabel: "1 Star" },
+      { href: "/2-star", label: "2-star mods", tierLabel: "2 Star" },
+      { href: "/3-star", label: "3-star mods", tierLabel: "3 Star" },
+      { href: "/4-star", label: "4-star mods", tierLabel: "4 Star" },
+      { href: "/all-effects", label: "All mod effects" }
     ]
   },
   {
     href: "/build",
-    label: "B.U.I.L.D.",
+    label: "Builder",
+    ariaLabel: "Builder (B.U.I.L.D.)",
     icon: Boxes,
     activePrefixes: ["/build", "/perks"],
     prefetch: false,
     isBuildTab: true,
     subLinks: [
-      { href: "/build?tab=gear", label: "🛡️ Gear & Armory" },
-      { href: "/build?tab=perks", label: "🎴 Perk Deck & SPECIAL" },
-      { href: "/build?tab=biometrics", label: "🧪 Biometrics & Stances" },
-      { href: "/build?tab=combat", label: "📊 Combat DPS & VATS" }
+      { href: "/build?tab=gear", label: "Gear" },
+      { href: "/build?tab=perks", label: "Perks and SPECIAL" },
+      { href: "/build?tab=biometrics", label: "Biometrics and stances" },
+      { href: "/build?tab=combat", label: "Damage and V.A.T.S." }
     ]
   },
-  { href: "/pts", label: "P.T.S.", icon: FlaskConical, activePrefixes: ["/pts"] },
-  { href: "/screenshot-assist", label: "S.C.A.N.", icon: Sparkles },
-  { href: "/transmissions", label: "Transmissions", icon: Radio, activePrefixes: ["/transmissions"] },
+  { href: "/pts", label: "Test server", ariaLabel: "Test server (P.T.S.)", icon: FlaskConical, activePrefixes: ["/pts"] },
+  { href: "/screenshot-assist", label: "Screenshot import", ariaLabel: "Screenshot import (S.C.A.N.)", icon: Sparkles },
+  { href: "/transmissions", label: "Shared builds", icon: Radio, activePrefixes: ["/transmissions"] },
   { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] }
 ];
 
@@ -576,7 +577,7 @@ interface AccountLinksResponse {
               <div className="flex items-center gap-2.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                 <div>
-                  <span className="font-bold text-amber-400 uppercase tracking-wider">ACTIVE VAULT LOADOUT: </span>
+                  <span className="font-bold text-amber-400">Active loadout: </span>
                   <span className="text-slate-200">Civil Engineer / Fixer Build Stack</span>
                 </div>
               </div>

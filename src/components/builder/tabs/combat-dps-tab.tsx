@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import BuilderFirepowerMatrix from "@/components/builder/builder-firepower-matrix";
 import type { CombatFirepowerResult } from "@/lib/builder/combat-firepower-engine";
 import { cn } from "@/lib/utils";
@@ -16,8 +18,9 @@ export default function CombatDpsTab({ active, weaponFirepowerResult }: CombatDp
   {weaponFirepowerResult ? (
     <BuilderFirepowerMatrix firepower={weaponFirepowerResult} />
   ) : (
-    <div className="rounded-xl border border-slate-800 bg-slate-950/90 p-8 text-center text-slate-400 font-mono">
-      &gt;&gt; NO WEAPON CONFIGURED. Switch to [ 1. GEAR &amp; ARMORY ] to select your weapon and mods.
+    <div className="rounded-xl border border-slate-800 bg-slate-950/90 p-8 text-center text-slate-400 font-mono space-y-3">
+      <p>No weapon selected yet. Choose a weapon and its mods in the Gear tab to see damage and V.A.T.S. numbers here.</p>
+      <Link href="/build?tab=gear" className="inline-block rounded border border-amber-500/50 px-4 py-2 text-amber-300 hover:bg-amber-500/10 transition">Open the Gear tab</Link>
     </div>
   )}
 </div>

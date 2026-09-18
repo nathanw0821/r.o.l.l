@@ -523,7 +523,7 @@ export default function ScreenshotAssistClient({
         <BuilderBetaGate 
           open={showBetaGate} 
           title="Access S.C.A.N. Beta"
-          description="S.C.A.N. (Screen Capture & Analysis Network) uses local Tesseract OCR to read your legendary crafting bench. This feature is in active development."
+          description="Screenshot import reads your legendary crafting bench in the browser and lets you confirm each match before anything is saved."
           onAccept={() => { setShowBetaGate(false); acceptBeta(); }}
           onCancel={() => setShowBetaGate(false)}
         />
@@ -683,7 +683,7 @@ export default function ScreenshotAssistClient({
         <div className="pip-terminal-panel rounded-[var(--radius)] p-4 relative">
           <div className="flex items-center justify-between">
             <div className="text-sm font-semibold uppercase font-mono text-foreground/90 tracking-wide flex items-center gap-2">
-              <span className="text-accent">01.</span> Holographic Ingest Zone
+              <span className="text-accent">1.</span> Paste a screenshot
             </div>
             {imageQueue.length > 0 && (
               <Button 
@@ -740,7 +740,7 @@ export default function ScreenshotAssistClient({
         {/* 2. Shortlist Filter Deck */}
         <div className="pip-terminal-panel rounded-[var(--radius)] p-4">
           <div className="text-sm font-semibold uppercase font-mono text-foreground/90 tracking-wide flex items-center gap-2">
-            <span className="text-accent">02.</span> Shortlist Target Index
+            <span className="text-accent">2.</span> Choose what to look for
           </div>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <label className="text-[0.78rem] font-mono uppercase tracking-wider text-foreground/50 block">
@@ -797,7 +797,7 @@ export default function ScreenshotAssistClient({
           <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border/40 pb-2.5">
             <div>
               <div className="text-sm font-semibold uppercase font-mono text-foreground/90 tracking-wide flex items-center gap-2">
-                <span className="text-accent">03.</span> {preset === "build" ? "Holographic Build Diagnostic" : "Tesseract & Gemini Vision Engine"}
+                <span className="text-accent">3.</span> {preset === "build" ? "Read the build" : "Read the screenshot"}
               </div>
               <div className="mt-0.5 text-xs text-foreground/50">{preset === "build" ? "Resolving full SPECIAL & legendary stat arrays." : "Hybrid Local OCR + Gemini 2.5 Vision recognition."}</div>
             </div>
@@ -895,7 +895,7 @@ export default function ScreenshotAssistClient({
               </div>
             )}
             {!ocrPending && !aiMessage && (
-              <div className="text-foreground/40 pl-3.5 italic">&gt; waiting for image_payload.img ingest...</div>
+              <div className="text-foreground/40 pl-3.5 italic">Paste a screenshot (Ctrl+V) or drop an image here.</div>
             )}
           </div>
 
@@ -962,7 +962,7 @@ export default function ScreenshotAssistClient({
         <div className={cn("pip-terminal-panel rounded-[var(--radius)] p-4", !isWindow && "lg:sticky lg:top-24 lg:self-start")}>
           <div className="flex items-center justify-between border-b border-border/40 pb-2">
             <div className="text-sm font-semibold uppercase font-mono text-foreground/90 tracking-wide flex items-center gap-2">
-              <span className="text-accent">04.</span> Optical Stream Preview
+              <span className="text-accent">4.</span> Preview
             </div>
             {imageQueue.length > 0 && (
               <span className="rounded-full bg-accent/10 px-2.5 py-0.5 font-mono text-[0.72rem] text-accent font-bold uppercase border border-accent/20 tracking-wider">
@@ -995,7 +995,7 @@ export default function ScreenshotAssistClient({
             ) : (
               <div className="flex flex-col items-center p-6 text-center">
                 <Terminal className="h-8 w-8 text-foreground/20 mb-2" />
-                <div className="font-mono text-xs uppercase text-foreground/40 tracking-wider">Visual feed stream empty</div>
+                <div className="font-mono text-xs text-foreground/40">Nothing to preview yet.</div>
                 <div className="text-[0.78rem] text-foreground/30 mt-0.5 font-mono">&gt; waiting_for_screenshot_sync.img</div>
               </div>
             )}
@@ -1006,7 +1006,7 @@ export default function ScreenshotAssistClient({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="text-sm font-semibold uppercase font-mono text-foreground/90 tracking-wide flex items-center gap-2">
-                  <span className="text-accent">05.</span> Matching Diagnostics
+                  <span className="text-accent">5.</span> Confirm matches
                 </div>
                 <div className="mt-0.5 text-xs text-foreground/50 font-mono">Verify target matches and save unlocks.</div>
               </div>

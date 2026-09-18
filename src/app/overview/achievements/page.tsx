@@ -17,7 +17,7 @@ export default async function OverviewAchievementsPage() {
         </CardHeader>
         <CardContent>
           <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-3 text-xs text-foreground/60">
-            Sign in to view and unlock account achievements.
+            Achievements track your legendary unlocks and shared builds. Sign in to start earning them.
           </div>
         </CardContent>
       </Card>
