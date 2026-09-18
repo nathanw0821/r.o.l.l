@@ -165,7 +165,7 @@ test.describe("guest smoke", () => {
     await expect(count).not.toHaveText(before ?? "", { timeout: 10_000 });
     await expect(page.locator("[data-guide-row]").first()).toBeVisible();
     // Typing never opens the reader on its own.
-    await expect(page.getByRole("button", { name: /Back to Vault Codex Hub/ })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Back to results" })).toBeHidden();
   });
 
   test("guides next page, then browser back returns to page 1", async ({ page }) => {
@@ -189,14 +189,100 @@ test.describe("guest smoke", () => {
     await expect(page.getByRole("heading", { name: "Fallout 76 Update Version 1.7.11.12 (April 30, 2024)", level: 1 })).toBeVisible({
       timeout: 20_000
     });
-    await page.getByRole("button", { name: /Back to Vault Codex Hub/ }).click();
+    await page.getByRole("button", { name: "Back to results" }).click();
 
     await expect(page.locator("[data-guide-row]").first()).toBeVisible();
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
     await page.keyboard.press("j");
     await expect(page.locator("[data-guide-row]").first()).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("button", { name: /Back to Vault Codex Hub/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Back to results" })).toBeVisible();
+  });
+
+  test("guides reader: open from a filtered list, Escape returns with filters and page intact", async ({ page }) => {
+    await page.goto("/wiki?category=Patch%20notes%20%26%20news&page=2");
+    await expect(page.getByText(/Page 2 of \d+/)).toBeVisible({ timeout: 20_000 });
+    const listUrl = page.url();
+    const row = page.locator("[data-guide-row]").nth(2);
+    const rowTitle = (await row.locator(".guides-row__title").textContent())?.trim() ?? "";
+
+    await row.click();
+    await expect(page.getByRole("heading", { level: 1, name: rowTitle })).toBeVisible();
+    await expect(page).toHaveURL(/[?&]id=/);
+    await expect(page.getByRole("heading", { level: 1, name: rowTitle })).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(page.getByText(/Page 2 of \d+/)).toBeVisible();
+    await expect(page).toHaveURL(listUrl);
+    await expect(page.getByRole("button", { name: "Remove Category: Patch notes & news" })).toBeVisible();
+    await expect(page.locator("[data-guide-row]").nth(2)).toBeFocused();
+  });
+
+  test("guides reader: a long guide shows 'On this page' and entries update the URL hash", async ({ page }) => {
+    // Guide 193 (Raider Power Armor): 5 headings and 22 tables.
+    await page.goto("/wiki?id=193");
+    await expect(page.getByRole("heading", { level: 1, name: "Raider Power Armor" })).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole("heading", { name: "Crafting", exact: true })).toBeAttached({ timeout: 20_000 });
+
+    const phoneToggle = page.getByText(/^On this page \(\d+\)$/);
+    if (await phoneToggle.isVisible()) await phoneToggle.click();
+    const toc = page.getByRole("navigation", { name: "On this page" }).filter({ visible: true });
+    await expect(toc).toHaveCount(1);
+
+    await toc.getByRole("link", { name: "Crafting", exact: true }).click();
+    await expect(page).toHaveURL(/[?&]id=193#crafting$/);
+    await expect(page.getByRole("heading", { name: "Crafting", exact: true })).toBeInViewport();
+  });
+
+  test("guides reader: ?id=#section scrolls to that section", async ({ page }) => {
+    await page.goto("/wiki?id=193#crafting");
+    await expect(page.getByRole("heading", { level: 1, name: "Raider Power Armor" })).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole("heading", { name: "Crafting", exact: true })).toBeInViewport({ timeout: 20_000 });
+  });
+
+  test("guides reader: next and previous move through the result page", async ({ page }) => {
+    await page.goto("/wiki?category=Patch%20notes%20%26%20news");
+    const rows = page.locator("[data-guide-row]");
+    await expect(rows.nth(1)).toBeVisible({ timeout: 20_000 });
+    const firstTitle = (await rows.nth(0).locator(".guides-row__title").textContent())?.trim() ?? "";
+    const secondTitle = (await rows.nth(1).locator(".guides-row__title").textContent())?.trim() ?? "";
+
+    await rows.nth(0).click();
+    const title = page.getByRole("heading", { level: 1 });
+    await expect(title).toHaveText(firstTitle);
+    await expect(page.getByRole("button", { name: "Previous", exact: true })).toBeDisabled();
+
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await expect(title).toHaveText(secondTitle);
+    await expect(page).toHaveURL(/[?&]category=Patch/);
+
+    await page.keyboard.press("[");
+    await expect(title).toHaveText(firstTitle);
+    await page.keyboard.press("]");
+    await expect(title).toHaveText(secondTitle);
+  });
+
+  test("guides reader: tables scroll inside their own box, never the page", async ({ page }) => {
+    await page.goto("/wiki?id=193");
+    await expect(page.getByRole("heading", { level: 1, name: "Raider Power Armor" })).toBeVisible({ timeout: 20_000 });
+    const tables = page.locator(".guides-table-wrap");
+    await expect(tables.first()).toBeVisible({ timeout: 20_000 });
+
+    const { scrollWidth, innerWidth, widest, anyScrolls } = await page.evaluate(() => {
+      const wraps = Array.from(document.querySelectorAll<HTMLElement>(".guides-table-wrap"));
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth: window.innerWidth,
+        widest: Math.max(...wraps.map((w) => w.getBoundingClientRect().right)),
+        anyScrolls: wraps.some((w) => w.scrollWidth > w.clientWidth),
+      };
+    });
+    expect(scrollWidth).toBeLessThanOrEqual(innerWidth + 1);
+    expect(widest).toBeLessThanOrEqual(innerWidth + 1);
+    // The 10-column crafting table is wider than the reading column at every size.
+    expect(anyScrolls).toBe(true);
+
+    await expectPageSane(page);
   });
 
   test("guides filters disclosure opens on phones without horizontal scroll", async ({ page }) => {

@@ -2163,3 +2163,50 @@ html[data-season="blood-moon"] .app-sidebar {
   letter-spacing: 0;
   text-shadow: none;
 }
+
+/* Guides reading view (/wiki?id=): page-level scroll, tables scroll inside their own box. */
+.guides-reader {
+  min-width: 0;
+}
+.guides-reader :where(h1, h2, h3, h4):focus {
+  outline: none;
+}
+.guides-reader :where(h1, h2, h3, h4):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+.guides-anchor {
+  scroll-margin-top: 2.5rem;
+}
+.guides-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+.guides-table-wrap:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.guides-toc-rail {
+  position: sticky;
+  top: 2.5rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+}
+.guides-adjacent {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.guides-adjacent:hover {
+  border-color: var(--color-accent);
+}
+.guides-reader-body a {
+  text-underline-offset: 3px;
+}
