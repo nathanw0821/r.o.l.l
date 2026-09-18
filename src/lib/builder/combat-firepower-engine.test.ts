@@ -121,9 +121,9 @@ describe("combat-firepower-engine", () => {
       playerStats: { agility: 10, luck: 10, strength: 5 },
     });
 
-    // Base Railway magazine: 10 -> Quad: 40
-    expect(result.magazineCapacity.base).toBe(10);
-    expect(result.magazineCapacity.effective).toBe(40);
+    // Base Railway magazine (Patch 70 "The Slasher": 10 -> 16) -> Quad: 64
+    expect(result.magazineCapacity.base).toBe(16);
+    expect(result.magazineCapacity.effective).toBe(64);
     expect(result.magazineCapacity.isQuad).toBe(true);
 
     // Base fire rate: 10.0 rps -> Rapid +25%: 12.5 rps

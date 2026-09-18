@@ -417,6 +417,9 @@ export const BALLISTIC_MUZZLE_MODS: WeaponInnateModOption[] = [
 
 // ==========================================
 // 2. RAILWAY RIFLE (No Mag, No Suppressor)
+// Patch 70 "The Slasher" (2026-09-15): base ammo capacity 10 -> 16 (see combat-firepower-catalog.ts),
+// semi-automatic receivers fire faster (fire delay reduced), Railway Spike weight 0.2 -> 0.15.
+// No magazine slot exists, so the capacity change lives on the base row, not on a mod here.
 // ==========================================
 export const RAILWAY_RECEIVER_MODS: WeaponInnateModOption[] = [
   { id: "auto-piston-receiver", label: "Automatic Piston Receiver", slot: "receiver", description: "Converts Railway Rifle into full-auto spike barrage. Extremely high DPS.", effectMath: { isAutomatic: true, fireRatePct: 0.75, apCostPct: -0.10, damagePct: -0.10 } },
