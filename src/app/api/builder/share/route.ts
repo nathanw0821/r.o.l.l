@@ -1,3 +1,4 @@
+import gameVersion from "@/data/truth/game-version.json";
 import { randomBytes } from "node:crypto";
 import { safeRevalidateTag } from "@/lib/revalidate";
 import { z } from "zod";
@@ -103,6 +104,7 @@ export async function POST(request: Request) {
   const editToken = randomBytes(16).toString("hex");
   const payload = {
     ...parsed.data.payload,
+    gamePatch: gameVersion.patch,
     _editToken: editToken,
   } as unknown as BuilderPayload;
 

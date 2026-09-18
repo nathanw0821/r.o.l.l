@@ -1,0 +1,20 @@
+{
+  "source": "Bethesda 'The Slasher' release notes (2026-09-15) and Nuka Knights Patch 70 notes",
+  "patches": [
+    {
+      "patch": 70,
+      "name": "The Slasher",
+      "released": "2026-09-15",
+      "changes": [
+        { "area": "Legendary mods", "text": "New 4-star mod Severing: +50% damage to bleeding targets.", "href": "/4-star" },
+        { "area": "Unique items", "text": "Named unique weapons and armor can now change legendary mods and take a 4th star. Mod changes on uniques cost 10x scrip; crafting needs 30 or 65 modules plus 40 or 80 Vault Steel.", "href": "/build" },
+        { "area": "Unique weapons", "text": "All 83 unique weapons got new innate effects and new drop sources.", "href": "/build" },
+        { "area": "Crafting economy", "text": "Changing a mod costs a fixed 50 scrip (1 to 3 star) or 100 (4 star). Scrip sale values are 15 / 25 / 50 / 150 by star; the Purveyor sells 1 to 3 star items for 25 / 35 / 60 caps.", "href": "/all-effects" },
+        { "area": "Perks", "text": "Night Person and Solar Powered are single-rank 2-point cards giving +5 / +5. Nocturnal Fortitude gives 50 HP per rank, Photosynthetic 3 HP/s per rank, and Lone Wanderer now reduces all damage types.", "href": "/perks" },
+        { "area": "Weapons", "text": "Railway Rifle holds 16 spikes (was 10) with faster semi-auto fire; Lever Action holds 6; melee swing speed bonuses are capped at +100%.", "href": "/build?tab=combat" },
+        { "area": "Armor", "text": "Unyielding thresholds are now exactly 20 / 40 / 60% HP. Lighter Build gives +5 AP on limbs and +10 on the torso; Ultra-Light +10 / +20. Torso Pocketed mods carry twice as much as limbs.", "href": "/build?tab=gear" },
+        { "area": "Events", "text": "The Slasher runs in weekly phases from 15 September to mid November; Infestation boss health was reduced. Season 26 'Beware the Blood Moon' and Legacy Season 4 are live.", "href": "/transmissions" }
+      ]
+    }
+  ]
+}

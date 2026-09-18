@@ -91,7 +91,7 @@ export default function EffectTable({
   // Local quick filters for the Tactical Armory toolbar
   const [selectedStarTab, setSelectedStarTab] = React.useState<"ALL" | "1 Star" | "2 Star" | "3 Star" | "4 Star">("ALL");
   const [selectedCategoryTab, setSelectedCategoryTab] = React.useState<"ALL" | "Weapon" | "Armor" | "Power Armor">("ALL");
-  const [selectedStatusTab, setSelectedStatusTab] = React.useState<"ALL" | "learned" | "seeking" | "locked">("ALL");
+  const [selectedStatusTab, setSelectedStatusTab] = React.useState<"ALL" | "learned" | "seeking" | "locked" | "changed">("ALL");
 
   React.useEffect(() => {
     const merged: EffectTierRow[] = rows.map((row, index) => {
@@ -164,6 +164,8 @@ export default function EffectTable({
       list = list.filter((r) => r.isSeeking && !r.unlocked);
     } else if (selectedStatusTab === "locked") {
       list = list.filter((r) => !r.unlocked && !r.isSeeking);
+    } else if (selectedStatusTab === "changed") {
+      list = list.filter((r) => isNewMod(r.effect.name));
     }
 
     return list;
@@ -452,11 +454,11 @@ export default function EffectTable({
         {/* Status Filter Tabs */}
         <div className="flex items-center gap-1">
           <span className="text-slate-500 text-[10px] uppercase font-bold mr-1">Status:</span>
-          {(["ALL", "learned", "seeking", "locked"] as const).map((st) => (
+          {(["ALL", "learned", "seeking", "locked", "changed"] as const).map((st) => (
             <button
               key={st}
               onClick={() => setSelectedStatusTab(st)}
-              className={`px-2 py-1 text-xs font-bold border uppercase transition ${
+              className={`px-2 py-1 text-xs font-bold border transition ${
                 selectedStatusTab === st
                   ? st === "learned" 
                     ? "bg-emerald-500 text-black border-emerald-400 font-black"
@@ -466,7 +468,7 @@ export default function EffectTable({
                   : "bg-[#080d13] text-slate-400 border-slate-800 hover:text-white"
               }`}
             >
-              {st}
+              {st === "ALL" ? "All" : st === "learned" ? "Learned" : st === "seeking" ? "Wanted" : st === "locked" ? "Not learned" : "New this patch"}
             </button>
           ))}
         </div>

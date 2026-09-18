@@ -95,6 +95,7 @@ export async function GET(request: Request) {
         title: rec.title,
         description: rec.description,
         createdAt: rec.createdAt.toISOString(),
+        gamePatch: typeof payload.gamePatch === "number" ? payload.gamePatch : null,
         author: rec.user ? {
           id: rec.userId,
           name: rec.user.name,

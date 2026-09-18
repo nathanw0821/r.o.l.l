@@ -48,6 +48,7 @@ export default async function TransmissionsPage() {
         title: rec.title,
         description: rec.description,
         createdAt: rec.createdAt.toISOString(),
+        gamePatch: typeof payload.gamePatch === "number" ? payload.gamePatch : null,
         author: rec.user
           ? {
               name: rec.user.name,
