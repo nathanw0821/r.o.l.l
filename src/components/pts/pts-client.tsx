@@ -2,6 +2,7 @@
 
 import gameVersion from "@/data/truth/game-version.json";
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import {
   AlertTriangle,
   ExternalLink,
@@ -19,6 +20,7 @@ import {
 } from "@/lib/pts/catalog";
 import { sanitizeTitle, stripHtmlAndMarkdown } from "@/lib/utils/clean-formatting";
 import PerkBuilder from "@/components/perks/perk-builder";
+import LinkifiedText from "@/components/linkified-text";
 import BuilderExperimentClient from "@/components/builder/builder-experiment-client";
 
 export default function PtsClient() {
@@ -209,6 +211,7 @@ export default function PtsClient() {
 }
 
 function PtsCard({ item }: { item: PtsItem }) {
+  const pathname = usePathname();
   return (
     <div className="rounded-xl border border-border bg-panel p-5 shadow-sm hover:border-amber-500/50 transition-all flex flex-col justify-between relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/10 to-transparent pointer-events-none rounded-bl-full" />
@@ -254,7 +257,7 @@ function PtsCard({ item }: { item: PtsItem }) {
 
         {/* Description */}
         <div className="text-xs text-slate-200 leading-relaxed bg-slate-950/80 p-3 rounded-lg border border-slate-800/80 font-sans shadow-inner">
-          {stripHtmlAndMarkdown(item.description)}
+          <LinkifiedText text={stripHtmlAndMarkdown(item.description)} currentPath={pathname} />
         </div>
 
         {/* Requirements & Extra Components */}

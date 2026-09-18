@@ -1,0 +1,306 @@
+/**
+ * Entity link map (Hyperlinking phase 1, `WS5_UX_DESIGN_PLAN.md` "Hyperlinking" items 1 and 3).
+ *
+ * Every entry is derived from data the site already ships; nothing is hand-typed here except the
+ * two stoplists below. Targets are the deep links the tools read:
+ *   legendary effect -> /all-effects?q=<name>        (tracker search box)
+ *   perk card        -> /perks?q=<name>              (perk search box)
+ *   unique item      -> /build?tab=gear&piece=<id>   (builder preselects that base piece)
+ *   major update     -> /wiki?update=<id>            (guides update filter)
+ *
+ * When two sources produce the same name (e.g. "Hardy", "Blocker", "Barbarian" are both a perk
+ * card and a legendary effect) the first source in this priority order wins:
+ * update > unique > perk > effect. Perk cards are what players name most often in prose; the
+ * tracker search still finds the effect of the same name.
+ *
+ * Matching (`findEntityMatches`) is deterministic: longest name first, whole words only,
+ * case-insensitive but only on capitalised occurrences (so "rapid fire" in prose is not linked to
+ * the Rapid effect), and it treats the typographic apostrophe (’) like the ASCII one.
+ */
+
+import { FALLBACK_LEGENDARY_EFFECTS } from "@/lib/static-fallback-catalog";
+import perkCards from "@/data/perk-cards.json";
+import { UNIQUE_ITEMS } from "@/lib/truth/unique-items";
+import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
+import { UPDATE_PATCHES } from "@/lib/wiki/update-patches";
+
+export type EntityKind = "update" | "unique" | "perk" | "effect";
+
+export type EntityLink = {
+  /** Lower-cased name with ’ folded to ' (unique across the map). */
+  key: string;
+  /** Display/source name as it appears in the data. */
+  name: string;
+  href: string;
+  kind: EntityKind;
+};
+
+export type EntityMatch = {
+  start: number;
+  end: number;
+  /** The text as it appears in the input (may use ’). */
+  text: string;
+  entity: EntityLink;
+};
+
+/** Shortest name that may become a link; shorter names are too ambiguous in prose. */
+export const MIN_ENTITY_NAME_LENGTH = 5;
+
+/**
+ * Legendary effects never auto-linked. The seven SPECIAL names are also 1-star effects, but in
+ * game text they almost always mean the stat ("+5 Strength"). The rest are effect names that the
+ * game also uses as damage types or status words in Title Case item text ("+50% Explosive Damage",
+ * "Burning", "Frozen", "Toxic", "Glowing", "Electrified") or as plain adjectives/nouns at the start
+ * of a sentence ("Active", "Charged", "Healthy", "Steady", "Vital", "Durability").
+ * They stay searchable in the tracker; they just do not become links.
+ */
+export const EFFECT_LINK_STOPLIST: ReadonlySet<string> = new Set([
+  "strength",
+  "perception",
+  "endurance",
+  "charisma",
+  "intelligence",
+  "agility",
+  "luck",
+  "active",
+  "burning",
+  "charged",
+  "durability",
+  "electrified",
+  "explosive",
+  "frozen",
+  "glowing",
+  "healthy",
+  "steady",
+  "toxic",
+  "vital"
+]);
+
+/**
+ * Perk cards never auto-linked: names that are ordinary English words or game nouns that show up
+ * capitalised for another meaning (sneak attacks, the "Hacker"/"Sniper" roles, a weapon
+ * "Suppressor" mod, "First Aid" items, "Adrenaline"/"Awareness" as UI words, sentence-initial
+ * nouns like "Contractor" or "Retribution"). Names such as "Scrounger" or "Night Person" are
+ * specific enough and stay linked.
+ */
+export const PERK_LINK_STOPLIST: ReadonlySet<string> = new Set([
+  "sneak",
+  "hacker",
+  "sniper",
+  "awareness",
+  "adrenaline",
+  "first aid",
+  "contractor",
+  "collateral damage",
+  "easy target",
+  "friendly fire",
+  "full charge",
+  "inspirational",
+  "pharmacist",
+  "philanthropist",
+  "power user",
+  "psychopath",
+  "rejuvenated",
+  "retribution",
+  "stabilized",
+  "suppressor",
+  "vaccinated"
+]);
+
+/** Route patterns every generated href must match (checked by the unit test). */
+export const ALLOWED_ENTITY_HREF_PATTERNS: readonly RegExp[] = [
+  /^\/all-effects\?q=[^&]+$/,
+  /^\/perks\?q=[^&]+$/,
+  /^\/build\?tab=gear&piece=[a-z0-9-]+$/,
+  /^\/wiki\?update=[a-z0-9-]+$/
+];
+
+export function normalizeEntityKey(name: string): string {
+  return name.replace(/[’‘]/g, "'").trim().toLowerCase();
+}
+
+function isLinkableName(name: string): boolean {
+  return name.trim().length >= MIN_ENTITY_NAME_LENGTH;
+}
+
+/** Update chip label without the parenthetical or a trailing year: "The Pitt (Expedition 1)" -> "The Pitt". */
+function updateMatchName(label: string): string {
+  return label
+    .replace(/\s*\(.*\)\s*$/, "")
+    .replace(/\s+\d{4}$/, "")
+    .trim();
+}
+
+function buildEntityLinks(): EntityLink[] {
+  const byKey = new Map<string, EntityLink>();
+  const add = (name: string, href: string, kind: EntityKind) => {
+    const clean = name.replace(/[’‘]/g, "'").trim();
+    if (!isLinkableName(clean)) return;
+    const key = normalizeEntityKey(clean);
+    if (byKey.has(key)) return; // priority: first source wins
+    byKey.set(key, { key, name: clean, href, kind });
+  };
+
+  // 1. Major updates (guides filter).
+  for (const patch of UPDATE_PATCHES) {
+    if (patch.id === "all") continue;
+    add(updateMatchName(patch.label), `/wiki?update=${patch.id}`, "update");
+  }
+
+  // 2. Unique items whose base-gear row exists in the builder.
+  const baseIds = new Set(BASE_GEAR_PIECES.map((piece) => piece.id));
+  for (const item of UNIQUE_ITEMS) {
+    const pieceId = item.baseItemId;
+    if (!pieceId || !baseIds.has(pieceId)) continue;
+    add(item.name, `/build?tab=gear&piece=${pieceId}`, "unique");
+  }
+
+  // 3. Perk cards.
+  for (const card of perkCards as Array<{ name: string }>) {
+    if (!card?.name || PERK_LINK_STOPLIST.has(normalizeEntityKey(card.name))) continue;
+    add(card.name, `/perks?q=${encodeURIComponent(card.name)}`, "perk");
+  }
+
+  // 4. Legendary effects.
+  for (const row of FALLBACK_LEGENDARY_EFFECTS) {
+    const name = row.effectName;
+    if (!name || EFFECT_LINK_STOPLIST.has(normalizeEntityKey(name))) continue;
+    add(name, `/all-effects?q=${encodeURIComponent(name)}`, "effect");
+  }
+
+  // Longest first (then alphabetical) so the regex alternation prefers the longest name at a position.
+  return Array.from(byKey.values()).sort(
+    (a, b) => b.name.length - a.name.length || a.key.localeCompare(b.key)
+  );
+}
+
+export const ENTITY_LINKS: readonly EntityLink[] = buildEntityLinks();
+
+const ENTITY_BY_KEY: ReadonlyMap<string, EntityLink> = new Map(ENTITY_LINKS.map((e) => [e.key, e]));
+
+export function getEntityLink(name: string): EntityLink | undefined {
+  return ENTITY_BY_KEY.get(normalizeEntityKey(name));
+}
+
+function escapeForRegex(name: string): string {
+  return name
+    .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    .replace(/'/g, "['’‘]");
+}
+
+const WORD_CHAR = /[\p{L}\p{N}]/u;
+
+let entityRegex: RegExp | null = null;
+function getEntityRegex(): RegExp {
+  if (!entityRegex) {
+    // No lookbehind (older Safari); the leading word boundary is checked by hand in findCandidates.
+    const alternation = ENTITY_LINKS.map((e) => escapeForRegex(e.name)).join("|");
+    entityRegex = new RegExp(`(?:${alternation})(?![\\p{L}\\p{N}])`, "giu");
+  }
+  return entityRegex;
+}
+
+/** Capitalised occurrence, or the exact case of the source name. */
+function acceptsCase(occurrence: string, entity: EntityLink): boolean {
+  const first = occurrence.charAt(0);
+  if (first !== first.toLowerCase() && first === first.toUpperCase()) return true;
+  return occurrence.replace(/[’‘]/g, "'") === entity.name;
+}
+
+function findCandidates(text: string): EntityMatch[] {
+  const regex = getEntityRegex();
+  regex.lastIndex = 0;
+  const out: EntityMatch[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(text)) !== null) {
+    const start = m.index;
+    const matched = m[0];
+    regex.lastIndex = start + 1; // allow overlapping candidates; selection resolves them
+    if (start > 0 && WORD_CHAR.test(text.charAt(start - 1))) continue;
+    const entity = ENTITY_BY_KEY.get(normalizeEntityKey(matched));
+    if (!entity || !acceptsCase(matched, entity)) continue;
+    out.push({ start, end: start + matched.length, text: matched, entity });
+  }
+  return out;
+}
+
+export type FindEntityOptions = {
+  /** Only the first occurrence of each entity (default true). */
+  firstOnly?: boolean;
+  /** Keys already linked earlier in the same block; updated in place. */
+  seen?: Set<string>;
+};
+
+/**
+ * Non-overlapping entity occurrences in `text`, in reading order. Overlaps are resolved longest
+ * first ("Anti-armor" beats a shorter name inside it); with `firstOnly` each entity appears once.
+ */
+export function findEntityMatches(text: string, options: FindEntityOptions = {}): EntityMatch[] {
+  if (!text) return [];
+  const { firstOnly = true, seen } = options;
+  const candidates = findCandidates(text).sort(
+    (a, b) => b.end - b.start - (a.end - a.start) || a.start - b.start
+  );
+  const chosen: EntityMatch[] = [];
+  for (const c of candidates) {
+    if (chosen.some((x) => c.start < x.end && x.start < c.end)) continue;
+    chosen.push(c);
+  }
+  chosen.sort((a, b) => a.start - b.start);
+  if (!firstOnly) return chosen;
+  const used = seen ?? new Set<string>();
+  const result: EntityMatch[] = [];
+  for (const c of chosen) {
+    if (used.has(c.entity.key)) continue;
+    used.add(c.entity.key);
+    result.push(c);
+  }
+  return result;
+}
+
+export type LinkSegment = { text: string; href?: string; entity?: EntityLink };
+
+export type LinkPlanState = {
+  /** Entity keys already handled in this block (first occurrence only). */
+  seen: Set<string>;
+  /** Links still allowed in this block. */
+  linksLeft: number;
+};
+
+export function createLinkPlanState(maxLinks = Number.POSITIVE_INFINITY): LinkPlanState {
+  return { seen: new Set<string>(), linksLeft: maxLinks };
+}
+
+function pathOf(href: string): string {
+  const path = href.split(/[?#]/)[0] || "/";
+  return path.length > 1 ? path.replace(/\/+$/, "") : path;
+}
+
+/**
+ * Splits `text` into plain and linked segments. Links to `currentPath` are left as text (never link
+ * a page to itself). `state` carries first-occurrence and max-link bookkeeping across several
+ * strings of the same block.
+ */
+export function planLinkSegments(
+  text: string,
+  options: { currentPath?: string | null; state?: LinkPlanState; maxLinks?: number } = {}
+): LinkSegment[] {
+  if (!text) return [];
+  const state = options.state ?? createLinkPlanState(options.maxLinks);
+  const here = options.currentPath ? pathOf(options.currentPath) : null;
+  const matches = findEntityMatches(text, { firstOnly: false });
+  const segments: LinkSegment[] = [];
+  let cursor = 0;
+  for (const m of matches) {
+    if (state.linksLeft <= 0) break;
+    if (state.seen.has(m.entity.key)) continue;
+    state.seen.add(m.entity.key);
+    if (here && pathOf(m.entity.href) === here) continue;
+    if (m.start > cursor) segments.push({ text: text.slice(cursor, m.start) });
+    segments.push({ text: m.text, href: m.entity.href, entity: m.entity });
+    cursor = m.end;
+    state.linksLeft -= 1;
+  }
+  if (cursor < text.length) segments.push({ text: text.slice(cursor) });
+  return segments;
+}

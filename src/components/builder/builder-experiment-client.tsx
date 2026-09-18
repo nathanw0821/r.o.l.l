@@ -41,6 +41,7 @@ import { useBuilderBootstrap } from "@/components/builder/hooks/use-builder-boot
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { calculateCombatFirepower } from "@/lib/builder/combat-firepower-engine";
+import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
 import {
   buildShoppingList,
@@ -186,6 +187,19 @@ export default function BuilderExperimentClient({
     setPayload,
     setSavedLoadouts,
   });
+
+  // Deep link `?piece=<baseGearId>` (e.g. from a linkified unique item name): selects that base
+  // piece once the working build has been restored. Ignored for read-only/shared views, when a
+  // shared build is being loaded (`?load=` / `?edit=`), and for ids not in BASE_GEAR_PIECES.
+  const pieceParam = searchParams?.get("piece")?.trim() ?? "";
+  const appliedPieceRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!isMounted || readOnly || targetTransmissionSlug) return;
+    if (!pieceParam || appliedPieceRef.current === pieceParam) return;
+    appliedPieceRef.current = pieceParam;
+    if (!BASE_GEAR_PIECES.some((p) => p.id === pieceParam)) return;
+    setBase(pieceParam);
+  }, [isMounted, readOnly, targetTransmissionSlug, pieceParam, setBase]);
 
   const {
     learnedBasePieceIds,

@@ -24,6 +24,8 @@ type FilterContextValue = {
   toggleStatus: (value: StatusFilter) => void;
   toggleOrigin: (value: string) => void;
   toggleCategory: (value: string) => void;
+  /** Stored filters have been restored (URL deep links apply after this). */
+  filtersHydrated: boolean;
 };
 
 const FilterContext = React.createContext<FilterContextValue | null>(null);
@@ -40,7 +42,8 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
     setOriginFilters,
     categoryFilters,
     setCategoryFilters,
-    clearFilters
+    clearFilters,
+    hydrated: filtersHydrated
   } = usePersistentFilters("roll.filters.v1");
   const [originOptions, setOriginOptions] = React.useState<string[]>([]);
 
@@ -86,7 +89,8 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
       toggleSource,
       toggleStatus,
       toggleOrigin,
-      toggleCategory
+      toggleCategory,
+      filtersHydrated
     }),
     [
       query,
@@ -104,7 +108,8 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
       toggleSource,
       toggleStatus,
       toggleOrigin,
-      toggleCategory
+      toggleCategory,
+      filtersHydrated
     ]
   );
 

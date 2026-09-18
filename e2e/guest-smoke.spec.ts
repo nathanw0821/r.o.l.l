@@ -90,7 +90,9 @@ test.describe("guest smoke", () => {
     await page.goto("/perks");
 
     // The perk builder is dynamically imported client-side (ssr: false), so give it time to mount.
-    const search = page.getByPlaceholder("Search perk cards...");
+    // Scoped to the page body: the sidebar command hub has an input with the same placeholder,
+    // which made this locator ambiguous (strict mode) and sent the test down the fallback branch.
+    const search = page.locator("#main-content").getByPlaceholder("Search perk cards...");
     const hasSearch = await search
       .waitFor({ state: "visible", timeout: 20_000 })
       .then(() => true)
@@ -98,7 +100,8 @@ test.describe("guest smoke", () => {
 
     if (hasSearch) {
       await search.fill("Night Person");
-      await expect(page.getByText("+5 INT and PER")).toBeVisible();
+      // The effect text lives in the card's tooltip; the card art carries the accessible name.
+      await expect(page.locator("#main-content").getByRole("img", { name: "Night Person", exact: true }).first()).toBeVisible();
     } else {
       // No search/filter on the page: fall back to asserting a full catalog renders
       // (character art images are the one element per card with a real accessible name).
@@ -144,6 +147,45 @@ test.describe("guest smoke", () => {
     await expect(page.getByText("NO ACTIVE PTS")).toBeVisible();
 
     await expectPageSane(page);
+  });
+
+  test("tracker deep link ?q= pre-fills the search box", async ({ page }) => {
+    await page.goto("/all-effects?q=Severing");
+
+    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...");
+    await expect(search).toHaveValue("Severing");
+    await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible();
+
+    await expectPageSane(page);
+  });
+
+  test("perks deep link ?q= pre-fills the perk search", async ({ page }) => {
+    await page.goto("/perks?q=Night%20Person");
+
+    // The perk builder is dynamically imported client-side (ssr: false), so give it time to mount.
+    // Scope to the page body: the sidebar command hub has an input with the same placeholder.
+    const main = page.locator("#main-content");
+    const search = main.getByPlaceholder("Search perk cards...");
+    await expect(search).toHaveValue("Night Person", { timeout: 20_000 });
+    await expect(main.getByRole("img", { name: "Night Person", exact: true }).first()).toBeVisible();
+
+    await expectPageSane(page);
+  });
+
+  test("a linkified term in 'What changed' opens its tool with the term searched", async ({ page }) => {
+    await page.goto("/");
+
+    const panel = page.locator("section", {
+      has: page.getByRole("heading", { name: /What changed in Patch/, level: 2 })
+    });
+    const severing = panel.getByRole("link", { name: "Severing", exact: true });
+    await expect(severing).toBeVisible();
+    await severing.click();
+
+    // Client navigation waits for the target route; under `next dev` its first compile can be slow.
+    await expect(page).toHaveURL(/\/all-effects\?q=Severing$/, { timeout: 20_000 });
+    await expect(page.getByPlaceholder("Search mod name, effect, or catalyst...")).toHaveValue("Severing");
+    await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible();
   });
 
   test("sign-in explains why an account helps", async ({ page }) => {

@@ -1,12 +1,17 @@
 import Link from "next/link";
 import patchDeltas from "@/data/truth/patch-deltas.json";
 import gameVersion from "@/data/truth/game-version.json";
+import LinkifiedText from "@/components/linkified-text";
 
 type PatchChange = { area: string; text: string; href?: string };
 type PatchEntry = { patch: number; name: string; released: string; changes: PatchChange[] };
 
-/** "What changed" list for the live patch, read from the truth pack (no prose is hand-written here). */
-export default function PatchChangesPanel({ limit }: { limit?: number }) {
+/**
+ * "What changed" list for the live patch, read from the truth pack (no prose is hand-written here).
+ * Game terms in each change are linked to their tool (first occurrence per change); `currentPath`
+ * is the page the panel sits on (home by default) so it never links to itself.
+ */
+export default function PatchChangesPanel({ limit, currentPath = "/" }: { limit?: number; currentPath?: string }) {
   const entry = (patchDeltas.patches as PatchEntry[]).find((p) => p.patch === gameVersion.patch);
   if (!entry) return null;
   const changes = limit ? entry.changes.slice(0, limit) : entry.changes;
@@ -26,7 +31,7 @@ export default function PatchChangesPanel({ limit }: { limit?: number }) {
           <li key={c.text} className="flex gap-3">
             <span className="w-32 shrink-0 text-foreground/50">{c.area}</span>
             <span>
-              {c.text}
+              <LinkifiedText text={c.text} currentPath={currentPath} />
               {c.href ? (
                 <>
                   {" "}

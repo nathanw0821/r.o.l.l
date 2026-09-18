@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -36,6 +37,7 @@ import {
   type WeaponInnateAggregateEffects,
 } from "@/lib/builder/weapon-piece-mods";
 import { resolveUniqueForBuilderId } from "@/lib/truth/unique-items";
+import LinkifiedText from "@/components/linkified-text";
 import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 import type { LocalProgressMap } from "@/components/use-local-progress";
 
@@ -91,6 +93,7 @@ export default function ChassisBayColumn({
   readOnly,
 }: ChassisBayColumnProps) {
   const groupedWeaponCategories = React.useMemo(() => getGroupedWeaponCategories(), []);
+  const pathname = usePathname();
   // Named unique in the weapon bay: its innate text is read-only reference copy.
   const activeWeaponUnique = React.useMemo(
     () => resolveUniqueForBuilderId(activeWeaponPiece.id),
@@ -415,7 +418,7 @@ export default function ChassisBayColumn({
                   </span>
                 </div>
                 <p className="text-[0.7rem] text-slate-200 leading-relaxed">
-                  {activeWeaponUnique.innateEffect}
+                  <LinkifiedText text={activeWeaponUnique.innateEffect} currentPath={pathname} />
                 </p>
                 <p className="text-[0.64rem] text-foreground/45 leading-relaxed">
                   Mods can be changed and a 4th star added since Patch 70 (10x scrip).

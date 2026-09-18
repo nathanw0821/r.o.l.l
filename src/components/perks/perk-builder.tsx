@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calculateLegendarySpecialBonuses, getPerkCardById, searchPerkCards, isGhoulPerkCard, areEquippedCardsEqual } from "@/lib/perks/catalog";
@@ -85,16 +86,19 @@ function normalizeEquippedCards(
   return result;
 }
 
+/**
+ * Deep link `?q=<term>` (or the older `?card=`) pre-fills the perk search: on load and again when
+ * the URL's value changes during client navigation (e.g. following a linkified perk name).
+ */
 function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => void }) {
+  const searchParams = useSearchParams();
+  const urlQuery = searchParams?.get("q") || searchParams?.get("card") || "";
+  const appliedRef = React.useRef<string | null>(null);
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const urlQuery = params.get("q") || params.get("card") || "";
-      if (urlQuery) {
-        onQueryChange(urlQuery);
-      }
-    }
-  }, [onQueryChange]);
+    if (!urlQuery || appliedRef.current === urlQuery) return;
+    appliedRef.current = urlQuery;
+    onQueryChange(urlQuery);
+  }, [urlQuery, onQueryChange]);
 
   return null;
 }
