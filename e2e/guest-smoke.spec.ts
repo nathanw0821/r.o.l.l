@@ -130,12 +130,87 @@ test.describe("guest smoke", () => {
     // toBeHidden() is satisfied whether the loading line never rendered or has since disappeared.
     await expect(page.getByText("Loading guides…")).toBeHidden({ timeout: 20_000 });
 
-    const resultsLine = page.getByText(/Showing \d+ Vault Guides/);
+    // Wording changed with the guides list upgrade: "Showing N Vault Guides" is now "Showing 3,165 guides".
+    const resultsLine = page.getByText(/Showing [\d,]+ guides?/);
     await expect(resultsLine).toBeVisible({ timeout: 20_000 });
     const text = await resultsLine.textContent();
-    const match = text?.match(/Showing (\d+) Vault Guides/);
+    const match = text?.match(/Showing ([\d,]+) guides?/);
     expect(match).not.toBeNull();
     expect(match?.[1]).not.toBe("0");
+
+    await expectPageSane(page);
+  });
+
+  test("guides category deep link shows result rows and pagination", async ({ page }) => {
+    await page.goto("/wiki?category=Patch%20notes%20%26%20news&page=1");
+
+    const rows = page.locator("[data-guide-row]");
+    await expect(rows.first()).toBeVisible({ timeout: 20_000 });
+    expect(await rows.count()).toBeGreaterThan(0);
+    expect(await rows.count()).toBeLessThanOrEqual(25);
+    await expect(page.getByText(/Page 1 of \d+/)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Remove Category: Patch notes & news" })).toBeVisible();
+
+    await expectPageSane(page);
+  });
+
+  test("typing a guides query updates the URL and the count", async ({ page }) => {
+    await page.goto("/wiki");
+    const count = page.getByText(/Showing [\d,]+ guides?/);
+    await expect(count).toBeVisible({ timeout: 20_000 });
+    const before = await count.textContent();
+
+    await page.locator("#guides-search").fill("fixer");
+    await expect(page).toHaveURL(/[?&]q=fixer(&|$)/, { timeout: 10_000 });
+    await expect(count).not.toHaveText(before ?? "", { timeout: 10_000 });
+    await expect(page.locator("[data-guide-row]").first()).toBeVisible();
+    // Typing never opens the reader on its own.
+    await expect(page.getByRole("button", { name: /Back to Vault Codex Hub/ })).toBeHidden();
+  });
+
+  test("guides next page, then browser back returns to page 1", async ({ page }) => {
+    await page.goto("/wiki");
+    await expect(page.getByText(/Page 1 of \d+/)).toBeVisible({ timeout: 20_000 });
+    const firstTitle = await page.locator("[data-guide-row]").first().textContent();
+
+    await page.getByRole("navigation", { name: "Pagination" }).getByRole("link", { name: "Next" }).click();
+    await expect(page).toHaveURL(/[?&]page=2(&|$)/);
+    await expect(page.getByText(/Page 2 of \d+/)).toBeVisible();
+    await expect(page.locator("[data-guide-row]").first()).not.toHaveText(firstTitle ?? "");
+
+    await page.goBack();
+    await expect(page).not.toHaveURL(/page=2/);
+    await expect(page.getByText(/Page 1 of \d+/)).toBeVisible();
+    await expect(page.locator("[data-guide-row]").first()).toHaveText(firstTitle ?? "");
+  });
+
+  test("guides ?id= deep link opens the reader, and j/Enter opens a row", async ({ page }) => {
+    await page.goto("/wiki?id=patch-1-7-11-12");
+    await expect(page.getByRole("heading", { name: "Fallout 76 Update Version 1.7.11.12 (April 30, 2024)", level: 1 })).toBeVisible({
+      timeout: 20_000
+    });
+    await page.getByRole("button", { name: /Back to Vault Codex Hub/ }).click();
+
+    await expect(page.locator("[data-guide-row]").first()).toBeVisible();
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await page.keyboard.press("j");
+    await expect(page.locator("[data-guide-row]").first()).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("button", { name: /Back to Vault Codex Hub/ })).toBeVisible();
+  });
+
+  test("guides filters disclosure opens on phones without horizontal scroll", async ({ page }) => {
+    await page.goto("/wiki");
+    await expect(page.getByText(/Showing [\d,]+ guides?/)).toBeVisible({ timeout: 20_000 });
+    const disclosure = page.getByText(/^Filters \(\d+\)$/);
+    const isPhoneLayout = await disclosure.isVisible();
+    test.skip(!isPhoneLayout, "Filters disclosure only shows below 1024px (the desktop rail replaces it).");
+
+    await disclosure.click();
+    await page.getByRole("button", { name: "NukaKnights" }).click();
+    await expect(page).toHaveURL(/[?&]source=NukaKnights(&|$)/);
+    await expect(page.getByText("Filters (1)")).toBeVisible();
+    await expect(page.locator("[data-guide-row]").first()).toBeVisible({ timeout: 20_000 });
 
     await expectPageSane(page);
   });

@@ -2101,3 +2101,65 @@ html[data-season="blood-moon"][data-theme="light"] .pip-shell::after {
 html[data-season="blood-moon"] .app-sidebar {
   border-right-color: color-mix(in srgb, #7f1d1d 35%, var(--sidebar-border));
 }
+
+/* ---------------------------------------------------------------------------
+ * Guides list (/wiki): search-first header, filter rail, result rows.
+ * One accent (amber), no gradients or glow; Share Tech Mono for data, system
+ * sans for prose. Phone gutter is 16px: .app-main pads 1.2rem there, so pull in 0.2rem.
+ * ------------------------------------------------------------------------- */
+.guides-mono {
+  font-family: var(--font-share-tech-mono), "Share Tech Mono", ui-monospace, monospace;
+  letter-spacing: 0;
+}
+.guides-prose {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: 0;
+}
+.guides-display {
+  font-family: var(--font-vt323), "VT323", monospace;
+  letter-spacing: 0;
+}
+@media (max-width: 860px) {
+  .guides-page {
+    margin-inline: -0.2rem;
+  }
+}
+.guides-search:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+.guides-row {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: inherit;
+  text-decoration: none;
+}
+.guides-row:hover {
+  background: var(--control-hover);
+}
+.guides-row:hover .guides-row__title {
+  color: var(--color-accent);
+}
+.guides-row:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+  background: var(--control-hover);
+}
+.guides-pill[aria-pressed="true"],
+.guides-pill[aria-current="true"] {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.guides-disclosure > summary {
+  list-style: none;
+  cursor: pointer;
+}
+.guides-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.guides-heading {
+  text-transform: none;
+  letter-spacing: 0;
+  text-shadow: none;
+}
