@@ -61,7 +61,7 @@ export default function FeedbackWidget() {
   }
 
   return (
-    <div className="feedback-widget">
+    <div className={open ? "feedback-widget feedback-widget--open" : "feedback-widget"}>
       {open ? (
         <section className="feedback-widget__panel">
           <div className="feedback-widget__header">
@@ -130,8 +130,9 @@ export default function FeedbackWidget() {
       ) : null}
       {!open ? (
         <button type="button" className="feedback-widget__toggle" onClick={() => setOpen(true)}>
-          <MessageSquare className="h-4 w-4" />
-          <span>Feedback</span>
+          <MessageSquare className="h-4 w-4" aria-hidden="true" />
+          {/* On phones the label is visually hidden (icon-only button); it stays the accessible name. */}
+          <span className="feedback-widget__label">Feedback</span>
         </button>
       ) : null}
     </div>

@@ -2052,6 +2052,179 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Phone chrome (<= 860px). Goal: page content starts near the top and the
+ * floating buttons never cover the last line. Desktop (> 860px) is untouched:
+ * every rule below is inside the phone media query, except hiding the slim
+ * banner variant, which only renders on phones.
+ * Command hub: kept in place as one compact row (search field + percentage +
+ * expand) rather than moved into the menu, so search stays zero taps away and
+ * the full hub (filters, progress, theme, nav) is one tap away, as before.
+ * ------------------------------------------------------------------------- */
+.guest-banner-slim {
+  display: none;
+}
+@media (max-width: 860px) {
+  :root {
+    --floating-ui-inset: 1rem;      /* distance of the floating buttons from the screen edge */
+    --floating-ui-size: 2.75rem;    /* height of the floating buttons (44px touch target) */
+    --quick-filters-width: 9.75rem; /* fixed so the Feedback button can sit beside it */
+    --floating-ui-clearance: calc(var(--floating-ui-inset) + var(--floating-ui-size) + 0.75rem);
+  }
+
+  /* Header row and top spacing. */
+  .app-sidebar {
+    padding: 0.7rem 1rem;
+  }
+  .app-main {
+    padding-top: 0.75rem;
+    padding-bottom: var(--floating-ui-clearance); /* room under the footer for the floating buttons */
+  }
+  .top-scroll-mask {
+    display: none; /* only masks sticky desktop headers; on phones it just added a gap */
+  }
+
+  /* Command hub: one compact row, about 48px tall. */
+  .command-hub {
+    margin-bottom: 0;
+    border-radius: 12px;
+  }
+  .command-hub__bar {
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    border-bottom: none;
+  }
+  .command-hub__search {
+    min-height: 2.25rem;
+    padding: 0.25rem 0.75rem;
+  }
+  .command-hub__stat {
+    min-width: 0;
+  }
+  .command-hub__stat-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .command-hub__expand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  .command-hub--open .command-hub__bar {
+    padding: 0 0 0.75rem;
+  }
+
+  /* Cloud-backup notice: slim variant replaces the tall card. */
+  .guest-banner-full {
+    display: none;
+  }
+  .guest-banner-slim {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+    border-radius: 10px;
+    background: var(--color-panel);
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+  .guest-banner-slim__text {
+    margin: 0;
+    color: var(--text-primary);
+  }
+  .guest-banner-slim__actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+    font-size: 0.68rem;
+  }
+  .guest-banner-slim__primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 2rem;
+    padding: 0 0.55rem;
+    border-radius: 8px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 700;
+  }
+  .guest-banner-slim__link {
+    min-height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .guest-banner-slim__link:hover {
+    color: var(--text-primary);
+  }
+  .guest-banner-slim__close {
+    grid-column: 2;
+    grid-row: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    color: var(--text-muted);
+  }
+  .guest-banner-slim__close:hover {
+    color: var(--text-primary);
+    background: var(--control-hover);
+  }
+  .guest-banner-slim :is(button, a):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Floating buttons: both bottom-right, side by side, never overlapping. */
+  .quick-filters-fab {
+    right: var(--floating-ui-inset);
+    bottom: var(--floating-ui-inset);
+    width: var(--quick-filters-width);
+    height: var(--floating-ui-size);
+    justify-content: center;
+    padding: 0 0.75rem;
+    white-space: nowrap;
+  }
+  .feedback-widget {
+    left: auto;
+    right: calc(var(--floating-ui-inset) + var(--quick-filters-width) + 0.5rem);
+    bottom: var(--floating-ui-inset);
+  }
+  .feedback-widget--open {
+    right: var(--floating-ui-inset); /* the open panel is nearly screen-wide */
+    bottom: calc(var(--floating-ui-inset) + var(--floating-ui-size) + 0.5rem); /* sit above Quick filters, not under it */
+  }
+  .feedback-widget__toggle {
+    width: var(--floating-ui-size);
+    height: var(--floating-ui-size);
+    justify-content: center;
+    padding: 0;
+  }
+  .feedback-widget__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
 /* Enforce 100% solid, opaque tooltips across all elements */
 [data-radix-popper-content-wrapper] {
   z-index: 10000 !important;
