@@ -323,7 +323,7 @@ export function ThemeProvider({
       setUiTone: setUiToneState,
       setFontScale: setFontScaleState
     }),
-    [theme, accent, colorBlind, density, uiMode, scanlineMode, uiTone, fontScale]
+    [theme, accent, colorBlind, density, uiMode, scanlineMode, uiTone, fontScale, season]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
