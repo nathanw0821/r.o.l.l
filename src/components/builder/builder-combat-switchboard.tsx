@@ -58,6 +58,13 @@ export type CombatSwitchboardState = {
   adrenalineStacks?: number;
   furiousStacks?: number;
   bulletStormStacks?: number;
+  onslaughtStacks?: number;
+  killStreak?: number;
+  tenderizerStacks?: number;
+  targetBleeding?: boolean;
+  targetBurning?: boolean;
+  targetPoisoned?: boolean;
+  targetCrippledLimbs?: number;
   combatStance?: {
     isSneaking: boolean;
     isCrouched?: boolean;
@@ -273,6 +280,13 @@ export default function BuilderCombatSwitchboard({
       adrenalineStacks: 0,
       furiousStacks: 0,
       bulletStormStacks: 0,
+      onslaughtStacks: 0,
+      killStreak: 0,
+      tenderizerStacks: 0,
+      targetBleeding: false,
+      targetBurning: false,
+      targetPoisoned: false,
+      targetCrippledLimbs: 0,
       combatStance: {
         isSneaking: false,
         isCrouched: false,
@@ -1382,8 +1396,68 @@ export default function BuilderCombatSwitchboard({
             </div>
           )}
 
-          {/* Dynamic Counters & Aristocrat's Caps Slider */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Dynamic Counters, Stacks & Aristocrat's Caps Slider */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {/* Bullet Storm Stacks */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1">
+              <div className="flex justify-between text-xs text-slate-400 font-bold uppercase">
+                <span>Bullet Storm:</span>
+                <span className="text-cyan-400">{switchboard.bulletStormStacks || 0} / 20</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="20"
+                step="1"
+                value={switchboard.bulletStormStacks || 0}
+                onChange={(e) => updateField("bulletStormStacks", parseInt(e.target.value, 10))}
+                className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+              />
+              <div className="text-[0.65rem] text-slate-500">
+                Heavy Gun bonus (3%–9%/stack; min 5 with Resolute Veteran)
+              </div>
+            </div>
+
+            {/* Onslaught Stacks */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1">
+              <div className="flex justify-between text-xs text-slate-400 font-bold uppercase">
+                <span>Onslaught:</span>
+                <span className="text-orange-400">{switchboard.onslaughtStacks || 0} / 30</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="30"
+                step="1"
+                value={switchboard.onslaughtStacks || 0}
+                onChange={(e) => updateField("onslaughtStacks", parseInt(e.target.value, 10))}
+                className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-orange-500"
+              />
+              <div className="text-[0.65rem] text-slate-500">
+                +{(switchboard.onslaughtStacks || 0) * 5}% Damage (+5% per stack)
+              </div>
+            </div>
+
+            {/* Tenderizer Stacks */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1">
+              <div className="flex justify-between text-xs text-slate-400 font-bold uppercase">
+                <span>Tenderizer:</span>
+                <span className="text-rose-400">{switchboard.tenderizerStacks || 0} / 100 hits</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={switchboard.tenderizerStacks || 0}
+                onChange={(e) => updateField("tenderizerStacks", parseInt(e.target.value, 10))}
+                className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-rose-500"
+              />
+              <div className="text-[0.65rem] text-slate-500">
+                +{((switchboard.tenderizerStacks || 0) * 0.1).toFixed(1)}% Damage Taken (+0.1%/hit)
+              </div>
+            </div>
+
             {/* Adrenaline Stacks */}
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1">
               <div className="flex justify-between text-xs text-slate-400 font-bold uppercase">
@@ -1441,6 +1515,85 @@ export default function BuilderCombatSwitchboard({
               />
               <div className="text-[0.65rem] text-slate-500">
                 {(switchboard.caps ?? 30000) >= 29000 ? "✅ Max +50% Aristocrat's Bonus" : "Scaled Aristocrat's Bonus"}
+              </div>
+            </div>
+          </div>
+
+          {/* Target Impairments (Enemy Debuffs & Impairment Triggers) */}
+          <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase">
+                <Target className="h-3.5 w-3.5 text-rose-400" />
+                <span>Target Impairments (Enemy Debuffs)</span>
+              </div>
+              <span className="text-[0.68rem] text-slate-500 font-mono">
+                Triggers Severing, Pyromaniac&apos;s, Viper&apos;s, Bully&apos;s, Wound Salter, Deal Sealer
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+              {/* Bleeding Target */}
+              <label className={cn(
+                "flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors text-xs select-none",
+                switchboard.targetBleeding
+                  ? "border-rose-500/50 bg-rose-500/10 text-rose-300 font-semibold"
+                  : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
+              )}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(switchboard.targetBleeding)}
+                  onChange={(e) => updateField("targetBleeding", e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-0 cursor-pointer"
+                />
+                <span>🩸 Bleeding</span>
+              </label>
+
+              {/* Burning Target */}
+              <label className={cn(
+                "flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors text-xs select-none",
+                switchboard.targetBurning
+                  ? "border-amber-500/50 bg-amber-500/10 text-amber-300 font-semibold"
+                  : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
+              )}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(switchboard.targetBurning)}
+                  onChange={(e) => updateField("targetBurning", e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0 cursor-pointer"
+                />
+                <span>🔥 Burning</span>
+              </label>
+
+              {/* Poisoned Target */}
+              <label className={cn(
+                "flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors text-xs select-none",
+                switchboard.targetPoisoned
+                  ? "border-lime-500/50 bg-lime-500/10 text-lime-300 font-semibold"
+                  : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
+              )}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(switchboard.targetPoisoned)}
+                  onChange={(e) => updateField("targetPoisoned", e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-lime-500 focus:ring-0 cursor-pointer"
+                />
+                <span>🧪 Poisoned</span>
+              </label>
+
+              {/* Crippled Limbs */}
+              <div className="flex items-center justify-between p-2 rounded border border-slate-800 bg-slate-950/60 text-xs">
+                <span className="text-slate-400">🦴 Crippled:</span>
+                <select
+                  value={switchboard.targetCrippledLimbs ?? 0}
+                  onChange={(e) => updateField("targetCrippledLimbs", parseInt(e.target.value, 10))}
+                  className="rounded bg-slate-900 border border-slate-700 px-2 py-0.5 text-xs text-slate-200 font-mono cursor-pointer"
+                >
+                  <option value={0}>0 Limbs</option>
+                  <option value={1}>1 Limb</option>
+                  <option value={2}>2 Limbs</option>
+                  <option value={3}>3 Limbs</option>
+                  <option value={4}>4 (All)</option>
+                </select>
               </div>
             </div>
           </div>

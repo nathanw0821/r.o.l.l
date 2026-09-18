@@ -461,4 +461,207 @@ describe("combat-firepower-engine", () => {
     expect(getWeaponCombatBaseStats("the-dragon").baseDamage).toBe(225);
     expect(getWeaponMaxLevel("the-dragon")).toBe(45);
   });
+
+  describe("Patch 62/66/70 Stack Mechanics & Target Impairments (WS-3)", () => {
+    it("scales Bullet Storm with explicit stack counts and Bringing the Big Guns double cap", () => {
+      // .50 Cal with Bullet Storm rank 3 (9% per 30 rounds / per stack)
+      const baseInput = {
+        weaponId: "50-cal-machine-gun",
+        equippedMods: [],
+        equippedPerks: [{ cardId: "bullet-storm", rank: 3 }],
+        playerStats: { agility: 10, luck: 10, strength: 15 },
+      };
+
+      // 0 stacks -> 0% bonus
+      const res0 = calculateCombatFirepower({
+        ...baseInput,
+        playerStats: { ...baseInput.playerStats, bulletStormStacks: 0 },
+      });
+      expect(res0.damagePerShot.breakdown.some((b) => b.source.includes("Bullet Storm (0 Stacks)"))).toBe(false);
+
+      // 10 stacks -> 10 * 9% = +90%
+      const res10 = calculateCombatFirepower({
+        ...baseInput,
+        playerStats: { ...baseInput.playerStats, bulletStormStacks: 10 },
+      });
+      const b10 = res10.damagePerShot.breakdown.find((b) => b.source.includes("Bullet Storm (10 Stacks)"));
+      expect(b10).toBeDefined();
+      expect(b10?.value).toBe("+90%");
+
+      // 20 stacks with Bringing the Big Guns -> 20 * 9% = +180%
+      const res20WithBigGuns = calculateCombatFirepower({
+        ...baseInput,
+        equippedPerks: [
+          { cardId: "bullet-storm", rank: 3 },
+          { cardId: "bringing-the-big-guns", rank: 1 },
+        ],
+        playerStats: { ...baseInput.playerStats, bulletStormStacks: 20 },
+      });
+      const b20 = res20WithBigGuns.damagePerShot.breakdown.find((b) => b.source.includes("Bullet Storm (20 Stacks)"));
+      expect(b20).toBeDefined();
+      expect(b20?.value).toBe("+180%");
+    });
+
+    it("enforces Resolute Veteran minimum 5 Bullet Storm stacks", () => {
+      const resMin5 = calculateCombatFirepower({
+        weaponId: "resolute-veteran",
+        equippedMods: [],
+        equippedPerks: [{ cardId: "bullet-storm", rank: 3 }],
+        playerStats: { agility: 10, luck: 10, strength: 15, bulletStormStacks: 0 },
+      });
+      // Minimum 5 stacks enforced even when slider is 0: 5 * 9% = +45%
+      const b5 = resMin5.damagePerShot.breakdown.find((b) => b.source.includes("Bullet Storm (5 Stacks)"));
+      expect(b5).toBeDefined();
+      expect(b5?.value).toBe("+45%");
+    });
+
+    it("scales Onslaught damage at +5% per stack", () => {
+      const resOnslaught = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, onslaughtStacks: 12 },
+      });
+      const b = resOnslaught.damagePerShot.breakdown.find((x) => x.source.includes("Onslaught (12 Stacks)"));
+      expect(b).toBeDefined();
+      expect(b?.value).toBe("+60%"); // 12 * 5% = +60%
+    });
+
+    it("scales Adrenaline / Kill Streak according to perk rank and stack count", () => {
+      // Adrenaline rank 3: 5% + 3% = 8% per kill
+      const resAdr = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [],
+        equippedPerks: [{ cardId: "adrenaline", rank: 3 }],
+        playerStats: { agility: 10, luck: 10, strength: 10, adrenalineStacks: 4 },
+      });
+      const b = resAdr.damagePerShot.breakdown.find((x) => x.source.includes("Adrenaline (4 Kills)"));
+      expect(b).toBeDefined();
+      expect(b?.value).toBe("+32%"); // 4 * 8% = +32%
+    });
+
+    it("stacks Tenderizer debuff at +0.1% per hit up to +100%", () => {
+      const resTend = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, tenderizerStacks: 40 },
+      });
+      const b = resTend.damagePerShot.breakdown.find((x) => x.source.includes("Tenderizer (40 Hits)"));
+      expect(b).toBeDefined();
+      expect(b?.value).toBe("+4.0% Target Debuff"); // 40 * 0.1% = 4.0%
+    });
+
+    it("triggers Severing 4★ (+50%) and Wound Salter on bleeding targets", () => {
+      const resBleed = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [{ slug: "severing" }],
+        equippedPerks: [{ cardId: "wound-salter", rank: 2 }],
+        playerStats: { agility: 10, luck: 10, strength: 10, targetBleeding: true },
+      });
+      const bSevering = resBleed.damagePerShot.breakdown.find((x) => x.source.includes("Severing 4★"));
+      expect(bSevering).toBeDefined();
+      expect(bSevering?.value).toBe("+50%");
+
+      const bWound = resBleed.damagePerShot.breakdown.find((x) => x.source.includes("Wound Salter (Rank 2"));
+      expect(bWound).toBeDefined();
+      expect(bWound?.value).toBe("+20%");
+    });
+
+    it("triggers Pyromaniac's 4★ (+50%) on burning targets and Viper's (+50%) on poisoned targets", () => {
+      const resPyro = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [{ slug: "pyromaniacs" }],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, targetBurning: true },
+      });
+      expect(resPyro.damagePerShot.breakdown.some((x) => x.source.includes("Pyromaniac's 4★"))).toBe(true);
+
+      const resViper = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [{ slug: "vipers" }],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, targetPoisoned: true },
+      });
+      expect(resViper.damagePerShot.breakdown.some((x) => x.source.includes("Viper's 4★"))).toBe(true);
+    });
+
+    it("scales Bully's 4★ (+25%/limb) and Crushing Blow (+10%/limb) on crippled targets", () => {
+      const resBully = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [{ slug: "bullys" }],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, targetCrippledLimbs: 3 },
+      });
+      const bBully = resBully.damagePerShot.breakdown.find((x) => x.source.includes("Bully's 4★ (3 Crippled"));
+      expect(bBully).toBeDefined();
+      expect(bBully?.value).toBe("+75%"); // 3 * 25% = 75%
+
+      const resCrushing = calculateCombatFirepower({
+        weaponId: "crushing-blow",
+        equippedMods: [],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, targetCrippledLimbs: 2 },
+      });
+      const bCrush = resCrushing.damagePerShot.breakdown.find((x) => x.source.includes("Crushing Blow Innate (2 Crippled"));
+      expect(bCrush).toBeDefined();
+      expect(bCrush?.value).toBe("+20%"); // 2 * 10% = 20%
+    });
+
+    it("scales Deal Sealer at +10% per active target impairment", () => {
+      const resDeal = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [],
+        equippedPerks: [{ cardId: "deal-sealer", rank: 1 }],
+        playerStats: {
+          agility: 10,
+          luck: 10,
+          strength: 10,
+          targetBleeding: true,
+          targetBurning: true,
+          targetPoisoned: false,
+          targetCrippledLimbs: 2,
+        },
+      });
+      // 3 active impairments: bleeding, burning, crippled
+      const bDeal = resDeal.damagePerShot.breakdown.find((x) => x.source.includes("Deal Sealer (3 Impairments)"));
+      expect(bDeal).toBeDefined();
+      expect(bDeal?.value).toBe("+30%"); // 3 * 10% = +30%
+    });
+
+    it("grants Demolition Expert rank 3 from The Guarantee innate effect", () => {
+      const resGuarantee = calculateCombatFirepower({
+        weaponId: "the-guarantee",
+        equippedMods: [{ slug: "explosive" }],
+        equippedPerks: [], // no demo expert equipped
+        playerStats: { agility: 10, luck: 10, strength: 10 },
+      });
+      // With Demo Expert 3: +60% explosive damage (0.2 * 1.4 = 0.28 base)
+      const bDemo = resGuarantee.damagePerShot.breakdown.find((x) => x.source.includes("The Guarantee: Demo Exp Rank 3"));
+      expect(bDemo).toBeDefined();
+    });
+
+    it("clamps melee and unarmed swing speed to +100% (2.0x multiplier limit)", () => {
+      // Combat knife with Rapid (+25%) and innate mods (+100%) would exceed 2.0x
+      const resClamped = calculateCombatFirepower({
+        weaponId: "combat-knife",
+        equippedMods: [{ slug: "rapid" }],
+        weaponCrafting: null,
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10 },
+      });
+      // Base fire rate is 2.9. With rapid alone it's 2.9 * 1.25 = 3.625 (under 2.0x)
+      expect(resClamped.fireRate.fireRateMultiplier).toBe(1.25);
+
+      // Now with Disorderly Conduct (+20%) and extreme swing speed mock
+      const resDisorderly = calculateCombatFirepower({
+        weaponId: "disorderly-conduct",
+        equippedMods: [{ slug: "rapid" }],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10 },
+      });
+      // 1.25 * 1.20 = 1.50 <= 2.0
+      expect(resDisorderly.fireRate.fireRateMultiplier).toBe(1.5);
+    });
+  });
 });
