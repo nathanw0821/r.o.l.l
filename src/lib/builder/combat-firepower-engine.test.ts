@@ -515,41 +515,70 @@ describe("combat-firepower-engine", () => {
       expect(b5?.value).toBe("+45%");
     });
 
-    it("scales Onslaught damage at +5% per stack", () => {
-      const resOnslaught = calculateCombatFirepower({
+    it("spends Onslaught stacks only through Furious (+5%/stack, max 9) and Pounder's (melee +10%/stack, max 10)", () => {
+      const noSpender = calculateCombatFirepower({
         weaponId: "the-fixer",
         equippedMods: [],
         equippedPerks: [],
         playerStats: { agility: 10, luck: 10, strength: 10, onslaughtStacks: 12 },
       });
-      const b = resOnslaught.damagePerShot.breakdown.find((x) => x.source.includes("Onslaught (12 Stacks)"));
-      expect(b).toBeDefined();
-      expect(b?.value).toBe("+60%"); // 12 * 5% = +60%
+      expect(noSpender.damagePerShot.breakdown.find((x) => x.source.includes("Onslaught"))).toBeUndefined();
+      const furious = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [{ slug: "furious" }],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, onslaughtStacks: 12 },
+      });
+      const f = furious.damagePerShot.breakdown.find((x) => x.source.startsWith("Furious"));
+      expect(f?.value).toBe("+45%"); // capped at 9 stacks
     });
 
-    it("scales Adrenaline / Kill Streak according to perk rank and stack count", () => {
-      // Adrenaline rank 3: 5% + 3% = 8% per kill
-      const resAdr = calculateCombatFirepower({
+    it("gives +3% armor penetration per Onslaught stack on Ticket to Revenge and +2% crit per stack on Elder's Mark", () => {
+      const ttr = calculateCombatFirepower({
+        weaponId: "ticket-to-revenge",
+        equippedMods: [],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, onslaughtStacks: 4 },
+      });
+      expect(ttr.armorPenetration.breakdown.find((x) => x.source.startsWith("Ticket to Revenge"))?.value).toBe("12% Penetration");
+      const em = calculateCombatFirepower({
+        weaponId: "elders-mark",
+        equippedMods: [],
+        equippedPerks: [],
+        playerStats: { agility: 10, luck: 10, strength: 10, onslaughtStacks: 4 },
+      });
+      expect(em.damagePerShot.breakdown.find((x) => x.source.startsWith("Elder's Mark"))?.value).toBe("+8% Crit");
+    });
+
+    it("gives Adrenaline +10% per kill on a Kill Streak, max 10, and nothing for a streak without the perk", () => {
+      const withPerk = calculateCombatFirepower({
         weaponId: "the-fixer",
         equippedMods: [],
-        equippedPerks: [{ cardId: "adrenaline", rank: 3 }],
-        playerStats: { agility: 10, luck: 10, strength: 10, adrenalineStacks: 4 },
+        equippedPerks: [{ cardId: "adrenaline", rank: 1 }],
+        playerStats: { agility: 10, luck: 10, strength: 10, killStreak: 14 },
       });
-      const b = resAdr.damagePerShot.breakdown.find((x) => x.source.includes("Adrenaline (4 Kills)"));
-      expect(b).toBeDefined();
-      expect(b?.value).toBe("+32%"); // 4 * 8% = +32%
-    });
-
-    it("stacks Tenderizer debuff at +0.1% per hit up to +100%", () => {
-      const resTend = calculateCombatFirepower({
+      expect(withPerk.damagePerShot.breakdown.find((x) => x.source.startsWith("Adrenaline"))?.value).toBe("+100%");
+      const noPerk = calculateCombatFirepower({
         weaponId: "the-fixer",
         equippedMods: [],
         equippedPerks: [],
-        playerStats: { agility: 10, luck: 10, strength: 10, tenderizerStacks: 40 },
+        playerStats: { agility: 10, luck: 10, strength: 10, killStreak: 4 },
       });
-      const b = resTend.damagePerShot.breakdown.find((x) => x.source.includes("Tenderizer (40 Hits)"));
-      expect(b).toBeDefined();
-      expect(b?.value).toBe("+4.0% Target Debuff"); // 40 * 0.1% = 4.0%
+      expect(noPerk.damagePerShot.breakdown.find((x) => x.source.includes("Kill Streak") || x.source.startsWith("Adrenaline"))).toBeUndefined();
+    });
+
+    it("applies Tenderizer as a multiplier on the total (+0.1% per hit, capped at +100%) only when the perk is equipped", () => {
+      const base = calculateCombatFirepower({ weaponId: "the-fixer", equippedMods: [], equippedPerks: [], playerStats: { agility: 10, luck: 10, strength: 10 } });
+      const tend = calculateCombatFirepower({
+        weaponId: "the-fixer",
+        equippedMods: [],
+        equippedPerks: [{ cardId: "tenderizer", rank: 1 }],
+        playerStats: { agility: 10, luck: 10, strength: 10, tenderizerStacks: 5000 },
+      });
+      expect(tend.damagePerShot.breakdown.find((x) => x.source.startsWith("Tenderizer"))?.value).toBe("×2.000 target debuff");
+      expect(tend.damagePerShot.normal).toBe(base.damagePerShot.normal * 2);
+      const noPerk = calculateCombatFirepower({ weaponId: "the-fixer", equippedMods: [], equippedPerks: [], playerStats: { agility: 10, luck: 10, strength: 10, tenderizerStacks: 5000 } });
+      expect(noPerk.damagePerShot.normal).toBe(base.damagePerShot.normal);
     });
 
     it("triggers Severing 4★ (+50%) and Wound Salter on bleeding targets", () => {

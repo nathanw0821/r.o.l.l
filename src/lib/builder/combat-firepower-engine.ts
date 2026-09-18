@@ -593,30 +593,28 @@ export function calculateCombatFirepower(
     breakdown.push({ source: `Bloody Mess (Rank ${bloodyMessRank})`, value: "Bleed Corpse Explosion (LCK Scaled)" });
   }
 
+  // Nerd Rage! (single rank since the Patch 62 rework): damage scales from 0 to +80% as
+  // health falls below 20% (Nukes & Dragons range; exact curve unpublished, modelled linearly).
   const nerdRageRank = perkRanks.get("nerd-rage") || 0;
   if (nerdRageRank > 0 && healthPct <= 0.2) {
-    const nr = nerdRageRank === 1 ? 0.1 : nerdRageRank === 2 ? 0.15 : 0.2;
+    // Floor +20% at the 20% line (matches the pre-rework top rank), rising to +80% at 0 HP.
+    const nr = 0.2 + 0.6 * Math.min(1, Math.max(0, (0.2 - healthPct) / 0.2));
     additiveDamagePct += nr;
     breakdown.push({ source: `Nerd Rage (<20% HP)`, value: `+${Math.round(nr * 100)}%` });
   }
 
+  // Kill Streak (Burning Springs): Adrenaline perk (single rank) and the Adrenal 1★ weapon mod each
+  // give +10% damage per kill while on a Kill Streak, max 10 kills. A streak alone gives nothing.
   const rawAdrenalineKills = input.playerStats.killStreak ?? input.playerStats.adrenalineStacks;
-  const adrenalineRank = perkRanks.get("adrenaline") || 0;
-  if (adrenalineRank > 0) {
-    const perKill = 0.05 + adrenalineRank * 0.01;
-    const kills = rawAdrenalineKills !== undefined ? Math.min(6, Math.max(0, rawAdrenalineKills)) : 6;
-    const adrBonus = kills * perKill;
-    if (adrBonus > 0) {
-      additiveDamagePct += adrBonus;
-      breakdown.push({
-        source: rawAdrenalineKills !== undefined ? `Adrenaline (${kills} Kills)` : "Adrenaline (Max Stacks)",
-        value: `+${Math.round(adrBonus * 100)}%`,
-      });
-    }
-  } else if (rawAdrenalineKills !== undefined && rawAdrenalineKills > 0) {
-    const adrKillsBonus = Math.min(6, rawAdrenalineKills) * 0.10;
-    additiveDamagePct += adrKillsBonus;
-    breakdown.push({ source: `Kill Streak (${rawAdrenalineKills} Kills)`, value: `+${Math.round(adrKillsBonus * 100)}%` });
+  const killStreakKills = Math.min(10, Math.max(0, rawAdrenalineKills ?? 0));
+  const hasAdrenalMod = (input.equippedMods || []).some((m) => m && typeof m.slug === "string" && m.slug.toLowerCase() === "adrenal");
+  if (killStreakKills > 0 && (perkRanks.get("adrenaline") || 0) > 0) {
+    additiveDamagePct += killStreakKills * 0.10;
+    breakdown.push({ source: `Adrenaline (${killStreakKills} kills)`, value: `+${killStreakKills * 10}%` });
+  }
+  if (killStreakKills > 0 && hasAdrenalMod) {
+    additiveDamagePct += killStreakKills * 0.10;
+    breakdown.push({ source: `Adrenal 1★ (${killStreakKills} kills)`, value: `+${killStreakKills * 10}%` });
   }
 
   // 2. Legendary Stars Analysis
@@ -764,28 +762,40 @@ export function calculateCombatFirepower(
     }
   }
 
-  // Onslaught Stacks (+5% additive damage per stack)
-  const onslaughtStacks = input.playerStats.onslaughtStacks || 0;
+  // Onslaught stacks only matter through the effects that spend them (Gleaming Depths rework):
+  // Furious 1★ +5% per stack (max 9), Pounder's 4★ melee +10% per stack (max 10),
+  // Guerrilla Master +5% ranged damage to close enemies per stack (max 5).
+  const onslaughtStacks = Math.max(0, input.playerStats.onslaughtStacks || 0);
+  const onslaughtModSlugs = new Set(
+    (input.equippedMods || []).filter((m) => m && typeof m.slug === "string").map((m) => (m as { slug: string }).slug.toLowerCase())
+  );
   if (onslaughtStacks > 0) {
-    const onslaughtBonus = onslaughtStacks * 0.05;
-    additiveDamagePct += onslaughtBonus;
-    breakdown.push({
-      source: `Onslaught (${onslaughtStacks} Stacks)`,
-      value: `+${Math.round(onslaughtBonus * 100)}%`,
-    });
+    if (onslaughtModSlugs.has("furious")) {
+      const st = Math.min(9, onslaughtStacks);
+      additiveDamagePct += st * 0.05;
+      breakdown.push({ source: `Furious 1★ (${st} Onslaught stacks)`, value: `+${st * 5}%` });
+    }
+    if (onslaughtModSlugs.has("pounders") && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
+      const st = Math.min(10, onslaughtStacks);
+      additiveDamagePct += st * 0.10;
+      breakdown.push({ source: `Pounder's 4★ (${st} Onslaught stacks)`, value: `+${st * 10}%` });
+    }
+    if ((perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0) > 0 && base.weaponClass === "guerrilla") {
+      const st = Math.min(5, onslaughtStacks);
+      additiveDamagePct += st * 0.05;
+      breakdown.push({ source: `Guerrilla Master (${st} Onslaught stacks, close targets)`, value: `+${st * 5}%` });
+    }
   }
 
-  // Tenderizer Stacks (+0.1% damage taken per hit, stacks to +100%)
-  const tenderizerHits = input.playerStats.tenderizerStacks || 0;
-  if (tenderizerHits > 0) {
-    const tendBonus = Math.min(1.0, tenderizerHits * 0.001);
-    if (tendBonus > 0) {
-      additiveDamagePct += tendBonus;
-      breakdown.push({
-        source: `Tenderizer (${tenderizerHits} Hits)`,
-        value: `+${(tendBonus * 100).toFixed(1)}% Target Debuff`,
-      });
-    }
+  // Tenderizer (single rank): the target takes +0.1% more damage per hit, stacking to +100%,
+  // no expiry, not in PvP. A target debuff, so it multiplies the total instead of joining the base pool.
+  const tenderizerHits = Math.max(0, input.playerStats.tenderizerStacks || 0);
+  const tenderizerMultiplier = (perkRanks.get("tenderizer") || 0) > 0 && tenderizerHits > 0 ? 1 + Math.min(1.0, tenderizerHits * 0.001) : 1;
+  if (tenderizerMultiplier > 1) {
+    breakdown.push({
+      source: `Tenderizer (${tenderizerHits} hits)`,
+      value: `×${tenderizerMultiplier.toFixed(3)} target debuff`,
+    });
   }
 
   // Target Impairments (Enemy Conditions) & Dependent Perks/Mods
@@ -931,7 +941,9 @@ export function calculateCombatFirepower(
   // primary in this engine adds to BASE (additiveDamagePct is a fraction; the calculator takes
   // percent). The multiplicative list is intentionally empty: sneak attack, Nocturnal and
   // Stalker's stay linearised into the additive pool for parity (tracked as a follow-up).
-  const normalDamage = Math.round(calculatePaperDamage(base.baseDamage, additiveDamagePct * 100, []));
+  const normalDamage = Math.round(
+    calculatePaperDamage(base.baseDamage, additiveDamagePct * 100, tenderizerMultiplier > 1 ? [(tenderizerMultiplier - 1) * 100] : [])
+  );
 
   // Explosive Area Damage
   let explosiveDamage = 0;
@@ -951,6 +963,12 @@ export function calculateCombatFirepower(
   // 4. Critical Damage Multiplier Pool
   // Base Crit = +100% of Base Damage
   let critBonusPct = 1.0;
+
+  if (input.weaponId === "elders-mark" && onslaughtStacks > 0) {
+    const emBonus = Math.min(10, onslaughtStacks) * 0.02;
+    critBonusPct += emBonus;
+    breakdown.push({ source: `Elder's Mark (${Math.min(10, onslaughtStacks)} Onslaught stacks)`, value: `+${Math.round(emBonus * 100)}% Crit` });
+  }
 
   if (innateMods.critDamagePct !== 0) {
     critBonusPct += innateMods.critDamagePct;
@@ -1113,6 +1131,12 @@ export function calculateCombatFirepower(
       source: "Magazine Penetration (Perforating/Piercing)",
       value: `${Math.round(innatePen * 100)}% Penetration`,
     });
+  }
+
+  if (input.weaponId === "ticket-to-revenge" && onslaughtStacks > 0) {
+    const ttrPen = Math.min(10, onslaughtStacks) * 3;
+    penetrationSourcesPct.push(ttrPen);
+    apBreakdown.push({ source: `Ticket to Revenge (${Math.min(10, onslaughtStacks)} Onslaught stacks)`, value: `${ttrPen}% Penetration` });
   }
 
   const tankKillerRank = perkRanks.get("tank-killer") || 0;
