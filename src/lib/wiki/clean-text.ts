@@ -246,6 +246,9 @@ const MAINTENANCE_PATTERNS: RegExp[] = [
   /\bThis (?:article|page|section) is a stub\s*\.?/gi,
   /\bYou can help (?:us|the (?:Fallout )?Wiki|Nukapedia) by expanding it\s*\.?/gi,
   /\bPlease help(?: us)? (?:by )?(?:expanding|improving)[^.]{0,80}\.?/gi,
+  // Fallout Wiki image-request notice: "Please help by uploading it.Details: No details given".
+  /\bPlease help(?: us)? by uploading (?:it|an image|images|a picture)\s*\.?/gi,
+  /\bDetails\s*:\s*No details given\s*\.?/gi,
 ];
 
 /** Bylines, read-time stamps, credits. */
@@ -339,7 +342,7 @@ function tidyInline(text: string): string {
   return text
     .replace(/\(\s*\)/g, " ")
     .replace(/[ \t]+/g, " ")
-    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/\s+([,.;:!?])(?!\d)/g, "$1") // keep " .44" / " .50" calibres
     .replace(/([(“])\s+/g, "$1")
     .replace(/\s+([)”])/g, "$1")
     .replace(/([,;:])\s*(?=[,;:.])/g, "")
@@ -515,7 +518,7 @@ export function cleanBody(text: string): string {
   for (const rawLine of out.split("\n")) {
     const table = isTableRow(rawLine);
     let line = rawLine.replace(/\(\s*\)/g, " ");
-    if (!table) line = line.replace(/[ \t]+([,.;:!?])/g, "$1");
+    if (!table) line = line.replace(/[ \t]+([,.;:!?])(?!\d)/g, "$1");
     line = line.replace(/[ \t]+/g, " ").trimEnd();
     const probe = line.trim();
     if (CHROME_LINE_PATTERNS.some((re) => re.test(probe))) {

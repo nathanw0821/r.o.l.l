@@ -440,7 +440,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": ".44 Pistol",
     "url": "https://fallout.wiki/wiki/.44_Pistol_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (2) Oil (2) Screw (6) Steel (16) Build at:Learn Method:Learned from plan/recipe Plan.44 Revolver Snubnosed.44 pistol Lv 5 (1) The.44…",
+    "snippet": "The .44 Pistol is a non-automatic pistol in Fallout 76.",
     "main_image": "static/images/3103d0e38249eabff8f7702fb793c52a.webp",
     "content": "",
     "sourceImages": true
@@ -451,7 +451,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": ".50 Cal Machine Gun",
     "url": "https://fallout.wiki/wiki/.50_Cal_Machine_Gun",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Gears (14) Oil (10) Rubber (16) Screw (21) Spring (17) Steel (31) Wood (12) Build at:Learn Method:Learned from plan/recipe Plan.50 cal machine…",
+    "snippet": "The .50 Cal Machine Gun is a heavy gun in Fallout 76.",
     "main_image": "static/images/362af7e6c290e84044361bebbd7ea86c.webp",
     "content": "",
     "sourceImages": true
@@ -472,7 +472,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "10mm Submachine Gun",
     "url": "https://fallout.wiki/wiki/10mm_Submachine_Gun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (9) Gears (11) Oil (8) Screw (12) Spring (14) Steel (32) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: 10mm…",
+    "snippet": "The 10mm Submachine Gun is a submachine gun in Fallout 76.",
     "main_image": "static/images/6ce11796cd14ef86ea76734420988537.png",
     "content": "",
     "sourceImages": true
@@ -493,7 +493,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Alien Blaster",
     "url": "https://fallout.wiki/wiki/Alien_Blaster_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (13) Circuitry (9) Fiber Optics (8) Glass (9) Plastic (22) Screw (14) Build at:Learn Method:Learned from plan/recipe Plan…",
+    "snippet": "The Alien Blaster is a ranged weapon in Fallout 76.",
     "main_image": "static/images/77a3a501005be20b1ac28db86922b27d.png",
     "content": "",
     "sourceImages": true
@@ -2538,7 +2538,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Assault Rifle",
     "url": "https://fallout.wiki/wiki/Assault_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (11) Gear (11) Oil (8) Screw (21) Spring (16) Steel (38) Built or Scrapped:Plan: Assault Rifle (1) The Assault Rifle is a ranged weapon…",
+    "snippet": "The Assault Rifle is a ranged weapon in Fallout 76.",
     "main_image": "static/images/f1ff129085717bb4461a67dc86a664c9.png",
     "content": "",
     "sourceImages": true
@@ -2549,7 +2549,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Assaultron Blade",
     "url": "https://fallout.wiki/wiki/Assaultron_Blade_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (7) Gears (10) Oil (7) Plastic (9) Screw (11) Steel (18) Build at:Learn Method:Learned from plan/recipe Plan: Assaultron blade Assaultro…",
+    "snippet": "The Assaultron Blade is a melee weapon in Fallout 76.",
     "main_image": "static/images/1a0c1de03c7e5a013bb4a7fb9d9f742f.png",
     "content": ""
   },
@@ -2559,7 +2559,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Auto Axe",
     "url": "https://fallout.wiki/wiki/Auto_Axe_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Gears (10) Oil (10) Screw (10) Steel (19) Build at:Learn Method:Learned from plan/recipe Plan: Auto Axe Auto Axe (1)",
+    "snippet": "The Auto Axe is a melee weapon in Fallout 76, introduced in the Expeditions: The Pitt update.",
     "main_image": "static/images/91718613deff289c2f58467e2de6571d.webp",
     "content": "",
     "sourceImages": true
@@ -2570,7 +2570,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Auto Grenade Launcher",
     "url": "https://fallout.wiki/wiki/Auto_Grenade_Launcher",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Gears (16) Oil (9) Rubber (16) Screw (17) Spring (16) Steel (26) Build at:Weapons Workbench Launchers Learn Method:Learned from plan/recipe Plan…",
+    "snippet": "The Auto Grenade Launcher is an explosive heavy gun in Fallout 76.",
     "main_image": "static/images/61f00a54343e127268bafbbb3ade94d6.png",
     "content": ""
   },
@@ -2591,7 +2591,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Baseball Bat",
     "url": "https://fallout.wiki/wiki/Baseball_Bat_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Plastic (9) Wood (15) Build at:Learn Method:Learned from plan/recipe Plan: Baseball bat Baseball Bat (1) A Baseball Bat is a melee weapon in Fall…",
+    "snippet": "A Baseball Bat is a melee weapon in Fallout 76.",
     "main_image": "static/images/5d1201ef8988d8c061bf8d1a484fb40c.png",
     "content": ""
   },
@@ -2611,7 +2611,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Baton",
     "url": "https://fallout.wiki/wiki/Baton_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Plastic (9) Rubber (13) Steel (14) Build at:Learn Method:Learned from plan/recipe Plan: Baton Baton (1) A Baton is a melee weapon in Fallout 76.",
+    "snippet": "A Baton is a melee weapon in Fallout 76.",
     "main_image": "static/images/54bc417889511c5b9c5518c6d6767fc5.png",
     "content": "",
     "sourceImages": true
@@ -2622,7 +2622,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Bear Arm",
     "url": "https://fallout.wiki/wiki/Bear_Arm",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (9) Bone (17) Screw (11) Steel (14) Build at:Learn Method:Learned from plan/recipe Plan: Bear Arm Bear Arm (1)",
+    "snippet": "The Bear Arm is a melee weapon in Fallout 76, introduced in the Wild Appalachia update.",
     "main_image": "static/images/fad3796eef2c3d85b4eec31fc4de3d44.png",
     "content": "",
     "sourceImages": true
@@ -2675,7 +2675,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Black Powder Pistol",
     "url": "https://fallout.wiki/wiki/Black_Powder_Pistol",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Copper (9) Lead (9) Leather (11) Oil (8) Screw (16) Steel (19) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Blackpowder pistol…",
+    "snippet": "The Black Powder Pistol is a non-automatic pistol in Fallout 76.",
     "main_image": "static/images/1f7b5171e1d850929430f56927d41f49.webp",
     "content": ""
   },
@@ -2685,7 +2685,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Black Powder Rifle",
     "url": "https://fallout.wiki/wiki/Black_Powder_Rifle",
     "category": "Armor & Power Armor",
-    "snippet": "The Black Powder Rifle is a non-automatic rifle in Fallout 76. Gameplay Produced in 1850 in Harpers Ferry, the weapon makes use of.50 Caliber Balls as ammunition and dea…",
+    "snippet": "The Black Powder Rifle is a non-automatic rifle in Fallout 76. Gameplay Produced in 1850 in Harpers Ferry, the weapon makes use of .50 Caliber Balls as ammunition and dea…",
     "main_image": "static/images/50450c81b1ad0d1c807cada5d86f9e7d.png",
     "content": "",
     "sourceImages": true
@@ -2789,7 +2789,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Bow",
     "url": "https://fallout.wiki/wiki/Bow_(Fallout_76)",
     "category": "Armor & Power Armor",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (10) Plastic (14) Rubber (17) Screw (12) Wood (21) Build at:Learn Method:Learned from plan/recipe Plan: Bow Bow (1) The Bow…",
+    "snippet": "The Bow is a ranged weapon in Fallout 76, introduced in the Wastelanders update.",
     "main_image": "static/images/f67945723b71d52d7fb016073e053456.png",
     "content": "",
     "sourceImages": true
@@ -2800,7 +2800,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Bowie Knife",
     "url": "https://fallout.wiki/wiki/Bowie_Knife_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (2) Rubber (1) Screw (2) Steel (4) Build at:Weapons Workbench Edged melee weapons Level:5 Learn Method:Learned from plan/recipe Plan: Bo…",
+    "snippet": "The Bowie Knife is a melee weapon in Fallout 76.",
     "main_image": "static/images/9f032ac807d53ae62ef9e6f9859b44f9.png",
     "content": "",
     "sourceImages": true
@@ -2811,7 +2811,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Boxing Glove",
     "url": "https://fallout.wiki/wiki/Boxing_Glove_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Leather (9) Rubber (13) Screw (10) Build at:Learn Method:Learned from plan/recipe Plan: Boxing glove Boxing Glove (1) The Boxing Glove is a melee…",
+    "snippet": "The Boxing Glove is a melee weapon in Fallout 76.",
     "main_image": "static/images/b7f41bcd3675c399264428b652faa2df.png",
     "content": ""
   },
@@ -2821,7 +2821,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Broadsider",
     "url": "https://fallout.wiki/wiki/Broadsider_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Oil (9) Plastic (13) Screw (20) Steel (52) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Broadsider Broadsider (1)",
+    "snippet": "The Broadsider is a ranged weapon in Fallout 76.",
     "main_image": "static/images/e89d0a4467b7bf18c4e554353948f08a.png",
     "content": "",
     "sourceImages": true
@@ -2905,7 +2905,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Cattleprod",
     "url": "https://fallout.wiki/wiki/Cattleprod_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (8) Circuitry (9) Plastic (10) Rubber (15) Steel (15) Build at:Learn Method:Learned from plan/recipe Plan: Cattle Prod Elec…",
+    "snippet": "The Cattleprod or Electrified Cattleprod is a melee weapon in Fallout 76, introduced in the Wastelanders update.",
     "main_image": "static/images/c9cfc015d73f12fa903cd044e7b01275.png",
     "content": "",
     "sourceImages": true
@@ -2927,7 +2927,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Chinese Officer Sword",
     "url": "https://fallout.wiki/wiki/Chinese_Officer_Sword_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (7) Copper (7) Oil (7) Steel (24) Built or Scrapped:Plan: The Chinese Officer Sword is a melee weapon in Fallout 76. A People's Liberati…",
+    "snippet": "The Chinese Officer Sword is a melee weapon in Fallout 76.",
     "main_image": "static/images/a75de1d22eedb135fa3e896095524fa7.png",
     "content": "",
     "sourceImages": true
@@ -2938,7 +2938,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Circuit Breaker",
     "url": "https://fallout.wiki/wiki/Circuit_Breaker",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Gear (10) Oil (9) Screw (14) Steel (24) Wood (15) Build at:Learn Method:Learned from plan/recipe Plan: Circuit Breaker Circuit Break…",
+    "snippet": "The Circuit Breaker is a pistol in Fallout 76, introduced in Season 15: The Big Score.",
     "main_image": "static/images/3a4bf862696a574dc4faec37ff1a64b9.webp",
     "content": "",
     "sourceImages": true
@@ -2980,7 +2980,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Combat Knife",
     "url": "https://fallout.wiki/wiki/Combat_Knife_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (10) Rubber (15) Steel (14) Build at:Learn Method:Known by default Combat Knife Lv 50 (1) The Combat Knife is a melee weapon i…",
+    "snippet": "The Combat Knife is a melee weapon in Fallout 76.",
     "main_image": "static/images/aeaa8ec9357d23afc0964536f0bb13df.png",
     "content": "",
     "sourceImages": true
@@ -2991,7 +2991,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Combat Rifle",
     "url": "https://fallout.wiki/wiki/Combat_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (12) Gears (9) Oil (9) Screw (17) Spring (16) Steel (31) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Combat rifle Sho…",
+    "snippet": "The Combat Rifle is a Rifle in Fallout 76.",
     "main_image": "static/images/9a4e58ed988407c36af8eea6f9c03219.png",
     "content": "",
     "sourceImages": true
@@ -3002,7 +3002,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Combat Shotgun",
     "url": "https://fallout.wiki/wiki/Combat_Shotgun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (11) Gears (10) Oil (9) Screw (15) Spring (15) Steel (29) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Combat shotgun…",
+    "snippet": "The Combat Shotgun is a shotgun in Fallout 76.",
     "main_image": "static/images/43bc35ee0d8c6c880250ad9e1fd757c4.png",
     "content": "",
     "sourceImages": true
@@ -3033,7 +3033,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Compound Bow",
     "url": "https://fallout.wiki/wiki/Compound_Bow_(Fallout_76)",
     "category": "Armor & Power Armor",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (13) Gear (13) Plastic (20) Rubber (17) Screw (15) Steel (18) Build at:Learn Method:Learned from plan/recipe Plan: Compound…",
+    "snippet": "The Compound Bow is a ranged weapon in Fallout 76, introduced in the Wastelanders update.",
     "main_image": "static/images/9892a382cb6c9dae0c82a199d95e378f.png",
     "content": "",
     "sourceImages": true
@@ -3054,7 +3054,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Cremator",
     "url": "https://fallout.wiki/wiki/Cremator",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (13) Asbestos (17) Copper (12) Rubber (16) Screw (14) Spring (14) Steel (36) Built or Scrapped:Plan: Cremator (1) The Cremator is a Heav…",
+    "snippet": "The Cremator is a Heavy Gun in Fallout 76, introduced in the Atlantic City America's Playground update.",
     "main_image": "static/images/266e5c61d930280fe376466e9d5dcd03.webp",
     "content": ""
   },
@@ -3075,7 +3075,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Crossbow",
     "url": "https://fallout.wiki/wiki/Crossbow",
     "category": "Armor & Power Armor",
-    "snippet": "Materials: Requirements: Produces: Aluminum (12) Gears (12) Plastic (13) Rubber (16) Screw (14) Spring (14) Steel (24) Build at:Learn Method:Learned from plan/recipe Plan: Crossbow…",
+    "snippet": "A Crossbow is a ranged weapon in Fallout 76.",
     "main_image": "static/images/c795ca4aa0285f12b60e6c6b94e5e85a.png",
     "content": ""
   },
@@ -3096,7 +3096,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Crusader Pistol",
     "url": "https://fallout.wiki/wiki/Crusader_Pistol",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Aluminum (9) Adhesive (12) Oil (8) Screw (12) Spring (14) Steel (18) Build at:Learn Method:Learned from plan/recipe Plan: Crusader Pistol Crusade…",
+    "snippet": "The Crusader Pistol is a non-automatic pistol in Fallout 76, introduced in the Steel Dawn update.",
     "main_image": "static/images/8c1c7136ea881f076d298330de7a9591.png",
     "content": "",
     "sourceImages": true
@@ -3137,7 +3137,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Cryolator",
     "url": "https://fallout.wiki/wiki/Cryolator_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (10) Circuitry (10) Glass (10) Plastic (15) Rubber (16) Screw (15) Steel (37) Build at:Learn Method:Learned from plan/recipe Plan: Cryol…",
+    "snippet": "The Cryolator is a heavy gun in Fallout 76.",
     "main_image": "static/images/abf52d28d63bfb501b350f059eb2768d.png",
     "content": ""
   },
@@ -3157,7 +3157,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Cultist Blade",
     "url": "https://fallout.wiki/wiki/Cultist_Blade",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Black Titanium (7) Bone (14) Leather (9) Steel (12) Build at:Learn Method:Learned from plan/recipe Plan: Cultist Blade Cultist Blade…",
+    "snippet": "The Cultist Blade is a melee weapon in Fallout 76.",
     "main_image": "static/images/dfcb238821493250152845e1aa2673b5.png",
     "content": ""
   },
@@ -3167,7 +3167,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Cultist Dagger",
     "url": "https://fallout.wiki/wiki/Cultist_Dagger",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (7) Black Titanium (6) Bone (11) Leather (8) Steel (11) Build at:Learn Method:Learned from plan/recipe Plan: Cultist Dagger Cultist Dagg…",
+    "snippet": "The Cultist Dagger is a melee weapon in Fallout 76.",
     "main_image": "static/images/796466b08241bbd0929ad658f93dbe4d.png",
     "content": ""
   },
@@ -3197,7 +3197,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Death Tambo",
     "url": "https://fallout.wiki/wiki/Death_Tambo",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Copper (9) Oil (7) Rubber (13) Steel (16) Build at:Learn Method:Learned from plan/recipe Plan: Death tambo Death Tambo (1) The Death Tambo is an…",
+    "snippet": "The Death Tambo is an unarmed melee weapon in Fallout 76.",
     "main_image": "static/images/0c6aadb82e2dabc7841e88a4bbc79009.png",
     "content": "",
     "sourceImages": true
@@ -3208,7 +3208,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Deathclaw Gauntlet",
     "url": "https://fallout.wiki/wiki/Deathclaw_Gauntlet_(Fallout_76)",
     "category": "Armor & Power Armor",
-    "snippet": "Materials: Requirements: Produces: Adhesive (1) Plastic (2) Rubber (1) Spring (1) Steel (3) Deathclaw Hand (1) Screw (3) Build at:Learn Method:Learned from plan/recipe Plan: Deathc…",
+    "snippet": "The Deathclaw Gauntlet is a melee weapon in Fallout 76.",
     "main_image": "static/images/a91cc361ef017789f5ba2df622af3b1d.png",
     "content": ""
   },
@@ -3239,7 +3239,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Dom Pedro",
     "url": "https://fallout.wiki/wiki/Dom_Pedro_(weapon)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Oil (8) Screw (14) Steel (28) Wood (15) Build at:Learn Method: Dom Pedro (1) Dom Pedro is a pistol in Fallout 76, introduced in the…",
+    "snippet": "Dom Pedro is a pistol in Fallout 76, introduced in the Blood x Rust season.",
     "main_image": "static/images/5018a07831f63c8a3e29de3e1f5e19f6.webp",
     "content": "",
     "sourceImages": true
@@ -3250,7 +3250,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Double-Barrel Shotgun",
     "url": "https://fallout.wiki/wiki/Double-Barrel_Shotgun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (9) Oil (8) Screw (13) Steel (23) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Double barrel shotgun Short D…",
+    "snippet": "The Double-Barrel Shotgun is a shotgun in Fallout 76.",
     "main_image": "static/images/ac940eaf00f595d6f797e4e59d25f26e.png",
     "content": "",
     "sourceImages": true
@@ -3271,7 +3271,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Drill Fist",
     "url": "https://fallout.wiki/wiki/Drill_Fist",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Aluminum (2) Gears (4) Legendary Module (2) Oil (2) Plastic (7) Rubber (4) Screw (6) Steel (8) Build at:Level:50 Learn Method:Learned from plan/r…",
+    "snippet": "The Drill Fist is a ★★★★ melee weapon in Fallout 76, introduced in the Gleaming Depths update.",
     "main_image": "static/images/94ae58d6ec64505d4a3c8b9a21ca3bc8.webp",
     "content": ""
   },
@@ -3322,7 +3322,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Electro Enforcer",
     "url": "https://fallout.wiki/wiki/Electro_Enforcer",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (10) Circuitry (9) Gold (9) Plastic (12) Rubber (16) Steel (17) Built or Scrapped:Plan: Electro Enforcer (1) The Electro Enforcer is a m…",
+    "snippet": "The Electro Enforcer is a melee weapon in Fallout 76, introduced in the Invaders from Beyond update.",
     "main_image": "static/images/c363239b16fc6615037c77f64f03dace.webp",
     "content": ""
   },
@@ -3374,7 +3374,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Fat Man",
     "url": "https://fallout.wiki/wiki/Fat_Man_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (12) Circuitry (8) Nuclear Material (8) Rubber (16) Screw (18) Spring (21) Steel (31) Build at:Learn Method:Learned from plan/recipe Pla…",
+    "snippet": "The Fat Man is a ranged weapon in Fallout 76.",
     "main_image": "static/images/286dc6f9e5fb6e86b9e87247df790cc2.png",
     "content": "",
     "sourceImages": true
@@ -3395,7 +3395,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Fire Axe",
     "url": "https://fallout.wiki/wiki/Fire_Axe_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Oil (7) Steel (16) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Fire axe Fire Axe (1) The Fire Axe is a melee weapon in Fallout…",
+    "snippet": "The Fire Axe is a melee weapon in Fallout 76.",
     "main_image": "static/images/7cbdab5af224c7ebb4028c8697f29310.png",
     "content": "",
     "sourceImages": true
@@ -3416,7 +3416,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Flamer",
     "url": "https://fallout.wiki/wiki/Flamer_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (13) Asbestos (17) Copper (12) Rubber (16) Screw (14) Spring (14) Steel (36) Build at:Learn Method:Learned from plan/recipe Plan: Flamer…",
+    "snippet": "The Flamer is a heavy gun in Fallout 76.",
     "main_image": "static/images/19262207f3e2cd631c3ce2cff3c5a656.png",
     "content": "",
     "sourceImages": true
@@ -3539,7 +3539,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gamma Gun",
     "url": "https://fallout.wiki/wiki/Gamma_Gun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (7) Nuclear Material (6) Plastic (15) Screw (11) Steel (20) Build at:Learn Method:Learned from plan/recipe Plan: Gamma gun Gamma Gun (1)",
+    "snippet": "The Gamma Gun is a ranged weapon in Fallout 76.",
     "main_image": "static/images/1ef2110f8c45d6d4de40223a8f7420bb.webp",
     "content": ""
   },
@@ -3549,7 +3549,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gatling Gun",
     "url": "https://fallout.wiki/wiki/Gatling_Gun",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (13) Gears (18) Screw (16) Spring (16) Steel (39) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Gatling gun Gatling Gun…",
+    "snippet": "The Gatling Gun, also referred to as Gatling's Battery Gun, is a heavy gun in Fallout 76.",
     "main_image": "static/images/54cc6e286c6e45170ea133890ba9db3d.png",
     "content": "",
     "sourceImages": true
@@ -3560,7 +3560,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gatling Laser",
     "url": "https://fallout.wiki/wiki/Gatling_Laser_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (15) Circuitry (12) Crystal (9) Fiber Optics (12) Gears (12) Plastic (21) Steel (32) Build at:Learn Method:Learned from plan/recipe Plan…",
+    "snippet": "The Gatling Laser is a ranged weapon in Fallout 76.",
     "main_image": "static/images/7e9f196b1e1c045f5e4cc643d833ff55.png",
     "content": ""
   },
@@ -3570,7 +3570,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gatling Plasma",
     "url": "https://fallout.wiki/wiki/Gatling_Plasma",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (13) Circuitry (13) Copper (16) Gears (13) Nuclear Material (10) Rubber (21) Steel (28) Build at:Learn Method:Learned from plan/recipe P…",
+    "snippet": "The Gatling Plasma is a heavy gun in Fallout 76.",
     "main_image": "static/images/b401de168e00c9316e6ad8fa76f9a831.png",
     "content": "",
     "sourceImages": true
@@ -3581,7 +3581,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gauntlet",
     "url": "https://fallout.wiki/wiki/Gauntlet_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (9) Gear (13) Oil (9) Plastic (15) Rubber (17) Screw (14) Steel (19) Build at:Learn Method:Learned from plan/recipe Plan: Gauntlet Gaunt…",
+    "snippet": "The Gauntlet is a melee weapon in Fallout 76, introduced in the Wastelanders update.",
     "main_image": "static/images/94435c620f2c04c69e0dbaedc148b167.png",
     "content": ""
   },
@@ -3602,7 +3602,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gauss Pistol",
     "url": "https://fallout.wiki/wiki/Gauss_Pistol_(Fallout_76)",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Aluminum (15) Circuitry (11) Screw (19) Silver (9) Spring (15) Steel (21) Built or Scrapped:Plan: Gauss Pistol (1) The Gauss Pistol is a ranged w…",
+    "snippet": "The Gauss Pistol is a ranged weapon in Fallout 76, introduced in the Wastelanders update.",
     "main_image": "static/images/d749e1ef4cb2ecc0678c6b8f3bcb8e3d.png",
     "content": "",
     "sourceImages": true
@@ -3613,7 +3613,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gauss Rifle",
     "url": "https://fallout.wiki/wiki/Gauss_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (14) Circuitry (10) Screw (18) Silver (8) Spring (14) Steel (20) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Gauss ri…",
+    "snippet": "The Gauss Rifle is a ranged weapon in Fallout 76.",
     "main_image": "static/images/c29f0bd920aba1a7f9a99583efaafd3c.png",
     "content": "",
     "sourceImages": true
@@ -3624,7 +3624,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gauss Shotgun",
     "url": "https://fallout.wiki/wiki/Gauss_Shotgun_(Fallout_76)",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Aluminum (15) Circuitry (11) Screw (19) Silver (9) Spring (15) Steel (21) Wood (15) Build at:Learn Method:Learned from plan/recipe Plan: Gauss Sh…",
+    "snippet": "The Gauss Shotgun is a ranged weapon in Fallout 76, introduced in the Wastelanders update.",
     "main_image": "static/images/eea834030ded11be03563757efd0af84.png",
     "content": "",
     "sourceImages": true
@@ -3635,7 +3635,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Golf Club",
     "url": "https://fallout.wiki/wiki/Golf_Club",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (10) Oil (7) Plastic (8) Rubber (13) Steel (13) Built or Scrapped:Plan: Golf Club (1)",
+    "snippet": "The Golf Club is a melee weapon in Fallout 76.",
     "main_image": "static/images/d8a49b4ac4fc2b2c501e9ccf78ca1b98.png",
     "content": "",
     "sourceImages": true
@@ -3667,7 +3667,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Guitar Sword",
     "url": "https://fallout.wiki/wiki/Guitar_Sword",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (8) Bone (13) Oil (8) Screw (11) Steel (18) Built or Scrapped:Plan: Guitar Sword (1)",
+    "snippet": "The Guitar Sword is a melee weapon in Fallout 76.",
     "main_image": "static/images/378ab5ed5ad758846018b68e72083810.png",
     "content": "",
     "sourceImages": true
@@ -3678,7 +3678,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Gulper Smacker",
     "url": "https://fallout.wiki/wiki/Gulper_Smacker",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Screw (3) Steel (3) Wood (10) Build at:Weapons Workbench Blunt melee weapons Level:20 Learn Method:Learned from plan/recipe Plan: Gulper Smacker…",
+    "snippet": "The Gulper Smacker is a two-handed melee weapon in Fallout 76, introduced in the Test Your Metal update. It is acquired by completing Event: Moonshine Jamboree.",
     "main_image": "static/images/9a13fc82d3249089cdc5eff49d16d756.png",
     "content": ""
   },
@@ -3708,7 +3708,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Handmade Rifle",
     "url": "https://fallout.wiki/wiki/Handmade_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Copper (7) Gears (9) Oil (7) Screw (13) Spring (15) Steel (15) Wood (12) Build at:Learn Method:Learned from plan/recipe Plan: Handma…",
+    "snippet": "The Handmade Rifle is a ranged weapon in Fallout 76.",
     "main_image": "static/images/d91955bfe998a93d13ac5b61d22956b2.png",
     "content": "",
     "sourceImages": true
@@ -3729,7 +3729,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Hatchet",
     "url": "https://fallout.wiki/wiki/Hatchet_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Oil (8) Screw (9) Steel (14) Wood (13) Build at:Learn Method:Known by default Hatchet (1) The Hatchet is a melee weapon in Fallout 76. Manufactur…",
+    "snippet": "The Hatchet is a melee weapon in Fallout 76.",
     "main_image": "static/images/4738555c9519553207d069f439fac5be.png",
     "content": "",
     "sourceImages": true
@@ -3751,7 +3751,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Hellstorm Missile Launcher",
     "url": "https://fallout.wiki/wiki/Hellstorm_Missile_Launcher",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (12) Gears (14) Leather (10) Screw (22) Spring (20) Steel (41) Build at:Learn Method:Learned from plan/recipe Plan: Hellsto…",
+    "snippet": "The Hellstorm Missile Launcher is a ranged weapon in Fallout 76, introduced in the Steel Dawn update.",
     "main_image": "static/images/24266a89cb49b45ea4a32bac57859135.webp",
     "content": "",
     "sourceImages": true
@@ -3772,7 +3772,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Hunting Rifle",
     "url": "https://fallout.wiki/wiki/Hunting_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Gears (10) Oil (8) Screw (15) Spring (15) Steel (18) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Hunting Rifle Hu…",
+    "snippet": "The Hunting Rifle is a Non-Automatic Rifle in Fallout 76.",
     "main_image": "static/images/5324dfb0234c446af1d6d9138f9587ba.png",
     "content": "",
     "sourceImages": true
@@ -3783,7 +3783,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Ice Breaker",
     "url": "https://fallout.wiki/wiki/Ice_Breaker",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Copper (12) Leather (11) Legendary Module (2) Oil (8) Screw (15) Spring (14) Steel (35) Wood (16) Build at:Weapons Workbench Heavy Guns Level:50…",
+    "snippet": "Ice Breaker is a weapon in Fallout 76, introduced in the Gone Fission season.",
     "main_image": "static/images/29ac48a21caff1bf3fc741f1cf43e6c9.webp",
     "content": ""
   },
@@ -3833,7 +3833,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Knuckles",
     "url": "https://fallout.wiki/wiki/Knuckles_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Steel (17) Build at:Learn Method:Learned from plan/recipe Plan: Knuckles Knuckles Lv 50 (1) The knuckles are a melee weapon in Fallout 76. A rust…",
+    "snippet": "The knuckles are a melee weapon in Fallout 76.",
     "main_image": "static/images/bba1cc0fe0132b29ce9748aa9805bf26.webp",
     "content": ""
   },
@@ -3843,7 +3843,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Laser Gun",
     "url": "https://fallout.wiki/wiki/Laser_Gun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (12) Circuitry (8) Crystal (7) Fiber Optics (5) Nuclear Material (6) Plastic (21) Screw (12) Build at:Learn Method:Learned from plan/rec…",
+    "snippet": "The Laser Gun is a weapon in Fallout 76.",
     "main_image": "static/images/c97f5a6be08b0eedca795f419a87740e.png",
     "content": "",
     "sourceImages": true
@@ -3865,7 +3865,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Lead Pipe",
     "url": "https://fallout.wiki/wiki/Lead_Pipe_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Concrete (10) Lead (11) Built or Scrapped:Plan: Lead Pipe (1) The Lead Pipe is a melee weapon in Fallout 76. A one-handed melee weapon with moder…",
+    "snippet": "The Lead Pipe is a melee weapon in Fallout 76.",
     "main_image": "static/images/482a2e5b32cb03382527d77b8425b595.png",
     "content": ""
   },
@@ -3875,7 +3875,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Lever Action Rifle",
     "url": "https://fallout.wiki/wiki/Lever_Action_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (9) Oil (7) Screw (14) Spring (12) Steel (23) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Lever gun Short L…",
+    "snippet": "The Lever Action Rifle is a non-automatic rifle in Fallout 76.",
     "main_image": "static/images/d8f576537e041c4ea0ded8bd4030c444.png",
     "content": "",
     "sourceImages": true
@@ -3959,7 +3959,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Machete",
     "url": "https://fallout.wiki/wiki/Machete_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Leather (9) Plastic (13) Screw (11) Steel (19) Build at: Machete Lv 50 (1) The machete is a melee weapon in Fallout 76. The machete has a rusted…",
+    "snippet": "The machete is a melee weapon in Fallout 76.",
     "main_image": "static/images/583774acb7fea8cba33e150d637f36a9.png",
     "content": "",
     "sourceImages": true
@@ -3990,7 +3990,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Meat Hook",
     "url": "https://fallout.wiki/wiki/Meat_Hook_(Fallout_76)",
     "category": "Armor & Power Armor",
-    "snippet": "Materials: Requirements: Produces: Oil (7) Screw (8) Steel (16) Build at:Learn Method:Learned from plan/recipe Plan: Meat Hook Meat Hook (1) The Meat Hook is a melee weapon in Fall…",
+    "snippet": "The Meat Hook is a melee weapon in Fallout 76.",
     "main_image": "static/images/f157187bca236e4a4e9f345b6013a9bf.png",
     "content": ""
   },
@@ -4040,7 +4040,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Minigun",
     "url": "https://fallout.wiki/wiki/Minigun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Aluminum (9) Gears (19) Oil (10) Screw (14) Spring (19) Steel (46) Build at:Learn Method:Learned from plan/recipe Plan: Minigun Mini…",
+    "snippet": "The Minigun is a heavy gun in Fallout 76.",
     "main_image": "static/images/cc2ae82179cba31cd0381fc7e253d7c3.png",
     "content": "",
     "sourceImages": true
@@ -4051,7 +4051,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Missile Launcher",
     "url": "https://fallout.wiki/wiki/Missile_Launcher_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Aluminum (12) Gears (14) Leather (10) Screw (22) Spring (20) Steel (41) Build at:Learn Method:Learned from plan/recipe Plan: Missile…",
+    "snippet": "The Missile Launcher is an explosive heavy gun in Fallout 76.",
     "main_image": "static/images/2b9999d01cb80e72b594b5478fa11cf7.png",
     "content": "",
     "sourceImages": true
@@ -4062,7 +4062,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Mole Miner Gauntlet",
     "url": "https://fallout.wiki/wiki/Mole_Miner_Gauntlet",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (9) Gears (11) Leather (9) Oil (8) Screw (11) Spring (15) Steel (21) Build at:Learn Method:Learned from plan/recipe Plan: Mole Miner Gau…",
+    "snippet": "The Mole Miner Gauntlet is a melee weapon in Fallout 76.",
     "main_image": "static/images/9bacd2eec739c3cdf0c708cf08d21c59.png",
     "content": "",
     "sourceImages": true
@@ -4094,7 +4094,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Multi-Purpose Axe",
     "url": "https://fallout.wiki/wiki/Multi-Purpose_Axe",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Oil (7) Steel (16) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Wood axe Multi-Purpose Axe (1) The Multi-Purpose Axe is a melee…",
+    "snippet": "The Multi-Purpose Axe is a melee weapon in Fallout 76.",
     "main_image": "static/images/5acfde138291d84a0ba57298c3379b02.png",
     "content": ""
   },
@@ -4155,7 +4155,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Nuka-Launcher",
     "url": "https://fallout.wiki/wiki/Nuka-Launcher",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Gears (16) Oil (9) Rubber (16) Screw (17) Spring (16) Steel (26) Build at:Weapons Workbench Launchers Learn Method:Learned from plan/recipe Nuka…",
+    "snippet": "The Nuka-Launcher is an explosive heavy gun in Fallout 76.",
     "main_image": "static/images/9e4bff963b8575470bc2d445cbe633ee.webp",
     "content": ""
   },
@@ -4299,7 +4299,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pipe Bolt-Action",
     "url": "https://fallout.wiki/wiki/Pipe_Bolt-Action_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (10) Oil (8) Screw (10) Steel (21) Build at: Pipe Bolt-Action Pistol (1)",
+    "snippet": "The Pipe Bolt-Action is a modular weapon in Fallout 76.",
     "main_image": "static/images/b27823e6e2ca2b8331f29f01374bb8a5.png",
     "content": "",
     "sourceImages": true
@@ -4310,7 +4310,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pipe Gun",
     "url": "https://fallout.wiki/wiki/Pipe_Gun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (10) Oil (8) Screw (10) Spring (14) Steel (22) Build at:Learn Method:Known by default Pipe Pistol (1) The Pipe Gun is a ranged…",
+    "snippet": "The Pipe Gun is a ranged weapon in Fallout 76. It can be modified into either a pistol or rifle.",
     "main_image": "static/images/e97004ed6e33beca9245a62ef753b948.png",
     "content": ""
   },
@@ -4320,7 +4320,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pipe Revolver",
     "url": "https://fallout.wiki/wiki/Pipe_Revolver_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Gears (10) Oil (8) Screw (10) Steel (21) Build at: Pipe Revolver (1)",
+    "snippet": "The Pipe Revolver is a modular weapon in Fallout 76.",
     "main_image": "static/images/985869b871766bf0ebeba2f5a77bb769.png",
     "content": "",
     "sourceImages": true
@@ -4331,7 +4331,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pipe Wrench",
     "url": "https://fallout.wiki/wiki/Pipe_Wrench_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Gears (11) Oil (8) Steel (18) Build at:Learn Method:Learned from plan/recipe Plan: Pipe Wrench Pipe Wrench (1) The Pipe Wrench is a melee weapon…",
+    "snippet": "The Pipe Wrench is a melee weapon in Fallout 76.",
     "main_image": "static/images/bd0fc348df47315ff94a0e9e28cc45c0.png",
     "content": "",
     "sourceImages": true
@@ -4353,7 +4353,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pitchfork",
     "url": "https://fallout.wiki/wiki/Pitchfork",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (7) Oil (7) Screw (8) Steel (16) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Pitchfork Pitchfork (1) The Pitchfork is…",
+    "snippet": "The Pitchfork is a melee weapon in Fallout 76.",
     "main_image": "static/images/82ce98ee37f1533860a72173c040448a.png",
     "content": ""
   },
@@ -4363,7 +4363,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Plasma Caster",
     "url": "https://fallout.wiki/wiki/Plasma_Caster_(Fallout_76)",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Circuitry (9) Fiber Optics (7) Glass (9) Nuclear Material (7) Screw (14) Steel (32) Build at:Learn Method:Learned from plan/recipe P…",
+    "snippet": "The Plasma Caster is a heavy gun in Fallout 76, introduced in the Wastelanders update.",
     "main_image": "static/images/4faad6c47238a9e57d5ae240cdf70bc5.png",
     "content": "",
     "sourceImages": true
@@ -4374,7 +4374,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Plasma Cutter",
     "url": "https://fallout.wiki/wiki/Plasma_Cutter",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (8) Black Titanium (10) Circuitry (8) Rubber (14) Steel (15) Build at:Learn Method:Learned from plan/recipe Plan: Plasma cutter Plasma C…",
+    "snippet": "The Plasma Cutter is a melee weapon in Fallout 76, introduced in the Steel Dawn update.",
     "main_image": "static/images/129dd49dcab7817e9443f2c8282db86a.png",
     "content": "",
     "sourceImages": true
@@ -4395,7 +4395,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Plasma Gun",
     "url": "https://fallout.wiki/wiki/Plasma_Gun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Circuitry (8) Fiber Optics (6) Glass (8) Nuclear Material (6) Screw (13) Steel (31) Build at:Learn Method:Learned from plan/recipe P…",
+    "snippet": "The Plasma Gun is a ranged weapon in Fallout 76.",
     "main_image": "static/images/0ecc0e06291505f0ab63026d0bafe575.png",
     "content": ""
   },
@@ -4415,7 +4415,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pole Hook",
     "url": "https://fallout.wiki/wiki/Pole_Hook_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Screw (9) Steel (18) Wood (13) Built or Scrapped:Plan: Pole Hook (1) The Pole Hook is a melee weapon in Fallout 76. A large fish hook fitted onto…",
+    "snippet": "The Pole Hook is a melee weapon in Fallout 76.",
     "main_image": "static/images/ca23e89e3db3385a2d82669619059536.png",
     "content": ""
   },
@@ -4435,7 +4435,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pool Cue",
     "url": "https://fallout.wiki/wiki/Pool_Cue_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Plastic (9) Wood (14) Build at:Weapons Workbench Blunt melee weapons Learn Method:Learned from plan/recipe Plan: Pool cue =Makeshift Warrior Rank…",
+    "snippet": "The Pool Cue is a melee weapon in Fallout 76.",
     "main_image": "static/images/0ca6da6697b86c8638730a843ec06a20.png",
     "content": ""
   },
@@ -4518,7 +4518,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Pump Action Shotgun",
     "url": "https://fallout.wiki/wiki/Pump_Action_Shotgun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (7) Oil (7) Screw (13) Steel (25) Build at:Learn Method:Learned from plan/recipe Plan: Pump-action shotgun Pump Action Shotgun (1) The P…",
+    "snippet": "The Pump Action Shotgun is a weapon in Fallout 76.",
     "main_image": "static/images/7e71ee0eb68b013495a0f7860b3aec57.png",
     "content": "",
     "sourceImages": true
@@ -4559,7 +4559,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Radium Rifle",
     "url": "https://fallout.wiki/wiki/Radium_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (12) Circuitry (8) Nuclear Material (7) Screw (17) Spring (16) Steel (31) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan…",
+    "snippet": "The Radium Rifle is a ranged weapon in Fallout 76.",
     "main_image": "static/images/6864273becbe48bc08142177e9029b21.png",
     "content": ""
   },
@@ -4569,7 +4569,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Railway Rifle",
     "url": "https://fallout.wiki/wiki/Railway_Rifle_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (11) Gears (11) Nuclear Material (9) Oil (11) Plastic (10) Screw (20) Steel (51) Build at:Learn Method:Learned from plan/recipe Plan: Ra…",
+    "snippet": "The Railway Rifle is a ranged weapon in Fallout 76.",
     "main_image": "static/images/b30ed76e60bc6fdda1c74aeb6b1293d8.png",
     "content": "",
     "sourceImages": true
@@ -4580,7 +4580,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Red Terror LMG",
     "url": "https://fallout.wiki/wiki/Red_Terror_LMG",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Mod Description Naming Effects Plan Components Form ID Standard Receiver Standard. – – – – – – – +25% – – – – 0049724A Standard.308 Receiver Changes Ammo to.308 Rounds…",
+    "snippet": "Mod Description Naming Effects Plan Components Form ID Standard Receiver Standard. – – – – – – – +25% – – – – 0049724A Standard .308 Receiver Changes Ammo to .308 Rounds…",
     "main_image": "static/images/9b481e8f1930d896e4ca2cb391e965bc.png",
     "content": ""
   },
@@ -4610,7 +4610,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Revolutionary Sword",
     "url": "https://fallout.wiki/wiki/Revolutionary_Sword_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Screw (9) Steel (19) Wood (13) Build at:Learn Method:Learned from plan/recipe Plan: Revolutionary War sword Revolutionary Sword (1)",
+    "snippet": "The Revolutionary Sword is a weapon in Fallout 76.",
     "main_image": "static/images/077beed7cfcd5e57beb3e57a85e21296.png",
     "content": "",
     "sourceImages": true
@@ -4641,7 +4641,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Rolling Pin",
     "url": "https://fallout.wiki/wiki/Rolling_Pin_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Screw (11) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Rolling pin Rolling Pin (1) The Rolling Pin is a melee weapon in Fallou…",
+    "snippet": "The Rolling Pin is a melee weapon in Fallout 76.",
     "main_image": "static/images/42398279e97257eb20c99d7bce717727.png",
     "content": ""
   },
@@ -4705,7 +4705,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Sheepsquatch Club",
     "url": "https://fallout.wiki/wiki/Sheepsquatch_Club",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Steel (21) Wood (16) Built or Scrapped:Plan: The Sheepsquatch Club is a melee weapon in Fallout 76, introduced in the Wild Appalachi…",
+    "snippet": "The Sheepsquatch Club is a melee weapon in Fallout 76, introduced in the Wild Appalachia update.",
     "main_image": "static/images/683370c9d7a3ff47c2d21a81b4603075.png",
     "content": ""
   },
@@ -4725,7 +4725,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Sheepsquatch Staff",
     "url": "https://fallout.wiki/wiki/Sheepsquatch_Staff",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (12) Steel (31) Wood (21) Build at:Learn Method:Learned from plan/recipe Plan: Sheepsquatch staff Sheepsquatch Staff Lv 50 (1) The Sheep…",
+    "snippet": "The Sheepsquatch Staff is a melee weapon in Fallout 76, introduced in the Wild Appalachia update.",
     "main_image": "static/images/6f9c8677cfcb30d698c963c260576f04.png",
     "content": ""
   },
@@ -4735,7 +4735,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Shepherd's Crook",
     "url": "https://fallout.wiki/wiki/Shepherd's_Crook",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Leather (9) Wood (16) Built or Scrapped:Plan: Shepherd's Crook (1) The Shepherd's Crook is a melee weapon in Fallout 76, introduced in the Wild A…",
+    "snippet": "The Shepherd's Crook is a melee weapon in Fallout 76, introduced in the Wild Appalachia update.",
     "main_image": "static/images/7cb27204bdfd085232b6b82a84f8efbe.png",
     "content": ""
   },
@@ -4745,7 +4745,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Shishkebab",
     "url": "https://fallout.wiki/wiki/Shishkebab_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (11) Copper (8) Leather (10) Gears (10) Steel (18) Screw (11) Fuel (5) Build at:Learn Method:Learned from plan/recipe Plan: Shishkebab S…",
+    "snippet": "The Shishkebab is a melee weapon in Fallout 76.",
     "main_image": "static/images/0ef2f11c9e02605d3b752ce7356426bc.png",
     "content": ""
   },
@@ -4765,7 +4765,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Sickle",
     "url": "https://fallout.wiki/wiki/Sickle",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Steel (18) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Sickle Sickle (1) The Sickle is a melee weapon in Fallout 76. The sickl…",
+    "snippet": "The Sickle is a melee weapon in Fallout 76.",
     "main_image": "static/images/9cfd5adff8006a236280776a49716620.png",
     "content": ""
   },
@@ -4775,7 +4775,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Single Action Revolver",
     "url": "https://fallout.wiki/wiki/Single_Action_Revolver",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Oil (8) Screw (14) Steel (28) Wood (15) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: Single-action revolver Single…",
+    "snippet": "The Single Action Revolver is a non-automatic pistol in Fallout 76.",
     "main_image": "static/images/a6cb71d3a53bce23b70f758e0aa46aea.png",
     "content": "",
     "sourceImages": true
@@ -4786,7 +4786,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Ski Sword",
     "url": "https://fallout.wiki/wiki/Ski_Sword",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Composite Ski (1) Rubber (13) Screw (11) Steel (16) Build at:Learn Method:Learned from plan/recipe Plan: Ski Sword Ski Sword Lv 45 (1) The Ski Sw…",
+    "snippet": "The Ski Sword is a melee weapon in Fallout 76.",
     "main_image": "static/images/b9363e4d0db0a0bc997566b57ac21a64.png",
     "content": "",
     "sourceImages": true
@@ -4797,7 +4797,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Sledgehammer",
     "url": "https://fallout.wiki/wiki/Sledgehammer_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive Screw Steel Wood Built or Scrapped:Plan: Sledgehammer (1) The Sledgehammer is a melee weapon in Fallout 76. A wooden handle…",
+    "snippet": "The Sledgehammer is a melee weapon in Fallout 76.",
     "main_image": "static/images/ccf00dc8b2318ef60829525f74984bd7.png",
     "content": "",
     "sourceImages": true
@@ -4829,7 +4829,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Somerset Special",
     "url": "https://fallout.wiki/wiki/Somerset_Special",
     "category": "Weapons & Legendary Mods",
-    "snippet": "The Somerset Special is a non-automatic pistol in Fallout 76. This weapon is a unique, Legendary.44 Pistol. It is modified with a scope, and has the legendary effect Anti-Armor ba…",
+    "snippet": "The Somerset Special is a non-automatic pistol in Fallout 76. This weapon is a unique, Legendary .44 Pistol. It is modified with a scope, and has the legendary effect Anti-Armor ba…",
     "main_image": "static/images/a6a4241c4dffca231b48a8eeb486a15a.png",
     "content": ""
   },
@@ -4839,7 +4839,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Spear",
     "url": "https://fallout.wiki/wiki/Spear_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (7) Screw (10) Steel (16) Wood (13) Built or Scrapped:Plan: Spear (1) The Spear is a melee weapon in Fallout 76. A two-handed weapon mad…",
+    "snippet": "The Spear is a melee weapon in Fallout 76.",
     "main_image": "static/images/1f02e03e332675e3932e302520cf8188.png",
     "content": ""
   },
@@ -4871,7 +4871,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Submachine Gun",
     "url": "https://fallout.wiki/wiki/Submachine_Gun_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Gears (10) Oil (7) Screw (20) Spring (17) Steel (37) Wood (14) Build at:Learn Method:Learned from plan/recipe Plan: Submachine gun Submachine Gun…",
+    "snippet": "The Submachine Gun is a weapon in Fallout 76.",
     "main_image": "static/images/e9095a0852ed1a3402e36fab3c1f9434.png",
     "content": "",
     "sourceImages": true
@@ -4882,7 +4882,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Super Sledge",
     "url": "https://fallout.wiki/wiki/Super_Sledge_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (10) Gears (11) Plastic (13) Screw (10) Spring (15) Steel (22) Build at:Learn Method:Learned from plan/recipe Plan: Super Sledge Super S…",
+    "snippet": "The Super Sledge is a melee weapon in Fallout 76.",
     "main_image": "static/images/6fedf20f3e79731def96d1b4cfd452c2.png",
     "content": "",
     "sourceImages": true
@@ -4893,7 +4893,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Switchblade",
     "url": "https://fallout.wiki/wiki/Switchblade_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Rubber (16) Screw (9) Steel (15) Built or Scrapped:Plan: Switchblade (1) The Switchblade is a melee weapon in Fallout 76. A one-handed melee weap…",
+    "snippet": "The Switchblade is a melee weapon in Fallout 76.",
     "main_image": "static/images/db66beb4ce5b39008b1a09fb592ea73c.webp",
     "content": ""
   },
@@ -4924,7 +4924,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Tesla Cannon",
     "url": "https://fallout.wiki/wiki/Tesla_Cannon_(Fallout_76)",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Aluminum (13) Circuitry (9) Rubber (17) Screw (19) Spring (22) Steel (32) Built or Scrapped:Plan: Tesla Cannon (1) The Tesla Cannon is a ranged w…",
+    "snippet": "The Tesla Cannon is a ranged weapon in Fallout 76.",
     "main_image": "static/images/003b44e511c35f46916f7d474fcf6f9a.webp",
     "content": "",
     "sourceImages": true
@@ -4935,7 +4935,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Tesla Rifle",
     "url": "https://fallout.wiki/wiki/Tesla_Rifle_(Fallout_76)",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Adhesive (16) Circuitry (11) Crystal (8) Nuclear Material (7) Plastic (15) Screw (19) Steel (25) Build at:Learn Method:Learned from plan/recipe P…",
+    "snippet": "The Tesla Rifle is a ranged weapon in Fallout 76.",
     "main_image": "static/images/2586001a1d5d12c2441a8d8121381457.png",
     "content": "",
     "sourceImages": true
@@ -4977,7 +4977,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "The Dragon",
     "url": "https://fallout.wiki/wiki/The_Dragon",
     "category": "Armor & Power Armor",
-    "snippet": "The Dragon is a ranged weapon in Fallout 76. Background The Dragon is an antique, muzzle-loading Black Powder Rifle with four distinct barrels. It is loaded with.50 Caliber…",
+    "snippet": "The Dragon is a ranged weapon in Fallout 76. Background The Dragon is an antique, muzzle-loading Black Powder Rifle with four distinct barrels. It is loaded with .50 Caliber…",
     "main_image": "static/images/841729ff9303e49becb2f421384924cd.png",
     "content": "",
     "sourceImages": true
@@ -4988,7 +4988,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "The Fact Finder",
     "url": "https://fallout.wiki/wiki/The_Fact_Finder",
     "category": "Vendors & Minerva Sales",
-    "snippet": "The Fact Finder is a non-automatic pistol in Fallout 76, introduced in the Steel Dawn update. This unique variant of the.44 pistol has the two-shot, explosive, and reduced AP cost…",
+    "snippet": "The Fact Finder is a non-automatic pistol in Fallout 76, introduced in the Steel Dawn update. This unique variant of the .44 pistol has the two-shot, explosive, and reduced AP cost…",
     "main_image": "static/images/a68293ebdb2f874127551d0ddcf7bac9.png",
     "content": ""
   },
@@ -5009,7 +5009,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "The Fixer",
     "url": "https://fallout.wiki/wiki/The_Fixer",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (9) Gears (10) Oil (8) Screw (15) Spring (15) Steel (18) Wood (14) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: The Fix…",
+    "snippet": "The Fixer is a ranged weapon in Fallout 76, introduced in the Wild Appalachia update.",
     "main_image": "static/images/0c3f81c4d9bfeda3a98a18be1513479b.png",
     "content": "",
     "sourceImages": true
@@ -5030,7 +5030,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "The Gutter",
     "url": "https://fallout.wiki/wiki/The_Gutter",
     "category": "Vendors & Minerva Sales",
-    "snippet": "Materials: Requirements: Produces: Aluminum (7) Gears (10) Legendary Module (2) Oil (7) Plastic (9) Screw (11) Steel (18) Build at:Level:45 Learn Method:Learned from plan/recipe Pl…",
+    "snippet": "The Gutter is a melee weapon in Fallout 76, introduced in the Wild Appalachia update.",
     "main_image": "static/images/23c5a1ed783190b09d64fba8b7af7d72.png",
     "content": ""
   },
@@ -5092,7 +5092,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Thirst Zapper",
     "url": "https://fallout.wiki/wiki/Thirst_Zapper_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (12) Gear (11) Plastic (14) Rubber (14) Screw (12) Spring (15) Build at:Weapons Workbench Ranged - Energy Guns Learn Method:Learned when…",
+    "snippet": "Thirst Zapper is a weapon in Fallout 76, introduced in the Nuka-World on Tour update.",
     "main_image": "static/images/286e0da17841c6d4a99d4592faf3c576.webp",
     "content": ""
   },
@@ -5123,7 +5123,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Tire Iron",
     "url": "https://fallout.wiki/wiki/Tire_Iron_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Steel (18) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: Tire iron Tire Iron (1) The Tire Iron is a melee weapon in Fallout 76. A…",
+    "snippet": "The Tire Iron is a melee weapon in Fallout 76.",
     "main_image": "static/images/10846ae44cd355eb9e3dfe6ecdec3984.png",
     "content": "",
     "sourceImages": true
@@ -5335,7 +5335,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Walking Cane",
     "url": "https://fallout.wiki/wiki/Walking_Cane_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Rubber (17) Wood (18) Built or Scrapped:Plan: Walking Cane (1) The Walking Cane is a melee weapon in Fallout 76. A simple wooden wal…",
+    "snippet": "The Walking Cane is a melee weapon in Fallout 76.",
     "main_image": "static/images/b017ba9b1980f73ae9220b37562febce.webp",
     "content": "",
     "sourceImages": true
@@ -5346,7 +5346,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "War Drum",
     "url": "https://fallout.wiki/wiki/War_Drum",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (8) Leather (8) Screw (1) Steel (21) Tin Can (5) Build at:Weapons Workbench Blunt melee weapons Level:45 Learn Method:Learned from plan/…",
+    "snippet": "The War Drum is a melee weapon in Fallout 76.",
     "main_image": "static/images/d9643f25d0bf7897db7adb1238ae8d2a.webp",
     "content": ""
   },
@@ -5356,7 +5356,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "War Glaive",
     "url": "https://fallout.wiki/wiki/War_Glaive",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Aluminum (8) Black Titanium (10) Circuitry (8) Rubber (14) Steel (15) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: War Glaive Wa…",
+    "snippet": "The War Glaive is a melee weapon in Fallout 76, introduced in the One Wasteland For All update.",
     "main_image": "static/images/17fedd55b12daddb21e4373384c618d9.png",
     "content": "",
     "sourceImages": true
@@ -5367,7 +5367,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Western Revolver",
     "url": "https://fallout.wiki/wiki/Western_Revolver_(Fallout_76)",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Materials: Requirements: Produces: Adhesive (8) Oil (8) Screw (16) Steel (25) Wood (14) Build at:Level:50 Learn Method:Learned from plan/recipe Plan: Revolver Western Revolver (1)",
+    "snippet": "The Western Revolver is a non-automatic pistol in Fallout 76.",
     "main_image": "static/images/fcf50d286648ea954d36d965b744922f.png",
     "content": "",
     "sourceImages": true
@@ -5378,7 +5378,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Western Spirit",
     "url": "https://fallout.wiki/wiki/Western_Spirit",
     "category": "Weapons & Legendary Mods",
-    "snippet": "Please help by uploading it.Details: No details given Western Spirit is a weapon in Fallout 76, introduced in the Nuka-World on Tour update. Gamep…",
+    "snippet": "Western Spirit is a weapon in Fallout 76, introduced in the Nuka-World on Tour update. Gamep…",
     "main_image": "static/images/b96d6ad161f5cb60627045856f5228e1.png",
     "content": ""
   },
@@ -8050,7 +8050,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "East Street",
     "url": "https://fallout.wiki/wiki/East_Street",
     "category": "General",
-    "snippet": "This content needs expanding. Please help us improve the article by adding missing information! Please help by uploading it. East Street is a road…",
+    "snippet": "This content needs expanding. Please help us improve the article by adding missing information! East Street is a road…",
     "main_image": "static/images/b96d6ad161f5cb60627045856f5228e1.png",
     "content": "",
     "stub": true
@@ -8265,7 +8265,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Fisherman's Rest",
     "url": "https://fallout.wiki/wiki/Fisherman's_Rest",
     "category": "Build Mechanics & Damage",
-    "snippet": "Please help by uploading it. Fisherman's Rest is a location in Fallout 76, introduced in the Gone Fission update. This section has not been writte…",
+    "snippet": "Fisherman's Rest is a location in Fallout 76, introduced in the Gone Fission update. This section has not been writte…",
     "main_image": "static/images/6781342835ca301f631e266642d86b5d.webp",
     "content": "",
     "sourceImages": true
@@ -8559,7 +8559,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Garden Drive",
     "url": "https://fallout.wiki/wiki/Garden_Drive",
     "category": "General",
-    "snippet": "This content needs expanding. Please help us improve the article by adding missing information! Please help by uploading it. Garden Drive is a roa…",
+    "snippet": "This content needs expanding. Please help us improve the article by adding missing information! Garden Drive is a roa…",
     "main_image": "static/images/989a332ba0a58a9c592274d9be1d821c.png",
     "content": ""
   },
@@ -8928,7 +8928,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Harpers Ferry Tunnel",
     "url": "https://fallout.wiki/wiki/Harpers_Ferry_Tunnel",
     "category": "General",
-    "snippet": "Please help by uploading it. Harpers Ferry…",
+    "snippet": "Harpers Ferry Tunnel is a location in The Mire region of Appalachia. A historic train tunnel near the town of Harpers Ferry in West Virginia, prior to the Great War the infrastructure was used to travel east across the mountains.",
     "main_image": "static/images/1ce5f7567174f48692d79d1a96f96159.png",
     "content": "",
     "sourceImages": true
@@ -14361,7 +14361,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Bloatfly",
     "url": "https://fallout.wiki/wiki/Bloatfly_(Fallout_76)",
     "category": "Build Mechanics & Damage",
-    "snippet": "Please help by uploading it. Bloatflies are creatures found in Appalachia. The bloatfly is an evolution of either the Musca domestica (common hous…",
+    "snippet": "Bloatflies are creatures found in Appalachia. The bloatfly is an evolution of either the Musca domestica (common hous…",
     "main_image": "static/images/ea075f10ff9b9639442024b05cbc0d46.png",
     "content": ""
   },
@@ -14854,7 +14854,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Mongrel",
     "url": "https://fallout.wiki/wiki/Mongrel_(Fallout_76)",
     "category": "Crafting & Materials",
-    "snippet": "Please help by uploading it. Mongrels are creatures found in Appalachia. Mongrels are commonly found throughout the region. They are aggressive an…",
+    "snippet": "Mongrels are creatures found in Appalachia. Mongrels are commonly found throughout the region. They are aggressive an…",
     "main_image": "static/images/9e0290d60fb656181e07239537f6cee6.webp",
     "content": ""
   },
@@ -15032,7 +15032,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Radscorpion",
     "url": "https://fallout.wiki/wiki/Radscorpion_(Fallout_76)",
     "category": "Events & Expeditions",
-    "snippet": "Please help by uploading it. Radscorpions are insects found in Appalachia. Radscorpions have venomous stingers, powerful claws, and have the a…",
+    "snippet": "Radscorpions are insects found in Appalachia. Radscorpions have venomous stingers, powerful claws, and have the a…",
     "main_image": "static/images/5d5ac56bb889db0b68e5824d1895edac.png",
     "content": "",
     "sourceImages": true
@@ -15450,7 +15450,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "title": "Wolf",
     "url": "https://fallout.wiki/wiki/Wolf_(Fallout_76)",
     "category": "Events & Expeditions",
-    "snippet": "Please help by uploading it. Wolves are creatures found in Appalachia. Wolves usually travel in packs and charge hastily at enemies to attack.",
+    "snippet": "Wolves are creatures found in Appalachia. Wolves usually travel in packs and charge hastily at enemies to attack. They can prove to be tough opponents when together, easily being able to overpower lone player characters in close quarters.",
     "main_image": "static/images/e6bafb25ddb40cc2f77bf959fec4ae3d.png",
     "content": "",
     "sourceImages": true
