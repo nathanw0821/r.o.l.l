@@ -29,10 +29,6 @@ describe("crafting-costs (Patch 70 The Slasher)", () => {
     expect(getLegendaryScripCost({ starRank: 1 })).toBe(50);
     expect(getLegendaryScripCost({ starRank: 3 })).toBe(50);
     expect(getLegendaryScripCost({ starRank: 4 })).toBe(100);
-    // Legacy modificationIndex argument is ignored: every change costs the same.
-    expect(getLegendaryScripCost(0)).toBe(50);
-    expect(getLegendaryScripCost(9)).toBe(50);
-    expect(getLegendaryScripCost(40)).toBe(50);
   });
 
   it("prices unique items at 10x scrip (500 / 1,000)", () => {
@@ -91,7 +87,9 @@ describe("crafting-costs (Patch 70 The Slasher)", () => {
   it("calculateCraftingLogistics: multi-piece armor set multiplies per-piece fees", () => {
     const s = calculateCraftingLogistics(3, 105, { maxStarRank: 3, isMultiPiece: true, pieceCount: 5 });
     expect(s.baseRandomizeModules).toBe(75);
-    expect(s.legendaryScrip).toBe(150);
+    expect(s.modBoxModules).toBe(105 * 5);
+    expect(s.legendaryScrip).toBe(150 * 5);
+    expect(s.legendaryModules).toBe(105 * 5 + 75);
     const none = calculateCraftingLogistics(0, 0, { maxStarRank: 3 });
     expect(none.legendaryScrip).toBe(0);
     expect(none.legendaryModules).toBe(0);

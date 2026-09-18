@@ -294,11 +294,7 @@ function PtsCard({ item }: { item: PtsItem }) {
           ) : (
             <span className="text-slate-400">Official Bethesda PTS</span>
           )}
-          {item.binaryVerified ? (
-            <span className="text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30 font-bold flex items-center gap-1">
-              Verified against SeventySix.esm
-            </span>
-          ) : null}
+
         </div>
       </div>
     </div>

@@ -8,9 +8,12 @@ import html, json, os, re, sys, time, urllib.request, datetime
 
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36"
 BASE = "https://nukesdragons.com/fallout-76/db/perks"
-args = [a for a in sys.argv[1:] if not a.startswith("--")]
-OUT = args[0] if args else "src/data/truth/perk-reference-nukesdragons.json"
-CACHE = sys.argv[sys.argv.index("--cache") + 1] if "--cache" in sys.argv else None
+import argparse
+_ap = argparse.ArgumentParser(description=__doc__)
+_ap.add_argument("out", nargs="?", default="src/data/truth/perk-reference-nukesdragons.json")
+_ap.add_argument("--cache", help="directory to cache fetched pages (re-runs skip the network)")
+_ns = _ap.parse_args()
+OUT, CACHE = _ns.out, _ns.cache
 if CACHE: os.makedirs(CACHE, exist_ok=True)
 
 def get(url, cache_name=None):

@@ -8,7 +8,6 @@ export type PtsSectionId =
   | "event-datamines";
 
 export interface PtsItem {
-  binaryVerified?: boolean;
   id: string;
   name: string;
   section: PtsSectionId;

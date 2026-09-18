@@ -5,15 +5,11 @@ import { Search, BookOpen, ExternalLink, Shield, ChevronRight, ArrowUpDown, Filt
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
+import wikiCategoryCounts from "@/lib/wiki/wiki-category-counts.json";
 
-const TOTAL_ARTICLES = FALLBACK_WIKI_ARTICLES.length;
-const CATEGORY_COUNTS: Record<string, number> = FALLBACK_WIKI_ARTICLES.reduce<Record<string, number>>((acc, a) => {
-  acc[a.category] = (acc[a.category] ?? 0) + 1;
-  return acc;
-}, {});
+const TOTAL_ARTICLES = (wikiCategoryCounts as Record<string, number>).all ?? 0;
 function countFor(category: string): string {
-  const n = category === "all" ? TOTAL_ARTICLES : (CATEGORY_COUNTS[category] ?? 0);
+  const n = (wikiCategoryCounts as Record<string, number>)[category] ?? 0;
   return `${n.toLocaleString()} ${category === "all" ? "Entries" : "Guides"}`;
 }
 
@@ -36,7 +32,7 @@ const CATEGORY_CARDS = [
   { id: "Perks & Mutations", label: "Perks & Mutations", count: countFor("Perks & Mutations"), iconName: "layers", desc: "S.P.E.C.I.A.L. card ranks & serum effects.", color: "from-purple-500/20 to-purple-600/5 border-purple-500/40" },
   { id: "Vendors & Minerva", label: "Vendors & Minerva Sales", count: countFor("Vendors & Minerva"), iconName: "coins", desc: "Minerva inventory schedules & Gold Bullion.", color: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/40" },
   { id: "Events & Expeditions", label: "Events & Expeditions", count: countFor("Events & Expeditions"), iconName: "compass", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
-  { id: "Builds & Mechanics", label: "Build Mechanics & Damage", count: countFor("Builds & Mechanics"), iconName: "activity", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
+  { id: "Build Mechanics & Damage", label: "Build Mechanics & Damage", count: countFor("Build Mechanics & Damage"), iconName: "activity", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
   { id: "Crafting & Resources", label: "Crafting & Materials", count: countFor("Crafting & Resources"), iconName: "wrench", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
 ];
 
