@@ -3,6 +3,8 @@
 import * as React from "react";
 import { findLocalProgressEntry } from "@/lib/progress-lookup";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { createLinkPlanState, linkifyToNodes } from "@/components/linkified-text";
 import { cn } from "@/lib/utils";
 import { Target, Plus, Minus, Check, Bookmark, Search, Sparkles } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
@@ -38,17 +40,34 @@ function cleanEffectName(name: string): string {
   return sanitizeTitle(name);
 }
 
-function renderInlineMarkdown(text: string | null | undefined): React.ReactNode {
+/**
+ * `linkify` links game terms in the plain-text parts (first occurrence per description, never to
+ * `currentPath`). Only used where the surrounding element is not itself clickable.
+ */
+function renderInlineMarkdown(
+  text: string | null | undefined,
+  linkify?: { currentPath: string | null }
+): React.ReactNode {
   if (!text) return "-";
   const parts: React.ReactNode[] = [];
   let keyIdx = 0;
+  const linkState = linkify ? createLinkPlanState() : null;
+  const pushPlain = (plain: string) => {
+    if (!linkify || !linkState) {
+      parts.push(plain);
+      return;
+    }
+    parts.push(
+      ...linkifyToNodes(plain, { currentPath: linkify.currentPath, state: linkState, keyPrefix: `lk${keyIdx++}` })
+    );
+  };
   const pattern = /(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/g;
   let match;
   let lastIndex = 0;
 
   while ((match = pattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(text.substring(lastIndex, match.index));
+      pushPlain(text.substring(lastIndex, match.index));
     }
     const matchedStr = match[0];
     if (matchedStr.startsWith("***") && matchedStr.endsWith("***")) {
@@ -61,9 +80,27 @@ function renderInlineMarkdown(text: string | null | undefined): React.ReactNode 
     lastIndex = pattern.lastIndex;
   }
   if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex));
+    pushPlain(text.substring(lastIndex));
   }
   return parts.length > 0 ? parts : text;
+}
+
+/**
+ * Deep link `?q=<term>` (e.g. /all-effects?q=Severing): puts the term in the search box once the
+ * stored filters have been restored, and again whenever the URL's q changes. Typing afterwards is
+ * not written back to the URL. Rendered inside its own Suspense boundary so reading search params
+ * never forces the surrounding table out of static/streamed rendering.
+ */
+function TrackerUrlQuerySync({ ready, onQuery }: { ready: boolean; onQuery: (q: string) => void }) {
+  const searchParams = useSearchParams();
+  const urlQuery = searchParams?.get("q")?.trim() ?? "";
+  const appliedRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!ready || !urlQuery || appliedRef.current === urlQuery) return;
+    appliedRef.current = urlQuery;
+    onQuery(urlQuery);
+  }, [ready, urlQuery, onQuery]);
+  return null;
 }
 
 export default function EffectTable({
@@ -83,7 +120,8 @@ export default function EffectTable({
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [localRows, setLocalRows] = React.useState(rows);
   const handledFocusRef = React.useRef<string | null>(null);
-  const { query, setQuery, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters } = useFilters();
+  const { query, setQuery, sourceFilters, statusFilters, originFilters, categoryFilters, setOriginOptions, clearFilters, filtersHydrated } = useFilters();
+  const pathname = usePathname();
   const { map: localProgress, setEntry: setLocalEntry } = useLocalProgress(true);
   const { commitEntries } = useProgressHistory();
   const { uiMode } = useThemeSettings();
@@ -304,6 +342,9 @@ export default function EffectTable({
 
   return (
     <div className="space-y-4">
+      <React.Suspense fallback={null}>
+        <TrackerUrlQuerySync ready={filtersHydrated} onQuery={setQuery} />
+      </React.Suspense>
       {/* =========================================================================
           TACTICAL TELEMETRY PROGRESS HUD (CONCEPT 4)
          ========================================================================= */}
@@ -562,7 +603,7 @@ export default function EffectTable({
 
                     {/* Tactical Effect */}
                     <td className="py-2 px-4 text-slate-300 font-sans text-xs leading-relaxed">
-                      {renderInlineMarkdown(row.description)}
+                      {renderInlineMarkdown(row.description, { currentPath: pathname })}
                       {row.origins && row.origins.length > 0 && (
                         <div className="text-[10px] text-slate-500 font-mono mt-1">
                           <span className="text-amber-500/70 font-bold">Source: </span>

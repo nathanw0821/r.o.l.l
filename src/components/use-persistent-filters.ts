@@ -51,6 +51,8 @@ export function usePersistentFilters(storageKey: string) {
   const [originFilters, setOriginFilters] = React.useState<string[]>(defaultFilters.origins);
   const [categoryFilters, setCategoryFilters] = React.useState<string[]>(defaultFilters.categories);
   const hasLoaded = React.useRef(false);
+  // True once stored filters have been read, so URL deep links (?q=) can be applied after them.
+  const [hydrated, setHydrated] = React.useState(false);
 
   React.useEffect(() => {
     if (hasLoaded.current) return;
@@ -67,6 +69,7 @@ export function usePersistentFilters(storageKey: string) {
       // ignore malformed storage
     } finally {
       hasLoaded.current = true;
+      setHydrated(true);
     }
   }, [storageKey]);
 
@@ -105,6 +108,7 @@ export function usePersistentFilters(storageKey: string) {
     setOriginFilters,
     categoryFilters,
     setCategoryFilters,
-    clearFilters
+    clearFilters,
+    hydrated
   };
 }
