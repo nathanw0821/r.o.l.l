@@ -249,7 +249,7 @@ export default function BuilderFirepowerMatrix({
                     <div>• No Crit Savvy: 63 Luck (53 with 3★ Lucky Hit)</div>
                   </div>
                   <div className="border-t border-slate-800 pt-1 text-[0.65rem] text-slate-400">
-                    Fill/Shot = (Luck × 1.5) + 5 + (Lucky ? 15 : 0)
+                    Fill/Shot = (Luck × 1.5) + 5 + (Lucky Hit ? 15 : 0)
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -265,7 +265,7 @@ export default function BuilderFirepowerMatrix({
                 <div className="rounded bg-amber-950/60 border border-amber-500/40 p-1.5 text-center flex items-center justify-center gap-1.5 text-[0.68rem] text-amber-300 font-bold">
                   <AlertCircle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
                   <span>
-                    Need +{critCycle.missingLuck} Luck (or 3★ Lucky)
+                    Need +{critCycle.missingLuck} Luck (or 3★ Lucky Hit)
                   </span>
                 </div>
               )}

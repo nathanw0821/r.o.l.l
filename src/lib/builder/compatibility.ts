@@ -653,6 +653,8 @@ export function buildShoppingList(
     underarmor?: { shellId?: string | null; liningId?: string | null; styleId?: string | null };
     pieceKind?: string;
     isMultiPiece?: boolean;
+    /** Named unique weapon/armor: scrip ×10 plus modules + Vault Steel per craft (Patch 70). */
+    isUnique?: boolean;
   }
 ): { modules: number; lines: ShoppingLine[] } {
   let modBoxModules = 0;
@@ -697,6 +699,8 @@ export function buildShoppingList(
     isMultiPiece: opts?.isMultiPiece,
     pieceCount: 5,
     maxStarRank,
+    starRanks: mods.map((m) => m.starRank),
+    isUnique: opts?.isUnique,
   });
 
   // Underarmor Linings & Styles Requirements
@@ -765,7 +769,16 @@ export function buildShoppingList(
   }
 
   if (logistics.legendaryScrip > 0) {
-    lines.unshift({ label: "Legendary Scrip (mod application fee)", count: logistics.legendaryScrip });
+    lines.unshift({
+      label: logistics.isUnique ? "Legendary Scrip (unique item, 10x fee)" : "Legendary Scrip (mod application fee)",
+      count: logistics.legendaryScrip,
+    });
+  }
+  if (logistics.isUnique && logistics.uniqueCraftingModules > 0) {
+    lines.push({ label: "Legendary modules (unique crafting surcharge)", count: logistics.uniqueCraftingModules });
+  }
+  if (logistics.vaultSteel > 0) {
+    lines.push({ label: "Vault Steel", count: logistics.vaultSteel });
   }
 
   return { modules: logistics.legendaryModules, lines };

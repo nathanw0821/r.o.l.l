@@ -83,12 +83,9 @@ function clampStar(starRank: number | undefined): 1 | 2 | 3 | 4 {
  * Scrip cost to apply / change one legendary mod.
  *
  * Since Patch 70 the fee is flat per star rank and no longer depends on how
- * many times the slot has been modified. A bare number argument is accepted
- * for backwards compatibility with the old `modificationIndex` signature and
- * is ignored (every modification costs the same).
+ * many times the slot has been modified.
  */
-export function getLegendaryScripCost(arg?: number | LegendaryScripCostOptions): number {
-  const opts: LegendaryScripCostOptions = typeof arg === "object" && arg !== null ? arg : {};
+export function getLegendaryScripCost(opts: LegendaryScripCostOptions = {}): number {
   const star = clampStar(opts.starRank);
   const base = SCRIP_MOD_CHANGE_COSTS[star] ?? SCRIP_MOD_CHANGE_COSTS[1] ?? 50;
   return opts.isUnique ? base * UNIQUE_SCRIP_MULTIPLIER : base;
@@ -113,7 +110,9 @@ export type CraftingCostSummary = {
 /**
  * Calculates complete crafting logistics summary.
  *
- * `equippedStarCount` is the number of legendary mods being applied. An item
+ * `equippedStarCount` and `modBoxModules` describe ONE piece; every figure is
+ * multiplied by `pieceCount` when `isMultiPiece` is set (a 5-piece armor set
+ * needs five mod boxes, five application fees and five surcharges). An item
  * has at most one 4★ slot, so when `maxStarRank` is 4 exactly one of those
  * mods is priced at the 4★ fee and the rest at the 1–3★ fee. Pass `starRanks`
  * to price each mod explicitly instead.
@@ -125,8 +124,6 @@ export function calculateCraftingLogistics(
     isMultiPiece?: boolean;
     pieceCount?: number;
     maxStarRank?: number;
-    /** @deprecated Ignored since Patch 70 (flat scrip fee). Kept so older callers compile. */
-    modificationIndex?: number;
     /** Explicit star rank per equipped mod; overrides the `maxStarRank` heuristic for scrip. */
     starRanks?: number[];
     /** Unique / named item: scrip ×10 plus modules + Vault Steel per craft. */
@@ -146,9 +143,10 @@ export function calculateCraftingLogistics(
   const uniqueCraftingModules = pieces * uniqueCost.legendaryModules;
   const vaultSteel = pieces * uniqueCost.vaultSteel;
 
-  const totalModules = modBoxModules + baseRandomizeModules + uniqueCraftingModules;
+  const totalModBoxModules = pieces * modBoxModules;
+  const totalModules = totalModBoxModules + baseRandomizeModules + uniqueCraftingModules;
 
-  // Scrip: flat fee per mod (50 for 1–3★, 100 for 4★), ×10 on uniques
+  // Scrip: flat fee per mod (50 for 1–3★, 100 for 4★), ×10 on uniques, per piece
   let totalScrip = 0;
   if (opts?.starRanks && opts.starRanks.length > 0) {
     for (const star of opts.starRanks) totalScrip += getLegendaryScripCost({ starRank: star, isUnique });
@@ -159,11 +157,12 @@ export function calculateCraftingLogistics(
       fourStarMods * getLegendaryScripCost({ starRank: 4, isUnique }) +
       lowerMods * getLegendaryScripCost({ starRank: 1, isUnique });
   }
+  totalScrip *= pieces;
 
   return {
     legendaryModules: totalModules,
     baseRandomizeModules,
-    modBoxModules,
+    modBoxModules: totalModBoxModules,
     legendaryScrip: totalScrip,
     isUnique,
     vaultSteel,

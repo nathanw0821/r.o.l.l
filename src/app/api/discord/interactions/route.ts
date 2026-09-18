@@ -1,7 +1,7 @@
 import gameVersion from "@/data/truth/game-version.json";
 import { NextResponse } from "next/server";
 import { getCachedBuilderModCatalog } from "@/lib/builder/get-builder-mod-catalog";
-import { getLegendaryScripCost } from "@/lib/builder/crafting-costs";
+import { getLegendaryScripCost, UNIQUE_CRAFTING_COSTS, STAR_MODULE_COSTS } from "@/lib/builder/crafting-costs";
 import { normalizeFuzzySearchString, applyFilters, type FilterableRow } from "@/lib/filter-utils";
 import { prisma } from "@/lib/prisma";
 import { searchPerkCards } from "@/lib/perks/catalog";
@@ -759,12 +759,12 @@ export async function POST(req: Request) {
                 },
                 {
                   name: "Unique weapons and armor",
-                  value: `Since Patch 70 named uniques can change mods too, at 10x: ${uniqueScrip} Scrip (1-3 star) or ${uniqueScrip4} Scrip (4-star). Crafting onto a unique also needs 30 modules + 40 Vault Steel (3-star) or 65 modules + 80 Vault Steel (4-star).`,
+                  value: `Since Patch 70 named uniques can change mods too, at 10x: ${uniqueScrip} Scrip (1-3 star) or ${uniqueScrip4} Scrip (4-star). Crafting onto a unique also needs ${UNIQUE_CRAFTING_COSTS[3].legendaryModules} modules + ${UNIQUE_CRAFTING_COSTS[3].vaultSteel} Vault Steel (3-star) or ${UNIQUE_CRAFTING_COSTS[4].legendaryModules} modules + ${UNIQUE_CRAFTING_COSTS[4].vaultSteel} Vault Steel (4-star).`,
                   inline: false
                 },
                 {
                   name: "Crafting a mod box",
-                  value: "15 / 30 / 60 / 120 Legendary Modules for a 1 / 2 / 3 / 4-star mod, plus its material.",
+                  value: `${STAR_MODULE_COSTS[1]} / ${STAR_MODULE_COSTS[2]} / ${STAR_MODULE_COSTS[3]} / ${STAR_MODULE_COSTS[4]} Legendary Modules for a 1 / 2 / 3 / 4-star mod, plus its material.`,
                   inline: false
                 }
               ],

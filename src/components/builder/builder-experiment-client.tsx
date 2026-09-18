@@ -34,6 +34,7 @@ import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals"
 import { useLegendaryBench } from "@/components/builder/hooks/use-legendary-bench";
 import { useBuilderShare } from "@/components/builder/hooks/use-builder-share";
 import { useLearnedBasePieces } from "@/components/builder/hooks/use-learned-base-pieces";
+import { isUniqueBaseItem } from "@/lib/truth/unique-items";
 import { useBuilderPayload } from "@/components/builder/hooks/use-builder-payload";
 import { useBuilderBootstrap } from "@/components/builder/hooks/use-builder-bootstrap";
 import { Button } from "@/components/ui/button";
@@ -270,8 +271,14 @@ export default function BuilderExperimentClient({
 
 
   const shopping = React.useMemo(
-    () => buildShoppingList(equippedModsOrdered, { underarmor: payload.underarmor, pieceKind: piece.kind, isMultiPiece }),
-    [equippedModsOrdered, payload.underarmor, piece.kind, isMultiPiece],
+    () =>
+      buildShoppingList(equippedModsOrdered, {
+        underarmor: payload.underarmor,
+        pieceKind: piece.kind,
+        isMultiPiece,
+        isUnique: isUniqueBaseItem(piece.id),
+      }),
+    [equippedModsOrdered, payload.underarmor, piece.kind, piece.id, isMultiPiece],
   );
 
   const {
