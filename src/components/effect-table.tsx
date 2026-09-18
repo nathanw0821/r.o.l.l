@@ -416,7 +416,7 @@ export default function EffectTable({
         </div>
 
         {/* Tier Filter Tabs */}
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           <span className="text-slate-500 text-[10px] uppercase font-bold mr-1">Tier:</span>
           {(["ALL", "1 Star", "2 Star", "3 Star", "4 Star"] as const).map((star) => (
             <button
@@ -434,7 +434,7 @@ export default function EffectTable({
         </div>
 
         {/* Category Slot Filter Tabs */}
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           <span className="text-slate-500 text-[10px] uppercase font-bold mr-1">Slot:</span>
           {(["ALL", "Weapon", "Armor", "Power Armor"] as const).map((cat) => (
             <button
@@ -452,7 +452,7 @@ export default function EffectTable({
         </div>
 
         {/* Status Filter Tabs */}
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           <span className="text-slate-500 text-[10px] uppercase font-bold mr-1">Status:</span>
           {(["ALL", "learned", "seeking", "locked", "changed"] as const).map((st) => (
             <button

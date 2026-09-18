@@ -136,8 +136,11 @@ export function useBuilderPayload({
     if (initialPayload?.activeWeaponPieceId) {
       return initialPayload.activeWeaponPieceId;
     }
+    // Default to The Fixer (the advertised starter loadout), not whatever weapon happens to be first in the catalog.
     const defaultWeap =
-      BASE_GEAR_PIECES.find((p) => p.kind === "weapon")?.id || "fixer";
+      BASE_GEAR_PIECES.find((p) => p.id === "fixer")?.id ||
+      BASE_GEAR_PIECES.find((p) => p.kind === "weapon")?.id ||
+      "fixer";
     return defaultWeap;
   });
   const [activeChassisId, setActiveChassisId] = React.useState<string>(() => {

@@ -98,6 +98,8 @@ type TierProgressSummary = {
 
 const SIDEBAR_COLLAPSE_KEY = "roll-sidebar-collapsed";
 const MOBILE_SIDEBAR_SUPPRESS_KEY = "roll.mobile.sidebar.suppress";
+/** Set once the visitor opens or closes the menu on a phone, so their choice wins over the collapsed default. */
+const MOBILE_SIDEBAR_TOUCHED_KEY = "roll.mobile.sidebar.touched";
 function CommandHubShellFallback() {
   return (
     <div aria-hidden="true" className="command-hub">
@@ -216,7 +218,13 @@ interface AccountLinksResponse {
 
   React.useEffect(() => {
     const media = window.matchMedia("(max-width: 860px)");
-    const apply = () => setIsMobile(media.matches);
+    const apply = () => {
+      setIsMobile(media.matches);
+      // Phones start with the menu collapsed (content first) unless the visitor has chosen otherwise.
+      if (media.matches && window.sessionStorage.getItem(MOBILE_SIDEBAR_TOUCHED_KEY) !== "1") {
+        setSidebarCollapsed(true);
+      }
+    };
     apply();
     media.addEventListener("change", apply);
     return () => media.removeEventListener("change", apply);
@@ -358,6 +366,11 @@ interface AccountLinksResponse {
   const discordLinked = linkedProviders.includes("discord");
   const sidebarRail = sidebarCollapsed && !isMobile;
   const onToggleSidebar = React.useCallback(() => {
+    try {
+      window.sessionStorage.setItem(MOBILE_SIDEBAR_TOUCHED_KEY, "1");
+    } catch {
+      // storage unavailable: the default simply applies again next load
+    }
     setSidebarCollapsed((value) => !value);
   }, []);
   const onSignOut = React.useCallback(() => {
@@ -620,7 +633,7 @@ interface AccountLinksResponse {
                 <p>
                   Fallout, Fallout 76, Vault-Tec, S.P.E.C.I.A.L., and related trademarks, logos, and game artwork are registered trademarks and copyrighted property of Bethesda Softworks LLC / ZeniMax Media Inc. R.O.L.L. is an independent community tool created under Fair Use (17 U.S.C. § 107) and Bethesda Fan Content guidelines.
                 </p>
-                <div className="pt-1 flex items-center gap-3 text-[0.62rem] font-mono text-slate-400">
+                <div className="pt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.62rem] font-mono text-slate-400">
                   <span>Outbound Credits:</span>
                   <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">NukaKnights Datamines</a>
                   <span>•</span>
