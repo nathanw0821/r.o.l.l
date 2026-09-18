@@ -23,7 +23,7 @@ function readNonNegativeInt(raw: string | null, fallback: number): number {
  * Guide search. Response body: a JSON array of guides (unchanged shape). The number of matches
  * before paging is sent in the `X-Total-Count` header.
  *
- * Params: q, category, sort, update, archive=1 (existing); source=<name>, stubs=hide,
+ * Params: q, category, sort, update, archive=1 (existing); source=<name>, stubs=hide, current=1,
  * offset=<n> (default 0), limit=<n> (default 500); id=<guide id> returns that
  * one guide regardless of the other filters (used by the /wiki?id= deep link).
  *
@@ -57,6 +57,7 @@ export async function GET(req: Request) {
     includeArchive,
     source: readSource(searchParams.get("source")),
     hideStubs: searchParams.get("stubs") === "hide",
+    hidePossiblyOutdated: searchParams.get("current") === "1",
     offset: readNonNegativeInt(searchParams.get("offset"), 0),
     limit: readNonNegativeInt(searchParams.get("limit"), DEFAULT_LIMIT),
   });

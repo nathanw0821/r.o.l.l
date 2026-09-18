@@ -1,0 +1,269 @@
+[
+  {
+    "id": "overeaters-max-health",
+    "patch": 66,
+    "patchName": "The Backwoods",
+    "changed": "Overeater's now gives +40 maximum Health per armor piece and no longer reduces damage taken.",
+    "appliesTo": {
+      "textAny": [
+        "overeater['’]?s?\\**[^|]{0,140}?(?:damage reduction|reduces? (?:incoming )?damage)",
+        "(?:damage reduction|reduces? (?:incoming )?damage)[^|\\n.]{0,60}overeater"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "no[- ]longer reduces (?:incoming )?damage",
+        "\\+40 max(?:imum)? (?:health|hp)",
+        "max(?:imum)? health (?:by )?up to \\+40",
+        "prior to \\**the backwoods"
+      ]
+    },
+    "currentHref": "/all-effects?q=Overeater's",
+    "verified": "legendary-effect-model.json effects.overeaters (Patch 66, verified); FO76_PATCH70_ACCURACY_REVIEW_AND_PLAN_2026-09-17.md section 1 row 66 (Bethesda 'The Backwoods' release notes)"
+  },
+  {
+    "id": "fireproof-renamed-hardy",
+    "patch": 66,
+    "patchName": "The Backwoods",
+    "changed": "The Fireproof perk was renamed Hardy and now only reduces explosion damage (15/30/45% by rank); it no longer reduces fire damage.",
+    "appliesTo": {
+      "textAny": [
+        "explosions?\\s+(?:and|&)\\s+(?:flame|fire)\\s+(?:attack|damage)",
+        "fireproof\\**\\s*(?:\\(\\s*)?rank\\s*[1-3]\\b",
+        "fireproof\\**\\s*[1-3]\\s*(?:,|\\)|\\n|$)"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "renamed (?:to )?[“\"]?hardy",
+        "(?:was|were) named fireproof"
+      ]
+    },
+    "currentHref": "/perks?q=Hardy",
+    "verified": "defensive-perks.json perks.hardy (15/30/45, explosions only, verified); FO76 review section 1 row 66 'Fireproof -> Hardy (explosions only)' and Truth Bible audit row 'Fireproof rank 3'; PATCH70_WORKLOG.md WS-3 spec"
+  },
+  {
+    "id": "resist-mods-plus-50",
+    "patch": 66,
+    "patchName": "The Backwoods",
+    "changed": "The Fireproof, Warming, HazMat and Poisoner's armor mods now give +50 to their resistance (was +25).",
+    "appliesTo": {
+      "textAny": [
+        "(?:fireproof|warming|hazmat|poisoner['’]?s)\\**[^|]{0,60}?\\+?25 (?:fire|cryo|poison|rad(?:iation)?) resistance"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "from \\+25 to \\+50"
+      ]
+    },
+    "currentHref": "/all-effects?q=Fireproof",
+    "verified": "FO76 review section 1 row 66 'resist mods +50' (Bethesda 'The Backwoods' release notes, reviewed 2026-09-17)"
+  },
+  {
+    "id": "vanguards-bolstering-reducers",
+    "patch": 66,
+    "patchName": "The Backwoods",
+    "changed": "Vanguard's and Bolstering now reduce damage taken by a percentage, applied after armor, instead of adding up to +35 Damage and Energy Resistance.",
+    "appliesTo": {
+      "textAny": [
+        "(?:vanguard['’]?s?|bolstering)\\**[^|]{0,120}?\\+?35 (?:energy|damage)(?: (?:&|and) (?:energy|damage))? resist"
+      ]
+    },
+    "currentHref": "/all-effects?q=Vanguard's",
+    "verified": "FO76 review section 1 row 66 'Vanguard's/Bolstering up to 10% DR' and the Patch 66 order of operations in defensive-perks.json (legendaryMods.vanguards / bolstering are pct-reducers; exact cap approximate, so the note gives no number)"
+  },
+  {
+    "id": "sentinels-cavaliers-flat",
+    "patch": 66,
+    "patchName": "The Backwoods",
+    "changed": "Cavalier's is now 10% less damage while sprinting and Sentinel's 5% less while standing still; the old '75% chance to reduce damage by 15%' is gone.",
+    "appliesTo": {
+      "textAny": [
+        "75\\s?% chance to reduce (?:incoming )?damage by 15\\s?%"
+      ]
+    },
+    "currentHref": "/all-effects?q=Sentinel's",
+    "verified": "defensive-perks.json legendaryMods.cavaliers ('was 15% chance of 75% reduction before Patch 66', verified) and legendaryMods.sentinels (5%, verified); Sentinel's -5% resolved by Nathan 2026-09-18 (PATCH70_WORKLOG.md ground rules); FO76 review row 66 'Cavalier's armor -10% while sprinting'"
+  },
+  {
+    "id": "heavy-gunner-line",
+    "patch": 62,
+    "patchName": "CAMP Revamp",
+    "changed": "The Heavy Gunner, Expert and Master Heavy Gunner cards were replaced by Bullet Storm (3/6/9% damage per 30 ammo spent, 10 stacks) and its support cards.",
+    "appliesTo": {
+      "textAll": [
+        "expert heavy gunner",
+        "master heavy gunner"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "bullet ?storm",
+        "before update 62",
+        "heavy gunner rank 3",
+        "babylon_"
+      ]
+    },
+    "currentHref": "/perks?q=Bullet%20Storm",
+    "verified": "perk-reference-nukesdragons.json 'Bullet Storm' (Patch 70 snapshot, 2026-09-18); FO76 review section 1 row 62. Guides that also say 'heavy gunner rank 3' are left to the hand-written Heavy Gunner rule in outdated-articles.ts"
+  },
+  {
+    "id": "stabilized-no-armor-ignore",
+    "patch": 62,
+    "patchName": "CAMP Revamp",
+    "changed": "Stabilized now gives big guns +30% accuracy, doubled in Power Armor; it no longer ignores armor and works outside Power Armor too.",
+    "appliesTo": {
+      "textAny": [
+        "stabili[sz]ed[^|\\n.]{0,160}(?:ignores?|penetrat\\w*)[^|\\n.]{0,40}armou?r",
+        "armou?r penetration (?:effects|perks)?[^|\\n.]{0,40}stabili[sz]ed",
+        "stabili[sz]ed[^|\\n.]{0,80}only works in (?:power armou?r|pa)\\b"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "babylon_"
+      ]
+    },
+    "currentHref": "/perks?q=Stabilized",
+    "verified": "perk-reference-nukesdragons.json 'Stabilized' card text 'Big guns gain 30% accuracy. Double in Power Armor.' (Patch 70 snapshot, 2026-09-18); FO76 review section 1 row 62 ('no armor ignore any more') and Truth Bible audit row 'Stabilized 3'"
+  },
+  {
+    "id": "special-scaled-single-rank",
+    "patch": 62,
+    "patchName": "CAMP Revamp",
+    "changed": "Nerd Rage!, Lone Wanderer, Barbarian, Evasive, Serendipity, Ricochet, Lifegiver, Inspirational and similar cards are single-rank cards that scale with a S.P.E.C.I.A.L. stat; rank 2 to 5 of these cards no longer exists.",
+    "appliesTo": {
+      "textAny": [
+        "\\b(?:nerd rage!?|lone wanderer|barbarian|evasive|refractor|rad resistant|serendipity|ricochet|bodyguards|junk shield|life ?giver|bloody mess|grim reaper['’]?s sprint|psychopath|strong back|iron fist|inspirational|first aid)\\**\\s*(?:\\(\\s*)?(?:rank\\s*)?[2-5](?=\\s*(?:[,)/\\n]|$|and\\b|or\\b|\\())"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "before (?:update|patch) 62",
+        "prior to (?:update|patch) 62"
+      ]
+    },
+    "currentHref": "/perks?q=Nerd%20Rage!",
+    "verified": "perk-reference-nukesdragons.json (every listed card has one rank in the Patch 70 snapshot, 2026-09-18); defensive-perks.json ranks: 1 entries; PATCH70_WORKLOG.md ground rules ('reject any claim that Lone Wanderer/Nerd Rage/Refractor/Rad Resistant are static 3-rank perks'); FO76 review section 1 row 62"
+  },
+  {
+    "id": "mod-change-fixed-scrip",
+    "patch": 70,
+    "patchName": "The Slasher",
+    "changed": "Changing a legendary mod now costs a fixed 50 scrip (1 to 3 star) or 100 scrip (4 star); the cost no longer rises with each change.",
+    "appliesTo": {
+      "textAll": [
+        "\\bscrip\\b"
+      ],
+      "textAny": [
+        "\\bcost (?:increas\\w*|goes up|rises|escalat\\w*) (?:for )?each (?:time|mod|swap|change)",
+        "(?:swap|change|attach)\\w* a (?:legendary )?mod[^.]{0,80}\\bcost\\b[^.]{0,40}increas",
+        "capp?(?:s|ing|ed)? at 1,?000 (?:legendary )?scrip"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "no longer increases",
+        "fixed (?:value|cost|fee|price)"
+      ]
+    },
+    "currentHref": "/all-effects",
+    "verified": "crafting-economy.json modChangeScripByStar 50/50/50/100 (Patch 70 release notes); patch-deltas.json Patch 70 'Crafting economy'"
+  },
+  {
+    "id": "night-person-solar-powered",
+    "patch": 70,
+    "patchName": "The Slasher",
+    "changed": "Night Person and Solar Powered are single-rank, 2-point cards giving +5 to both stats (Night Person INT and PER at night, Solar Powered STR and END by day).",
+    "appliesTo": {
+      "textAny": [
+        "\\+[1-3]\\s*(?:to\\s+)?(?:int(?:elligence)?|str(?:ength)?)\\s*(?:and|&)\\s*\\+?[1-3]?\\s*(?:per(?:ception)?|end(?:urance)?)\\s*between (?:the hours of )?6",
+        "(?:night person|solar powered)[^|\\n]{0,40}\\|\\s*rank:?\\s*[23]\\b"
+      ]
+    },
+    "currentHref": "/perks?q=Night%20Person",
+    "verified": "perk-reference-nukesdragons.json 'Night Person' / 'Solar Powered' (1 rank, cost 2, +5; Patch 70 snapshot 2026-09-18); patch-deltas.json Patch 70 'Perks'"
+  },
+  {
+    "id": "vats-optimized-35",
+    "patch": 70,
+    "patchName": "The Slasher",
+    "changed": "V.A.T.S. Optimized (the old '25% less V.A.T.S. AP cost' roll) cuts V.A.T.S. AP cost by 35%, not 25% (checked against Patch 70 data).",
+    "appliesTo": {
+      "textAny": [
+        "25\\s?%\\s*(?:less|lower|reduced)\\s*(?:v\\.?\\s?a\\.?\\s?t\\.?\\s?s\\.?|vats)\\s*(?:action point|ap)",
+        "\\b25\\s?lvc\\b",
+        "v\\.?\\s?a\\.?\\s?t\\.?\\s?s\\.?\\s*optimi[sz]ed\\**[^|\\n]{0,80}?\\b25\\s?%"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "35\\s?%\\s*(?:less\\s*)?(?:v\\.?\\s?a\\.?\\s?t\\.?\\s?s\\.?\\s*|vats\\s*)?(?:action point|ap)",
+        "optimi[sz]ed[^|\\n]{0,60}35\\s?%"
+      ]
+    },
+    "currentHref": "/all-effects?q=V.A.T.S.%20Optimized",
+    "verified": "legendary-effect-model.json effects['vats-optimized'] value 0.65 (Patch 70 datamine reviewed by Nathan 2026-09-18); PATCH70_WORKLOG.md ground rules 'V.A.T.S. Optimized x0.65'"
+  },
+  {
+    "id": "bloodied-130",
+    "patch": 70,
+    "patchName": "The Slasher",
+    "changed": "Bloodied gives up to +130% damage (reached at 5% health), not +95% (checked against Patch 70 data).",
+    "appliesTo": {
+      "textAny": [
+        "damage increases up to \\+?95\\s?% as health decreases",
+        "bloodied\\**[^|\\n]{0,60}(?:up to|max(?:imum)?(?: of)?|capp?ed at)\\s*\\+?95\\s?%",
+        "0\\s?% < hp ≤ 5\\s?% = \\+95\\s?% damage",
+        "bloodied[\\s\\S]{0,400}?\\|\\s*5\\s?%\\s*\\|\\s*\\+95\\s?%\\s*\\|"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "(?:up to|max(?:imum)?(?: bonus damage)?)\\s*\\+?130\\s?%"
+      ]
+    },
+    "currentHref": "/all-effects?q=Bloodied",
+    "verified": "legendary-effect-model.json effects.bloodied value 1.3, cap at 5% health (Patch 70 datamine reviewed by Nathan 2026-09-18); PATCH70_WORKLOG.md ground rules 'Bloodied +130'"
+  },
+  {
+    "id": "junkies-100",
+    "patch": 70,
+    "patchName": "The Slasher",
+    "changed": "Junkie's gives +10% damage per addiction, up to +100% at 10 addictions, not a +50% cap (checked against Patch 70 data).",
+    "appliesTo": {
+      "textAny": [
+        "junkie['’]?s\\**[^|]{0,100}?(?:up to|max(?:imum)?(?: of)?|capp?ed at)\\s*\\+?50\\s?%",
+        "5 or more (?:active )?addictions:?\\s*\\+50\\s?%"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "10 addictions",
+        "junkie['’]?s\\**[^|\\n]{0,100}?\\+?100\\s?%"
+      ]
+    },
+    "currentHref": "/all-effects?q=Junkie's",
+    "verified": "legendary-effect-model.json effects.junkies 0.1 per addiction, cap 1.0 (Patch 70 datamine reviewed by Nathan 2026-09-18); PATCH70_WORKLOG.md ground rules 'Junkie's +100'"
+  },
+  {
+    "id": "two-shot-75",
+    "patch": 70,
+    "patchName": "The Slasher",
+    "changed": "Two Shot adds +75% base damage plus the extra projectile, not +25% (checked against Patch 70 data).",
+    "appliesTo": {
+      "textAny": [
+        "two[- ]shot\\**\\s*[-–:]\\s*\\+1 projectiles? \\+25\\s?% damage",
+        "two[- ]shot\\**:?\\s*\\+25\\s?% damage and adds an extra projectile"
+      ]
+    },
+    "excludeIf": {
+      "textAny": [
+        "two[- ]shot[^|\\n]{0,60}\\+75\\s?%"
+      ]
+    },
+    "currentHref": "/all-effects?q=Two%20Shot",
+    "verified": "legendary-effect-model.json effects['two-shot'] value 0.75 (Patch 70 datamine reviewed by Nathan 2026-09-18); PATCH70_WORKLOG.md ground rules 'Two Shot +75'"
+  }
+]
