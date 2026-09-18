@@ -30,7 +30,8 @@
     "discord:register": "tsx scripts/register-discord-commands.ts",
     "wiki:clean": "tsx scripts/truth/clean-wiki-corpus.ts",
     "wiki:counts": "tsx scripts/truth/build-wiki-counts.ts",
-    "links:build": "tsx scripts/truth/build-entity-links.ts"
+    "links:build": "tsx scripts/truth/build-entity-links.ts",
+    "wiki:supersede": "tsx scripts/truth/build-supersede-index.ts"
   },
   "prisma": {
     "seed": "tsx src/seed.ts"

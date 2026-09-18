@@ -4,6 +4,7 @@
  *
  * Steps 0-5 are the route's original rules, moved here unchanged. Additions:
  *  - `source` (exact source name) and `hideStubs` (drop `stub` entries);
+ *  - `hidePossiblyOutdated` (drop guides with a supersede note or a hand-written outdated flag);
  *  - the second update-keyword rule that /wiki used to apply client-side to the first 100
  *    results (title/content/category must contain the chip's term); applying it here keeps
  *    the same result set now that the page pages through the API instead;
@@ -26,6 +27,8 @@
 
 import searchSynonyms from "@/data/truth/search-synonyms.json";
 import { ENTITY_LINKS, getEntityLink } from "@/lib/links/entity-links";
+import { getArticleOutdatedStatus } from "./outdated-articles";
+import { isPossiblyOutdated } from "./supersede";
 
 interface SearchableArticle {
   id: number | string;
@@ -46,6 +49,8 @@ export interface WikiSearchOptions {
   includeArchive?: boolean;
   source?: string | null;
   hideStubs?: boolean;
+  /** `current=1`: drop guides flagged "May be out of date" (supersede-index.json) or "Outdated" (outdated-articles.ts, title rules as the list shows them). */
+  hidePossiblyOutdated?: boolean;
   offset?: number;
   limit?: number;
 }
@@ -362,6 +367,9 @@ export function searchWikiArticles<T extends SearchableArticle>(
   }
   if (options.hideStubs) {
     list = list.filter((a) => !a.stub);
+  }
+  if (options.hidePossiblyOutdated) {
+    list = list.filter((a) => !isPossiblyOutdated(a.id) && !getArticleOutdatedStatus(a));
   }
 
   // 1. Category filter

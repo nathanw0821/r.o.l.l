@@ -330,6 +330,47 @@ test.describe("guest smoke", () => {
     await expect(page.locator("[data-guide-row]").first()).toBeVisible({ timeout: 20_000 });
   });
 
+  // Guide 4116 says the Stabilized perk "only works in PA" (true before Patch 62); the rule
+  // stabilized-no-armor-ignore in src/data/truth/supersede-rules.json flags it.
+  test("guides reader: a guide with a superseded value shows 'May be out of date' with a working link", async ({ page }) => {
+    await page.goto("/wiki?id=4116");
+    const notes = page.locator("[data-supersede-notes]");
+    await expect(notes).toBeVisible({ timeout: 20_000 });
+    await expect(notes.getByRole("heading", { name: "May be out of date", level: 2 })).toBeVisible();
+    await expect(notes).toContainText("Patch 62 (CAMP Revamp):");
+    await expect(notes).toContainText("Stabilized now gives big guns +30% accuracy");
+    await notes.getByRole("link", { name: "See the current value" }).click();
+    await expect(page).toHaveURL(/\/perks\?q=Stabilized$/, { timeout: 20_000 });
+    await expect(page.locator("#main-content").getByPlaceholder("Search perk cards...")).toHaveValue("Stabilized", {
+      timeout: 20_000
+    });
+  });
+
+  test("guides list: flagged rows carry 'May be out of date' and current=1 hides them", async ({ page }) => {
+    const title = "Build how to Gauss Minigun Heavy Gunner Heavy Weapons with Power Armor";
+    const search = async () => {
+      await expect(page.getByText(/Showing [\d,]+ guides?/)).toBeVisible({ timeout: 20_000 });
+      // Two guides match; only the build guide (4117) is flagged, so one row stays with current=1.
+      await page.locator("#guides-search").fill("Gauss Minigun");
+      await expect(page).toHaveURL(/[?&]q=Gauss/, { timeout: 10_000 });
+      await expect(page.getByText("Loading guides…")).toBeHidden({ timeout: 20_000 });
+    };
+
+    await page.goto("/wiki");
+    await search();
+    const row = page.locator("[data-guide-row]", { hasText: title });
+    await expect(row).toBeVisible({ timeout: 20_000 });
+    await expect(row.locator("[data-supersede-tag]")).toHaveText("May be out of date");
+
+    await page.goto("/wiki?current=1");
+    await expect(page.getByRole("button", { name: "Remove Hiding possibly outdated" })).toBeVisible({ timeout: 20_000 });
+    await search();
+    await expect(page).toHaveURL(/[?&]current=1/);
+    await expect(page.locator("[data-guide-row]").first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator("[data-guide-row]", { hasText: title })).toHaveCount(0);
+    await expect(page.locator("[data-supersede-tag]")).toHaveCount(0);
+  });
+
   test("test server page shows the last shipped cycle", async ({ page }) => {
     await page.goto("/pts");
 

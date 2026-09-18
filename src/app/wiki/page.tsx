@@ -98,6 +98,7 @@ function searchApiUrl(state: GuideListState, sort: SortOption, offset: number, l
   });
   if (state.source) params.set("source", state.source);
   if (state.hideStubs) params.set("stubs", "hide");
+  if (state.hideOutdated) params.set("current", "1");
   return `/api/wiki/search?${params.toString()}`;
 }
 
@@ -118,6 +119,7 @@ function toHighResImageUrl(url: string | null): string {
 }
 
 import { getArticleOutdatedStatus } from "@/lib/wiki/outdated-articles";
+import { SUPERSEDE_INDEX, isPossiblyOutdated, supersedeNotesForId } from "@/lib/wiki/supersede";
 import { cleanTitle as cleanArticleTitle } from "@/lib/wiki/clean-text";
 import {
   MIN_TOC_ENTRIES,
@@ -595,6 +597,15 @@ function FilterGroups({
           />
           <span>Hide stubs ({STUB_ARTICLES.toLocaleString()})</span>
         </label>
+        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-[13px] text-[var(--text-muted)]">
+          <input
+            type="checkbox"
+            checked={state.hideOutdated}
+            onChange={(e) => set({ hideOutdated: e.target.checked })}
+            className="h-4 w-4 accent-[var(--color-accent)]"
+          />
+          <span>Hide possibly outdated</span>
+        </label>
       </section>
     </div>
   );
@@ -668,6 +679,8 @@ function GuideReader({
   const toc = React.useMemo(() => buildGuideToc(body), [body]);
   const showToc = !loadingContent && toc.entries.length >= MIN_TOC_ENTRIES;
   const outdatedStatus = getArticleOutdatedStatus(article);
+  const supersedeNotes = supersedeNotesForId(article.id);
+  const moreSupersedeNotes = (SUPERSEDE_INDEX[String(article.id)]?.length ?? 0) - supersedeNotes.length;
   const date = formatGuideDate(article.updatedAt);
   const category = categoryLabel(article.category || "General");
 
@@ -764,6 +777,45 @@ function GuideReader({
             Current version: {outdatedStatus.replacementTitle}
           </Link>
         </div>
+      ) : null}
+
+      {supersedeNotes.length > 0 ? (
+        <section
+          role="note"
+          aria-labelledby="guide-supersede-title"
+          data-supersede-notes
+          className={`${outdatedStatus ? "mt-4" : "mt-6"} max-w-[72ch] space-y-3 rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] p-4`}
+        >
+          <h2 id="guide-supersede-title" className="guides-heading guides-mono text-[15px] text-[var(--text-primary)]">
+            May be out of date
+          </h2>
+          <p className="guides-prose text-[15px] leading-[1.6] text-[var(--text-muted)]">
+            Parts of this guide describe how the game worked before a later patch. The rest of it may still be accurate.
+          </p>
+          <ul className="space-y-3">
+            {supersedeNotes.map((rule) => (
+              <li key={rule.id} data-supersede-rule={rule.id} className="space-y-1">
+                <p className="guides-prose text-[15px] leading-[1.6] text-[var(--text-primary)]">
+                  <span className="guides-mono text-[var(--text-soft)]">
+                    Patch {rule.patch} ({rule.patchName}):
+                  </span>{" "}
+                  {rule.changed}
+                </p>
+                <Link
+                  href={rule.currentHref}
+                  className="guides-mono inline-block text-[13px] text-[var(--color-accent)] underline underline-offset-4"
+                >
+                  See the current value
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {moreSupersedeNotes > 0 ? (
+            <p className="guides-prose text-[14px] text-[var(--text-soft)]">
+              {moreSupersedeNotes === 1 ? "One more change also touches this guide." : `${moreSupersedeNotes} more changes also touch this guide.`}
+            </p>
+          ) : null}
+        </section>
       ) : null}
 
       <div className="mt-8 lg:grid lg:grid-cols-[minmax(0,72ch)_15rem] lg:gap-x-12">
@@ -1513,6 +1565,11 @@ function TruthWikiContent() {
                           {outdatedInfo ? (
                             <span className="inline-flex items-center gap-1 rounded border border-[var(--color-accent)] px-1.5 text-[var(--color-accent)]">
                               <AlertTriangle aria-hidden="true" className="h-3 w-3" /> Outdated
+                            </span>
+                          ) : null}
+                          {isPossiblyOutdated(item.id) ? (
+                            <span data-supersede-tag className="rounded border border-[var(--border-strong)] px-1.5 text-[var(--text-muted)]">
+                              May be out of date
                             </span>
                           ) : null}
                           {item.archived ? (

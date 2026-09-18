@@ -9,6 +9,7 @@
  *   archive=1         include archived series posts
  *   source            one of WIKI_SOURCES
  *   stubs=hide        hide stub guides (body under 300 characters)
+ *   current=1         hide guides flagged "May be out of date" or "Outdated"
  *   page              1-based page number (default 1)
  * `id` / `article` (open one guide in the reader) are deep links handled by the page, not list state.
  */
@@ -37,6 +38,8 @@ export interface GuideListState {
   archive: boolean;
   source: WikiSource | null;
   hideStubs: boolean;
+  /** `current=1`: hide possibly outdated guides. */
+  hideOutdated: boolean;
   page: number;
 }
 
@@ -47,6 +50,7 @@ export const DEFAULT_GUIDE_LIST_STATE: GuideListState = {
   archive: false,
   source: null,
   hideStubs: false,
+  hideOutdated: false,
   page: 1,
 };
 
@@ -85,6 +89,7 @@ export function parseGuideListState(params: ParamReader | null | undefined): Gui
     archive: params.get("archive") === "1",
     source: readSource(params.get("source")),
     hideStubs: params.get("stubs") === "hide",
+    hideOutdated: params.get("current") === "1",
     page: readPage(params.get("page")),
   };
 }
@@ -98,6 +103,7 @@ export function serializeGuideListState(state: GuideListState): string {
   if (state.archive) params.set("archive", "1");
   if (state.source && SOURCE_SET.has(state.source)) params.set("source", state.source);
   if (state.hideStubs) params.set("stubs", "hide");
+  if (state.hideOutdated) params.set("current", "1");
   if (state.page > 1) params.set("page", String(state.page));
   return params.toString();
 }
@@ -127,11 +133,12 @@ export function countActiveFilters(state: GuideListState): number {
     (state.source ? 1 : 0) +
     (state.update !== "all" ? 1 : 0) +
     (state.archive ? 1 : 0) +
-    (state.hideStubs ? 1 : 0)
+    (state.hideStubs ? 1 : 0) +
+    (state.hideOutdated ? 1 : 0)
   );
 }
 
-export type GuideFilterKey = "q" | "category" | "source" | "update" | "archive" | "stubs";
+export type GuideFilterKey = "q" | "category" | "source" | "update" | "archive" | "stubs" | "current";
 
 export interface GuideFilterChip {
   key: GuideFilterKey;
@@ -152,6 +159,7 @@ export function activeFilterChips(
   if (state.update !== "all") chips.push({ key: "update", label: `Update: ${UPDATE_LABELS.get(state.update) ?? state.update}` });
   if (state.archive) chips.push({ key: "archive", label: "Including archive" });
   if (state.hideStubs) chips.push({ key: "stubs", label: "Hiding stubs" });
+  if (state.hideOutdated) chips.push({ key: "current", label: "Hiding possibly outdated" });
   return chips;
 }
 
@@ -176,6 +184,9 @@ export function removeFilter(state: GuideListState, key: GuideFilterKey): GuideL
       break;
     case "stubs":
       next.hideStubs = false;
+      break;
+    case "current":
+      next.hideOutdated = false;
       break;
   }
   return next;
