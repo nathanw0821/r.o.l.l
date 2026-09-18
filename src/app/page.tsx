@@ -27,6 +27,19 @@ async function HomeSummaryOverview() {
     console.error("[HomeSummaryOverview] Failed to load progress summary:", e);
   }
 
+  let sampleBuild: { slug: string; title: string } | null = null;
+  if (!session?.user?.id) {
+    try {
+      sampleBuild = await prisma.sharedBuild.findFirst({
+        where: { published: true },
+        orderBy: { createdAt: "desc" },
+        select: { slug: true, title: true },
+      });
+    } catch {
+      // Graceful DB fallback: no sample link
+    }
+  }
+
   let user: { username: string | null } | null = null;
   if (session?.user?.id) {
     try {
@@ -49,6 +62,14 @@ async function HomeSummaryOverview() {
               Track which legendary mods you have learned, build loadouts, and check damage against the current patch.
             </p>
           </div>
+          {!user?.username && sampleBuild && (
+            <Link
+              href={`/l/${sampleBuild.slug}`}
+              className="flex items-center gap-2 px-4 py-2 border border-accent/60 text-accent rounded-lg text-xs font-mono font-bold hover:bg-accent/10 transition shrink-0"
+            >
+              Open a sample build: {sampleBuild.title}
+            </Link>
+          )}
           {user?.username && (
             <Link 
               href={`/u/${user.username}`} 
