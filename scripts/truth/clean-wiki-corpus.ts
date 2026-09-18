@@ -256,6 +256,22 @@ function withoutImageLines(body: string): string {
 }
 
 /** The first readable prose of a cleaned body: no headings, tables, lists or rules. */
+/** A snippet that starts with scraped infobox field labels rather than prose. */
+const INFOBOX_FIELD_START = /^(?:Materials|Requirements|Produces|Build at|Learn Method|Weight|Value)\s*:/;
+
+/**
+ * The first body line that defines the subject ("The **.44 Pistol** is a non-automatic pistol
+ * in *Fallout 76*."), with Markdown emphasis removed. Empty when there is none.
+ */
+function definingSentence(body: string): string {
+  for (const line of body.split("\n")) {
+    const text = line.trim().replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1");
+    if (!text || /^[#|>\-\d]/.test(text) || INFOBOX_FIELD_START.test(text)) continue;
+    if (/\b(?:is|are|was|were)\s+(?:a|an|the)\b/.test(text) && text.length >= 30) return text;
+  }
+  return "";
+}
+
 function firstProse(body: string): string {
   const parts: string[] = [];
   for (const line of body.split("\n")) {
@@ -387,6 +403,15 @@ function main(): void {
     // heading repeat is recognised, while the title gets the cleaned snippet (without
     // the repeat removed) as evidence for which words are proper nouns.
     let snippet = cleanSnippet(article.snippet, article.title);
+    // Crafting-plan guides often open with raw infobox fields ("Materials: Requirements:
+    // Produces: ..."); use the body's defining sentence ("The .44 Pistol is a ...") instead.
+    if (INFOBOX_FIELD_START.test(snippet)) {
+      const definition = cleanSnippet(definingSentence(newBody), article.title);
+      if (definition.length >= SNIPPET_FALLBACK_LENGTH) {
+        snippet = definition;
+        snippetsFromBody += 1;
+      }
+    }
     if (snippet.length < SNIPPET_FALLBACK_LENGTH) {
       const fromBody = cleanSnippet(firstProse(newBody), article.title);
       if (fromBody.length > snippet.length) {

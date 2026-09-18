@@ -365,3 +365,20 @@ describe("sourceImages flag", () => {
     for (const a of flagged) expect(a.url).toMatch(/^https?:\/\//);
   });
 });
+
+describe("cleaner regressions found in the guides list", () => {
+  it("removes the wiki image-request notice", () => {
+    const out = cleanSnippet(
+      "Please help by uploading it.Details: No details given Western Spirit is a weapon in Fallout 76.",
+      "Western Spirit",
+    );
+    expect(out).toBe("Western Spirit is a weapon in Fallout 76.");
+  });
+
+  it("keeps the space before a calibre such as .44 or .50", () => {
+    expect(cleanSnippet("The .44 Pistol is a non-automatic pistol in Fallout 76.", "x")).toBe(
+      "The .44 Pistol is a non-automatic pistol in Fallout 76.",
+    );
+    expect(cleanBody("Chambered in .50 caliber , like the Fixer .")).toBe("Chambered in .50 caliber, like the Fixer.");
+  });
+});
