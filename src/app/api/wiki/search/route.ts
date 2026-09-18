@@ -1,95 +1,61 @@
 import { NextResponse } from "next/server";
 import { FALLBACK_WIKI_ARTICLES } from "@/lib/wiki/wiki-articles-data";
 import { cleanSnippet } from "@/lib/wiki/clean-text";
+import { searchWikiArticles } from "@/lib/wiki/search-wiki-articles";
+import { readSource } from "@/lib/wiki/guide-list-state";
 
+const DEFAULT_LIMIT = 500;
+
+function readNonNegativeInt(raw: string | null, fallback: number): number {
+  if (raw === null || !/^\d+$/.test(raw.trim())) return fallback;
+  const n = Number.parseInt(raw.trim(), 10);
+  return Number.isSafeInteger(n) ? n : fallback;
+}
+
+/**
+ * Guide search. Response body: a JSON array of guides (unchanged shape). The number of matches
+ * before paging is sent in the `X-Total-Count` header.
+ *
+ * Params: q, category, sort, update, archive=1 (existing); source=<name>, stubs=hide,
+ * offset=<n> (default 0), limit=<n> (default 500); id=<guide id> returns that
+ * one guide regardless of the other filters (used by the /wiki?id= deep link).
+ */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const q = (searchParams.get("q") || "").trim().toLowerCase();
-  const category = searchParams.get("category") || "all";
-  const sort = searchParams.get("sort") || "newest";
-  const updateFilter = searchParams.get("update") || "all";
-  const includeArchive = searchParams.get("archive") === "1";
-  const limit = parseInt(searchParams.get("limit") || "500", 10);
 
-  let list = [...FALLBACK_WIKI_ARTICLES];
+  const cacheHeaders = {
+    "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800",
+  };
 
-  // 0. Archive Filter (time-bound series posts; opt in with ?archive=1)
-  if (!includeArchive) {
-    list = list.filter((a) => !a.archived);
-  }
-
-  // 1. Category Filter
-  if (category && category.toLowerCase() !== "all") {
-    const prefix = category.toLowerCase().split(" ")[0].split("&")[0].trim();
-    list = list.filter((a) => (a.category || "").toLowerCase().includes(prefix));
-  }
-
-  // 2. Query Search Filter
-  if (q.length > 0) {
-    list = list.filter(
-      (a) =>
-        a.title.toLowerCase().includes(q) ||
-        a.content.toLowerCase().includes(q) ||
-        a.snippet.toLowerCase().includes(q)
-    );
-  }
-
-  // 3. Patch / Update Keyword Filter
-  if (updateFilter && updateFilter.toLowerCase() !== "all") {
-    let kw = updateFilter.toLowerCase().replace(/-/g, " ");
-    if (kw.includes("pitt")) kw = "pitt";
-    if (kw.includes("atlantic")) kw = "atlantic";
-    if (kw.includes("skyline")) kw = "skyline";
-    if (kw.includes("milepost")) kw = "milepost";
-    if (kw.includes("backwood")) kw = "backwood";
-    if (kw.includes("burning")) kw = "burning";
-    if (kw.includes("nuka")) kw = "nuka";
-    if (kw.includes("invader")) kw = "invader";
-    if (kw.includes("slasher")) kw = "slasher";
-
-    list = list.filter(
-      (a) =>
-        a.title.toLowerCase().includes(kw) ||
-        a.snippet.toLowerCase().includes(kw) ||
-        (a.category || "").toLowerCase().includes(kw)
-    );
-  }
-
-  // 4. Sorting & Relevance Ranking
-  if (q.length > 0 && (!sort || sort === "newest" || sort === "relevance")) {
-    list.sort((a, b) => {
-      const aTitle = a.title.toLowerCase();
-      const bTitle = b.title.toLowerCase();
-      const aScore = aTitle === q ? 100 : aTitle.startsWith(q) ? 50 : aTitle.includes(q) ? 20 : 5;
-      const bScore = bTitle === q ? 100 : bTitle.startsWith(q) ? 50 : bTitle.includes(q) ? 20 : 5;
-      if (aScore !== bScore) return bScore - aScore;
-      return String(b.id).localeCompare(String(a.id));
+  const id = searchParams.get("id");
+  if (id !== null && id.trim()) {
+    const match = FALLBACK_WIKI_ARTICLES.find((a) => String(a.id) === id.trim());
+    const payload = match ? [{ ...match, snippet: cleanSnippet(match.snippet, match.title) }] : [];
+    return NextResponse.json(payload, {
+      headers: { ...cacheHeaders, "X-Total-Count": String(payload.length) },
     });
-  } else if (sort === "oldest") {
-    list.sort((a, b) => String(a.id).localeCompare(String(b.id)));
-  } else if (sort === "title-asc") {
-    list.sort((a, b) => a.title.localeCompare(b.title));
-  } else if (sort === "title-desc") {
-    list.sort((a, b) => b.title.localeCompare(a.title));
-  } else {
-    // "newest" or default
-    list.sort((a, b) => String(b.id).localeCompare(String(a.id)));
   }
 
-  // 5. Stubs (cleaned body under 300 characters) always rank last.
-  list = [...list.filter((a) => !a.stub), ...list.filter((a) => a.stub)];
+  const { total, items } = searchWikiArticles(FALLBACK_WIKI_ARTICLES, {
+    q: searchParams.get("q") || "",
+    category: searchParams.get("category") || "all",
+    sort: searchParams.get("sort") || "newest",
+    update: searchParams.get("update") || "all",
+    includeArchive: searchParams.get("archive") === "1",
+    source: readSource(searchParams.get("source")),
+    hideStubs: searchParams.get("stubs") === "hide",
+    offset: readNonNegativeInt(searchParams.get("offset"), 0),
+    limit: readNonNegativeInt(searchParams.get("limit"), DEFAULT_LIMIT),
+  });
 
-  // 6. Render-time safety net: the corpus is cleaned by
-  //    scripts/truth/clean-wiki-corpus.ts, but a future dirty import must not be able
-  //    to leak scraped markup into a card.
-  const payload = list.slice(0, limit).map((a) => ({
+  // Render-time safety net: the corpus is cleaned by scripts/truth/clean-wiki-corpus.ts, but a
+  // future dirty import must not be able to leak scraped markup into a result row.
+  const payload = items.map((a) => ({
     ...a,
     snippet: cleanSnippet(a.snippet, a.title),
   }));
 
   return NextResponse.json(payload, {
-    headers: {
-      "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800"
-    }
+    headers: { ...cacheHeaders, "X-Total-Count": String(total) },
   });
 }

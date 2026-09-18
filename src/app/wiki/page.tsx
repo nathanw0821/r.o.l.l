@@ -1,23 +1,37 @@
 "use client";
 
 import * as React from "react";
-import { Search, BookOpen, ExternalLink, Shield, ChevronRight, ArrowUpDown, Filter, Terminal, FileText, ArrowLeft, Layers, Compass, Crosshair, Coins, Activity, Wrench, AlertTriangle } from "lucide-react";
+import { Search, ExternalLink, Shield, ArrowUpDown, Terminal, ArrowLeft, AlertTriangle, X, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { createLinkPlanState, linkifyToNodes } from "@/components/linkified-text";
 
 import wikiCategoryCounts from "@/lib/wiki/wiki-category-counts.json";
-import { UPDATE_PATCHES, UPDATE_PATCH_IDS } from "@/lib/wiki/update-patches";
+import { UPDATE_PATCHES } from "@/lib/wiki/update-patches";
+import {
+  GUIDES_PER_PAGE,
+  WIKI_SOURCES,
+  activeFilterChips,
+  clearAllFilters,
+  countActiveFilters,
+  firstSentence,
+  pageCount,
+  pageOffset,
+  parseGuideListState,
+  removeFilter,
+  serializeGuideListState,
+  type GuideFilterKey,
+  type GuideListState,
+  type WikiSource,
+} from "@/lib/wiki/guide-list-state";
 
-const TOTAL_ARTICLES = (wikiCategoryCounts as Record<string, number>).all ?? 0;
-const ARCHIVED_ARTICLES = (wikiCategoryCounts as Record<string, number>).archived ?? 0;
-function countFor(category: string): string {
-  const n = (wikiCategoryCounts as Record<string, number>)[category] ?? 0;
-  return `${n.toLocaleString()} ${category === "all" ? "Entries" : "Guides"}`;
-}
+const COUNTS = wikiCategoryCounts as Record<string, number>;
+const TOTAL_ARTICLES = COUNTS.all ?? 0;
+const ARCHIVED_ARTICLES = COUNTS.archived ?? 0;
+const STUB_ARTICLES = COUNTS.stub ?? 0;
 
 interface ArticleItem {
-  id: number;
+  id: number | string;
   source: string;
   title: string;
   url: string;
@@ -32,31 +46,44 @@ interface ArticleItem {
   sourceImages?: boolean;
 }
 
-const CATEGORY_CARDS = [
-  { id: "all", label: "All Vault Records", count: countFor("all"), iconName: "book", desc: "Complete Fallout 76 Vault-Tec database.", color: "from-amber-500/20 to-amber-600/5 border-amber-500/40" },
-  { id: "Weapons & Mods", label: "Weapons & Legendary Mods", count: countFor("Weapons & Mods"), iconName: "crosshair", desc: "Drop odds, crafting costs & mod matrices.", color: "from-red-500/20 to-red-600/5 border-red-500/40" },
-  { id: "Armor & Power Armor", label: "Armor & Power Armor", count: countFor("Armor & Power Armor"), iconName: "shield", desc: "Resist values, set bonuses & PA schematics.", color: "from-blue-500/20 to-blue-600/5 border-blue-500/40" },
-  { id: "Perks & Mutations", label: "Perks & Mutations", count: countFor("Perks & Mutations"), iconName: "layers", desc: "S.P.E.C.I.A.L. card ranks & serum effects.", color: "from-purple-500/20 to-purple-600/5 border-purple-500/40" },
-  { id: "Vendors & Minerva", label: "Vendors & Minerva Sales", count: countFor("Vendors & Minerva"), iconName: "coins", desc: "Minerva inventory schedules & Gold Bullion.", color: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/40" },
-  { id: "Events & Expeditions", label: "Events & Expeditions", count: countFor("Events & Expeditions"), iconName: "compass", desc: "Public event drop rates, The Pitt & Atlantic City Expeditions.", color: "from-cyan-500/20 to-cyan-600/5 border-cyan-500/40" },
-  { id: "Build Mechanics & Damage", label: "Build Mechanics & Damage", count: countFor("Build Mechanics & Damage"), iconName: "activity", desc: "Crit formulas, sneak multipliers & AP regen.", color: "from-amber-400/20 to-yellow-600/5 border-amber-400/40" },
-  { id: "Crafting & Resources", label: "Crafting & Materials", count: countFor("Crafting & Resources"), iconName: "wrench", desc: "Flux locations, junk farming & camp plans.", color: "from-teal-500/20 to-teal-600/5 border-teal-500/40" },
-  { id: "Patch notes & news", label: "Patch notes & news", count: countFor("Patch notes & news"), iconName: "filetext", desc: "Update notes, hotfixes, test server datamines.", color: "from-slate-400/20 to-slate-500/5 border-slate-400/40" },
-  { id: "Atomic Shop archive", label: "Atomic Shop archive", count: countFor("Atomic Shop archive"), iconName: "coins", desc: "Weekly Atomic Shop offers and bundle rundowns.", color: "from-fuchsia-500/20 to-fuchsia-600/5 border-fuchsia-500/40" },
+type SortOption = "newest" | "oldest" | "title-asc" | "title-desc";
+
+/** Category ids are the `?category=` values and the counts keys; do not rename them. */
+const CATEGORY_LIST: ReadonlyArray<{ id: string; label: string; desc: string }> = [
+  { id: "all", label: "All guides", desc: "Every guide in the library." },
+  { id: "Weapons & Mods", label: "Weapons & legendary mods", desc: "Drop odds, crafting costs and mod tables." },
+  { id: "Armor & Power Armor", label: "Armor & power armor", desc: "Resistances, set bonuses and power armor plans." },
+  { id: "Perks & Mutations", label: "Perks & mutations", desc: "S.P.E.C.I.A.L. card ranks and serum effects." },
+  { id: "Vendors & Minerva", label: "Vendors & Minerva", desc: "Minerva schedules and Gold Bullion." },
+  { id: "Events & Expeditions", label: "Events & expeditions", desc: "Public event rewards, The Pitt and Atlantic City expeditions." },
+  { id: "Build Mechanics & Damage", label: "Build mechanics & damage", desc: "Crit formulas, sneak multipliers and AP regen." },
+  { id: "Crafting & Resources", label: "Crafting & materials", desc: "Flux locations, junk farming and camp plans." },
+  { id: "Patch notes & news", label: "Patch notes & news", desc: "Update notes, hotfixes and test server datamines." },
+  { id: "Atomic Shop archive", label: "Atomic Shop archive", desc: "Weekly Atomic Shop offers and bundle rundowns." },
 ];
 
-const CATEGORY_IDS: ReadonlySet<string> = new Set(CATEGORY_CARDS.map((card) => card.id));
+const CATEGORY_LABELS = new Map(CATEGORY_LIST.map((c) => [c.id, c.label]));
+const categoryLabel = (id: string) => CATEGORY_LABELS.get(id) ?? id;
 
-/** `?category=` value if it names a category card, else null (unknown values are ignored). */
-function readCategoryParam(raw: string | null | undefined): string | null {
-  const value = raw?.trim();
-  return value && CATEGORY_IDS.has(value) ? value : null;
+/** Committed counts; "all" follows the archive toggle so it matches what the list shows. */
+function categoryCount(id: string, includeArchive: boolean): number {
+  if (id === "all") return includeArchive ? TOTAL_ARTICLES : TOTAL_ARTICLES - ARCHIVED_ARTICLES;
+  return COUNTS[id] ?? 0;
 }
 
-/** `?update=` value if it names an update chip, else null (unknown values are ignored). */
-function readUpdateParam(raw: string | null | undefined): string | null {
-  const value = raw?.trim().toLowerCase();
-  return value && UPDATE_PATCH_IDS.has(value) ? value : null;
+function searchApiUrl(state: GuideListState, sort: SortOption, offset: number, limit: number): string {
+  const params = new URLSearchParams({
+    q: state.q,
+    category: state.category,
+    sort,
+    update: state.update,
+    archive: state.archive ? "1" : "0",
+    offset: String(offset),
+    limit: String(limit),
+  });
+  if (state.source) params.set("source", state.source);
+  if (state.hideStubs) params.set("stubs", "hide");
+  return `/api/wiki/search?${params.toString()}`;
 }
 
 function toHighResImageUrl(url: string | null): string {
@@ -425,22 +452,153 @@ function getEquipmentKeyFromTitle(title: string, content: string): string {
   return cleanTitle(title);
 }
 
+
+const PILL =
+  "guides-pill guides-mono inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]";
+const RAIL_OPTION =
+  "guides-pill guides-mono flex w-full items-center justify-between gap-2 rounded-md border border-transparent px-2 py-1.5 text-left text-[13px] text-[var(--text-muted)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)]";
+const GROUP_HEADING = "guides-heading guides-mono mb-1.5 text-[13px] text-[var(--text-soft)]";
+
+function CategoryList({
+  state,
+  onSelect,
+  layout,
+}: {
+  state: GuideListState;
+  onSelect: (id: string) => void;
+  layout: "row" | "column";
+}) {
+  return (
+    <ul className={layout === "row" ? "flex flex-wrap gap-2" : "space-y-0.5"}>
+      {CATEGORY_LIST.map((cat) => {
+        const current = state.category === cat.id;
+        return (
+          <li key={cat.id}>
+            <button
+              type="button"
+              title={cat.desc}
+              aria-pressed={current}
+              onClick={() => onSelect(cat.id)}
+              className={layout === "row" ? PILL : RAIL_OPTION}
+            >
+              <span>{cat.label}</span>
+              <span className="text-[var(--text-soft)]">{categoryCount(cat.id, state.archive).toLocaleString()}</span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+/** Source, update and option filters: the desktop rail and the phone disclosure render the same groups. */
+function FilterGroups({
+  state,
+  onChange,
+  idPrefix,
+  includeCategory,
+}: {
+  state: GuideListState;
+  onChange: (next: GuideListState) => void;
+  idPrefix: string;
+  includeCategory: boolean;
+}) {
+  const set = (patch: Partial<GuideListState>) => onChange({ ...state, ...patch, page: 1 });
+  return (
+    <div className="space-y-5">
+      {includeCategory ? (
+        <section aria-labelledby={`${idPrefix}-category`}>
+          <h2 id={`${idPrefix}-category`} className={GROUP_HEADING}>Category</h2>
+          <CategoryList state={state} onSelect={(id) => set({ category: id })} layout="column" />
+        </section>
+      ) : null}
+
+      <section aria-labelledby={`${idPrefix}-source`}>
+        <h2 id={`${idPrefix}-source`} className={GROUP_HEADING}>Source</h2>
+        <ul className="space-y-0.5">
+          {[null, ...WIKI_SOURCES].map((source) => (
+            <li key={source ?? "all"}>
+              <button
+                type="button"
+                aria-pressed={state.source === source}
+                onClick={() => set({ source: source as WikiSource | null })}
+                className={RAIL_OPTION}
+              >
+                {source ?? "All sources"}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby={`${idPrefix}-update`}>
+        <h2 id={`${idPrefix}-update`} className={GROUP_HEADING}>Update</h2>
+        <ul className="space-y-0.5">
+          {UPDATE_PATCHES.map((patch) => (
+            <li key={patch.id}>
+              <button
+                type="button"
+                aria-pressed={state.update === patch.id}
+                onClick={() => set({ update: patch.id })}
+                className={RAIL_OPTION}
+              >
+                {patch.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby={`${idPrefix}-options`} className="space-y-2">
+        <h2 id={`${idPrefix}-options`} className={GROUP_HEADING}>Options</h2>
+        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-[13px] text-[var(--text-muted)]">
+          <input
+            type="checkbox"
+            checked={state.archive}
+            onChange={(e) => set({ archive: e.target.checked })}
+            className="h-4 w-4 accent-[var(--color-accent)]"
+          />
+          <span>Include archive ({ARCHIVED_ARTICLES.toLocaleString()})</span>
+        </label>
+        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-[13px] text-[var(--text-muted)]">
+          <input
+            type="checkbox"
+            checked={state.hideStubs}
+            onChange={(e) => set({ hideStubs: e.target.checked })}
+            className="h-4 w-4 accent-[var(--color-accent)]"
+          />
+          <span>Hide stubs ({STUB_ARTICLES.toLocaleString()})</span>
+        </label>
+      </section>
+    </div>
+  );
+}
+
 function TruthWikiContent() {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const initialQ = searchParams?.get("q") || searchParams?.get("query") || "";
-  const initialArticleId = searchParams?.get("id") || searchParams?.get("article") || "";
+  const pathname = usePathname() || "/wiki";
+  const listState = React.useMemo(() => parseGuideListState(searchParams), [searchParams]);
+  const listKey = serializeGuideListState(listState);
 
-  const [query, setQuery] = React.useState(initialQ);
-  const [category, setCategory] = React.useState(() => readCategoryParam(searchParams?.get("category")) ?? "all");
-  const [sortBy, setSortBy] = React.useState<"newest" | "oldest" | "title-asc" | "title-desc">("newest");
-  const [updateFilter, setUpdateFilter] = React.useState(() => readUpdateParam(searchParams?.get("update")) ?? "all");
-  const [includeArchive, setIncludeArchive] = React.useState(() => searchParams?.get("archive") === "1");
+  const [queryInput, setQueryInput] = React.useState(listState.q);
+  const [sortBy, setSortBy] = React.useState<SortOption>("newest");
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
+  const [total, setTotal] = React.useState<number | null>(null);
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [loadingContent, setLoadingContent] = React.useState(false);
-  const hasAutoOpenedRef = React.useRef(false);
+
+  const searchInputRef = React.useRef<HTMLInputElement>(null);
+  const resultsRef = React.useRef<HTMLOListElement>(null);
+  const resultsTopRef = React.useRef<HTMLDivElement>(null);
+  /** Query string this page last wrote itself; any other URL change is navigation (link, back/forward). */
+  const selfWrittenRef = React.useRef<string | null>(null);
+  /** Deep-link values (?q=, ?id=) seen on the previous URL, to auto-open the reader only when they change. */
+  const prevDeepLinkRef = React.useRef<{ q: string; id: string } | null>(null);
+  const sortRef = React.useRef(sortBy);
+  React.useEffect(() => {
+    sortRef.current = sortBy;
+  }, [sortBy]);
 
   React.useEffect(() => {
     if (!selectedArticle) return;
@@ -467,105 +625,154 @@ function TruthWikiContent() {
     };
   }, [selectedArticle?.id, selectedArticle?.content]);
 
-  React.useEffect(() => {
-    const q = searchParams?.get("q") || searchParams?.get("query");
-    if (q !== null && q !== undefined) {
-      setQuery((prev) => {
-        if (prev !== q) {
-          hasAutoOpenedRef.current = false;
-          return q;
-        }
-        return prev;
-      });
-    }
-  }, [searchParams]);
+  /** Write list state to the URL. Filters and paging push a history entry; typing replaces it. */
+  const writeState = React.useCallback(
+    (next: GuideListState, mode: "push" | "replace" = "push") => {
+      const qs = serializeGuideListState(next);
+      if (qs === window.location.search.replace(/^\?/, "")) return;
+      selfWrittenRef.current = qs;
+      const url = qs ? `${pathname}?${qs}` : pathname;
+      if (mode === "push") window.history.pushState(null, "", url);
+      else window.history.replaceState(null, "", url);
+    },
+    [pathname],
+  );
 
-  // Deep links: ?category=, ?update= and ?archive=1 (read on load and on client navigation).
-  // Only params that are present and valid are applied, so chips the user clicked stay put.
-  React.useEffect(() => {
-    const cat = readCategoryParam(searchParams?.get("category"));
-    if (cat) setCategory(cat);
-    const upd = readUpdateParam(searchParams?.get("update"));
-    if (upd) setUpdateFilter(upd);
-    if (searchParams?.get("archive") === "1") setIncludeArchive(true);
-  }, [searchParams]);
-
-  const searchArticles = React.useCallback(async (q: string, cat: string, sort: string, upd: string, archive: boolean) => {
-    setLoading(true);
+  // Deep links that open the reader: ?id= (alias ?article=) opens that guide; ?q= (alias ?query=)
+  // opens the best title match, as before. Runs on load and on navigation (a /wiki?q= link, back or
+  // forward) when the value changed; never for URL updates this page makes while you type or page.
+  const openDeepLink = React.useCallback(async (id: string, state: GuideListState) => {
     try {
-      const res = await fetch(`/api/wiki/search?q=${encodeURIComponent(q)}&category=${encodeURIComponent(cat)}&sort=${encodeURIComponent(sort)}&update=${encodeURIComponent(upd)}&archive=${archive ? "1" : "0"}&limit=100`);
-      const data = await res.json();
-      let list: ArticleItem[] = Array.isArray(data) ? data : [];
-
-      if (upd && upd !== "all") {
-        const targetKw = upd.toLowerCase().replace(/-/g, " ");
-        const matchTerm = targetKw.includes("burning")
-          ? "burning"
-          : targetKw.includes("backwood")
-          ? "backwood"
-          : targetKw.includes("milepost")
-          ? "milepost"
-          : targetKw.includes("atlantic")
-          ? "atlantic"
-          : targetKw.includes("skyline")
-          ? "skyline"
-          : targetKw;
-
-        list = list.filter((item) => {
-          const t = item.title.toLowerCase();
-          const c = item.content.toLowerCase();
-          const catName = (item.category || "").toLowerCase();
-          return t.includes(matchTerm) || c.includes(matchTerm) || catName.includes(matchTerm);
-        });
+      if (id) {
+        const res = await fetch(`/api/wiki/search?id=${encodeURIComponent(id)}`);
+        const data = await res.json();
+        if (Array.isArray(data) && data[0]) {
+          setSelectedArticle(data[0] as ArticleItem);
+          return;
+        }
       }
-
-      if (sort === "oldest") {
-        list = [...list].sort((a, b) => a.id - b.id);
-      } else if (sort === "title-asc") {
-        list = [...list].sort((a, b) => cleanTitle(a.title).localeCompare(cleanTitle(b.title)));
-      } else if (sort === "title-desc") {
-        list = [...list].sort((a, b) => cleanTitle(b.title).localeCompare(cleanTitle(a.title)));
-      } else if (sort === "newest") {
-        list = [...list].sort((a, b) => b.id - a.id);
-      }
-
-      setArticles(list);
-
-      // Auto-open reader if navigating directly via specific search or article ID
-      if ((initialArticleId || q) && list.length > 0 && !hasAutoOpenedRef.current) {
-        let bestMatch: ArticleItem | undefined;
-        if (initialArticleId) {
-          bestMatch = list.find((a) => String(a.id) === String(initialArticleId));
-        }
-        if (!bestMatch && q.trim().length > 1) {
-          const cleanQ = q.toLowerCase().trim();
-          bestMatch = list.find((a) => a.title.toLowerCase() === cleanQ) ||
-                      list.find((a) => a.title.toLowerCase().startsWith(cleanQ)) ||
-                      list.find((a) => a.title.toLowerCase().includes(cleanQ)) ||
-                      list[0];
-        }
-        if (bestMatch) {
-          setSelectedArticle(bestMatch);
-          hasAutoOpenedRef.current = true;
-        }
+      const q = state.q;
+      if (q.trim().length > 1) {
+        const res = await fetch(searchApiUrl(state, sortRef.current, 0, 100));
+        const data = await res.json();
+        const list: ArticleItem[] = Array.isArray(data) ? data : [];
+        const cleanQ = q.toLowerCase().trim();
+        const bestMatch =
+          list.find((a) => a.title.toLowerCase() === cleanQ) ||
+          list.find((a) => a.title.toLowerCase().startsWith(cleanQ)) ||
+          list.find((a) => a.title.toLowerCase().includes(cleanQ)) ||
+          list[0];
+        if (bestMatch) setSelectedArticle(bestMatch);
       }
     } catch (err) {
-      console.error("Failed to fetch category articles:", err);
-      setArticles([]);
-    } finally {
-      setLoading(false);
+      console.error("Failed to open linked guide:", err);
     }
-  }, [initialArticleId]);
+  }, []);
 
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      searchArticles(query, category, sortBy, updateFilter, includeArchive);
-    }, 150);
+    const qs = searchParams?.toString() ?? "";
+    const external = selfWrittenRef.current === null || qs !== selfWrittenRef.current;
+    selfWrittenRef.current = null;
+    const id = searchParams?.get("id") || searchParams?.get("article") || "";
+    const prev = prevDeepLinkRef.current;
+    prevDeepLinkRef.current = { q: listState.q, id };
+    if (!external) return;
+    setQueryInput(listState.q);
+    const idChanged = Boolean(id) && (!prev || prev.id !== id);
+    const qChanged = listState.q.trim().length > 1 && (!prev || prev.q !== listState.q);
+    if (idChanged || qChanged) void openDeepLink(idChanged ? id : "", listState);
+  }, [searchParams, listState, openDeepLink]);
+
+  // Typing updates ?q= after a short pause and returns to page 1.
+  React.useEffect(() => {
+    if (queryInput === listState.q) return;
+    const timer = setTimeout(() => writeState({ ...listState, q: queryInput, page: 1 }, "replace"), 250);
     return () => clearTimeout(timer);
-  }, [query, category, sortBy, updateFilter, includeArchive, searchArticles]);
+  }, [queryInput, listState, writeState]);
+
+  // Fetch the current page whenever the URL state or the sort changes.
+  React.useEffect(() => {
+    const state = parseGuideListState(new URLSearchParams(listKey));
+    const controller = new AbortController();
+    setLoading(true);
+    fetch(searchApiUrl(state, sortBy, pageOffset(state.page), GUIDES_PER_PAGE), { signal: controller.signal })
+      .then(async (res) => {
+        const data = await res.json();
+        const list: ArticleItem[] = Array.isArray(data) ? data : [];
+        const header = Number(res.headers.get("X-Total-Count"));
+        setArticles(list);
+        setTotal(Number.isFinite(header) && res.headers.has("X-Total-Count") ? header : list.length);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return;
+        console.error("Failed to fetch guides:", err);
+        setArticles([]);
+        setTotal(0);
+        setLoading(false);
+      });
+    return () => controller.abort();
+  }, [listKey, sortBy]);
+
+  const pages = pageCount(total ?? 0);
+
+  // A page past the end (e.g. an old link) goes to the last page.
+  React.useEffect(() => {
+    if (loading || total === null || total === 0) return;
+    if (listState.page > pages) writeState({ ...listState, page: pages }, "replace");
+  }, [loading, total, pages, listState, writeState]);
+
+  // Keyboard: "/" focuses search; j/k move between result rows; Enter opens the focused row (native link).
+  React.useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (selectedArticle) return;
+      const target = e.target as HTMLElement | null;
+      if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) return;
+      if (e.key === "/") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        return;
+      }
+      if (e.key !== "j" && e.key !== "k") return;
+      const rows = Array.from(resultsRef.current?.querySelectorAll<HTMLElement>("[data-guide-row]") ?? []);
+      if (rows.length === 0) return;
+      const current = rows.indexOf(document.activeElement as HTMLElement);
+      const next =
+        current < 0 ? 0 : e.key === "j" ? Math.min(rows.length - 1, current + 1) : Math.max(0, current - 1);
+      e.preventDefault();
+      rows[next].focus();
+      rows[next].scrollIntoView({ block: "nearest" });
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [selectedArticle]);
+
+  const applyFilters = (next: GuideListState) => writeState(next, "push");
+  const goToPage = (page: number) => {
+    writeState({ ...listState, page }, "push");
+    resultsTopRef.current?.scrollIntoView({ block: "start" });
+  };
+  const clearAll = () => {
+    setQueryInput("");
+    writeState(clearAllFilters(), "push");
+  };
+  const removeChip = (key: GuideFilterKey) => {
+    if (key === "q") setQueryInput("");
+    writeState(removeFilter(listState, key), "push");
+  };
+
+  const chips = activeFilterChips(listState, categoryLabel);
+  const filterCount = countActiveFilters(listState);
+  const pageHref = (page: number) => {
+    const qs = serializeGuideListState({ ...listState, page });
+    return qs ? `${pathname}?${qs}` : pathname;
+  };
+  const firstShown = total ? pageOffset(listState.page) + 1 : 0;
+  const lastShown = total ? Math.min(total, pageOffset(listState.page) + articles.length) : 0;
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-3 py-3 text-slate-100 font-sans">
+    <div className="guides-page mx-auto max-w-7xl space-y-6 py-3 text-[var(--text-primary)]">
       {/* ARTICLE READER MODAL (When an article is clicked) */}
       {selectedArticle && (
         <div className="fixed inset-0 z-50 bg-slate-950/90 flex justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn">
@@ -709,229 +916,233 @@ function TruthWikiContent() {
         </div>
       )}
 
-      {/* HERO CODEX BANNER */}
-      <div className="rounded-2xl bg-gradient-to-r from-[#0f172a] via-[#111e38] to-[#0f172a] p-8 border-2 border-slate-700 shadow-2xl space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">
-              <Terminal className="h-4 w-4 text-amber-400" />
-              <span>Guide library</span> · <span>{TOTAL_ARTICLES.toLocaleString()} guides</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-amber-400 uppercase">
-              Fallout 76 guides
-            </h1>
-            <p className="text-sm text-slate-300 font-sans leading-relaxed">
-              Patch notes, drop odds, Minerva schedules, event checklists and damage math, searchable in one place. Older guides are flagged when a patch has changed them.
-            </p>
+      {/* SEARCH-FIRST HEADER */}
+      <header className="space-y-4">
+        <div className="space-y-1.5">
+          <h1 className="guides-display guides-heading text-[32px] leading-none text-[var(--color-accent)]">Fallout 76 guides</h1>
+          <p className="guides-prose max-w-[75ch] text-[15px] leading-relaxed text-[var(--text-muted)]">
+            {TOTAL_ARTICLES.toLocaleString()} guides: patch notes, drop odds, Minerva schedules, event checklists and damage math, searchable in one place. Older guides are flagged when a patch has changed them.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div role="search" className="relative min-w-0 flex-1">
+            <label htmlFor="guides-search" className="sr-only">
+              Search guides
+            </label>
+            <Search aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-accent)]" />
+            <input
+              ref={searchInputRef}
+              id="guides-search"
+              type="search"
+              value={queryInput}
+              onChange={(e) => setQueryInput(e.target.value)}
+              placeholder={`Search ${TOTAL_ARTICLES.toLocaleString()} guides by title, item or quest`}
+              aria-keyshortcuts="/"
+              autoComplete="off"
+              className="guides-search guides-mono w-full rounded-lg border-2 border-[var(--border-strong)] bg-[var(--background-primary)] py-3.5 pl-12 pr-12 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)]"
+            />
+            <kbd
+              aria-hidden="true"
+              className="guides-mono pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-[var(--border-strong)] px-1.5 text-[13px] text-[var(--text-soft)] sm:block"
+            >
+              /
+            </kbd>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-[#060a10] px-4 py-2.5 rounded-xl border border-slate-700 font-mono text-xs text-amber-400 shadow-inner">
-              <ArrowUpDown className="h-4 w-4 text-amber-400" />
-              <span className="text-slate-400 text-[11px]">SORT:</span>
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 lg:justify-end">
+            <p aria-live="polite" aria-atomic="true" className="guides-mono text-[15px] text-[var(--text-muted)]">
+              {total === null ? null : (
+                <>
+                  Showing <span className="text-[var(--text-primary)]">{total.toLocaleString()}</span> {total === 1 ? "guide" : "guides"}
+                </>
+              )}
+            </p>
+            <label className="guides-mono flex items-center gap-2 text-[13px] text-[var(--text-soft)]">
+              <ArrowUpDown aria-hidden="true" className="h-4 w-4" />
+              <span>Sort</span>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "newest" | "oldest" | "title-asc" | "title-desc")}
-                className="bg-transparent font-bold focus:outline-none cursor-pointer text-amber-400"
+                onChange={(e) => {
+                  setSortBy(e.target.value as SortOption);
+                  if (listState.page > 1) writeState({ ...listState, page: 1 }, "push");
+                }}
+                className="cursor-pointer rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-[13px] text-[var(--text-primary)]"
               >
-                <option value="newest" className="bg-[#0b121e] text-slate-200">🕒 Newest Record</option>
-                <option value="oldest" className="bg-[#0b121e] text-slate-200">📜 Oldest Record</option>
-                <option value="title-asc" className="bg-[#0b121e] text-slate-200">🔤 Title (A-Z)</option>
-                <option value="title-desc" className="bg-[#0b121e] text-slate-200">🔲 Title (Z-A)</option>
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="title-asc">Title A to Z</option>
+                <option value="title-desc">Title Z to A</option>
               </select>
-            </div>
-
-            <label className="flex items-center gap-2 bg-[#060a10] px-4 py-2.5 rounded-xl border border-slate-700 font-mono text-xs text-slate-300 shadow-inner cursor-pointer">
-              <input
-                type="checkbox"
-                checked={includeArchive}
-                onChange={(e) => setIncludeArchive(e.target.checked)}
-                className="h-3.5 w-3.5 accent-amber-400"
-              />
-              <span>Include archive ({ARCHIVED_ARTICLES.toLocaleString()})</span>
             </label>
           </div>
         </div>
 
-        {/* HERO SEARCH INPUT */}
-        <div className="relative">
-          <Search className="absolute left-5 top-4 h-5 w-5 text-amber-400" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Search ${TOTAL_ARTICLES.toLocaleString()} Vault guides by title, item name, or quest objective...`}
-            className="w-full pl-14 pr-4 py-4 bg-[#060a10] border-2 border-slate-700 rounded-xl text-slate-100 placeholder:text-slate-500 font-mono text-sm md:text-base focus:outline-none focus:border-amber-400 shadow-inner transition-colors"
-          />
-        </div>
-      </div>
+        <nav aria-label="Categories" className="hidden lg:block">
+          <CategoryList state={listState} onSelect={(id) => applyFilters({ ...listState, category: id, page: 1 })} layout="row" />
+        </nav>
+      </header>
 
-      {/* VISUAL KNOWLEDGE CATEGORY CARDS GRID */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-          <span className="font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-            <Compass className="h-4 w-4" /> BROWSE BY KNOWLEDGE CATEGORY
-          </span>
-          <span>Click any category card to filter</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {CATEGORY_CARDS.map((card) => {
-            const isSelected = category === card.id;
-            return (
-              <button
-                key={card.id}
-                type="button"
-                onClick={() => {
-                  setCategory(card.id);
-                  setQuery("");
-                }}
-                className={`text-left p-5 rounded-xl border transition-all flex flex-col justify-between gap-5 group select-none ${
-                  isSelected
-                    ? "bg-amber-500/10 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/50"
-                    : "bg-[#0b121f] border-slate-800/90 hover:border-slate-600 hover:bg-[#10192c]"
-                }`}
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center">
-                      {card.iconName === "book" && <BookOpen className="h-5 w-5 text-amber-400" />}
-                      {card.iconName === "crosshair" && <Crosshair className="h-5 w-5 text-red-400" />}
-                      {card.iconName === "shield" && <Shield className="h-5 w-5 text-blue-400" />}
-                      {card.iconName === "layers" && <Layers className="h-5 w-5 text-purple-400" />}
-                      {card.iconName === "coins" && <Coins className="h-5 w-5 text-emerald-400" />}
-                      {card.iconName === "compass" && <Compass className="h-5 w-5 text-cyan-400" />}
-                      {card.iconName === "activity" && <Activity className="h-5 w-5 text-amber-400" />}
-                      {card.iconName === "wrench" && <Wrench className="h-5 w-5 text-teal-400" />}
-                      {card.iconName === "filetext" && <FileText className="h-5 w-5 text-slate-300" />}
-                    </div>
-                    <span
-                      className={`text-[11px] font-mono font-bold px-3 py-0.5 rounded-full border shadow-sm ${
-                        isSelected
-                          ? "bg-amber-400 text-slate-950 border-amber-300 font-black"
-                          : "bg-slate-900/90 text-slate-300 border-slate-700/80"
-                      }`}
-                    >
-                      {card.count}
-                    </span>
-                  </div>
-                  <h3
-                    className={`font-mono font-bold text-sm tracking-wide uppercase leading-snug transition-colors ${
-                      isSelected ? "text-amber-400" : "text-slate-100 group-hover:text-amber-300"
-                    }`}
-                  >
-                    {card.label}
-                  </h3>
-                  <p className="text-xs text-slate-400 font-sans leading-relaxed">
-                    {card.desc}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between text-[11px] font-mono font-bold text-amber-400 group-hover:text-amber-300 pt-3 border-t border-slate-800/60">
-                  <span>Explore Guides</span>
-                  <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* UPDATE PATCH FILTER BAR */}
-      <div className="flex flex-wrap items-center gap-2 p-4 rounded-xl bg-[#0f172a] border border-slate-700">
-        <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider mr-2 flex items-center gap-1.5">
-          <Filter className="h-4 w-4" /> Filter by Major Patch:
-        </span>
-        {UPDATE_PATCHES.map((patch) => (
-          <button
-            key={patch.id}
-            onClick={() => setUpdateFilter(patch.id)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all border ${
-              updateFilter === patch.id
-                ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-md scale-[1.02]"
-                : "bg-[#060a10] hover:bg-slate-800 text-slate-400 border-slate-700 hover:border-emerald-500/40"
-            }`}
-          >
-            {patch.label}
-          </button>
-        ))}
-      </div>
-
-      {/* RESULTS GRID / CARD LIST */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-1 text-xs font-mono text-slate-400">
-          <div>
-            Showing <span className="text-amber-400 font-bold">{articles.length}</span> Vault Guides in{" "}
-            <span className="text-emerald-400 font-bold uppercase">{category === "all" ? "All Knowledge Categories" : category}</span>
-            {updateFilter !== "all" && (
-              <span className="text-amber-300 font-bold uppercase"> • Patch: {updateFilter}</span>
-            )}
+      <div className="lg:grid lg:grid-cols-[232px_minmax(0,1fr)] lg:gap-8">
+        {/* FILTER RAIL (desktop) */}
+        <aside aria-label="Filters" className="hidden lg:block">
+          <div className="sticky top-4">
+            <FilterGroups state={listState} onChange={applyFilters} idPrefix="rail" includeCategory={false} />
           </div>
-          {loading && <div className="text-amber-400 font-bold">Loading guides…</div>}
-        </div>
+        </aside>
 
-        {articles.length === 0 && !loading && (
-          <div className="p-16 text-center text-slate-500 font-mono space-y-3 rounded-2xl bg-[#0f172a] border border-slate-700">
-            <BookOpen className="h-12 w-12 mx-auto text-amber-500/30" />
-            <div className="text-sm font-bold text-slate-300">No guides match this filter.</div>
-            <button
-              onClick={() => {
-                setCategory("all");
-                setUpdateFilter("all");
-                setQuery("");
-              }}
-              className="text-amber-400 underline hover:text-amber-300 text-xs font-bold"
-            >
-              Reset All Filters &amp; Search
-            </button>
-          </div>
-        )}
-
-        {/* VAULT GUIDE CARDS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {articles.map((item) => {
-            const outdatedInfo = getArticleOutdatedStatus(item);
-            return (
-              <div
-                key={item.id}
-                onClick={() => setSelectedArticle(item)}
-                className={`bg-[#0f172a] border rounded-2xl p-6 flex flex-col justify-between gap-5 cursor-pointer group transition-all hover:-translate-y-1 shadow-xl hover:shadow-2xl ${
-                  outdatedInfo
-                    ? "border-amber-600/50 hover:border-amber-400 ring-1 ring-amber-500/20"
-                    : "border-slate-700 hover:border-amber-500/60"
-                }`}
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-[10px] font-mono font-bold uppercase">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="px-3 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                        {item.category || "General"}
-                      </span>
-                      {outdatedInfo && (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-950/90 text-amber-300 border border-amber-500/60 flex items-center gap-1 animate-pulse">
-                          <AlertTriangle className="h-3 w-3 text-amber-400" /> OUTDATED
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-slate-400 font-bold">{item.source}</span>
-                  </div>
-                  <h3 className="font-bold text-lg text-slate-100 group-hover:text-amber-300 font-mono transition-colors leading-snug">
-                    {cleanTitle(item.title)}
-                  </h3>
-                <p className="text-xs text-slate-300 line-clamp-3 font-sans leading-relaxed">
-                  {item.snippet ? item.snippet.replace(/<[^>]*>/g, "") : item.content.replace(/<[^>]*>/g, "").substring(0, 150) + "..."}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-amber-400 font-bold group-hover:text-amber-300">
-                <span className="flex items-center gap-1.5">
-                  <FileText className="h-3.5 w-3.5" /> Read Full Guide
-                </span>
-                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </div>
+        <div className="min-w-0 space-y-4" ref={resultsTopRef}>
+          {/* FILTERS DISCLOSURE (phones and tablets) */}
+          <details className="guides-disclosure rounded-lg border border-[var(--border)] bg-[var(--surface)] lg:hidden">
+            <summary className="guides-mono flex items-center gap-2 px-4 py-3 text-[15px] text-[var(--text-primary)]">
+              <SlidersHorizontal aria-hidden="true" className="h-4 w-4 text-[var(--color-accent)]" />
+              Filters ({filterCount})
+            </summary>
+            <div className="border-t border-[var(--border)] px-2 py-4">
+              <FilterGroups state={listState} onChange={applyFilters} idPrefix="sheet" includeCategory />
             </div>
-          );
-        })}
+          </details>
+
+          {/* ACTIVE FILTER CHIPS */}
+          {chips.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <ul aria-label="Active filters" className="flex flex-wrap gap-2">
+                {chips.map((chip) => (
+                  <li key={chip.key} className="min-w-0 max-w-full">
+                    <button
+                      type="button"
+                      onClick={() => removeChip(chip.key)}
+                      aria-label={`Remove ${chip.label}`}
+                      className="guides-mono inline-flex max-w-full items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-2 py-1 text-[13px] text-[var(--text-primary)] hover:border-[var(--color-accent)]"
+                    >
+                      <span className="truncate">{chip.label}</span>
+                      <X aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-[var(--text-soft)]" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={clearAll}
+                className="guides-mono px-1 text-[13px] text-[var(--color-accent)] underline underline-offset-2"
+              >
+                Clear all
+              </button>
+            </div>
+          ) : null}
+
+          {loading ? (
+            <p className="guides-mono text-[13px] text-[var(--color-accent)]">Loading guides…</p>
+          ) : null}
+
+          {/* EMPTY STATE */}
+          {!loading && articles.length === 0 ? (
+            <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
+              <p className="guides-mono text-[15px] text-[var(--text-primary)]">No guides match these filters.</p>
+              <button type="button" onClick={clearAll} className="guides-mono text-[13px] text-[var(--color-accent)] underline underline-offset-2">
+                Clear all filters and search
+              </button>
+            </div>
+          ) : null}
+
+          {/* RESULT ROWS */}
+          {articles.length > 0 ? (
+            <ol
+              ref={resultsRef}
+              aria-label={`Guides ${firstShown} to ${lastShown}`}
+              aria-busy={loading}
+              className={`divide-y divide-[var(--border)] overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] ${loading ? "opacity-60" : ""}`}
+            >
+              {articles.map((item) => {
+                const outdatedInfo = getArticleOutdatedStatus(item);
+                const summary = firstSentence(item.snippet || (item.content || "").substring(0, 150));
+                return (
+                  <li key={String(item.id)}>
+                    <a
+                      href={`${pathname}?id=${encodeURIComponent(String(item.id))}`}
+                      data-guide-row
+                      onClick={(e) => {
+                        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                        e.preventDefault();
+                        setSelectedArticle(item);
+                      }}
+                      className="guides-row"
+                    >
+                      <span className="guides-row__title guides-mono block text-[18px] leading-snug text-[var(--text-primary)]">
+                        {cleanTitle(item.title)}
+                      </span>
+                      {summary ? (
+                        <span className="guides-prose mt-1 line-clamp-2 text-[15px] leading-normal text-[var(--text-muted)]">
+                          {summary}
+                        </span>
+                      ) : null}
+                      <span className="guides-mono mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[var(--text-soft)]">
+                        <span>{item.source}</span>
+                        <span>{categoryLabel(item.category || "General")}</span>
+                        {outdatedInfo ? (
+                          <span className="inline-flex items-center gap-1 rounded border border-[var(--color-accent)] px-1.5 text-[var(--color-accent)]">
+                            <AlertTriangle aria-hidden="true" className="h-3 w-3" /> Outdated
+                          </span>
+                        ) : null}
+                        {item.archived ? (
+                          <span className="rounded border border-[var(--border-strong)] px-1.5 text-[var(--text-muted)]">Archived</span>
+                        ) : null}
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          ) : null}
+
+          {/* PAGINATION */}
+          {total !== null && total > 0 ? (
+            <nav aria-label="Pagination" className="guides-mono flex items-center justify-between gap-3 text-[13px]">
+              {listState.page > 1 ? (
+                <a
+                  href={pageHref(listState.page - 1)}
+                  rel="prev"
+                  onClick={(e) => {
+                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    goToPage(listState.page - 1);
+                  }}
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--border-strong)] px-3 py-2 text-[var(--text-primary)] hover:border-[var(--color-accent)]"
+                >
+                  <ChevronLeft aria-hidden="true" className="h-4 w-4" /> Previous
+                </a>
+              ) : (
+                <span aria-hidden="true" className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-3 py-2 text-[var(--text-soft)] opacity-60">
+                  <ChevronLeft className="h-4 w-4" /> Previous
+                </span>
+              )}
+              <span className="text-[var(--text-muted)]">
+                Page {Math.min(listState.page, pages).toLocaleString()} of {pages.toLocaleString()}
+              </span>
+              {listState.page < pages ? (
+                <a
+                  href={pageHref(listState.page + 1)}
+                  rel="next"
+                  onClick={(e) => {
+                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    goToPage(listState.page + 1);
+                  }}
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--border-strong)] px-3 py-2 text-[var(--text-primary)] hover:border-[var(--color-accent)]"
+                >
+                  Next <ChevronRight aria-hidden="true" className="h-4 w-4" />
+                </a>
+              ) : (
+                <span aria-hidden="true" className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-3 py-2 text-[var(--text-soft)] opacity-60">
+                  Next <ChevronRight className="h-4 w-4" />
+                </span>
+              )}
+            </nav>
+          ) : null}
+
+          <p className="guides-mono hidden text-[13px] text-[var(--text-soft)] lg:block">
+            Keys: <kbd>/</kbd> search, <kbd>j</kbd> and <kbd>k</kbd> move between guides, <kbd>Enter</kbd> opens one.
+          </p>
         </div>
       </div>
     </div>
@@ -945,4 +1156,3 @@ export default function TruthWikiPage() {
     </React.Suspense>
   );
 }
-
