@@ -26,24 +26,21 @@ export type BuilderLegendarySeedRow = {
 
 const SPECIAL_MATH_LOOKUP: Record<string, Record<string, number>> = {
   "anti-armor": { damagePct: 0.12 },
-  "aristocrats": { dr: 20, er: 20 },
+  // aristocrats (armor): 10% damage reflect at 40K caps since Patch 66; no flat resists.
   "bloodied": { damagePct: 0.25 },
-  "bolstering": { dr: 10, er: 10 },
-  "mutants": { dr: 10, er: 10 },
-  "nocturnal": { dr: 80, er: 80 },
-  "overeaters": { dr: 6, er: 6 },
+  // bolstering / vanguards / mutants / sentinels: multiplicative damage reducers since Patch 66, modelled in perk-defensive-layer.ts.
+  "nocturnal": { per: 4, agi: 4 },
+  "overeaters": { hp: 40 },
   "two-shot": { damagePct: 0.25 },
   "unyielding": { specialBonus: 3 },
-  "vanguards": { dr: 10, er: 10 },
   "powered": { apRegen: 0.05 },
-  "poisoners": { pr: 25 },
-  "fireproof": { fr: 25 },
-  "warming": { cr: 25 },
-  "hazmat": { rr: 25 },
-  "hardy": { er: 15 },
+  "poisoners": { pr: 50 },
+  "fireproof": { fr: 50 },
+  "warming": { cr: 50 },
+  "hazmat": { rr: 50 },
+  // hardy: 7% less explosion damage (reducer), no flat resist.
   "rapid": { damagePct: 0.05 },
   "explosive": { damagePct: 0.2 },
-  "sentinels": { dr: 15, er: 15 },
   "strength-2": { str: 2 },
   "perception-2": { per: 2 },
   "endurance-2": { end: 2 },
