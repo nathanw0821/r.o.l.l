@@ -33,9 +33,9 @@ export default function GuestSignupBanner() {
     return null;
   }
 
-  const handleDismiss = () => {
+  const handleDismiss = (permanent = dontShowAgain) => {
     try {
-      if (dontShowAgain) {
+      if (permanent) {
         localStorage.setItem(PERM_DISMISS_KEY, "true");
       } else {
         sessionStorage.setItem(SESSION_DISMISS_KEY, "true");
@@ -47,7 +47,33 @@ export default function GuestSignupBanner() {
   };
 
   return (
-    <div className="mb-4 rounded-xl border border-accent/40 bg-panel/95 backdrop-blur-md p-4 shadow-lg font-mono relative overflow-hidden transition-all duration-300">
+    <>
+    {/* Phones (<= 860px): one slim notice instead of the tall card. Same storage keys:
+        the close button hides it for this session, "Don't show again" hides it for good. */}
+    <div data-guest-banner="slim" className="guest-banner-slim font-mono" role="region" aria-label="Cloud backup">
+      <p className="guest-banner-slim__text">Create a free account to back up your tracker.</p>
+      <div className="guest-banner-slim__actions">
+        <button type="button" onClick={() => signIn()} className="guest-banner-slim__primary">
+          Create account
+        </button>
+        <Link href="/privacy" className="guest-banner-slim__link">
+          Privacy
+        </Link>
+        <button type="button" onClick={() => handleDismiss(true)} className="guest-banner-slim__link">
+          Don&apos;t show again
+        </button>
+      </div>
+      <button
+        type="button"
+        onClick={() => handleDismiss(false)}
+        aria-label="Dismiss banner"
+        title="Dismiss for current session"
+        className="guest-banner-slim__close"
+      >
+        <X className="h-4 w-4" aria-hidden="true" />
+      </button>
+    </div>
+    <div data-guest-banner="full" className="guest-banner-full mb-4 rounded-xl border border-accent/40 bg-panel/95 backdrop-blur-md p-4 shadow-lg font-mono relative overflow-hidden transition-all duration-300">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-start md:items-center gap-3">
           <div className="h-10 w-10 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center shrink-0 text-accent mt-0.5 md:mt-0">
@@ -97,7 +123,7 @@ export default function GuestSignupBanner() {
             </Link>
             <button
               type="button"
-              onClick={handleDismiss}
+              onClick={() => handleDismiss()}
               aria-label="Dismiss banner"
               title={dontShowAgain ? "Dismiss permanently" : "Dismiss for current session"}
               className="h-8 w-8 flex items-center justify-center rounded-lg border border-border/40 hover:bg-background/80 text-foreground/50 hover:text-foreground transition ml-1"
@@ -108,5 +134,6 @@ export default function GuestSignupBanner() {
         </div>
       </div>
     </div>
+    </>
   );
 }

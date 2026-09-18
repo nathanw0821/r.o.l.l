@@ -211,14 +211,15 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           )}
         </div>
         <div className="command-hub__stat">
-          <div className="text-[0.78rem] uppercase text-foreground/50">Completion</div>
-          <div className="text-base font-semibold">{displayPercent}%</div>
+          <div className="command-hub__stat-label text-[0.78rem] uppercase text-foreground/50">Completion</div>
+          <div className="command-hub__stat-value text-base font-semibold">{displayPercent}%</div>
         </div>
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
           className="command-hub__expand"
           aria-expanded={expanded}
+          aria-label={expanded ? "Close command hub" : "Open command hub"}
         >
           {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
@@ -742,7 +743,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           setExpanded((prev) => !prev);
         }}
         className={cn(
-          "xl:hidden fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-accent text-accent-foreground font-mono text-xs font-black uppercase shadow-xl border border-accent/40 backdrop-blur-md active:scale-95 transition-all cursor-pointer",
+          "quick-filters-fab xl:hidden fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-accent text-accent-foreground font-mono text-xs font-black uppercase shadow-xl border border-accent/40 backdrop-blur-md active:scale-95 transition-all cursor-pointer",
           expanded && "hidden"
         )}
         aria-label="Open Command Hub Filters"
