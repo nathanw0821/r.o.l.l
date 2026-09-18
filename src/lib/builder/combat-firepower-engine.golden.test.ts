@@ -35,7 +35,7 @@ describe("combat-firepower-engine goldens", () => {
     });
     // Anti-Armor 50% × Incisor 75% × bow bar 35% would be ~92%; the engine cap holds it at 90%.
     expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(90);
-    expect(result.targetDummy.effectiveDR).toBe(40); // 400 DR × (1 − 0.90)
+    expect(result.targetDummy.effectiveDR).toBe(30); // 300 DR × (1 − 0.90)
   });
 
   it("crit every-other-shot: engine Luck table vs calculator derivation (100% agreement)", () => {

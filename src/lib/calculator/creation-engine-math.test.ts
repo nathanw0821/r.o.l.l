@@ -74,9 +74,9 @@ describe("Creation Engine math — 6 golden benchmarks", () => {
 });
 
 describe("Creation Engine math — reference parity edge cases", () => {
-  it("VATS AP cost: 30 AP, -30% mods => 21.0; with 25 LVC => 15.8", () => {
-    expect(calculateVatsApCost(30, 30)).toBe(21);
-    expect(calculateVatsApCost(30, 30, true)).toBe(15.8);
+  it("VATS AP cost: 40 AP, -30% mods => 28.0; with V.A.T.S. Optimized (x0.65) => 18.2", () => {
+    expect(calculateVatsApCost(40, 30)).toBe(28);
+    expect(calculateVatsApCost(40, 30, true)).toBe(18.2);
   });
 
   it("caps total armor penetration at the 90% engine limit", () => {

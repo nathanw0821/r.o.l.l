@@ -196,7 +196,7 @@ export function buildVatsEmbed(opts: CalcOptions): DiscordEmbed {
   return {
     title: "🎯 V.A.T.S. ACTION POINT CALCULATOR",
     url: "https://fallout76.wiki",
-    description: "Weapon mod reductions sum additively against base AP. The 25% Less VATS Cost star multiplies the modded cost by 0.75.",
+    description: "Weapon mod reductions sum additively against base AP. The V.A.T.S. Optimized star (-35% AP) multiplies the modded cost by 0.65.",
     color: PIPBOY_GREEN,
     fields: [
       {
@@ -204,7 +204,7 @@ export function buildVatsEmbed(opts: CalcOptions): DiscordEmbed {
         value: readout([
           `BASE AP   ${fmt(baseAp)}`,
           `MODS      −${pct(modReduction)}  → ${fmt(withoutLvc, 1)} AP`,
-          lvc ? `25 LVC    × 0.75  → ${fmt(cost, 1)} AP` : "25 LVC    not equipped",
+          lvc ? `VATS Opt  × 0.65  → ${fmt(cost, 1)} AP` : "VATS Opt  not equipped",
           `= ${fmt(cost, 1)} AP / shot`
         ]),
         inline: false

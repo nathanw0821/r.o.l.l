@@ -18,11 +18,11 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 177,
-        "critical": 399,
+        "normal": 191,
+        "critical": 413,
         "explosiveBonus": 0,
-        "totalPerShot": 177,
-        "activeShotDamage": 288,
+        "totalPerShot": 191,
+        "activeShotDamage": 302,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -42,7 +42,7 @@
           },
           {
             "source": "Bloodied (80% Missing HP)",
-            "value": "+80%"
+            "value": "+109%"
           },
           {
             "source": "Psychotats / Psychobuff",
@@ -90,9 +90,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1611,
-        "criticalCycleDPS": 2621,
-        "activeDPS": 2621,
+        "burstDPS": 1738,
+        "criticalCycleDPS": 2748,
+        "activeDPS": 2748,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -105,13 +105,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 19,
-        "maxShotsInPool": 18,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 21,
         "totalApPool": 350,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -155,13 +155,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.4127,
-        "normalLanded": 22,
-        "criticalLanded": 66,
-        "burstDPSLanded": 200,
-        "criticalCycleDPSLanded": 400,
-        "activeDPSLanded": 400
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4243,
+        "normalLanded": 24,
+        "criticalLanded": 70,
+        "burstDPSLanded": 218,
+        "criticalCycleDPSLanded": 428,
+        "activeDPSLanded": 428
       }
     },
     "earle-williams": {
@@ -182,11 +182,11 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 177,
-        "critical": 399,
+        "normal": 191,
+        "critical": 413,
         "explosiveBonus": 0,
-        "totalPerShot": 177,
-        "activeShotDamage": 288,
+        "totalPerShot": 191,
+        "activeShotDamage": 302,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -206,7 +206,7 @@
           },
           {
             "source": "Bloodied (80% Missing HP)",
-            "value": "+80%"
+            "value": "+109%"
           },
           {
             "source": "Psychotats / Psychobuff",
@@ -254,9 +254,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1611,
-        "criticalCycleDPS": 2621,
-        "activeDPS": 2621,
+        "burstDPS": 1738,
+        "criticalCycleDPS": 2748,
+        "activeDPS": 2748,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -269,13 +269,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 19,
-        "maxShotsInPool": 18,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 21,
         "totalApPool": 350,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -313,19 +313,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 400,
-        "armorMitigationPct": 63,
-        "mitigationRatio": 0.3716,
-        "normalLanded": 13,
-        "criticalLanded": 40,
-        "burstDPSLanded": 118,
-        "criticalCycleDPSLanded": 241,
-        "activeDPSLanded": 241
+        "effectiveDR": 300,
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4243,
+        "normalLanded": 16,
+        "criticalLanded": 46,
+        "burstDPSLanded": 146,
+        "criticalCycleDPSLanded": 282,
+        "activeDPSLanded": 282
       }
     },
     "ultracite-titan": {
@@ -346,11 +346,11 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 177,
-        "critical": 399,
+        "normal": 191,
+        "critical": 413,
         "explosiveBonus": 0,
-        "totalPerShot": 177,
-        "activeShotDamage": 288,
+        "totalPerShot": 191,
+        "activeShotDamage": 302,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -370,7 +370,7 @@
           },
           {
             "source": "Bloodied (80% Missing HP)",
-            "value": "+80%"
+            "value": "+109%"
           },
           {
             "source": "Psychotats / Psychobuff",
@@ -418,9 +418,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1611,
-        "criticalCycleDPS": 2621,
-        "activeDPS": 2621,
+        "burstDPS": 1738,
+        "criticalCycleDPS": 2748,
+        "activeDPS": 2748,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -433,13 +433,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 19,
-        "maxShotsInPool": 18,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 21,
         "totalApPool": 350,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -483,13 +483,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 61,
-        "mitigationRatio": 0.3901,
-        "normalLanded": 17,
-        "criticalLanded": 52,
-        "burstDPSLanded": 155,
-        "criticalCycleDPSLanded": 314,
-        "activeDPSLanded": 314
+        "armorMitigationPct": 60,
+        "mitigationRatio": 0.4011,
+        "normalLanded": 19,
+        "criticalLanded": 55,
+        "burstDPSLanded": 173,
+        "criticalCycleDPSLanded": 337,
+        "activeDPSLanded": 337
       }
     },
     "level-100-super-mutant": {
@@ -510,11 +510,11 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 177,
-        "critical": 399,
+        "normal": 191,
+        "critical": 413,
         "explosiveBonus": 0,
-        "totalPerShot": 177,
-        "activeShotDamage": 288,
+        "totalPerShot": 191,
+        "activeShotDamage": 302,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -534,7 +534,7 @@
           },
           {
             "source": "Bloodied (80% Missing HP)",
-            "value": "+80%"
+            "value": "+109%"
           },
           {
             "source": "Psychotats / Psychobuff",
@@ -582,9 +582,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1611,
-        "criticalCycleDPS": 2621,
-        "activeDPS": 2621,
+        "burstDPS": 1738,
+        "criticalCycleDPS": 2748,
+        "activeDPS": 2748,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -597,13 +597,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 19,
-        "maxShotsInPool": 18,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 21,
         "totalApPool": 350,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -647,13 +647,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 53,
-        "mitigationRatio": 0.47009999999999996,
-        "normalLanded": 83,
-        "criticalLanded": 252,
-        "burstDPSLanded": 755,
-        "criticalCycleDPSLanded": 1524,
-        "activeDPSLanded": 1524
+        "armorMitigationPct": 52,
+        "mitigationRatio": 0.4833,
+        "normalLanded": 92,
+        "criticalLanded": 265,
+        "burstDPSLanded": 837,
+        "criticalCycleDPSLanded": 1624,
+        "activeDPSLanded": 1624
       }
     },
     "raw-unarmored": {
@@ -674,11 +674,11 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 177,
-        "critical": 399,
+        "normal": 191,
+        "critical": 413,
         "explosiveBonus": 0,
-        "totalPerShot": 177,
-        "activeShotDamage": 288,
+        "totalPerShot": 191,
+        "activeShotDamage": 302,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -698,7 +698,7 @@
           },
           {
             "source": "Bloodied (80% Missing HP)",
-            "value": "+80%"
+            "value": "+109%"
           },
           {
             "source": "Psychotats / Psychobuff",
@@ -746,9 +746,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1611,
-        "criticalCycleDPS": 2621,
-        "activeDPS": 2621,
+        "burstDPS": 1738,
+        "criticalCycleDPS": 2748,
+        "activeDPS": 2748,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -761,13 +761,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 19,
-        "maxShotsInPool": 18,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 21,
         "totalApPool": 350,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -813,11 +813,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 175,
-        "criticalLanded": 395,
-        "burstDPSLanded": 1593,
-        "criticalCycleDPSLanded": 2594,
-        "activeDPSLanded": 2594
+        "normalLanded": 189,
+        "criticalLanded": 409,
+        "burstDPSLanded": 1720,
+        "criticalCycleDPSLanded": 2721,
+        "activeDPSLanded": 2721
       }
     }
   },
@@ -1073,19 +1073,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 76,
-        "armorMitigationPct": 55,
-        "mitigationRatio": 0.4533,
-        "normalLanded": 5,
-        "criticalLanded": 12,
-        "burstDPSLanded": 57,
-        "criticalCycleDPSLanded": 97,
-        "activeDPSLanded": 57
+        "effectiveDR": 57,
+        "armorMitigationPct": 50,
+        "mitigationRatio": 0.5035000000000001,
+        "normalLanded": 6,
+        "criticalLanded": 13,
+        "burstDPSLanded": 68,
+        "criticalCycleDPSLanded": 108,
+        "activeDPSLanded": 68
       }
     },
     "ultracite-titan": {
@@ -1740,19 +1740,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 304,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.41490000000000005,
-        "normalLanded": 15,
-        "criticalLanded": 24,
-        "burstDPSLanded": 18,
-        "criticalCycleDPSLanded": 23,
-        "activeDPSLanded": 18
+        "effectiveDR": 228,
+        "armorMitigationPct": 54,
+        "mitigationRatio": 0.4608,
+        "normalLanded": 17,
+        "criticalLanded": 26,
+        "burstDPSLanded": 20,
+        "criticalCycleDPSLanded": 26,
+        "activeDPSLanded": 20
       }
     },
     "ultracite-titan": {
@@ -2399,19 +2399,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 220,
-        "armorMitigationPct": 60,
-        "mitigationRatio": 0.3961,
-        "normalLanded": 9,
-        "criticalLanded": 24,
-        "burstDPSLanded": 82,
-        "criticalCycleDPSLanded": 150,
-        "activeDPSLanded": 82
+        "effectiveDR": 165,
+        "armorMitigationPct": 56,
+        "mitigationRatio": 0.44,
+        "normalLanded": 10,
+        "criticalLanded": 26,
+        "burstDPSLanded": 91,
+        "criticalCycleDPSLanded": 164,
+        "activeDPSLanded": 91
       }
     },
     "ultracite-titan": {
@@ -3062,18 +3062,18 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 280,
-        "armorMitigationPct": 67,
-        "mitigationRatio": 0.32520000000000004,
+        "effectiveDR": 210,
+        "armorMitigationPct": 64,
+        "mitigationRatio": 0.36119999999999997,
         "normalLanded": 6,
-        "criticalLanded": 14,
+        "criticalLanded": 16,
         "burstDPSLanded": 119,
-        "criticalCycleDPSLanded": 199,
+        "criticalCycleDPSLanded": 219,
         "activeDPSLanded": 119
       }
     },
@@ -3511,11 +3511,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 222,
+        "normal": 156,
+        "critical": 262,
         "explosiveBonus": 26,
-        "totalPerShot": 142,
-        "activeShotDamage": 142,
+        "totalPerShot": 182,
+        "activeShotDamage": 182,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -3526,8 +3526,8 @@
             "value": "+20%"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3547,9 +3547,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 213,
-        "criticalCycleDPS": 273,
-        "activeDPS": 213,
+        "burstDPS": 273,
+        "criticalCycleDPS": 333,
+        "activeDPS": 273,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3608,13 +3608,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 62,
-        "mitigationRatio": 0.38079999999999997,
-        "normalLanded": 16,
-        "criticalLanded": 30,
-        "burstDPSLanded": 24,
-        "criticalCycleDPSLanded": 35,
-        "activeDPSLanded": 24
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4169,
+        "normalLanded": 23,
+        "criticalLanded": 37,
+        "burstDPSLanded": 35,
+        "criticalCycleDPSLanded": 45,
+        "activeDPSLanded": 35
       }
     },
     "earle-williams": {
@@ -3638,11 +3638,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 222,
+        "normal": 156,
+        "critical": 262,
         "explosiveBonus": 26,
-        "totalPerShot": 142,
-        "activeShotDamage": 142,
+        "totalPerShot": 182,
+        "activeShotDamage": 182,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -3653,8 +3653,8 @@
             "value": "+20%"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3674,9 +3674,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 213,
-        "criticalCycleDPS": 273,
-        "activeDPS": 213,
+        "burstDPS": 273,
+        "criticalCycleDPS": 333,
+        "activeDPS": 273,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3729,19 +3729,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 400,
-        "armorMitigationPct": 66,
-        "mitigationRatio": 0.3429,
-        "normalLanded": 10,
-        "criticalLanded": 18,
-        "burstDPSLanded": 15,
-        "criticalCycleDPSLanded": 21,
-        "activeDPSLanded": 15
+        "effectiveDR": 300,
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4169,
+        "normalLanded": 15,
+        "criticalLanded": 25,
+        "burstDPSLanded": 23,
+        "criticalCycleDPSLanded": 30,
+        "activeDPSLanded": 23
       }
     },
     "ultracite-titan": {
@@ -3765,11 +3765,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 222,
+        "normal": 156,
+        "critical": 262,
         "explosiveBonus": 26,
-        "totalPerShot": 142,
-        "activeShotDamage": 142,
+        "totalPerShot": 182,
+        "activeShotDamage": 182,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -3780,8 +3780,8 @@
             "value": "+20%"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3801,9 +3801,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 213,
-        "criticalCycleDPS": 273,
-        "activeDPS": 213,
+        "burstDPS": 273,
+        "criticalCycleDPS": 333,
+        "activeDPS": 273,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3862,13 +3862,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 64,
-        "mitigationRatio": 0.36,
-        "normalLanded": 13,
-        "criticalLanded": 24,
-        "burstDPSLanded": 20,
-        "criticalCycleDPSLanded": 28,
-        "activeDPSLanded": 20
+        "armorMitigationPct": 61,
+        "mitigationRatio": 0.39409999999999995,
+        "normalLanded": 18,
+        "criticalLanded": 29,
+        "burstDPSLanded": 27,
+        "criticalCycleDPSLanded": 35,
+        "activeDPSLanded": 27
       }
     },
     "level-100-super-mutant": {
@@ -3892,11 +3892,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 222,
+        "normal": 156,
+        "critical": 262,
         "explosiveBonus": 26,
-        "totalPerShot": 142,
-        "activeShotDamage": 142,
+        "totalPerShot": 182,
+        "activeShotDamage": 182,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -3907,8 +3907,8 @@
             "value": "+20%"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3928,9 +3928,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 213,
-        "criticalCycleDPS": 273,
-        "activeDPS": 213,
+        "burstDPS": 273,
+        "criticalCycleDPS": 333,
+        "activeDPS": 273,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3989,13 +3989,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 57,
-        "mitigationRatio": 0.4338,
-        "normalLanded": 62,
-        "criticalLanded": 113,
-        "burstDPSLanded": 93,
-        "criticalCycleDPSLanded": 131,
-        "activeDPSLanded": 93
+        "armorMitigationPct": 53,
+        "mitigationRatio": 0.47490000000000004,
+        "normalLanded": 86,
+        "criticalLanded": 142,
+        "burstDPSLanded": 129,
+        "criticalCycleDPSLanded": 171,
+        "activeDPSLanded": 129
       }
     },
     "raw-unarmored": {
@@ -4019,11 +4019,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 222,
+        "normal": 156,
+        "critical": 262,
         "explosiveBonus": 26,
-        "totalPerShot": 142,
-        "activeShotDamage": 142,
+        "totalPerShot": 182,
+        "activeShotDamage": 182,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4034,8 +4034,8 @@
             "value": "+20%"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -4055,9 +4055,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 213,
-        "criticalCycleDPS": 273,
-        "activeDPS": 213,
+        "burstDPS": 273,
+        "criticalCycleDPS": 333,
+        "activeDPS": 273,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4118,11 +4118,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 141,
-        "criticalLanded": 220,
-        "burstDPSLanded": 212,
-        "criticalCycleDPSLanded": 271,
-        "activeDPSLanded": 212
+        "normalLanded": 180,
+        "criticalLanded": 259,
+        "burstDPSLanded": 270,
+        "criticalCycleDPSLanded": 329,
+        "activeDPSLanded": 270
       }
     }
   },
@@ -4145,11 +4145,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 189,
-        "critical": 279,
+        "normal": 234,
+        "critical": 324,
         "explosiveBonus": 0,
-        "totalPerShot": 189,
-        "activeShotDamage": 189,
+        "totalPerShot": 234,
+        "activeShotDamage": 234,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4164,8 +4164,8 @@
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Steady 2★ (Stationary / Not Moving)",
@@ -4185,9 +4185,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 662,
-        "criticalCycleDPS": 819,
-        "activeDPS": 662,
+        "burstDPS": 819,
+        "criticalCycleDPS": 977,
+        "activeDPS": 819,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4246,13 +4246,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4227,
-        "normalLanded": 24,
-        "criticalLanded": 41,
-        "burstDPSLanded": 84,
-        "criticalCycleDPSLanded": 114,
-        "activeDPSLanded": 84
+        "armorMitigationPct": 54,
+        "mitigationRatio": 0.457,
+        "normalLanded": 32,
+        "criticalLanded": 50,
+        "burstDPSLanded": 112,
+        "criticalCycleDPSLanded": 144,
+        "activeDPSLanded": 112
       }
     },
     "earle-williams": {
@@ -4273,11 +4273,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 189,
-        "critical": 279,
+        "normal": 234,
+        "critical": 324,
         "explosiveBonus": 0,
-        "totalPerShot": 189,
-        "activeShotDamage": 189,
+        "totalPerShot": 234,
+        "activeShotDamage": 234,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4292,8 +4292,8 @@
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Steady 2★ (Stationary / Not Moving)",
@@ -4313,9 +4313,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 662,
-        "criticalCycleDPS": 819,
-        "activeDPS": 662,
+        "burstDPS": 819,
+        "criticalCycleDPS": 977,
+        "activeDPS": 819,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4368,19 +4368,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 400,
-        "armorMitigationPct": 62,
-        "mitigationRatio": 0.38060000000000005,
-        "normalLanded": 14,
-        "criticalLanded": 24,
-        "burstDPSLanded": 49,
-        "criticalCycleDPSLanded": 67,
-        "activeDPSLanded": 49
+        "effectiveDR": 300,
+        "armorMitigationPct": 54,
+        "mitigationRatio": 0.457,
+        "normalLanded": 21,
+        "criticalLanded": 33,
+        "burstDPSLanded": 74,
+        "criticalCycleDPSLanded": 95,
+        "activeDPSLanded": 74
       }
     },
     "ultracite-titan": {
@@ -4401,11 +4401,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 189,
-        "critical": 279,
+        "normal": 234,
+        "critical": 324,
         "explosiveBonus": 0,
-        "totalPerShot": 189,
-        "activeShotDamage": 189,
+        "totalPerShot": 234,
+        "activeShotDamage": 234,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4420,8 +4420,8 @@
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Steady 2★ (Stationary / Not Moving)",
@@ -4441,9 +4441,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 662,
-        "criticalCycleDPS": 819,
-        "activeDPS": 662,
+        "burstDPS": 819,
+        "criticalCycleDPS": 977,
+        "activeDPS": 819,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4502,13 +4502,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 60,
-        "mitigationRatio": 0.3996,
-        "normalLanded": 19,
-        "criticalLanded": 32,
-        "burstDPSLanded": 67,
-        "criticalCycleDPSLanded": 89,
-        "activeDPSLanded": 67
+        "armorMitigationPct": 57,
+        "mitigationRatio": 0.43200000000000005,
+        "normalLanded": 25,
+        "criticalLanded": 39,
+        "burstDPSLanded": 88,
+        "criticalCycleDPSLanded": 112,
+        "activeDPSLanded": 88
       }
     },
     "level-100-super-mutant": {
@@ -4529,11 +4529,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 189,
-        "critical": 279,
+        "normal": 234,
+        "critical": 324,
         "explosiveBonus": 0,
-        "totalPerShot": 189,
-        "activeShotDamage": 189,
+        "totalPerShot": 234,
+        "activeShotDamage": 234,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4548,8 +4548,8 @@
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Steady 2★ (Stationary / Not Moving)",
@@ -4569,9 +4569,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 662,
-        "criticalCycleDPS": 819,
-        "activeDPS": 662,
+        "burstDPS": 819,
+        "criticalCycleDPS": 977,
+        "activeDPS": 819,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4630,13 +4630,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 52,
-        "mitigationRatio": 0.4815,
-        "normalLanded": 91,
-        "criticalLanded": 155,
-        "burstDPSLanded": 319,
-        "criticalCycleDPSLanded": 431,
-        "activeDPSLanded": 319
+        "armorMitigationPct": 48,
+        "mitigationRatio": 0.5205,
+        "normalLanded": 122,
+        "criticalLanded": 190,
+        "burstDPSLanded": 427,
+        "criticalCycleDPSLanded": 546,
+        "activeDPSLanded": 427
       }
     },
     "raw-unarmored": {
@@ -4657,11 +4657,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 189,
-        "critical": 279,
+        "normal": 234,
+        "critical": 324,
         "explosiveBonus": 0,
-        "totalPerShot": 189,
-        "activeShotDamage": 189,
+        "totalPerShot": 234,
+        "activeShotDamage": 234,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4676,8 +4676,8 @@
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Two Shot (+25% Base)",
-            "value": "+25%"
+            "source": "Two Shot (+75% Base, Patch 60)",
+            "value": "+75%"
           },
           {
             "source": "Steady 2★ (Stationary / Not Moving)",
@@ -4697,9 +4697,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 662,
-        "criticalCycleDPS": 819,
-        "activeDPS": 662,
+        "burstDPS": 819,
+        "criticalCycleDPS": 977,
+        "activeDPS": 819,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4760,11 +4760,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 187,
-        "criticalLanded": 276,
-        "burstDPSLanded": 655,
-        "criticalCycleDPSLanded": 810,
-        "activeDPSLanded": 655
+        "normalLanded": 232,
+        "criticalLanded": 321,
+        "burstDPSLanded": 812,
+        "criticalCycleDPSLanded": 968,
+        "activeDPSLanded": 812
       }
     }
   },
@@ -4834,13 +4834,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 17,
-        "maxShotsInPool": 17,
+        "apCostPerShot": 14,
+        "maxShotsInPool": 21,
         "totalApPool": 300,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -4963,13 +4963,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 17,
-        "maxShotsInPool": 17,
+        "apCostPerShot": 14,
+        "maxShotsInPool": 21,
         "totalApPool": 300,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -5012,19 +5012,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 256,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.4127,
-        "normalLanded": 12,
-        "criticalLanded": 21,
-        "burstDPSLanded": 36,
-        "criticalCycleDPSLanded": 50,
-        "activeDPSLanded": 36
+        "effectiveDR": 192,
+        "armorMitigationPct": 54,
+        "mitigationRatio": 0.4583,
+        "normalLanded": 14,
+        "criticalLanded": 24,
+        "burstDPSLanded": 42,
+        "criticalCycleDPSLanded": 57,
+        "activeDPSLanded": 42
       }
     },
     "ultracite-titan": {
@@ -5092,13 +5092,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 17,
-        "maxShotsInPool": 17,
+        "apCostPerShot": 14,
+        "maxShotsInPool": 21,
         "totalApPool": 300,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -5221,13 +5221,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 17,
-        "maxShotsInPool": 17,
+        "apCostPerShot": 14,
+        "maxShotsInPool": 21,
         "totalApPool": 300,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -5350,13 +5350,13 @@
         ]
       },
       "vats": {
-        "apCostPerShot": 17,
-        "maxShotsInPool": 17,
+        "apCostPerShot": 14,
+        "maxShotsInPool": 21,
         "totalApPool": 300,
         "breakdown": [
           {
-            "source": "VATS Optimized 3★ (-25% AP)",
-            "value": "×0.75"
+            "source": "V.A.T.S. Optimized 3★ (-35% AP)",
+            "value": "×0.65"
           },
           {
             "source": "Base VATS AP Cost",
@@ -5691,19 +5691,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 40,
-        "armorMitigationPct": 19,
-        "mitigationRatio": 0.8125,
-        "normalLanded": 25,
-        "criticalLanded": 33,
-        "burstDPSLanded": 200,
-        "criticalCycleDPSLanded": 232,
-        "activeDPSLanded": 200
+        "effectiveDR": 30,
+        "armorMitigationPct": 10,
+        "mitigationRatio": 0.9025,
+        "normalLanded": 27,
+        "criticalLanded": 37,
+        "burstDPSLanded": 216,
+        "criticalCycleDPSLanded": 256,
+        "activeDPSLanded": 216
       }
     },
     "ultracite-titan": {
@@ -6402,19 +6402,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 100,
-        "armorMitigationPct": 29,
-        "mitigationRatio": 0.7131000000000001,
-        "normalLanded": 38,
-        "criticalLanded": 56,
-        "burstDPSLanded": 76,
-        "criticalCycleDPSLanded": 94,
-        "activeDPSLanded": 76
+        "effectiveDR": 75,
+        "armorMitigationPct": 21,
+        "mitigationRatio": 0.7920999999999999,
+        "normalLanded": 42,
+        "criticalLanded": 62,
+        "burstDPSLanded": 84,
+        "criticalCycleDPSLanded": 104,
+        "activeDPSLanded": 84
       }
     },
     "ultracite-titan": {
@@ -7073,19 +7073,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 256,
-        "armorMitigationPct": 41,
-        "mitigationRatio": 0.5867,
-        "normalLanded": 46,
-        "criticalLanded": 65,
-        "burstDPSLanded": 37,
-        "criticalCycleDPSLanded": 44,
-        "activeDPSLanded": 37
+        "effectiveDR": 192,
+        "armorMitigationPct": 35,
+        "mitigationRatio": 0.6517000000000001,
+        "normalLanded": 52,
+        "criticalLanded": 72,
+        "burstDPSLanded": 42,
+        "criticalCycleDPSLanded": 50,
+        "activeDPSLanded": 42
       }
     },
     "ultracite-titan": {
@@ -7710,19 +7710,19 @@
           "name": "Earle Williams (Colossal Problem)",
           "shortName": "Earle",
           "category": "boss",
-          "damageResistance": 400,
-          "energyResistance": 400,
+          "damageResistance": 300,
+          "energyResistance": 300,
           "flatDamageReductionPct": 0.8,
-          "description": "Deep Mine Colossus Boss (400 DR, 80% flat damage reduction)"
+          "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 400,
-        "armorMitigationPct": 62,
-        "mitigationRatio": 0.38130000000000003,
-        "normalLanded": 14,
-        "criticalLanded": 20,
-        "burstDPSLanded": 127,
-        "criticalCycleDPSLanded": 155,
-        "activeDPSLanded": 127
+        "effectiveDR": 300,
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4235,
+        "normalLanded": 16,
+        "criticalLanded": 22,
+        "burstDPSLanded": 146,
+        "criticalCycleDPSLanded": 173,
+        "activeDPSLanded": 146
       }
     },
     "ultracite-titan": {

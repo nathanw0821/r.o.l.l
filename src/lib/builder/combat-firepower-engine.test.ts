@@ -51,19 +51,19 @@ describe("combat-firepower-engine", () => {
     });
 
     // Base: 48
-    // Commando (+60%) + Bloody Mess (+15%) + Nerd Rage (+20%) + Bloodied (+80%) + Psychotats (+25%) + Small Guns (+20%) + Adrenal Reaction (+63%) = +283%
+    // Commando (+60%) + Bloody Mess (+15%) + Nerd Rage (+20%) + Bloodied (+109% at 20% HP, cap +130%) + Psychotats (+25%) + Small Guns (+20%) + Adrenal Reaction (+63%) = +283%
     // Normal damage ~ 48 * (1 + 2.83) ≈ 184
     expect(result.damagePerShot.normal).toBeGreaterThan(150);
 
     // Critical damage includes Better Crits (+100%), Vital (+50%), Blight Soup (+125%), G&B 3 (+100%), Eagle Eyes (+62.5%) = ~437.5%
     expect(result.damagePerShot.critical).toBeGreaterThan(result.damagePerShot.normal * 2);
 
-    // VATS AP cost: 25 * 0.75 = 19 AP
-    expect(result.vats.apCostPerShot).toBe(19);
+    // VATS AP cost: 25 * 0.65 = 16.25 -> 16 AP
+    expect(result.vats.apCostPerShot).toBe(16);
 
-    // Agility 25 -> Total AP = 100 + 250 = 350 AP -> ~18 shots
+    // Agility 25 -> Total AP = 100 + 250 = 350 AP -> 21 shots at 16 AP
     expect(result.vats.totalApPool).toBe(350);
-    expect(result.vats.maxShotsInPool).toBe(18);
+    expect(result.vats.maxShotsInPool).toBe(21);
 
     // Luck 33 + Critical Savvy 3 -> Every 2nd shot ready
     expect(result.critCycle.everySecondShotReady).toBe(true);
@@ -275,7 +275,7 @@ describe("combat-firepower-engine", () => {
     expect(carnivoreRes.damagePerShot.critical).toBe(96);
   });
 
-  it("calculates boss target dummy mitigation against Earle Williams (400 DR, 80% flat reduction)", () => {
+  it("calculates boss target dummy mitigation against Earle Williams (300 DR, 80% flat reduction)", () => {
     const withoutAA = calculateCombatFirepower({
       weaponId: "the-fixer",
       equippedMods: [],
@@ -285,7 +285,7 @@ describe("combat-firepower-engine", () => {
     });
 
     expect(withoutAA.targetDummy.dummy.id).toBe("earle-williams");
-    expect(withoutAA.targetDummy.effectiveDR).toBe(400);
+    expect(withoutAA.targetDummy.effectiveDR).toBe(300);
     // 80% flat reduction means landed damage is heavily suppressed compared to sheet damage
     expect(withoutAA.targetDummy.normalLanded).toBeLessThan(withoutAA.damagePerShot.normal * 0.15);
 
@@ -299,8 +299,8 @@ describe("combat-firepower-engine", () => {
       playerStats: { strength: 1, agility: 15, luck: 15 },
     });
 
-    // 400 DR * (1 - 0.68) = 128 Effective DR
-    expect(withAA.targetDummy.effectiveDR).toBe(128);
+    // 300 DR * (1 - 0.68) = 96 Effective DR
+    expect(withAA.targetDummy.effectiveDR).toBe(96);
     // Landed damage with 68% AP must be substantially higher than without AP
     expect(withAA.targetDummy.normalLanded).toBeGreaterThan(withoutAA.targetDummy.normalLanded);
   });
