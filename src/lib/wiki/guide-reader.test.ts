@@ -9,6 +9,8 @@ import {
   guideHeadingText,
   guideEntityKeys,
   parseGuideTable,
+  pickActiveSection,
+  READING_BAND,
   titleWords,
   selectRelatedGuides,
   slugifyHeading,
@@ -356,6 +358,29 @@ describe("parseGuideTable", () => {
 
   it("returns nothing to render for an empty table", () => {
     expect(parseGuideTable("| | |\n|  |  |")).toEqual({ caption: null, header: null, rows: [], columns: 0 });
+  });
+});
+
+describe("pickActiveSection", () => {
+  const slugs = ["overview", "crafting", "plans", "notes"];
+
+  it("is empty before the first heading reaches the reading band", () => {
+    expect(pickActiveSection(slugs, ["below", "below", "below", "below"])).toBeNull();
+    expect(pickActiveSection([], [])).toBeNull();
+  });
+
+  it("picks the first heading inside the band", () => {
+    expect(pickActiveSection(slugs, ["above", "in", "in", "below"])).toBe("crafting");
+    expect(pickActiveSection(slugs, ["in", "below", "below", "below"])).toBe("overview");
+  });
+
+  it("keeps the last heading scrolled past while its section fills the screen", () => {
+    expect(pickActiveSection(slugs, ["above", "above", "below", "below"])).toBe("crafting");
+    expect(pickActiveSection(slugs, ["above", "above", "above", "above"])).toBe("notes");
+  });
+
+  it("reads a band that covers the top 40% of the viewport", () => {
+    expect(READING_BAND).toBe(0.4);
   });
 });
 

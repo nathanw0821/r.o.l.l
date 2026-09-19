@@ -132,9 +132,12 @@ import {
   isSkippedGuideBlock,
   normalizeGuideBlock,
   parseGuideTable,
+  pickActiveSection,
+  READING_BAND,
   selectRelatedGuides,
   splitGuideBlocks,
   type GuideTocEntry,
+  type SectionPosition,
 } from "@/lib/wiki/guide-reader";
 
 /**
@@ -657,19 +660,114 @@ function formatGuideDate(raw: string | undefined): string | null {
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 
-function GuideToc({ entries, onJump }: { entries: GuideTocEntry[]; onJump: (slug: string) => void }) {
+function prefersReducedMotion(): boolean {
+  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+}
+
+/**
+ * The contents entry being read. One IntersectionObserver watches the h2/h3 headings against a
+ * band over the top 40% of the viewport (READING_BAND); it only records each heading's side of the
+ * band from the entries it is handed, so scrolling never reads layout. The phone disclosure and the
+ * desktop rail share the result, whether or not the disclosure is open. A contents click pins its
+ * section until the reader scrolls on their own (the last short section may never reach the band).
+ */
+function useActiveSection(slugs: readonly string[], enabled: boolean): { active: string | null; pin: (slug: string) => void } {
+  const [active, setActive] = React.useState<string | null>(null);
+  const pinnedRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    if (!enabled || slugs.length === 0 || typeof IntersectionObserver === "undefined") return;
+    const positions = new Map<string, SectionPosition>();
+    pinnedRef.current = null;
+    const update = () => {
+      if (pinnedRef.current) return;
+      setActive(pickActiveSection(slugs, slugs.map((slug) => positions.get(slug) ?? "below")));
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const bandTop = entry.rootBounds?.top ?? 0;
+          positions.set(
+            entry.target.id,
+            entry.isIntersecting ? "in" : entry.boundingClientRect.top < bandTop ? "above" : "below",
+          );
+        }
+        update();
+      },
+      { rootMargin: `0px 0px -${Math.round((1 - READING_BAND) * 100)}% 0px`, threshold: 0 },
+    );
+    for (const slug of slugs) {
+      const heading = document.getElementById(slug);
+      if (heading) observer.observe(heading);
+    }
+    // The reader taking over (wheel, touch, keys) ends a contents-click pin.
+    const unpin = () => {
+      if (!pinnedRef.current) return;
+      pinnedRef.current = null;
+      update();
+    };
+    const opts = { passive: true } as const;
+    window.addEventListener("wheel", unpin, opts);
+    window.addEventListener("touchstart", unpin, opts);
+    window.addEventListener("keydown", unpin);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("wheel", unpin);
+      window.removeEventListener("touchstart", unpin);
+      window.removeEventListener("keydown", unpin);
+    };
+  }, [slugs, enabled]);
+
+  const pin = React.useCallback((slug: string) => {
+    pinnedRef.current = slug;
+    setActive(slug);
+  }, []);
+
+  return { active: enabled && active && slugs.includes(active) ? active : null, pin };
+}
+
+function GuideToc({
+  entries,
+  activeSlug,
+  onJump,
+  keepActiveVisible = false,
+}: {
+  entries: GuideTocEntry[];
+  activeSlug: string | null;
+  onJump: (slug: string) => void;
+  /** Desktop rail: scroll its own box (never the page) so a long contents list keeps the entry in view. */
+  keepActiveVisible?: boolean;
+}) {
+  const listRef = React.useRef<HTMLOListElement>(null);
+
+  React.useEffect(() => {
+    if (!keepActiveVisible || !activeSlug) return;
+    const box = listRef.current?.closest<HTMLElement>(".guides-toc-rail");
+    if (!box || box.scrollHeight <= box.clientHeight) return;
+    const link = listRef.current?.querySelector<HTMLElement>(`a[data-toc-slug="${CSS.escape(activeSlug)}"]`);
+    if (!link) return;
+    // Once per section change, never per scroll frame.
+    const boxRect = box.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    const delta =
+      linkRect.top < boxRect.top ? linkRect.top - boxRect.top - 8 : linkRect.bottom > boxRect.bottom ? linkRect.bottom - boxRect.bottom + 8 : 0;
+    if (delta !== 0) box.scrollBy({ top: delta, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  }, [activeSlug, keepActiveVisible]);
+
   return (
-    <ol className="guides-toc space-y-0.5">
+    <ol ref={listRef} className="guides-toc space-y-0.5">
       {entries.map((entry) => (
         <li key={entry.slug} className={entry.level === 3 ? "pl-3" : undefined}>
           <a
             href={`#${entry.slug}`}
+            data-toc-slug={entry.slug}
+            aria-current={entry.slug === activeSlug ? "location" : undefined}
             onClick={(e) => {
               if (!isPlainClick(e)) return;
               e.preventDefault();
               onJump(entry.slug);
             }}
-            className="guides-prose block rounded px-2 py-1 text-[14px] leading-snug text-[var(--text-muted)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)]"
+            className="guides-prose block rounded px-2 py-1 text-[14px] leading-snug text-[var(--text-muted)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)] motion-safe:transition-colors aria-[current=location]:bg-[var(--control-hover)] aria-[current=location]:text-[var(--color-accent)] aria-[current=location]:shadow-[inset_2px_0_0_var(--color-accent)]"
           >
             {entry.text}
           </a>
@@ -716,13 +814,20 @@ function GuideReader({
   const category = categoryLabel(article.category || "General");
   const sourceUrl = externalSourceUrl(article.url);
 
-  const jumpTo = React.useCallback((slug: string) => {
-    const target = document.getElementById(slug);
-    if (!target) return;
-    target.scrollIntoView({ block: "start" });
-    target.focus({ preventScroll: true });
-    window.history.replaceState(window.history.state, "", `#${slug}`);
-  }, []);
+  const tocSlugs = React.useMemo(() => toc.entries.map((entry) => entry.slug), [toc]);
+  const { active: activeSlug, pin: pinSection } = useActiveSection(tocSlugs, showToc);
+
+  const jumpTo = React.useCallback(
+    (slug: string) => {
+      const target = document.getElementById(slug);
+      if (!target) return;
+      pinSection(slug);
+      target.scrollIntoView({ block: "start" });
+      target.focus({ preventScroll: true });
+      window.history.replaceState(window.history.state, "", `#${slug}`);
+    },
+    [pinSection],
+  );
 
   const openFromLink = (item: ArticleItem) => (e: React.MouseEvent) => {
     if (!isPlainClick(e)) return;
@@ -804,7 +909,6 @@ function GuideReader({
                   view them on the original page
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>
-                .
               </>
             ) : (
               "."
@@ -877,7 +981,7 @@ function GuideReader({
                 On this page ({toc.entries.length})
               </summary>
               <nav aria-label="On this page" className="border-t border-[var(--border)] px-2 py-3">
-                <GuideToc entries={toc.entries} onJump={jumpTo} />
+                <GuideToc entries={toc.entries} activeSlug={activeSlug} onJump={jumpTo} />
               </nav>
             </details>
           ) : null}
@@ -990,7 +1094,7 @@ function GuideReader({
           {showToc ? (
             <nav aria-label="On this page" className="guides-toc-rail hidden lg:block">
               <h2 className="guides-heading guides-mono mb-2 px-2 text-[13px] text-[var(--text-soft)]">On this page</h2>
-              <GuideToc entries={toc.entries} onJump={jumpTo} />
+              <GuideToc entries={toc.entries} activeSlug={activeSlug} onJump={jumpTo} keepActiveVisible />
             </nav>
           ) : null}
         </aside>
