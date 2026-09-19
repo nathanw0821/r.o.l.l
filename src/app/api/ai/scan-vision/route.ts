@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { getGeminiClient, GEMINI_VISION_MODEL } from "@/lib/ai/gemini-client";
+import { rateLimit } from "@/lib/rate-limit";
+
+/** About 7.5 MB of image once decoded; larger screenshots should be resized on the client. */
+const MAX_IMAGE_BASE64_CHARS = 10_000_000;
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  const limiter = await rateLimit("ai-scan-vision", 4, 60000);
+  if (!limiter.success) {
+    return NextResponse.json({ success: false, error: "Too many requests. Please try again shortly." }, { status: 429 });
+  }
+
   try {
     const ai = getGeminiClient();
     if (!ai) {
@@ -15,6 +24,10 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const { imageBase64 } = body as { imageBase64?: string };
+
+    if (typeof imageBase64 === "string" && imageBase64.length > MAX_IMAGE_BASE64_CHARS) {
+      return NextResponse.json({ success: false, error: "Image is too large." }, { status: 413 });
+    }
 
     if (!imageBase64 || typeof imageBase64 !== "string") {
       return NextResponse.json(

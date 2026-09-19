@@ -24,10 +24,8 @@ export async function POST(request: Request) {
     return badRequest("Security verification failed. Please complete the anti-bot verification.");
   }
 
-  const result = await requestPasswordReset(parsed.data.email);
+  await requestPasswordReset(parsed.data.email);
 
-  return ok({
-    accepted: result.accepted,
-    delivered: result.delivered
-  });
+  // Same answer whether or not the email has an account ("delivered" used to reveal that).
+  return ok({ accepted: true, delivered: false, resetUrl: null });
 }

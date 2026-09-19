@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export function GET() {
-  const content = `Contact: mailto:nathanw@gmail.com
+  const content = `Contact: https://github.com/nathanw0821/r.o.l.l/security/advisories/new
 Expires: 2027-12-31T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://fallout76.wiki/security.txt
