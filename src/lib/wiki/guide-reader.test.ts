@@ -4,6 +4,8 @@ import {
   adjacentGuides,
   buildGuideToc,
   flattenPatchLabel,
+  guideHeadingLevel,
+  guideHeadingText,
   guideEntityKeys,
   titleWords,
   selectRelatedGuides,
@@ -83,6 +85,51 @@ describe("buildGuideToc", () => {
 
   it("the reader shows a table of contents from three headings", () => {
     expect(MIN_TOC_ENTRIES).toBe(3);
+  });
+
+  it("keeps h4-h6 out of the contents and strips emphasis from entry text", () => {
+    const toc = buildGuideToc(["# **Overview**", "#### **Step 2: Review the Graph**", "##### Event: Mothman Equinox", "## Crafting"].join("\n\n"));
+    expect(toc.entries.map((e) => [e.level, e.text, e.slug])).toEqual([
+      [2, "Overview", "overview"],
+      [3, "Crafting", "crafting"],
+    ]);
+  });
+});
+
+describe("guideHeadingLevel / guideHeadingText", () => {
+  it("maps one to six '#' to h2-h6 (the page title is the h1)", () => {
+    expect(guideHeadingLevel("# Overview")).toBe(2);
+    expect(guideHeadingLevel("## Crafting")).toBe(3);
+    expect(guideHeadingLevel("### Plans")).toBe(4);
+    // Real corpus headings that used to render as paragraphs with their "####" showing.
+    expect(guideHeadingLevel("#### **Step 2: Review the Graph**")).toBe(5); // guide 149
+    expect(guideHeadingLevel("#### Minerva Angebote für diesen Termin")).toBe(5); // guide 332
+    expect(guideHeadingLevel("##### Treasure hunters and double mutations")).toBe(6); // guide 3578
+    expect(guideHeadingLevel("###### **Forest**")).toBe(6); // guide 4638
+  });
+
+  it("accepts scrape artefacts with the marker glued on or on its own line", () => {
+    expect(guideHeadingLevel("##Challenges")).toBe(3); // guide 3650
+    expect(guideHeadingLevel("###Combat")).toBe(4); // guide 3743
+    expect(guideHeadingLevel("##\n Bigfoot und die Partycrasher nach Events")).toBe(3); // guide 3581
+  });
+
+  it("rejects text that only starts with '#'", () => {
+    expect(guideHeadingLevel("#5 Things the ghoul needs now")).toBeNull(); // guide 3809
+    expect(guideHeadingLevel("####### Seven is too many")).toBeNull();
+    expect(guideHeadingLevel("#")).toBeNull();
+    expect(guideHeadingLevel("Plain text # not a heading")).toBeNull();
+    expect(guideHeadingLevel("| # | Name |")).toBeNull();
+  });
+
+  it("shows the text without the marker, emphasis or stray whitespace", () => {
+    expect(guideHeadingText("#### **Step 2: Review the Graph**")).toBe("Step 2: Review the Graph");
+    expect(guideHeadingText("###### **Note:** keys only drop during *Invaders from Beyond*")).toBe(
+      "Note: keys only drop during Invaders from Beyond",
+    );
+    expect(guideHeadingText("##\n Bigfoot und die Partycrasher")).toBe("Bigfoot und die Partycrasher");
+    expect(guideHeadingText("## T-51b *Excavator* 2x")).toBe("T-51b Excavator 2x");
+    expect(guideHeadingText("## 2 * 3 * 4")).toBe("2 * 3 * 4");
   });
 });
 

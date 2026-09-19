@@ -365,7 +365,7 @@ function parseCleanArticleContent(
       activeTitleWord = null;
     }
 
-    // 4. Headings (h2/h3 carry the table-of-contents ids)
+    // 4. Headings (h2/h3 carry the table-of-contents ids; h4-h6 stay out of the contents)
     const headingLevel = guideHeadingLevel(trimmed);
     if (headingLevel === 2) {
       return (
@@ -374,7 +374,7 @@ function parseCleanArticleContent(
           id={slugByBlock.get(idx)}
           className="guides-heading guides-mono guides-anchor mt-10 mb-3 border-b border-[var(--border)] pb-2 text-[24px] leading-tight text-[var(--color-accent)]"
         >
-          {guideHeadingText(trimmed, 2)}
+          {guideHeadingText(trimmed)}
         </h2>
       );
     }
@@ -385,15 +385,29 @@ function parseCleanArticleContent(
           id={slugByBlock.get(idx)}
           className="guides-heading guides-mono guides-anchor mt-8 mb-2 text-[18px] leading-snug text-[var(--color-accent)]"
         >
-          {guideHeadingText(trimmed, 3)}
+          {guideHeadingText(trimmed)}
         </h3>
       );
     }
     if (headingLevel === 4) {
       return (
         <h4 key={idx} className="guides-heading guides-mono mt-6 mb-2 text-[15px] leading-snug text-[var(--text-primary)]">
-          {guideHeadingText(trimmed, 4)}
+          {guideHeadingText(trimmed)}
         </h4>
+      );
+    }
+    if (headingLevel === 5) {
+      return (
+        <h5 key={idx} className="guides-heading guides-mono mt-5 mb-1.5 text-[14px] leading-snug text-[var(--text-primary)]">
+          {guideHeadingText(trimmed)}
+        </h5>
+      );
+    }
+    if (headingLevel === 6) {
+      return (
+        <h6 key={idx} className="guides-heading guides-mono mt-4 mb-1.5 text-[13px] leading-snug text-[var(--text-muted)]">
+          {guideHeadingText(trimmed)}
+        </h6>
       );
     }
 

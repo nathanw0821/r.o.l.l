@@ -31,21 +31,38 @@ export function normalizeGuideBlock(block: string): string {
   return block.trim().replace(/(\d{4})(\d+\s*min\s*read)/i, "$1 • $2");
 }
 
+/** Rendered heading levels: the page title is the h1, so body markdown starts at h2. */
+export type GuideHeadingLevel = 2 | 3 | 4 | 5 | 6;
+
 /**
- * Body heading level for a block, as rendered: "# " → h2, "## " → h3, "### " → h4.
- * Returns null for anything else ("#### " and deeper render as paragraphs, as before).
+ * "#"–"######" then whitespace ("## Crafting", "##\n Bigfoot"), or two or more "#" glued to the
+ * text ("##Challenges", a scrape artefact). A single "#" glued to text is not a heading ("#5 Things").
  */
-export function guideHeadingLevel(trimmed: string): 2 | 3 | 4 | null {
-  if (trimmed.startsWith("# ")) return 2;
-  if (trimmed.startsWith("## ")) return 3;
-  if (trimmed.startsWith("### ")) return 4;
-  return null;
+const HEADING_MARKER = /^(#{1,6})(\s*)(?=[^\s#])/;
+
+/**
+ * Body heading level for a block, as rendered: "# " → h2, "## " → h3, "### " → h4,
+ * "#### " → h5, "##### " and "###### " → h6. Returns null for anything else.
+ */
+export function guideHeadingLevel(trimmed: string): GuideHeadingLevel | null {
+  const match = HEADING_MARKER.exec(trimmed);
+  if (!match) return null;
+  const hashes = match[1].length;
+  if (!match[2] && hashes < 2) return null;
+  return Math.min(6, hashes + 1) as GuideHeadingLevel;
 }
 
-/** Heading text exactly as the parser shows it (first "#… " marker removed). */
-export function guideHeadingText(trimmed: string, level: 2 | 3 | 4): string {
-  const marker = level === 2 ? "# " : level === 3 ? "## " : "### ";
-  return trimmed.replace(marker, "");
+/**
+ * Heading text as the reader shows it: the "#… " marker removed, whitespace collapsed and
+ * markdown emphasis dropped (headings are already set in the heading face, so "**Step 2**"
+ * would otherwise show its asterisks).
+ */
+export function guideHeadingText(trimmed: string): string {
+  return trimmed
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/(\*{1,3}|_{2})(\S(?:.*?\S)?)\1/g, "$2")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /** URL-safe slug: lower case, letters/digits joined by single hyphens, markdown emphasis dropped. */
@@ -92,7 +109,7 @@ export function buildGuideToc(content: string): GuideToc {
     const trimmed = normalizeGuideBlock(block);
     const level = guideHeadingLevel(trimmed);
     if (level !== 2 && level !== 3) return;
-    const text = guideHeadingText(trimmed, level).trim();
+    const text = guideHeadingText(trimmed);
     const base = slugifyHeading(text);
     let slug = base;
     for (let n = 2; used.has(slug); n++) slug = `${base}-${n}`;
