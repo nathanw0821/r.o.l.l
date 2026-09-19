@@ -11,11 +11,16 @@ tsconfig.tsbuildinfo
 .env
 .env*.local
 .env.*
+!.env.example
 *.pem
 *.key
-*secrets*
-*token*
-*credential*
+*.p12
+.dev.vars*
+credentials.json
+service-account*.json
+*.secrets.json
+# (Deliberately no *token* / *secret* / *credential* globs: they silently hid real source
+# files such as src/lib/builder/edit-token.ts and the Secret Agent perk card images.)
 *.sql
 !prisma/migrations/**/*.sql
 *.backup
