@@ -25,6 +25,8 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5432/roll?schema=public' }}
       NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-build-placeholder-not-for-production' }}
       NEXTAUTH_URL: https://fallout76.wiki
+      # Public Turnstile site key: compiled into the client bundle at build time (not a secret).
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 0x4AAAAAADptvziu-B7dS6yh
 
     steps:
       - name: Checkout Code

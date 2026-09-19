@@ -95,12 +95,14 @@ export async function POST(request: Request) {
     return validationError(parsed.error, "Invalid build payload.");
   }
 
-  const turnstile = await verifyTurnstileToken(parsed.data.turnstileToken);
-  if (!turnstile.success) {
-    return badRequest("Security verification failed. Please complete the anti-bot verification.");
-  }
-
+  // Signed-in users are already authenticated and rate limited; guests pass the anti-bot check.
   const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    const turnstile = await verifyTurnstileToken(parsed.data.turnstileToken);
+    if (!turnstile.success) {
+      return badRequest("Security verification failed. Please complete the anti-bot check and try again.");
+    }
+  }
   const slug = makeSlug(parsed.data.title);
   const { token: editToken, hash: editTokenHash } = createEditToken();
   const payload = {

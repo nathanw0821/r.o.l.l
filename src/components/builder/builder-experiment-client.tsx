@@ -22,6 +22,7 @@ import { BUILDER_STORAGE_KEYS } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import BuilderMasterTabNav from "@/components/builder/builder-master-tab-nav";
 import LegendaryModPickerDialog from "@/components/builder/legendary-mod-picker-dialog";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { modDeepLinkPick, resolveModParam } from "@/lib/links/cross-links";
 import PerkDeckTab from "@/components/builder/tabs/perk-deck-tab";
 import BiometricsTab from "@/components/builder/tabs/biometrics-tab";
@@ -379,6 +380,9 @@ export default function BuilderExperimentClient({
     updateBusy,
     updateStatus,
     shareBuild,
+    needsTurnstile,
+    setShareTurnstileToken,
+    turnstileRenderKey,
     updateTransmission,
     exitTransmissionMode,
   } = useBuilderShare({
@@ -647,6 +651,13 @@ export default function BuilderExperimentClient({
                     {shareBusy ? "PUBLISHING..." : activeTransmission ? "SAVE AS NEW" : "PUBLISH"}
                   </Button>
                 </div>
+                {needsTurnstile ? (
+                  <TurnstileWidget
+                    key={turnstileRenderKey}
+                    onVerify={setShareTurnstileToken}
+                    className="basis-full"
+                  />
+                ) : null}
 
                 <Button
                   type="button"

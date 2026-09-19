@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 
 type ForgotPasswordResponse =
   | { success: true; data: { accepted: true; delivered: boolean; resetUrl: string | null } }
@@ -18,6 +19,8 @@ export default function ForgotPasswordForm() {
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [result, setResult] = React.useState<{ delivered: boolean; resetUrl: string | null } | null>(null);
+  const [turnstileToken, setTurnstileToken] = React.useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = React.useState(0);
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -29,8 +32,11 @@ export default function ForgotPasswordForm() {
     const response = await fetch("/api/auth/forgot-password", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, turnstileToken })
     });
+    // Tokens are single-use: render a fresh widget for any retry.
+    setTurnstileToken(null);
+    setTurnstileKey((k) => k + 1);
     const payload = (await response.json().catch(() => null)) as ForgotPasswordResponse | null;
 
     if (!response.ok || !payload?.success) {
@@ -61,6 +67,7 @@ export default function ForgotPasswordForm() {
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
       </label>
+      <TurnstileWidget key={turnstileKey} onVerify={setTurnstileToken} className="flex justify-center my-2" />
       <Button type="submit" className="w-full" disabled={pending}>
         {pending ? "Sending..." : "Send secure link"}
       </Button>
