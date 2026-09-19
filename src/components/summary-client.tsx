@@ -701,9 +701,11 @@ export default function SummaryClient({
                           <button
                             type="button"
                             title={row.isSeeking ? "Remove from Seeking wishlist" : "Add to Seeking wishlist"}
+                            aria-label={row.isSeeking ? `Remove ${cleanEffectName(row.effect.name)} from Seeking wishlist` : `Add ${cleanEffectName(row.effect.name)} to Seeking wishlist`}
+                            aria-pressed={row.isSeeking}
                             onClick={() => updateSeeking(row, !row.isSeeking)}
                             className={cn(
-                              "p-0.5 rounded transition-all",
+                              "p-0.5 rounded transition-all touch:h-11 touch:w-11 touch:flex touch:items-center touch:justify-center",
                               row.isSeeking
                                 ? "text-amber-400 bg-amber-950/60 border border-amber-500/50 shadow-[0_0_6px_rgba(245,158,11,0.4)]"
                                 : "text-foreground/30 hover:text-amber-400/80"
@@ -714,13 +716,15 @@ export default function SummaryClient({
                         )}
 
                         {/* Owned Inventory Counter */}
-                        <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-background/60 border border-border/40 text-[0.68rem]">
+                        <div className="flex items-center gap-0.5 px-1.5 py-0.5 touch:p-0 rounded bg-background/60 border border-border/40 text-[0.68rem] touch:text-sm">
                           {!isExportingImage && (
                             <button
                               type="button"
                               title="Decrease owned inventory count"
+                              data-count-step="down"
+                              aria-label={`Decrease owned count of ${cleanEffectName(row.effect.name)}`}
                               onClick={() => updateCount(row, row.modCount - 1)}
-                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem]"
+                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem] touch:h-11 touch:w-11 touch:text-base"
                             >
                               -
                             </button>
@@ -732,8 +736,10 @@ export default function SummaryClient({
                             <button
                               type="button"
                               title="Increase owned inventory count"
+                              data-count-step="up"
+                              aria-label={`Increase owned count of ${cleanEffectName(row.effect.name)}`}
                               onClick={() => updateCount(row, row.modCount + 1)}
-                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem]"
+                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem] touch:h-11 touch:w-11 touch:text-base"
                             >
                               +
                             </button>
@@ -744,8 +750,10 @@ export default function SummaryClient({
                         <button
                           type="button"
                           title={isUnlocked ? "Unlocked (click to toggle)" : "Locked (click to toggle)"}
+                          aria-label={`${cleanEffectName(row.effect.name)}: ${isUnlocked ? "unlocked" : "locked"} (toggle)`}
+                          aria-pressed={isUnlocked}
                           onClick={() => toggleRow(row)}
-                          className={cn("w-4 text-center font-mono text-[0.85rem] cursor-pointer", symbolColor)}
+                          className={cn("w-4 text-center font-mono text-[0.85rem] cursor-pointer touch:h-11 touch:w-11", symbolColor)}
                         >
                           {symbol}
                         </button>
