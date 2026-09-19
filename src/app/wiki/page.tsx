@@ -23,6 +23,7 @@ import {
   serializeGuideListState,
   type GuideFilterKey,
   type GuideListState,
+  type GuideSort,
   type WikiSource,
 } from "@/lib/wiki/guide-list-state";
 
@@ -46,8 +47,6 @@ interface ArticleItem {
   /** The original article has pictures; they are linked, not embedded. */
   sourceImages?: boolean;
 }
-
-type SortOption = "newest" | "oldest" | "title-asc" | "title-desc";
 
 /** Category ids are the `?category=` values and the counts keys; do not rename them. */
 const CATEGORY_LIST: ReadonlyArray<{ id: string; label: string; desc: string }> = [
@@ -87,11 +86,11 @@ function categoryCount(id: string, includeArchive: boolean): number {
   return COUNTS[id] ?? 0;
 }
 
-function searchApiUrl(state: GuideListState, sort: SortOption, offset: number, limit: number): string {
+function searchApiUrl(state: GuideListState, offset: number, limit: number): string {
   const params = new URLSearchParams({
     q: state.q,
     category: state.category,
-    sort,
+    sort: state.sort,
     update: state.update,
     archive: state.archive ? "1" : "0",
     offset: String(offset),
@@ -991,7 +990,6 @@ function TruthWikiContent() {
   const listKey = serializeGuideListState(listState);
 
   const [queryInput, setQueryInput] = React.useState(listState.q);
-  const [sortBy, setSortBy] = React.useState<SortOption>("newest");
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [total, setTotal] = React.useState<number | null>(null);
   /** Category ids from the API's X-Suggestions header when a query matches nothing. */
@@ -1007,10 +1005,6 @@ function TruthWikiContent() {
   const selfWrittenRef = React.useRef<string | null>(null);
   /** Deep-link values (?q=, ?id=) seen on the previous URL, to auto-open the reader only when they change. */
   const prevDeepLinkRef = React.useRef<{ q: string; id: string } | null>(null);
-  const sortRef = React.useRef(sortBy);
-  React.useEffect(() => {
-    sortRef.current = sortBy;
-  }, [sortBy]);
 
   // Reader: focus + scroll hand-off between the list and the open guide.
   const readerTitleRef = React.useRef<HTMLHeadingElement>(null);
@@ -1138,7 +1132,7 @@ function TruthWikiContent() {
       }
       const q = state.q;
       if (q.trim().length > 1) {
-        const res = await fetch(searchApiUrl(state, sortRef.current, 0, 100));
+        const res = await fetch(searchApiUrl(state, 0, 100));
         const data = await res.json();
         const list: ArticleItem[] = Array.isArray(data) ? data : [];
         const cleanQ = q.toLowerCase().trim();
@@ -1191,12 +1185,12 @@ function TruthWikiContent() {
     return () => clearTimeout(timer);
   }, [queryInput, listState, writeState]);
 
-  // Fetch the current page whenever the URL state or the sort changes.
+  // Fetch the current page whenever the URL state (filters, sort, page) changes.
   React.useEffect(() => {
     const state = parseGuideListState(new URLSearchParams(listKey));
     const controller = new AbortController();
     setLoading(true);
-    fetch(searchApiUrl(state, sortBy, pageOffset(state.page), GUIDES_PER_PAGE), { signal: controller.signal })
+    fetch(searchApiUrl(state, pageOffset(state.page), GUIDES_PER_PAGE), { signal: controller.signal })
       .then(async (res) => {
         const data = await res.json();
         const list: ArticleItem[] = Array.isArray(data) ? data : [];
@@ -1215,7 +1209,7 @@ function TruthWikiContent() {
         setLoading(false);
       });
     return () => controller.abort();
-  }, [listKey, sortBy]);
+  }, [listKey]);
 
   const pages = pageCount(total ?? 0);
 
@@ -1351,7 +1345,7 @@ function TruthWikiContent() {
   };
   const clearAll = () => {
     setQueryInput("");
-    writeState(clearAllFilters(), "push");
+    writeState(clearAllFilters(listState.sort), "push");
   };
   const removeChip = (key: GuideFilterKey) => {
     if (key === "q") setQueryInput("");
@@ -1365,7 +1359,7 @@ function TruthWikiContent() {
     return qs ? `${pathname}?${qs}` : pathname;
   };
   /** A suggested category starts a fresh browse of that category (the query found nothing). */
-  const suggestionState = (id: string): GuideListState => ({ ...clearAllFilters(), archive: listState.archive, category: id });
+  const suggestionState = (id: string): GuideListState => ({ ...clearAllFilters(listState.sort), archive: listState.archive, category: id });
   const suggestionHref = (id: string) => `${pathname}?${serializeGuideListState(suggestionState(id))}`;
   const firstShown = total ? pageOffset(listState.page) + 1 : 0;
   const lastShown = total ? Math.min(total, pageOffset(listState.page) + articles.length) : 0;
@@ -1444,11 +1438,9 @@ function TruthWikiContent() {
                 <ArrowUpDown aria-hidden="true" className="h-4 w-4" />
                 <span>Sort</span>
                 <select
-                  value={sortBy}
-                  onChange={(e) => {
-                    setSortBy(e.target.value as SortOption);
-                    if (listState.page > 1) writeState({ ...listState, page: 1 }, "push");
-                  }}
+                  id="guides-sort"
+                  value={listState.sort}
+                  onChange={(e) => writeState({ ...listState, sort: e.target.value as GuideSort, page: 1 }, "push")}
                   className="cursor-pointer rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-[13px] text-[var(--text-primary)]"
                 >
                   <option value="newest">Newest first</option>
