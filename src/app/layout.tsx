@@ -9,6 +9,7 @@ import { getSiteUrl } from "@/lib/app-config";
 import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
+import ServiceWorkerRegister from "@/components/service-worker-register";
 
 import { VT323, Share_Tech_Mono } from "next/font/google";
 import { resolveSeasonAttribute } from "@/lib/season";
@@ -182,6 +183,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Suspense fallback={<ShellLoading />}>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
