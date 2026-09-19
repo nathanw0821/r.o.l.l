@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCachedPublishedSharedBuild } from "@/lib/builder/get-shared-build";
+import { sameSiteRedirectPath } from "@/lib/links/safe-redirect";
 import { normalizeBuilderPayload } from "@/lib/builder/normalize-builder-payload";
 import { getAppSession } from "@/lib/auth";
 import { isAdminUser } from "@/lib/app-config";
@@ -31,10 +32,13 @@ export default async function SharedLoadoutPage({ params }: PageProps) {
   const { slug } = await params;
   const row = await getCachedPublishedSharedBuild(slug);
 
-  // Instant 307 Redirect for URL Shortlinks
-  if (row?.payload && typeof row.payload === "object" && "redirectUrl" in row.payload && (row.payload as { redirectUrl?: string }).redirectUrl) {
-    const { redirect } = await import("next/navigation");
-    redirect((row.payload as { redirectUrl: string }).redirectUrl);
+  // Shortlinks redirect, but only to pages on this site (never an open redirect).
+  if (row?.payload && typeof row.payload === "object" && "redirectUrl" in row.payload) {
+    const target = sameSiteRedirectPath((row.payload as { redirectUrl?: unknown }).redirectUrl);
+    if (target) {
+      const { redirect } = await import("next/navigation");
+      redirect(target);
+    }
   }
 
   const payload = normalizeBuilderPayload(row?.payload);

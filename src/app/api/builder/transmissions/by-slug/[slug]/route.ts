@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { isAdminUser } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
+import { publicPayload } from "@/lib/builder/edit-token";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,7 @@ export async function GET(request: Request, { params }: RouteParams) {
           slug: record.slug,
           title: record.title,
           description: record.description,
-          payload: record.payload,
+          payload: publicPayload(record.payload),
           createdAt: record.createdAt.toISOString(),
           updatedAt: record.updatedAt.toISOString(),
           userId: record.userId,
