@@ -15,6 +15,7 @@ export default async function ScreenshotAssistPage() {
 
   return (
     <div className="space-y-6">
+      <h1 className="text-xl font-semibold tracking-tight">Screenshot import</h1>
       <p className="text-sm text-foreground/65">
         Paste a screenshot of the <strong>Legendary Crafting Bench</strong> (any star tab) and R.O.L.L. reads which mods you have learned, then you confirm the matches. Reading happens in your browser; nothing is uploaded unless you choose the vision option. (This tool is also called S.C.A.N.)
       </p>

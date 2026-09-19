@@ -51,7 +51,12 @@ export default function ForgotPasswordForm() {
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          name="email"
+          inputMode="email"
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="user@example.com"
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
