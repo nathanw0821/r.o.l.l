@@ -61,6 +61,11 @@ export interface UseBuilderShareResult {
   updateBusy: boolean;
   updateStatus: TransmissionStatusMessage | null;
   shareBuild: () => Promise<void>;
+  /** Guests must pass the anti-bot check before publishing; signed-in users skip it. */
+  needsTurnstile: boolean;
+  setShareTurnstileToken: (token: string) => void;
+  /** Changes after every publish so the widget re-renders and issues a fresh (single-use) token. */
+  turnstileRenderKey: number;
   updateTransmission: () => Promise<void>;
   exitTransmissionMode: () => void;
 }
@@ -238,6 +243,12 @@ export function useBuilderShare({
     setSwitchboardState,
   ]);
 
+  const [shareTurnstileToken, setShareTurnstileTokenState] = React.useState<string | null>(null);
+  const [turnstileRenderKey, setTurnstileRenderKey] = React.useState(0);
+  const setShareTurnstileToken = React.useCallback((token: string) => {
+    setShareTurnstileTokenState(token || null);
+  }, []);
+
   async function shareBuild() {
     setShareBusy(true);
     setShareResult(null);
@@ -258,6 +269,7 @@ export function useBuilderShare({
               ? (switchboardState as unknown as Record<string, unknown>)
               : undefined,
           },
+          turnstileToken: currentUserId ? undefined : shareTurnstileToken,
         }),
       });
       const body = (await response.json()) as {
@@ -317,6 +329,11 @@ export function useBuilderShare({
       setShareResult(e instanceof Error ? e.message : "Share failed.");
     } finally {
       setShareBusy(false);
+      // Turnstile tokens are single-use: get a fresh one for the next publish.
+      if (!currentUserId) {
+        setShareTurnstileTokenState(null);
+        setTurnstileRenderKey((k) => k + 1);
+      }
     }
   }
 
@@ -421,6 +438,9 @@ export function useBuilderShare({
     updateBusy,
     updateStatus,
     shareBuild,
+    needsTurnstile: !currentUserId,
+    setShareTurnstileToken,
+    turnstileRenderKey,
     updateTransmission,
     exitTransmissionMode,
   };

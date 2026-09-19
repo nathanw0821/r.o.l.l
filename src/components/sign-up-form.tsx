@@ -36,6 +36,7 @@ export default function SignUpForm() {
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [turnstileToken, setTurnstileToken] = React.useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = React.useState(0);
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [providers, setProviders] = React.useState<Record<string, { id: string; name: string }> | null>(null);
@@ -79,6 +80,9 @@ export default function SignUpForm() {
 
     if (!response.ok || !payload?.success) {
       setError(getErrorMessage(payload));
+      // Tokens are single-use: render a fresh widget for the retry.
+      setTurnstileToken(null);
+      setTurnstileKey((k) => k + 1);
       setPending(false);
       return;
     }
@@ -193,7 +197,7 @@ export default function SignUpForm() {
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
       </label>
-      <TurnstileWidget onVerify={setTurnstileToken} className="flex justify-center my-2" />
+      <TurnstileWidget key={turnstileKey} onVerify={setTurnstileToken} className="flex justify-center my-2" />
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Creating account..." : "Create Account"}
       </Button>
