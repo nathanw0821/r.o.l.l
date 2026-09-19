@@ -23,6 +23,7 @@ import {
   serializeGuideListState,
   type GuideFilterKey,
   type GuideListState,
+  type GuideSort,
   type WikiSource,
 } from "@/lib/wiki/guide-list-state";
 
@@ -46,8 +47,6 @@ interface ArticleItem {
   /** The original article has pictures; they are linked, not embedded. */
   sourceImages?: boolean;
 }
-
-type SortOption = "newest" | "oldest" | "title-asc" | "title-desc";
 
 /** Category ids are the `?category=` values and the counts keys; do not rename them. */
 const CATEGORY_LIST: ReadonlyArray<{ id: string; label: string; desc: string }> = [
@@ -87,11 +86,11 @@ function categoryCount(id: string, includeArchive: boolean): number {
   return COUNTS[id] ?? 0;
 }
 
-function searchApiUrl(state: GuideListState, sort: SortOption, offset: number, limit: number): string {
+function searchApiUrl(state: GuideListState, offset: number, limit: number): string {
   const params = new URLSearchParams({
     q: state.q,
     category: state.category,
-    sort,
+    sort: state.sort,
     update: state.update,
     archive: state.archive ? "1" : "0",
     offset: String(offset),
@@ -126,14 +125,19 @@ import {
   MIN_TOC_ENTRIES,
   adjacentGuides,
   buildGuideToc,
+  externalSourceUrl,
   flattenPatchLabel,
   guideHeadingLevel,
   guideHeadingText,
   isSkippedGuideBlock,
   normalizeGuideBlock,
+  parseGuideTable,
+  pickActiveSection,
+  READING_BAND,
   selectRelatedGuides,
   splitGuideBlocks,
   type GuideTocEntry,
+  type SectionPosition,
 } from "@/lib/wiki/guide-reader";
 
 /**
@@ -199,6 +203,10 @@ function renderFormattedInlineText(text: string, linkify?: { currentPath: string
   return parts.length > 0 ? parts : [text];
 }
 
+/** Header row and caption look (the style the first row of every table used to get). */
+const TABLE_HEAD_ROW =
+  "border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--color-accent)_10%,transparent)] text-[var(--color-accent)]";
+
 /** Images we may embed: served from this site only. Third-party images are linked, never hotlinked. */
 function isSameSiteImage(url: string | null | undefined): boolean {
   if (!url) return false;
@@ -222,42 +230,53 @@ function parseCleanArticleContent(
 
     const trimmed = normalizeGuideBlock(block);
 
-    // 1. Markdown Table (scrolls inside its own container, never the page)
+    // 1. Markdown Table (scrolls inside its own container, never the page). parseGuideTable picks the
+    //    header row: none when the first row is data, the second when the first is a title (caption).
     if (trimmed.startsWith("|")) {
       activeTitleWord = null;
-      const rows = trimmed.split("\n").filter((r) => r.trim().startsWith("|"));
-      if (rows.length > 0) {
+      const table = parseGuideTable(trimmed);
+      if (table.header || table.rows.length > 0) {
+        const cellClass = (cell: string) =>
+          `px-3 py-2 align-top leading-snug ${cell.length > 40 ? "min-w-[16rem]" : "whitespace-nowrap"}`;
         return (
-          <div key={idx} role="region" aria-label="Table" tabIndex={0} className="guides-table-wrap my-5">
-            <table className="guides-mono w-full border-collapse text-left text-[13px]">
+          <div key={idx} role="region" aria-label={table.caption ?? "Table"} tabIndex={0} className="guides-table-wrap my-5">
+            <table data-guide-table className="guides-mono w-full border-collapse text-left text-[13px]">
+              {table.caption ? (
+                <caption className={`${TABLE_HEAD_ROW} border-b px-3 py-2 text-left leading-snug`}>{table.caption}</caption>
+              ) : null}
+              {table.header ? (
+                <thead>
+                  <tr className={`${TABLE_HEAD_ROW} border-b`}>
+                    {table.header.map((cell, cIdx) => (
+                      <th key={cIdx} scope="col" className={`${cellClass(cell)} text-left font-normal`}>
+                        {renderFormattedInlineText(cell)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              ) : null}
               <tbody>
-                {rows.map((rowStr, rIdx) => {
-                  if (/^\|[\s\-:|]+\|$/.test(rowStr.trim())) return null;
-                  const cells = rowStr.split("|").slice(1, -1).map((c) => c.trim());
-                  const isHeader = rIdx === 0;
-
-                  return (
-                    <tr
-                      key={rIdx}
-                      className={
-                        isHeader
-                          ? "border-b border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--color-accent)_10%,transparent)] text-[var(--color-accent)]"
-                          : "border-b border-[var(--border)] last:border-b-0"
-                      }
-                    >
-                      {cells.map((cell, cIdx) => (
-                        <td key={cIdx} className={`px-3 py-2 align-top leading-snug ${cell.length > 40 ? "min-w-[16rem]" : "whitespace-nowrap"}`}>
+                {table.rows.map((row, rIdx) => (
+                  <tr key={rIdx} className="border-b border-[var(--border)] last:border-b-0">
+                    {row.group ? (
+                      <td colSpan={table.columns} className="px-3 py-2 align-top leading-snug text-[var(--color-accent)]">
+                        {renderFormattedInlineText(row.cells[0])}
+                      </td>
+                    ) : (
+                      row.cells.map((cell, cIdx) => (
+                        <td key={cIdx} className={cellClass(cell)}>
                           {renderFormattedInlineText(cell)}
                         </td>
-                      ))}
-                    </tr>
-                  );
-                })}
+                      ))
+                    )}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         );
       }
+      return null;
     }
 
     // 2. Markdown Image
@@ -366,7 +385,7 @@ function parseCleanArticleContent(
       activeTitleWord = null;
     }
 
-    // 4. Headings (h2/h3 carry the table-of-contents ids)
+    // 4. Headings (h2/h3 carry the table-of-contents ids; h4-h6 stay out of the contents)
     const headingLevel = guideHeadingLevel(trimmed);
     if (headingLevel === 2) {
       return (
@@ -375,7 +394,7 @@ function parseCleanArticleContent(
           id={slugByBlock.get(idx)}
           className="guides-heading guides-mono guides-anchor mt-10 mb-3 border-b border-[var(--border)] pb-2 text-[24px] leading-tight text-[var(--color-accent)]"
         >
-          {guideHeadingText(trimmed, 2)}
+          {guideHeadingText(trimmed)}
         </h2>
       );
     }
@@ -386,15 +405,29 @@ function parseCleanArticleContent(
           id={slugByBlock.get(idx)}
           className="guides-heading guides-mono guides-anchor mt-8 mb-2 text-[18px] leading-snug text-[var(--color-accent)]"
         >
-          {guideHeadingText(trimmed, 3)}
+          {guideHeadingText(trimmed)}
         </h3>
       );
     }
     if (headingLevel === 4) {
       return (
         <h4 key={idx} className="guides-heading guides-mono mt-6 mb-2 text-[15px] leading-snug text-[var(--text-primary)]">
-          {guideHeadingText(trimmed, 4)}
+          {guideHeadingText(trimmed)}
         </h4>
+      );
+    }
+    if (headingLevel === 5) {
+      return (
+        <h5 key={idx} className="guides-heading guides-mono mt-5 mb-1.5 text-[14px] leading-snug text-[var(--text-primary)]">
+          {guideHeadingText(trimmed)}
+        </h5>
+      );
+    }
+    if (headingLevel === 6) {
+      return (
+        <h6 key={idx} className="guides-heading guides-mono mt-4 mb-1.5 text-[13px] leading-snug text-[var(--text-muted)]">
+          {guideHeadingText(trimmed)}
+        </h6>
       );
     }
 
@@ -627,19 +660,114 @@ function formatGuideDate(raw: string | undefined): string | null {
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 
-function GuideToc({ entries, onJump }: { entries: GuideTocEntry[]; onJump: (slug: string) => void }) {
+function prefersReducedMotion(): boolean {
+  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+}
+
+/**
+ * The contents entry being read. One IntersectionObserver watches the h2/h3 headings against a
+ * band over the top 40% of the viewport (READING_BAND); it only records each heading's side of the
+ * band from the entries it is handed, so scrolling never reads layout. The phone disclosure and the
+ * desktop rail share the result, whether or not the disclosure is open. A contents click pins its
+ * section until the reader scrolls on their own (the last short section may never reach the band).
+ */
+function useActiveSection(slugs: readonly string[], enabled: boolean): { active: string | null; pin: (slug: string) => void } {
+  const [active, setActive] = React.useState<string | null>(null);
+  const pinnedRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    if (!enabled || slugs.length === 0 || typeof IntersectionObserver === "undefined") return;
+    const positions = new Map<string, SectionPosition>();
+    pinnedRef.current = null;
+    const update = () => {
+      if (pinnedRef.current) return;
+      setActive(pickActiveSection(slugs, slugs.map((slug) => positions.get(slug) ?? "below")));
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const bandTop = entry.rootBounds?.top ?? 0;
+          positions.set(
+            entry.target.id,
+            entry.isIntersecting ? "in" : entry.boundingClientRect.top < bandTop ? "above" : "below",
+          );
+        }
+        update();
+      },
+      { rootMargin: `0px 0px -${Math.round((1 - READING_BAND) * 100)}% 0px`, threshold: 0 },
+    );
+    for (const slug of slugs) {
+      const heading = document.getElementById(slug);
+      if (heading) observer.observe(heading);
+    }
+    // The reader taking over (wheel, touch, keys) ends a contents-click pin.
+    const unpin = () => {
+      if (!pinnedRef.current) return;
+      pinnedRef.current = null;
+      update();
+    };
+    const opts = { passive: true } as const;
+    window.addEventListener("wheel", unpin, opts);
+    window.addEventListener("touchstart", unpin, opts);
+    window.addEventListener("keydown", unpin);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("wheel", unpin);
+      window.removeEventListener("touchstart", unpin);
+      window.removeEventListener("keydown", unpin);
+    };
+  }, [slugs, enabled]);
+
+  const pin = React.useCallback((slug: string) => {
+    pinnedRef.current = slug;
+    setActive(slug);
+  }, []);
+
+  return { active: enabled && active && slugs.includes(active) ? active : null, pin };
+}
+
+function GuideToc({
+  entries,
+  activeSlug,
+  onJump,
+  keepActiveVisible = false,
+}: {
+  entries: GuideTocEntry[];
+  activeSlug: string | null;
+  onJump: (slug: string) => void;
+  /** Desktop rail: scroll its own box (never the page) so a long contents list keeps the entry in view. */
+  keepActiveVisible?: boolean;
+}) {
+  const listRef = React.useRef<HTMLOListElement>(null);
+
+  React.useEffect(() => {
+    if (!keepActiveVisible || !activeSlug) return;
+    const box = listRef.current?.closest<HTMLElement>(".guides-toc-rail");
+    if (!box || box.scrollHeight <= box.clientHeight) return;
+    const link = listRef.current?.querySelector<HTMLElement>(`a[data-toc-slug="${CSS.escape(activeSlug)}"]`);
+    if (!link) return;
+    // Once per section change, never per scroll frame.
+    const boxRect = box.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    const delta =
+      linkRect.top < boxRect.top ? linkRect.top - boxRect.top - 8 : linkRect.bottom > boxRect.bottom ? linkRect.bottom - boxRect.bottom + 8 : 0;
+    if (delta !== 0) box.scrollBy({ top: delta, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  }, [activeSlug, keepActiveVisible]);
+
   return (
-    <ol className="guides-toc space-y-0.5">
+    <ol ref={listRef} className="guides-toc space-y-0.5">
       {entries.map((entry) => (
         <li key={entry.slug} className={entry.level === 3 ? "pl-3" : undefined}>
           <a
             href={`#${entry.slug}`}
+            data-toc-slug={entry.slug}
+            aria-current={entry.slug === activeSlug ? "location" : undefined}
             onClick={(e) => {
               if (!isPlainClick(e)) return;
               e.preventDefault();
               onJump(entry.slug);
             }}
-            className="guides-prose block rounded px-2 py-1 text-[14px] leading-snug text-[var(--text-muted)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)]"
+            className="guides-prose block rounded px-2 py-1 text-[14px] leading-snug text-[var(--text-muted)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)] motion-safe:transition-colors aria-[current=location]:bg-[var(--control-hover)] aria-[current=location]:text-[var(--color-accent)] aria-[current=location]:shadow-[inset_2px_0_0_var(--color-accent)]"
           >
             {entry.text}
           </a>
@@ -684,14 +812,22 @@ function GuideReader({
   const moreSupersedeNotes = (SUPERSEDE_INDEX[String(article.id)]?.length ?? 0) - supersedeNotes.length;
   const date = formatGuideDate(article.updatedAt);
   const category = categoryLabel(article.category || "General");
+  const sourceUrl = externalSourceUrl(article.url);
 
-  const jumpTo = React.useCallback((slug: string) => {
-    const target = document.getElementById(slug);
-    if (!target) return;
-    target.scrollIntoView({ block: "start" });
-    target.focus({ preventScroll: true });
-    window.history.replaceState(window.history.state, "", `#${slug}`);
-  }, []);
+  const tocSlugs = React.useMemo(() => toc.entries.map((entry) => entry.slug), [toc]);
+  const { active: activeSlug, pin: pinSection } = useActiveSection(tocSlugs, showToc);
+
+  const jumpTo = React.useCallback(
+    (slug: string) => {
+      const target = document.getElementById(slug);
+      if (!target) return;
+      pinSection(slug);
+      target.scrollIntoView({ block: "start" });
+      target.focus({ preventScroll: true });
+      window.history.replaceState(window.history.state, "", `#${slug}`);
+    },
+    [pinSection],
+  );
 
   const openFromLink = (item: ArticleItem) => (e: React.MouseEvent) => {
     if (!isPlainClick(e)) return;
@@ -758,8 +894,25 @@ function GuideReader({
           View Original Guide Source on {article.source} ↗
         </a>
         {article.sourceImages ? (
-          <p className="guides-prose text-[14px] leading-normal text-[var(--text-soft)]">
-            This guide has pictures on the original page. We link to them rather than copy them.
+          <p data-source-images className="guides-prose text-[14px] leading-normal text-[var(--text-soft)]">
+            This guide has pictures. We link to them rather than copy them
+            {sourceUrl ? (
+              <>
+                {": "}
+                <a
+                  href={sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="guides-mono inline-flex items-baseline gap-1 whitespace-nowrap text-[13px] text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
+                >
+                  <ExternalLink aria-hidden="true" className="h-3.5 w-3.5 shrink-0 self-center text-[var(--color-accent)]" />
+                  view them on the original page
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </>
+            ) : (
+              "."
+            )}
           </p>
         ) : null}
       </header>
@@ -828,7 +981,7 @@ function GuideReader({
                 On this page ({toc.entries.length})
               </summary>
               <nav aria-label="On this page" className="border-t border-[var(--border)] px-2 py-3">
-                <GuideToc entries={toc.entries} onJump={jumpTo} />
+                <GuideToc entries={toc.entries} activeSlug={activeSlug} onJump={jumpTo} />
               </nav>
             </details>
           ) : null}
@@ -941,7 +1094,7 @@ function GuideReader({
           {showToc ? (
             <nav aria-label="On this page" className="guides-toc-rail hidden lg:block">
               <h2 className="guides-heading guides-mono mb-2 px-2 text-[13px] text-[var(--text-soft)]">On this page</h2>
-              <GuideToc entries={toc.entries} onJump={jumpTo} />
+              <GuideToc entries={toc.entries} activeSlug={activeSlug} onJump={jumpTo} keepActiveVisible />
             </nav>
           ) : null}
         </aside>
@@ -991,7 +1144,6 @@ function TruthWikiContent() {
   const listKey = serializeGuideListState(listState);
 
   const [queryInput, setQueryInput] = React.useState(listState.q);
-  const [sortBy, setSortBy] = React.useState<SortOption>("newest");
   const [articles, setArticles] = React.useState<ArticleItem[]>([]);
   const [total, setTotal] = React.useState<number | null>(null);
   /** Category ids from the API's X-Suggestions header when a query matches nothing. */
@@ -1007,10 +1159,6 @@ function TruthWikiContent() {
   const selfWrittenRef = React.useRef<string | null>(null);
   /** Deep-link values (?q=, ?id=) seen on the previous URL, to auto-open the reader only when they change. */
   const prevDeepLinkRef = React.useRef<{ q: string; id: string } | null>(null);
-  const sortRef = React.useRef(sortBy);
-  React.useEffect(() => {
-    sortRef.current = sortBy;
-  }, [sortBy]);
 
   // Reader: focus + scroll hand-off between the list and the open guide.
   const readerTitleRef = React.useRef<HTMLHeadingElement>(null);
@@ -1138,7 +1286,7 @@ function TruthWikiContent() {
       }
       const q = state.q;
       if (q.trim().length > 1) {
-        const res = await fetch(searchApiUrl(state, sortRef.current, 0, 100));
+        const res = await fetch(searchApiUrl(state, 0, 100));
         const data = await res.json();
         const list: ArticleItem[] = Array.isArray(data) ? data : [];
         const cleanQ = q.toLowerCase().trim();
@@ -1191,12 +1339,12 @@ function TruthWikiContent() {
     return () => clearTimeout(timer);
   }, [queryInput, listState, writeState]);
 
-  // Fetch the current page whenever the URL state or the sort changes.
+  // Fetch the current page whenever the URL state (filters, sort, page) changes.
   React.useEffect(() => {
     const state = parseGuideListState(new URLSearchParams(listKey));
     const controller = new AbortController();
     setLoading(true);
-    fetch(searchApiUrl(state, sortBy, pageOffset(state.page), GUIDES_PER_PAGE), { signal: controller.signal })
+    fetch(searchApiUrl(state, pageOffset(state.page), GUIDES_PER_PAGE), { signal: controller.signal })
       .then(async (res) => {
         const data = await res.json();
         const list: ArticleItem[] = Array.isArray(data) ? data : [];
@@ -1215,7 +1363,7 @@ function TruthWikiContent() {
         setLoading(false);
       });
     return () => controller.abort();
-  }, [listKey, sortBy]);
+  }, [listKey]);
 
   const pages = pageCount(total ?? 0);
 
@@ -1351,7 +1499,7 @@ function TruthWikiContent() {
   };
   const clearAll = () => {
     setQueryInput("");
-    writeState(clearAllFilters(), "push");
+    writeState(clearAllFilters(listState.sort), "push");
   };
   const removeChip = (key: GuideFilterKey) => {
     if (key === "q") setQueryInput("");
@@ -1365,7 +1513,7 @@ function TruthWikiContent() {
     return qs ? `${pathname}?${qs}` : pathname;
   };
   /** A suggested category starts a fresh browse of that category (the query found nothing). */
-  const suggestionState = (id: string): GuideListState => ({ ...clearAllFilters(), archive: listState.archive, category: id });
+  const suggestionState = (id: string): GuideListState => ({ ...clearAllFilters(listState.sort), archive: listState.archive, category: id });
   const suggestionHref = (id: string) => `${pathname}?${serializeGuideListState(suggestionState(id))}`;
   const firstShown = total ? pageOffset(listState.page) + 1 : 0;
   const lastShown = total ? Math.min(total, pageOffset(listState.page) + articles.length) : 0;
@@ -1444,11 +1592,9 @@ function TruthWikiContent() {
                 <ArrowUpDown aria-hidden="true" className="h-4 w-4" />
                 <span>Sort</span>
                 <select
-                  value={sortBy}
-                  onChange={(e) => {
-                    setSortBy(e.target.value as SortOption);
-                    if (listState.page > 1) writeState({ ...listState, page: 1 }, "push");
-                  }}
+                  id="guides-sort"
+                  value={listState.sort}
+                  onChange={(e) => writeState({ ...listState, sort: e.target.value as GuideSort, page: 1 }, "push")}
                   className="cursor-pointer rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-[13px] text-[var(--text-primary)]"
                 >
                   <option value="newest">Newest first</option>
