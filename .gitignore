@@ -10,6 +10,12 @@ tsconfig.tsbuildinfo
 # Environment secrets, credentials & logs
 .env
 .env*.local
+.env.*
+*.pem
+*.key
+*secrets*
+*token*
+*credential*
 *.sql
 !prisma/migrations/**/*.sql
 *.backup
