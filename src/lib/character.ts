@@ -9,7 +9,12 @@ export async function getActiveCharacterId(userId: string | undefined): Promise<
   });
 
   if (settings?.activeCharacterId) {
-    return settings.activeCharacterId;
+    // Never trust the stored id alone: it must be one of this user's characters.
+    const owned = await prisma.character.findFirst({
+      where: { id: settings.activeCharacterId, userId },
+      select: { id: true }
+    });
+    if (owned) return owned.id;
   }
 
   // Check if any character already exists

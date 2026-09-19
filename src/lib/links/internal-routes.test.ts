@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ENTITY_LINKS, normalizeEntityKey } from "@/lib/links/entity-links";
 import { hrefPathname, resolvesToAppRoute, routeSegmentsFromAppFile } from "@/lib/links/route-resolution";
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
@@ -96,5 +96,15 @@ describe("internal links resolve", () => {
         if (url.pathname === "/all-effects") expect(EFFECT_KEYS.has(normalizeEntityKey(q)), `${t.term} -> ${href}`).toBe(true);
       }
     }
+  });
+});
+
+describe("sitemap", () => {
+  it("lists only routes that exist", async () => {
+    vi.stubEnv("NEXTAUTH_URL", "https://fallout76.wiki");
+    const { default: sitemap } = await import("@/app/sitemap");
+    const urls = sitemap().map((entry) => new URL(entry.url).pathname);
+    expect(urls.length).toBeGreaterThan(5);
+    expect(urls.filter((p) => !resolvesToAppRoute(p, APP_FILES))).toEqual([]);
   });
 });
