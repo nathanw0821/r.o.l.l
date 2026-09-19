@@ -2437,3 +2437,12 @@ html {
     min-height: 2.5rem;
   }
 }
+
+/* iOS Safari zooms into any focused field under 16px. Phones only. */
+@media (max-width: 860px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="color"]):not([type="image"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

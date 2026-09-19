@@ -107,7 +107,7 @@ export default function SignUpForm() {
           </Button>
         ) : null}
         <div className="text-center text-xs text-foreground/60">
-          <Link href="/auth/sign-in" className="text-accent hover:underline">
+          <Link href="/auth/sign-in" className="text-accent hover:underline touch:inline-flex touch:min-h-11 touch:items-center touch:px-2">
             Back to sign in
           </Link>
         </div>
@@ -147,7 +147,12 @@ export default function SignUpForm() {
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          name="email"
+          inputMode="email"
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="user@example.com"
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
@@ -157,7 +162,11 @@ export default function SignUpForm() {
         <input
           value={username}
           onChange={(event) => setUsername(event.target.value)}
+          name="username"
           autoComplete="username"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="Choose a username"
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
@@ -190,7 +199,7 @@ export default function SignUpForm() {
       </Button>
       <div className="text-center text-xs text-foreground/60">
         Already have an account?{" "}
-        <Link href="/auth/sign-in" className="text-accent hover:underline">
+        <Link href="/auth/sign-in" className="text-accent hover:underline touch:inline-flex touch:min-h-11 touch:items-center touch:px-2">
           Sign in
         </Link>
       </div>
