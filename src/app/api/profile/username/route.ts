@@ -3,6 +3,7 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { parseJson } from "@/lib/api/validation";
 import { badRequest, ok, unauthorized } from "@/lib/api/responses";
+import { isReservedUsername } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 
 const usernameSchema = z.object({
@@ -40,6 +41,7 @@ async function generateDefaultUsername(userId: string) {
 
   for (let i = 0; i < 100; i += 1) {
     const candidate = i === 0 ? base : `${base}-${Math.floor(Math.random() * 9000) + 1000}`;
+    if (isReservedUsername(candidate)) continue;
     const existing = await prisma.user.findUnique({ where: { username: candidate } });
     if (!existing) {
       return candidate;
@@ -79,7 +81,7 @@ export async function POST(request: Request) {
   } else {
     username = normalizeUsername(parsed.data.username);
     const existing = await prisma.user.findUnique({ where: { username } });
-    if (existing && existing.id !== session.user.id) {
+    if ((existing && existing.id !== session.user.id) || (!existing && isReservedUsername(username))) {
       return badRequest("That username is already taken.");
     }
   }
