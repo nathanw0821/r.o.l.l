@@ -28,6 +28,7 @@ import { usePersistedAppNavigation } from "@/components/use-persisted-app-naviga
 import { useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 import { CharacterSelector } from "@/components/character-selector";
 import MigrationNotice from "@/components/migration-notice";
+import GuestSignupBanner from "@/components/guest-signup-banner";
 import { useVisitorTracking } from "@/lib/hooks/use-visitor-tracking";
 
 interface AppSubLink {
@@ -120,7 +121,6 @@ const DeferredLocalProgressSync = dynamic(() => import("@/components/local-progr
 const DeferredUsernameCompletion = dynamic(() => import("@/components/username-completion"), { ssr: false });
 const DeferredFeedbackWidget = dynamic(() => import("@/components/feedback-widget"), { ssr: false });
 const DeferredTermsModal = dynamic(() => import("@/components/terms-modal"), { ssr: false });
-const DeferredGuestSignupBanner = dynamic(() => import("@/components/guest-signup-banner"), { ssr: false });
 
 function isNavLinkActive(pathname: string, link: AppNavLink) {
   if (link.activePaths?.includes(pathname)) {
@@ -235,11 +235,17 @@ interface AccountLinksResponse {
   }, [mobileSidebarReveal]);
 
   React.useEffect(() => {
+    const root = document.documentElement;
     if (!isMobile) {
       setMobileSidebarReveal(1);
+      root.removeAttribute("data-scroll-dir");
       return;
     }
 
+    // Floating buttons (Quick filters, Feedback) hide while scrolling down; CSS reads this.
+    const setScrollDir = (dir: "up" | "down") => {
+      if (root.getAttribute("data-scroll-dir") !== dir) root.setAttribute("data-scroll-dir", dir);
+    };
     let lastY = window.scrollY;
     let frame = 0;
     let pendingY = lastY;
@@ -263,6 +269,7 @@ interface AccountLinksResponse {
       }
       const y = pendingY;
       if (y <= 24) {
+        setScrollDir("up");
         applyReveal(1);
         lastY = y;
         if (scrollStopTimeout) {
@@ -280,11 +287,13 @@ interface AccountLinksResponse {
           scrollStopTimeout = null;
         }
         accumulatedUpScroll = 0;
+        if (delta > 4) setScrollDir("down");
         applyReveal(revealRef - delta / 120);
       } else if (delta < -0.5) {
         // Scrolling up: don't reveal immediately during active fast scroll.
         // Instead, accumulate upward distance and reveal only when scroll stops or slows.
         accumulatedUpScroll += Math.abs(delta);
+        if (accumulatedUpScroll > 30) setScrollDir("up");
         if (scrollStopTimeout) {
           window.clearTimeout(scrollStopTimeout);
         }
@@ -310,6 +319,7 @@ interface AccountLinksResponse {
       window.removeEventListener("scroll", handleScroll);
       if (frame) window.cancelAnimationFrame(frame);
       if (scrollStopTimeout) window.clearTimeout(scrollStopTimeout);
+      root.removeAttribute("data-scroll-dir");
     };
   }, [isMobile]);
 
@@ -406,7 +416,8 @@ interface AccountLinksResponse {
           className={cn(
             "app-sidebar",
             sidebarRail && "app-sidebar--rail",
-            isMobile && sidebarCollapsed && "app-sidebar--mobile-collapsed"
+            isMobile && sidebarCollapsed && "app-sidebar--mobile-collapsed",
+            isMobile && !sidebarCollapsed && "app-sidebar--mobile-expanded"
           )}
         >
           <div className="app-sidebar__top">
@@ -580,7 +591,7 @@ interface AccountLinksResponse {
             <DeferredCommandHubShell authKey={authKey} isSignedIn={isSignedIn} />
             <DeferredFeedbackWidget />
             <main id="main-content" className="content-panel flex-1 min-h-[60vh]">
-              <DeferredGuestSignupBanner />
+              <GuestSignupBanner />
               {children}
             </main>
             <DeferredUsernameCompletion />
