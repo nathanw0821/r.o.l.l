@@ -17,8 +17,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **NO SYNTHETIC OVERLAY BOXES**: Never draw flat color rectangles over title banners or badges when native Bethesda assets exist.
 - **NO WEB SCRAPING**: All 274 perk cards (578 rank tiers, 868 PNGs) are pre-compiled locally in `public/images/in_game_cards/` and `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`.
 
-## 🚀 Deployment Pipeline Pacing Policy
-- **STRICT RULE**: NEVER push a new commit or trigger a new deployment while a previous Cloudflare / GitHub Actions deployment workflow is still running or pending.
-- **WAIT FOR COMPLETION**: Always wait for the ongoing deployment to finish and verify that the prior deployment is live before pushing any subsequent updates.
+## 🚫 Sovereign Vault Development Firewall & Isolation Policy
+- **MASTER DIRECTIVE**: Under NO circumstances during development may any code, schema, data, dependency, runtime service, or asset from R.O.L.L. be overlapped, imported, bridged, or merged into the Sovereign Vault (`/home/nathanw/sovereign_vault_ui`), nor may anything from the Sovereign Vault be injected into R.O.L.L.
+- **ZERO CROSS-REPO IMPORTS**: Never write `import` statements or cross-project relative paths pointing into `sovereign_vault_ui`.
+- **INDEPENDENT REPOSITORIES**: Commits to R.O.L.L. remain 100% strictly within `/home/nathanw/Creative Direction/R.O.L.L`. Never stage omnibus diffs touching Sovereign Vault.
+- **ISOLATED RUNTIMES**: Sovereign Vault is Python/Flask/Kiwix; R.O.L.L. is Node/Next.js/Prisma. Keep dependencies, databases (`vault_search.db` vs Prisma/Neon/D1), and daemons strictly partitioned.
+- **CANONICAL MATH EXCEPTION**: The Creation Engine combat math formulas (`0.15`, `0.365`, etc.) live in TypeScript (`src/lib/calculator/creation-engine-math.ts`) as a self-contained, standalone implementation. They share mathematical constants by specification, not by runtime code-sharing.
+
 
 
