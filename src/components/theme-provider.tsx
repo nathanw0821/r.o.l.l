@@ -241,6 +241,10 @@ export function ThemeProvider({
   React.useEffect(() => {
     const resolved = resolveTheme(theme);
     document.documentElement.setAttribute("data-theme", resolved);
+    // Browser/installed-app bar colour follows the chosen theme, not only the system one.
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.setAttribute("content", resolved === "light" ? "#f4efe8" : "#070a0f");
+    });
     if (isMounted.current) {
       window.localStorage.setItem(THEME_KEY, theme);
     }
