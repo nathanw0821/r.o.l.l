@@ -781,12 +781,13 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           "quick-filters-fab xl:hidden fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-accent text-accent-foreground font-mono text-xs font-black uppercase shadow-xl border border-accent/40 backdrop-blur-md active:scale-95 transition-all cursor-pointer",
           expanded && "hidden"
         )}
-        aria-label="Open Command Hub Filters"
+        aria-label={hasActiveFilters ? "Quick filters (filters active)" : "Quick filters"}
       >
-        <SlidersHorizontal className="h-4 w-4 shrink-0" />
-        <span>Quick Filters</span>
+        <SlidersHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" />
+        {/* On phones the label is visually hidden (icon-only button); it stays the accessible name. */}
+        <span className="quick-filters-fab__label">Quick Filters</span>
         {hasActiveFilters && (
-          <span className="h-2 w-2 rounded-full bg-warning animate-ping" />
+          <span className="quick-filters-fab__dot h-2 w-2 rounded-full bg-warning animate-ping" aria-hidden="true" />
         )}
       </button>
       )}

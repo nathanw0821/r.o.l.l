@@ -13,7 +13,7 @@ import { getAppSession } from "@/lib/auth";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 import ServiceWorkerRegister from "@/components/service-worker-register";
 
-import { VT323, Share_Tech_Mono } from "next/font/google";
+import { VT323, Share_Tech_Mono, Oswald, Roboto_Condensed } from "next/font/google";
 import { resolveSeasonAttribute } from "@/lib/season";
 
 const fontVT323 = VT323({
@@ -27,6 +27,21 @@ const fontShareTechMono = Share_Tech_Mono({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-share-tech-mono",
+  display: "swap",
+});
+
+// Perk card faces (in-game-perk-card.tsx). Self-hosted by next/font: no request to Google at runtime.
+const fontOswald = Oswald({
+  weight: ["500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-oswald",
+  display: "swap",
+});
+
+const fontRobotoCondensed = Roboto_Condensed({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-roboto-condensed",
   display: "swap",
 });
 
@@ -166,16 +181,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       data-ui-tone="neutral"
       data-sidebar-collapsed="0"
       data-season={resolveSeasonAttribute("auto")}
-      className={`${fontVT323.variable} ${fontShareTechMono.variable}`}
+      className={`${fontVT323.variable} ${fontShareTechMono.variable} ${fontOswald.variable} ${fontRobotoCondensed.variable}`}
     >
       <head>
-        <link rel="preload" href="/images/special/special_S.webp" as="image" type="image/webp" fetchPriority="high" />
-        <link rel="preload" href="/images/special/special_P.webp" as="image" type="image/webp" />
-        <link rel="preload" href="/images/special/special_E.webp" as="image" type="image/webp" />
-        <link rel="preload" href="/images/special/special_C.webp" as="image" type="image/webp" />
-        <link rel="preload" href="/images/special/special_I.webp" as="image" type="image/webp" />
-        <link rel="preload" href="/images/special/special_A.webp" as="image" type="image/webp" />
-        <link rel="preload" href="/images/special/special_L.webp" as="image" type="image/webp" />
         <Script
           id="ui-bootstrap"
           strategy="beforeInteractive"

@@ -652,11 +652,12 @@ export default function BuilderExperimentClient({
                   </Button>
                 </div>
                 {needsTurnstile ? (
-                  <TurnstileWidget
-                    key={turnstileRenderKey}
-                    onVerify={setShareTurnstileToken}
-                    className="basis-full"
-                  />
+                  <div className="basis-full space-y-1.5">
+                    <p className="text-xs font-mono text-emerald-300/80" role="status">
+                      Quick anti-bot check: your build publishes as soon as it passes.
+                    </p>
+                    <TurnstileWidget key={turnstileRenderKey} onVerify={setShareTurnstileToken} />
+                  </div>
                 ) : null}
 
                 <Button

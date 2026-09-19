@@ -34,7 +34,11 @@ export default function AppalachianRadar() {
   const [data, setData] = React.useState<RadarPayload | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [copiedSilo, setCopiedSilo] = React.useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = React.useState(true);
+  // Phones start collapsed (one header row) so the first screen shows the tracker; one tap opens it.
+  // Only used after the fetch, and the server always renders the loading state, so no hydration mismatch.
+  const [isExpanded, setIsExpanded] = React.useState(
+    () => typeof window === "undefined" || window.matchMedia("(min-width: 768px)").matches
+  );
   const [, setTick] = React.useState(0);
 
   React.useEffect(() => {
@@ -72,12 +76,15 @@ export default function AppalachianRadar() {
   };
 
   if (loading) {
+    // Same footprint as the loaded panel (header row; on md+ also the expanded body) so nothing
+    // below it jumps when the timers arrive.
     return (
-      <div className="w-full rounded-xl border border-emerald-500/20 bg-slate-950/80 p-4 font-mono animate-pulse">
-        <div className="flex items-center gap-2 text-emerald-400/70 text-xs">
-          <Radio className="h-4 w-4 animate-spin" />
+      <div className="w-full rounded-xl border border-emerald-500/30 bg-gradient-to-b from-[#08120d] to-[#040806] font-mono overflow-hidden" aria-busy="true">
+        <div className="px-4 py-3 bg-emerald-950/40 border-b border-emerald-500/20 flex items-center gap-2.5 text-xs text-emerald-400/70">
+          <Radio className="h-3.5 w-3.5 motion-safe:animate-spin" aria-hidden="true" />
           <span>Loading live game timers…</span>
         </div>
+        <div className="hidden md:block h-[200px]" aria-hidden="true" />
       </div>
     );
   }

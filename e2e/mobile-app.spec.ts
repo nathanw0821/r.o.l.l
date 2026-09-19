@@ -137,7 +137,7 @@ test.describe("phone form fields", () => {
     await expect(page.getByRole("heading", { name: "Sign in", level: 1 })).toBeVisible();
     await expect(page.getByRole("button", { name: "Feedback", exact: true })).toBeVisible({ timeout: 20_000 });
     await expect(page.locator("[data-guest-banner]")).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Open Command Hub Filters" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^Quick filters/ })).toHaveCount(0);
   });
 });
 
