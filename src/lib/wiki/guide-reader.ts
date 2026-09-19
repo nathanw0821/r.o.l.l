@@ -239,6 +239,27 @@ export function buildGuideToc(content: string): GuideToc {
   return { entries, slugByBlock };
 }
 
+/**
+ * Where a contents heading sits relative to the reading band (the top 40% of the viewport),
+ * as the reader's IntersectionObserver reports it.
+ */
+export type SectionPosition = "above" | "in" | "below";
+
+/** Top share of the viewport that counts as "being read": the observer's rootMargin keeps this band. */
+export const READING_BAND = 0.4;
+
+/**
+ * The section being read, given each contents heading's position in reading order: the first
+ * heading inside the reading band, else the last one already scrolled past, else none (still
+ * above the first heading).
+ */
+export function pickActiveSection<T>(items: ReadonlyArray<T>, positions: ReadonlyArray<SectionPosition>): T | null {
+  const inBand = positions.indexOf("in");
+  if (inBand >= 0) return items[inBand] ?? null;
+  const above = positions.lastIndexOf("above");
+  return above >= 0 ? (items[above] ?? null) : null;
+}
+
 export interface RelatedGuideCandidate {
   id: number | string;
   title: string;
