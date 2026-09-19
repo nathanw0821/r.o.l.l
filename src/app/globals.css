@@ -2487,6 +2487,37 @@ html.command-hub-scroll-lock body {
   }
 }
 
+/* Safe areas (viewport-fit=cover). env() is 0 on devices without a notch or
+ * home indicator, so these only change layout on those devices. */
+@media (max-width: 860px) {
+  .app-sidebar {
+    padding-top: calc(0.7rem + env(safe-area-inset-top, 0px));
+    padding-left: calc(1rem + env(safe-area-inset-left, 0px));
+    padding-right: calc(1rem + env(safe-area-inset-right, 0px));
+  }
+  .app-main {
+    padding-left: max(1.2rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.2rem, env(safe-area-inset-right, 0px));
+    padding-bottom: calc(var(--floating-ui-clearance) + env(safe-area-inset-bottom, 0px));
+  }
+  .quick-filters-fab {
+    right: calc(var(--floating-ui-inset) + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--floating-ui-inset) + env(safe-area-inset-bottom, 0px));
+  }
+  .feedback-widget {
+    right: calc(var(--floating-ui-inset) + var(--quick-filters-width) + 0.5rem + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--floating-ui-inset) + env(safe-area-inset-bottom, 0px));
+  }
+  .feedback-widget--open {
+    right: calc(var(--floating-ui-inset) + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--floating-ui-inset) + var(--floating-ui-size) + 0.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  /* No Quick filters on this page: Feedback takes its corner. */
+  html[data-quick-filters="off"] .feedback-widget:not(.feedback-widget--open) {
+    right: calc(var(--floating-ui-inset) + env(safe-area-inset-right, 0px));
+  }
+}
+
 /* Guest banner: dismissed visitors never see it flash before hydration (set by the bootstrap script). */
 html[data-guest-banner-dismissed="1"] [data-guest-banner] {
   display: none !important;

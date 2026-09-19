@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import Script from "next/script";
@@ -33,7 +33,6 @@ export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
   title: "R.O.L.L | Reconfiguration, Optimization & Logistics Laboratory",
   description: "Fallout 76 Vault-Tec Master Hub: B.U.I.L.D. Sandbox, P.E.R.K. Matrix, and Truth Bible Knowledge Base.",
-  manifest: "/manifest.json",
   icons: {
     icon: "/icon.png",
     apple: "/apple-icon.png",
@@ -44,6 +43,21 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "R.O.L.L"
   }
+};
+
+// viewport-fit=cover lets an installed app draw under the notch and home indicator;
+// globals.css pads the fixed chrome with env(safe-area-inset-*). Zoom stays enabled.
+// theme-color follows the system scheme here; ThemeProvider switches it to the
+// theme the visitor actually picked.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#070a0f" },
+    { media: "(prefers-color-scheme: light)", color: "#f4efe8" }
+  ]
 };
 
 type ThemeMode = "light" | "dark" | "system";
