@@ -65,6 +65,125 @@ export function guideHeadingText(trimmed: string): string {
     .trim();
 }
 
+export interface GuideTableRow {
+  cells: string[];
+  /** A one-cell label inside a wider table ("★★★★" above the four-star mods): spans every column. */
+  group: boolean;
+}
+
+export interface GuideTable {
+  /** A title row with one filled cell above the real header ("Strength" over the perk columns). */
+  caption: string | null;
+  /** The column header row, or null when the first row is data (the scrape dropped the header). */
+  header: string[] | null;
+  rows: GuideTableRow[];
+  /** Column count after trailing all-empty columns are dropped. */
+  columns: number;
+}
+
+/** Cells of one "| a | b |" line; a missing closing pipe ("| S Strength") keeps the last cell. */
+function tableCells(line: string): string[] {
+  const trimmed = line.trim();
+  const parts = trimmed.split("|").slice(1);
+  if (trimmed.endsWith("|") && parts.length > 0) parts.pop();
+  return parts.map((c) => c.trim());
+}
+
+/** A markdown separator row: every cell is "---", ":--", "--:" or ":-:" (three dashes or more). */
+function isSeparatorLine(line: string): boolean {
+  const cells = tableCells(line);
+  return cells.length > 0 && cells.every((c) => /^:?-{3,}:?$/.test(c));
+}
+
+function plainCell(cell: string): string {
+  return cell.replace(/(\*{1,3}|_{2}|`)(\S(?:.*?\S)?)\1/g, "$2").trim();
+}
+
+/**
+ * A cell that can be a column label: short, and not a value. Values are numbers ("51", "x0.13",
+ * "+2", "1.5"), Form IDs ("0050DE51") and anything longer than a label (sentences, notices,
+ * "Bow • Compound Bow • …" navigation lists).
+ */
+function isLabelCell(cell: string): boolean {
+  const text = plainCell(cell);
+  if (!text) return true;
+  if (text.length > 40) return false;
+  if (/\d/.test(text) && /^[\d\s.,%+\-–−x×/()~]+$/i.test(text)) return false;
+  if (/^[0-9A-F]{8}$/.test(text)) return false;
+  return true;
+}
+
+function filledCount(cells: string[]): number {
+  return cells.reduce((n, c) => n + (c ? 1 : 0), 0);
+}
+
+/** Only the first cell is filled, in a table with other columns. */
+function isTitleRow(cells: string[], columns: number): boolean {
+  return columns > 1 && Boolean(cells[0]) && filledCount(cells) === 1;
+}
+
+/**
+ * Structure of a guide table block. The scraped corpus has no markdown separator rows, and the
+ * scraper dropped some tables' header rows, so "row 0 is the header" was wrong in two ways:
+ *  - data tables with no header (armor stats "| | Raider Power Helmet | 51 | …", challenge lists
+ *    "| Collect a RadAway … | 20 |", notices "| This page is about …") had their first data row
+ *    styled as the header. The first row is now the header only when every cell is a label.
+ *  - tables with a title row above the header ("Strength", then "Perk | Req | Description | …")
+ *    styled the title as the header and the real header as data. The title becomes the caption.
+ * A markdown separator row ("|---|---|"), if a future import has one, marks the header outright.
+ * One-cell rows inside a wider table become group labels, and trailing empty columns are dropped.
+ */
+export function parseGuideTable(block: string): GuideTable {
+  const lines = block.split("\n").filter((line) => line.trim().startsWith("|"));
+  const separatorAt = lines.findIndex(isSeparatorLine);
+  const raw: Array<{ cells: string[]; beforeSeparator: boolean }> = [];
+  lines.forEach((line, i) => {
+    if (isSeparatorLine(line)) return;
+    const cells = tableCells(line);
+    if (filledCount(cells) === 0) return;
+    raw.push({ cells, beforeSeparator: separatorAt > 0 && i < separatorAt });
+  });
+
+  // Trailing columns that are empty in every row are scrape padding.
+  let columns = 0;
+  for (const { cells } of raw) {
+    let last = cells.length;
+    while (last > 0 && !cells[last - 1]) last--;
+    columns = Math.max(columns, last);
+  }
+  const rows = raw.map(({ cells, beforeSeparator }) => ({ cells: cells.slice(0, columns), beforeSeparator }));
+
+  let caption: string | null = null;
+  let header: string[] | null = null;
+  let start = 0;
+  const isLabelRow = (cells: string[]) => filledCount(cells) > 0 && cells.every(isLabelCell);
+
+  if (separatorAt > 0 && rows.some((r) => r.beforeSeparator)) {
+    const headerIdx = rows.filter((r) => r.beforeSeparator).length - 1;
+    if (headerIdx === 1 && isTitleRow(rows[0].cells, columns)) caption = plainCell(rows[0].cells[0]);
+    header = rows[headerIdx].cells;
+    start = headerIdx + 1;
+  } else if (
+    rows.length >= 2 &&
+    isTitleRow(rows[0].cells, columns) &&
+    filledCount(rows[1].cells) >= 2 &&
+    isLabelRow(rows[1].cells)
+  ) {
+    caption = plainCell(rows[0].cells[0]);
+    header = rows[1].cells;
+    start = 2;
+  } else if (rows.length > 0 && isLabelRow(rows[0].cells)) {
+    header = rows[0].cells;
+    start = 1;
+  }
+
+  const body = rows.slice(start).map(({ cells }) => ({
+    cells,
+    group: columns >= 3 && isTitleRow(cells, columns) && cells.length === 1,
+  }));
+  return { caption, header, rows: body, columns };
+}
+
 /** URL-safe slug: lower case, letters/digits joined by single hyphens, markdown emphasis dropped. */
 export function slugifyHeading(text: string): string {
   const slug = text

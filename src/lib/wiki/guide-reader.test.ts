@@ -7,6 +7,7 @@ import {
   guideHeadingLevel,
   guideHeadingText,
   guideEntityKeys,
+  parseGuideTable,
   titleWords,
   selectRelatedGuides,
   slugifyHeading,
@@ -225,6 +226,135 @@ describe("adjacentGuides", () => {
   it("disables both when the guide is not on the page", () => {
     expect(adjacentGuides(list, 99)).toEqual({ index: -1, prev: null, next: null });
     expect(adjacentGuides(list, null)).toEqual({ index: -1, prev: null, next: null });
+  });
+});
+
+// Snippets are the first rows of real corpus tables (public/data/wiki/<id>.json). The corpus has no
+// markdown separator rows, and some header rows were lost in the scrape, so the header is inferred.
+describe("parseGuideTable", () => {
+  it("guide 102: a title row above the columns becomes the caption, the next row the header", () => {
+    const table = parseGuideTable(
+      [
+        "| Strength | | | | | |",
+        "| Perk | Req | Description | Effects | Form ID | Editor ID |",
+        "| Barbarian | 1 | *Channel your inner Grognak!* | Every point of Strength adds +4 Damage Resist (max 60). (No Power Armor) | 00479B21 | Babylon_Barbarian03 |",
+        "| Bear Arms | 1 | *Your bear-like arms help you bear bigger arms.* | Heavy Guns weigh 90% less. | 00479B22 | Babylon_BearArms03 |",
+      ].join("\n"),
+    );
+    expect(table.caption).toBe("Strength");
+    expect(table.header).toEqual(["Perk", "Req", "Description", "Effects", "Form ID", "Editor ID"]);
+    expect(table.rows.map((r) => r.cells[0])).toEqual(["Barbarian", "Bear Arms"]);
+    expect(table.columns).toBe(6);
+  });
+
+  it("guide 1018: 'Quest Stages' is the caption and Stage/Status/Description/Log Entry the header", () => {
+    const table = parseGuideTable(
+      [
+        "| Quest Stages | | | |",
+        "| Stage | Status | Description | Log Entry |",
+        "| ? | | Track and Eliminate Enemies | |",
+        "| ? | | Eliminate Carrier to Obtain First Code | |",
+      ].join("\n"),
+    );
+    expect(table.caption).toBe("Quest Stages");
+    expect(table.header).toEqual(["Stage", "Status", "Description", "Log Entry"]);
+    expect(table.rows).toHaveLength(2);
+    expect(table.rows[0].cells).toEqual(["?", "", "Track and Eliminate Enemies", ""]);
+  });
+
+  it("guide 193: armor stat rows have no header, so the first row stays data", () => {
+    const table = parseGuideTable(
+      [
+        "| | Raider Power Helmet | 51 | 51 | 51 | 10 | 41 |",
+        "| | Raider Power Torso | 86 | 86 | 86 | 14 | 81 |",
+        "| | Raider Power Left Arm | 51 | 51 | 51 | 10 | 61 |",
+      ].join("\n"),
+    );
+    expect(table.header).toBeNull();
+    expect(table.caption).toBeNull();
+    expect(table.rows.map((r) => r.cells[1])).toEqual(["Raider Power Helmet", "Raider Power Torso", "Raider Power Left Arm"]);
+    expect(table.rows[0].cells[0]).toBe("");
+  });
+
+  it("guide 211: weapon stat rows (x0.13, 1.5, 42.9) have no header", () => {
+    const table = parseGuideTable(
+      [
+        "| Assault Rifle | 8 | 64 | 8 | x0.13 | 8 | 3 | 23 | 1 | 1.5 | 24 | 1250 | 7 | 300 | 42.9 |",
+        "| Infiltrator | 7 | 56 | 8 | x0.13 | 10 | 3 | 23 | 0.9 | 1.5 | 24 | 1429 | 7 | 400 | 57.1 |",
+      ].join("\n"),
+    );
+    expect(table.header).toBeNull();
+    expect(table.rows).toHaveLength(2);
+  });
+
+  it("guide 3650: challenge lists (sentence + count) have no header", () => {
+    const table = parseGuideTable(
+      [
+        "| Collect a **Chlorine Bag** while wearing the Tough But Hearty Helmet. | 8 |",
+        "| Collect a Med-X while wearing the Tough But Kind Helmet. | 10 |",
+      ].join("\n"),
+    );
+    expect(table.header).toBeNull();
+    expect(table.rows[0].cells).toEqual(["Collect a **Chlorine Bag** while wearing the Tough But Hearty Helmet.", "8"]);
+  });
+
+  it("guide 1118: a one-row notice box is data, not a header", () => {
+    const table = parseGuideTable("| | This page is about the location as it appeared before the release of *Steel Dawn* . |");
+    expect(table.header).toBeNull();
+    expect(table.rows).toHaveLength(1);
+  });
+
+  it("guides 148 and 1003: a row of labels (bold or plain) is still the header", () => {
+    const drops = parseGuideTable(["| **Name** | **Drop Rates** |", "| Addictol | - |", "| Antibiotics | - |"].join("\n"));
+    expect(drops.header).toEqual(["**Name**", "**Drop Rates**"]);
+    expect(drops.rows.map((r) => r.cells)).toEqual([
+      ["Addictol", "-"],
+      ["Antibiotics", "-"],
+    ]);
+
+    const quests = parseGuideTable(
+      [
+        "| Icon | Name | Location(s) | Given by | Reward | Form ID | Editor ID |",
+        "| | Into the Mystery | Riverside Manor | Young Woman (corpse) | Worn Veil Tattered Dress | 00345D50 | MoM00 |",
+      ].join("\n"),
+    );
+    expect(quests.header?.[0]).toBe("Icon");
+    expect(quests.caption).toBeNull();
+    expect(quests.rows).toHaveLength(1);
+  });
+
+  it("guide 81: a one-cell star row inside the table is a group label spanning every column", () => {
+    const table = parseGuideTable(
+      [
+        "| Name | Description | Notes | Update Added |",
+        "| **★★★★** |",
+        "| Blazing Block | 25% chance to deal 50 Fire damage on a successful block | – | | 00527F6D |",
+      ].join("\n"),
+    );
+    expect(table.header).toEqual(["Name", "Description", "Notes", "Update Added"]);
+    expect(table.rows[0]).toEqual({ cells: ["**★★★★**"], group: true });
+    expect(table.rows[1].group).toBe(false);
+    expect(table.columns).toBe(5);
+  });
+
+  it("keeps a cell after a missing closing pipe (guide 3609) and drops padding columns", () => {
+    expect(parseGuideTable("| S Strength").header).toEqual(["S Strength"]);
+    const list = parseGuideTable(["| Daily Ops: Decryption | | | | | |", "| Track and Eliminate Enemies | | | | | |"].join("\n"));
+    expect(list.columns).toBe(1);
+    expect(list.header).toEqual(["Daily Ops: Decryption"]);
+    expect(list.rows.map((r) => r.cells)).toEqual([["Track and Eliminate Enemies"]]);
+  });
+
+  it("honours a markdown separator row when one is present", () => {
+    const table = parseGuideTable(["| Level | 10 | 20 |", "| --- | :---: | ---: |", "| DR | 51 | 86 |"].join("\n"));
+    expect(table.header).toEqual(["Level", "10", "20"]);
+    expect(table.rows.map((r) => r.cells)).toEqual([["DR", "51", "86"]]);
+    // A "- | -" data row is not a separator.
+    expect(parseGuideTable(["| Name | Rate |", "| - | - |"].join("\n")).rows).toHaveLength(1);
+  });
+
+  it("returns nothing to render for an empty table", () => {
+    expect(parseGuideTable("| | |\n|  |  |")).toEqual({ caption: null, header: null, rows: [], columns: 0 });
   });
 });
 
