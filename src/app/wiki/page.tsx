@@ -5,6 +5,7 @@ import { Search, ExternalLink, ArrowUpDown, ArrowLeft, AlertTriangle, X, Sliders
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { createLinkPlanState, linkifyToNodes } from "@/components/linkified-text";
+import { openFeedback, outdatedGuideFeedback } from "@/lib/feedback/feedback-prefill";
 
 import wikiCategoryCounts from "@/lib/wiki/wiki-category-counts.json";
 import { UPDATE_PATCHES } from "@/lib/wiki/update-patches";
@@ -861,6 +862,18 @@ function GuideReader({
             </nav>
           ) : null}
 
+          <p className="guides-mono mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[var(--text-soft)]">
+            <span>Something in this guide wrong or out of date?</span>
+            <button
+              type="button"
+              data-report-outdated
+              onClick={() => openFeedback(outdatedGuideFeedback({ id: article.id, title: cleanTitle(article.title), source: article.source }))}
+              className="text-[var(--color-accent)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
+            >
+              Report outdated
+            </button>
+          </p>
+
           <p className="guides-mono mt-6 hidden text-[13px] text-[var(--text-soft)] lg:block">
             Keys: <kbd>[</kbd> and <kbd>]</kbd> previous and next guide, <kbd>Esc</kbd> back to results.
           </p>
@@ -877,8 +890,10 @@ function GuideReader({
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block overflow-hidden rounded-md border border-[var(--border)] bg-[var(--background-primary)] p-1"
+                aria-label={`${cleanTitle(article.title)} on ${article.source} (opens in a new tab)`}
+                className="relative block overflow-hidden rounded-md border border-[var(--border)] bg-[var(--background-primary)] p-1"
               >
+                <ExternalLink aria-hidden="true" className="absolute right-2 top-2 h-3.5 w-3.5 text-[var(--color-accent)]" />
                 <img
                   src={article.main_image.startsWith("http") ? toHighResImageUrl(article.main_image) : `/static/images/${article.main_image.split("/").pop()}`}
                   alt={cleanTitle(article.title)}
@@ -1378,7 +1393,15 @@ function TruthWikiContent() {
         {/* SEARCH-FIRST HEADER */}
         <header className="space-y-4">
           <div className="space-y-1.5">
-            <h1 className="guides-display guides-heading text-[32px] leading-none text-[var(--color-accent)]">Fallout 76 guides</h1>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h1 className="guides-display guides-heading text-[32px] leading-none text-[var(--color-accent)]">Fallout 76 guides</h1>
+              <Link
+                href="/wiki/glossary"
+                className="guides-mono text-[13px] text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
+              >
+                Glossary
+              </Link>
+            </div>
             <p className="guides-prose max-w-[75ch] text-[15px] leading-relaxed text-[var(--text-muted)]">
               {TOTAL_ARTICLES.toLocaleString()} guides: patch notes, drop odds, Minerva schedules, event checklists and damage math, searchable in one place. Older guides are flagged when a patch has changed them.
             </p>

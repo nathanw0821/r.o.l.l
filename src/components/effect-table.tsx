@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { createLinkPlanState, linkifyToNodes } from "@/components/linkified-text";
 import { cn } from "@/lib/utils";
+import { builderModHref, starFromTierLabel } from "@/lib/links/cross-links";
 import { Target, Plus, Minus, Check, Bookmark, Search, Sparkles, ChevronDown } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
 import { useProgressHistory } from "@/components/progress-history-provider";
@@ -500,6 +501,14 @@ export default function EffectTable({
               </span>
             )}
           </div>
+          <Link
+            href={builderModHref(row.effect.name, starFromTierLabel(row.tier?.label))}
+            data-use-in-builder
+            className="mt-0.5 inline-block font-mono text-[10px] font-normal text-slate-400 underline decoration-slate-600 underline-offset-2 hover:text-amber-300 hover:decoration-amber-400"
+            aria-label={`Use in builder: ${cleanEffectName(row.effect.name)}`}
+          >
+            Use in builder
+          </Link>
         </td>
 
         {/* Equipment Slot */}

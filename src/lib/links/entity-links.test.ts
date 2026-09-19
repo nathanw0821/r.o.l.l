@@ -10,7 +10,8 @@ import {
   planLinkSegments
 } from "@/lib/links/entity-links";
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
-import { buildEntityLinks } from "@/lib/links/entity-links-build";
+import { buildEntityLinks, containsWholeName } from "@/lib/links/entity-links-build";
+import { GLOSSARY_SLUGS, GLOSSARY_TERMS } from "@/lib/truth/mechanics-glossary";
 import { UPDATE_PATCH_IDS } from "@/lib/wiki/update-patches";
 
 const names = (text: string) => findEntityMatches(text).map((m) => m.entity.name);
@@ -24,7 +25,7 @@ describe("entity link map", () => {
 
   it("covers every source kind", () => {
     const kinds = new Set(ENTITY_LINKS.map((e) => e.kind));
-    expect([...kinds].sort()).toEqual(["effect", "perk", "unique", "update"]);
+    expect([...kinds].sort()).toEqual(["effect", "glossary", "perk", "unique", "update"]);
     expect(getEntityLink("Severing")?.href).toBe("/all-effects?q=Severing");
     expect(getEntityLink("Night Person")?.href).toBe("/perks?q=Night%20Person");
     expect(getEntityLink("The Slasher")?.href).toBe("/wiki?update=the-slasher");
@@ -134,6 +135,49 @@ describe("planLinkSegments", () => {
       "Photosynthetic",
       "Lone Wanderer"
     ]);
+  });
+});
+
+describe("glossary entries in the link map", () => {
+  it("links glossary terms to their anchor, and every anchor exists", () => {
+    expect(getEntityLink("Vault Steel")?.href).toBe("/wiki/glossary#vault-steel");
+    expect(getEntityLink("Onslaught")?.kind).toBe("glossary");
+    for (const e of ENTITY_LINKS.filter((x) => x.kind === "glossary")) {
+      const slug = e.href.split("#")[1];
+      expect(GLOSSARY_SLUGS.has(slug), `${e.name} -> ${e.href}`).toBe(true);
+    }
+  });
+
+  it("never takes a perk or effect link: collisions and names containing them stay with the catalog", () => {
+    expect(getEntityLink("Bullet Storm")?.kind).toBe("perk");
+    expect(getEntityLink("Critical Savvy")?.kind).toBe("perk");
+    expect(getEntityLink("Lucky Hit")?.kind).toBe("effect");
+    expect(getEntityLink("Unyielding thresholds")).toBeUndefined();
+    expect(getEntityLink("Tenderizer stacks")).toBeUndefined();
+    expect(getEntityLink("Bleeding")).toBeUndefined(); // stoplisted: mostly proper names in guides
+    expect(names("Unyielding thresholds are 20 / 40 / 60% HP.")).toEqual(["Unyielding"]);
+    // Every glossary term is either linked to its own anchor or deliberately left out.
+    const linked = ENTITY_LINKS.filter((e) => e.kind === "glossary").length;
+    expect(linked).toBeGreaterThanOrEqual(20);
+    expect(linked).toBeLessThanOrEqual(GLOSSARY_TERMS.length);
+  });
+
+  it("containsWholeName matches whole words only", () => {
+    expect(containsWholeName("unyielding thresholds", ["unyielding"])).toBe(true);
+    expect(containsWholeName("bullet storm", ["bullet storm"])).toBe(true);
+    expect(containsWholeName("evade", ["evasive"])).toBe(false);
+    expect(containsWholeName("legendary modules", ["legendary module"])).toBe(false);
+  });
+
+  it("skipKeys keeps an entry's own name as text but links other terms", () => {
+    const segs = planLinkSegments("Onslaught stacks feed Furious and Vault Steel.", { skipKeys: new Set(["onslaught"]) });
+    expect(segs.filter((s) => s.href).map((s) => s.text)).toEqual(["Furious", "Vault Steel"]);
+    expect(segs.map((s) => s.text).join("")).toBe("Onslaught stacks feed Furious and Vault Steel.");
+  });
+
+  it("links a glossary term in guide text from /wiki (a different path from /wiki/glossary)", () => {
+    const segs = planLinkSegments("Crafting a 4-star mod on a unique needs Vault Steel.", { currentPath: "/wiki" });
+    expect(segs.find((s) => s.text === "Vault Steel")?.href).toBe("/wiki/glossary#vault-steel");
   });
 });
 

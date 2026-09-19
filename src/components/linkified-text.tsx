@@ -3,7 +3,7 @@ import Link from "next/link";
 import {
   createLinkPlanState,
   planLinkSegments,
-  type LinkPlanState
+  type PlanLinkOptions
 } from "@/lib/links/entity-links";
 
 /** Accent underline used for entity links (same accent as the site's other inline links, no motion). */
@@ -17,7 +17,7 @@ export const ENTITY_LINK_CLASS =
  */
 export function linkifyToNodes(
   text: string,
-  options: { currentPath?: string | null; state?: LinkPlanState; maxLinks?: number; keyPrefix?: string } = {}
+  options: PlanLinkOptions & { keyPrefix?: string } = {}
 ): React.ReactNode[] {
   const segments = planLinkSegments(text, options);
   const prefix = options.keyPrefix ?? "lk";
@@ -42,12 +42,15 @@ export { createLinkPlanState };
 export default function LinkifiedText({
   text,
   maxLinks,
-  currentPath
+  currentPath,
+  skipKeys
 }: {
   text: string | null | undefined;
   maxLinks?: number;
   currentPath?: string | null;
+  /** Entity keys left as text (e.g. a glossary entry's own term). */
+  skipKeys?: ReadonlySet<string>;
 }) {
   if (!text) return null;
-  return <>{linkifyToNodes(text, { currentPath, maxLinks })}</>;
+  return <>{linkifyToNodes(text, { currentPath, maxLinks, skipKeys })}</>;
 }

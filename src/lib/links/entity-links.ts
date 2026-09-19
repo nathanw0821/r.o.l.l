@@ -7,11 +7,14 @@
  *   perk card        -> /perks?q=<name>              (perk search box)
  *   unique item      -> /build?tab=gear&piece=<id>   (builder preselects that base piece)
  *   major update     -> /wiki?update=<id>            (guides update filter)
+ *   glossary term    -> /wiki/glossary#<slug>        (mechanics glossary, `mechanics-glossary.json`)
  *
  * When two sources produce the same name (e.g. "Hardy", "Blocker", "Barbarian" are both a perk
  * card and a legendary effect) the first source in this priority order wins:
- * update > unique > perk > effect. Perk cards are what players name most often in prose; the
- * tracker search still finds the effect of the same name.
+ * update > unique > perk > effect > glossary. Perk cards are what players name most often in prose; the
+ * tracker search still finds the effect of the same name. Glossary terms come last and are also
+ * left out when their name contains a higher-priority name ("Unyielding thresholds" contains the
+ * Unyielding effect), because the longest match would otherwise take that link away.
  *
  * Matching (`findEntityMatches`) is deterministic: longest name first, whole words only,
  * case-insensitive but only on capitalised occurrences (so "rapid fire" in prose is not linked to
@@ -20,7 +23,7 @@
 
 import entityLinkIndex from "@/lib/links/entity-link-index.json";
 
-export type EntityKind = "update" | "unique" | "perk" | "effect";
+export type EntityKind = "update" | "unique" | "perk" | "effect" | "glossary";
 
 export type EntityLink = {
   /** Lower-cased name with ’ folded to ' (unique across the map). */
@@ -103,12 +106,19 @@ export const PERK_LINK_STOPLIST: ReadonlySet<string> = new Set([
   "vaccinated"
 ]);
 
+/**
+ * Glossary terms kept on /wiki/glossary but never auto-linked: "Bleeding" is mostly part of proper
+ * names in the guides ("Bleeding Kate's Grindhouse", "Bleeding Bear Trap"), not the status.
+ */
+export const GLOSSARY_LINK_STOPLIST: ReadonlySet<string> = new Set(["bleeding"]);
+
 /** Route patterns every generated href must match (checked by the unit test). */
 export const ALLOWED_ENTITY_HREF_PATTERNS: readonly RegExp[] = [
   /^\/all-effects\?q=[^&]+$/,
   /^\/perks\?q=[^&]+$/,
   /^\/build\?tab=gear&piece=[a-z0-9-]+$/,
-  /^\/wiki\?update=[a-z0-9-]+$/
+  /^\/wiki\?update=[a-z0-9-]+$/,
+  /^\/wiki\/glossary#[a-z0-9-]+$/
 ];
 
 export function normalizeEntityKey(name: string): string {
@@ -223,17 +233,23 @@ function pathOf(href: string): string {
 }
 
 /**
- * Splits `text` into plain and linked segments. Links to `currentPath` are left as text (never link
- * a page to itself). `state` carries first-occurrence and max-link bookkeeping across several
+ * Splits `text` into plain and linked segments. Links to `currentPath` and entities in `skipKeys`
+ * are left as text (never link a page or an entry to itself). `state` carries first-occurrence and max-link bookkeeping across several
  * strings of the same block.
  */
-export function planLinkSegments(
-  text: string,
-  options: { currentPath?: string | null; state?: LinkPlanState; maxLinks?: number } = {}
-): LinkSegment[] {
+export type PlanLinkOptions = {
+  currentPath?: string | null;
+  state?: LinkPlanState;
+  maxLinks?: number;
+  /** Entity keys never linked here (e.g. a glossary entry's own term inside its definition). */
+  skipKeys?: ReadonlySet<string>;
+};
+
+export function planLinkSegments(text: string, options: PlanLinkOptions = {}): LinkSegment[] {
   if (!text) return [];
   const state = options.state ?? createLinkPlanState(options.maxLinks);
   const here = options.currentPath ? pathOf(options.currentPath) : null;
+  const skip = options.skipKeys;
   const matches = findEntityMatches(text, { firstOnly: false });
   const segments: LinkSegment[] = [];
   let cursor = 0;
@@ -241,6 +257,7 @@ export function planLinkSegments(
     if (state.linksLeft <= 0) break;
     if (state.seen.has(m.entity.key)) continue;
     state.seen.add(m.entity.key);
+    if (skip?.has(m.entity.key)) continue;
     if (here && pathOf(m.entity.href) === here) continue;
     if (m.start > cursor) segments.push({ text: text.slice(cursor, m.start) });
     segments.push({ text: m.text, href: m.entity.href, entity: m.entity });

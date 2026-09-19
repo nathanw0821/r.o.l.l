@@ -1,0 +1,247 @@
+{
+  "$comment": "Mechanics glossary rendered at /wiki/glossary and added to the entity link map (kind 'glossary', lowest priority). Every number here is copied from another truth-pack file, the calculator, PATCH70_WORKLOG.md or FO76_PATCH70_ACCURACY_REVIEW_AND_PLAN_2026-09-17.md; `source` names where. Do not add a term the pack has no facts for. `seeAlso` holds internal hrefs only (checked by src/lib/links/internal-routes.test.ts).",
+  "patch": 70,
+  "verifiedAt": "2026-09-18",
+  "terms": [
+    {
+      "term": "4th star on uniques",
+      "slug": "fourth-star-on-uniques",
+      "definition": "Since Patch 70, named unique weapons and armor can change their legendary mods and take a 4th star. Crafting onto a unique needs 30 modules and 40 Vault Steel for a 3-star mod, or 65 modules and 80 Vault Steel for a 4-star mod.",
+      "verifiedPatch": 70,
+      "source": "crafting-economy.json uniqueCraftingByStar; patch-deltas.json Patch 70 'Unique items' (Bethesda 'The Slasher' release notes, 2026-09-15)",
+      "seeAlso": ["/build?tab=gear", "/wiki/glossary#vault-steel", "/wiki/glossary#mod-change-cost"]
+    },
+    {
+      "term": "Armor penetration",
+      "slug": "armor-penetration",
+      "definition": "Armor penetration lowers the target's Damage Resistance before the damage curve is applied. Sources multiply together rather than add (50% and 36% make 68%, not 86%), and total penetration is capped at 90%.",
+      "verifiedPatch": 70,
+      "source": "src/lib/calculator/creation-engine-math.ts calculateEffectiveArmor, MAX_ARMOR_PENETRATION = 0.9; legendary-effect-model.json effects.anti-armor",
+      "seeAlso": ["/all-effects?q=Anti-armor", "/wiki/glossary#damage-resistance-curve", "/build?tab=combat"]
+    },
+    {
+      "term": "Bleeding",
+      "slug": "bleeding",
+      "definition": "Bleeding is a status on the target. Since Patch 70 the 4-star Severing mod gives +50% damage against bleeding targets.",
+      "verifiedPatch": 70,
+      "source": "legendary-effect-model.json effects.severing; patch-deltas.json Patch 70 'Legendary mods'",
+      "seeAlso": ["/all-effects?q=Severing", "/4-star"]
+    },
+    {
+      "term": "Blocking",
+      "slug": "blocking",
+      "definition": "Blocking stops 60% of the damage by default since Patch 66 (it used to be 100%). The Blocker perk blocks 15, 20 or 25% more melee damage by rank.",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json perks.blocker (baseBlockPct 60); FO76 review section 1 row 66 'blocking 100% to 60%'",
+      "seeAlso": ["/perks?q=Blocker", "/build?tab=biometrics"]
+    },
+    {
+      "term": "Boss damage reduction",
+      "slug": "boss-damage-reduction",
+      "definition": "Some bosses take a flat percentage less damage after the armor curve. R.O.L.L.'s target dummies use Earle at 300 DR with 80% reduction and the Scorchbeast Queen at 300 DR with 70%.",
+      "verifiedPatch": 70,
+      "source": "PATCH70_WORKLOG.md ground rules (Earle 300/80, SBQ 300/70, resolved by Nathan 2026-09-18); creation-engine-math.ts calculateMitigatedDamage (boss flat reduction after the curve)",
+      "seeAlso": ["/build?tab=combat", "/wiki/glossary#damage-mitigation-order"]
+    },
+    {
+      "term": "Bullet Storm",
+      "slug": "bullet-storm",
+      "definition": "Bullet Storm replaced the Heavy Gunner cards in Patch 62: +3, 6 or 9% damage per 30 ammo spent, up to 10 stacks. Bringing the Big Guns raises the limit by 10 and Lock and Load keeps half the stacks when you reload.",
+      "verifiedPatch": 70,
+      "source": "perk-reference-nukesdragons.json 'Bullet Storm', 'Bringing the Big Guns', 'Lock and Load' (Patch 70 snapshot, 2026-09-18); supersede-rules.json heavy-gunner-line",
+      "seeAlso": ["/perks?q=Bullet%20Storm", "/perks?q=Bringing%20the%20Big%20Guns", "/perks?q=Lock%20and%20Load"]
+    },
+    {
+      "term": "Critical meter",
+      "slug": "critical-meter",
+      "definition": "Each hit in V.A.T.S. fills the critical meter by Luck × 1.5 + 5 points out of 100, rounded; when it is full your next shot can be a critical hit. The 3-star Lucky Hit mod adds 15 before rounding.",
+      "verifiedPatch": 70,
+      "source": "src/lib/calculator/creation-engine-math.ts calculateCritFrequency (Formula 5); FO76 review section 2 'crit fill verified'",
+      "seeAlso": ["/wiki/glossary#critical-savvy", "/wiki/glossary#lucky-hit", "/perks?q=Four%20Leaf%20Clover"]
+    },
+    {
+      "term": "Critical Savvy",
+      "slug": "critical-savvy",
+      "definition": "Critical Savvy makes a critical hit use only 85, 70 or 55% of the critical meter by rank. At rank 3, 33 Luck gives a critical every other shot in V.A.T.S. (23 Luck with Lucky Hit).",
+      "verifiedPatch": 70,
+      "source": "perk-reference-nukesdragons.json 'Critical Savvy'; creation-engine-math.ts CRIT_SAVVY_METER_PRESERVED_PCT; FO76 review row 'Crit: Savvy 3 consumes 55%, preserves 45%'",
+      "seeAlso": ["/perks?q=Critical%20Savvy", "/wiki/glossary#critical-meter", "/wiki/glossary#lucky-hit"]
+    },
+    {
+      "term": "Damage mitigation order",
+      "slug": "damage-mitigation-order",
+      "definition": "Since Patch 66, incoming damage is reduced by armor first and then by percentage reducers, which multiply together instead of adding up. Evade and Deflect are rolled before any damage is dealt.",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json orderOfOperations; FO76 review section 1 row 66 (Bethesda 'The Backwoods' release notes)",
+      "seeAlso": ["/wiki/glossary#damage-reducer", "/wiki/glossary#damage-resistance-curve", "/build?tab=biometrics"]
+    },
+    {
+      "term": "Damage reducer",
+      "slug": "damage-reducer",
+      "definition": "A damage reducer cuts damage taken by a percentage after armor, multiplied with any other reducers. Examples are Sentinel's (5% while standing still), Cavalier's (10% while sprinting) and Mutant's (1% per mutation, up to 5%).",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json legendaryMods.sentinels, cavaliers, mutants",
+      "seeAlso": ["/all-effects?q=Sentinel's", "/all-effects?q=Cavalier's", "/wiki/glossary#damage-mitigation-order"]
+    },
+    {
+      "term": "Damage resistance curve",
+      "slug": "damage-resistance-curve",
+      "definition": "Damage after armor is damage × min(0.99, (damage × 0.15 ÷ effective DR) ^ 0.365). The curve is continuous, so there is no cliff at any DR value.",
+      "verifiedPatch": 70,
+      "source": "src/lib/calculator/creation-engine-math.ts calculateMitigatedDamage (constants 0.15 and 0.365); FO76 review section 2 'calculator core verified'",
+      "seeAlso": ["/wiki/glossary#armor-penetration", "/wiki/glossary#boss-damage-reduction", "/build?tab=combat"]
+    },
+    {
+      "term": "Deflect",
+      "slug": "deflect",
+      "definition": "Deflect is a chance to send a ranged hit back at the attacker; you still take 50% of that hit. Deflect chance is 1.5 times higher in heavy armor or Power Armor.",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json evadeDeflect (deflectDamageTakenPct 50, deflectHeavyArmorMultiplier 1.5)",
+      "seeAlso": ["/perks?q=Ricochet", "/perks?q=Bullet%20Shield", "/wiki/glossary#evade"]
+    },
+    {
+      "term": "Evade",
+      "slug": "evade",
+      "definition": "Evade is a chance to avoid an attack, rolled before any damage is dealt. Sources include Evasive (2 to 14% from AGI, no Power Armor), Moving Target while sprinting and the Reflex armor mod (2% per piece).",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json perks.evasive, perks.moving-target, legendaryMods.reflex, orderOfOperations",
+      "seeAlso": ["/perks?q=Evasive", "/perks?q=Dodgy", "/all-effects?q=Reflex"]
+    },
+    {
+      "term": "Infestations",
+      "slug": "infestations",
+      "definition": "Infestations arrived in Patch 68: 52 sites, at most 5 active at once, and the boss always drops a 4-star legendary. The same patch added 11 new 4-star mods.",
+      "verifiedPatch": 70,
+      "source": "FO76 review section 1 row 68 (Nuka Knights Patch 68 notes, 'Infestations: New 4-Star Mods')",
+      "seeAlso": ["/4-star", "/wiki?q=Infestation"]
+    },
+    {
+      "term": "Kill Streak",
+      "slug": "kill-streak",
+      "definition": "Kill Streak counts your recent kills; it arrived in Patch 64 (Burning Springs). Adrenaline and the Adrenal mod give +10% damage per kill on a streak, up to 10 kills.",
+      "verifiedPatch": 70,
+      "source": "perk-reference-nukesdragons.json 'Adrenaline'; legendary-effect-model.json effects.adrenal; FO76 review section 1 row 64",
+      "seeAlso": ["/perks?q=Adrenaline", "/all-effects?q=Adrenal"]
+    },
+    {
+      "term": "Legendary modules",
+      "slug": "legendary-modules",
+      "definition": "Crafting a legendary mod costs 15, 30, 60 or 120 modules by star, and a random roll costs 5, 10 or 15. Since Patch 70 each module weighs 0.05.",
+      "verifiedPatch": 70,
+      "source": "crafting-economy.json moduleCraftingCostByStar, randomRollModulesByStar, legendaryModuleWeight",
+      "seeAlso": ["/all-effects", "/wiki/glossary#mod-change-cost"]
+    },
+    {
+      "term": "Legendary scrip",
+      "slug": "legendary-scrip",
+      "definition": "Since Patch 70, selling a legendary item gives 15, 25, 50 or 150 scrip by star. Scrapping one gives 3, 5, 10 or 30 scrip.",
+      "verifiedPatch": 70,
+      "source": "crafting-economy.json scripSaleValueByStar, scrappingScripByStar (Bethesda Patch 70 release notes)",
+      "seeAlso": ["/wiki/glossary#mod-change-cost", "/all-effects"]
+    },
+    {
+      "term": "Lucky Hit",
+      "slug": "lucky-hit",
+      "definition": "Lucky Hit is the 3-star legendary mod that adds 15 to each hit's critical meter fill before rounding. With Critical Savvy rank 3 it lowers the every-other-shot Luck from 33 to 23.",
+      "verifiedPatch": 70,
+      "source": "creation-engine-math.ts calculateCritFrequency (hasLuckyHit); FO76 review row 'Crit: Savvy 3' (33 Luck / 23 with Lucky Hit)",
+      "seeAlso": ["/all-effects?q=Lucky%20Hit", "/wiki/glossary#critical-meter"]
+    },
+    {
+      "term": "Matching set",
+      "slug": "matching-set",
+      "definition": "A matching set means every armor piece you wear comes from the same set; for Power Armor, all six pieces. Ironclad's 15, 20 or 25% armor bonus doubles with a matching set.",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json perks.ironclad (matchingSetMultiplier 2); PATCH70_WORKLOG.md WS-3 step 1 (matching set rule)",
+      "seeAlso": ["/perks?q=Ironclad", "/build?tab=gear"]
+    },
+    {
+      "term": "Mod change cost",
+      "slug": "mod-change-cost",
+      "definition": "Since Patch 70, changing a legendary mod costs a flat 50 scrip for a 1 to 3-star mod and 100 for a 4-star mod; the price no longer rises with each change. Unique items pay 10 times as much.",
+      "verifiedPatch": 70,
+      "source": "crafting-economy.json modChangeScripByStar, uniqueScripMultiplier; supersede-rules.json mod-change-fixed-scrip",
+      "seeAlso": ["/all-effects", "/wiki/glossary#fourth-star-on-uniques"]
+    },
+    {
+      "term": "Onslaught",
+      "slug": "onslaught",
+      "definition": "Onslaught stacks build up over time and are spent on attacks (Gunslinger Master). Furious gives +5% damage per stack up to 9 stacks, and Pounder's +10% per stack up to 10.",
+      "verifiedPatch": 70,
+      "source": "perk-reference-nukesdragons.json 'Gunslinger Master'; legendary-effect-model.json effects.furious, effects.pounders",
+      "seeAlso": ["/perks?q=Gunslinger%20Master", "/all-effects?q=Furious", "/all-effects?q=Pounder's"]
+    },
+    {
+      "term": "Power Armor innate reduction",
+      "slug": "power-armor-innate-reduction",
+      "definition": "Some sources say each Power Armor piece reduces damage by 7% or 15%; this is unverified. R.O.L.L. uses 0 and offers a toggle labelled unverified.",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json powerArmorInnate (confidence unverified); PATCH70_WORKLOG.md ground rules ('PA innate 7%/15% per piece, kept 0 + toggle')",
+      "seeAlso": ["/build?tab=biometrics"]
+    },
+    {
+      "term": "Resistance mods",
+      "slug": "resistance-mods",
+      "definition": "Since Patch 66 the Fireproof, Warming, HazMat and Poisoner's armor mods give +50 to their resistance; they used to give +25.",
+      "verifiedPatch": 70,
+      "source": "supersede-rules.json resist-mods-plus-50; legendary-effect-model.json (resist mods 50)",
+      "seeAlso": ["/all-effects?q=Fireproof", "/1-star"]
+    },
+    {
+      "term": "SPECIAL-scaled perk",
+      "slug": "special-scaled-perk",
+      "definition": "Since Patch 62, cards such as Barbarian, Evasive, Lone Wanderer and Nerd Rage! have a single rank and scale with a S.P.E.C.I.A.L. stat. The exact curves are unpublished, so R.O.L.L. models them linearly and marks them approximate.",
+      "verifiedPatch": 70,
+      "source": "supersede-rules.json special-scaled-single-rank; defensive-perks.json $comment; PATCH70_WORKLOG.md ground rules",
+      "seeAlso": ["/perks?q=Lone%20Wanderer", "/perks?q=Barbarian"]
+    },
+    {
+      "term": "Swing speed cap",
+      "slug": "swing-speed-cap",
+      "definition": "Since Patch 70, melee swing speed bonuses are capped at +100%.",
+      "verifiedPatch": 70,
+      "source": "patch-deltas.json Patch 70 'Weapons'",
+      "seeAlso": ["/build?tab=combat"]
+    },
+    {
+      "term": "Tenderizer stacks",
+      "slug": "tenderizer-stacks",
+      "definition": "With the Tenderizer perk each hit makes the target take +0.1% more damage, stacking to +100% with no expiry. It does not work in PvP.",
+      "verifiedPatch": 70,
+      "source": "defensive-perks.json perks.tenderizer; FO76 review row 'Tenderizer +10%' (single-rank, +0.1% per hit)",
+      "seeAlso": ["/perks?q=Tenderizer"]
+    },
+    {
+      "term": "Underarmor styles",
+      "slug": "underarmor-styles",
+      "definition": "Since Patch 66 underarmor styles give S.P.E.C.I.A.L. points; for example Vault underarmor gives +2 END, +5 INT and +3 LCK.",
+      "verifiedPatch": 70,
+      "source": "FO76 review section 1 row 66 (Bethesda 'The Backwoods' release notes, underarmor styles)",
+      "seeAlso": ["/build?tab=gear"]
+    },
+    {
+      "term": "Unique innate effect",
+      "slug": "unique-innate-effect",
+      "definition": "An innate effect is the built-in effect of a named unique weapon or armor piece. Patch 70 gave all 83 unique weapons new innate effects, for example Ticket to Revenge gives +3% armor penetration per Onslaught stack.",
+      "verifiedPatch": 70,
+      "source": "unique-items.json (Ticket to Revenge model armor-pen-per-onslaught-stack); patch-deltas.json Patch 70 'Unique weapons'",
+      "seeAlso": ["/build?tab=gear&piece=ticket-to-revenge", "/wiki/glossary#fourth-star-on-uniques"]
+    },
+    {
+      "term": "Unyielding thresholds",
+      "slug": "unyielding-thresholds",
+      "definition": "Unyielding armor gives +3 to every S.P.E.C.I.A.L. stat except Endurance while your health is low (+2 for ghouls). Since Patch 70 the low-health steps are exactly 20, 40 and 60% HP.",
+      "verifiedPatch": 70,
+      "source": "legendary-effect-model.json effects.unyielding; patch-deltas.json Patch 70 'Armor'",
+      "seeAlso": ["/all-effects?q=Unyielding", "/1-star"]
+    },
+    {
+      "term": "Vault Steel",
+      "slug": "vault-steel",
+      "definition": "Vault Steel is the material needed to craft legendary mods onto unique items since Patch 70: 40 for a 3-star craft and 80 for a 4-star craft.",
+      "verifiedPatch": 70,
+      "source": "crafting-economy.json uniqueCraftingByStar; patch-deltas.json Patch 70 'Unique items'",
+      "seeAlso": ["/wiki/glossary#fourth-star-on-uniques", "/build?tab=gear"]
+    }
+  ]
+}
