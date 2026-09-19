@@ -2,7 +2,7 @@ import { hashPassword } from "@/lib/password-hash";
 import { z } from "zod";
 import { parseJson } from "@/lib/api/validation";
 import { badRequest, forbidden, internalError, ok, tooManyRequests } from "@/lib/api/responses";
-import { isPublicRegistrationEnabled } from "@/lib/app-config";
+import { isPublicRegistrationEnabled, isReservedUsername } from "@/lib/app-config";
 import { issueEmailVerification } from "@/lib/email-verification";
 import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
@@ -59,6 +59,10 @@ export async function POST(request: Request) {
 
   if (isEmailLike(username)) {
     return badRequest("Choose a username, not an email address.");
+  }
+
+  if (isReservedUsername(username)) {
+    return badRequest("That username is already taken.");
   }
 
   const [existingEmail, existingUsername] = await Promise.all([

@@ -16,16 +16,18 @@ binding = "ASSETS"
 [placement]
 mode = "smart"
 
+# Plain-text vars only: this file is public. Secrets (DISCORD_CLIENT_SECRET, GOOGLE_CLIENT_SECRET,
+# NEXTAUTH_SECRET, DATABASE_URL, TURNSTILE_SECRET_KEY, ...) live in `wrangler secret put <NAME>`
+# (add `--env preview` for preview). wrangler-config.test.ts fails if one is added here.
+# Admin is granted by username only; ADMIN_EMAILS would also require a verified email.
 [vars]
 NEXTAUTH_URL = "https://fallout76.wiki"
-ADMIN_EMAILS = "nathanw@gmail.com"
-ADMIN_USERNAMES = "ezkialez,test"
+ADMIN_USERNAMES = "ezkialez"
 ALLOW_PUBLIC_REGISTRATION = "true"
 EMAIL_FROM = "R.O.L.L <no-reply@support.fallout76.wiki>"
 GOOGLE_CLIENT_ID = "717058834888-tri1suu3o125h1haajjrffufioj75ga7.apps.googleusercontent.com"
 NEXT_PUBLIC_TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 DISCORD_CLIENT_ID = "1530017912520445962"
-DISCORD_CLIENT_SECRET = "LGKxyMulgUYJPgHXUxvtpvVfEF8YsIHN"
 DISCORD_PUBLIC_KEY = "fedb0644caf356455e981c9f7935aaa7cb4e38ecb67a6f80c6476926ce4a0c0a"
 
 [triggers]
@@ -45,14 +47,12 @@ routes = [
 ]
 [env.preview.vars]
 NEXTAUTH_URL = "https://preview.fallout76.wiki"
-ADMIN_EMAILS = "nathanw@gmail.com"
-ADMIN_USERNAMES = "ezkialez,test"
+ADMIN_USERNAMES = "ezkialez"
 ALLOW_PUBLIC_REGISTRATION = "true"
 EMAIL_FROM = "R.O.L.L <no-reply@support.fallout76.wiki>"
 GOOGLE_CLIENT_ID = "717058834888-tri1suu3o125h1haajjrffufioj75ga7.apps.googleusercontent.com"
 NEXT_PUBLIC_TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 DISCORD_CLIENT_ID = "1530017912520445962"
-DISCORD_CLIENT_SECRET = "LGKxyMulgUYJPgHXUxvtpvVfEF8YsIHN"
 DISCORD_PUBLIC_KEY = "fedb0644caf356455e981c9f7935aaa7cb4e38ecb67a6f80c6476926ce4a0c0a"
 
 [[env.preview.kv_namespaces]]

@@ -68,12 +68,25 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
       }
+      // Admin checks read username and email verification from the session, so carry them in the
+      // token. Tokens issued before this field existed are filled in once from the database.
+      const id = (token.id ?? token.sub) as string | undefined;
+      if (id && (user || token.username === undefined)) {
+        const row = await prisma.user.findUnique({
+          where: { id },
+          select: { username: true, emailVerified: true }
+        });
+        token.username = row?.username ?? null;
+        token.emailVerified = Boolean(row?.emailVerified);
+      }
       return token;
     },
     async session({ session, token }) {
       const id = (token?.id ?? token?.sub) as string | undefined;
       if (session.user && id) {
         session.user.id = id;
+        session.user.username = token.username ?? null;
+        session.user.emailVerified = Boolean(token.emailVerified);
       }
       return session;
     }

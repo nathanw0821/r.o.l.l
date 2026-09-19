@@ -5,6 +5,8 @@ export { getSiteUrl } from "./site-url";
 type AdminLikeUser = {
   email?: string | null;
   username?: string | null;
+  /** Admin by email only counts once the address is verified (Date from Prisma, boolean from the session). */
+  emailVerified?: Date | string | boolean | null;
 };
 
 const truthyValues = new Set(["1", "true", "yes", "on"]);
@@ -86,7 +88,32 @@ export function isAdminUser(user: AdminLikeUser | null | undefined) {
   const username = user.username?.trim().toLowerCase();
   const email = user.email?.trim().toLowerCase();
 
-  return Boolean((username && usernames.has(username)) || (email && emails.has(email)));
+  const emailIsVerified = Boolean(user.emailVerified);
+
+  return Boolean((username && usernames.has(username)) || (email && emailIsVerified && emails.has(email)));
+}
+
+/**
+ * Usernames nobody may register or rename to: the configured admin names (admin is granted by
+ * username, so an unclaimed admin name would be free admin access) plus role-like names.
+ */
+const RESERVED_USERNAMES = new Set([
+  "admin",
+  "administrator",
+  "root",
+  "system",
+  "moderator",
+  "mod",
+  "staff",
+  "support",
+  "test",
+  "roll",
+  "official"
+]);
+
+export function isReservedUsername(raw: string) {
+  const username = raw.trim().toLowerCase();
+  return RESERVED_USERNAMES.has(username) || splitEnvList(process.env.ADMIN_USERNAMES).includes(username);
 }
 
 export function getSyncUrlError(rawUrl?: string | null) {
