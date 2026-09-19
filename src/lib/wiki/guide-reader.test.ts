@@ -3,6 +3,7 @@ import {
   MIN_TOC_ENTRIES,
   adjacentGuides,
   buildGuideToc,
+  externalSourceUrl,
   flattenPatchLabel,
   guideHeadingLevel,
   guideHeadingText,
@@ -355,6 +356,20 @@ describe("parseGuideTable", () => {
 
   it("returns nothing to render for an empty table", () => {
     expect(parseGuideTable("| | |\n|  |  |")).toEqual({ caption: null, header: null, rows: [], columns: 0 });
+  });
+});
+
+describe("externalSourceUrl", () => {
+  it("passes absolute http(s) source links through", () => {
+    expect(externalSourceUrl("https://fallout.wiki/wiki/Raider_Power_Armor")).toBe("https://fallout.wiki/wiki/Raider_Power_Armor");
+    expect(externalSourceUrl(" https://nukaknights.com/events-kalender.html ")).toBe("https://nukaknights.com/events-kalender.html");
+    expect(externalSourceUrl("http://example.com/a b")).toBe("http://example.com/a%20b");
+  });
+
+  it("refuses anything that is not an absolute http(s) URL", () => {
+    for (const url of [null, undefined, "", "javascript:alert(1)", "data:text/html,x", "/wiki?id=1", "//evil.example", "not a url"]) {
+      expect(externalSourceUrl(url)).toBeNull();
+    }
   });
 });
 

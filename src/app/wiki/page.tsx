@@ -125,6 +125,7 @@ import {
   MIN_TOC_ENTRIES,
   adjacentGuides,
   buildGuideToc,
+  externalSourceUrl,
   flattenPatchLabel,
   guideHeadingLevel,
   guideHeadingText,
@@ -713,6 +714,7 @@ function GuideReader({
   const moreSupersedeNotes = (SUPERSEDE_INDEX[String(article.id)]?.length ?? 0) - supersedeNotes.length;
   const date = formatGuideDate(article.updatedAt);
   const category = categoryLabel(article.category || "General");
+  const sourceUrl = externalSourceUrl(article.url);
 
   const jumpTo = React.useCallback((slug: string) => {
     const target = document.getElementById(slug);
@@ -787,8 +789,26 @@ function GuideReader({
           View Original Guide Source on {article.source} ↗
         </a>
         {article.sourceImages ? (
-          <p className="guides-prose text-[14px] leading-normal text-[var(--text-soft)]">
-            This guide has pictures on the original page. We link to them rather than copy them.
+          <p data-source-images className="guides-prose text-[14px] leading-normal text-[var(--text-soft)]">
+            This guide has pictures. We link to them rather than copy them
+            {sourceUrl ? (
+              <>
+                {": "}
+                <a
+                  href={sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="guides-mono inline-flex items-baseline gap-1 whitespace-nowrap text-[13px] text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
+                >
+                  <ExternalLink aria-hidden="true" className="h-3.5 w-3.5 shrink-0 self-center text-[var(--color-accent)]" />
+                  view them on the original page
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+                .
+              </>
+            ) : (
+              "."
+            )}
           </p>
         ) : null}
       </header>
