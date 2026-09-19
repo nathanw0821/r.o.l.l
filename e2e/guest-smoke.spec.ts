@@ -682,7 +682,9 @@ test.describe("cross-links and glossary", () => {
 
   test("tracker 'Use in builder' opens the mod picker searched to that mod, and 'Track this mod' comes back", async ({ page }) => {
     await page.goto("/all-effects?q=Severing");
-    const row = page.getByRole("row", { name: /Severing/ });
+    // Wait for hydration: a click that lands before it can be lost.
+    await expect(page.locator('[data-tier-controls="ready"]')).toBeVisible({ timeout: 30_000 });
+    const row = page.getByRole("row", { name: /Severing/ }).filter({ visible: true });
     await expect(row).toBeVisible({ timeout: 30_000 });
     await row.getByRole("link", { name: "Use in builder: Severing" }).click();
 

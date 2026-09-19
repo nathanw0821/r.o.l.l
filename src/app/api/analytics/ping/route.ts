@@ -2,6 +2,7 @@ import { z } from "zod";
 import { parseJson } from "@/lib/api/validation";
 import { internalError, ok } from "@/lib/api/responses";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 const pingSchema = z.object({
   type: z.enum(["guest", "user"])
@@ -12,6 +13,10 @@ export async function POST(request: Request) {
   if ("response" in parsed) return parsed.response;
 
   const { type } = parsed.data;
+
+  // One write per visitor per minute at most; extra pings are accepted but not counted.
+  const limiter = await rateLimit("analytics-ping", 3, 60_000);
+  if (!limiter.success) return ok({ counted: false });
 
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);

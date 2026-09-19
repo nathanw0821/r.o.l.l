@@ -40,3 +40,22 @@ describe("isReservedUsername", () => {
     expect(isReservedUsername("vaultdweller")).toBe(false);
   });
 });
+
+describe("getSyncUrlError (admin source URLs)", () => {
+  it("refuses private, loopback and mapped addresses", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    const { getSyncUrlError } = await import("@/lib/app-config");
+    for (const url of [
+      "https://[::1]/x",
+      "https://[::ffff:10.0.0.1]/x",
+      "https://100.64.1.1/x",
+      "https://127.0.0.1/x",
+      "https://localhost./x",
+      "https://192.168.1.4/x"
+    ]) {
+      expect(getSyncUrlError(url)).not.toBeNull();
+    }
+    expect(getSyncUrlError("https://fallout.wiki/wiki/Bloodied")).toBeNull();
+    vi.unstubAllEnvs();
+  });
+});

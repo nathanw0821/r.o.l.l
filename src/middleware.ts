@@ -5,7 +5,7 @@ import { buildContentSecurityPolicy, createNonce, CSP_NONCE_HEADER } from "@/lib
 export const runtime = "experimental-edge";
 
 const BOT_PROBE_EXTENSIONS = /\.(?:htc|php\d?|phtml|asp|aspx|jsp|cgi|env|git|bak|sql|ini|conf|yaml|yml|ds_store)$/i;
-const LEGITIMATE_TXT_FILES = /^\/(?:robots\.txt|humans\.txt|security\.txt|ads\.txt|app-ads\.txt)$/i;
+const LEGITIMATE_TXT_FILES = /^\/(?:robots\.txt|humans\.txt|security\.txt|\.well-known\/security\.txt|ads\.txt|app-ads\.txt)$/i;
 const BOT_PROBE_PATHS = /^\/(?:wp-admin|wp-login|wp-includes|xmlrpc\.php|phpmyadmin|cgi-bin|autodiscover|console|actuator|debug|_profiler)\b/i;
 
 export function middleware(request: NextRequest) {

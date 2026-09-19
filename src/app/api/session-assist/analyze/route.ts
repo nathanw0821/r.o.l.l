@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
 import { assistPresetContent } from "@/lib/session-assist-presets";
 import { z } from "zod";
 
@@ -43,6 +46,23 @@ const responseFormat = {
 } as const;
 
 export async function POST(request: Request) {
+  // The user's own OpenAI key passes through here, so only signed-in users, rate limited, and the
+  // upstream error body is never echoed back (it would make this an anonymous key-checking proxy).
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json(
+      { success: false, error: { code: "UNAUTHORIZED", message: "Sign in to use screenshot assist." } },
+      { status: 401 }
+    );
+  }
+  const limiter = await rateLimit(`session-assist:${session.user.id}`, 10, 60_000);
+  if (!limiter.success) {
+    return NextResponse.json(
+      { success: false, error: { code: "RATE_LIMITED", message: "Too many requests. Please wait a moment." } },
+      { status: 429 }
+    );
+  }
+
   let body: unknown;
 
   try {
@@ -116,14 +136,15 @@ export async function POST(request: Request) {
   });
 
   if (!openAiResponse.ok) {
-    const details = await openAiResponse.text();
     return NextResponse.json(
       {
         success: false,
         error: {
           code: "OPENAI_ERROR",
-          message: "OpenAI could not analyze the screenshot.",
-          details
+          message:
+            openAiResponse.status === 401
+              ? "OpenAI rejected the API key."
+              : `OpenAI could not analyze the screenshot (status ${openAiResponse.status}).`
         }
       },
       { status: 502 }
