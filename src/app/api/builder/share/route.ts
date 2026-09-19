@@ -1,5 +1,6 @@
 import gameVersion from "@/data/truth/game-version.json";
 import { randomBytes } from "node:crypto";
+import { createEditToken, EDIT_TOKEN_HASH_KEY, publicPayload } from "@/lib/builder/edit-token";
 import { safeRevalidateTag } from "@/lib/revalidate";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
@@ -101,11 +102,11 @@ export async function POST(request: Request) {
 
   const session = await getServerSession(authOptions);
   const slug = makeSlug(parsed.data.title);
-  const editToken = randomBytes(16).toString("hex");
+  const { token: editToken, hash: editTokenHash } = createEditToken();
   const payload = {
-    ...parsed.data.payload,
+    ...publicPayload(parsed.data.payload as Record<string, unknown>),
     gamePatch: gameVersion.patch,
-    _editToken: editToken,
+    [EDIT_TOKEN_HASH_KEY]: editTokenHash,
   } as unknown as BuilderPayload;
 
   const record = await prisma.sharedBuild.create({

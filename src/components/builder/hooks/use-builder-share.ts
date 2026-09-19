@@ -163,11 +163,7 @@ export function useBuilderShare({
           title: item.title,
           description: item.description,
           isOwner,
-          editToken:
-            localToken ||
-            (typeof item.payload?._editToken === "string"
-              ? item.payload._editToken
-              : undefined),
+          editToken: localToken,
         });
 
         if (item.title) {

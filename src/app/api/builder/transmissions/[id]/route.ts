@@ -5,7 +5,7 @@ import { isAdminUser } from "@/lib/app-config";
 import { prisma } from "@/lib/prisma";
 import { safeRevalidateTag } from "@/lib/revalidate";
 import { sharedBuildTagForSlug } from "@/lib/cache-tags";
-import type { BuilderPayload } from "@/lib/builder/types";
+import { mergeClientPayload, publicPayload, verifyEditToken } from "@/lib/builder/edit-token";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +44,7 @@ export async function GET(request: Request, { params }: RouteParams) {
         slug: record.slug,
         title: record.title,
         description: record.description,
-        payload: record.payload,
+        payload: publicPayload(record.payload),
         createdAt: record.createdAt.toISOString(),
         updatedAt: record.updatedAt.toISOString(),
         userId: record.userId,
@@ -77,13 +77,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
     const body = ((await request.json().catch(() => ({}))) || {}) as Record<string, unknown>;
     const editToken = typeof body.editToken === "string" ? body.editToken : null;
-    const payloadEditToken = (record.payload as Record<string, unknown>)?._editToken;
-
-    const isAuthorized = Boolean(
-      (currentUserId && record.userId === currentUserId) ||
-      isAdmin ||
-      (editToken && payloadEditToken && editToken === payloadEditToken)
-    );
+    const isSignedInOwner = Boolean(currentUserId && record.userId === currentUserId);
+    const hasValidToken = verifyEditToken(record.payload, editToken);
+    const isAuthorized = isSignedInOwner || isAdmin || hasValidToken;
 
     if (!isAuthorized) {
       return NextResponse.json(
@@ -104,17 +100,13 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       updateData.description = typeof body.description === "string" ? body.description.trim().slice(0, 500) : null;
     }
 
-    if (body.payload && typeof body.payload === "object") {
-      // Preserve original _editToken inside payload
-      const updatedPayload = {
-        ...(body.payload as BuilderPayload),
-        ...(payloadEditToken ? { _editToken: payloadEditToken } : {}),
-      };
-      updateData.payload = updatedPayload;
+    if (body.payload && typeof body.payload === "object" && !Array.isArray(body.payload)) {
+      // Server-owned keys (edit token hash) are kept; client-sent "_" keys and redirects are dropped.
+      updateData.payload = mergeClientPayload(body.payload, record.payload);
     }
 
-    // If user is logged in and build previously had no userId, claim it to this user
-    if (currentUserId && !record.userId) {
+    // An anonymous build is claimed by a signed-in user who proves they published it (edit token).
+    if (currentUserId && !record.userId && hasValidToken) {
       updateData.userId = currentUserId;
     }
 
@@ -166,12 +158,8 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     }
 
     const editToken = bodyToken || queryToken;
-    const payloadEditToken = (record.payload as Record<string, unknown>)?._editToken;
-
     const isAuthorized = Boolean(
-      (currentUserId && record.userId === currentUserId) ||
-      isAdmin ||
-      (editToken && payloadEditToken && editToken === payloadEditToken)
+      (currentUserId && record.userId === currentUserId) || isAdmin || verifyEditToken(record.payload, editToken)
     );
 
     if (!isAuthorized) {
