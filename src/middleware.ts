@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { buildContentSecurityPolicy, createNonce, CSP_NONCE_HEADER } from "@/lib/security/csp";
 
 export const runtime = "experimental-edge";
 
@@ -35,7 +36,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 301);
   }
 
-  return NextResponse.next();
+  // 3. Content-Security-Policy with a per-request nonce. Next reads the nonce from the request's
+  // CSP header and stamps it on its own scripts; the layout passes it to the bootstrap <Script>.
+  const nonce = createNonce();
+  const csp = buildContentSecurityPolicy(nonce, { dev: process.env.NODE_ENV === "development" });
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(CSP_NONCE_HEADER, nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set("Content-Security-Policy", csp);
+  return response;
 }
 
 export const config = {
