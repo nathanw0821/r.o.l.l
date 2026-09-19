@@ -432,21 +432,42 @@ function InGamePerkCardComponent({
 
   const inGameInspectImage = getInGamePerkCardImage(cardId || name, inspectRankData.rank, isFemale);
 
-  const openWikiSource = React.useCallback(() => {
-    window.open(`/wiki?q=${encodeURIComponent(name)}`, "_blank", "noopener,noreferrer");
-  }, [name]);
+  // Touch long-press opens the all-ranks inspector (same as right-click on desktop).
+  // Pointer events with a move threshold so scrolling a card list never triggers it;
+  // the click that follows a completed long-press is swallowed so it does not also
+  // equip/unequip the card.
+  const longPressStartRef = React.useRef<{ x: number; y: number } | null>(null);
+  const suppressNextClickRef = React.useRef(false);
 
-  // Mobile-only touch long press
-  const handleTouchStart = () => {
-    longPressTimerRef.current = setTimeout(() => {
-      openWikiSource();
-    }, 550);
-  };
-
-  const handleTouchEnd = () => {
+  const cancelLongPress = React.useCallback(() => {
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
+    }
+    longPressStartRef.current = null;
+  }, []);
+
+  React.useEffect(() => cancelLongPress, [cancelLongPress]);
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse") return;
+    // The control bar (rank -/+, equip, info) lives inside the card surface.
+    if ((e.target as HTMLElement).closest("button")) return;
+    cancelLongPress();
+    suppressNextClickRef.current = false;
+    longPressStartRef.current = { x: e.clientX, y: e.clientY };
+    longPressTimerRef.current = setTimeout(() => {
+      longPressTimerRef.current = null;
+      suppressNextClickRef.current = true;
+      setShowInspector(true);
+    }, 500);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const start = longPressStartRef.current;
+    if (!start) return;
+    if (Math.abs(e.clientX - start.x) > 10 || Math.abs(e.clientY - start.y) > 10) {
+      cancelLongPress();
     }
   };
 
@@ -458,7 +479,7 @@ function InGamePerkCardComponent({
     >
       {/* Style Bible Container: Aspect Ratio Uniform Framing */}
       <div
-        className={`relative w-full aspect-[310/490] transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+        className={`relative w-full aspect-[310/490] transition-all duration-200 cursor-pointer flex flex-col justify-between select-none [-webkit-touch-callout:none] ${
           isAccordion
             ? "border-0 ring-0 shadow-none bg-transparent overflow-visible"
             : isEquipped
@@ -470,6 +491,11 @@ function InGamePerkCardComponent({
             : "rounded-xl shadow-xl overflow-hidden opacity-95 group-hover:opacity-100 group-hover:scale-[1.03]"
         }`}
         onClick={(e) => {
+          if (suppressNextClickRef.current) {
+            suppressNextClickRef.current = false;
+            e.stopPropagation();
+            return;
+          }
           if (isAccordion && !isForefront) {
             e.stopPropagation();
             onSelect?.();
@@ -484,11 +510,14 @@ function InGamePerkCardComponent({
             onEquip?.();
           }
         }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchMove={handleTouchEnd}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={cancelLongPress}
+        onPointerCancel={cancelLongPress}
+        onPointerLeave={cancelLongPress}
         onContextMenu={(e) => {
           e.preventDefault();
+          cancelLongPress();
           setShowInspector(true);
         }}
         title={
@@ -496,7 +525,7 @@ function InGamePerkCardComponent({
             ? `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to bring to forefront]`
             : isAccordion && isForefront
             ? `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to inspect all ranks • Use control bar below to adjust rank or remove]`
-            : `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to ${isEquipped ? "unequip" : "equip"} • Right-click / Info icon to inspect all ranks]`
+            : `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to ${isEquipped ? "unequip" : "equip"} • Right-click, long-press or Info icon to inspect all ranks]`
         }
       >
         {/* 1. Literal 1:1 In-Game Bitmap Cards (Pip-Boy Slanted & Curved for Regular, Ghoul, and Legendary) */}
@@ -632,12 +661,13 @@ function InGamePerkCardComponent({
                 e.stopPropagation();
                 if (rank > 1) onRankChange(rank - 1);
               }}
-              className={`h-6 w-6 rounded border font-black text-xs flex items-center justify-center transition-all disabled:opacity-20 shrink-0 ${
+              className={`touch-hit h-6 w-6 rounded border font-black text-xs flex items-center justify-center transition-all disabled:opacity-20 shrink-0 ${
                 isLegendary
                   ? "bg-yellow-950/80 border-yellow-500/80 text-yellow-300 hover:bg-yellow-400 hover:text-slate-950"
                   : "bg-slate-900 border-slate-700 text-amber-400 hover:bg-amber-500 hover:text-slate-950"
               }`}
               title="Rank Down"
+              aria-label={`Rank down ${displayName}`}
             >
               -
             </button>
@@ -682,12 +712,13 @@ function InGamePerkCardComponent({
                 e.stopPropagation();
                 if (rank < maxRank) onRankChange(rank + 1);
               }}
-              className={`h-6 w-6 rounded border font-black text-xs flex items-center justify-center transition-all disabled:opacity-20 shrink-0 ${
+              className={`touch-hit h-6 w-6 rounded border font-black text-xs flex items-center justify-center transition-all disabled:opacity-20 shrink-0 ${
                 isLegendary
                   ? "bg-yellow-950/80 border-yellow-500/80 text-yellow-300 hover:bg-yellow-400 hover:text-slate-950"
                   : "bg-slate-900 border-slate-700 text-amber-400 hover:bg-amber-500 hover:text-slate-950"
               }`}
               title="Rank Up"
+              aria-label={`Rank up ${displayName}`}
             >
               +
             </button>
@@ -724,8 +755,9 @@ function InGamePerkCardComponent({
               e.stopPropagation();
               setShowInspector(true);
             }}
-            className="h-7 w-7 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-amber-400 hover:text-white flex items-center justify-center transition-all shrink-0 active:scale-95"
-            title="Inspect All Ranks & Lore (Right-click card also opens this)"
+            className="touch-hit h-7 w-7 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-amber-400 hover:text-white flex items-center justify-center transition-all shrink-0 active:scale-95"
+            title="Inspect All Ranks & Lore (Right-click or long-press the card also opens this)"
+            aria-label={`Inspect all ranks of ${displayName}`}
           >
             <Info className="h-3.5 w-3.5" />
           </button>

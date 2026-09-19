@@ -9,9 +9,10 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
+    <div className="bg-background text-foreground">
+      <div className="mx-auto flex max-w-md flex-col justify-center px-6 py-8 md:min-h-[70vh]">
         <BrandStack align="center" className="mb-4" />
+        <h1 className="mb-2 text-center text-lg font-semibold">Create an account</h1>
         <p className="text-center text-sm text-foreground/70">
           Create your account with email, username, and password.
         </p>

@@ -169,7 +169,11 @@ export default function SignInForm({
         <input
           value={identifier}
           onChange={(event) => setIdentifier(event.target.value)}
+          name="username"
           autoComplete="username"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="Enter your username or email"
           className="rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
         />
@@ -182,6 +186,7 @@ export default function SignInForm({
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             onAnimationStart={handleAutofillAnimation}
+            name="password"
             autoComplete="current-password"
             placeholder="Enter your password"
             className="autofill-detect w-full rounded-[var(--radius)] border border-border bg-panel px-3 py-2 text-sm"
@@ -207,14 +212,14 @@ export default function SignInForm({
         {pending ? "Signing in..." : "Sign In"}
       </Button>
       <div className="text-center text-xs text-foreground/60">
-        <Link href="/auth/forgot-password" className="text-accent hover:underline">
+        <Link href="/auth/forgot-password" className="text-accent hover:underline touch:inline-flex touch:min-h-11 touch:items-center">
           Forgot password, or email a secure link to set one
         </Link>
       </div>
       {allowPublicRegistration ? (
         <div className="text-center text-xs text-foreground/60">
           Need an account?{" "}
-          <a href="/auth/sign-up" className="text-accent hover:underline">
+          <a href="/auth/sign-up" className="text-accent hover:underline touch:inline-flex touch:min-h-11 touch:items-center touch:px-2">
             Sign up
           </a>
         </div>
