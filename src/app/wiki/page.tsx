@@ -130,6 +130,7 @@ import {
   guideHeadingText,
   isSkippedGuideBlock,
   normalizeGuideBlock,
+  parseGuideTable,
   selectRelatedGuides,
   splitGuideBlocks,
   type GuideTocEntry,
@@ -198,6 +199,10 @@ function renderFormattedInlineText(text: string, linkify?: { currentPath: string
   return parts.length > 0 ? parts : [text];
 }
 
+/** Header row and caption look (the style the first row of every table used to get). */
+const TABLE_HEAD_ROW =
+  "border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--color-accent)_10%,transparent)] text-[var(--color-accent)]";
+
 /** Images we may embed: served from this site only. Third-party images are linked, never hotlinked. */
 function isSameSiteImage(url: string | null | undefined): boolean {
   if (!url) return false;
@@ -221,42 +226,53 @@ function parseCleanArticleContent(
 
     const trimmed = normalizeGuideBlock(block);
 
-    // 1. Markdown Table (scrolls inside its own container, never the page)
+    // 1. Markdown Table (scrolls inside its own container, never the page). parseGuideTable picks the
+    //    header row: none when the first row is data, the second when the first is a title (caption).
     if (trimmed.startsWith("|")) {
       activeTitleWord = null;
-      const rows = trimmed.split("\n").filter((r) => r.trim().startsWith("|"));
-      if (rows.length > 0) {
+      const table = parseGuideTable(trimmed);
+      if (table.header || table.rows.length > 0) {
+        const cellClass = (cell: string) =>
+          `px-3 py-2 align-top leading-snug ${cell.length > 40 ? "min-w-[16rem]" : "whitespace-nowrap"}`;
         return (
-          <div key={idx} role="region" aria-label="Table" tabIndex={0} className="guides-table-wrap my-5">
-            <table className="guides-mono w-full border-collapse text-left text-[13px]">
+          <div key={idx} role="region" aria-label={table.caption ?? "Table"} tabIndex={0} className="guides-table-wrap my-5">
+            <table data-guide-table className="guides-mono w-full border-collapse text-left text-[13px]">
+              {table.caption ? (
+                <caption className={`${TABLE_HEAD_ROW} border-b px-3 py-2 text-left leading-snug`}>{table.caption}</caption>
+              ) : null}
+              {table.header ? (
+                <thead>
+                  <tr className={`${TABLE_HEAD_ROW} border-b`}>
+                    {table.header.map((cell, cIdx) => (
+                      <th key={cIdx} scope="col" className={`${cellClass(cell)} text-left font-normal`}>
+                        {renderFormattedInlineText(cell)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              ) : null}
               <tbody>
-                {rows.map((rowStr, rIdx) => {
-                  if (/^\|[\s\-:|]+\|$/.test(rowStr.trim())) return null;
-                  const cells = rowStr.split("|").slice(1, -1).map((c) => c.trim());
-                  const isHeader = rIdx === 0;
-
-                  return (
-                    <tr
-                      key={rIdx}
-                      className={
-                        isHeader
-                          ? "border-b border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--color-accent)_10%,transparent)] text-[var(--color-accent)]"
-                          : "border-b border-[var(--border)] last:border-b-0"
-                      }
-                    >
-                      {cells.map((cell, cIdx) => (
-                        <td key={cIdx} className={`px-3 py-2 align-top leading-snug ${cell.length > 40 ? "min-w-[16rem]" : "whitespace-nowrap"}`}>
+                {table.rows.map((row, rIdx) => (
+                  <tr key={rIdx} className="border-b border-[var(--border)] last:border-b-0">
+                    {row.group ? (
+                      <td colSpan={table.columns} className="px-3 py-2 align-top leading-snug text-[var(--color-accent)]">
+                        {renderFormattedInlineText(row.cells[0])}
+                      </td>
+                    ) : (
+                      row.cells.map((cell, cIdx) => (
+                        <td key={cIdx} className={cellClass(cell)}>
                           {renderFormattedInlineText(cell)}
                         </td>
-                      ))}
-                    </tr>
-                  );
-                })}
+                      ))
+                    )}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         );
       }
+      return null;
     }
 
     // 2. Markdown Image
