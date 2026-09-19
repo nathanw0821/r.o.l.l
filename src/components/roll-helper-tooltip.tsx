@@ -22,6 +22,19 @@ export default function RollHelperTooltip({
   const [isOpen, setIsOpen] = React.useState(false);
   const [addedBuild, setAddedBuild] = React.useState(false);
   const [addedPerk, setAddedPerk] = React.useState(false);
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const panelId = React.useId();
+  const lastPointerTypeRef = React.useRef("");
+
+  // Touch has no hover: the trigger toggles on tap, and a tap outside closes it.
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handlePointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isOpen]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,16 +64,34 @@ export default function RollHelperTooltip({
 
   return (
     <div
+      ref={rootRef}
       className="relative inline-block group"
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setIsOpen(false);
+      }}
     >
-      <span className="cursor-pointer border-b border-dashed border-amber-400/60 hover:text-amber-400 transition-colors">
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        onPointerDown={(e) => {
+          lastPointerTypeRef.current = e.pointerType;
+        }}
+        onClick={() => {
+          // A mouse already opened it on hover; a click must not close it again.
+          if (lastPointerTypeRef.current === "mouse") setIsOpen(true);
+          else setIsOpen((open) => !open);
+          lastPointerTypeRef.current = "";
+        }}
+        className="touch-hit cursor-pointer border-b border-dashed border-amber-400/60 hover:text-amber-400 transition-colors text-left"
+      >
         {children}
-      </span>
+      </button>
 
       {isOpen && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 bg-slate-950 border border-amber-500/40 rounded-xl p-3 shadow-2xl font-mono text-left animate-in fade-in duration-150">
+        <div id={panelId} className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 max-w-[calc(100vw-2rem)] bg-slate-950 border border-amber-500/40 rounded-xl p-3 shadow-2xl font-mono text-left animate-in fade-in duration-150">
           <div className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-400 border-b border-slate-800 pb-1.5 mb-2">
             <Sparkles className="h-3.5 w-3.5" />
             <span>MINI R.O.L.L. HELPER // {kind}</span>

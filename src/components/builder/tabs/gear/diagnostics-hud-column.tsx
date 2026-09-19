@@ -140,14 +140,15 @@ export default function DiagnosticsHudColumn({
                   <div className="flex items-center justify-between text-xs">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span
+                        <button
+                          type="button"
                           className={cn(
-                            "font-bold cursor-help hover:underline decoration-dashed underline-offset-2",
+                            "touch-hit font-bold cursor-help hover:underline decoration-dashed underline-offset-2",
                             specTheme.text,
                           )}
                         >
                           {BUILDER_SPECIAL_LABELS[key]}
-                        </span>
+                        </button>
                       </TooltipTrigger>
                       <TooltipContent
                         side="right"
@@ -206,7 +207,8 @@ export default function DiagnosticsHudColumn({
                     <span className="text-foreground/30 mr-1">Base: {base}</span>
                     <button
                       type="button"
-                      className="w-3.5 h-3.5 rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
+                      aria-label={`Lower base ${SPECIAL_FULL_NAMES[key] || key.toUpperCase()}`}
+                      className="w-3.5 h-3.5 touch:w-11 touch:h-11 touch:text-base rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
                       onClick={() => {
                         const val = Math.max(1, base - 1);
                         setPayload((p) => ({
@@ -220,7 +222,8 @@ export default function DiagnosticsHudColumn({
                     </button>
                     <button
                       type="button"
-                      className="w-3.5 h-3.5 rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
+                      aria-label={`Raise base ${SPECIAL_FULL_NAMES[key] || key.toUpperCase()}`}
+                      className="w-3.5 h-3.5 touch:w-11 touch:h-11 touch:text-base rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
                       onClick={() => {
                         const val = Math.min(15, base + 1);
                         setPayload((p) => ({

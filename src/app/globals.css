@@ -2383,3 +2383,57 @@ html[data-season="blood-moon"] .app-sidebar {
 .guides-reader-body a {
   text-underline-offset: 3px;
 }
+
+/* ---------------------------------------------------------------------------
+ * Touch, phone forms and installed-app (PWA) chrome.
+ * Desktop with a mouse is untouched: everything below is scoped to a coarse
+ * pointer, the phone breakpoint (<= 860px), the overlay breakpoint (< 1200px)
+ * or safe-area insets, which are 0 outside notched phones.
+ * ------------------------------------------------------------------------- */
+
+/* Faster taps (no double-tap-zoom delay on older WebKit) and no grey flash. */
+:where(a, button, input, select, textarea, label, summary, [role="button"]) {
+  touch-action: manipulation;
+}
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bigger hit area without changing layout: an invisible 44x44 box centred on
+ * the control. Only on touch screens. */
+@media (pointer: coarse) {
+  .touch-hit {
+    position: relative;
+  }
+  .touch-hit::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+
+  /* Tracker tiles: count stepper and Seeking toggle. */
+  .summary-status-card__count {
+    padding: 0;
+  }
+  .summary-status-card__count-btn,
+  .summary-status-card__seeking-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  /* Checkboxes and radios. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 1.25rem;
+    min-height: 1.25rem;
+  }
+
+  /* Compact builder selects (h-5 / h-7) are too small to hit with a finger. */
+  select {
+    min-height: 2.5rem;
+  }
+}
