@@ -11,6 +11,7 @@ const publicRoutes = [
   "/3-star",
   "/4-star",
   "/still-need",
+  "/wiki/glossary",
   "/settings"
 ];
 

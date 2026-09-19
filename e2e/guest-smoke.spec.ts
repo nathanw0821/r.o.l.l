@@ -635,3 +635,71 @@ test.describe("phone layout", () => {
     await expect(page.locator("[data-guest-banner]")).toHaveCount(0);
   });
 });
+
+test.describe("cross-links and glossary", () => {
+  test("glossary lists at least 25 terms and the A-Z index jumps to a letter", async ({ page }) => {
+    await page.goto("/wiki/glossary");
+    await expect(page.getByRole("heading", { level: 1, name: "Mechanics glossary" })).toBeVisible();
+    expect(await page.locator("[data-glossary-term]").count()).toBeGreaterThanOrEqual(25);
+
+    // Banners mount on the client and push the index down; click only once it has settled.
+    const letterV = page.getByRole("navigation", { name: "Glossary index" }).getByRole("link", { name: "Letter V" });
+    await waitForStablePosition(letterV);
+    await letterV.click();
+    await expect(page).toHaveURL(/\/wiki\/glossary#letter-v$/);
+    await expect(page.locator("#vault-steel")).toBeInViewport();
+
+    await page.goto("/wiki/glossary#kill-streak");
+    await expect(page.locator("#kill-streak")).toBeInViewport({ timeout: 10_000 });
+    await expectPageSane(page);
+  });
+
+  test("a glossary term linked in a guide body opens its glossary entry", async ({ page }) => {
+    // Guide 105 (Adrenaline): "Gain damage per kill while on a Kill Streak."
+    await page.goto("/wiki?id=105");
+    await expect(page.getByRole("button", { name: "Back to results" })).toBeVisible({ timeout: 20_000 });
+    const term = page.locator(".guides-reader-body").getByRole("link", { name: "Kill Streak", exact: true }).first();
+    await expect(term).toHaveAttribute("href", "/wiki/glossary#kill-streak", { timeout: 20_000 });
+    await waitForStablePosition(term);
+    await term.click();
+    await expect(page).toHaveURL(/\/wiki\/glossary#kill-streak$/, { timeout: 30_000 });
+    await expect(page.locator("#kill-streak")).toBeInViewport({ timeout: 10_000 });
+  });
+
+  test("guide reader 'Report outdated' opens the feedback form pre-filled", async ({ page }) => {
+    await page.goto("/wiki?id=105");
+    await expect(page.getByRole("button", { name: "Back to results" })).toBeVisible({ timeout: 20_000 });
+    await page.getByRole("button", { name: "Report outdated" }).click();
+    await expect(page.getByPlaceholder("Short summary")).toHaveValue(/^Outdated guide: /, { timeout: 10_000 });
+    await expect(page.getByPlaceholder("Share details")).toHaveValue(/\/wiki\?id=105/);
+  });
+
+  test("tracker 'Use in builder' opens the mod picker searched to that mod, and 'Track this mod' comes back", async ({ page }) => {
+    await page.goto("/all-effects?q=Severing");
+    const row = page.getByRole("row", { name: /Severing/ });
+    await expect(row).toBeVisible({ timeout: 30_000 });
+    await row.getByRole("link", { name: "Use in builder: Severing" }).click();
+
+    await expect(page).toHaveURL(/\/build\?tab=gear&mod=severing$/, { timeout: 30_000 });
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible({ timeout: 30_000 });
+    await expect(dialog.getByPlaceholder("SEARCH EFFECT CODENAME...")).toHaveValue("Severing");
+
+    await dialog.getByRole("link", { name: "Track this mod: Severing" }).click();
+    await expect(page).toHaveURL(/\/all-effects\?q=Severing$/, { timeout: 30_000 });
+    await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible({ timeout: 30_000 });
+  });
+
+  test("perk modal 'Guides that mention this perk' opens the guides search", async ({ page }) => {
+    await page.goto("/perks?q=Night%20Person");
+    const main = page.locator("#main-content");
+    await expect(main.getByRole("img", { name: "Night Person", exact: true }).first()).toBeVisible({ timeout: 20_000 });
+    await main.getByTitle(/Inspect All Ranks/).first().click();
+
+    const link = page.getByRole("link", { name: "Guides that mention this perk" });
+    await expect(link).toHaveAttribute("href", "/wiki?q=Night%20Person");
+    await link.click();
+    await expect(page).toHaveURL(/\/wiki\?q=Night(%20|\+)Person/, { timeout: 30_000 });
+    await expect(page.locator("#guides-search")).toHaveValue("Night Person", { timeout: 20_000 });
+  });
+});

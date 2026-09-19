@@ -1,4 +1,5 @@
 import * as React from "react";
+import Link from "next/link";
 import { Sparkle, Check } from "lucide-react";
 import type { BaseGearPiece } from "@/lib/builder/base-gear";
 import type { BuilderModDTO } from "@/lib/builder/types";
@@ -9,6 +10,7 @@ import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-descripti
 import { isGhoulDiscouragedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
 import { isNewMod } from "@/lib/filter-utils";
 import { cn } from "@/lib/utils";
+import { trackerSearchHref } from "@/lib/links/cross-links";
 
 function LegendaryModDetailFootprint({
   mod,
@@ -127,84 +129,95 @@ const ModPickerOption = React.memo(function ModPickerOption({
     : undefined;
 
   return (
-    <button
-      type="button"
-      data-status={statusAttr}
-      title={title}
-      style={{
-        contentVisibility: "auto",
-        containIntrinsicSize: compact ? "auto 48px" : "auto 96px",
-      }}
-      className={cn(
-        "pip-terminal-panel flex w-full flex-col rounded-[var(--radius)] border text-left p-2.5 transition-all duration-150 cursor-pointer font-mono select-none overflow-hidden relative group",
-        isUnlocked
-          ? "border-emerald-500/50 bg-emerald-950/20 hover:bg-emerald-900/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
-          : modCount > 0
-            ? "border-amber-500/50 bg-amber-950/20 hover:bg-amber-900/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
-            : "border-border/30 opacity-75 hover:opacity-100 hover:border-border/60 hover:bg-background/20",
-        isRecommended && "ring-1 ring-accent/60",
-      )}
-      onClick={() => onPick(mod.id)}
-    >
-      <div className="flex items-start justify-between gap-2 w-full">
-        <span className="min-w-0 font-bold flex flex-wrap items-center gap-1.5 text-xs">
-          <span 
-            className={cn(
-              "break-words font-black",
-              isUnlocked ? "text-emerald-300" : modCount > 0 ? "text-amber-200" : "text-foreground"
+    <div className="relative">
+      <button
+        type="button"
+        data-status={statusAttr}
+        title={title}
+        style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: compact ? "auto 48px" : "auto 96px",
+        }}
+        className={cn(
+          "pip-terminal-panel flex w-full flex-col rounded-[var(--radius)] border text-left p-2.5 transition-all duration-150 cursor-pointer font-mono select-none overflow-hidden relative group",
+          isUnlocked
+            ? "border-emerald-500/50 bg-emerald-950/20 hover:bg-emerald-900/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+            : modCount > 0
+              ? "border-amber-500/50 bg-amber-950/20 hover:bg-amber-900/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
+              : "border-border/30 opacity-75 hover:opacity-100 hover:border-border/60 hover:bg-background/20",
+          isRecommended && "ring-1 ring-accent/60",
+        )}
+        onClick={() => onPick(mod.id)}
+      >
+        <div className="flex items-start justify-between gap-2 w-full">
+          <span className="min-w-0 font-bold flex flex-wrap items-center gap-1.5 text-xs">
+            <span 
+              className={cn(
+                "break-words font-black",
+                isUnlocked ? "text-emerald-300" : modCount > 0 ? "text-amber-200" : "text-foreground"
+              )}
+              style={{ overflowWrap: "anywhere" }}
+            >
+              {mod.name}
+            </span>
+            {isNewMod(mod.name) && (
+              <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
+                New
+              </span>
             )}
-            style={{ overflowWrap: "anywhere" }}
-          >
-            {mod.name}
+            {isRecommended && (
+              <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.84rem] uppercase tracking-wider text-accent font-black animate-pulse">
+                <Sparkle className="h-2 w-2 inline mr-0.5" /> Recom.
+              </span>
+            )}
           </span>
-          {isNewMod(mod.name) && (
-            <span className="rounded border border-accent/40 bg-accent/30 px-1.5 py-0.5 text-[0.78rem] uppercase tracking-wider text-accent font-black animate-pulse">
-              New
-            </span>
-          )}
-          {isRecommended && (
-            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[0.84rem] uppercase tracking-wider text-accent font-black animate-pulse">
-              <Sparkle className="h-2 w-2 inline mr-0.5" /> Recom.
-            </span>
-          )}
-        </span>
-        <div className="shrink-0 flex items-center gap-1.5 text-[0.68rem] font-mono">
-          {isUnlocked ? (
-            <span className="px-1.5 py-0.5 rounded font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex items-center gap-0.5 shadow-sm">
-              <Check className="w-2.5 h-2.5" /> Unlocked
-            </span>
-          ) : (
-            <span className="px-1.5 py-0.5 rounded font-medium uppercase tracking-wider bg-rose-500/10 border border-rose-500/25 text-rose-400/80">
-              🔒 Locked
-            </span>
-          )}
-          {modCount > 0 && (
-            <span className="px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm">
-              📦 x{modCount} Stash
-            </span>
-          )}
-          {isSeeking && (
-            <span className="px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-cyan-500/20 border border-cyan-500/50 text-cyan-300">
-              🎯 Seeking
-            </span>
-          )}
+          <div className="shrink-0 flex items-center gap-1.5 text-[0.68rem] font-mono">
+            {isUnlocked ? (
+              <span className="px-1.5 py-0.5 rounded font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex items-center gap-0.5 shadow-sm">
+                <Check className="w-2.5 h-2.5" /> Unlocked
+              </span>
+            ) : (
+              <span className="px-1.5 py-0.5 rounded font-medium uppercase tracking-wider bg-rose-500/10 border border-rose-500/25 text-rose-400/80">
+                🔒 Locked
+              </span>
+            )}
+            {modCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm">
+                📦 x{modCount} Stash
+              </span>
+            )}
+            {isSeeking && (
+              <span className="px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-cyan-500/20 border border-cyan-500/50 text-cyan-300">
+                🎯 Seeking
+              </span>
+            )}
+          </div>
         </div>
-      </div>
       
-      <div className="mt-1 w-full">
-        <LegendaryModDetailFootprint
-          mod={mod}
-          piece={piece}
-          density={compact ? "compact" : "default"}
-        />
-      </div>
+        <div className="mt-1 w-full">
+          <LegendaryModDetailFootprint
+            mod={mod}
+            piece={piece}
+            density={compact ? "compact" : "default"}
+          />
+        </div>
       
-      {ghoulMode && isGhoulDiscouragedLegendarySlug(mod.slug) ? (
-        <p className="mt-1.5 rounded border border-warning/30 bg-warning/5 px-2 py-0.5 text-[0.84rem] leading-tight text-warning/80 italic font-sans">
-          Off-meta for typical Ghoul builds.
-        </p>
-      ) : null}
-    </button>
+        {ghoulMode && isGhoulDiscouragedLegendarySlug(mod.slug) ? (
+          <p className="mt-1.5 rounded border border-warning/30 bg-warning/5 px-2 py-0.5 text-[0.84rem] leading-tight text-warning/80 italic font-sans">
+            Off-meta for typical Ghoul builds.
+          </p>
+        ) : null}
+      </button>
+      {/* Sibling of the pick button (a link cannot sit inside a button); opens the tracker searched to this mod. */}
+      <Link
+        href={trackerSearchHref(mod.name)}
+        data-track-mod
+        aria-label={`Track this mod: ${mod.name}`}
+        className="absolute bottom-2 right-2.5 z-10 font-mono text-[0.68rem] text-foreground/55 underline decoration-border/60 underline-offset-2 hover:text-accent hover:decoration-accent"
+      >
+        Track this mod
+      </Link>
+    </div>
   );
 });
 

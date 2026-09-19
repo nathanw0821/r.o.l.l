@@ -22,6 +22,7 @@ import { BUILDER_STORAGE_KEYS } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import BuilderMasterTabNav from "@/components/builder/builder-master-tab-nav";
 import LegendaryModPickerDialog from "@/components/builder/legendary-mod-picker-dialog";
+import { modDeepLinkPick, resolveModParam } from "@/lib/links/cross-links";
 import PerkDeckTab from "@/components/builder/tabs/perk-deck-tab";
 import BiometricsTab from "@/components/builder/tabs/biometrics-tab";
 import CombatDpsTab from "@/components/builder/tabs/combat-dps-tab";
@@ -333,6 +334,37 @@ export default function BuilderExperimentClient({
   React.useEffect(() => {
     clearPickRef.current = () => setActivePick(null);
   }, [setActivePick]);
+
+  // Deep link `?mod=<catalogSlug>` (from the tracker's "Use in builder"): once the working build
+  // has been restored, opens the legendary mod picker on the Gear tab, searched to that mod, for
+  // the active weapon's star slot or else the armor chassis. It never equips anything by itself.
+  // Ignored for read-only/shared views, when a shared build is loading (`?load=` / `?edit=`),
+  // for unknown slugs, and for mods that fit neither the weapon nor the chassis.
+  const modParam = searchParams?.get("mod")?.trim() ?? "";
+  const appliedModRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!isMounted || readOnly || targetTransmissionSlug) return;
+    if (!modParam || appliedModRef.current === modParam) return;
+    appliedModRef.current = modParam;
+    const mod = resolveModParam(mods, modParam);
+    if (!mod) return;
+    setMasterTab("gear");
+    const pick = modDeepLinkPick(mod, activeWeaponPiece, activeChassisPiece, { ghoul: payload.ghoul });
+    if (!pick) return;
+    setSlotQuery(mod.name);
+    setActivePick(pick);
+  }, [
+    isMounted,
+    readOnly,
+    targetTransmissionSlug,
+    modParam,
+    mods,
+    activeWeaponPiece,
+    activeChassisPiece,
+    payload.ghoul,
+    setSlotQuery,
+    setActivePick,
+  ]);
 
 
   const {

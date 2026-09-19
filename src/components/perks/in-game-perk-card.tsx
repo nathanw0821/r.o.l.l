@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard, getPerkCardById, OutdatedPerkMeta, ReworkedPerkMeta } from "@/lib/perks/catalog";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
 import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
@@ -17,6 +18,7 @@ import {
 } from "@/lib/perks/clean-perk-assets";
 import { Sparkles, Star, Info, X, ExternalLink, AlertTriangle } from "lucide-react";
 import gameVersion from "@/data/truth/game-version.json";
+import { guidesSearchHref } from "@/lib/links/cross-links";
 
 export interface InGamePerkCardProps {
   cardId?: string;
@@ -909,6 +911,16 @@ function InGamePerkCardComponent({
                 </div>
               </div>
             </div>
+
+            <p className="text-xs">
+              <Link
+                href={guidesSearchHref(name)}
+                data-perk-guides-link
+                className="text-amber-300 underline decoration-amber-500/40 underline-offset-2 hover:decoration-amber-300"
+              >
+                Guides that mention this perk
+              </Link>
+            </p>
 
             {/* Modal Footer Actions */}
             <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">

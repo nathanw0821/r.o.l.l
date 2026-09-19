@@ -4,6 +4,11 @@ import * as React from "react";
 import { MessageSquare, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import {
+  FEEDBACK_OPEN_EVENT,
+  takePendingFeedbackPrefill,
+  type FeedbackPrefill
+} from "@/lib/feedback/feedback-prefill";
 
 type FeedbackResponse =
   | { success: true; data: { submitted: true } }
@@ -23,6 +28,33 @@ export default function FeedbackWidget() {
   const [pending, setPending] = React.useState(false);
   const [done, setDone] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  const messageRef = React.useRef<HTMLTextAreaElement>(null);
+
+  // Other parts of the site open the widget pre-filled via openFeedback() (e.g. "Report outdated" on a guide).
+  React.useEffect(() => {
+    const apply = (prefill: FeedbackPrefill | null) => {
+      if (!prefill) return;
+      setOpen(true);
+      setDone(false);
+      setError(null);
+      if (prefill.subject) setSubject(prefill.subject);
+      if (prefill.message) setMessage(prefill.message);
+      requestAnimationFrame(() => {
+        const field = messageRef.current;
+        if (!field) return;
+        field.focus();
+        field.setSelectionRange(field.value.length, field.value.length);
+      });
+    };
+    apply(takePendingFeedbackPrefill());
+    const onOpen = (event: Event) => {
+      takePendingFeedbackPrefill();
+      apply((event as CustomEvent<FeedbackPrefill>).detail ?? {});
+    };
+    window.addEventListener(FEEDBACK_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(FEEDBACK_OPEN_EVENT, onOpen);
+  }, []);
 
   React.useEffect(() => {
     if (!replyEmail && session?.user?.email) {
@@ -101,6 +133,7 @@ export default function FeedbackWidget() {
               <label className="flex flex-col gap-1 text-xs">
                 <span>Message (max 500)</span>
                 <textarea
+                  ref={messageRef}
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
                   maxLength={500}
