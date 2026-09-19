@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import Script from "next/script";
+import { headers } from "next/headers";
+import { CSP_NONCE_HEADER } from "@/lib/security/csp";
 import "./globals.css";
 import Providers from "@/components/providers";
 import AppShell from "@/components/app-shell";
@@ -126,7 +128,8 @@ function ShellLoading() {
   );
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const nonce = (await headers()).get(CSP_NONCE_HEADER) ?? undefined;
   const resolvedTheme: "light" | "dark" = "dark";
 
   return (
@@ -154,6 +157,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script
           id="ui-bootstrap"
           strategy="beforeInteractive"
+          nonce={nonce}
           dangerouslySetInnerHTML={{ __html: buildUiBootstrapScript() }}
         />
       </head>

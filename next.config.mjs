@@ -18,8 +18,8 @@ function toOrigin(raw) {
 const allowedOrigins = Array.from(
   new Set(
     [
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
+      // Local origins are only trusted outside production builds.
+      ...(process.env.NODE_ENV === "production" ? [] : ["http://localhost:3000", "http://127.0.0.1:3000"]),
       process.env.NEXTAUTH_URL,
       process.env.APP_URL,
       process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
@@ -32,8 +32,9 @@ const allowedOrigins = Array.from(
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Type errors fail the build (CI's build step is the only type gate before deploy).
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: false
   },
   cacheComponents: false,
   serverExternalPackages: [
@@ -107,8 +108,13 @@ const nextConfig = {
             value: "DENY"
           },
           {
+            // The legacy XSS auditor is removed from browsers and could be abused; "0" disables it.
             key: "X-XSS-Protection",
-            value: "1; mode=block"
+            value: "0"
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
           },
           {
             key: "Referrer-Policy",

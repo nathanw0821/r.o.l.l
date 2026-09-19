@@ -80,7 +80,9 @@ test.describe("guest smoke", () => {
   test("legendary tracker search filters to Severing and 'New this patch' shows rows", async ({ page }) => {
     await page.goto("/all-effects");
 
-    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...");
+    // Production builds stream the tracker into a hidden container before moving it into the
+    // page, so briefly two copies exist: always use the visible one.
+    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...").filter({ visible: true });
     await expect(search).toBeVisible();
     await search.fill("Severing");
 
@@ -403,7 +405,9 @@ test.describe("guest smoke", () => {
   test("tracker deep link ?q= pre-fills the search box", async ({ page }) => {
     await page.goto("/all-effects?q=Severing");
 
-    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...");
+    // Production builds stream the tracker into a hidden container before moving it into the
+    // page, so briefly two copies exist: always use the visible one.
+    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...").filter({ visible: true });
     await expect(search).toHaveValue("Severing");
     await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible();
 
@@ -465,7 +469,9 @@ test.describe("guest smoke", () => {
     await fourStar.click();
     await expect(fourStar).toHaveAttribute("aria-expanded", "false");
 
-    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...");
+    // Production builds stream the tracker into a hidden container before moving it into the
+    // page, so briefly two copies exist: always use the visible one.
+    const search = page.getByPlaceholder("Search mod name, effect, or catalyst...").filter({ visible: true });
     await search.fill("Severing");
     const sections = page.locator("[data-tier-group]");
     await expect(sections).toHaveCount(1);
@@ -490,7 +496,7 @@ test.describe("guest smoke", () => {
     await expect(page.getByRole("button", { name: /^3-star/ })).toHaveAttribute("aria-expanded", "false");
 
     await page.goto(`/all-effects?focus=${encodeURIComponent(id ?? "")}`);
-    await expect(page.locator(`[data-effect-id="${id}"]`)).toBeInViewport({ timeout: 30_000 });
+    await expect(page.locator(`[data-effect-id="${id}"]`).filter({ visible: true })).toBeInViewport({ timeout: 30_000 });
     await expect(page.getByRole("button", { name: /^3-star/ })).toHaveAttribute("aria-expanded", "true");
     await expect(page.getByRole("button", { name: /^1-star/ })).toHaveAttribute("aria-expanded", "false");
   });
@@ -527,7 +533,7 @@ test.describe("guest smoke", () => {
     // Waiting for the row first means the table has rendered and the ?q= sync has run.
     await expect(page).toHaveURL(/\/all-effects\?q=Severing$/, { timeout: 30_000 });
     await expect(page.getByRole("row", { name: /Severing/ })).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByPlaceholder("Search mod name, effect, or catalyst...")).toHaveValue("Severing");
+    await expect(page.getByPlaceholder("Search mod name, effect, or catalyst...").filter({ visible: true })).toHaveValue("Severing");
   });
 
   test("sign-in explains why an account helps", async ({ page }) => {
