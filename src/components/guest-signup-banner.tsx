@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import { ShieldCheck, X, UserPlus, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,27 +10,34 @@ import { Button } from "@/components/ui/button";
 const SESSION_DISMISS_KEY = "roll-dismissed-signup-banner-session";
 const PERM_DISMISS_KEY = "roll-dismissed-signup-banner-perm";
 
+/**
+ * Rendered on the server for guests so it never pushes the page down after
+ * hydration (layout shift). Visitors who dismissed it are hidden before first
+ * paint by the root layout's bootstrap script (html[data-guest-banner-dismissed]),
+ * and the effect below then removes it from the tree.
+ */
 export default function GuestSignupBanner() {
   const { data: session, status } = useSession();
-  const [dismissed, setDismissed] = React.useState(true);
+  const pathname = usePathname();
+  const [dismissed, setDismissed] = React.useState(false);
   const [dontShowAgain, setDontShowAgain] = React.useState(false);
 
   React.useEffect(() => {
-    // Only show for non-authenticated guests who haven't permanently or session-dismissed
-    if (status === "unauthenticated") {
-      try {
-        const isPerm = localStorage.getItem(PERM_DISMISS_KEY) === "true";
-        const isSession = sessionStorage.getItem(SESSION_DISMISS_KEY) === "true";
-        if (!isPerm && !isSession) {
-          setDismissed(false);
-        }
-      } catch {
-        setDismissed(false);
+    try {
+      const isPerm = localStorage.getItem(PERM_DISMISS_KEY) === "true";
+      const isSession = sessionStorage.getItem(SESSION_DISMISS_KEY) === "true";
+      if (isPerm || isSession) {
+        setDismissed(true);
       }
+    } catch {
+      // Storage unavailable: keep showing it.
     }
-  }, [status]);
+  }, []);
 
-  if (dismissed || status !== "unauthenticated" || Boolean(session)) {
+  // The sign-in and sign-up pages are the banner's own call to action.
+  const onAuthPage = pathname === "/auth" || Boolean(pathname?.startsWith("/auth/"));
+
+  if (dismissed || onAuthPage || status !== "unauthenticated" || Boolean(session)) {
     return null;
   }
 

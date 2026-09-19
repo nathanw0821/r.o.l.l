@@ -875,6 +875,7 @@ a {
   display: grid;
   grid-template-columns: 13.75rem minmax(0, 1fr);
   min-height: 100vh;
+  min-height: 100dvh;
   align-items: start;
 }
 
@@ -899,6 +900,7 @@ a {
   top: 1rem;
   align-self: start;
   height: calc(100vh - 2rem);
+  height: calc(100dvh - 2rem);
   overflow-y: auto;
   transition: transform 0.22s ease, opacity 0.22s ease;
 }
@@ -1327,6 +1329,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 
 .session-assist-window__body {
   max-height: calc(100vh - 10rem);
+  max-height: calc(100dvh - 10rem);
   overflow: auto;
   padding: 1rem;
 }
@@ -1449,11 +1452,18 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   }
   .app-sidebar--mobile-collapsed .app-nav,
   .app-sidebar--mobile-collapsed .app-sidebar__auth,
-  .app-sidebar--mobile-collapsed .app-sidebar__support {
+  .app-sidebar--mobile-collapsed .app-sidebar__support,
+  /* Before hydration: the bootstrap script already knows the phone menu starts
+     collapsed, so the first paint matches and nothing jumps up afterwards. */
+  html[data-mobile-menu="collapsed"] .app-sidebar:not(.app-sidebar--mobile-expanded) .app-nav,
+  html[data-mobile-menu="collapsed"] .app-sidebar:not(.app-sidebar--mobile-expanded) .app-sidebar__auth,
+  html[data-mobile-menu="collapsed"] .app-sidebar:not(.app-sidebar--mobile-expanded) .app-sidebar__support {
     display: none;
   }
   .app-sidebar--mobile-collapsed .brand-stack__subtitle,
-  .app-sidebar--mobile-collapsed .brand-stack__support {
+  .app-sidebar--mobile-collapsed .brand-stack__support,
+  html[data-mobile-menu="collapsed"] .app-sidebar:not(.app-sidebar--mobile-expanded) .brand-stack__subtitle,
+  html[data-mobile-menu="collapsed"] .app-sidebar:not(.app-sidebar--mobile-expanded) .brand-stack__support {
     display: none;
   }
   .app-sidebar__auth {
@@ -1527,6 +1537,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   }
   .session-assist-window__body {
     max-height: calc(100vh - 9rem);
+    max-height: calc(100dvh - 9rem);
   }
 }
 
@@ -1994,6 +2005,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
     inset: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
+    height: 100dvh !important;
     max-width: 100vw !important;
     z-index: 99999 !important;
     background: rgba(10, 14, 18, 0.97) !important;
@@ -2366,6 +2378,7 @@ html[data-season="blood-moon"] .app-sidebar {
   position: sticky;
   top: 2.5rem;
   max-height: calc(100vh - 4rem);
+  max-height: calc(100dvh - 4rem);
   overflow-y: auto;
 }
 .guides-adjacent {
@@ -2444,5 +2457,70 @@ html {
   select,
   textarea {
     font-size: 16px !important;
+  }
+}
+
+/* Floating buttons (phones): hide while scrolling down, back on scroll up. */
+@media (max-width: 860px) {
+  .quick-filters-fab,
+  .feedback-widget {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  html[data-scroll-dir="down"] .quick-filters-fab,
+  html[data-scroll-dir="down"] .feedback-widget:not(.feedback-widget--open) {
+    transform: translateY(calc(100% + var(--floating-ui-inset) + env(safe-area-inset-bottom, 0px)));
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Command hub overlay (< 1200px): the page behind must not scroll. */
+html.command-hub-scroll-lock,
+html.command-hub-scroll-lock body {
+  overflow: hidden;
+}
+@media (max-width: 1199px) {
+  .command-hub--open {
+    overscroll-behavior: contain;
+    padding: max(1.25rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px))
+      max(1.25rem, env(safe-area-inset-bottom, 0px)) max(1.25rem, env(safe-area-inset-left, 0px)) !important;
+  }
+}
+
+/* Guest banner: dismissed visitors never see it flash before hydration (set by the bootstrap script). */
+html[data-guest-banner-dismissed="1"] [data-guest-banner] {
+  display: none !important;
+}
+
+/* Phone landscape (short screens, e.g. 800x360): chrome gets out of the way so the
+ * first screen shows page content. Tighter spacing, one-row cloud-backup notice. */
+@media (max-width: 860px) and (max-height: 500px) {
+  .app-sidebar {
+    padding-top: calc(0.4rem + env(safe-area-inset-top, 0px));
+    padding-bottom: 0.4rem;
+  }
+  .app-main {
+    padding-top: 0.5rem;
+  }
+  .content-canvas {
+    gap: 0.5rem;
+  }
+  .content-panel {
+    gap: 0.75rem;
+  }
+  .command-hub__bar {
+    padding-block: 0.25rem;
+  }
+  .guest-banner-slim {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    padding-block: 0.25rem;
+  }
+  .guest-banner-slim__actions {
+    grid-column: 2;
+    grid-row: 1;
+    flex-wrap: nowrap;
+  }
+  .guest-banner-slim__close {
+    grid-column: 3;
   }
 }

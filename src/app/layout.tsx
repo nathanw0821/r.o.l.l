@@ -78,7 +78,14 @@ function buildUiBootstrapScript() {
       root.setAttribute("data-scanlines", scanlineMode);
       root.setAttribute("data-ui-tone", uiTone);
       root.setAttribute("data-sidebar-collapsed", sidebarCollapsed === "1" ? "1" : "0");
+      // Phones start with the menu collapsed unless the visitor opened it this session
+      // (same rule as AppShell), so the first paint already has the final height.
+      const menuTouched = window.sessionStorage.getItem("roll.mobile.sidebar.touched") === "1";
+      root.setAttribute("data-mobile-menu", !menuTouched || sidebarCollapsed === "1" ? "collapsed" : "open");
       root.setAttribute("data-season", seasonAttr);
+      if (read("roll-dismissed-signup-banner-perm", "") === "true" || window.sessionStorage.getItem("roll-dismissed-signup-banner-session") === "true") {
+        root.setAttribute("data-guest-banner-dismissed", "1");
+      }
     } catch {
       // Keep server defaults if storage is unavailable.
     }
