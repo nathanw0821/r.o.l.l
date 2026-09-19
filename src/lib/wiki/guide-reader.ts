@@ -323,6 +323,17 @@ export function adjacentGuides<T extends { id: number | string }>(
   };
 }
 
+/** The guide's source URL when it is an absolute http(s) link we can send readers to; null otherwise. */
+export function externalSourceUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url.trim());
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.href : null;
+  } catch {
+    return null;
+  }
+}
+
 /** "Patch 30 (Fallout Worlds)" → "Patch 30, Fallout Worlds" so it reads inside one pair of brackets. */
 export function flattenPatchLabel(patchVersion: string): string {
   return patchVersion.replace(/\s*\(([^)]*)\)\s*$/, ", $1").trim();
