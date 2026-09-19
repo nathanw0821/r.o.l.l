@@ -277,6 +277,95 @@ Sovereign Vault incorporates a complete local speech synthesis and transcription
 
 ---
 
+## 6. Autonomous Intelligence Synthesis & News Radar (`ai_radar.py`)
+
+### The Opportunity in R.O.L.L.
+R.O.L.L. currently has a static intelligence endpoint (`/api/radar`) that fetches nuke launch codes and Minerva's inventory. However, keeping the community informed about Bethesda PTS changes, datamined atom shop items, seasonal roadmap adjustments, and developer Discord announcements currently requires Nathan to read forums and write guides manually.
+
+### The Sovereign Vault Architectural Blueprint
+In Sovereign Vault, [`ai_radar.py`](file:///home/nathanw/sovereign_vault_ui/ai_radar.py) runs an automated daily intelligence loop:
+- Ingests multiple RSS/Atom feeds concurrently via `feedparser`.
+- Strips markup, normalizes content, and filters out noise/duplicates.
+- Feeds raw text to a local LLM (`hermes3:8b` on Ollama) to synthesize an **Executive Daily Briefing** with bulleted breakthroughs, categorizations, and source citations.
+- Exports structured dossiers directly to Markdown and triggers TTS voice briefings.
+
+### Concrete Implementation for R.O.L.L.
+Create an automated **"Appalachian Morning Dispatch"** cron pipeline (`src/lib/radar/dispatch-engine.ts`):
+1. Polls Bethesda News, NukaKnights RSS, and Fallout Reddit datamine feeds every 6 hours.
+2. Runs automated LLM summarization (via local Ollama or Cloudflare Workers AI).
+3. Publishes structured bulletin entries to `src/app/transmissions/` and broadcasts daily patch summaries to linked Discord servers via the R.O.L.L. Bot webhook.
+
+---
+
+## 7. Kiwix ZIM Compaction for 100% Offline Vault Deployment (`auto_zimify.py`)
+
+### The Opportunity in R.O.L.L.
+R.O.L.L. has offline service worker support, but players in remote areas, air-gapped devices, Steam Deck users playing offline, or survivalists want a truly self-contained, zero-network, portable copy of the entire Fallout 76 truth database that requires no Node.js runtime or server dependencies.
+
+### The Sovereign Vault Architectural Blueprint
+Sovereign Vault uses `auto_zimify.py` and `kiwix-serve`:
+- Packages static HTML, compressed WebP/SVG images, CSS, and full-text search indexes into a single compressed `.zim` archive (open standard used by Wikipedia, WikiHow, and Project Gutenberg).
+- The resulting file can be mounted by Kiwix on Windows, Linux, Android, or iOS with instant full-text search, zero battery drain, and zero server infrastructure.
+
+### Concrete Implementation for R.O.L.L.
+Add an automated build command `npm run export:zim`:
+1. Runs `next build && next export` to emit static HTML into `out/`.
+2. Invokes `zimwriterfs` to compress all 268 Pip-Boy curved cards, 167 mod effects, and 200+ guides into `fallout76_wiki_2026.zim` (~1.2 GB).
+3. Distribute this `.zim` on GitHub Releases and host it directly inside Nathan's Sovereign Vault on port 8085 (`http://127.0.0.1:8085`) as an offline emergency gaming canon!
+
+---
+
+## 8. Monolith Single-File HTML Exporter for Offline Field Guides
+
+### The Opportunity in R.O.L.L.
+Players frequently want to save a specific in-depth raid guide (e.g. *Neurological Warfare Boss Mechanics & Threat Mitigation*) to their local drive or send it to a teammate as an email attachment, without external broken image links or stylesheet failures.
+
+### The Sovereign Vault Architectural Blueprint
+Sovereign Vault leverages `monolith`:
+```bash
+monolith "https://fallout76.wiki/wiki/neurological-warfare" -o neurological_warfare_standalone.html
+```
+`monolith` bundles all CSS, JavaScript, fonts, and base64-encoded images into a single self-contained `.html` file that opens identically in any browser forever without an internet connection.
+
+### Concrete Implementation for R.O.L.L.
+Add a **"📥 Download Standalone Field Guide (.html)"** button on every wiki article page:
+- Server-side route `GET /api/wiki/[slug]/export`: Bundles the guide Markdown, inline CSS, and base64 Pip-Boy card graphics into a single self-contained HTML payload for instant player download.
+
+---
+
+## 9. Generative Asset Pipeline & NPC Roleplay (ComfyUI & SillyTavern)
+
+### The Opportunity in R.O.L.L.
+Players love immersive roleplaying and customizing their character loadouts with custom Pip-Boy portraits, or asking questions to in-universe lore personas (MODUS, Duchess, Minerva, or the Overseer).
+
+### The Sovereign Vault Architectural Blueprint
+Sovereign Vault includes native integrations with:
+- **ComfyUI Flux.1 Schnell** (`/api/imagine`): Programmatic JSON workflow injection for generating images with seed persistence.
+- **SillyTavern**: Local character card format (spec v2 with persona descriptions, scenario, and greeting dialogues) driven by Hermes 3.
+
+### Concrete Implementation for R.O.L.L.
+1. **Custom Pip-Boy Portrait Generator**: A player can input their character's appearance, and R.O.L.L. can call local ComfyUI to render a custom 1950s retro-futuristic Vault-Tec ID card portrait.
+2. **MODUS / Minerva Persona Assistant**: Users can toggle between factual technical answers and in-character roleplay responses from MODUS ("Greetings, Member...") using a lightweight persona system prompt.
+
+---
+
+## 10. Database WAL Optimization & Non-Blocking Atomic Hot Backups
+
+### The Opportunity in R.O.L.L.
+If R.O.L.L. runs SQLite in development, local staging, or on edge Cloudflare D1/Turso databases, concurrent write spikes (e.g., Discord slash commands writing user progress during peak raid hours) can cause locking bottlenecks or database corruption during ungraceful restarts.
+
+### The Sovereign Vault Architectural Blueprint
+Sovereign Vault's `sovereign_config.py` and `spark_autonomous_engine.py` implement hardened SQLite production configurations:
+- **PRAGMA journal_mode = WAL**: Allows concurrent readers and writers without blocking.
+- **PRAGMA synchronous = NORMAL**: Drastically cuts NVMe write amplification while guaranteeing transactional durability.
+- **PRAGMA busy_timeout = 15000**: Eliminates `database is locked` errors during background re-indexing.
+- **Atomic Zero-Downtime Hot Backups**: Uses `VACUUM INTO` or SQLite Backup API to snapshot the live database to secondary storage without taking the service offline.
+
+### Concrete Implementation for R.O.L.L.
+Ensure all SQLite/Prisma/D1 connections apply these PRAGMAs on connection initialization and run automated hot backups during low-traffic hours.
+
+---
+
 ## Summary of Actionable Next Steps for R.O.L.L.
 
 | Priority | Feature | Sovereign Vault Reference | Expected R.O.L.L. Impact |
@@ -284,5 +373,10 @@ Sovereign Vault incorporates a complete local speech synthesis and transcription
 | **P0** | **Relational Synergy Graph Engine** | `graph_engine.py` | Replaces hardcoded 7-weapon dict with full 167-mod + 268-perk dynamic graph. |
 | **P1** | **Hybrid Search (Vector + BM25 + RRF)** | `semantic_engine.py` | Enables conceptual search across guides and loadouts without exact keywords. |
 | **P1** | **Visual Synergy Web UI** | `sovereign_router.py` (`/api/graph`) | Interactive Pip-Boy node graph displaying build synergies in real time. |
+| **P1** | **Autonomous News Radar** | `ai_radar.py` | Automatically ingests PTS and patch notes; generates daily community briefings. |
+| **P2** | **Kiwix .ZIM Offline Compilation** | `auto_zimify.py` | Compiles entire website into single 1.2GB offline archive for air-gapped play. |
 | **P2** | **Datamine Ingestion Sentinel** | `mover_daemon.py`, `sqlite_queue.py` | Automated watcher and staging pipeline for PTS and live patch updates. |
+| **P2** | **Monolith Standalone Exporter** | `monolith` | 1-click single-file HTML downloads for offline survival field guides. |
 | **P3** | **Pip-Boy Radio Voice Assistant** | `sovereign_router.py` (`/api/tts`, `/api/stt`) | Hands-free audio queries during active gameplay. |
+| **P3** | **ComfyUI / Persona Roleplay** | ComfyUI / SillyTavern integration | Generates custom Vault-Tec ID badges; in-universe MODUS/Minerva lore assistant. |
+
