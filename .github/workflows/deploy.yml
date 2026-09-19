@@ -48,6 +48,9 @@ jobs:
       - name: Run Unit Tests
         run: npm run test
 
+      - name: Type Check
+        run: npm run typecheck
+
       - name: Build Next.js with OpenNext
         run: npm run build:cf
 

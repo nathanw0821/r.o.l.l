@@ -30,8 +30,11 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 DISCORD_CLIENT_ID = "1530017912520445962"
 DISCORD_PUBLIC_KEY = "fedb0644caf356455e981c9f7935aaa7cb4e38ecb67a6f80c6476926ce4a0c0a"
 
+# No cron trigger: the OpenNext worker has no scheduled() handler, so the old daily trigger only
+# failed. /api/cron/* stay callable with CRON_SECRET; wire a scheduled() entry before re-adding it.
+# An explicit empty list makes `wrangler deploy` remove the old trigger (omitting it would keep it).
 [triggers]
-crons = ["0 18 * * *"]
+crons = []
 
 [[kv_namespaces]]
 binding = "KV_LIMITER"

@@ -54,8 +54,25 @@ export async function POST(request: Request) {
     };
     const { characterId, slotIndex, name, specials, equippedCards } = body;
 
-    if (typeof slotIndex !== "number" || slotIndex < 0 || slotIndex > 5) {
+    if (typeof slotIndex !== "number" || !Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex > 5) {
       return badRequest("Invalid loadout parameters (slotIndex 0-5 required)");
+    }
+    // Stored as JSON: keep it to the shapes the perk builder writes and a sane size.
+    if (name !== undefined && (typeof name !== "string" || name.length > 60)) {
+      return badRequest("Loadout name must be at most 60 characters.");
+    }
+    if (
+      specials !== undefined &&
+      (typeof specials !== "object" || specials === null || Array.isArray(specials) || Object.keys(specials).length > 7 ||
+        Object.values(specials).some((v) => typeof v !== "number" || v < 0 || v > 99))
+    ) {
+      return badRequest("Invalid SPECIAL values.");
+    }
+    if (equippedCards !== undefined && (!Array.isArray(equippedCards) || equippedCards.length > 100)) {
+      return badRequest("Too many equipped cards.");
+    }
+    if (JSON.stringify({ specials, equippedCards }).length > 20_000) {
+      return badRequest("Loadout is too large.");
     }
 
     let targetCharacter: { id: string } | null = null;

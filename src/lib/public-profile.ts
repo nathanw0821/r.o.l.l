@@ -11,7 +11,6 @@ export async function getPublicCraftingResume(username: string) {
     select: {
       id: true,
       username: true,
-      name: true,
       image: true,
       createdAt: true
     }
@@ -56,7 +55,8 @@ export async function getPublicCraftingResume(username: string) {
   return {
     user: {
       username: user.username,
-      displayName: user.name || user.username
+      // Public pages show the chosen username, never the real name from a Google/Discord profile.
+      displayName: user.username
     },
     stats: {
       total: catalog.length,

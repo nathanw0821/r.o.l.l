@@ -100,6 +100,10 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       updateData.description = typeof body.description === "string" ? body.description.trim().slice(0, 500) : null;
     }
 
+    if (body.payload && JSON.stringify(body.payload).length > 200_000) {
+      return NextResponse.json({ success: false, error: "Build is too large." }, { status: 413 });
+    }
+
     if (body.payload && typeof body.payload === "object" && !Array.isArray(body.payload)) {
       // Server-owned keys (edit token hash) are kept; client-sent "_" keys and redirects are dropped.
       updateData.payload = mergeClientPayload(body.payload, record.payload);

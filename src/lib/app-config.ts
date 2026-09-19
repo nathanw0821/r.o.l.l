@@ -31,12 +31,25 @@ function isPrivateIpv4(hostname: string) {
     first === 127 ||
     (first === 169 && second === 254) ||
     (first === 172 && second >= 16 && second <= 31) ||
-    (first === 192 && second === 168)
+    (first === 192 && second === 168) ||
+    (first === 100 && second >= 64 && second <= 127) || // carrier-grade NAT
+    (first === 198 && (second === 18 || second === 19)) || // benchmarking
+    first >= 224 // multicast and reserved
   );
 }
 
 function isPrivateIpv6(hostname: string) {
   const normalized = hostname.toLowerCase();
+  // IPv4-mapped (::ffff:10.0.0.1) inherits the IPv4 rules.
+  const mapped = normalized.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+  if (mapped) return isPrivateIpv4(mapped[1]);
+  // URL() rewrites the mapped form to hex: ::ffff:a00:1 is 10.0.0.1.
+  const mappedHex = normalized.match(/^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/);
+  if (mappedHex) {
+    const hi = Number.parseInt(mappedHex[1], 16);
+    const lo = Number.parseInt(mappedHex[2], 16);
+    return isPrivateIpv4(`${hi >> 8}.${hi & 255}.${lo >> 8}.${lo & 255}`);
+  }
   return (
     normalized === "::" ||
     normalized === "::1" ||
@@ -47,7 +60,8 @@ function isPrivateIpv6(hostname: string) {
 }
 
 function isLocalHostname(hostname: string) {
-  const normalized = hostname.toLowerCase();
+  // URL.hostname keeps the brackets on IPv6 literals ("[::1]"), which isIP() does not accept.
+  const normalized = hostname.toLowerCase().replace(/^\[(.*)\]$/, "$1").replace(/\.$/, "");
   const ipType = isIP(normalized);
 
   if (normalized === "localhost" || normalized.endsWith(".local") || normalized.endsWith(".internal")) {

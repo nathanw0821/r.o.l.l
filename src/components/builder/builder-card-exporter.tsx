@@ -352,14 +352,18 @@ export async function exportPerkDeckCard(params: {
     inner.style.fontFamily = "monospace";
     inner.style.color = "#e2e8f0";
 
+    // Every interpolated value is escaped: names and card ids come from saved user data.
+    const esc = (value: unknown) =>
+      String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch] as string);
+
     const specialsHtml = Object.entries(specials)
-      .map(([k, v]) => `<div style="background: rgba(14, 18, 22, 0.9); border: 1px solid rgba(76, 195, 138, 0.3); border-radius: 8px; padding: 10px; text-align: center;"><div style="color: #4cc38a; font-weight: 900; font-size: 18px;">${k}</div><div style="font-size: 14px; font-weight: 700; color: #fff;">${v} PTS</div></div>`)
+      .map(([k, v]) => `<div style="background: rgba(14, 18, 22, 0.9); border: 1px solid rgba(76, 195, 138, 0.3); border-radius: 8px; padding: 10px; text-align: center;"><div style="color: #4cc38a; font-weight: 900; font-size: 18px;">${esc(k)}</div><div style="font-size: 14px; font-weight: 700; color: #fff;">${esc(v)} PTS</div></div>`)
       .join("");
 
     const cardsHtml = equippedCards
       .map(
         (c) =>
-          `<div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 8px; padding: 10px;"><div style="color: #f59e0b; font-weight: 800; font-size: 14px;">${c.cardId} (${c.rank}★)</div></div>`
+          `<div style="background: rgba(14, 18, 22, 0.95); border: 1px solid rgba(76, 195, 138, 0.25); border-radius: 8px; padding: 10px;"><div style="color: #f59e0b; font-weight: 800; font-size: 14px;">${esc(c.cardId)} (${esc(c.rank)}★)</div></div>`
       )
       .join("");
 
@@ -367,9 +371,9 @@ export async function exportPerkDeckCard(params: {
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(76, 195, 138, 0.4); padding-bottom: 12px;">
         <div>
           <div style="color: #4cc38a; font-size: 12px; font-weight: 900; letter-spacing: 0.15em;">VAULT-TEC PUNCH CARD MACHINE // P.E.R.K. DECK</div>
-          <div style="font-size: 28px; font-weight: 900; color: #ffffff;">${characterName} — ${slotName}</div>
+          <div style="font-size: 28px; font-weight: 900; color: #ffffff;">${esc(characterName)} — ${esc(slotName)}</div>
         </div>
-        <div style="text-align: right; color: rgba(226, 232, 240, 0.6); font-size: 12px;">${stamp} · fallout76.wiki</div>
+        <div style="text-align: right; color: rgba(226, 232, 240, 0.6); font-size: 12px;">${esc(stamp)} · fallout76.wiki</div>
       </div>
       <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;">${specialsHtml}</div>
       <div style="font-size: 14px; font-weight: 900; color: #4cc38a; margin-top: 10px;">[ EQUIPPED PERK CARDS DECK (${equippedCards.length}) ]</div>

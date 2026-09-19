@@ -6,6 +6,8 @@ import { readSource } from "@/lib/wiki/guide-list-state";
 import wikiCategoryCounts from "@/lib/wiki/wiki-category-counts.json";
 
 const DEFAULT_LIMIT = 500;
+/** Upper bound for `limit` so one request cannot ask for the whole corpus at once. */
+const MAX_LIMIT = 1000;
 
 /** Category ids (the `?category=` values) in the page's order; the counts file also holds totals. */
 const CATEGORY_IDS = Object.keys(wikiCategoryCounts).filter((k) => !["all", "archived", "stub"].includes(k));
@@ -59,7 +61,7 @@ export async function GET(req: Request) {
     hideStubs: searchParams.get("stubs") === "hide",
     hidePossiblyOutdated: searchParams.get("current") === "1",
     offset: readNonNegativeInt(searchParams.get("offset"), 0),
-    limit: readNonNegativeInt(searchParams.get("limit"), DEFAULT_LIMIT),
+    limit: Math.min(readNonNegativeInt(searchParams.get("limit"), DEFAULT_LIMIT), MAX_LIMIT),
   });
 
   // Render-time safety net: the corpus is cleaned by scripts/truth/clean-wiki-corpus.ts, but a

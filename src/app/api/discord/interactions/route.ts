@@ -84,12 +84,18 @@ export async function POST(req: Request) {
 
   const rawBody = await req.text();
 
-  // Verify request origin from Discord
-  if (publicKey) {
-    const isValid = await verifyDiscordSignature(rawBody, signature, timestamp, publicKey);
-    if (!isValid) {
-      return new NextResponse("Invalid request signature", { status: 401 });
-    }
+  // Verify request origin from Discord. Fail closed: without a public key nothing is accepted,
+  // and signatures older than 5 minutes are refused (replayed interactions).
+  if (!publicKey) {
+    return new NextResponse("Interactions are not configured", { status: 401 });
+  }
+  const signedAt = Number(timestamp);
+  if (!Number.isFinite(signedAt) || Math.abs(Date.now() / 1000 - signedAt) > 300) {
+    return new NextResponse("Stale request", { status: 401 });
+  }
+  const isValid = await verifyDiscordSignature(rawBody, signature, timestamp, publicKey);
+  if (!isValid) {
+    return new NextResponse("Invalid request signature", { status: 401 });
   }
 
   let interaction;
@@ -626,10 +632,8 @@ export async function POST(req: Request) {
       if (username) {
         user = await prisma.user.findFirst({
           where: {
-            OR: [
-              { name: { equals: username, mode: "insensitive" } },
-              { username: { equals: username, mode: "insensitive" } }
-            ]
+            // Username only: real names from Google/Discord profiles are never searchable here.
+            username: { equals: username, mode: "insensitive" }
           },
           include: { progress: true }
         });
@@ -678,7 +682,7 @@ export async function POST(req: Request) {
         data: {
           embeds: [
             {
-              title: `📻 R.O.L.L. Tracker Progress: ${user.name || user.username || "Vault Dweller"}`,
+              title: `📻 R.O.L.L. Tracker Progress: ${user.username || "Vault Dweller"}`,
               color: 0x10b981,
               fields: [
                 { name: "Account Rank Badge", value: badge, inline: true },
@@ -811,8 +815,8 @@ export async function POST(req: Request) {
       const cleanSlug = slug.replace(/^https:\/\/fallout76\.wiki\/l\//, "");
       const buildUrl = `https://fallout76.wiki/l/${cleanSlug}`;
 
-      const buildRecord = await prisma.sharedBuild.findUnique({
-        where: { slug: cleanSlug }
+      const buildRecord = await prisma.sharedBuild.findFirst({
+        where: { slug: cleanSlug, published: true }
       });
 
       if (!buildRecord) {
