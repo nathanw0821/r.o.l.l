@@ -10,7 +10,7 @@ export default async function OverviewGeneralPage() {
     session?.user?.id
       ? await prisma.user.findUnique({
           where: { id: session.user.id },
-          select: { email: true, username: true }
+          select: { email: true, username: true, emailVerified: true, passwordHash: true }
         })
       : null;
 
@@ -51,7 +51,11 @@ export default async function OverviewGeneralPage() {
               <CardDescription>Update the email tied to this account profile.</CardDescription>
             </CardHeader>
             <CardContent>
-              <ProfileEmailSettingsForm initialEmail={user?.email ?? null} />
+              <ProfileEmailSettingsForm
+                initialEmail={user?.email ?? null}
+                emailVerified={Boolean(user?.emailVerified)}
+                hasPassword={Boolean(user?.passwordHash)}
+              />
             </CardContent>
           </Card>
         </div>

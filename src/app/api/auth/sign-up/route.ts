@@ -1,5 +1,6 @@
 import { hashPassword } from "@/lib/password-hash";
 import { z } from "zod";
+import { newPasswordSchema } from "@/lib/password-policy";
 import { parseJson } from "@/lib/api/validation";
 import { badRequest, forbidden, internalError, ok, tooManyRequests } from "@/lib/api/responses";
 import { isPublicRegistrationEnabled, isReservedUsername } from "@/lib/app-config";
@@ -15,11 +16,7 @@ const signUpSchema = z.object({
     .min(3)
     .max(32)
     .regex(/^[a-z0-9._-]+$/i, "Username can use letters, numbers, dots, underscores, and dashes only."),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters.")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number."),
+  password: newPasswordSchema,
   turnstileToken: z.string().nullable().optional()
 });
 

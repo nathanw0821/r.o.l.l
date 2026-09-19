@@ -14,6 +14,7 @@ import { awardAchievements, awardLoginAchievement, syncUserAchievements } from "
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
 import { applyImportedProfileIfNeeded } from "@/lib/profile";
+import { credentialFingerprint, SESSION_RECHECK_MS } from "@/lib/session-fingerprint";
 
 if (!process.env.NEXTAUTH_URL && process.env.APP_URL) {
   process.env.NEXTAUTH_URL = process.env.APP_URL;
@@ -47,6 +48,8 @@ function isEmailIdentifier(value: string) {
   return z.string().email().safeParse(value).success;
 }
 
+export const SESSION_COOKIE_NAME = "__Host-roll.session-token";
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   get secret() {
@@ -57,10 +60,29 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt"
   },
   callbacks: {
-    async signIn({ user, account }) {
-      // Basic validation
-      if (account?.provider !== "credentials" && !user.email) {
-        return false;
+    async signIn({ user, account, profile }) {
+      if (!account || account.provider === "credentials") return true;
+      if (!user.email) return false;
+
+      // Already linked to this provider account: normal sign-in.
+      const linked = await prisma.account.findUnique({
+        where: { provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId } },
+        select: { id: true }
+      });
+      if (linked) return true;
+
+      // Google/Discord would be attached to an existing account with the same email. Only allow
+      // that when both sides have proven the address: otherwise someone could register a victim's
+      // email with a password first and keep access after the victim signs in with Google.
+      const existing = await prisma.user.findUnique({
+        where: { email: user.email.trim().toLowerCase() },
+        select: { passwordHash: true, emailVerified: true }
+      });
+      if (!existing) return true;
+      const p = (profile ?? {}) as { email_verified?: boolean; verified?: boolean };
+      const providerVerified = p.email_verified === true || p.verified === true;
+      if (!providerVerified || (existing.passwordHash && !existing.emailVerified)) {
+        return "/auth/sign-in?error=VerifyEmailToLink";
       }
       return true;
     },
@@ -68,16 +90,24 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
       }
-      // Admin checks read username and email verification from the session, so carry them in the
-      // token. Tokens issued before this field existed are filled in once from the database.
+      // The token carries the username and email-verified state (admin checks read them) and a
+      // fingerprint of the password hash + email. It is rechecked every few minutes; when the
+      // password or email changed (or the user was deleted) every session of that account ends.
       const id = (token.id ?? token.sub) as string | undefined;
-      if (id && (user || token.username === undefined)) {
+      const now = Date.now();
+      const due = !token.checkedAt || now - token.checkedAt > SESSION_RECHECK_MS;
+      if (id && (user || token.username === undefined || !token.fp || due)) {
         const row = await prisma.user.findUnique({
           where: { id },
-          select: { username: true, emailVerified: true }
+          select: { username: true, emailVerified: true, passwordHash: true, email: true }
         });
-        token.username = row?.username ?? null;
-        token.emailVerified = Boolean(row?.emailVerified);
+        if (!row) throw new Error("SESSION_REVOKED");
+        const fp = credentialFingerprint(row);
+        if (!user && token.fp && token.fp !== fp) throw new Error("SESSION_REVOKED");
+        token.fp = fp;
+        token.checkedAt = now;
+        token.username = row.username ?? null;
+        token.emailVerified = Boolean(row.emailVerified);
       }
       return token;
     },
@@ -140,7 +170,7 @@ export const authOptions: NextAuthOptions = {
           if (!parsed.success) return null;
 
           const identifier = normalizeIdentifier(parsed.data.identifier);
-          const password = parsed.data.password.trim();
+          const password = parsed.data.password;
           if (!identifier || !password) return null;
 
           const username = normalizeUsername(identifier);
@@ -273,18 +303,32 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/sign-in"
   },
+  // Host-only cookie (no Domain), so preview.fallout76.wiki never receives production sessions.
+  // The name changed from the old ".fallout76.wiki" cookie, which signed everyone out once.
   cookies: process.env.NODE_ENV === "production" ? {
     sessionToken: {
-      name: `__Secure-next-auth.session-token`,
+      name: SESSION_COOKIE_NAME,
       options: {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: true,
-        domain: ".fallout76.wiki"
+        secure: true
       }
     }
   } : undefined,
+  logger: {
+    error(code, metadata) {
+      // A revoked session is expected, not an error worth a stack trace.
+      if (code === "JWT_SESSION_ERROR" && String((metadata as { message?: string })?.message ?? metadata).includes("SESSION_REVOKED")) return;
+      console.error(`[next-auth][error][${code}]`, metadata);
+    },
+    warn(code) {
+      console.warn(`[next-auth][warn][${code}]`);
+    },
+    debug(code, metadata) {
+      if (process.env.NODE_ENV !== "production") console.debug(`[next-auth][debug][${code}]`, metadata);
+    }
+  },
   debug: process.env.NODE_ENV !== "production"
 };
 

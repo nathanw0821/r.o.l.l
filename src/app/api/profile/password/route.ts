@@ -1,12 +1,13 @@
 import { verifyPassword, hashPassword } from "@/lib/password-hash";
 import { z } from "zod";
+import { newPasswordSchema } from "@/lib/password-policy";
 import { requireUser } from "@/lib/api/auth";
 import { badRequest, ok } from "@/lib/api/responses";
 import { prisma } from "@/lib/prisma";
 
 const payloadSchema = z.object({
   currentPassword: z.string().min(1).optional(),
-  newPassword: z.string().min(8).max(128)
+  newPassword: newPasswordSchema
 });
 
 export async function POST(request: Request) {
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const parsed = payloadSchema.safeParse(body);
   if (!parsed.success) {
-    return badRequest("New password must be at least 8 characters.");
+    return badRequest(parsed.error.issues[0]?.message ?? "Choose a stronger password.");
   }
 
   const user = await prisma.user.findUnique({
@@ -44,5 +45,6 @@ export async function POST(request: Request) {
     data: { passwordHash }
   });
 
-  return ok({ updated: true });
+  // The password is part of the session fingerprint, so every session (this one too) now ends.
+  return ok({ updated: true, signedOut: true });
 }

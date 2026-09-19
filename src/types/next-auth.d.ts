@@ -15,5 +15,8 @@ declare module "next-auth/jwt" {
     id?: string;
     username?: string | null;
     emailVerified?: boolean;
+    /** credentialFingerprint() of the user when the token was last checked. */
+    fp?: string;
+    checkedAt?: number;
   }
 }
