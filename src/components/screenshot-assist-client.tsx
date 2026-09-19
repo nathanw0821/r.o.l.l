@@ -506,6 +506,7 @@ export default function ScreenshotAssistClient({
 
 
   const isWindow = mode === "window";
+  const fileInputId = React.useId();
   const aiSuggestionSet = React.useMemo(() => new Set(aiSuggestedIds), [aiSuggestedIds]);
   const presetContent = assistPresetContent[preset];
 
@@ -683,7 +684,8 @@ export default function ScreenshotAssistClient({
         <div className="pip-terminal-panel rounded-[var(--radius)] p-4 relative">
           <div className="flex items-center justify-between">
             <div className="text-sm font-semibold uppercase font-mono text-foreground/90 tracking-wide flex items-center gap-2">
-              <span className="text-accent">1.</span> Paste a screenshot
+              <span className="text-accent">1.</span> <span className="touch:hidden">Paste a screenshot</span>
+              <span className="hidden touch:inline">Choose a screenshot</span>
             </div>
             {imageQueue.length > 0 && (
               <Button 
@@ -700,11 +702,22 @@ export default function ScreenshotAssistClient({
           {imageQueue.length === 0 ? (
             <div className="mt-4 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-background/20 p-8 text-center transition-colors hover:border-accent/40 group relative overflow-hidden">
               <Upload className="mb-3 h-10 w-10 text-foreground/30 group-hover:text-accent group-hover:scale-105 transition-all duration-300" />
-              <div className="font-mono text-xs uppercase text-foreground/75 tracking-wide">
+              {/* Touch screens: pasting is awkward, so lead with the file picker. */}
+              <label
+                htmlFor={fileInputId}
+                className="hidden touch:inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-accent px-6 font-mono text-sm font-bold uppercase tracking-wide text-accent-foreground shadow-md active:scale-95 cursor-pointer"
+              >
+                <Upload className="h-4 w-4" aria-hidden="true" />
+                Choose screenshot
+              </label>
+              <div className="font-mono text-xs uppercase text-foreground/75 tracking-wide touch:hidden">
                 Paste Clipboard Image <kbd className="bg-background/80 px-1 py-0.5 rounded border border-border text-[0.78rem] ml-1">Ctrl + V</kbd>
               </div>
-              <p className="mt-1 max-w-[280px] text-[0.78rem] text-foreground/45">
+              <p className="mt-1 max-w-[280px] text-[0.78rem] text-foreground/45 touch:hidden">
                 Drop your Fallout 76 screenshots or inventory snips here directly.
+              </p>
+              <p className="mt-2 hidden max-w-[280px] text-[0.78rem] text-foreground/55 touch:block">
+                Pick one or more screenshots of the Legendary Crafting Bench from your photos.
               </p>
               <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-accent/10 to-transparent group-hover:via-accent/30 transition-all duration-500" />
             </div>
@@ -728,6 +741,7 @@ export default function ScreenshotAssistClient({
 
           <div className="mt-4">
             <Input 
+              id={fileInputId}
               type="file" 
               multiple 
               accept="image/png,image/jpeg,image/webp" 

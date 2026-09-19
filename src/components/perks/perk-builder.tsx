@@ -8,7 +8,7 @@ import { PERK_CATALOG, PerkCard, SpecialCategory, calculateSpecialCapacity, calc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportPerkDeckCard } from "@/components/builder/builder-card-exporter";
-import { Sparkles, Link2 } from "lucide-react";
+import { Sparkles, Link2, ChevronDown } from "lucide-react";
 import PerkLevelingRoadmap from "@/components/perks/perk-leveling-roadmap";
 import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
 import PipBoyPerkAccordionColumn from "@/components/perks/pipboy-perk-accordion-column";
@@ -101,6 +101,19 @@ function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => v
   }, [urlQuery, onQueryChange]);
 
   return null;
+}
+
+/** True below the md breakpoint (phones). False on the server and on wider screens. */
+function useIsPhoneWidth() {
+  return React.useSyncExternalStore(
+    (onChange) => {
+      const media = window.matchMedia("(max-width: 767px)");
+      media.addEventListener("change", onChange);
+      return () => media.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia("(max-width: 767px)").matches,
+    () => false
+  );
 }
 
 export default function PerkBuilder({
@@ -520,6 +533,18 @@ export default function PerkBuilder({
     return result.sort((a, b) => a.name.localeCompare(b.name));
   }, [searchedAllCards, selectedCategory]);
 
+  // Phones: the flat catalog of every card is ~35 screens tall, so "ALL" without a
+  // search shows collapsible S.P.E.C.I.A.L. sections instead. Desktop is unchanged.
+  const isPhoneCatalog = useIsPhoneWidth();
+  const [openCatalogGroups, setOpenCatalogGroups] = React.useState<SpecialCategory[]>([]);
+  const groupCatalogOnPhone = isPhoneCatalog && selectedCategory === "ALL" && searchQuery.trim().length === 0;
+  const catalogGroups = React.useMemo(() => {
+    const order: SpecialCategory[] = ["S", "P", "E", "C", "I", "A", "L", "LEGENDARY"];
+    return order
+      .map((category) => ({ category, cards: filteredCards.filter((c) => c.special === category) }))
+      .filter((group) => group.cards.length > 0);
+  }, [filteredCards]);
+
   const handleClearDeck = () => {
     setEquippedCards([]);
   };
@@ -562,6 +587,45 @@ export default function PerkBuilder({
     } finally {
       setLoadingAi(false);
     }
+  };
+
+
+  const renderCatalogCard = (card: PerkCard, idx: number) => {
+    const equippedItem = equippedCards.find((item) => item.cardId === card.id);
+    const currentRank = equippedItem ? equippedItem.rank : 1;
+    const activeRankObj = card.ranks.find((r) => r.rank === currentRank) || card.ranks[0];
+
+    return (
+      <PipBoyPerkCard
+        key={card.id}
+        cardId={card.id}
+        name={card.name}
+        special={card.special}
+        cost={activeRankObj?.cost ?? (currentRank)}
+        rank={currentRank}
+        maxRank={card.maxRank}
+        minLevel={card.minLevel}
+        description={activeRankObj?.description || ""}
+        isEquipped={!!equippedItem}
+        isFemale={isFemale}
+        isOutdated={card.isOutdated}
+        outdatedMeta={card.outdatedMeta}
+        reworkedFrom={card.reworkedFrom}
+        priority={idx < 8}
+        onEquip={() => {
+          if (card.isOutdated && card.outdatedMeta?.replacedBy) {
+            const replacement = getPerkCardById(card.outdatedMeta.replacedBy.id);
+            if (replacement) {
+              handleEquipCard(replacement, 1);
+              return;
+            }
+          }
+          handleEquipCard(card, currentRank);
+        }}
+        onUnequip={() => handleUnequipCard(card.id)}
+        onRankChange={(newRank) => handleEquipCard(card, newRank)}
+      />
+    );
   };
 
   return (
@@ -1107,45 +1171,54 @@ export default function PerkBuilder({
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
-              {filteredCards.map((card, idx) => {
-                const equippedItem = equippedCards.find((item) => item.cardId === card.id);
-                const currentRank = equippedItem ? equippedItem.rank : 1;
-                const activeRankObj = card.ranks.find((r) => r.rank === currentRank) || card.ranks[0];
-
-                return (
-                  <PipBoyPerkCard
-                    key={card.id}
-                    cardId={card.id}
-                    name={card.name}
-                    special={card.special}
-                    cost={activeRankObj?.cost ?? (currentRank)}
-                    rank={currentRank}
-                    maxRank={card.maxRank}
-                    minLevel={card.minLevel}
-                    description={activeRankObj?.description || ""}
-                    isEquipped={!!equippedItem}
-                    isFemale={isFemale}
-                    isOutdated={card.isOutdated}
-                    outdatedMeta={card.outdatedMeta}
-                    reworkedFrom={card.reworkedFrom}
-                    priority={idx < 8}
-                    onEquip={() => {
-                      if (card.isOutdated && card.outdatedMeta?.replacedBy) {
-                        const replacement = getPerkCardById(card.outdatedMeta.replacedBy.id);
-                        if (replacement) {
-                          handleEquipCard(replacement, 1);
-                          return;
-                        }
-                      }
-                      handleEquipCard(card, currentRank);
-                    }}
-                    onUnequip={() => handleUnequipCard(card.id)}
-                    onRankChange={(newRank) => handleEquipCard(card, newRank)}
-                  />
-                );
-              })}
-            </div>
+            {groupCatalogOnPhone ? (
+              /* Phones, "ALL", no search: one collapsible section per S.P.E.C.I.A.L. so the
+                 catalog is a short list of headers instead of ~35 screens of cards. */
+              <div className="space-y-2" data-perk-catalog-groups>
+                {catalogGroups.map((group) => {
+                  const open = openCatalogGroups.includes(group.category);
+                  const theme = SPECIAL_THEMES[group.category];
+                  const panelId = `perk-catalog-group-${group.category}`;
+                  return (
+                    <section key={group.category} className="rounded-lg border border-slate-800 bg-slate-950/60">
+                      <h3>
+                        <button
+                          type="button"
+                          aria-expanded={open}
+                          aria-controls={panelId}
+                          onClick={() =>
+                            setOpenCatalogGroups((prev) =>
+                              prev.includes(group.category)
+                                ? prev.filter((c) => c !== group.category)
+                                : [...prev, group.category]
+                            )
+                          }
+                          className="flex min-h-11 w-full items-center justify-between gap-3 px-3 py-2 text-left font-mono text-sm font-bold"
+                        >
+                          <span className={theme?.text}>{theme?.name ?? group.category}</span>
+                          <span className="flex items-center gap-2 text-xs text-slate-400">
+                            {group.cards.length} cards
+                            <ChevronDown
+                              className={cn("h-4 w-4 transition-transform", open && "rotate-180")}
+                              aria-hidden="true"
+                            />
+                          </span>
+                        </button>
+                      </h3>
+                      {open ? (
+                        <div id={panelId} className="grid grid-cols-2 gap-3 px-2 pb-3">
+                          {group.cards.map((card, idx) => renderCatalogCard(card, idx))}
+                        </div>
+                      ) : null}
+                    </section>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+                {filteredCards.map((card, idx) => renderCatalogCard(card, idx))}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

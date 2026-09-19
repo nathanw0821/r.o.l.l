@@ -552,7 +552,7 @@ export default function EffectTable({
           <div className="inline-flex items-center gap-1.5 justify-center">
             <button
               onClick={() => toggleRow(row)}
-              className={`px-2 py-1 text-[10px] font-bold border transition flex items-center gap-1 ${
+              className={`px-2 py-1 touch:min-h-11 text-[10px] font-bold border transition flex items-center gap-1 ${
                 row.unlocked
                   ? "bg-emerald-500 text-black border-emerald-400 font-black shadow-sm"
                   : "bg-[#111720] text-slate-400 border-slate-700 hover:text-emerald-300 hover:border-emerald-600"
@@ -565,7 +565,7 @@ export default function EffectTable({
 
             <button
               onClick={() => updateSeeking(row, !row.isSeeking)}
-              className={`px-2 py-1 text-[10px] font-bold border transition flex items-center gap-1 ${
+              className={`px-2 py-1 touch:min-h-11 text-[10px] font-bold border transition flex items-center gap-1 ${
                 row.isSeeking && !row.unlocked
                   ? "bg-amber-400 text-black border-amber-300 font-black shadow-sm"
                   : "bg-[#111720] text-slate-400 border-slate-700 hover:text-amber-300 hover:border-amber-600"
@@ -577,28 +577,34 @@ export default function EffectTable({
             </button>
 
             {/* Mod Inventory Counter */}
-            <div className="flex items-center border border-slate-800 bg-[#070a0e] px-1 py-0.5">
+            <div className="flex items-center border border-slate-800 bg-[#070a0e] px-1 py-0.5 touch:p-0">
               <button
                 type="button"
+                data-count-step="down"
+                aria-label={`Decrease owned count of ${cleanEffectName(row.effect.name)}`}
                 onClick={() => updateCount(row, row.modCount - 1)}
-                className="text-slate-500 hover:text-white px-0.5"
+                className="text-slate-500 hover:text-white px-0.5 touch:h-11 touch:w-11 touch:flex touch:items-center touch:justify-center"
               >
-                <Minus className="w-2.5 h-2.5" />
+                <Minus className="w-2.5 h-2.5 touch:w-4 touch:h-4" aria-hidden="true" />
               </button>
               <input
                 type="number"
+                inputMode="numeric"
                 min="0"
+                aria-label={`Owned count of ${cleanEffectName(row.effect.name)}`}
                 value={row.modCount === 0 ? "" : row.modCount}
                 onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
                 placeholder="0"
-                className="w-5 text-center text-[10px] font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-slate-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-5 touch:w-9 text-center text-[10px] font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-slate-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
               <button
                 type="button"
+                data-count-step="up"
+                aria-label={`Increase owned count of ${cleanEffectName(row.effect.name)}`}
                 onClick={() => updateCount(row, row.modCount + 1)}
-                className="text-slate-500 hover:text-white px-0.5"
+                className="text-slate-500 hover:text-white px-0.5 touch:h-11 touch:w-11 touch:flex touch:items-center touch:justify-center"
               >
-                <Plus className="w-2.5 h-2.5" />
+                <Plus className="w-2.5 h-2.5 touch:w-4 touch:h-4" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -654,13 +660,17 @@ export default function EffectTable({
           <div className="summary-status-card__count">
             <button
               type="button"
+              data-count-step="down"
+              aria-label={`Decrease owned count of ${cleanEffectName(row.effect.name)}`}
               onClick={() => updateCount(row, row.modCount - 1)}
               className="summary-status-card__count-btn shrink-0"
             >
-              <Minus className="h-2.5 w-2.5" />
+              <Minus className="h-2.5 w-2.5" aria-hidden="true" />
             </button>
             <input
               type="number"
+              inputMode="numeric"
+              aria-label={`Owned count of ${cleanEffectName(row.effect.name)}`}
               min="0"
               value={row.modCount === 0 ? "" : row.modCount}
               onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
@@ -669,15 +679,19 @@ export default function EffectTable({
             />
             <button
               type="button"
+              data-count-step="up"
+              aria-label={`Increase owned count of ${cleanEffectName(row.effect.name)}`}
               onClick={() => updateCount(row, row.modCount + 1)}
               className="summary-status-card__count-btn shrink-0"
             >
-              <Plus className="h-2.5 w-2.5" />
+              <Plus className="h-2.5 w-2.5" aria-hidden="true" />
             </button>
           </div>
           <button
             type="button"
             title={row.isSeeking ? "Remove from Seeking" : "Add to Seeking"}
+            aria-label={row.isSeeking ? `Remove ${cleanEffectName(row.effect.name)} from Seeking` : `Add ${cleanEffectName(row.effect.name)} to Seeking`}
+            aria-pressed={row.isSeeking}
             onClick={() => updateSeeking(row, !row.isSeeking)}
             data-active={row.isSeeking}
             className="summary-status-card__seeking-btn"

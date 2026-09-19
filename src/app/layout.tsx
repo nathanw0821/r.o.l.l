@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import Script from "next/script";
@@ -11,6 +11,7 @@ import { getSiteUrl } from "@/lib/app-config";
 import { isAdminUser } from "@/lib/app-config";
 import { getAppSession } from "@/lib/auth";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
+import ServiceWorkerRegister from "@/components/service-worker-register";
 
 import { VT323, Share_Tech_Mono } from "next/font/google";
 import { resolveSeasonAttribute } from "@/lib/season";
@@ -35,7 +36,6 @@ export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
   title: "R.O.L.L | Reconfiguration, Optimization & Logistics Laboratory",
   description: "Fallout 76 Vault-Tec Master Hub: B.U.I.L.D. Sandbox, P.E.R.K. Matrix, and Truth Bible Knowledge Base.",
-  manifest: "/manifest.json",
   icons: {
     icon: "/icon.png",
     apple: "/apple-icon.png",
@@ -46,6 +46,21 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "R.O.L.L"
   }
+};
+
+// viewport-fit=cover lets an installed app draw under the notch and home indicator;
+// globals.css pads the fixed chrome with env(safe-area-inset-*). Zoom stays enabled.
+// theme-color follows the system scheme here; ThemeProvider switches it to the
+// theme the visitor actually picked.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#070a0f" },
+    { media: "(prefers-color-scheme: light)", color: "#f4efe8" }
+  ]
 };
 
 type ThemeMode = "light" | "dark" | "system";
@@ -80,7 +95,14 @@ function buildUiBootstrapScript() {
       root.setAttribute("data-scanlines", scanlineMode);
       root.setAttribute("data-ui-tone", uiTone);
       root.setAttribute("data-sidebar-collapsed", sidebarCollapsed === "1" ? "1" : "0");
+      // Phones start with the menu collapsed unless the visitor opened it this session
+      // (same rule as AppShell), so the first paint already has the final height.
+      const menuTouched = window.sessionStorage.getItem("roll.mobile.sidebar.touched") === "1";
+      root.setAttribute("data-mobile-menu", !menuTouched || sidebarCollapsed === "1" ? "collapsed" : "open");
       root.setAttribute("data-season", seasonAttr);
+      if (read("roll-dismissed-signup-banner-perm", "") === "true" || window.sessionStorage.getItem("roll-dismissed-signup-banner-session") === "true") {
+        root.setAttribute("data-guest-banner-dismissed", "1");
+      }
     } catch {
       // Keep server defaults if storage is unavailable.
     }
@@ -165,6 +187,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <Suspense fallback={<ShellLoading />}>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

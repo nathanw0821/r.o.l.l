@@ -22,8 +22,8 @@ export default async function VerifyEmailPage(props: { searchParams: SearchParam
       : "That verification link is missing or invalid.";
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
+    <div className="bg-background text-foreground">
+      <div className="mx-auto flex max-w-md flex-col justify-center px-6 py-8 md:min-h-[70vh]">
         <BrandStack align="center" className="mb-4" />
         <div className="rounded-[var(--radius-lg)] border border-border bg-panel/70 p-5">
           <h1 className="text-lg font-semibold">{title}</h1>

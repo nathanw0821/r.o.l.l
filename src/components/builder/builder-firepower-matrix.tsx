@@ -110,8 +110,8 @@ export default function BuilderFirepowerMatrix({
               </span>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button type="button" className="text-slate-500 hover:text-slate-300">
-                    <HelpCircle className="h-3 w-3" />
+                  <button type="button" aria-label="Damage calculation breakdown" className="touch-hit text-slate-500 hover:text-slate-300">
+                    <HelpCircle className="h-3 w-3" aria-hidden="true" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="bg-slate-950 border-emerald-500/40 text-xs font-mono p-2.5 max-w-xs space-y-1">
@@ -233,7 +233,7 @@ export default function BuilderFirepowerMatrix({
               </span>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button type="button" className="text-purple-300 font-bold text-[0.65rem] hover:underline flex items-center gap-0.5">
+                  <button type="button" className="touch-hit text-purple-300 font-bold text-[0.65rem] hover:underline flex items-center gap-0.5">
                     <span>Luck: {critCycle.currentLuck} / {critCycle.requiredLuck}</span>
                     <HelpCircle className="h-3 w-3 text-slate-500 ml-0.5" />
                   </button>

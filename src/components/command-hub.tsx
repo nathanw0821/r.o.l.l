@@ -32,6 +32,8 @@ type CommandHubProps = {
   } | null;
 };
 
+const QUICK_FILTERS_HIDDEN_PREFIXES = ["/auth", "/rules", "/privacy", "/terms", "/offline"];
+
 export default function CommandHub({ summary, tierProgress, isAdmin = false, dataset }: CommandHubProps) {
   const hubRef = React.useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
@@ -43,6 +45,11 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     pathname?.startsWith("/3-star") ||
     pathname?.startsWith("/4-star") ||
     pathname?.startsWith("/all-effects")
+  );
+  // Quick Filters only filter tracker/builder content; on reading and account pages
+  // the floating button would just cover text.
+  const showQuickFiltersFab = !QUICK_FILTERS_HIDDEN_PREFIXES.some(
+    (prefix) => pathname === prefix || Boolean(pathname?.startsWith(`${prefix}/`))
   );
   const { data: session } = useSession();
   const isUserAdmin = Boolean(session?.user && ((session.user as { role?: string }).role === "ADMIN" || (session.user as { isAdmin?: boolean }).isAdmin)) || isAdmin;
@@ -119,6 +126,28 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
   }, []);
 
   React.useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute("data-quick-filters", showQuickFiltersFab ? "on" : "off");
+    return () => {
+      root.removeAttribute("data-quick-filters");
+    };
+  }, [showQuickFiltersFab]);
+
+  // Below 1200px the open hub is a full-screen overlay: lock the page behind it.
+  React.useEffect(() => {
+    if (!expanded) return;
+    const overlay = window.matchMedia("(max-width: 1199px)");
+    const root = document.documentElement;
+    const apply = () => root.classList.toggle("command-hub-scroll-lock", overlay.matches);
+    apply();
+    overlay.addEventListener("change", apply);
+    return () => {
+      overlay.removeEventListener("change", apply);
+      root.classList.remove("command-hub-scroll-lock");
+    };
+  }, [expanded]);
+
+  React.useEffect(() => {
     if (!expanded) return;
 
     function handlePointerDown(event: PointerEvent) {
@@ -182,6 +211,11 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <Search className="h-4 w-4 text-foreground/50 shrink-0" />
           <input
             ref={searchInputRef}
+            aria-label="Search"
+            enterKeyHint="search"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             value={query}
             onChange={(event) => {
               const val = event.target.value;
@@ -233,7 +267,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             <button
               type="button"
               onClick={() => setExpanded(false)}
-              className="flex items-center gap-1 text-xs font-bold uppercase text-foreground/60 hover:text-foreground bg-background/50 px-2.5 py-1 rounded border border-border/30 cursor-pointer"
+              className="flex min-h-11 items-center gap-1 text-xs font-bold uppercase text-foreground/60 hover:text-foreground bg-background/50 px-3 py-1 rounded border border-border/30 cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
               <span>Close</span>
@@ -421,7 +455,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               {originOptions.length > 0 && (
                 <div className="space-y-1.5">
                   <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Origins</span>
-                  <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                  <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto max-xl:max-h-none max-xl:overflow-visible">
                     {originOptions.map((origin) => {
                       const active = originFilters.includes(origin);
                       return (
@@ -737,6 +771,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     </div>
       
       {/* Floating Quick-Filter button on mobile */}
+      {showQuickFiltersFab && (
       <button
         type="button"
         onClick={() => {
@@ -754,6 +789,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <span className="h-2 w-2 rounded-full bg-warning animate-ping" />
         )}
       </button>
+      )}
     </>
   );
 }
