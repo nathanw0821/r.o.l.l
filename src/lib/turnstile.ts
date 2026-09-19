@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { clientIpFrom } from "@/lib/rate-limit";
 
 export type TurnstileVerifyResult = {
   success: boolean;
@@ -23,12 +24,12 @@ export async function verifyTurnstileToken(token: string | null | undefined): Pr
   }
 
   try {
-    const ip = (await headers()).get("x-forwarded-for")?.split(",")[0];
+    const ip = clientIpFrom(await headers());
 
     const formData = new URLSearchParams();
     formData.append("secret", secretKey);
     formData.append("response", token);
-    if (ip) {
+    if (ip && ip !== "anonymous") {
       formData.append("remoteip", ip);
     }
 

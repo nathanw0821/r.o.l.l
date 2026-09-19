@@ -1,12 +1,21 @@
 import { NextResponse } from "next/server";
 import { getGeminiClient, GEMINI_DEFAULT_MODEL } from "@/lib/ai/gemini-client";
 import { getLocalTacticalAdvice } from "@/lib/ai/local-tactics";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   let specialPayload: Record<string, number> = {};
   let perksPayload: Array<{ name: string; rank: number; special: string }> = [];
+
+  const limiter = await rateLimit("ai-build-advisor", 6, 60000);
+  if (!limiter.success) {
+    return NextResponse.json({ success: false, error: "Too many requests. Please try again shortly." }, { status: 429 });
+  }
+  if (Number(req.headers.get("content-length") ?? 0) > 32_000) {
+    return NextResponse.json({ success: false, error: "Request too large." }, { status: 413 });
+  }
 
   try {
     const body = await req.json();
@@ -22,8 +31,16 @@ export async function POST(req: Request) {
       );
     }
 
-    specialPayload = special;
-    perksPayload = perks || [];
+    specialPayload = Object.fromEntries(
+      Object.entries(special)
+        .slice(0, 7)
+        .map(([k, v]) => [String(k).slice(0, 12), Math.max(0, Math.min(99, Number(v) || 0))])
+    );
+    perksPayload = (Array.isArray(perks) ? perks : []).slice(0, 60).map((p) => ({
+      name: String(p?.name ?? "").slice(0, 60),
+      rank: Math.max(0, Math.min(5, Number(p?.rank) || 0)),
+      special: String(p?.special ?? "").slice(0, 12)
+    }));
 
     const ai = getGeminiClient();
     if (!ai) {
@@ -46,8 +63,7 @@ export async function POST(req: Request) {
     const prompt = `You are Vault-Tec's Senior Tactical AI Advisor for Fallout 76 (2026 Patch & PTS Standard).
 FALLOUT 76 GAME MECHANICS & R.O.L.L. PLATFORM FEATURES:
 - Perk Card Limit: Universal maximum of 15 perk card points per S.P.E.C.I.A.L. category across all character builds.
-- Logarithmic Damage Formula Audit: min(0.99, (Damage / Enemy DR)^0.366).
-- Direct SeventySix.esm Binary Extraction: 100% FormID parity for all 1★–4★ legendary mods.
+- Damage after armor: Damage × min(0.99, ((Damage × 0.15) / Enemy DR)^0.365).
 - Expeditions: Complete drop tables for The Pitt (Union Dues, From Ashes to Fire) and Atlantic City (Tax Evasion, Sensational Game, Human Condition).
 - Legendary Perks & Serum Suppression: Maximum 6 Legendary Perk Cards; Mutation food multipliers scale 2.5x with Herbivore/Carnivore and 1x under Serum Suppression.
 

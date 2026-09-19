@@ -125,14 +125,6 @@ export const authOptions: NextAuthOptions = {
       process.env.APP_URL = process.env.NEXTAUTH_URL;
     }
 
-    console.log("[NextAuth get providers] process.env check:", {
-      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? "defined" : "undefined",
-      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? "defined" : "undefined",
-      TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID ? "defined" : "undefined",
-      REDDIT_CLIENT_ID: process.env.REDDIT_CLIENT_ID ? "defined" : "undefined",
-      AZURE_AD_CLIENT_ID: process.env.AZURE_AD_CLIENT_ID ? "defined" : "undefined",
-    });
-
     return [
       CredentialsProvider({
         name: "Username or Email",
@@ -204,21 +196,8 @@ export const authOptions: NextAuthOptions = {
             return updated;
           }
 
-          const legacyNoSecondary = identifierIsEmail
-            ? null
-            : await prisma.user.findFirst({
-                where: { authCode: legacyAuthCode, secondaryCode: null }
-              });
-
-          if (legacyNoSecondary) {
-            const passwordHash = await hashPassword(password);
-            const updated = await prisma.user.update({
-              where: { id: legacyNoSecondary.id },
-              data: { username, passwordHash, authCode: null, secondaryCode: null }
-            });
-            await applyProfile(updated.id);
-            return updated;
-          }
+          // Accounts with an auth code but no secondary code used to sign in with ANY password (which
+          // then became their password). Production had none (checked 2026-09-18); the path is gone.
 
           if (existing) {
             return null;
@@ -306,7 +285,7 @@ export const authOptions: NextAuthOptions = {
       }
     }
   } : undefined,
-  debug: true
+  debug: process.env.NODE_ENV !== "production"
 };
 
 export const getAppSession = cache(async () => {

@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       delivered: verification.delivered
     }, 201);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to create account.";
-    return internalError(message);
+    console.error("[sign-up] account creation failed:", error);
+    return internalError("Unable to create account. Please try again.");
   }
 }
