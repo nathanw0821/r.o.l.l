@@ -11,7 +11,8 @@ const config = [
       ".vercel/**",
       ".wrangler/**",
       "node_modules/**",
-      "worker-configuration.d.ts"
+      "worker-configuration.d.ts",
+      ".claude/**"
     ]
   },
   ...nextVitals,

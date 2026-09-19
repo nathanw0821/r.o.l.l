@@ -25,6 +25,19 @@ export function clientIpFrom(h: Pick<Headers, "get">): string {
   return h.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
 }
 
+/**
+ * Production and preview bind the same KV namespace, so keys carry the deployment's host
+ * (preview traffic must not share production's buckets).
+ */
+function environmentPrefix(): string {
+  try {
+    const host = new URL(process.env.NEXTAUTH_URL ?? "").host;
+    return host ? `${host}:` : "";
+  } catch {
+    return "";
+  }
+}
+
 /** Cloudflare KV rejects expirationTtl below 60 seconds; the window itself lives in `expiresAt`. */
 const KV_MIN_TTL_SECONDS = 60;
 function kvTtl(ms: number) {
@@ -33,7 +46,7 @@ function kvTtl(ms: number) {
 
 export async function rateLimit(key: string, limit: number, windowMs: number) {
   const ip = clientIpFrom(await headers());
-  const fullKey = `${key}:${ip}`;
+  const fullKey = `${environmentPrefix()}${key}:${ip}`;
   const now = Date.now();
 
   // Try to retrieve Cloudflare KV_LIMITER namespace if running in Cloudflare context

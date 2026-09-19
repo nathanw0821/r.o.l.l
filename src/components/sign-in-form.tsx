@@ -24,10 +24,14 @@ export default function SignInForm({
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    const notice = searchParams.get("notice");
+    if (notice === "password-changed") setError("Password saved. You were signed out on every device; sign in with your new password.");
+    else if (notice === "email-changed") setError("Email changed. You were signed out on every device; sign in again and use the verification link we sent.");
     const errorParam = searchParams.get("error");
     if (errorParam) {
       if (errorParam === "OAuthCallback") setError("Google was unable to verify your account. Check your redirect URIs or try again.");
       else if (errorParam === "OAuthAccountNotLinked") setError("This email is already linked to another sign-in method. Try using your password.");
+      else if (errorParam === "VerifyEmailToLink") setError("An account with this email already exists. Sign in with your password and verify your email in Profile settings first; then Google or Discord can be linked.");
       else setError(`Authentication Error: ${errorParam}`);
     }
   }, [searchParams]);

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { newPasswordSchema } from "@/lib/password-policy";
 import { badRequest, ok, tooManyRequests } from "@/lib/api/responses";
 import { rateLimit } from "@/lib/rate-limit";
 import { parseJson } from "@/lib/api/validation";
@@ -6,7 +7,7 @@ import { resetPasswordByToken } from "@/lib/password-reset";
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1),
-  password: z.string().min(8)
+  password: newPasswordSchema
 });
 
 export async function POST(request: Request) {

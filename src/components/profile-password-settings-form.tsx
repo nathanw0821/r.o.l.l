@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
 export default function ProfilePasswordSettingsForm({
@@ -43,11 +44,8 @@ export default function ProfilePasswordSettingsForm({
       return;
     }
 
-    setCurrentPassword("");
-    setNextPassword("");
-    setConfirmPassword("");
-    setMessage(hasPassword ? "Password updated." : "Password created.");
-    setPending(false);
+    // A new password ends every session, this one included.
+    await signOut({ callbackUrl: "/auth/sign-in?notice=password-changed" });
   }
 
   return (
