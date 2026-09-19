@@ -38,6 +38,12 @@ export async function createCharacter(input: { name: string, gameAccountId?: str
 
   // If gameAccountId provided, check limit for that account
   if (parsed.data.gameAccountId) {
+    const ownsAccount = await prisma.gameAccount.count({
+      where: { id: parsed.data.gameAccountId, userId: session.user.id }
+    });
+    if (!ownsAccount) {
+      throw new Error("Game account not found");
+    }
     const accountCharCount = await prisma.character.count({
       where: { gameAccountId: parsed.data.gameAccountId }
     });

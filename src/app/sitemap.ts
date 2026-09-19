@@ -10,9 +10,15 @@ const publicRoutes = [
   "/2-star",
   "/3-star",
   "/4-star",
-  "/still-need",
+  "/perks",
+  "/pts",
+  "/transmissions",
+  "/wiki",
   "/wiki/glossary",
-  "/settings"
+  "/screenshot-assist",
+  "/rules",
+  "/privacy",
+  "/terms"
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -51,7 +51,7 @@ export async function deleteGameAccount(accountId: string) {
 
   // Delete all characters in this account
   await prisma.character.deleteMany({
-    where: { gameAccountId: accountId }
+    where: { gameAccountId: accountId, userId: session.user.id }
   });
 
   await prisma.gameAccount.delete({
@@ -90,10 +90,14 @@ export async function createGameAccountAndLinkCharacter(input: {
       }
     });
 
-    await tx.character.update({
-      where: { id: input.characterId },
+    // Only the caller's own character may be linked (and made active).
+    const linked = await tx.character.updateMany({
+      where: { id: input.characterId, userId: session.user.id },
       data: { gameAccountId: account.id }
     });
+    if (linked.count !== 1) {
+      throw new Error("Character not found");
+    }
 
     // Also set as active
     await tx.userSettings.upsert({

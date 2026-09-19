@@ -58,9 +58,14 @@ export async function GET(request: Request) {
     }
 
     if (q) {
-      where.OR = [
-        { title: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
+      // AND, not OR: a search must narrow "mine" instead of replacing its ownership filter.
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: q, mode: "insensitive" } },
+            { description: { contains: q, mode: "insensitive" } },
+          ],
+        },
       ];
     }
 

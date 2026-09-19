@@ -28,26 +28,21 @@ function getConnectionString(): string | undefined {
   // 1. Try to get it from Cloudflare request context
   try {
     const ctx = getCloudflareContext();
-    console.log("[Prisma] getCloudflareContext returned ctx:", !!ctx);
     if (ctx) {
       const env = ctx.env as Record<string, string | undefined>;
-      console.log("[Prisma] ctx.env keys:", Object.keys(env || {}));
       if (env?.DATABASE_URL) {
         connectionString = env.DATABASE_URL;
-        console.log("[Prisma] Found DATABASE_URL in Cloudflare context");
       }
     }
-  } catch (e) {
-    console.log("[Prisma] getCloudflareContext threw error:", e instanceof Error ? e.message : String(e));
+  } catch {
+    // Not running inside a Cloudflare request (build, tests, local dev).
   }
 
   // 2. Fall back to process.env
   if (!connectionString) {
     connectionString = process.env.DATABASE_URL;
-    if (connectionString) {
-      console.log("[Prisma] Found DATABASE_URL in process.env");
-    } else {
-      console.log("[Prisma] DATABASE_URL not found in process.env either!");
+    if (!connectionString) {
+      console.error("[Prisma] DATABASE_URL is not configured.");
     }
   }
 

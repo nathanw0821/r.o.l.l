@@ -76,7 +76,7 @@ export async function POST(request: Request) {
       });
     });
 
-    console.log(`[Security / Deletion] Permanently deleted user: ${email}`);
+    console.log(`[Security / Deletion] Permanently deleted user id ${userId}`);
     return ok({ success: true, message: "Account permanently deleted." });
 
   } catch (error) {
