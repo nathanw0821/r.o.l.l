@@ -10,6 +10,7 @@
  *   source            one of WIKI_SOURCES
  *   stubs=hide        hide stub guides (body under 300 characters)
  *   current=1         hide guides flagged "May be out of date" or "Outdated"
+ *   sort              one of GUIDE_SORTS (default "newest", omitted from the URL)
  *   page              1-based page number (default 1)
  * `id` / `article` (open one guide in the reader) are deep links handled by the page, not list state.
  */
@@ -28,6 +29,12 @@ export const WIKI_SOURCES = [
 ] as const;
 export type WikiSource = (typeof WIKI_SOURCES)[number];
 
+/** Result orders the list offers (`/api/wiki/search` understands each). "newest" is the default. */
+export const GUIDE_SORTS = ["newest", "oldest", "title-asc", "title-desc"] as const;
+export type GuideSort = (typeof GUIDE_SORTS)[number];
+export const DEFAULT_GUIDE_SORT: GuideSort = "newest";
+
+const SORT_SET: ReadonlySet<string> = new Set(GUIDE_SORTS);
 const CATEGORY_SET: ReadonlySet<string> = new Set(WIKI_CATEGORY_IDS);
 const SOURCE_SET: ReadonlySet<string> = new Set(WIKI_SOURCES);
 
@@ -40,6 +47,8 @@ export interface GuideListState {
   hideStubs: boolean;
   /** `current=1`: hide possibly outdated guides. */
   hideOutdated: boolean;
+  /** Result order. Not a filter: no chip, not counted, and "Clear all" keeps it. */
+  sort: GuideSort;
   page: number;
 }
 
@@ -51,6 +60,7 @@ export const DEFAULT_GUIDE_LIST_STATE: GuideListState = {
   source: null,
   hideStubs: false,
   hideOutdated: false,
+  sort: DEFAULT_GUIDE_SORT,
   page: 1,
 };
 
@@ -73,6 +83,11 @@ export function readSource(raw: string | null | undefined): WikiSource | null {
   return value && SOURCE_SET.has(value) ? (value as WikiSource) : null;
 }
 
+export function readSort(raw: string | null | undefined): GuideSort | null {
+  const value = raw?.trim().toLowerCase();
+  return value && SORT_SET.has(value) ? (value as GuideSort) : null;
+}
+
 /** Positive integer page, else 1. */
 export function readPage(raw: string | null | undefined): number {
   if (!raw || !/^\d+$/.test(raw.trim())) return 1;
@@ -90,6 +105,7 @@ export function parseGuideListState(params: ParamReader | null | undefined): Gui
     source: readSource(params.get("source")),
     hideStubs: params.get("stubs") === "hide",
     hideOutdated: params.get("current") === "1",
+    sort: readSort(params.get("sort")) ?? DEFAULT_GUIDE_SORT,
     page: readPage(params.get("page")),
   };
 }
@@ -104,6 +120,7 @@ export function serializeGuideListState(state: GuideListState): string {
   if (state.source && SOURCE_SET.has(state.source)) params.set("source", state.source);
   if (state.hideStubs) params.set("stubs", "hide");
   if (state.hideOutdated) params.set("current", "1");
+  if (state.sort !== DEFAULT_GUIDE_SORT && SORT_SET.has(state.sort)) params.set("sort", state.sort);
   if (state.page > 1) params.set("page", String(state.page));
   return params.toString();
 }
@@ -192,9 +209,12 @@ export function removeFilter(state: GuideListState, key: GuideFilterKey): GuideL
   return next;
 }
 
-/** Everything back to defaults (query included), like the old "Reset all filters & search". */
-export function clearAllFilters(): GuideListState {
-  return { ...DEFAULT_GUIDE_LIST_STATE };
+/**
+ * Everything back to defaults (query included), like the old "Reset all filters & search".
+ * The sort order is a view choice, not a filter: pass the current one to keep it.
+ */
+export function clearAllFilters(sort: GuideSort = DEFAULT_GUIDE_SORT): GuideListState {
+  return { ...DEFAULT_GUIDE_LIST_STATE, sort };
 }
 
 /**
