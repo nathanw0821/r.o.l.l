@@ -581,7 +581,7 @@ test.describe("phone layout", () => {
     await page.goto("/wiki");
     await expect(page.locator("[data-guide-row]").first()).toBeVisible({ timeout: 20_000 });
     const feedback = page.getByRole("button", { name: "Feedback", exact: true });
-    const quickFilters = page.getByRole("button", { name: "Open Command Hub Filters" });
+    const quickFilters = page.getByRole("button", { name: /^Quick filters/ });
     await expect(feedback).toBeVisible({ timeout: 20_000 });
     await expect(quickFilters).toBeVisible({ timeout: 20_000 });
 
@@ -618,7 +618,7 @@ test.describe("phone layout", () => {
     await page.getByRole("button", { name: "Close feedback" }).click();
     await expect(feedback).toBeVisible();
 
-    const quickFilters = page.getByRole("button", { name: "Open Command Hub Filters" });
+    const quickFilters = page.getByRole("button", { name: /^Quick filters/ });
     await expect(quickFilters).toBeVisible({ timeout: 20_000 });
     await quickFilters.click();
     await expect(page.getByText("[ COMMAND CENTER ]")).toBeVisible();

@@ -196,13 +196,13 @@ export function ScaleformSpecialVisual({
       >
         <span
           className="text-[0.55rem] sm:text-[0.64rem] font-medium tracking-[0.16em] text-white/90 uppercase leading-none"
-          style={{ fontFamily: "'Oswald', sans-serif" }}
+          style={{ fontFamily: "var(--font-oswald), 'Oswald', sans-serif" }}
         >
           {specialName}
         </span>
         <span
           className="text-[0.76rem] sm:text-[0.90rem] font-bold tracking-wide text-white uppercase truncate max-w-full leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] mt-0.5"
-          style={{ fontFamily: "'Oswald', sans-serif" }}
+          style={{ fontFamily: "var(--font-oswald), 'Oswald', sans-serif" }}
         >
           {displayName}
         </span>
@@ -212,7 +212,7 @@ export function ScaleformSpecialVisual({
       <div className="absolute top-[1.2%] left-[2%] w-[13.5%] h-[10.2%] bg-[#dfd5be] border-[2px] border-[#b8984d] rounded-tl-lg rounded-br-md shadow-[2px_2px_5px_rgba(0,0,0,0.45),inset_0_0_0_1px_#59451d] flex flex-col items-center justify-center z-[35] pointer-events-none">
         <span
           className="text-base sm:text-xl font-bold text-slate-850 leading-none drop-shadow-[0_1px_0_rgba(255,255,255,0.7)]"
-          style={{ fontFamily: "'Oswald', sans-serif" }}
+          style={{ fontFamily: "var(--font-oswald), 'Oswald', sans-serif" }}
         >
           {cost}
         </span>
@@ -246,7 +246,7 @@ export function ScaleformSpecialVisual({
         <div className="absolute top-[8%] left-[6%] right-[6%] h-[48%] flex items-center">
           <p
             className="text-[0.62rem] sm:text-[0.74rem] font-bold text-slate-900 leading-snug line-clamp-3 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]"
-            style={{ fontFamily: "'Roboto Condensed', sans-serif" }}
+            style={{ fontFamily: "var(--font-roboto-condensed), 'Roboto Condensed', sans-serif" }}
           >
             {description}
           </p>
@@ -302,13 +302,13 @@ export function ScaleformLegendaryVisual({
       <div className="absolute top-[6%] inset-x-[8%] h-[12%] flex flex-col items-center justify-center text-center z-[25] leading-tight pointer-events-none">
         <span
           className="text-[0.6rem] sm:text-[0.68rem] font-bold tracking-[0.22em] text-amber-300 uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
-          style={{ fontFamily: "'Oswald', sans-serif" }}
+          style={{ fontFamily: "var(--font-oswald), 'Oswald', sans-serif" }}
         >
           - LEGENDARY -
         </span>
         <span
           className="text-[0.8rem] sm:text-[0.95rem] font-bold tracking-wide text-white uppercase truncate max-w-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]"
-          style={{ fontFamily: "'Oswald', sans-serif" }}
+          style={{ fontFamily: "var(--font-oswald), 'Oswald', sans-serif" }}
         >
           {displayName}
         </span>
@@ -336,7 +336,7 @@ export function ScaleformLegendaryVisual({
       <div className="absolute bottom-[4.5%] inset-x-[7%] h-[13.5%] flex items-center justify-center text-center z-[25] pointer-events-none px-1">
         <p
           className="text-[0.62rem] sm:text-[0.74rem] font-bold text-white leading-tight line-clamp-3 drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)]"
-          style={{ fontFamily: "'Roboto Condensed', sans-serif" }}
+          style={{ fontFamily: "var(--font-roboto-condensed), 'Roboto Condensed', sans-serif" }}
         >
           {description}
         </p>

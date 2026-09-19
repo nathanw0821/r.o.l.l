@@ -245,11 +245,21 @@ export function useBuilderShare({
 
   const [shareTurnstileToken, setShareTurnstileTokenState] = React.useState<string | null>(null);
   const [turnstileRenderKey, setTurnstileRenderKey] = React.useState(0);
+  // The anti-bot widget (a third-party script) loads only once a guest presses Publish.
+  const [turnstileActive, setTurnstileActive] = React.useState(false);
+  const publishWhenVerifiedRef = React.useRef(false);
   const setShareTurnstileToken = React.useCallback((token: string) => {
     setShareTurnstileTokenState(token || null);
   }, []);
 
   async function shareBuild() {
+    if (!currentUserId && !shareTurnstileToken) {
+      publishWhenVerifiedRef.current = true;
+      setTurnstileActive(true);
+      setShareResult(null);
+      return;
+    }
+    publishWhenVerifiedRef.current = false;
     setShareBusy(true);
     setShareResult(null);
     try {
@@ -336,6 +346,15 @@ export function useBuilderShare({
       }
     }
   }
+
+  // A guest pressed Publish before the check: publish as soon as the widget hands us a token.
+  React.useEffect(() => {
+    if (shareTurnstileToken && publishWhenVerifiedRef.current) {
+      void shareBuild();
+    }
+    // shareBuild reads the latest state on each render; only a new token should trigger this.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shareTurnstileToken]);
 
   async function updateTransmission() {
     if (!activeTransmission) return;
@@ -438,7 +457,7 @@ export function useBuilderShare({
     updateBusy,
     updateStatus,
     shareBuild,
-    needsTurnstile: !currentUserId,
+    needsTurnstile: !currentUserId && turnstileActive,
     setShareTurnstileToken,
     turnstileRenderKey,
     updateTransmission,
