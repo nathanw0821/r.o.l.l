@@ -35,4 +35,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **ROTATE, DON'T JUST DELETE**: a secret that was ever committed stays in git history; rotate it at the provider. Record steps in `~/Desktop/Agent_Exchange/SECRETS_RESET_PLAN.md`.
 - **`NEXT_PUBLIC_*` IS BUILD-TIME**: public client values (e.g. the Turnstile site key) must be in the CI build env (`.github/workflows/deploy.yml`), not only in `wrangler.toml`.
 - **NEVER HOTLINK**: never embed or rehost images or other assets served by third-party sites; link to the source page instead.
+- **NO SIDE-DOOR DEPLOYS**: never deploy with `wrangler deploy`, the Cloudflare MCP or any path other than Nathan's push to `main` (CI deploys). The Cloudflare MCP / plugin is for docs, logs and observability only.
+
+## 🔎 Search & Client Performance Decisions (2026-09-19)
+- No in-browser ML models, no DuckDB-/SQLite-Wasm, no ONNX inside the Worker (3 MiB bundle limit, phone bandwidth). The data is small (149 mods, 268 perk cards, 3,384 guides): plain filtering is sub-millisecond.
+- Precision problems ("without Power Armor", "under 20% HP") are solved with structured filters on the truth pack first. A server-side Cloudflare Workers AI reranker for guide search only if real query logs show the need.
+- Preferred client-side upgrade: a small prebuilt MiniSearch/FlexSearch guide index cached by the service worker (offline search for the app).
+- Consult the `modern-web-guidance` skill before HTML/CSS/client-side JS work.
 
