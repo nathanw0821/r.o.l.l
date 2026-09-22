@@ -7,6 +7,9 @@
  *     it answer with the cached /offline page. Page HTML is never stored.
  *   - Same-origin static files under /_next/static/ and /images/ (content-hashed or
  *     immutable) are cache-first, fetched without cookies.
+ *   - Guide data under /data/wiki (the client search index and guide bodies) is
+ *     network-first: fresh while online, the last copy when offline. The /wiki page
+ *     searches the cached index itself when /api/wiki/search cannot be reached.
  *
  * What it never touches (no respondWith, the browser handles them directly):
  *   - /api/* and /auth/* (auth, server data, anything user-specific)
@@ -17,12 +20,16 @@
  * Registered only in production builds (src/components/service-worker-register.tsx).
  * Bump VERSION to drop every old cache on the next activation.
  */
-const VERSION = "roll-sw-v1";
+const VERSION = "roll-sw-v2";
 const OFFLINE_URL = "/offline";
 const OFFLINE_CACHE = `${VERSION}-offline`;
 const STATIC_CACHE = `${VERSION}-static`;
+const GUIDES_CACHE = `${VERSION}-guides`;
 const STATIC_MAX_ENTRIES = 300;
+const GUIDES_MAX_ENTRIES = 250;
 const STATIC_PREFIXES = ["/_next/static/", "/images/"];
+/** Guide data: the client search index (/data/wiki-index.json) and the guide bodies (/data/wiki/<id>.json). */
+const GUIDES_PREFIX = "/data/wiki";
 const BYPASS_PREFIXES = ["/api/", "/auth/"];
 
 self.addEventListener("install", (event) => {
@@ -83,6 +90,22 @@ async function staticCacheFirst(request) {
   return response;
 }
 
+async function guidesNetworkFirst(request) {
+  const cache = await caches.open(GUIDES_CACHE);
+  try {
+    const response = await fetch(request.url, { credentials: "omit" });
+    if (isCacheable(response)) {
+      await cache.put(request.url, response.clone());
+      trimCache(GUIDES_CACHE, GUIDES_MAX_ENTRIES).catch(() => undefined);
+    }
+    return response;
+  } catch (error) {
+    const cached = await cache.match(request.url);
+    if (cached) return cached;
+    throw error;
+  }
+}
+
 async function networkWithOfflineFallback(request) {
   try {
     return await fetch(request);
@@ -109,6 +132,11 @@ self.addEventListener("fetch", (event) => {
 
   if (isStaticAsset(url)) {
     event.respondWith(staticCacheFirst(request));
+    return;
+  }
+
+  if (url.pathname.startsWith(GUIDES_PREFIX)) {
+    event.respondWith(guidesNetworkFirst(request));
   }
   // Anything else: not intercepted.
 });
