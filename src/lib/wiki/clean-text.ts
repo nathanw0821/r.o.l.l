@@ -546,7 +546,7 @@ function isCommenterLine(line: string): boolean {
  */
 function cutCommentThread(text: string): string {
   const match = COMMENT_TIMESTAMP.exec(text);
-  if (!match) return text;
+  if (!match) return cutQuotedReplyThread(text);
   const paragraphStart = text.lastIndexOf("\n\n", match.index);
   let cut = paragraphStart < 0 ? 0 : paragraphStart;
 
@@ -566,8 +566,46 @@ function cutCommentThread(text: string): string {
   return text.slice(0, cut);
 }
 
-/** Lines that are only left dangling once the boilerplate after them is gone. */
-const DANGLING_TAIL = [/^(?:\*\*|__)Other Guides(?:\*\*|__)$/, COMMENTER_LINE, TEAM_SIGNATURE_LINE];
+/**
+ * A NukaKnights reply thread whose timestamps the scrape dropped (id 3640): the parent comment
+ * is quoted, then the commenter's name line, then the same quote again, with nothing but prose
+ * after it. The thread starts at the quoted paragraph. Without the repeat a lone "Name:" line
+ * could be article text, so nothing is cut.
+ */
+function cutQuotedReplyThread(text: string): string {
+  const lines = text.split("\n");
+  let offset = 0;
+  for (let i = 0; i < lines.length; i += 1) {
+    const next = lines[i + 1];
+    if (isCommenterLine(lines[i]) && next !== undefined && next.trim() !== "") {
+      const after = lines.slice(i + 1);
+      if (!after.some((line) => STRUCTURE_LINE.test(line))) {
+        const quote = after.join("\n").trim().split(/\n\s*\n/)[0].trim();
+        const before = text.slice(0, offset);
+        const quotedAt = quote.length >= 20 ? before.indexOf(quote) : -1;
+        if (quotedAt >= 0) {
+          const paragraphStart = before.lastIndexOf("\n\n", quotedAt);
+          return text.slice(0, paragraphStart < 0 ? 0 : paragraphStart);
+        }
+      }
+    }
+    offset += lines[i].length + 1;
+  }
+  return text;
+}
+
+/**
+ * Lines that are only left dangling once the boilerplate after them is gone: a heading or a
+ * bold-only line with nothing under it ("## Gallery" over dropped images, "__Rewards__" at the
+ * end of a quest guide, id 4443).
+ */
+const DANGLING_TAIL = [
+  /^(?:\*\*|__)Other Guides(?:\*\*|__)$/,
+  COMMENTER_LINE,
+  TEAM_SIGNATURE_LINE,
+  /^#{1,6}\s*\S/,
+  /^(?:\*\*|__)[^*_\n]+(?:\*\*|__):?$/,
+];
 
 function dropDanglingTail(lines: string[]): string[] {
   const out = [...lines];
