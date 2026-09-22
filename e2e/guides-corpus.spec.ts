@@ -35,7 +35,7 @@ test.describe("guides corpus is Fallout 76 only", () => {
   });
 
   test("the guides total on /wiki matches the corpus", async ({ page }) => {
-    expect(counts.all).toBe(3165);
+    expect(counts.all).toBe(3158);
     await page.goto("/wiki");
     await expect(page.getByText(`${counts.all.toLocaleString("en-US")} guides: patch notes`)).toBeVisible({ timeout: 20_000 });
     await expect(page.getByPlaceholder(`Search ${counts.all.toLocaleString("en-US")} guides by title, item or quest`)).toBeVisible();

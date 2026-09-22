@@ -152,7 +152,7 @@ test.describe("guest smoke", () => {
     // toBeHidden() is satisfied whether the loading line never rendered or has since disappeared.
     await expect(page.getByText("Loading guides…")).toBeHidden({ timeout: 20_000 });
 
-    // Wording changed with the guides list upgrade: "Showing N Vault Guides" is now "Showing 3,165 guides".
+    // Wording changed with the guides list upgrade: "Showing N Vault Guides" is now "Showing 3,158 guides".
     const resultsLine = page.getByText(/Showing [\d,]+ guides?/);
     await expect(resultsLine).toBeVisible({ timeout: 20_000 });
     const text = await resultsLine.textContent();
