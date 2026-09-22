@@ -8,6 +8,14 @@ import { createLinkPlanState, linkifyToNodes } from "@/components/linkified-text
 import { openFeedback, outdatedGuideFeedback } from "@/lib/feedback/feedback-prefill";
 
 import wikiCategoryCounts from "@/lib/wiki/wiki-category-counts.json";
+import {
+  findOfflineGuide,
+  isNetworkFailure,
+  loadWikiClientIndex,
+  searchOfflineGuides,
+  warmWikiClientIndex,
+  type GuideListPage,
+} from "@/lib/wiki/offline-search";
 import { UPDATE_PATCHES } from "@/lib/wiki/update-patches";
 import {
   GUIDES_PER_PAGE,
@@ -100,6 +108,53 @@ function searchApiUrl(state: GuideListState, offset: number, limit: number): str
   if (state.hideStubs) params.set("stubs", "hide");
   if (state.hideOutdated) params.set("current", "1");
   return `/api/wiki/search?${params.toString()}`;
+}
+
+/**
+ * One page of the list: the server first; when the request never reaches it (offline), the
+ * same search over the cached client index. Any other failure (HTTP error, bad JSON) rejects.
+ */
+async function requestGuidePage(
+  state: GuideListState,
+  offset: number,
+  limit: number,
+  signal?: AbortSignal,
+): Promise<GuideListPage<ArticleItem>> {
+  try {
+    const res = await fetch(searchApiUrl(state, offset, limit), { signal });
+    const data = await res.json();
+    const items: ArticleItem[] = Array.isArray(data) ? data : [];
+    const header = Number(res.headers.get("X-Total-Count"));
+    return {
+      items,
+      total: Number.isFinite(header) && res.headers.has("X-Total-Count") ? header : items.length,
+      suggestions: parseSuggestionsHeader(res.headers.get("X-Suggestions")),
+      offline: false,
+    };
+  } catch (err) {
+    if (!isNetworkFailure(err)) throw err;
+    const index = await loadWikiClientIndex();
+    const page = searchOfflineGuides(index, state, offset, limit);
+    return { ...page, items: page.items.map(toArticleItem) };
+  }
+}
+
+/** The `?id=` deep link: the server, else the cached client index. */
+async function requestGuideById(id: string): Promise<ArticleItem | null> {
+  try {
+    const res = await fetch(`/api/wiki/search?id=${encodeURIComponent(id)}`);
+    const data = await res.json();
+    return Array.isArray(data) && data[0] ? (data[0] as ArticleItem) : null;
+  } catch (err) {
+    if (!isNetworkFailure(err)) throw err;
+    const match = findOfflineGuide(await loadWikiClientIndex(), id);
+    return match ? toArticleItem(match) : null;
+  }
+}
+
+/** An index row in the shape the list and reader expect (the body is fetched separately). */
+function toArticleItem(row: { id: number | string; source: string; title: string; url: string; category: string; snippet: string; archived?: boolean; stub?: boolean; sourceImages?: boolean }): ArticleItem {
+  return { ...row, content: "", main_image: null };
 }
 
 function toHighResImageUrl(url: string | null): string {
@@ -1183,6 +1238,14 @@ function TruthWikiContent() {
   const [selectedArticle, setSelectedArticle] = React.useState<ArticleItem | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [loadingContent, setLoadingContent] = React.useState(false);
+  /** The last list came from the cached client index because the server was unreachable. */
+  const [offline, setOffline] = React.useState(false);
+
+  // Fetch the client index in the background while online, so the service worker holds it
+  // before the connection is lost.
+  React.useEffect(() => {
+    warmWikiClientIndex();
+  }, []);
 
   const searchInputRef = React.useRef<HTMLInputElement>(null);
   const resultsRef = React.useRef<HTMLOListElement>(null);
@@ -1308,19 +1371,16 @@ function TruthWikiContent() {
   const openDeepLink = React.useCallback(async (id: string, state: GuideListState) => {
     try {
       if (id) {
-        const res = await fetch(`/api/wiki/search?id=${encodeURIComponent(id)}`);
-        const data = await res.json();
-        if (Array.isArray(data) && data[0]) {
-          selectedRef.current = data[0] as ArticleItem;
-          setSelectedArticle(data[0] as ArticleItem);
+        const match = await requestGuideById(id);
+        if (match) {
+          selectedRef.current = match;
+          setSelectedArticle(match);
           return;
         }
       }
       const q = state.q;
       if (q.trim().length > 1) {
-        const res = await fetch(searchApiUrl(state, 0, 100));
-        const data = await res.json();
-        const list: ArticleItem[] = Array.isArray(data) ? data : [];
+        const list = (await requestGuidePage(state, 0, 100)).items;
         const cleanQ = q.toLowerCase().trim();
         const bestMatch =
           list.find((a) => a.title.toLowerCase() === cleanQ) ||
@@ -1376,14 +1436,13 @@ function TruthWikiContent() {
     const state = parseGuideListState(new URLSearchParams(listKey));
     const controller = new AbortController();
     setLoading(true);
-    fetch(searchApiUrl(state, pageOffset(state.page), GUIDES_PER_PAGE), { signal: controller.signal })
-      .then(async (res) => {
-        const data = await res.json();
-        const list: ArticleItem[] = Array.isArray(data) ? data : [];
-        const header = Number(res.headers.get("X-Total-Count"));
-        setArticles(list);
-        setTotal(Number.isFinite(header) && res.headers.has("X-Total-Count") ? header : list.length);
-        setSuggestions(parseSuggestionsHeader(res.headers.get("X-Suggestions")));
+    requestGuidePage(state, pageOffset(state.page), GUIDES_PER_PAGE, controller.signal)
+      .then((page) => {
+        if (controller.signal.aborted) return;
+        setArticles(page.items);
+        setTotal(page.total);
+        setSuggestions(page.suggestions);
+        setOffline(page.offline);
         setLoading(false);
       })
       .catch((err) => {
@@ -1478,12 +1537,16 @@ function TruthWikiContent() {
   React.useEffect(() => {
     if (!selectedId || !selectedCategory || relatedPools[selectedCategory]) return;
     const controller = new AbortController();
-    const params = new URLSearchParams({ category: selectedCategory, sort: "newest", stubs: "hide", limit: "60" });
-    fetch(`/api/wiki/search?${params.toString()}`, { signal: controller.signal })
-      .then((res) => res.json())
-      .then((data) => {
-        const list: ArticleItem[] = Array.isArray(data) ? data : [];
-        setRelatedPools((pools) => ({ ...pools, [selectedCategory]: list }));
+    const poolState: GuideListState = {
+      ...parseGuideListState(new URLSearchParams()),
+      category: selectedCategory,
+      sort: "newest",
+      hideStubs: true,
+    };
+    requestGuidePage(poolState, 0, 60, controller.signal)
+      .then((page) => {
+        if (controller.signal.aborted) return;
+        setRelatedPools((pools) => ({ ...pools, [selectedCategory]: page.items }));
       })
       .catch((err) => {
         if (controller.signal.aborted) return;
@@ -1617,6 +1680,11 @@ function TruthWikiContent() {
                 {total === null ? null : (
                   <>
                     Showing <span className="text-[var(--text-primary)]">{total.toLocaleString()}</span> {total === 1 ? "guide" : "guides"}
+                    {offline ? (
+                      <span data-guides-offline className="ml-2 text-[var(--color-accent)]">
+                        (offline: searching the saved guide list)
+                      </span>
+                    ) : null}
                   </>
                 )}
               </p>

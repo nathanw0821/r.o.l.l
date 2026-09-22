@@ -35,7 +35,8 @@ interface SearchableArticle {
   source: string;
   title: string;
   snippet: string;
-  content: string;
+  /** Optional: the client index used for offline search carries no bodies. */
+  content?: string;
   category: string;
   archived?: boolean;
   stub?: boolean;
@@ -402,7 +403,7 @@ export function searchWikiArticles<T extends SearchableArticle>(
     list = list.filter(
       (a) =>
         a.title.toLowerCase().includes(term) ||
-        a.content.toLowerCase().includes(term) ||
+        (a.content ?? "").toLowerCase().includes(term) ||
         (a.category || "").toLowerCase().includes(term),
     );
   }

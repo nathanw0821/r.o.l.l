@@ -40,6 +40,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## 🔎 Search & Client Performance Decisions (2026-09-19)
 - No in-browser ML models, no DuckDB-/SQLite-Wasm, no ONNX inside the Worker (3 MiB bundle limit, phone bandwidth). The data is small (149 mods, 268 perk cards, 3,158 guides): plain filtering is sub-millisecond.
 - Precision problems ("without Power Armor", "under 20% HP") are solved with structured filters on the truth pack first. A server-side Cloudflare Workers AI reranker for guide search only if real query logs show the need.
-- Preferred client-side upgrade: a small prebuilt MiniSearch/FlexSearch guide index cached by the service worker (offline search for the app).
+- Offline guide search (shipped 2026-09-22): `public/data/wiki-index.json` (titles, snippets, flags; ~190 KB gzipped, written by `scripts/truth/build-wiki-counts.ts`) is fetched in the background on `/wiki` and cached by the service worker with every opened guide body; when `/api/wiki/search` cannot be reached the page runs the same search engine over that index (`src/lib/wiki/offline-search.ts`). No MiniSearch/FlexSearch: the existing engine is small and gives identical ranking.
 - Consult the `modern-web-guidance` skill before HTML/CSS/client-side JS work.
 
