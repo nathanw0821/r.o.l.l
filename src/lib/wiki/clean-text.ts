@@ -353,6 +353,289 @@ function tidyInline(text: string): string {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Site boilerplate (text about the source websites, not about the game)      */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The kinds of source-site boilerplate {@link stripSiteBoilerplate} removes. Used by the
+ * corpus script to report how many guides each kind touched.
+ */
+export type SiteBoilerplateKind =
+  | "duchess-footer-v1"
+  | "duchess-footer-v2"
+  | "buffs-n-brew"
+  | "nk-donation"
+  | "nk-header"
+  | "nk-comments"
+  | "comment-invite"
+  | "wiki-maintenance"
+  | "site-chrome";
+
+interface BoilerplateRule {
+  kind: SiteBoilerplateKind;
+  /** Removed wherever they occur, so a run-on scrape (one long line) is handled too. */
+  inline?: RegExp[];
+  /** Whole lines (trimmed) that are removed when they match. */
+  lines?: RegExp[];
+}
+
+/**
+ * Every pattern is anchored on wording that only the site itself uses (the author's
+ * signature, the site's donation widget, the wiki's own maintenance templates), never
+ * on a single word such as "support" or "donate", which also occur in game text.
+ */
+const SITE_BOILERPLATE_RULES: BoilerplateRule[] = [
+  {
+    // TheDuchessFlame footer, 2024+ wording ("Aussie data miner ... Ko-fi page").
+    kind: "duchess-footer-v1",
+    inline: [
+      /I'?m an Aussie data miner who creates guides for farming, events,? and food buffs in Fallout 76\.*/g,
+      /I firmly believe that knowledge should be accessible to everyone, so my guides will always be free\.\s*However, maintaining a website and using photo and video editing software can be costly\./g,
+      /-?[ \t]*_{0,2}Follow Me on Social Media:?_{0,2}:?\s*Keep up with my latest updates by following me on social media\./g,
+      /-?[ \t]*_{0,2}One-Time Donation:?_{0,2}:?\s*Buy me a coffee\./g,
+      /-?[ \t]*_{0,2}Monthly Contribution:?_{0,2}:?\s*Become a regular supporter by subscribing to my Ko-fi page\./g,
+      /Every bit of support helps cover the costs of creating these guides and maybe even gets me a cup of coffee or three\s*;?\)?/g,
+    ],
+  },
+  {
+    // TheDuchessFlame footer, older wording ("Australian data miner ... buying me a ko-fi").
+    kind: "duchess-footer-v2",
+    inline: [
+      /I'?m an Australian data miner who writes farming, events?,? and food buff guides for Fallout 76(?: and Starfield)?\./g,
+      /I believe that all knowledge and information should be free,? which is why my guides will never be locked behind a paywall\.\s*However, running a website and photo and video editing software does not come cheaply\./g,
+      /So,? if you (?:found|find) my guides (?:helpful|useful),? please consider buy(?:ing)? me a ko-?fi \(coffee\) using the link below\./gi,
+      /All monies go towards the tools for writing my guides and maybe for an actual cup of coffee or 3\s*;?\)?/g,
+      /Alternatively, share my guides with your fellow (?:vault |space |vault and space )*dwellers and help them to survive the (?:wasteland|spaceland|Starfield)\./g,
+    ],
+  },
+  {
+    // The author's food-buff group plug that ends many TheDuchessFlame guides.
+    kind: "buffs-n-brew",
+    inline: [
+      /Join us at _{0,2}Buffs n Brew_{0,2}, a group dedicated to food buffs and (?:food buff )?farming\./g,
+      /Buffs n Brew is a community built around food buff farming, crafting, and sharing knowledge\.\s*Whether you[’']re looking to stock up or learn the best ways to boost your build, we[’']re here to help\./g,
+      /Let Buffs n Brew handle it! Place your food buff order, and our chefs will whip up your meal and deliver it straight to your camp[’']s front door\./g,
+    ],
+    lines: [
+      /^Love food buffs\?$/,
+      /^Love your food buffs\? We[’']ve got you covered\.$/,
+      /^Craving buffs but short on time to make them yourself\?$/,
+      /^(?:Discord|Facebook|Buffs n Brew)\s*-\s*_{0,2}(?:All Platforms|PC|XBOX|Xbox|PlayStation)_{0,2}(?:\s*\([^)\n]*\))?$/,
+      /^\*\*Buffs n Brew (?:XBOX|Xbox|PC|PlayStation)\*\*$/,
+    ],
+  },
+  {
+    // NukaKnights donation widget and merchandising plug (German and English).
+    kind: "nk-donation",
+    inline: [
+      /Hat Dir dieser Artikel weitergeholfen\? Dann unterstütze uns gern mit einer Spende oder einem Abonnement\.(?:\s*Jetzt Spenden)*/g,
+      /(?:Support us with your donation\s*)*Did this article help you\? Then please support us with a donation or subscription\.(?:\s*Donate now)*/g,
+      /(?:Support(?:ed)? us with your donation\s*)+(?=\n|$)/g,
+      /The Merchandising Shop is another channel to \*\*support\*\* us and (?:to )?\*\*donate\*\* in this form\.[^\n]*/g,
+    ],
+    lines: [/^(?:#{1,6}\s*)?(?:Unterstütze uns|Mit Deiner Spende|Support us|With your donation|Jetzt Spenden|Donate now)$/],
+  },
+  {
+    // "Artikel <category><title> <date><category> <author> <date> 2 0 1 <category>" – the
+    // scraped byline, date, like/comment counters and category chips of a NukaKnights post.
+    kind: "nk-header",
+    inline: [
+      new RegExp(
+        String.raw`^(?:Artikel|Article) [^\n]*? \S+ (?:(?:\d{2}[./]\d{2}[./]\d{4}|[A-Z][a-z]+ \d{1,2}(?:st|nd|rd|th)?, \d{4}) )+\d{1,4} \d{1,4} \d{1,4}` +
+          String.raw`(?: (?:NKCAT)(?:,? ?(?:NKCAT))*)?(?: |$)`.replace(
+            /NKCAT/g,
+            "Atom Shop|Fallout 76 News|Spielbrett / Saison|Game Board / Season|Datamining|Insider|Builds|Tipps|Tips|Patchnotes|Patch notes|PTS|Karten|Cards|Maps|Nuka Knights",
+          ),
+        "gm",
+      ),
+    ],
+  },
+  {
+    // Reader comment chrome on NukaKnights: lists of commenter names ("a:b:c:") and the
+    // "Like this event…" hint. The comment threads themselves are cut by `cutCommentThread`.
+    kind: "nk-comments",
+    lines: [
+      /^(?:[^\s:*][^:*\n]{0,29}:){2,}$/,
+      /^\*?Tip: Like this event to receive a notification when it starts or someone comments\.\*?$/,
+    ],
+  },
+  {
+    // "What do you think? Feel free to write in the comments." – an invitation to use the
+    // site's comment box, together with the rhetorical questions that lead into it.
+    kind: "comment-invite",
+    inline: [
+      /(?<=^|[.!?][ \t])(?:[^.!?\n]*\?[ \t]*)*\**(?:If you [^.!?\n]{0,60}?,\s*)?(?:Schreibt (?:es )?(?:uns )?gern in die Kommentare|(?:Feel free to |[Pp]lease |[Jj]ust )?(?:[Ww]rite|[Ll]eave)[^.!?\n]{0,80}? in the comments[^.!?\n]{0,80})[.!]?\**/gm,
+    ],
+  },
+  {
+    // The wikis' own maintenance templates (Fallout Wiki, Nukapedia / Fallout Fandom).
+    kind: "wiki-maintenance",
+    inline: [/This content (?:or section )?(?:needs expanding|requires updating)\.\s*(?=Please help us improve)/g],
+    lines: [
+      /^(?:\*\*[^*\n]{1,60}\*\*\s*)?Please help us improve the article(?: by adding missing information)?!?$/i,
+      /^\|\s*\|[^|\n]*(?:help us improve the article|help \*?(?:Nukapedia|Fallout Wiki)\*?|Nukapedia\*? ?'s quality standards)[^|\n]*\|\s*$/i,
+      /^(?:\*\*[^*\n]{1,60}\*\*\s*)?(?:This article is too short to provide more than rudimentary information about the subject\.\s*|The infobox template in\s*)?You can help \*?Nukapedia\*? ?by (?:writing|expanding|uploading|filling|improving) it(?: in)?\s*\.?$/i,
+      /^\*?Nukapedia\*? ?by (?:writing|expanding|uploading|filling|improving) it(?: in)?\s*\.?$/i,
+      /^You can help$/,
+      /^Article suggested to be split into independent articles as outlined above\.?$/,
+      /^(?=.{0,300}$).*\bNukapedia\b.{0,8}quality standards.*$/,
+      /^The article, infobox or file image has quality issues that need to be rectified\. Please help \*?Fallout Wiki\*? by editing or replacing it with a better version\.?$/,
+    ],
+  },
+  {
+    // Site navigation and widget text that says nothing about the game.
+    kind: "site-chrome",
+    lines: [
+      /^bottom of page$/i,
+      /^Scroll Down$/,
+      /^\*?Click on (?:the )?map for (?:a )?high[- ]resolution version\*?$/i,
+      /^\*\*Your progress will be automatically saved as you mark the boxes on the checklist below\.\*\*$/,
+      /^Related Links:$/,
+      // NukaKnights' article revision widget ("**Changelog** · 1 changes · Last changed: …").
+      /^\*\*Changelog\*\*\s*·\s*\d+ (?:changes?|Änderungen?)\s*·\s*(?:Last changed|Letzte Änderung):[^\n]*$/,
+      // A line whose only content is a pointer to a link on the source site: either the
+      // scraped link marker ("… can be found __here__.") or a pointer to a site resource
+      // ("The advanced 10 sec guide can be found here."). "The skeleton … can be found
+      // here." in a wiki location article is about the game world and is not matched.
+      /^(?:OR )?[^.!?\n]{0,120}?\bcan (?:now )?be found __here[_.:\s]*$/,
+      /^(?:OR )?[^.!?,\n]{0,100}?\b(?:guides?|maps?|checklists?|cop(?:y|ies)|version|photos|list|tracker|calculator|spreadsheet|video|channel|breakdown|patch notes|background)\b[^.!?,\n]{0,40}?\bcan (?:now )?be found here[.:]?$/i,
+    ],
+  },
+];
+
+/**
+ * A reader comment's timestamp on NukaKnights: "0 am 29.05.2026 um 17:09:28 Uhr",
+ * "0 on August 29, 2025 at 10:36:44 am", "0 on 12/5/2025 at 12:16:01 p.m". Articles never
+ * give a time to the second, so this only ever matches the comment widget.
+ */
+const COMMENT_TIMESTAMP = new RegExp(
+  [
+    String.raw`\b\d+\s+am \d{1,2}\.\d{1,2}\.\d{4} um \d{1,2}:\d{2}:\d{2} Uhr`,
+    String.raw`\bon (?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? \d{1,2}, \d{4}|\d{1,2}/\d{1,2}/\d{4}) at \d{1,2}:\d{2}:\d{2}(?:\s*(?:a\.m|p\.m|am|pm)\b)?`,
+  ].join("|"),
+);
+
+/** A line that is nothing but a commenter's name ("Luise76:") or a reply chain ("a:b:c:"). */
+const COMMENTER_LINE = /^[^\s:]+:$/;
+const REPLY_CHAIN_LINE = /^(?:[^\s:*][^:*\n]{0,29}:){2,}$/;
+/** The site team's own reply signature ("skywalka team:"). */
+const TEAM_SIGNATURE_LINE = /^skywalka ?team:$/i;
+
+/** Single-word labels that look like a commenter line but belong to the article. */
+const ARTICLE_LABELS = new Set([
+  "quelle", "quellen", "source", "sources", "zutaten", "ingredients", "description", "beschreibung",
+  "collects", "note", "notes", "hinweis", "tipp", "tip", "rewards", "belohnungen", "alpha", "bravo",
+  "charlie", "update", "fazit", "info", "achtung", "wichtig", "voraussetzungen", "requirements",
+]);
+
+/** A heading, table row or list item: article structure, never part of a comment. */
+const STRUCTURE_LINE = /^\s*(?:#|\||[-*+]\s|\d+\.\s)/;
+
+function isCommenterLine(line: string): boolean {
+  const t = line.trim();
+  if (REPLY_CHAIN_LINE.test(t) || TEAM_SIGNATURE_LINE.test(t)) return true;
+  return COMMENTER_LINE.test(t) && !ARTICLE_LABELS.has(t.slice(0, -1).toLowerCase().replace(/^-/, ""));
+}
+
+/**
+ * Cuts a NukaKnights reader-comment thread off the end of a body. The site always renders
+ * comments after the article, so everything from the start of the thread on is user
+ * interaction. The thread starts at the first commenter-name line that has text right under
+ * it and only unstructured prose between it and the first comment timestamp, or else at the
+ * paragraph holding that timestamp.
+ */
+function cutCommentThread(text: string): string {
+  const match = COMMENT_TIMESTAMP.exec(text);
+  if (!match) return text;
+  const paragraphStart = text.lastIndexOf("\n\n", match.index);
+  let cut = paragraphStart < 0 ? 0 : paragraphStart;
+
+  const lines = text.slice(0, match.index).split("\n");
+  let offset = 0;
+  for (let i = 0; i < lines.length && offset < cut; i += 1) {
+    const next = lines[i + 1];
+    if (isCommenterLine(lines[i]) && next !== undefined && next.trim() !== "") {
+      const between = lines.slice(i + 1);
+      if (!between.some((line) => STRUCTURE_LINE.test(line))) {
+        cut = offset;
+        break;
+      }
+    }
+    offset += lines[i].length + 1;
+  }
+  return text.slice(0, cut);
+}
+
+/** Lines that are only left dangling once the boilerplate after them is gone. */
+const DANGLING_TAIL = [/^(?:\*\*|__)Other Guides(?:\*\*|__)$/, COMMENTER_LINE, TEAM_SIGNATURE_LINE];
+
+function dropDanglingTail(lines: string[]): string[] {
+  const out = [...lines];
+  for (;;) {
+    while (out.length > 0 && !out[out.length - 1].trim()) out.pop();
+    if (out.length === 0) return out;
+    const last = out[out.length - 1].trim();
+    if (!DANGLING_TAIL.some((re) => re.test(last))) return out;
+    out.pop();
+  }
+}
+
+function applyRule(text: string, rule: BoilerplateRule): string {
+  let out = text;
+  for (const re of rule.inline ?? []) out = out.replace(re, "");
+  if (rule.lines?.length) {
+    out = out
+      .split("\n")
+      .filter((line) => !rule.lines!.some((re) => re.test(line.trim())))
+      .join("\n");
+  }
+  return out;
+}
+
+/**
+ * Removes text that is about the source website rather than about Fallout 76: author
+ * signatures and donation appeals, group plugs, NukaKnights bylines, like counters,
+ * reader comments and comment invitations, wiki maintenance templates and page chrome.
+ * Game text is never touched, even where it uses words such as "support" or "donation".
+ *
+ * Pure and idempotent. A text without boilerplate comes back unchanged.
+ */
+export function stripSiteBoilerplate(text: string): string {
+  if (!text) return "";
+  let out = cutCommentThread(text);
+  for (const rule of SITE_BOILERPLATE_RULES) out = applyRule(out, rule);
+  const rawLines = out.split("\n");
+  const lines = dropDanglingTail(rawLines);
+  if (out === text && lines.length === rawLines.length) return text;
+  return lines
+    .map((line) => line.replace(/[ \t]+$/, ""))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/**
+ * Words that only site boilerplate uses. A card snippet was cut from the page by the
+ * scraper, often mid-sentence, so the exact patterns above may not match it; a snippet
+ * that still contains one of these is rebuilt from the cleaned body instead.
+ */
+export const SITE_BOILERPLATE_MARKER =
+  /Nukapedia|help us improve the\b|Please help Fallout Wiki|quality standards|Unterstütze uns|Mit Deiner Spende|Hat Dir dieser Artikel|Did this article help you|Jetzt Spenden|Donate now|\bskywalka\b|data miner who (?:creates|writes)|\bko-?fi\b|Buffs n Brew|Tip: Like this event|(?:^|\s)(?:[^\s:]+:){2,}(?=\s|$)|\b\d+ am \d{1,2}\.\d{1,2}\.\d{4} um \d/i;
+
+/** Which kinds of site boilerplate a text contains (for reporting; empty when clean). */
+export function siteBoilerplateKinds(text: string): SiteBoilerplateKind[] {
+  if (!text) return [];
+  const kinds: SiteBoilerplateKind[] = [];
+  if (cutCommentThread(text) !== text) kinds.push("nk-comments");
+  for (const rule of SITE_BOILERPLATE_RULES) {
+    if (applyRule(text, rule) !== text && !kinds.includes(rule.kind)) kinds.push(rule.kind);
+  }
+  // Only a dangling tail ("**Other Guides**", a lone commenter name) was removed.
+  if (kinds.length === 0 && stripSiteBoilerplate(text) !== text.trim()) kinds.push("site-chrome");
+  return kinds;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Title-repeat removal                                                       */
 /* -------------------------------------------------------------------------- */
 
@@ -444,7 +727,7 @@ function truncateToSentence(text: string): { text: string; truncated: boolean } 
  */
 export function cleanSnippet(text: string, title?: string): string {
   if (!text) return "";
-  let out = decodeEntities(text);
+  let out = stripSiteBoilerplate(decodeEntities(text));
 
   // Remember whether the scraper already cut this snippet mid-sentence.
   const hadEllipsis = /(?:\.{3}|…)\s*$/.test(out);
@@ -504,6 +787,10 @@ export function cleanBody(text: string): string {
   if (!text) return "";
   let out = decodeEntities(text);
   out = out.replace(/\r\n?/g, "\n");
+  // Site boilerplate goes first, so the line rules below see the lines it leaves behind
+  // (a byline cut off the front of a line exposes a "See also:" start, for example), and
+  // again at the end for anything that only matches once markup has been unwrapped.
+  out = stripSiteBoilerplate(out);
   out = out.replace(/<[^>]*>/g, " ");
 
   out = stripMarkdownImages(out);
@@ -533,11 +820,12 @@ export function cleanBody(text: string): string {
     kept.push(line);
   }
 
-  return kept
+  const cleaned = kept
     .join("\n")
     .replace(/[ \t]+$/gm, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+  return stripSiteBoilerplate(cleaned);
 }
 
 /* -------------------------------------------------------------------------- */
