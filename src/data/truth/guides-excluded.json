@@ -1,0 +1,888 @@
+{
+  "$comment": "Guides removed from the corpus because they carry no Fallout 76 information: pages about the source websites themselves (site-meta, site-qa, user-post, donation, merchandise), navigation pages (navigation-shell, listing-shell, category-blurb) and pages about other games, the TV series or real life (not-fallout-76). Reviewed by hand on 2026-09-22. scripts/truth/clean-wiki-corpus.ts drops these ids from the index and deletes their bodies on every run, so a re-import cannot bring them back; src/lib/wiki/guides-excluded.test.ts pins that.",
+  "reasons": {
+    "site-qa": "a Q&A page about the website",
+    "user-post": "a member's forum post on the site, not an article",
+    "site-meta": "about the website, its team, features, subscriptions or community",
+    "donation": "a donation appeal",
+    "merchandise": "a merchandise-shop advert",
+    "category-blurb": "a blog category landing page: a description of the category and a list of post titles",
+    "navigation-shell": "the scraped body is only the site menu or a list of links",
+    "listing-shell": "a blog category listing of post titles and dates; the posts themselves are separate guides",
+    "not-fallout-76": "about another game, the TV series or real life"
+  },
+  "guides": [
+    {
+      "id": 9,
+      "source": "NukaKnights",
+      "title": "Questions for Nuka knights",
+      "url": "https://nukaknights.com/fragen-an-nuka-knights.html",
+      "reason": "site-qa",
+      "note": "Nuka Knights' 'questions for us' page: site menu, login prompts and forum post list"
+    },
+    {
+      "id": 13,
+      "source": "NukaKnights",
+      "title": "Pns",
+      "url": "https://nukaknights.com/pns.html",
+      "reason": "site-meta",
+      "note": "Nuka Knights subscription tiers (ad-free / Plus / Prime)"
+    },
+    {
+      "id": 15,
+      "source": "NukaKnights",
+      "title": "Roadmap Archiv",
+      "url": "https://nukaknights.com/roadmap-archiv.html",
+      "reason": "navigation-shell",
+      "note": "Nuka Knights roadmap archive: a list of headings whose images were not scraped"
+    },
+    {
+      "id": 45,
+      "source": "TheDuchessFlame",
+      "title": "Www.Theduchessflame.Com",
+      "url": "https://www.theduchessflame.com",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 46,
+      "source": "TheDuchessFlame",
+      "title": "Data Miner Patch Notes",
+      "url": "https://www.theduchessflame.com/data-miner-patch-notes",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 47,
+      "source": "TheDuchessFlame",
+      "title": "Buffsnbrewmenu",
+      "url": "https://www.theduchessflame.com/buffsnbrewmenu",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 137,
+      "source": "NukaKnights",
+      "title": "Tools",
+      "url": "https://nukaknights.com/tools.html",
+      "reason": "site-meta",
+      "note": "list of Nuka Knights web tools"
+    },
+    {
+      "id": 139,
+      "source": "NukaKnights",
+      "title": "Would you rather sell 4 star items instead of scrapping them",
+      "url": "https://nukaknights.com/posts/would-you-rather-sell-4-star-items-instead-of-scrapping-them.html",
+      "reason": "user-post",
+      "note": "a member's community-forum post on Nuka Knights, not an article"
+    },
+    {
+      "id": 140,
+      "source": "NukaKnights",
+      "title": "Do you also sell 4 star items for bottle caps instead of recycling them",
+      "url": "https://nukaknights.com/beitraege/verkauft-ihr-auch-4-sterne-gegenstaende-fuer-kronkorken-statt-sie-zu-verwerten.html",
+      "reason": "user-post",
+      "note": "a member's community-forum post on Nuka Knights, not an article"
+    },
+    {
+      "id": 158,
+      "source": "TheDuchessFlame",
+      "title": "Non Perishable Farming Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/non-perishable-farming-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 159,
+      "source": "TheDuchessFlame",
+      "title": "Checklists",
+      "url": "https://www.theduchessflame.com/blog/categories/checklists",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 170,
+      "source": "TheDuchessFlame",
+      "title": "Bnb About Us",
+      "url": "https://www.theduchessflame.com/bnb-about-us",
+      "reason": "site-meta",
+      "note": "Buffs n Brew group 'About us' page (food-buff ordering service and donation drive)"
+    },
+    {
+      "id": 171,
+      "source": "Fallout Wiki",
+      "title": "Experience Points",
+      "url": "https://fallout.wiki/wiki/Experience_Points",
+      "reason": "not-fallout-76",
+      "note": "Experience Points across Fallout 1-New Vegas; no Fallout 76 content"
+    },
+    {
+      "id": 174,
+      "source": "Fallout Wiki",
+      "title": "Zealot's Marine Armor",
+      "url": "https://fallout.wiki/wiki/Zealot's_Marine_Armor",
+      "reason": "not-fallout-76",
+      "note": "Fallout 4 (Far Harbor) armor"
+    },
+    {
+      "id": 175,
+      "source": "Fallout Wiki",
+      "title": "Inquisitor's Marine Armor",
+      "url": "https://fallout.wiki/wiki/Inquisitor's_Marine_Armor",
+      "reason": "not-fallout-76",
+      "note": "Fallout 4 (Far Harbor) armor"
+    },
+    {
+      "id": 211,
+      "source": "Fallout Wiki",
+      "title": "Assault Rifle (Fallout 3)",
+      "url": "https://fallout.wiki/wiki/Assault_Rifle_(Fallout_3)",
+      "reason": "not-fallout-76",
+      "note": "Fallout 3 weapon"
+    },
+    {
+      "id": 218,
+      "source": "Fallout Wiki",
+      "title": "Mariposa Military Base",
+      "url": "https://fallout.wiki/wiki/Mariposa_Military_Base",
+      "reason": "not-fallout-76",
+      "note": "Fallout / Fallout 2 location (California)"
+    },
+    {
+      "id": 241,
+      "source": "Fallout Fandom",
+      "title": "Unyielding synth chest piece",
+      "url": "https://fallout.fandom.com/wiki/Unyielding_synth_chest_piece",
+      "reason": "not-fallout-76",
+      "note": "Fallout 4 armor; scraped body is only the Fallout 4 apparel navbox"
+    },
+    {
+      "id": 242,
+      "source": "Fallout Fandom",
+      "title": "Fallout 4 legendary armor effects",
+      "url": "https://fallout.fandom.com/wiki/Fallout_4_legendary_armor_effects",
+      "reason": "not-fallout-76",
+      "note": "Fallout 4 legendary effects"
+    },
+    {
+      "id": 255,
+      "source": "Fallout Fandom",
+      "title": "Fallout 4 legendary weapon effects",
+      "url": "https://fallout.fandom.com/wiki/Fallout_4_legendary_weapon_effects",
+      "reason": "not-fallout-76",
+      "note": "Fallout 4 legendary effects"
+    },
+    {
+      "id": 261,
+      "source": "Fallout Fandom",
+      "title": "Powered armor (Fallout)",
+      "url": "https://fallout.fandom.com/wiki/Powered_armor_(Fallout)",
+      "reason": "not-fallout-76",
+      "note": "power armor in the first Fallout"
+    },
+    {
+      "id": 330,
+      "source": "NukaKnights",
+      "title": "Welcome to the new community section",
+      "url": "https://nukaknights.com/posts/welcome-to-the-new-community-section.html",
+      "reason": "site-meta",
+      "note": "announcement of the Nuka Knights community section (forum, polls, 'Hot or Not')"
+    },
+    {
+      "id": 331,
+      "source": "NukaKnights",
+      "title": "Welcome to the new community area",
+      "url": "https://nukaknights.com/beitraege/willkommen-im-neuen-community-bereich.html",
+      "reason": "site-meta",
+      "note": "announcement of the Nuka Knights community section (forum, polls, 'Hot or Not')"
+    },
+    {
+      "id": 380,
+      "source": "TheDuchessFlame",
+      "title": "Ghoul Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/ghoul-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 381,
+      "source": "TheDuchessFlame",
+      "title": "Junk Farming Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/junk-farming-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 382,
+      "source": "TheDuchessFlame",
+      "title": "Daily Ops",
+      "url": "https://www.theduchessflame.com/blog/categories/daily-ops",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 383,
+      "source": "TheDuchessFlame",
+      "title": "Current Events",
+      "url": "https://www.theduchessflame.com/blog/categories/current-events",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 384,
+      "source": "TheDuchessFlame",
+      "title": "Camp Allies",
+      "url": "https://www.theduchessflame.com/blog/categories/camp-allies",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 386,
+      "source": "TheDuchessFlame",
+      "title": "Calculators",
+      "url": "https://www.theduchessflame.com/blog/categories/calculators",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 388,
+      "source": "TheDuchessFlame",
+      "title": "Camp Collectrons",
+      "url": "https://www.theduchessflame.com/blog/categories/camp-collectrons",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 389,
+      "source": "TheDuchessFlame",
+      "title": "Camp Buff Items",
+      "url": "https://www.theduchessflame.com/blog/categories/camp-buff-items",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 400,
+      "source": "TheDuchessFlame",
+      "title": "Build Inspiration Generator",
+      "url": "https://www.theduchessflame.com/build-inspiration-generator",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 401,
+      "source": "TheDuchessFlame",
+      "title": "Meet the team ps",
+      "url": "https://www.theduchessflame.com/meet-the-team-ps",
+      "reason": "site-meta",
+      "note": "TheDuchessFlame 'Meet the team' page"
+    },
+    {
+      "id": 402,
+      "source": "TheDuchessFlame",
+      "title": "Workwithme",
+      "url": "https://www.theduchessflame.com/workwithme",
+      "reason": "site-meta",
+      "note": "TheDuchessFlame collaborations and sponsorship page"
+    },
+    {
+      "id": 403,
+      "source": "TheDuchessFlame",
+      "title": "Duchess Link Tree",
+      "url": "https://www.theduchessflame.com/duchess-link-tree",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 404,
+      "source": "TheDuchessFlame",
+      "title": "Supportmywork",
+      "url": "https://www.theduchessflame.com/supportmywork",
+      "reason": "donation",
+      "note": "TheDuchessFlame 'Support my work' donation page"
+    },
+    {
+      "id": 405,
+      "source": "TheDuchessFlame",
+      "title": "Copy of useful spreadsheets",
+      "url": "https://www.theduchessflame.com/copy-of-useful-spreadsheets",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 407,
+      "source": "TheDuchessFlame",
+      "title": "Useful Fo76 Spreadsheets",
+      "url": "https://www.theduchessflame.com/useful-fo76-spreadsheets",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame spreadsheet link page: only 'File > Make a Copy' labels"
+    },
+    {
+      "id": 409,
+      "source": "TheDuchessFlame",
+      "title": "Podcast",
+      "url": "https://www.theduchessflame.com/podcast",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 3506,
+      "source": "NukaKnights",
+      "title": "Atomic Shop",
+      "url": "https://nukaknights.com/blog/atom-shop/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3507,
+      "source": "NukaKnights",
+      "title": "Builds",
+      "url": "https://nukaknights.com/blog/builds/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3508,
+      "source": "NukaKnights",
+      "title": "Datamining",
+      "url": "https://nukaknights.com/blog/datamining/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3509,
+      "source": "NukaKnights",
+      "title": "Fallout 76 News",
+      "url": "https://nukaknights.com/blog/fallout-76-news/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3510,
+      "source": "NukaKnights",
+      "title": "Insider",
+      "url": "https://nukaknights.com/blog/insider/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3511,
+      "source": "NukaKnights",
+      "title": "Cards",
+      "url": "https://nukaknights.com/blog/karten/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3512,
+      "source": "NukaKnights",
+      "title": "Nuka Knights",
+      "url": "https://nukaknights.com/blog/nuka-knights/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3513,
+      "source": "NukaKnights",
+      "title": "Patchnotes",
+      "url": "https://nukaknights.com/blog/patchnotes/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3514,
+      "source": "NukaKnights",
+      "title": "Pts Public Testserver",
+      "url": "https://nukaknights.com/blog/pts-public-testserver/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3515,
+      "source": "NukaKnights",
+      "title": "Game board season",
+      "url": "https://nukaknights.com/blog/spielbrett-saison/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3516,
+      "source": "NukaKnights",
+      "title": "Tips",
+      "url": "https://nukaknights.com/blog/tipps/",
+      "reason": "category-blurb",
+      "note": "Nuka Knights blog category landing page: one-paragraph description plus a list of post titles"
+    },
+    {
+      "id": 3531,
+      "source": "NukaKnights",
+      "title": "Mehr Community Neue Features and Optimierungen im Juli 2026",
+      "url": "https://nukaknights.com/blog/mehr-community-neue-features-and-optimierungen-im-juli-2026.html",
+      "reason": "site-meta",
+      "note": "Nuka Knights site/app feature news (comments, push notifications, apps)"
+    },
+    {
+      "id": 3551,
+      "source": "NukaKnights",
+      "title": "25 discount in the Nuka Knights Merchandising Shop until, 7 Jan 2026",
+      "url": "https://nukaknights.com/blog/25-rabatt-im-nuka-knights-merchandising-shop-bis-01-07-2026.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 3678,
+      "source": "NukaKnights",
+      "title": "25 discount in the Nuka Knights Merchandising Shop until, 1 Jun 2026",
+      "url": "https://nukaknights.com/blog/25-rabatt-im-nuka-knights-merchandising-shop-bis-06-01-2026.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 3687,
+      "source": "NukaKnights",
+      "title": "Fallout Season 2 All broadcast dates for the first broadcast of the episodes on Amazon Prime",
+      "url": "https://nukaknights.com/blog/fallout-staffel-2-alle-sendetermine-zur-erstausstrahlung-der-folgen-auf-amazon-prime.html",
+      "reason": "not-fallout-76",
+      "note": "news about the Fallout TV series on Amazon Prime"
+    },
+    {
+      "id": 3779,
+      "source": "NukaKnights",
+      "title": "Fallout on Prime production for season 2 of the series is complete",
+      "url": "https://nukaknights.com/blog/fallout-on-prime-die-produktion-zur-2-staffel-der-serie-ist-abgeschlossen.html",
+      "reason": "not-fallout-76",
+      "note": "news about the Fallout TV series on Amazon Prime"
+    },
+    {
+      "id": 3794,
+      "source": "NukaKnights",
+      "title": "Frohe Ostern an alle Nuka Knights",
+      "url": "https://nukaknights.com/blog/frohe-ostern-an-alle-nuka-knights.html",
+      "reason": "site-meta",
+      "note": "holiday greeting / thanks to the site's supporters"
+    },
+    {
+      "id": 3797,
+      "source": "NukaKnights",
+      "title": "20 discount in the Nuka Knights Merchandising Shop until, 17 Apr 2025",
+      "url": "https://nukaknights.com/blog/20-rabatt-im-nuka-knights-merchandising-shop-bis-17-04-2025.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 3830,
+      "source": "NukaKnights",
+      "title": "Fallout Prime Season 2 New photos from set",
+      "url": "https://nukaknights.com/blog/fallout-prime-staffel-2-neue-fotos-vom-set.html",
+      "reason": "not-fallout-76",
+      "note": "news about the Fallout TV series on Amazon Prime"
+    },
+    {
+      "id": 3834,
+      "source": "NukaKnights",
+      "title": "New Nuka Knights Feature Legendary Mods Checklists for All Plus and Prime Accounts",
+      "url": "https://nukaknights.com/blog/neues-nuka-knights-feature-legendaere-mods-checklisten-fuer-alle-plus-und-prime-konten.html",
+      "reason": "site-meta",
+      "note": "new Nuka Knights account feature for paying subscribers"
+    },
+    {
+      "id": 3842,
+      "source": "NukaKnights",
+      "title": "Happy New Fallout 76 Year 2025",
+      "url": "https://nukaknights.com/blog/frohes-neues-fallout-76-jahr-2025.html",
+      "reason": "site-meta",
+      "note": "holiday greeting / thanks to the site's supporters"
+    },
+    {
+      "id": 3852,
+      "source": "NukaKnights",
+      "title": "25 discount and free shipping in the Nuka Knights Merchandising Shop until, 8 Dec 2024",
+      "url": "https://nukaknights.com/blog/25-rabatt-and-gratis-versand-im-nuka-knights-merchandising-shop-bis-08-12-2024.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 3856,
+      "source": "NukaKnights",
+      "title": "30 off everything in the Nuka Knights Merchandising Shop only Today, 29 Nov 2024",
+      "url": "https://nukaknights.com/blog/30-rabatt-auf-alles-im-nuka-knights-merchandising-shop-nur-heute-29-11-2024-.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 3892,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop until, 2 Sep 2024",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-bis-zum-02-09-2024.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 3917,
+      "source": "NukaKnights",
+      "title": "25 off everything in our merchandising shop on, 21 Jun 2024",
+      "url": "https://nukaknights.com/blog/25-rabatt-auf-alles-in-unserem-merchandising-shop-am-21-06-2024.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 3954,
+      "source": "NukaKnights",
+      "title": "Fallout series on Amazon Prime starts earlier on the night of April 11th",
+      "url": "https://nukaknights.com/blog/fallout-serie-auf-amazon-prime-startet-frueher-in-der-nacht-vom-11-april.html",
+      "reason": "not-fallout-76",
+      "note": "news about the Fallout TV series on Amazon Prime"
+    },
+    {
+      "id": 3971,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 07 03, 12 Mar 2024",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-07-03-12-03-2024.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4008,
+      "source": "NukaKnights",
+      "title": "24 discount on everything in our merchandising shop 04 01, 7 Jan 2024",
+      "url": "https://nukaknights.com/blog/24-rabatt-auf-alles-in-unserem-merchandising-shop-04-01-07-01-2024.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4024,
+      "source": "NukaKnights",
+      "title": "Fallout Tv series First official images from the upcoming Fallout Amazon Prime series",
+      "url": "https://nukaknights.com/blog/fallout-tv-serie-erste-offizielle-bilder-aus-der-kommenden-fallout-amazon-prime-serie.html",
+      "reason": "not-fallout-76",
+      "note": "news about the Fallout TV series on Amazon Prime"
+    },
+    {
+      "id": 4026,
+      "source": "NukaKnights",
+      "title": "30 off everything in our merchandising shop Only on, 24 Nov 2023",
+      "url": "https://nukaknights.com/blog/30-rabatt-auf-alles-in-unserem-merchandising-shop-nur-am-24-11-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4029,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 15 11, 19 Nov 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-15-11-19-11-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4035,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 02 11, 5 Nov 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-02-11-05-11-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4040,
+      "source": "NukaKnights",
+      "title": "25 off everything in our merchandising shop 24 10, 26 Oct 2023",
+      "url": "https://nukaknights.com/blog/25-rabatt-auf-alles-in-unserem-merchandising-shop-24-10-26-10-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4041,
+      "source": "NukaKnights",
+      "title": "Fallout Tv series starts April 12, 2024 on Amazon Prime",
+      "url": "https://nukaknights.com/blog/fallout-tv-serie-startet-am-12-april-2024-auf-amazon-prime.html",
+      "reason": "not-fallout-76",
+      "note": "news about the Fallout TV series on Amazon Prime"
+    },
+    {
+      "id": 4053,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 23 09, 28 Sep 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-23-09-28-09-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4058,
+      "source": "NukaKnights",
+      "title": "20 discount from 2 items in our merchandising shop 30 08, 4 Sep 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-ab-2-artikeln-in-unserem-merchandising-shop-30-08-04-09-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4071,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 02 08, 7 Aug 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-02-08-07-08-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4082,
+      "source": "NukaKnights",
+      "title": "Please feel free to donate us a few beers",
+      "url": "https://nukaknights.com/blog/spendet-uns-doch-gern-mal-ein-paar-bier.html",
+      "reason": "donation",
+      "note": "'Please donate us a few beers': Nuka Knights donation appeal"
+    },
+    {
+      "id": 4084,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 08 07, 12 Jul 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-08-07-12-07-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4095,
+      "source": "NukaKnights",
+      "title": "New Heavy Overeater design and 25 off everything in our merchandising shop Only on June 21, 2023",
+      "url": "https://nukaknights.com/blog/neues-heavy-overeater-design-and-25-rabatt-auf-alles-in-unserem-merchandising-shop-nur-am-21-06-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4103,
+      "source": "NukaKnights",
+      "title": "15 off everything in our merchandising shop 20 05, 23 May 2023",
+      "url": "https://nukaknights.com/blog/15-rabatt-auf-alles-in-unserem-merchandising-shop-20-05-23-05-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4113,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 23 04, 26 Apr 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-23-04-26-04-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4127,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 27 03, 2 Apr 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-27-03-02-04-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4132,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 17 03, 22 Mar 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-17-03-22-03-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4135,
+      "source": "NukaKnights",
+      "title": "20 off everything in our merchandising shop 04 03, 12 Mar 2023",
+      "url": "https://nukaknights.com/blog/20-rabatt-auf-alles-in-unserem-merchandising-shop-04-03-12-03-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4143,
+      "source": "NukaKnights",
+      "title": "15 off everything in our merchandising shop 23 02, 27 Feb 2023",
+      "url": "https://nukaknights.com/blog/15-rabatt-auf-alles-in-unserem-merchandising-shop-23-02-27-02-2023.html",
+      "reason": "merchandise",
+      "note": "discount in the Nuka Knights merchandising shop"
+    },
+    {
+      "id": 4207,
+      "source": "NukaKnights",
+      "title": "Willkommen Bei Nuka Knights",
+      "url": "https://nukaknights.com/blog/willkommen-bei-nuka-knights.html",
+      "reason": "site-meta",
+      "note": "'Welcome to Nuka Knights': the site's and Facebook group's own introduction"
+    },
+    {
+      "id": 4537,
+      "source": "TheDuchessFlame",
+      "title": "Where to find all solomon s Trove items",
+      "url": "https://www.theduchessflame.com/post/where-to-find-all-solomon-s-trove-items",
+      "reason": "not-fallout-76",
+      "note": "Starfield quest guide"
+    },
+    {
+      "id": 4581,
+      "source": "TheDuchessFlame",
+      "title": "Ruby S Canned Pozole Pozole Blanco Recipe",
+      "url": "https://www.theduchessflame.com/post/ruby-s-canned-pozole-pozole-blanco-recipe",
+      "reason": "not-fallout-76",
+      "note": "real-life cooking recipe"
+    },
+    {
+      "id": 4711,
+      "source": "TheDuchessFlame",
+      "title": "Chem Farming Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/chem-farming-guides",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4713,
+      "source": "TheDuchessFlame",
+      "title": "Update Overviews",
+      "url": "https://www.theduchessflame.com/blog/categories/update-overviews",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4714,
+      "source": "TheDuchessFlame",
+      "title": "Pet Taming Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/pet-taming-guides",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4715,
+      "source": "TheDuchessFlame",
+      "title": "Perk Card Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/perk-card-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4716,
+      "source": "TheDuchessFlame",
+      "title": "Real Life Recipes",
+      "url": "https://www.theduchessflame.com/blog/categories/real-life-recipes",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4718,
+      "source": "TheDuchessFlame",
+      "title": "Legendary Crafting Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/legendary-crafting-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4719,
+      "source": "TheDuchessFlame",
+      "title": "Bobblehead Farming Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/bobblehead-farming-guides",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4721,
+      "source": "TheDuchessFlame",
+      "title": "Cryptid Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/cryptid-guides",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4722,
+      "source": "TheDuchessFlame",
+      "title": "Special Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/special-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4723,
+      "source": "TheDuchessFlame",
+      "title": "Seasonal Events",
+      "url": "https://www.theduchessflame.com/blog/categories/seasonal-events",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4725,
+      "source": "TheDuchessFlame",
+      "title": "Expedition Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/expedition-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4726,
+      "source": "TheDuchessFlame",
+      "title": "How To Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/how-to-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4727,
+      "source": "TheDuchessFlame",
+      "title": "Weather Control Stations",
+      "url": "https://www.theduchessflame.com/blog/categories/weather-control-stations",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4729,
+      "source": "TheDuchessFlame",
+      "title": "Quest Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/quest-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4730,
+      "source": "TheDuchessFlame",
+      "title": "Magazine Farming Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/magazine-farming-guides",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4731,
+      "source": "TheDuchessFlame",
+      "title": "Raid Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/raid-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4732,
+      "source": "TheDuchessFlame",
+      "title": "Vendor Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/vendor-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4733,
+      "source": "TheDuchessFlame",
+      "title": "Cryo Freezers Fridges",
+      "url": "https://www.theduchessflame.com/blog/categories/cryo-freezers-fridges",
+      "reason": "navigation-shell",
+      "note": "TheDuchessFlame page whose scraped body is only the site menu"
+    },
+    {
+      "id": 4734,
+      "source": "TheDuchessFlame",
+      "title": "Camp Resource Items",
+      "url": "https://www.theduchessflame.com/blog/categories/camp-resource-items",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4735,
+      "source": "TheDuchessFlame",
+      "title": "Fishing Guides",
+      "url": "https://www.theduchessflame.com/blog/categories/fishing-guides",
+      "reason": "listing-shell",
+      "note": "TheDuchessFlame blog category listing: post titles and dates (at most a one-line teaser); the posts themselves are separate guides"
+    },
+    {
+      "id": 4838,
+      "source": "Bethesda Official",
+      "title": "Fallout 4 patches",
+      "url": "https://fallout.fandom.com/wiki/Fallout_4_patches",
+      "reason": "not-fallout-76",
+      "note": "Fallout 4 patch list"
+    }
+  ]
+}

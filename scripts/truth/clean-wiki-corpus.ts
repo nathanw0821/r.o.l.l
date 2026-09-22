@@ -5,7 +5,11 @@
  *   npx tsx scripts/truth/clean-wiki-corpus.ts --dry-run # report only
  *
  * What it does, in order:
- *  1. runs `cleanBody` over every `public/data/wiki/<id>.json`; every image is removed
+ *  0. drops every guide listed in `src/data/truth/guides-excluded.json` (pages about the
+ *     source websites, navigation shells, other games) from the index and deletes its body
+ *     file, so a re-import can never bring one back;
+ *  1. runs `cleanBody` over every `public/data/wiki/<id>.json` (which also strips source-site
+ *     boilerplate: author footers, donation appeals, bylines, reader comments); every image is removed
  *     (they are hotlinks to other sites or dead relative paths) and the index entry gets
  *     `sourceImages: true` so the reader links to the original article for the pictures;
  *  2. runs `cleanSnippet` / `cleanTitle` over every entry of `FALLBACK_WIKI_ARTICLES`,
@@ -28,7 +32,15 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { bodyHasImages, cleanBody, cleanSnippet, cleanTitle } from "../../src/lib/wiki/clean-text";
+import excludedGuides from "../../src/data/truth/guides-excluded.json";
+import {
+  SITE_BOILERPLATE_MARKER,
+  bodyHasImages,
+  cleanBody,
+  cleanSnippet,
+  cleanTitle,
+  siteBoilerplateKinds,
+} from "../../src/lib/wiki/clean-text";
 import {
   FALLBACK_WIKI_ARTICLES,
   type WikiArticleItem,
@@ -40,6 +52,9 @@ const BODY_DIR = path.join(ROOT, "public/data/wiki");
 const EXPORT_MARKER = "export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = ";
 
 const DRY_RUN = process.argv.includes("--dry-run");
+
+/** Guide ids that are not Fallout 76 information (reviewed list, see the JSON's $comment). */
+const EXCLUDED_IDS = new Set(excludedGuides.guides.map((g) => String(g.id)));
 
 /** A cleaned body shorter than this is a stub. */
 const STUB_BODY_LENGTH = 300;
@@ -388,10 +403,32 @@ function main(): void {
   }
   const drafts: Draft[] = [];
 
+  // 0. excluded guides: out of the index, body file deleted.
+  const removed: WikiArticleItem[] = [];
   for (const article of FALLBACK_WIKI_ARTICLES) {
+    if (EXCLUDED_IDS.has(String(article.id))) removed.push(article);
+  }
+  const bodyFilesDeleted: string[] = [];
+  for (const g of excludedGuides.guides) {
+    const file = path.join(BODY_DIR, `${g.id}.json`);
+    if (fs.existsSync(file)) bodyFilesDeleted.push(file);
+  }
+
+  const boilerplateByKind = new Map<string, number>();
+  let bodiesWithBoilerplate = 0;
+  const emptiedByStripping: WikiArticleItem[] = [];
+
+  for (const article of FALLBACK_WIKI_ARTICLES) {
+    if (EXCLUDED_IDS.has(String(article.id))) continue;
     const body = readBody(article.id);
     const rawBody = body?.content ?? "";
     const newBody = cleanBody(rawBody);
+    const kinds = siteBoilerplateKinds(rawBody);
+    if (kinds.length > 0) {
+      bodiesWithBoilerplate += 1;
+      for (const kind of kinds) bump(boilerplateByKind, kind);
+      if (!withoutImageLines(newBody)) emptiedByStripping.push(article);
+    }
     if (body) {
       cleanedBodies.set(body.file, newBody);
       if (newBody !== rawBody) bodiesChanged += 1;
@@ -412,9 +449,17 @@ function main(): void {
         snippetsFromBody += 1;
       }
     }
+    // A snippet the scraper cut out of site boilerplate (a donation line, a byline, a wiki
+    // maintenance box) is rebuilt from the cleaned body, or left empty when the body has
+    // no prose of its own.
+    if (SITE_BOILERPLATE_MARKER.test(snippet)) {
+      const fromBody = cleanSnippet(firstProse(newBody), article.title);
+      snippet = SITE_BOILERPLATE_MARKER.test(fromBody) ? "" : fromBody;
+      snippetsFromBody += 1;
+    }
     if (snippet.length < SNIPPET_FALLBACK_LENGTH) {
       const fromBody = cleanSnippet(firstProse(newBody), article.title);
-      if (fromBody.length > snippet.length) {
+      if (fromBody.length > snippet.length && !SITE_BOILERPLATE_MARKER.test(fromBody)) {
         snippet = fromBody;
         snippetsFromBody += 1;
       }
@@ -495,6 +540,7 @@ function main(): void {
   const indexChanged = nextIndex !== existingIndex;
 
   if (!DRY_RUN) {
+    for (const file of bodyFilesDeleted) fs.unlinkSync(file);
     for (const [file, content] of cleanedBodies) {
       const next = JSON.stringify({
         id: JSON.parse(fs.readFileSync(file, "utf-8")).id,
@@ -511,6 +557,18 @@ function main(): void {
 
   console.log(DRY_RUN ? "\nwiki corpus clean (DRY RUN)\n" : "\nwiki corpus clean\n");
   console.log(`entries: ${nextArticles.length}, body files: ${cleanedBodies.size}\n`);
+  console.log(
+    `excluded (src/data/truth/guides-excluded.json): ${removed.length} removed from the index, ` +
+      `${bodyFilesDeleted.length} body files ${DRY_RUN ? "to delete" : "deleted"}`,
+  );
+  for (const a of removed) console.log(`  - [${a.id}] ${a.source} — ${a.title}`);
+  console.log(`\nsite boilerplate stripped from ${bodiesWithBoilerplate} bodies (a body can have several kinds)`);
+  for (const [kind, count] of [...boilerplateByKind].sort((a, b) => b[1] - a[1])) {
+    console.log(`  ${kind.padEnd(30)} ${String(count).padStart(6)}`);
+  }
+  console.log(`bodies with no text left after stripping (exclusion candidates): ${emptiedByStripping.length}`);
+  for (const a of emptiedByStripping) console.log(`  ? [${a.id}] ${a.source} — ${a.title}`);
+  console.log("");
   console.log("clutter, before -> after");
   console.log(row("snippets with ![ markup", before.snippetsWithImageMarkup, after.snippetsWithImageMarkup));
   console.log(row("snippets with asset/upload paths", before.snippetsWithAssets, after.snippetsWithAssets));
