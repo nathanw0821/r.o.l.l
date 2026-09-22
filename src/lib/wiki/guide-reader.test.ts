@@ -9,6 +9,7 @@ import {
   guideHeadingText,
   guideEntityKeys,
   parseGuideTable,
+  splitCrammedCell,
   pickActiveSection,
   READING_BAND,
   titleWords,
@@ -356,8 +357,45 @@ describe("parseGuideTable", () => {
     expect(parseGuideTable(["| Name | Rate |", "| - | - |"].join("\n")).rows).toHaveLength(1);
   });
 
+  it("guide 53: a partial row of labels above the column labels is a group header with spans", () => {
+    const table = parseGuideTable(
+      [
+        "| | Conditional Rewards, Expedition completed with... | | | | Once Per Day |",
+        "| Expedition | No Objectives | 1 Objective | 2 Objectives | 3 Objectives | Daily Bonus |",
+        "| The Pitt: Union Dues | 1 | 2 | 5 | 8 | +8 |",
+        "| Atlantic City: Tax Evasion | 3 | 5 | 10 | 15 | +5 |",
+      ].join("\n"),
+    );
+    expect(table.caption).toBeNull();
+    expect(table.groupHeader).toEqual([
+      { label: "", span: 1 },
+      { label: "Conditional Rewards, Expedition completed with...", span: 4 },
+      { label: "Once Per Day", span: 1 },
+    ]);
+    expect(table.header).toEqual(["Expedition", "No Objectives", "1 Objective", "2 Objectives", "3 Objectives", "Daily Bonus"]);
+    expect(table.rows.map((r) => r.cells[0])).toEqual(["The Pitt: Union Dues", "Atlantic City: Tax Evasion"]);
+  });
+
+  it("guide 62: 'Perk | Characteristic' spans the SPECIAL/Effect/Weapons columns", () => {
+    const table = parseGuideTable(
+      ["| Perk | Characteristic | |", "| SPECIAL | Effect | Weapons |", "| Strength | +Damage | Melee |", "| Perception | +Accuracy | Rifles |"].join("\n"),
+    );
+    expect(table.groupHeader).toEqual([
+      { label: "Perk", span: 1 },
+      { label: "Characteristic", span: 2 },
+    ]);
+    expect(table.header).toEqual(["SPECIAL", "Effect", "Weapons"]);
+    expect(table.rows).toHaveLength(2);
+  });
+
+  it("a title row is still a caption, not a group header", () => {
+    const table = parseGuideTable(["| Strength | | |", "| Perk | Req | Effect |", "| Barbarian | 1 | +DR |"].join("\n"));
+    expect(table.caption).toBe("Strength");
+    expect(table.groupHeader).toBeNull();
+  });
+
   it("returns nothing to render for an empty table", () => {
-    expect(parseGuideTable("| | |\n|  |  |")).toEqual({ caption: null, header: null, rows: [], columns: 0 });
+    expect(parseGuideTable("| | |\n|  |  |")).toEqual({ caption: null, groupHeader: null, header: null, rows: [], columns: 0 });
   });
 });
 
@@ -402,5 +440,40 @@ describe("flattenPatchLabel", () => {
   it("folds a trailing bracket into a comma", () => {
     expect(flattenPatchLabel("Patch 30 (Fallout Worlds)")).toBe("Patch 30, Fallout Worlds");
     expect(flattenPatchLabel("Patch 54")).toBe("Patch 54");
+  });
+});
+
+describe("splitCrammedCell", () => {
+  it("guide 1929: a flattened attack list becomes one item per entry", () => {
+    expect(splitCrammedCell("Unarmed (75 ) Area (40 ) Cloak (50 ) Landing (30 ) Sonic (40 ) Strafe (10 )")).toEqual([
+      "Unarmed (75 )",
+      "Area (40 )",
+      "Cloak (50 )",
+      "Landing (30 )",
+      "Sonic (40 )",
+      "Strafe (10 )",
+    ]);
+  });
+
+  it("guide 1880: extra brackets stay with their entry", () => {
+    expect(
+      splitCrammedCell("? ? Freezer breath (1 ) Death (3% Fusion Core drain/s, 5 seconds) (-60% movement speed, 3 seconds) Fireball (20) (1/s , 4 seconds)"),
+    ).toEqual([
+      "? ? Freezer breath (1 )",
+      "Death (3% Fusion Core drain/s, 5 seconds) (-60% movement speed, 3 seconds)",
+      "Fireball (20) (1/s , 4 seconds)",
+    ]);
+  });
+
+  it("guide 190: crafting components split, ordinary text does not", () => {
+    expect(splitCrammedCell("Aluminum (12) Circuitry (3) Fiberglass (6) Gears (6)")).toEqual([
+      "Aluminum (12)",
+      "Circuitry (3)",
+      "Fiberglass (6)",
+      "Gears (6)",
+    ]);
+    expect(splitCrammedCell("Two entries only (1) here (2)")).toBeNull();
+    expect(splitCrammedCell("The perk (rank 1) adds damage (see note) and more (a lot), which is a sentence, not a list.")).toBeNull();
+    expect(splitCrammedCell("")).toBeNull();
   });
 });

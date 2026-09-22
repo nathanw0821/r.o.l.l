@@ -132,6 +132,7 @@ import {
   isSkippedGuideBlock,
   normalizeGuideBlock,
   parseGuideTable,
+  splitCrammedCell,
   pickActiveSection,
   READING_BAND,
   selectRelatedGuides,
@@ -166,7 +167,9 @@ function renderFormattedInlineText(text: string, linkify?: { currentPath: string
     parts.push(...linkifyToNodes(plain, { currentPath: linkify.currentPath, state: linkState, keyPrefix: `lk${keyIdx++}` }));
   };
 
-  const mdPattern = /(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/g;
+  // "__bold__" is the underscore form of bold (412 guides use it, e.g. "__How to Use This Calculator__");
+  // single underscores are left alone (snake_case, file names).
+  const mdPattern = /(\*\*\*.*?\*\*\*|\*\*.*?\*\*|__(?=\S).*?(?<=\S)__|\*.*?\*)/g;
   let match;
   let lastIndex = 0;
 
@@ -181,7 +184,10 @@ function renderFormattedInlineText(text: string, linkify?: { currentPath: string
           {matchedStr.slice(3, -3)}
         </strong>
       );
-    } else if (matchedStr.startsWith("**") && matchedStr.endsWith("**")) {
+    } else if (
+      (matchedStr.startsWith("**") && matchedStr.endsWith("**")) ||
+      (matchedStr.startsWith("__") && matchedStr.endsWith("__"))
+    ) {
       parts.push(
         <strong key={keyIdx++} className="font-bold text-amber-300">
           {matchedStr.slice(2, -2)}
@@ -246,6 +252,20 @@ function parseCleanArticleContent(
               ) : null}
               {table.header ? (
                 <thead>
+                  {table.groupHeader ? (
+                    <tr className={`${TABLE_HEAD_ROW} border-b`}>
+                      {table.groupHeader.map((group, gIdx) => (
+                        <th
+                          key={gIdx}
+                          scope="colgroup"
+                          colSpan={group.span}
+                          className="px-3 py-2 align-bottom text-center font-normal leading-snug"
+                        >
+                          {group.label ? renderFormattedInlineText(group.label) : null}
+                        </th>
+                      ))}
+                    </tr>
+                  ) : null}
                   <tr className={`${TABLE_HEAD_ROW} border-b`}>
                     {table.header.map((cell, cIdx) => (
                       <th key={cIdx} scope="col" className={`${cellClass(cell)} text-left font-normal`}>
@@ -263,11 +283,23 @@ function parseCleanArticleContent(
                         {renderFormattedInlineText(row.cells[0])}
                       </td>
                     ) : (
-                      row.cells.map((cell, cIdx) => (
-                        <td key={cIdx} className={cellClass(cell)}>
-                          {renderFormattedInlineText(cell)}
-                        </td>
-                      ))
+                      row.cells.map((cell, cIdx) => {
+                        // A flattened infobox list ("Unarmed (75 ) Area (40 ) …") reads as one item per line.
+                        const items = splitCrammedCell(cell);
+                        return (
+                          <td key={cIdx} className={items ? "px-3 py-2 align-top leading-snug min-w-[12rem]" : cellClass(cell)}>
+                            {items ? (
+                              <ul className="m-0 list-none space-y-0.5 p-0">
+                                {items.map((item, iIdx) => (
+                                  <li key={iIdx}>{renderFormattedInlineText(item)}</li>
+                                ))}
+                              </ul>
+                            ) : (
+                              renderFormattedInlineText(cell)
+                            )}
+                          </td>
+                        );
+                      })
                     )}
                   </tr>
                 ))}
