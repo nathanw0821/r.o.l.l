@@ -93,6 +93,7 @@ function buildUiBootstrapScript() {
       const density = read("roll-density", "compact");
       const scanlineMode = read("roll-scanline-mode", "balanced");
       const uiTone = read("roll-ui-tone", "neutral");
+      const uiMode = read("roll-ui-mode", "tactical");
       const sidebarCollapsed = read("roll-sidebar-collapsed", "0");
       const seasonPref = read("roll-season", "auto");
       const seasonNow = Date.now();
@@ -109,6 +110,7 @@ function buildUiBootstrapScript() {
       root.setAttribute("data-density", density);
       root.setAttribute("data-scanlines", scanlineMode);
       root.setAttribute("data-ui-tone", uiTone);
+      root.setAttribute("data-ui-mode", uiMode === "retro" ? "retro" : "tactical");
       root.setAttribute("data-sidebar-collapsed", sidebarCollapsed === "1" ? "1" : "0");
       // Phones start with the menu collapsed unless the visitor opened it this session
       // (same rule as AppShell), so the first paint already has the final height.
@@ -179,6 +181,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       data-density="compact"
       data-scanlines="balanced"
       data-ui-tone="neutral"
+      data-ui-mode="tactical"
       data-sidebar-collapsed="0"
       data-season={resolveSeasonAttribute("auto")}
       className={`${fontVT323.variable} ${fontShareTechMono.variable} ${fontOswald.variable} ${fontRobotoCondensed.variable}`}

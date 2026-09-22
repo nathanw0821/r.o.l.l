@@ -143,9 +143,10 @@ export function ThemeProvider({
   const [density, setDensityState] = React.useState<"comfortable" | "compact">(
     () => readStoredDensity(defaultDensity)
   );
-  const [uiMode, setUiModeState] = React.useState<UiMode>(
-    () => readStoredUiMode(defaultUiMode)
-  );
+  // Starts from the server default: the tracker's markup depends on this, so the client must
+  // hydrate the server's tactical layout first and switch to the saved retro tiles in the
+  // mount effect below (reading storage here made React re-render the whole page, error #418).
+  const [uiMode, setUiModeState] = React.useState<UiMode>(defaultUiMode);
   const [scanlineMode, setScanlineModeState] = React.useState<ScanlineMode>(() => readStoredScanline());
   const [uiTone, setUiToneState] = React.useState<UiTone>(() => readStoredUiTone());
   const [season, setSeasonState] = React.useState<SeasonPreference>(() => {
@@ -272,11 +273,14 @@ export function ThemeProvider({
   }, [density]);
 
   React.useEffect(() => {
+    // First commit still holds the server default while the saved mode is about to be applied:
+    // leave the attribute the bootstrap script set, so the page does not flash tactical styles.
+    if (uiMode === defaultUiMode && readStoredUiMode(defaultUiMode) !== uiMode) return;
     document.documentElement.setAttribute("data-ui-mode", uiMode);
     if (isMounted.current) {
       window.localStorage.setItem(UI_MODE_KEY, uiMode);
     }
-  }, [uiMode]);
+  }, [uiMode, defaultUiMode]);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-scanlines", scanlineMode);
