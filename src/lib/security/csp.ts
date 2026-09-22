@@ -1,5 +1,5 @@
 /**
- * Content-Security-Policy for HTML responses (set per request in middleware with a fresh nonce).
+ * Content-Security-Policy for HTML responses (set per request in src/proxy.ts with a fresh nonce).
  *
  * - Scripts: only ones carrying this request's nonce ('strict-dynamic' lets those load their own
  *   chunks, e.g. Next's bundles and the Cloudflare Turnstile loader injected by our widget).

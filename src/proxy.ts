@@ -2,13 +2,16 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { buildContentSecurityPolicy, createNonce, CSP_NONCE_HEADER } from "@/lib/security/csp";
 
-export const runtime = "experimental-edge";
-
 const BOT_PROBE_EXTENSIONS = /\.(?:htc|php\d?|phtml|asp|aspx|jsp|cgi|env|git|bak|sql|ini|conf|yaml|yml|ds_store)$/i;
 const LEGITIMATE_TXT_FILES = /^\/(?:robots\.txt|humans\.txt|security\.txt|\.well-known\/security\.txt|ads\.txt|app-ads\.txt)$/i;
 const BOT_PROBE_PATHS = /^\/(?:wp-admin|wp-login|wp-includes|xmlrpc\.php|phpmyadmin|cgi-bin|autodiscover|console|actuator|debug|_profiler)\b/i;
 
-export function middleware(request: NextRequest) {
+/**
+ * Next 16 proxy (the former middleware.ts, renamed; the runtime export is not allowed here and
+ * proxy runs on Node by default). On Cloudflare, OpenNext bundles it as the worker's middleware
+ * handler in front of the Next server.
+ */
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Fast-Path Edge Filter: Instantly drop vulnerability scanner bot probes
