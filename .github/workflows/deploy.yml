@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, preview]
+    branches: [main]
   pull_request:
-    branches: [main, preview]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -18,7 +18,7 @@ jobs:
       contents: read
       deployments: write
     environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      name: production
       url: https://fallout76.wiki
     env:
       # CI placeholders for Prisma and Next.js builds (no real secrets needed for build/check)
@@ -92,14 +92,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --minify
-
-      - name: Deploy to Cloudflare Workers (Preview Environment)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/preview'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env preview --minify
 
       - name: Upload Wrangler Log on Failure
         if: failure()
