@@ -18,6 +18,17 @@ describe(".gitignore", () => {
     }
   });
 
+  it("tracks no secret or editor MCP file (an ignore rule never untracks what was committed before it)", () => {
+    const tracked = execFileSync("git", ["ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean);
+    const leaks = tracked.filter(
+      (path) =>
+        /(^|\/)\.env($|\.)/.test(path) && path !== ".env.example" ||
+        /\.(pem|key|p12)$/.test(path) ||
+        /(^|\/)(\.cursor\/mcp\.json|\.vscode\/mcp\.json|\.mcp\.json|\.gemini\/settings\.json|\.dev\.vars.*)$/.test(path)
+    );
+    expect(leaks).toEqual([]);
+  });
+
   it("never hides source files or assets whose names merely mention tokens or secrets", () => {
     for (const path of [
       ".env.example",
