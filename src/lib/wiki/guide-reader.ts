@@ -71,9 +71,21 @@ export interface GuideTableRow {
   group: boolean;
 }
 
+/** One cell of a group-header row: a label spanning `span` columns (an empty label for unlabelled columns). */
+export interface GuideTableGroup {
+  label: string;
+  span: number;
+}
+
 export interface GuideTable {
   /** A title row with one filled cell above the real header ("Strength" over the perk columns). */
   caption: string | null;
+  /**
+   * A partial row of labels above the real header ("| | Conditional Rewards, Expedition completed
+   * with... | | | | Once Per Day |" over "Expedition | No Objectives | …"): each label spans the
+   * columns up to the next label, as the source site drew it.
+   */
+  groupHeader: GuideTableGroup[] | null;
   /** The column header row, or null when the first row is data (the scrape dropped the header). */
   header: string[] | null;
   rows: GuideTableRow[];
@@ -104,10 +116,10 @@ function plainCell(cell: string): string {
  * "+2", "1.5"), Form IDs ("0050DE51") and anything longer than a label (sentences, notices,
  * "Bow • Compound Bow • …" navigation lists).
  */
-function isLabelCell(cell: string): boolean {
+function isLabelCell(cell: string, maxLength = 40): boolean {
   const text = plainCell(cell);
   if (!text) return true;
-  if (text.length > 40) return false;
+  if (text.length > maxLength) return false;
   if (/\d/.test(text) && /^[\d\s.,%+\-–−x×/()~]+$/i.test(text)) return false;
   if (/^[0-9A-F]{8}$/.test(text)) return false;
   return true;
@@ -122,6 +134,64 @@ function isTitleRow(cells: string[], columns: number): boolean {
   return columns > 1 && Boolean(cells[0]) && filledCount(cells) === 1;
 }
 
+/** A group label may be a little longer than a column label ("Conditional Rewards, Expedition completed with..."). */
+function isGroupLabelCell(cell: string): boolean {
+  return isLabelCell(cell, 60);
+}
+
+/**
+ * A partial row of labels (two or more filled, not every column) above a fuller row of labels:
+ * the group-header row of a two-row header.
+ */
+function isGroupHeaderRow(cells: string[], nextCells: string[], columns: number): boolean {
+  const filled = filledCount(cells);
+  const nextFilled = filledCount(nextCells);
+  return (
+    columns >= 3 &&
+    filled >= 2 &&
+    filled < columns &&
+    nextFilled > filled &&
+    nextFilled >= columns - 1 &&
+    cells.every(isGroupLabelCell) &&
+    nextCells.every((cell) => isLabelCell(cell))
+  );
+}
+
+/** Group-header cells with their column spans: a label covers the empty columns after it. */
+function groupHeaderCells(cells: string[], columns: number): GuideTableGroup[] {
+  const groups: GuideTableGroup[] = [];
+  for (let col = 0; col < columns; col += 1) {
+    const label = plainCell(cells[col] ?? "");
+    const last = groups[groups.length - 1];
+    if (!label && last) last.span += 1;
+    else groups.push({ label, span: 1 });
+  }
+  return groups;
+}
+
+const CRAMMED_ITEM = /[^()|]{1,40}?\([^()]*\)(?:\s*\([^()]*\))*\s*/y;
+
+/**
+ * A wiki infobox list that the scrape flattened into one cell, "Unarmed (75 ) Area (40 ) Cloak (50 )"
+ * or "Aluminum (12) Circuitry (3) Fiberglass (6)": three or more "Label (value)" items and nothing
+ * else. Returns the items, or null when the cell is ordinary text.
+ */
+export function splitCrammedCell(cell: string): string[] | null {
+  const text = cell.trim();
+  if ((text.match(/\(/g) ?? []).length < 3) return null;
+  const items: string[] = [];
+  CRAMMED_ITEM.lastIndex = 0;
+  let at = 0;
+  while (at < text.length) {
+    CRAMMED_ITEM.lastIndex = at;
+    const match = CRAMMED_ITEM.exec(text);
+    if (!match || match.index !== at) return null;
+    items.push(match[0].trim());
+    at = CRAMMED_ITEM.lastIndex;
+  }
+  return items.length >= 3 ? items : null;
+}
+
 /**
  * Structure of a guide table block. The scraped corpus has no markdown separator rows, and the
  * scraper dropped some tables' header rows, so "row 0 is the header" was wrong in two ways:
@@ -130,6 +200,8 @@ function isTitleRow(cells: string[], columns: number): boolean {
  *    styled as the header. The first row is now the header only when every cell is a label.
  *  - tables with a title row above the header ("Strength", then "Perk | Req | Description | …")
  *    styled the title as the header and the real header as data. The title becomes the caption.
+ *  - two-row headers ("| | Conditional Rewards… | | | | Once Per Day |" above the column labels)
+ *    had their group row styled as the header. The group row now spans its columns above the header.
  * A markdown separator row ("|---|---|"), if a future import has one, marks the header outright.
  * One-cell rows inside a wider table become group labels, and trailing empty columns are dropped.
  */
@@ -154,15 +226,20 @@ export function parseGuideTable(block: string): GuideTable {
   const rows = raw.map(({ cells, beforeSeparator }) => ({ cells: cells.slice(0, columns), beforeSeparator }));
 
   let caption: string | null = null;
+  let groupHeader: GuideTableGroup[] | null = null;
   let header: string[] | null = null;
   let start = 0;
-  const isLabelRow = (cells: string[]) => filledCount(cells) > 0 && cells.every(isLabelCell);
+  const isLabelRow = (cells: string[]) => filledCount(cells) > 0 && cells.every((cell) => isLabelCell(cell));
 
   if (separatorAt > 0 && rows.some((r) => r.beforeSeparator)) {
     const headerIdx = rows.filter((r) => r.beforeSeparator).length - 1;
     if (headerIdx === 1 && isTitleRow(rows[0].cells, columns)) caption = plainCell(rows[0].cells[0]);
     header = rows[headerIdx].cells;
     start = headerIdx + 1;
+  } else if (rows.length >= 3 && isGroupHeaderRow(rows[0].cells, rows[1].cells, columns)) {
+    groupHeader = groupHeaderCells(rows[0].cells, columns);
+    header = rows[1].cells;
+    start = 2;
   } else if (
     rows.length >= 2 &&
     isTitleRow(rows[0].cells, columns) &&
@@ -181,7 +258,7 @@ export function parseGuideTable(block: string): GuideTable {
     cells,
     group: columns >= 3 && isTitleRow(cells, columns) && cells.length === 1,
   }));
-  return { caption, header, rows: body, columns };
+  return { caption, groupHeader, header, rows: body, columns };
 }
 
 /** URL-safe slug: lower case, letters/digits joined by single hyphens, markdown emphasis dropped. */
