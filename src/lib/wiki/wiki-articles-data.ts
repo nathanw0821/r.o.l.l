@@ -307,16 +307,6 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "sourceImages": true
   },
   {
-    "id": 57,
-    "source": "Fallout Wiki",
-    "title": "Reclamation Day (Event)",
-    "url": "https://fallout.wiki/wiki/Reclamation_Day_(Event)",
-    "category": "Events & Expeditions",
-    "snippet": "Reclamation Day is an event mentioned in the Fallout Television Series. The goal of Vault 76 is to resettle the Appalachian wasteland 25 years after the Great War. Vault 33 Dweller…",
-    "main_image": "static/images/38f25f030351e9f16bf3a3149e4f7b2d.jpg",
-    "content": ""
-  },
-  {
     "id": 58,
     "source": "Fallout Wiki",
     "title": "Fallout 76 Legendary Weapon Mods",
@@ -1630,16 +1620,6 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Perks & Mutations",
     "snippet": "The perk loadout system is a feature in Fallout 76, introduced in the Locked & Loaded update. As of the Locked & Loaded update, players can customize multiple S.P.E.C.I.A.L. loadou…",
     "main_image": "static/images/f5ca89f91487da6c05a71310310c0224.png",
-    "content": ""
-  },
-  {
-    "id": 285,
-    "source": "Fallout Fandom",
-    "title": "VATS",
-    "url": "https://fallout.fandom.com/wiki/VATS",
-    "category": "Build Mechanics & Damage",
-    "snippet": "Article suggested to be split into independent articles as outlined above. “V.A.T.S., or the Vault-Tec Assisted Targeting System, is an advanced combat technology whose development…",
-    "main_image": null,
     "content": ""
   },
   {
@@ -21827,26 +21807,6 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "content": ""
   },
   {
-    "id": 3125,
-    "source": "Fallout Fandom",
-    "title": "Cryptids",
-    "url": "https://fallout.fandom.com/wiki/Cryptids",
-    "category": "Build Mechanics & Damage",
-    "snippet": "(from the Greek κρύπτω, krypto, meaning \"hide\" or \"hidden\") are a subset of animals and other creatures that are mentioned in local folklore and other accounts, but whose…",
-    "main_image": "static/images/ba3f016b1bfe8c307517df67a22062a6.png",
-    "content": ""
-  },
-  {
-    "id": 3128,
-    "source": "Fallout Fandom",
-    "title": "Aliens",
-    "url": "https://fallout.fandom.com/wiki/Aliens",
-    "category": "Vendors & Minerva Sales",
-    "snippet": "This is an overview article, listing content appearing in multiple Fallout media. For information specific to a given game or TV series, consult the table below. The origins of ali…",
-    "main_image": "static/images/47276f285865928a7f9f27d76919cb67.png",
-    "content": ""
-  },
-  {
     "id": 3141,
     "source": "Fallout Fandom",
     "title": "Dolphish",
@@ -21876,16 +21836,6 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "main_image": "static/images/4f9eb75b1cea6f663da3b76319bbf2ba.png",
     "content": "",
     "sourceImages": true
-  },
-  {
-    "id": 3155,
-    "source": "Fallout Fandom",
-    "title": "Iguana",
-    "url": "https://fallout.fandom.com/wiki/Iguana",
-    "category": "General",
-    "snippet": "Iguanas are large, herbivorous lizards originally native to Central and South America, which proliferated across North America in the wake of the Great War. They are a staple of th…",
-    "main_image": "static/images/56f6290a933f1554cd31df142dedd3c7.png",
-    "content": ""
   },
   {
     "id": 3156,
@@ -22285,17 +22235,6 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "url": "https://nukaknights.com/blog/datamining-pts-atom-shop-gegenstaende-patch-70.html",
     "category": "Atomic Shop archive",
     "snippet": "Modular Display Cubes (3x) Modular Display Cubes (3x) Modular Display Cubes (3x) Lab Experiment Note Board Lab Experiment Note Board Lab Experiment Note Board Slocum's Joe Donut Fryer Cooking Station BoS Advanced Power Armor Station…",
-    "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": "",
-    "sourceImages": true
-  },
-  {
-    "id": 3539,
-    "source": "NukaKnights",
-    "title": "Offizielle News Fallout 76 Raven Rock Fallout 3 and New Vegas Remaster bestaetigt",
-    "url": "https://nukaknights.com/blog/offizielle-news-fallout-76-raven-rock-fallout-3-and-new-vegas-remaster-bestaetigt.html",
-    "category": "Patch notes & news",
-    "snippet": "Offizielle News: Fallout 76 Raven Rock, Fallout 3 & New Vegas Remaster bestätigt…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
     "sourceImages": true
@@ -25525,17 +25464,6 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "content": "",
     "archived": true,
     "stub": true
-  },
-  {
-    "id": 3882,
-    "source": "NukaKnights",
-    "title": "Fallout Prime series wins Emmy Awards Offers and Events",
-    "url": "https://nukaknights.com/blog/fallout-prime-serie-gewinnt-emmy-awards-angebote-and-events.html",
-    "category": "Events & Expeditions",
-    "snippet": "Fallout Prime series wins Emmy Awards: Offers & Events…",
-    "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
-    "content": "",
-    "sourceImages": true
   },
   {
     "id": 3884,
