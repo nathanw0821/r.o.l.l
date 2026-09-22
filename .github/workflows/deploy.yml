@@ -56,6 +56,35 @@ jobs:
       - name: Build Next.js with OpenNext
         run: npm run build:cf
 
+      # Accessibility gate: axe (WCAG 2.2 AA) on every main guest route, desktop + phone, plus the
+      # keyboard paths. Runs against the production build with no database: guest pages degrade
+      # gracefully, and the spec checks structure, names, contrast and text sizes, not data.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Accessibility gate (axe + keyboard)
+        env:
+          E2E_BASE_URL: http://127.0.0.1:3200
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/roll?schema=public
+        run: |
+          npx next start -p 3200 > next-start.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://127.0.0.1:3200/rules && break
+            sleep 2
+          done
+          npx playwright test e2e/a11y.spec.ts e2e/a11y-keyboard.spec.ts
+
+      - name: Upload accessibility report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report
+          path: |
+            e2e/a11y-report/
+            e2e/.output/
+            next-start.log
+          if-no-files-found: ignore
+
       - name: Deploy to Cloudflare Workers (Production)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
