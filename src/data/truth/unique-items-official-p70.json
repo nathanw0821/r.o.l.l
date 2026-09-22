@@ -1,0 +1,340 @@
+{
+  "$comment": "Fallout 76 'The Slasher' (Patch 70, build 1.7.26.13, 2026-09-15) release notes, 'Unique Item Crafting' table: unique weapon name and innate effect, verbatim from fallout.bethesda.net/en-EU/news/fallout-76-the-slasher-release-notes (captured 2026-09-22). unique-items.test.ts checks every weapon in unique-items.json against this; the pack normalises Bethesda's typos, listed there.",
+  "source": "https://fallout.bethesda.net/en-EU/news/fallout-76-the-slasher-release-notes",
+  "patch": 70,
+  "capturedAt": "2026-09-22",
+  "weapons": [
+    {
+      "name": "Old Guard",
+      "effect": "+10% Deflect Chance"
+    },
+    {
+      "name": "Nailer",
+      "effect": "Blocking inflicts Bleeding"
+    },
+    {
+      "name": "Meteoritic Sword",
+      "effect": "Grants Radicool Perk"
+    },
+    {
+      "name": "The Gutter",
+      "effect": "Poison Damage"
+    },
+    {
+      "name": "Camden Whacker",
+      "effect": "Random Elemental Damage"
+    },
+    {
+      "name": "Acceptable Overkill",
+      "effect": "+1 Rank to Perk Concentrated Fire"
+    },
+    {
+      "name": "Commander's Charge",
+      "effect": "30% Chance to Block Projectiles"
+    },
+    {
+      "name": "Crushing Blow",
+      "effect": "+10% Damage per Crippled Limb Your Target Has"
+    },
+    {
+      "name": "Disorderly Conduct",
+      "effect": "+20% Attack Speed"
+    },
+    {
+      "name": "Kingfisher",
+      "effect": "+10% Damage per Local Legend Challenge Completed"
+    },
+    {
+      "name": "Night Light",
+      "effect": "Ignore Time of Day Requirements on Perks"
+    },
+    {
+      "name": "Salt of the Earth",
+      "effect": "Fires both barrels at once"
+    },
+    {
+      "name": "The Action Hero",
+      "effect": "+1% Deflect Chance per Bullet Storm Stack"
+    },
+    {
+      "name": "Resolute Veteran",
+      "effect": "Your Minimum Bullet Storm Stack Count is 5"
+    },
+    {
+      "name": "The Guarantee",
+      "effect": "Grants Demo Expert (Rank 3)"
+    },
+    {
+      "name": "Unstoppable Monster",
+      "effect": "Reduce Damage Taken by 5% and an Additional 1% per Killstreak (Max 10)"
+    },
+    {
+      "name": "The Quick Fix",
+      "effect": "+5% Swing Speed per Addiction"
+    },
+    {
+      "name": "Whistle in the Dark",
+      "effect": "Grants Mister Sandman Perk Card (Rank 2)"
+    },
+    {
+      "name": "Medical Malpractice",
+      "effect": "Bonuses to Stimpak Healing Also Increase Damage"
+    },
+    {
+      "name": "Mechanic's Best Friend",
+      "effect": "Makeshift Warrior Also Increases Damage"
+    },
+    {
+      "name": "Sole Survivor",
+      "effect": "+3% Weak Spot Damage per Kill while on a Kill Streak (Max 10)"
+    },
+    {
+      "name": "Cultist Piercer",
+      "effect": "+50% Armor Penetrations vs Cryptids"
+    },
+    {
+      "name": "Elder's Mark",
+      "effect": "+2% V.A.T.S. Critical Damage per Onslaught Stack"
+    },
+    {
+      "name": "Holy Fire",
+      "effect": "You and Teammates Hit by Your Flame Gain +30% Damage and +50 DR for 15 Seconds"
+    },
+    {
+      "name": "Lucas' Switchblade",
+      "effect": "+50% Explosive Damage"
+    },
+    {
+      "name": "Ogua Gauntlet",
+      "effect": "+30% More Damage Blocked"
+    },
+    {
+      "name": "Kabloom",
+      "effect": "Poison Damage"
+    },
+    {
+      "name": "Branding Iron",
+      "effect": "Fire Damage"
+    },
+    {
+      "name": "Face Breaker",
+      "effect": "+10% Damage to Weak Point"
+    },
+    {
+      "name": "Boiling Point",
+      "effect": "Poison Damage"
+    },
+    {
+      "name": "Cauterizer",
+      "effect": "Energy Damage"
+    },
+    {
+      "name": "Drill Fist",
+      "effect": "Fire Damage"
+    },
+    {
+      "name": "Flatliner",
+      "effect": "Fully Charged Shots Deal 100% More Damage"
+    },
+    {
+      "name": "Lickety-Split",
+      "effect": "Railway Spikes Chain 2 Times"
+    },
+    {
+      "name": "Ultracite Terror Sword",
+      "effect": "Poison Damage"
+    },
+    {
+      "name": "Boomstick",
+      "effect": "Fires 2 Additional Missiles"
+    },
+    {
+      "name": "Longshot",
+      "effect": "+30% Damage to Far Targets While Aiming"
+    },
+    {
+      "name": "Overkill",
+      "effect": "Kills Grant +5 Killstreak Count"
+    },
+    {
+      "name": "Peacemaker",
+      "effect": "Bonus Explosive Damage Base on CHA"
+    },
+    {
+      "name": "Daisycutter",
+      "effect": "+20% Damage for Every 1000 RAD Resistance"
+    },
+    {
+      "name": "Pyrolyzer",
+      "effect": "Burning Enemies Burst into a Firey Mess Based on Luck"
+    },
+    {
+      "name": "Somerset Special",
+      "effect": "+15% Damage to Distant Targets"
+    },
+    {
+      "name": "The Fact Finder",
+      "effect": "+15% Damage to Weak Point While Aiming"
+    },
+    {
+      "name": "V63-BERTHA",
+      "effect": "Modifiers to Explosive Radius Apply to Damage Instead"
+    },
+    {
+      "name": "Bunker Buster",
+      "effect": "+25% Explosive Radius"
+    },
+    {
+      "name": "Final Word",
+      "effect": "Gain 1 Bullet Storm Stack on Kill"
+    },
+    {
+      "name": "The V.A.T.S. Unknown",
+      "effect": "V.A.T.S. Criticals Deal Between 20% to 200% Damage"
+    },
+    {
+      "name": "Slug Buster",
+      "effect": "Replenish 60 Action Points with Each Kill"
+    },
+    {
+      "name": "Oathbreaker",
+      "effect": "+1 Rank to Perk Bloody Mess"
+    },
+    {
+      "name": "Nuka-Launcher",
+      "effect": "Launches Nuka Quantum Grenades"
+    },
+    {
+      "name": "Stimpike",
+      "effect": "Attacks will Heal Friendly Targets by 10% Health"
+    },
+    {
+      "name": "Love Tap",
+      "effect": "Bashing Grants You and Teammates +30% Damage for 30 Seconds"
+    },
+    {
+      "name": "Crowd Control",
+      "effect": "Bleed Damage"
+    },
+    {
+      "name": "Doctor's Orders",
+      "effect": "Attacks Against Weak Points Have 30% Chance to Reset a Revive Effect Cooldown"
+    },
+    {
+      "name": "Foundation's Vengeance",
+      "effect": "Foundations Vengeance: +5 Bullet Storm Stacks While Under 25% HP"
+    },
+    {
+      "name": "Pirate Punch",
+      "effect": "+5% Damage per Lockpick Skill"
+    },
+    {
+      "name": "The Debilitator",
+      "effect": "+2% Limb Damage per STR"
+    },
+    {
+      "name": "Tone Death",
+      "effect": "+20% Damage while Well Tuned"
+    },
+    {
+      "name": "Mind Over Matter",
+      "effect": "+1 INT per kill during a kill streak"
+    },
+    {
+      "name": "Molerat Bat",
+      "effect": "+50% Damage to Molerats"
+    },
+    {
+      "name": "Grand Finale",
+      "effect": "Fire Damage"
+    },
+    {
+      "name": "The Farmhand",
+      "effect": "Bonus Melee Damage per END"
+    },
+    {
+      "name": "Western Spirit",
+      "effect": "Grants Gunslinger Master Perk"
+    },
+    {
+      "name": "Gunther's Big Iron",
+      "effect": "+45% Reload Speed"
+    },
+    {
+      "name": "Whacker Smacker",
+      "effect": "+5% Power Attack Damage per Onslaught Stack"
+    },
+    {
+      "name": "Shattered Grounds",
+      "effect": "Bleed Damage"
+    },
+    {
+      "name": "Anchorage Ace",
+      "effect": "Prototype Integrated Silencer"
+    },
+    {
+      "name": "Red Terror",
+      "effect": "Fire Damage"
+    },
+    {
+      "name": "Ticket to Revenge",
+      "effect": "+3% Armor Penetration per Onslaught stack"
+    },
+    {
+      "name": "V63-OLGA",
+      "effect": "Projectiles Gain +63% Chance to Refract Towards a Nearby Target"
+    },
+    {
+      "name": "V63-HELGA",
+      "effect": "Piercing Attacks"
+    },
+    {
+      "name": "Civil Unrest",
+      "effect": "+50 Action Points"
+    },
+    {
+      "name": "Relic Reaper",
+      "effect": "Random Collection Perk"
+    },
+    {
+      "name": "V63 Shock Baton",
+      "effect": "Energy Damage"
+    },
+    {
+      "name": "Meadow Breeze Sprayer",
+      "effect": "Sprays Toxic Meadow Breeze"
+    },
+    {
+      "name": "Prototype ABX03",
+      "effect": "Sprays Burning Meadow Breeze"
+    },
+    {
+      "name": "Resolve Breaker",
+      "effect": "Fire Cryogenic Grenades"
+    },
+    {
+      "name": "All Rise",
+      "effect": "+50 HP"
+    },
+    {
+      "name": "Black Diamond",
+      "effect": "Cryo Damage"
+    },
+    {
+      "name": "Super Slasher",
+      "effect": "Bleed Damage"
+    },
+    {
+      "name": "Cryptid Jawbone Knife",
+      "effect": "+50% damage to Cryptids"
+    },
+    {
+      "name": "Minty Breather",
+      "effect": "Attacks Restore Teammates Health"
+    },
+    {
+      "name": "Xerxo's Gamma Ray Gun",
+      "effect": "Emits Radiation at 6 RAD/s"
+    }
+  ]
+}

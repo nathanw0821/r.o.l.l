@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import OFFICIAL_P70 from "@/data/truth/unique-items-official-p70.json";
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
 import { WEAPON_ALIASES, WEAPON_COMBAT_BASE_CATALOG } from "@/lib/builder/combat-firepower-catalog";
 import {
@@ -51,6 +52,29 @@ describe("unique-items truth pack", () => {
         "Old Guard", "Resolute Veteran", "Salt of the Earth", "The Action Hero", "The Farmhand", "The Guarantee", "The Quick Fix",
       ].sort()
     );
+  });
+
+  it("every weapon's innate matches the official Patch 70 release-notes table (Bethesda's typos normalised)", () => {
+    const official = new Map(OFFICIAL_P70.weapons.map((row) => [row.name, row.effect]));
+    // The pack corrects these typos in the official text; anything else must match word for word.
+    const normalised: Record<string, string> = {
+      "Cultist Piercer": "+50% Armor Penetration vs Cryptids",
+      Peacemaker: "Bonus Explosive Damage Based on CHA",
+      Pyrolyzer: "Burning Enemies Burst into a Fiery Mess Based on Luck",
+      "The V.A.T.S. Unknown": "V.A.T.S. Criticals Deal Between 20% and 200% Damage",
+      Stimpike: "Attacks Heal Friendly Targets by 10% Health",
+      "Foundation's Vengeance": "+5 Bullet Storm Stacks While Under 25% HP",
+      "Resolve Breaker": "Fires Cryogenic Grenades",
+    };
+    // Compared on letters and digits only (case, spacing, apostrophes and punctuation differ between
+    // Bethesda's table and the pack's house style); the wording itself must match.
+    const fold = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "");
+    expect(official.size).toBe(83);
+    for (const item of getUniqueItems("weapon")) {
+      const expected = normalised[item.name] ?? official.get(item.name);
+      expect(expected, `${item.name} is not in the official table`).toBeDefined();
+      expect(fold(item.innateEffect), item.name).toBe(fold(expected!));
+    }
   });
 
   it("every non-null baseItemId exists in base-gear or the firepower catalog", () => {

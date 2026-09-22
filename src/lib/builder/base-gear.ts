@@ -86,6 +86,7 @@ export const WEAPON_BASE_PIECES: BaseGearPiece[] = [
   { id: "gunthers-big-iron", label: "Gunther's Big Iron (Single Action · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
   { id: "the-fact-finder", label: "The Fact Finder (.44 Pistol · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
   { id: "the-kabloom", label: "The Kabloom (Pump Shotgun · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
+  { id: "civil-unrest", label: "Civil Unrest (Pump Shotgun · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
   { id: "grand-finale", label: "Grand Finale (Broadsider · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
   { id: "boomstick", label: "Boomstick (Missile Launcher · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
   { id: "overkill", label: "Overkill (Fat Man · Unique)", kind: "weapon", isUnique: true, weaponSub: "heavy" },
@@ -93,6 +94,7 @@ export const WEAPON_BASE_PIECES: BaseGearPiece[] = [
   { id: "face-breaker", label: "Face Breaker (Power Fist · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
   { id: "unstoppable-monster", label: "Unstoppable Monster (Deathclaw Gauntlet · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
   { id: "the-gutter", label: "The Gutter (Chinese Officer Sword · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
+  { id: "the-quick-fix", label: "The Quick Fix (Switchblade · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
   { id: "whacker-smacker", label: "Whacker Smacker (Super Sledge · Unique)", kind: "weapon", isUnique: true, weaponSub: "melee" },
   { id: "crowd-control", label: "Crowd Control (Combat Shotgun · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
   { id: "medical-malpractice", label: "Medical Malpractice (.44 Pistol · Unique)", kind: "weapon", isUnique: true, weaponSub: "ranged" },
@@ -408,7 +410,7 @@ const WEAPON_TYPE_CHASSIS_MAP: Record<WeaponCategoryKey, { label: string; icon: 
       ["combat-shotgun", "crowd-control"],
       ["double-barrel", "cold-shoulder"],
       ["gauss-shotgun"],
-      ["pump-shotgun", "the-kabloom"]
+      ["pump-shotgun", "civil-unrest", "the-kabloom"]
     ]
   },
   pistols: {
@@ -454,7 +456,7 @@ const WEAPON_TYPE_CHASSIS_MAP: Record<WeaponCategoryKey, { label: string; icon: 
       ["shishkebab"],
       ["sledgehammer"],
       ["super-sledge", "v63-zweihander", "whacker-smacker"],
-      ["switchblade"],
+      ["switchblade", "the-quick-fix"],
       ["tenderizer"],
       ["the-gutter"],
       ["v63-shock-baton"],

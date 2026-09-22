@@ -296,6 +296,34 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isEnergy": false,
     "isExplosiveInherent": true
   },
+  "civil-unrest": {
+    "id": "civil-unrest",
+    "label": "Civil Unrest (Pump Shotgun · Unique)",
+    "maxLevel": 45,
+    "baseDamage": 95,
+    "damageType": "ballistic",
+    "fireRate": 2,
+    "baseVatsApCost": 32,
+    "magazineSize": 8,
+    "weaponClass": "shotgunner",
+    "isAutomatic": false,
+    "isRanged": true,
+    "isEnergy": false
+  },
+  "the-quick-fix": {
+    "id": "the-quick-fix",
+    "label": "The Quick Fix (Switchblade · Unique)",
+    "maxLevel": 50,
+    "baseDamage": 26,
+    "damageType": "physical",
+    "fireRate": 3.8,
+    "baseVatsApCost": 14,
+    "magazineSize": 1,
+    "weaponClass": "melee",
+    "isAutomatic": false,
+    "isRanged": false,
+    "isEnergy": false
+  },
   "grand-finale": {
     "id": "grand-finale",
     "label": "Grand Finale (Broadsider · Unique)",
