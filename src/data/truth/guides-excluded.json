@@ -9,7 +9,8 @@
     "category-blurb": "a blog category landing page: a description of the category and a list of post titles",
     "navigation-shell": "the scraped body is only the site menu or a list of links",
     "listing-shell": "a blog category listing of post titles and dates; the posts themselves are separate guides",
-    "not-fallout-76": "about another game, the TV series or real life"
+    "not-fallout-76": "about another game, the TV series or real life",
+    "empty-after-cleaning": "Nothing left after removing site boilerplate: the original content was screenshots or site chrome that was never captured, so the page shows only a title and a link."
   },
   "guides": [
     {
@@ -883,6 +884,886 @@
       "url": "https://fallout.fandom.com/wiki/Fallout_4_patches",
       "reason": "not-fallout-76",
       "note": "Fallout 4 patch list"
+    },
+    {
+      "id": 3527,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 31 Jul 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-31-07-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3533,
+      "source": "NukaKnights",
+      "title": "Atomic Shop Wochenend Angebote, 24 Jul 2026",
+      "url": "https://nukaknights.com/blog/atom-update-shop-24-07-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3538,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 17 Jul 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-17-07-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3542,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 10 Jul 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-10-07-2026.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3547,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 3 Jul 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-03-07-2026.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3552,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 26 Jun 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-26-06-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3566,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 5 Jun 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-05-06-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3571,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 29 May 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-29-05-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3574,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 22 May 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-22-05-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3580,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 15 May 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-15-05-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3583,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochend Angebote, 8 May 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-08-05-2026-wochend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3589,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 1 May 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-01-05-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3593,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 24 Apr 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-24-04-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3603,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 10 Apr 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-10-04-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3612,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 3 Apr 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-03-04-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3619,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 27 Mar 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-27-03-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3629,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 13 Mar 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-13-03-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3634,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 6 Mar 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-06-03-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3641,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 27 Feb 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-27-02-2026.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3644,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 20 Feb 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-20-02-2026.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3646,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 13 Feb 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-13-02-2026.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3653,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 4 Feb 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-04-02-2026.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3658,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 29 Jan 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-29-01-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3662,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 22 Jan 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-22-01-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3668,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update Wochenend Angebote, 15 Jan 2026",
+      "url": "https://nukaknights.com/blog/atom-shop-update-15-01-2026-wochenend-angebote.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3748,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 29 Jul 2025",
+      "url": "https://nukaknights.com/blog/atom-shop-update-29-07-2025.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3749,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 22 Jul 2025",
+      "url": "https://nukaknights.com/blog/atom-shop-update-22-07-2025.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3827,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 18 Feb 2025",
+      "url": "https://nukaknights.com/blog/atom-shop-update-18-02-2025.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3833,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 28 Jan 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-28-01-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3836,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 21 Jan 2025",
+      "url": "https://nukaknights.com/blog/atom-shop-update-21-01-2025.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3839,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 14 Jan 2025",
+      "url": "https://nukaknights.com/blog/atom-shop-update-14-01-2025.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3841,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 31 Dec 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-31-12-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3843,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 24 Dec 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-24-12-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3847,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 17 Dec 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-17-12-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3849,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 10 Dec 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-10-12-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3854,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 3 Dec 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-03-12-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3857,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 26 Nov 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-26-11-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3859,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 19 Nov 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-19-11-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3862,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 12 Nov 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-12-11-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3864,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 5 Nov 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-05-11-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3866,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 29 Oct 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-29-10-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3868,
+      "source": "NukaKnights",
+      "title": "Datamining Pts Patch 56 Atomic Shop Atx, 25 Oct 2024",
+      "url": "https://nukaknights.com/blog/datamining-pts-patch-56-atom-shop-25-10-2024-atx.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3871,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 22 Oct 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-22-10-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3874,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 15 Oct 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-15-10-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3875,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 8 Oct 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-08-10-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3876,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 1 Oct 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-01-10-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3879,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 24 Sep 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-24-09-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3883,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 10 Sep 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-10-09-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3886,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 3 Sep 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-03-09-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3893,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 27 Aug 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-27-08-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3895,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 20 Sep 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-20-09-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3898,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 13 Aug 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-13-08-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3900,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 6 Aug 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-06-08-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3902,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 30 Jul 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-30-07-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3904,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 23 Jul 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-23-07-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3911,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 9 Jul 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-09-07-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3914,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 2 Jul 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-02-07-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3918,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 18 Jun 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-18-06-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3921,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 12 Jun 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-12-06-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3925,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 4 Jun 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-04-06-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3927,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 28 May 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-28-05-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3929,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 21 May 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-21-05-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3931,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 14 May 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-14-05-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3933,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 7 May 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-07-05-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3938,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 30 Apr 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-30-04-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3941,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 23 Apr 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-23-04-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3948,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 16 Apr 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-16-04-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3956,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 2 Apr 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-02-04-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3960,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 26 Mar 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-26-03-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3967,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 19 Mar 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-19-03-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3969,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 12 Mar 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-12-03-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3972,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 5 Mar 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-05-03-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3975,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 27 Feb 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-27-02-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3980,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 20 Feb 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-20-02-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3982,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 13 Feb 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-13-02-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3986,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 6 Feb 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-06-02-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 3991,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 30 Jan 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-30-01-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4000,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 23 Jan 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-23-01-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4003,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 16 Jan 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-16-01-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4005,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 9 Jan 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-09-01-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4010,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 2 Jan 2024",
+      "url": "https://nukaknights.com/blog/atom-shop-update-02-01-2024.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4011,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 26 Dec 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-26-12-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4012,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 19 Dec 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-19-12-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4014,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 12 Dec 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-12-12-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4018,
+      "source": "NukaKnights",
+      "title": "Datamining Patch 48 Score Spielbrett Atlantic City",
+      "url": "https://nukaknights.com/blog/datamining-patch-48-score-spielbrett-atlantic-city.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4019,
+      "source": "NukaKnights",
+      "title": "Datamining Patch 48 Atx Atomic Shop Atlantic City",
+      "url": "https://nukaknights.com/blog/datamining-patch-48-atx-atom-shop-atlantic-city.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4030,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 14 Nov 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-14-11-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4033,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 7 Nov 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-07-11-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4036,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 31 Oct 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-31-10-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4042,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 23 Oct 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-23-10-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4044,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 17 Oct 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-17-10-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4045,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 10 Oct 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-10-10-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4049,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 3 Oct 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-03-10-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4052,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 26 Sep 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-26-09-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4055,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 19 Sep 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-19-09-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4057,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 5 Sep 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-05-09-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4059,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 28 Aug 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-28-08-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4060,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 22 Aug 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-22-08-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4061,
+      "source": "NukaKnights",
+      "title": "All rewards from Season 14 Fight for Freedom",
+      "url": "https://nukaknights.com/blog/alle-belohnungen-aus-saison-14-kampf-um-die-freiheit.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4067,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 15 Aug 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-15-08-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4076,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 18 Jul 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-18-07-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4083,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 11 Jul 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-11-07-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4085,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 4 Jul 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-04-07-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4098,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 13 Jun 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-13-06-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4107,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 16 May 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-16-05-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4109,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 9 May 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-09-05-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4112,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 25 Apr 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-25-04-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4142,
+      "source": "NukaKnights",
+      "title": "All rewards from Season 12 Rip Daring on cryptid hunt Game Board 12",
+      "url": "https://nukaknights.com/blog/alle-belohnungen-aus-saison-12-rip-daring-auf-kryptidenjagd-spielbrett-12.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4146,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 14 Feb 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-14-02-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
+    },
+    {
+      "id": 4156,
+      "source": "NukaKnights",
+      "title": "Atomic Shop update, 24 Jan 2023",
+      "url": "https://nukaknights.com/blog/atom-shop-update-24-01-2023.html",
+      "reason": "empty-after-cleaning",
+      "note": "Body empty after boilerplate removal (Nathan approved removing these 2026-09-22)"
     }
   ]
 }
