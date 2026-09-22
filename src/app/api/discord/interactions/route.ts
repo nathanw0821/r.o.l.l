@@ -308,7 +308,7 @@ export async function POST(req: Request) {
         return NextResponse.json({
           type: 4,
           data: {
-            content: `🔍 No wiki article found matching **"${query}"**. Browse 3,300+ guides at **[fallout76.wiki/wiki](https://fallout76.wiki/wiki)**!`,
+            content: `🔍 No wiki article found matching **"${query}"**. Browse all ${FALLBACK_WIKI_ARTICLES.length.toLocaleString("en-US")} guides at **[fallout76.wiki/wiki](https://fallout76.wiki/wiki)**!`,
             flags: 64
           }
         });
