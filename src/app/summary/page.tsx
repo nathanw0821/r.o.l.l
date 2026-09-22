@@ -34,7 +34,7 @@ export default async function SummaryPage() {
             {user?.username && (
               <Link 
                 href={`/u/${user.username}`} 
-                className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-xs font-mono font-bold uppercase hover:bg-accent/90 transition shrink-0"
+                className="flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-lg text-xs font-mono font-bold uppercase hover:bg-accent/90 transition shrink-0"
               >
                 <ExternalLink className="h-4 w-4" />
                 Share profile
@@ -57,15 +57,15 @@ export default async function SummaryPage() {
           
           <div className="pt-3 border-t border-border/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-              <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Total Effects</span>
+              <span className="text-2xs font-mono uppercase tracking-widest text-foreground/50">Total Effects</span>
               <span className="text-2xl font-mono font-bold text-foreground mt-1">{summary.total}</span>
             </div>
             <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-              <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Unlocked</span>
+              <span className="text-2xs font-mono uppercase tracking-widest text-foreground/50">Unlocked</span>
               <span className="text-2xl font-mono font-bold text-foreground mt-1">{summary.unlocked}</span>
             </div>
             <div className="rounded-lg border border-border/30 bg-background/30 p-3.5 flex flex-col justify-center">
-              <span className="text-[0.72rem] font-mono uppercase tracking-widest text-foreground/50">Completion</span>
+              <span className="text-2xs font-mono uppercase tracking-widest text-foreground/50">Completion</span>
               <span className="text-2xl font-mono font-bold text-foreground mt-1">{summary.percent}%</span>
             </div>
           </div>

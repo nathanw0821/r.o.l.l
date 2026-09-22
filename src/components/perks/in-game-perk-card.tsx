@@ -19,6 +19,7 @@ import {
 import { Sparkles, Star, Info, X, ExternalLink, AlertTriangle } from "lucide-react";
 import gameVersion from "@/data/truth/game-version.json";
 import { guidesSearchHref } from "@/lib/links/cross-links";
+import { trapTabKey } from "@/lib/focus-trap";
 
 export interface InGamePerkCardProps {
   cardId?: string;
@@ -195,7 +196,7 @@ export function ScaleformSpecialVisual({
         style={{ backgroundColor: headerColor }}
       >
         <span
-          className="text-[0.55rem] sm:text-[0.64rem] font-medium tracking-[0.16em] text-white/90 uppercase leading-none"
+          className="text-3xs sm:text-3xs font-medium tracking-[0.16em] text-white/90 uppercase leading-none"
           style={{ fontFamily: "var(--font-oswald), 'Oswald', sans-serif" }}
         >
           {specialName}
@@ -245,7 +246,7 @@ export function ScaleformSpecialVisual({
         {/* Description Text */}
         <div className="absolute top-[8%] left-[6%] right-[6%] h-[48%] flex items-center">
           <p
-            className="text-[0.62rem] sm:text-[0.74rem] font-bold text-slate-900 leading-snug line-clamp-3 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]"
+            className="text-3xs sm:text-2xs font-bold text-slate-900 leading-snug line-clamp-3 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]"
             style={{ fontFamily: "var(--font-roboto-condensed), 'Roboto Condensed', sans-serif" }}
           >
             {description}
@@ -301,7 +302,7 @@ export function ScaleformLegendaryVisual({
       {/* 2. Header Banner: - LEGENDARY - & Perk Title */}
       <div className="absolute top-[6%] inset-x-[8%] h-[12%] flex flex-col items-center justify-center text-center z-[25] leading-tight pointer-events-none">
         <span
-          className="text-[0.6rem] sm:text-[0.68rem] font-bold tracking-[0.22em] text-amber-300 uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
+          className="text-3xs sm:text-2xs font-bold tracking-[0.22em] text-amber-300 uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
           style={{ fontFamily: "var(--font-oswald), 'Oswald', sans-serif" }}
         >
           - LEGENDARY -
@@ -335,7 +336,7 @@ export function ScaleformLegendaryVisual({
       {/* 5. Description Text Box */}
       <div className="absolute bottom-[4.5%] inset-x-[7%] h-[13.5%] flex items-center justify-center text-center z-[25] pointer-events-none px-1">
         <p
-          className="text-[0.62rem] sm:text-[0.74rem] font-bold text-white leading-tight line-clamp-3 drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)]"
+          className="text-3xs sm:text-2xs font-bold text-white leading-tight line-clamp-3 drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)]"
           style={{ fontFamily: "var(--font-roboto-condensed), 'Roboto Condensed', sans-serif" }}
         >
           {description}
@@ -404,20 +405,30 @@ function InGamePerkCardComponent({
     setInspectRank(rank);
   }, [rank]);
 
-  // Handle ESC key and lock body scrolling when inspector modal is active
+  const inspectorTitleId = React.useId();
+  const inspectorPanelRef = React.useRef<HTMLDivElement | null>(null);
+
+  // Inspector modal: Escape closes, Tab stays inside, focus moves in on open and back on close,
+  // and the page behind does not scroll.
   React.useEffect(() => {
     if (!showInspector) return;
+    const opener = document.activeElement as HTMLElement | null;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.stopPropagation();
         setShowInspector(false);
+        return;
       }
+      trapTabKey(e, inspectorPanelRef.current);
     };
     window.addEventListener("keydown", handleKeyDown);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    inspectorPanelRef.current?.querySelector<HTMLElement>("[data-inspector-close]")?.focus();
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = prevOverflow;
+      if (opener && opener.isConnected) opener.focus();
     };
   }, [showInspector]);
 
@@ -587,10 +598,10 @@ function InGamePerkCardComponent({
               >
                 {cost}
               </span>
-              <span className="text-[0.68rem] font-black uppercase tracking-wider text-slate-100 truncate">
+              <span className="text-2xs font-black uppercase tracking-wider text-slate-100 truncate">
                 {displayName}
               </span>
-              <span className={`text-[0.58rem] font-black px-1.5 py-0.5 rounded border uppercase ${theme.stampBg}`}>
+              <span className={`text-3xs font-black px-1.5 py-0.5 rounded border uppercase ${theme.stampBg}`}>
                 {special}
               </span>
             </div>
@@ -601,7 +612,7 @@ function InGamePerkCardComponent({
             </div>
 
             {/* Description Text Box */}
-            <p className="text-[0.62rem] font-mono text-slate-200 leading-tight bg-slate-950/90 p-2 rounded border border-slate-800 shrink-0 line-clamp-3">
+            <p className="text-3xs font-mono text-slate-200 leading-tight bg-slate-950/90 p-2 rounded border border-slate-800 shrink-0 line-clamp-3">
               {description}
             </p>
           </div>
@@ -609,28 +620,28 @@ function InGamePerkCardComponent({
 
         {/* Outdated Warning Badge Banner */}
         {effectiveIsOutdated && (!isAccordion || isForefront) && (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-red-600 via-amber-600 to-amber-500 text-white font-black text-[0.58rem] px-2 py-0.5 rounded shadow-lg border border-amber-300 tracking-wider flex items-center gap-1 z-40 animate-pulse">
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-red-600 via-amber-600 to-amber-500 text-white font-black text-3xs px-2 py-0.5 rounded shadow-lg border border-amber-300 tracking-wider flex items-center gap-1 z-40 animate-pulse">
             <AlertTriangle className="h-3 w-3" /> OUTDATED
           </div>
         )}
 
         {/* Legendary Badge Crest Banner (only for fallback images that lack built-in title) */}
         {isLegendary && (!inGameCardImage || imgError) && !cleanForeground && (!isAccordion || isForefront) && (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[0.58rem] px-2 py-0.5 rounded-md shadow-lg border border-yellow-300 tracking-wider flex items-center gap-1 z-40">
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-3xs px-2 py-0.5 rounded-md shadow-lg border border-yellow-300 tracking-wider flex items-center gap-1 z-40">
             <Sparkles className="h-3 w-3 fill-slate-950" /> LEGENDARY
           </div>
         )}
 
         {/* Ghoul Specific Badge Banner */}
         {isGhoul && !isLegendary && (!inGameCardImage || imgError) && (!isAccordion || isForefront) && (
-          <div className="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-400 text-emerald-300 font-mono font-black text-[0.58rem] px-2 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.6)] tracking-wider z-40 flex items-center gap-1">
+          <div className="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-400 text-emerald-300 font-mono font-black text-3xs px-2 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.6)] tracking-wider z-40 flex items-center gap-1">
             <span className="text-emerald-400">☢</span> GHOUL
           </div>
         )}
 
         {/* Equipped Badge Ribbon */}
         {isEquipped && !isAccordion && (
-          <div className="absolute top-2 right-2 bg-amber-500 text-slate-950 font-black text-[0.62rem] px-2 py-0.5 rounded-full shadow-lg border border-amber-300 tracking-wider z-40 pointer-events-none">
+          <div className="absolute top-2 right-2 bg-amber-500 text-slate-950 font-black text-3xs px-2 py-0.5 rounded-full shadow-lg border border-amber-300 tracking-wider z-40 pointer-events-none">
             ✓ EQUIPPED
           </div>
         )}
@@ -676,7 +687,7 @@ function InGamePerkCardComponent({
           {/* Current Rank Display & Stars */}
           <div className="flex-1 text-center font-mono px-0.5 min-w-0">
             <span
-              className={`text-[0.60rem] sm:text-[0.65rem] font-black block leading-none truncate ${
+              className={`text-3xs sm:text-2xs font-black block leading-none truncate ${
                 isLegendary ? "text-yellow-200" : "text-slate-200"
               }`}
             >
@@ -736,7 +747,7 @@ function InGamePerkCardComponent({
                   onEquip?.();
                 }
               }}
-              className={`text-[0.58rem] font-black uppercase px-2 py-1 rounded border transition-all shadow-sm shrink-0 ${
+              className={`text-3xs font-black uppercase px-2 py-1 rounded border transition-all shadow-sm shrink-0 ${
                 isEquipped
                   ? "bg-red-950/90 border-red-700 text-red-300 hover:bg-red-900 hover:text-white"
                   : isLegendary
@@ -773,6 +784,10 @@ function InGamePerkCardComponent({
           onClick={() => setShowInspector(false)}
         >
           <div
+            ref={inspectorPanelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={inspectorTitleId}
             className="relative w-full max-w-xl md:max-w-3xl max-h-[92vh] overflow-y-auto bg-slate-950 border border-amber-500/50 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-4 font-mono text-foreground"
             onClick={(e) => e.stopPropagation()}
           >
@@ -780,7 +795,7 @@ function InGamePerkCardComponent({
             <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg sm:text-xl font-black uppercase text-amber-400 tracking-wider">
+                  <h3 id={inspectorTitleId} className="text-lg sm:text-xl font-black uppercase text-amber-400 tracking-wider">
                     {displayName}
                   </h3>
                   <span className={`text-xs font-black px-2 py-0.5 rounded border uppercase ${theme.stampBg}`}>
@@ -795,10 +810,12 @@ function InGamePerkCardComponent({
               </div>
               <button
                 type="button"
+                data-inspector-close
+                aria-label="Close inspector"
                 onClick={() => setShowInspector(false)}
                 className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 shrink-0"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -810,7 +827,7 @@ function InGamePerkCardComponent({
                     <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
                     OUTDATED GAME KNOWLEDGE ({effectiveOutdatedMeta.patchVersion})
                   </span>
-                  <span className="text-[0.65rem] px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold uppercase">
+                  <span className="text-2xs px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold uppercase">
                     Reworked in Live FO76
                   </span>
                 </div>
@@ -818,7 +835,7 @@ function InGamePerkCardComponent({
                   {effectiveOutdatedMeta.reason}
                 </p>
                 {effectiveOutdatedMeta.legacyEffect && (
-                  <p className="text-[0.72rem] text-amber-300/80 italic font-mono bg-amber-950/80 p-2 rounded border border-amber-800/40">
+                  <p className="text-2xs text-amber-300/80 italic font-mono bg-amber-950/80 p-2 rounded border border-amber-800/40">
                     Legacy Effect: &quot;{effectiveOutdatedMeta.legacyEffect}&quot;
                   </p>
                 )}
@@ -836,7 +853,7 @@ function InGamePerkCardComponent({
             {/* Modern Rework Info Callout */}
             {effectiveReworkedFrom && !effectiveIsOutdated && (
               <div className="rounded-xl border border-sky-500/40 bg-sky-950/40 p-3 space-y-1 text-slate-200">
-                <div className="text-[0.72rem] font-bold uppercase text-sky-400 flex items-center gap-1.5">
+                <div className="text-2xs font-bold uppercase text-sky-400 flex items-center gap-1.5">
                   <Info className="h-3.5 w-3.5 text-sky-400 shrink-0" />
                   {`PATCH ${gameVersion.patch} LIVE GROUND TRUTH`}: Formerly &quot;{effectiveReworkedFrom.formerName}&quot;
                 </div>
@@ -932,7 +949,7 @@ function InGamePerkCardComponent({
                               ))}
                             </span>
                           </span>
-                          <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-[0.65rem] text-slate-400 font-mono">
+                          <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-2xs text-slate-400 font-mono">
                             Cost: {r.cost} SPECIAL Pt{r.cost > 1 ? "s" : ""}
                           </span>
                         </div>

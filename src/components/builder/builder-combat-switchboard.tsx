@@ -529,7 +529,7 @@ export default function BuilderCombatSwitchboard({
       {readOnly && (
         <div className="rounded-lg border border-amber-500/40 bg-amber-950/20 p-2.5 text-xs font-mono text-amber-300 flex items-center justify-between">
           <span className="font-bold tracking-wider uppercase">&gt;&gt; SPECTATOR VIEW · READ-ONLY BIOMETRICS &amp; COMBAT STANCES</span>
-          <span className="text-[0.65rem] px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/40 text-amber-200">
+          <span className="text-2xs px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/40 text-amber-200">
             Telemetry Locked
           </span>
         </div>
@@ -654,7 +654,7 @@ export default function BuilderCombatSwitchboard({
                   <Sparkles className="h-3.5 w-3.5 text-lime-400 animate-pulse" />
                   <span>[ BIOMETRIC TELEMETRY: HP &amp; RADIANT GLOW OVERSHIELD ]</span>
                 </span>
-                <span className="text-[0.72rem] text-slate-400">
+                <span className="text-2xs text-slate-400">
                   Base HP: <span className="text-rose-400 font-bold">{switchboard.healthPct}%</span> · Glow Overshield: <span className="text-lime-300 font-bold">{switchboard.glowPct || 0}%</span>
                 </span>
               </div>
@@ -666,7 +666,7 @@ export default function BuilderCombatSwitchboard({
                   className="h-full bg-gradient-to-r from-rose-700 to-rose-500 transition-all duration-300 relative shrink-0"
                   style={{ width: `${switchboard.healthPct}%` }}
                 >
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[0.65rem] font-black text-white tracking-widest drop-shadow">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-2xs font-black text-white tracking-widest drop-shadow">
                     HP {switchboard.healthPct}%
                   </span>
                 </div>
@@ -677,14 +677,14 @@ export default function BuilderCombatSwitchboard({
                     className="h-full bg-gradient-to-r from-lime-500 via-emerald-400 to-lime-300 border-l border-lime-200 transition-all duration-300 relative shadow-[0_0_15px_rgba(132,204,22,0.8)] animate-pulse shrink-0"
                     style={{ width: `${Math.min(100 - switchboard.healthPct, switchboard.glowPct || 0)}%` }}
                   >
-                    <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-[0.62rem] font-black text-slate-950 tracking-wider">
+                    <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-3xs font-black text-slate-950 tracking-wider">
                       +GLOW {switchboard.glowPct}%
                     </span>
                   </div>
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center justify-between text-[0.65rem] text-slate-400 pt-0.5 gap-2">
+              <div className="flex flex-wrap items-center justify-between text-2xs text-slate-400 pt-0.5 gap-2">
                 <span>🛡️ GHOUL RAD CONVERSION: Radiation taken or consumed is converted into a Green Overshield.</span>
                 <span className="text-lime-400 font-bold">OVERSHIELD: {switchboard.glowPct || 0}% ACTIVE</span>
               </div>
@@ -696,7 +696,7 @@ export default function BuilderCombatSwitchboard({
                   <Heart className="h-3.5 w-3.5 text-rose-400" />
                   <span>[ BIOMETRIC TELEMETRY: HP &amp; RADIATION CAP ]</span>
                 </span>
-                <span className="text-[0.72rem] text-slate-400">
+                <span className="text-2xs text-slate-400">
                   Usable HP: <span className="text-rose-400 font-bold">{Math.min(switchboard.healthPct, Math.max(5, 100 - (switchboard.radsPct || 0)))}%</span> · Rad Saturation: <span className="text-amber-400 font-bold">{switchboard.radsPct || 0}%</span>
                 </span>
               </div>
@@ -708,7 +708,7 @@ export default function BuilderCombatSwitchboard({
                   className="h-full bg-gradient-to-r from-rose-700 to-rose-500 transition-all duration-300 relative"
                   style={{ width: `${Math.min(switchboard.healthPct, Math.max(5, 100 - (switchboard.radsPct || 0)))}%` }}
                 >
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[0.65rem] font-black text-white tracking-widest drop-shadow">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-2xs font-black text-white tracking-widest drop-shadow">
                     HP {switchboard.healthPct}%
                   </span>
                 </div>
@@ -719,14 +719,14 @@ export default function BuilderCombatSwitchboard({
                     className="h-full bg-gradient-to-r from-amber-600 to-amber-500 border-l border-amber-300 ml-auto transition-all duration-300 relative"
                     style={{ width: `${switchboard.radsPct || 0}%` }}
                   >
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[0.62rem] font-black text-slate-950 tracking-wider">
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-3xs font-black text-slate-950 tracking-wider">
                       RADS {switchboard.radsPct}%
                     </span>
                   </div>
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center justify-between text-[0.65rem] text-slate-400 pt-0.5 gap-2">
+              <div className="flex flex-wrap items-center justify-between text-2xs text-slate-400 pt-0.5 gap-2">
                 <span>☣️ RADIATION CAP: Rads suppress maximum usable health pool (Bloodied threshold).</span>
                 <span className="text-amber-400 font-bold">RAD CAP: {switchboard.radsPct || 0}%</span>
               </div>
@@ -745,6 +745,7 @@ export default function BuilderCombatSwitchboard({
               </div>
               <div className="flex items-center gap-2">
                 <input
+                  aria-label="Current health percent"
                   type="range"
                   min="5"
                   max="100"
@@ -754,7 +755,7 @@ export default function BuilderCombatSwitchboard({
                   className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-rose-500"
                 />
               </div>
-              <div className="flex items-center justify-between text-[0.68rem] pt-1">
+              <div className="flex items-center justify-between text-2xs pt-1">
                 <button
                   type="button"
                   onClick={() => updateField("healthPct", 20)}
@@ -799,7 +800,7 @@ export default function BuilderCombatSwitchboard({
                   onChange={(e) => updateField("glowPct", parseInt(e.target.value, 10))}
                   className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-lime-400"
                 />
-                <div className="flex items-center justify-between text-[0.68rem] pt-0.5">
+                <div className="flex items-center justify-between text-2xs pt-0.5">
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
@@ -835,7 +836,7 @@ export default function BuilderCombatSwitchboard({
                       100% Max Glow
                     </button>
                   </div>
-                  <span className="text-[0.65rem] text-slate-500 italic">Damage absorbed by shield</span>
+                  <span className="text-2xs text-dim italic">Damage absorbed by shield</span>
                 </div>
               </div>
             ) : (
@@ -848,6 +849,7 @@ export default function BuilderCombatSwitchboard({
                   <span className="text-amber-300 font-bold">{switchboard.radsPct || 0}% Rads</span>
                 </div>
                 <input
+                  aria-label="Radiation saturation percent"
                   type="range"
                   min="0"
                   max="95"
@@ -856,7 +858,7 @@ export default function BuilderCombatSwitchboard({
                   onChange={(e) => updateField("radsPct", parseInt(e.target.value, 10))}
                   className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
                 />
-                <div className="flex items-center justify-between text-[0.68rem] pt-0.5">
+                <div className="flex items-center justify-between text-2xs pt-0.5">
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
@@ -881,7 +883,7 @@ export default function BuilderCombatSwitchboard({
                       80% Bloodied Cap
                     </button>
                   </div>
-                  <span className="text-[0.65rem] text-slate-500">Rads cap max usable HP pool</span>
+                  <span className="text-2xs text-dim">Rads cap max usable HP pool</span>
                 </div>
               </div>
             )}
@@ -915,7 +917,7 @@ export default function BuilderCombatSwitchboard({
                       key={st.id}
                       type="button"
                       onClick={() => updateField("feralPct", st.presetVal)}
-                      className={`px-1 py-1 rounded text-[0.65rem] font-bold uppercase transition-all truncate border cursor-pointer ${
+                      className={`px-1 py-1 rounded text-2xs font-bold uppercase transition-all truncate border cursor-pointer ${
                         currentFeralStage.id === st.id
                           ? "bg-lime-500 text-slate-950 border-lime-400 font-black shadow-[0_0_8px_rgba(132,204,22,0.4)]"
                           : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
@@ -926,7 +928,7 @@ export default function BuilderCombatSwitchboard({
                   ))}
                 </div>
 
-                <div className="text-[0.68rem] text-lime-300/90 bg-lime-950/40 border border-lime-500/20 rounded p-1.5 space-y-0.5">
+                <div className="text-2xs text-lime-300/90 bg-lime-950/40 border border-lime-500/20 rounded p-1.5 space-y-0.5">
                   <div className="font-bold text-lime-300">{currentFeralStage.boost}</div>
                   <div className="text-slate-400">{currentFeralStage.desc}</div>
                 </div>
@@ -944,7 +946,8 @@ export default function BuilderCombatSwitchboard({
                   <button
                     type="button"
                     onClick={() => stepFood(-1)}
-                    className="p-1 hover:text-white text-slate-500 transition-colors cursor-pointer"
+                    aria-label="Previous food level"
+                    className="p-1 hover:text-white text-dim transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -952,12 +955,13 @@ export default function BuilderCombatSwitchboard({
                   <button
                     type="button"
                     onClick={() => stepFood(1)}
-                    className="p-1 hover:text-white text-slate-500 transition-colors cursor-pointer"
+                    aria-label="Next food level"
+                    className="p-1 hover:text-white text-dim transition-colors cursor-pointer"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="text-[0.68rem] text-slate-400">{currentFoodDef.desc}</p>
+                <p className="text-2xs text-slate-400">{currentFoodDef.desc}</p>
               </div>
             )}
 
@@ -966,10 +970,10 @@ export default function BuilderCombatSwitchboard({
               <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-2">
                 <div className="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center justify-between border-b border-slate-800 pb-1">
                   <span>[ 🧬 GHOUL DYNAMICS &amp; BUFF INGESTION ]</span>
-                  <span className="text-[0.62rem] text-slate-400 uppercase">Survival Bypassed</span>
+                  <span className="text-3xs text-slate-400 uppercase">Survival Bypassed</span>
                 </div>
 
-                <div className="space-y-1.5 text-[0.68rem]">
+                <div className="space-y-1.5 text-2xs">
                   <div className="flex items-start gap-1.5 text-emerald-300 font-bold">
                     <span className="text-emerald-400 shrink-0">🍖 FOOD &amp; DRINK BUFFS:</span>
                     <span className="font-normal text-slate-200">Ghouls fully consume and gain 100% stat &amp; damage bonuses from all Food Buffs, Teas, Chems, and Alcohol.</span>
@@ -1002,7 +1006,8 @@ export default function BuilderCombatSwitchboard({
                   <button
                     type="button"
                     onClick={() => stepThirst(-1)}
-                    className="p-1 hover:text-white text-slate-500 transition-colors cursor-pointer"
+                    aria-label="Previous thirst level"
+                    className="p-1 hover:text-white text-dim transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -1010,12 +1015,13 @@ export default function BuilderCombatSwitchboard({
                   <button
                     type="button"
                     onClick={() => stepThirst(1)}
-                    className="p-1 hover:text-white text-slate-500 transition-colors cursor-pointer"
+                    aria-label="Next thirst level"
+                    className="p-1 hover:text-white text-dim transition-colors cursor-pointer"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="text-[0.68rem] text-slate-400">{currentThirstDef.desc}</p>
+                <p className="text-2xs text-slate-400">{currentThirstDef.desc}</p>
                 <div className="flex items-center gap-1.5 pt-1">
                   <button
                     type="button"
@@ -1023,7 +1029,7 @@ export default function BuilderCombatSwitchboard({
                       updateField("foodState", "fully_fed");
                       updateField("thirstState", "fully_hydrated");
                     }}
-                    className="flex-1 py-1 rounded border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 text-[0.65rem] font-bold uppercase hover:bg-emerald-900/50 transition-colors cursor-pointer text-center truncate"
+                    className="flex-1 py-1 rounded border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 text-2xs font-bold uppercase hover:bg-emerald-900/50 transition-colors cursor-pointer text-center truncate"
                     title="Set Hunger & Thirst to 100% (Overeater's: +40 Max HP per piece since Patch 66; Gourmand's +24% damage)"
                   >
                     🍖💧 Max Overeater&apos;s
@@ -1034,7 +1040,7 @@ export default function BuilderCombatSwitchboard({
                       updateField("foodState", "starving");
                       updateField("thirstState", "parched");
                     }}
-                    className="px-2 py-1 rounded border border-rose-500/30 bg-rose-950/30 text-rose-400 text-[0.65rem] font-bold uppercase hover:bg-rose-900/40 transition-colors cursor-pointer"
+                    className="px-2 py-1 rounded border border-rose-500/30 bg-rose-950/30 text-rose-400 text-2xs font-bold uppercase hover:bg-rose-900/40 transition-colors cursor-pointer"
                     title="Set to Starving & Parched"
                   >
                     ⚠️ Depleted
@@ -1055,7 +1061,8 @@ export default function BuilderCombatSwitchboard({
                 <button
                   type="button"
                   onClick={() => stepTeam(-1)}
-                  className="p-1 hover:text-white text-slate-500 transition-colors cursor-pointer"
+                  aria-label="Smaller team"
+                  className="p-1 hover:text-white text-dim transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -1063,12 +1070,13 @@ export default function BuilderCombatSwitchboard({
                 <button
                   type="button"
                   onClick={() => stepTeam(1)}
-                  className="p-1 hover:text-white text-slate-500 transition-colors cursor-pointer"
+                  aria-label="Larger team"
+                  className="p-1 hover:text-white text-dim transition-colors cursor-pointer"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
-              <div className="flex flex-wrap items-center justify-between text-[0.68rem] text-slate-400 pt-0.5 gap-2">
+              <div className="flex flex-wrap items-center justify-between text-2xs text-slate-400 pt-0.5 gap-2">
                 <span>{currentTeamDef.desc}</span>
                 <label className="flex items-center gap-1.5 cursor-pointer text-emerald-400 font-bold">
                   <input
@@ -1092,7 +1100,7 @@ export default function BuilderCombatSwitchboard({
               <span className="flex items-center gap-1.5">
                 <Target className="h-3.5 w-3.5" /> Tactical Combat Stances &amp; V.A.T.S.
               </span>
-              <span className="text-[0.65rem] text-slate-400 font-normal">
+              <span className="text-2xs text-slate-400 font-normal">
                 {switchboard.combatStance?.isCrouched ? "🤫 Stealthed" : "🧍 Upright"} ·{" "}
                 {switchboard.combatStance?.isInVats
                   ? switchboard.combatStance?.vatsCritEveryOtherShot
@@ -1106,7 +1114,7 @@ export default function BuilderCombatSwitchboard({
 
             {/* Row 1: Physical Posture & Movement Stances */}
             <div className="space-y-1">
-              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+              <div className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                 <span>Physical Movement &amp; Posture</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1121,7 +1129,7 @@ export default function BuilderCombatSwitchboard({
                   }`}
                 >
                   <span>{switchboard.combatStance?.isCrouched ? "🤫 Stealthed" : "🧍 Upright"}</span>
-                  <span className="text-[0.62rem] font-normal text-slate-500">
+                  <span className="text-3xs font-normal text-dim">
                     {switchboard.combatStance?.isCrouched ? "Nocturnal / Sneak (2.5×)" : "Normal Detection"}
                   </span>
                 </button>
@@ -1137,7 +1145,7 @@ export default function BuilderCombatSwitchboard({
                   }`}
                 >
                   <span>{switchboard.combatStance?.isSprinting ? "🏃 Sprinting" : "🚶 Walking"}</span>
-                  <span className="text-[0.62rem] font-normal text-slate-500">
+                  <span className="text-3xs font-normal text-dim">
                     {switchboard.combatStance?.isSprinting ? "Cavalier's (-10% damage taken)" : "Standard Speed"}
                   </span>
                 </button>
@@ -1153,7 +1161,7 @@ export default function BuilderCombatSwitchboard({
                   }`}
                 >
                   <span>{switchboard.combatStance?.isStationary ? "🛑 Stationary" : "🏃 Moving"}</span>
-                  <span className="text-[0.62rem] font-normal text-slate-500">
+                  <span className="text-3xs font-normal text-dim">
                     {switchboard.combatStance?.isStationary ? "Sentinel's -5% taken · Steady +25%" : "Dynamic Movement"}
                   </span>
                 </button>
@@ -1169,7 +1177,7 @@ export default function BuilderCombatSwitchboard({
                   }`}
                 >
                   <span>{switchboard.combatStance?.isPowerAttacking ? "💥 Power Attack" : "🗡️ Regular Atk"}</span>
-                  <span className="text-[0.62rem] font-normal text-slate-500">
+                  <span className="text-3xs font-normal text-dim">
                     {switchboard.combatStance?.isPowerAttacking ? "+40% Heavy Hitter's" : "Base Attack Cost"}
                   </span>
                 </button>
@@ -1178,9 +1186,9 @@ export default function BuilderCombatSwitchboard({
 
             {/* Row 2: Targeting & V.A.T.S. Fire Control */}
             <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
-              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+              <div className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                 <span>Targeting &amp; V.A.T.S. Critical Loop</span>
-                <span className="text-[0.62rem] text-slate-500 lowercase">vats suppresses ads bonuses</span>
+                <span className="text-3xs text-dim lowercase">vats suppresses ads bonuses</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {/* 1. Aiming Down Sights */}
@@ -1197,7 +1205,7 @@ export default function BuilderCombatSwitchboard({
                     <span>🎯</span>
                     <span>{switchboard.combatStance?.isAiming ? "Aiming (ADS)" : "Hip Fire"}</span>
                   </div>
-                  <span className="text-[0.62rem] font-normal text-slate-500">
+                  <span className="text-3xs font-normal text-dim">
                     {switchboard.combatStance?.isAiming ? "Hitman's (+25%) · Steadfast (+50 DR)" : "Free Hip Spread (ADS Off)"}
                   </span>
                 </button>
@@ -1216,7 +1224,7 @@ export default function BuilderCombatSwitchboard({
                     <span className="text-emerald-400">⚡</span>
                     <span>{switchboard.combatStance?.isInVats ? "In V.A.T.S. (Active)" : "Enter V.A.T.S."}</span>
                   </div>
-                  <span className="text-[0.62rem] font-normal text-slate-500">
+                  <span className="text-3xs font-normal text-dim">
                     {switchboard.combatStance?.isInVats ? "Target Lock · 95% Cap · AP Cost" : "Free Targeting (VATS Off)"}
                   </span>
                 </button>
@@ -1244,16 +1252,16 @@ export default function BuilderCombatSwitchboard({
                       <span>Crit Every 2nd Shot</span>
                     </span>
                     {critQualification?.everySecondShotReady ? (
-                      <span className="text-[0.58rem] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-black">
+                      <span className="text-3xs px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-black">
                         ⚡ QUALIFIED
                       </span>
                     ) : (
-                      <span className="text-[0.58rem] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                      <span className="text-3xs px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
                         🔒 NEED +{critQualification?.missingLuck ?? "?"} LCK
                       </span>
                     )}
                   </div>
-                  <span className="text-[0.62rem] font-normal text-slate-400">
+                  <span className="text-3xs font-normal text-slate-400">
                     {switchboard.combatStance?.vatsCritEveryOtherShot
                       ? "1 Normal ➔ 1 Crit Alternating Loop"
                       : `Req: ${critQualification?.requiredLuck ?? 33} Luck (Build has ${critQualification?.currentLuck ?? 0})`}
@@ -1263,7 +1271,7 @@ export default function BuilderCombatSwitchboard({
 
               {/* V.A.T.S. & Luck Chart Telemetry Card */}
               {critQualification && (
-                <div className="rounded border border-emerald-500/20 bg-slate-950/80 p-2.5 text-[0.68rem] font-mono space-y-1.5">
+                <div className="rounded border border-emerald-500/20 bg-slate-950/80 p-2.5 text-2xs font-mono space-y-1.5">
                   <div className="flex flex-wrap items-center justify-between gap-1 border-b border-slate-800 pb-1">
                     <span className="text-emerald-400 font-bold">
                       [ V.A.T.S. CRITICAL METER &amp; LUCK CHART TELEMETRY ]
@@ -1274,27 +1282,27 @@ export default function BuilderCombatSwitchboard({
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-300 pt-0.5">
                     <div>
-                      <span className="text-slate-500">Current Luck:</span>{" "}
+                      <span className="text-dim">Current Luck:</span>{" "}
                       <span className="text-white font-bold">{critQualification.currentLuck}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500">1:1 Req Luck:</span>{" "}
+                      <span className="text-dim">1:1 Req Luck:</span>{" "}
                       <span className="text-amber-300 font-bold">{critQualification.requiredLuck}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500">Crit Savvy:</span>{" "}
+                      <span className="text-dim">Crit Savvy:</span>{" "}
                       <span className="text-emerald-300 font-bold">
                         {critQualification.critSavvyRank > 0 ? `Rank ${critQualification.critSavvyRank} (${critQualification.fillCostPct}% cost)` : "None (100% cost)"}
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500">Fill Per Shot:</span>{" "}
+                      <span className="text-dim">Fill Per Shot:</span>{" "}
                       <span className="text-cyan-300 font-bold">{critQualification.fillPerShotPct}% / shot</span>
                     </div>
                   </div>
-                  <div className="text-[0.62rem] text-slate-400 pt-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <div className="text-3xs text-slate-400 pt-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <span>💡 {critQualification.recommendation}</span>
-                    <span className="text-slate-500 shrink-0">
+                    <span className="text-dim shrink-0">
                       3★ Lucky: {critQualification.hasLucky15Fill ? "Active (-10 Luck)" : "Off"} · VATS Opt: {critQualification.hasVatsOptimized ? "Active (-35% AP)" : "Off"}
                     </span>
                   </div>
@@ -1306,8 +1314,8 @@ export default function BuilderCombatSwitchboard({
             <div className="rounded border border-emerald-500/30 bg-slate-950 p-2 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 font-mono">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <span className="text-slate-400 font-bold uppercase text-[0.68rem] shrink-0">Tactical Triggers:</span>
-                <span className="text-emerald-300 font-black text-[0.7rem] truncate">
+                <span className="text-slate-400 font-bold uppercase text-2xs shrink-0">Tactical Triggers:</span>
+                <span className="text-emerald-300 font-black text-2xs truncate">
                   {activeTacticalTags && activeTacticalTags.length > 0
                     ? activeTacticalTags.join(" · ")
                     : switchboard.combatStance?.isCrouched
@@ -1315,7 +1323,7 @@ export default function BuilderCombatSwitchboard({
                     : "Standard Upright Combat (No Stance Buffs Active)"}
                 </span>
               </div>
-              <span className="text-[0.62rem] text-slate-500 uppercase shrink-0 text-right">
+              <span className="text-3xs text-dim uppercase shrink-0 text-right">
                 Live Game Mechanics Active
               </span>
             </div>
@@ -1328,12 +1336,12 @@ export default function BuilderCombatSwitchboard({
                 <span className="flex items-center gap-1.5">
                   <Shield className="h-3.5 w-3.5 text-sky-400" /> Damage taken
                 </span>
-                <span className="text-[0.62rem] text-slate-500 normal-case font-normal text-right">
+                <span className="text-3xs text-dim normal-case font-normal text-right">
                   Armor curve first, then reducers multiply (Patch 66)
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
-                <label className="flex flex-col gap-1 text-[0.68rem] text-slate-400">
+                <label className="flex flex-col gap-1 text-2xs text-slate-400">
                   <span>Incoming hit</span>
                   <input
                     type="number"
@@ -1344,7 +1352,7 @@ export default function BuilderCombatSwitchboard({
                     className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-white font-mono focus:border-sky-500 outline-none"
                   />
                 </label>
-                <label className="flex flex-col gap-1 text-[0.68rem] text-slate-400">
+                <label className="flex flex-col gap-1 text-2xs text-slate-400">
                   <span>Incoming damage type</span>
                   <select
                     value={incomingDamageType}
@@ -1357,15 +1365,15 @@ export default function BuilderCombatSwitchboard({
                   </select>
                 </label>
                 <div className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono flex items-baseline justify-between gap-2">
-                  <span className="text-slate-500">Taken</span>
+                  <span className="text-dim">Taken</span>
                   <span>
                     <span className="text-sky-300 font-black text-base">{damageTaken ? Math.round(damageTaken.delivered) : "—"}</span>
-                    <span className="text-slate-500"> / {incomingDamage}</span>
+                    <span className="text-dim"> / {incomingDamage}</span>
                   </span>
                 </div>
               </div>
               {damageTaken && (
-                <div className="text-[0.68rem] text-slate-400 font-mono flex flex-wrap gap-x-3 gap-y-0.5">
+                <div className="text-2xs text-slate-400 font-mono flex flex-wrap gap-x-3 gap-y-0.5">
                   <span>
                     Curve vs {damageTaken.resist} {incomingDamageType === "energy" ? "ER" : "DR"}: {damageTaken.afterCurve.toFixed(1)} ({damageTaken.damageCoefficientPct}%)
                   </span>
@@ -1383,7 +1391,7 @@ export default function BuilderCombatSwitchboard({
                 </div>
               )}
               {switchboard.inPowerArmor && (
-                <label className="flex items-center gap-1.5 text-[0.68rem] text-slate-400 cursor-pointer">
+                <label className="flex items-center gap-1.5 text-2xs text-slate-400 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={(switchboard.powerArmorInnatePct ?? 0) > 0}
@@ -1405,6 +1413,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-cyan-400">{switchboard.bulletStormStacks || 0} / 20</span>
               </div>
               <input
+                aria-label="Bullet Storm stacks"
                 type="range"
                 min="0"
                 max="20"
@@ -1413,7 +1422,7 @@ export default function BuilderCombatSwitchboard({
                 onChange={(e) => updateField("bulletStormStacks", parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-500"
               />
-              <div className="text-[0.65rem] text-slate-500">
+              <div className="text-2xs text-dim">
                 Heavy Gun bonus (3%–9%/stack; min 5 with Resolute Veteran)
               </div>
             </div>
@@ -1425,6 +1434,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-orange-400">{switchboard.onslaughtStacks || 0} / 30</span>
               </div>
               <input
+                aria-label="Onslaught stacks"
                 type="range"
                 min="0"
                 max="30"
@@ -1433,7 +1443,7 @@ export default function BuilderCombatSwitchboard({
                 onChange={(e) => updateField("onslaughtStacks", parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-orange-500"
               />
-              <div className="text-[0.65rem] text-slate-500">
+              <div className="text-2xs text-dim">
                 +{(switchboard.onslaughtStacks || 0) * 5}% Damage (+5% per stack)
               </div>
             </div>
@@ -1445,6 +1455,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-rose-400">{switchboard.tenderizerStacks || 0} / 100 hits</span>
               </div>
               <input
+                aria-label="Tenderizer stacks"
                 type="range"
                 min="0"
                 max="100"
@@ -1453,7 +1464,7 @@ export default function BuilderCombatSwitchboard({
                 onChange={(e) => updateField("tenderizerStacks", parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-rose-500"
               />
-              <div className="text-[0.65rem] text-slate-500">
+              <div className="text-2xs text-dim">
                 +{((switchboard.tenderizerStacks || 0) * 0.1).toFixed(1)}% Damage Taken (+0.1%/hit)
               </div>
             </div>
@@ -1465,6 +1476,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-amber-400">{switchboard.adrenalineStacks || 0} / 6</span>
               </div>
               <input
+                aria-label="Adrenaline kill streak"
                 type="range"
                 min="0"
                 max="6"
@@ -1473,7 +1485,7 @@ export default function BuilderCombatSwitchboard({
                 onChange={(e) => updateField("adrenalineStacks", parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
               />
-              <div className="text-[0.65rem] text-slate-500">
+              <div className="text-2xs text-dim">
                 +{(switchboard.adrenalineStacks || 0) * 10}% Additive Damage
               </div>
             </div>
@@ -1485,6 +1497,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-purple-400">{switchboard.addictionsCount || 0} / 5</span>
               </div>
               <input
+                aria-label="Addictions count"
                 type="range"
                 min="0"
                 max="5"
@@ -1493,7 +1506,7 @@ export default function BuilderCombatSwitchboard({
                 onChange={(e) => updateField("addictionsCount", parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-500"
               />
-              <div className="text-[0.65rem] text-slate-500">
+              <div className="text-2xs text-dim">
                 +{(switchboard.addictionsCount || 0) * 10}% Junkie&apos;s Bonus (Max 50%)
               </div>
             </div>
@@ -1505,6 +1518,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-emerald-400">{(switchboard.caps ?? 30000).toLocaleString()}</span>
               </div>
               <input
+                aria-label="Caps carried"
                 type="range"
                 min="0"
                 max="40000"
@@ -1513,7 +1527,7 @@ export default function BuilderCombatSwitchboard({
                 onChange={(e) => updateField("caps", parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
               />
-              <div className="text-[0.65rem] text-slate-500">
+              <div className="text-2xs text-dim">
                 {(switchboard.caps ?? 30000) >= 29000 ? "✅ Max +50% Aristocrat's Bonus" : "Scaled Aristocrat's Bonus"}
               </div>
             </div>
@@ -1526,7 +1540,7 @@ export default function BuilderCombatSwitchboard({
                 <Target className="h-3.5 w-3.5 text-rose-400" />
                 <span>Target Impairments (Enemy Debuffs)</span>
               </div>
-              <span className="text-[0.68rem] text-slate-500 font-mono">
+              <span className="text-2xs text-dim font-mono">
                 Triggers Severing, Pyromaniac&apos;s, Viper&apos;s, Bully&apos;s, Wound Salter, Deal Sealer
               </span>
             </div>
@@ -1581,9 +1595,10 @@ export default function BuilderCombatSwitchboard({
               </label>
 
               {/* Crippled Limbs */}
-              <div className="flex items-center justify-between p-2 rounded border border-slate-800 bg-slate-950/60 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded border border-slate-800 bg-slate-950/60 text-xs">
                 <span className="text-slate-400">🦴 Crippled:</span>
                 <select
+                  aria-label="Crippled limbs on the target"
                   value={switchboard.targetCrippledLimbs ?? 0}
                   onChange={(e) => updateField("targetCrippledLimbs", parseInt(e.target.value, 10))}
                   className="rounded bg-slate-900 border border-slate-700 px-2 py-0.5 text-xs text-slate-200 font-mono cursor-pointer"
@@ -1608,7 +1623,7 @@ export default function BuilderCombatSwitchboard({
               <Utensils className="h-4 w-4 text-emerald-400 shrink-0" />
               <span><strong className="text-emerald-400 font-bold">Full Species Buff Compatibility:</strong> Both Humans and Ghouls benefit 100% from stacked food recipes, teas, chems, bobbleheads, magazines, and alcohol brews.</span>
             </span>
-            <span className="text-[0.68rem] text-slate-400 uppercase font-mono">
+            <span className="text-2xs text-slate-400 uppercase font-mono">
               Species: <span className={isGhoul ? "text-lime-400 font-bold" : "text-emerald-400 font-bold"}>{isGhoul ? "☣️ PLAYABLE GHOUL" : "👤 HUMAN"}</span>
             </span>
           </div>
@@ -1737,7 +1752,7 @@ export default function BuilderCombatSwitchboard({
                 <button
                   type="button"
                   onClick={() => updateField("activeFoods", {})}
-                  className="text-[0.68rem] text-rose-400 hover:underline cursor-pointer"
+                  className="text-2xs text-rose-400 hover:underline cursor-pointer"
                 >
                   Clear All Foods
                 </button>
@@ -1755,7 +1770,7 @@ export default function BuilderCombatSwitchboard({
                       <button
                         type="button"
                         onClick={() => handleRemoveFoodCategory(category)}
-                        className="text-slate-500 hover:text-rose-400 cursor-pointer"
+                        className="text-dim hover:text-rose-400 cursor-pointer"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -1775,11 +1790,11 @@ export default function BuilderCombatSwitchboard({
             <span className="flex items-center gap-1.5">
               <Calculator className="h-4 w-4" /> Live Calculation Formula &amp; Biometrics Audit
             </span>
-            <span className="text-[0.68rem] text-slate-400 font-normal">
+            <span className="text-2xs text-slate-400 font-normal">
               Species: <span className={isGhoul ? "text-lime-300 font-bold" : "text-emerald-300 font-bold"}>{isGhoul ? "☣️ PLAYABLE GHOUL" : "👤 HUMAN"}</span>
             </span>
           </div>
-          <div className="space-y-1.5 text-slate-300 text-[0.72rem]">
+          <div className="space-y-1.5 text-slate-300 text-2xs">
             {isGhoul ? (
               <>
                 <div>• <span className="text-white font-bold">Ghoul Glow Overshield:</span> {switchboard.glowPct || 0}% active (<span className="text-lime-400">Radiation absorbed &amp; converted 1:1 into Green Overshield</span>)</div>

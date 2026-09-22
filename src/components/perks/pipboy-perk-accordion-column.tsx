@@ -69,7 +69,7 @@ export default function PipBoyPerkAccordionColumn({
             </span>
             <div className="flex items-center gap-1">
               <span
-                className={`font-mono text-[0.68rem] font-black ${
+                className={`font-mono text-2xs font-black ${
                   isOverCapacity
                     ? "text-red-400"
                     : pointsUsed === capacity
@@ -120,11 +120,11 @@ export default function PipBoyPerkAccordionColumn({
             <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
               Empty Slot
             </span>
-            <span className="text-[0.65rem] font-mono text-slate-500 mt-1">
+            <span className="text-2xs font-mono text-dim mt-1">
               Cap: {capacity} pts
             </span>
             {!readOnly && (
-              <span className="mt-3 text-[0.62rem] font-mono font-bold px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 group-hover:border-amber-500/50 group-hover:text-amber-300 transition-all">
+              <span className="mt-3 text-3xs font-mono font-bold px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 group-hover:border-amber-500/50 group-hover:text-amber-300 transition-all">
                 + Add Perk
               </span>
             )}
@@ -189,7 +189,7 @@ export default function PipBoyPerkAccordionColumn({
       {/* Accordion Stack Footer Meta */}
       {equippedCards.length > 1 && (
         <div className="px-2.5 py-1.5 border-t border-slate-900 bg-slate-950/60 text-center">
-          <span className="text-[0.62rem] font-mono text-slate-400">
+          <span className="text-3xs font-mono text-slate-400">
             {equippedCards.length} cards • hover/tap to view
           </span>
         </div>

@@ -78,7 +78,7 @@ export default function ArmoryMatrixSection({
       <div className="pip-terminal-panel p-4 rounded-xl space-y-3.5 font-mono">
         <div className="text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center justify-between">
           <span>&gt; CHASSIS &amp; GEAR ARMORY MATRIX</span>
-          <span className="text-[0.68rem] text-foreground/45 font-normal">
+          <span className="text-2xs text-foreground/45 font-normal">
             Active: {activeChassisPiece?.label}
           </span>
         </div>
@@ -115,7 +115,7 @@ export default function ArmoryMatrixSection({
                 <div className="text-xs font-black uppercase text-slate-100 truncate">
                   {piece.label}
                 </div>
-                <div className="text-[0.65rem] text-emerald-400 font-bold uppercase tracking-wide truncate">
+                <div className="text-2xs text-emerald-400 font-bold uppercase tracking-wide truncate">
                   {piece.kind === "powerArmor"
                     ? "Power Armor Frame"
                     : piece.kind === "armor"
@@ -128,11 +128,11 @@ export default function ArmoryMatrixSection({
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {pieceMaxLevel && (
-                <span className="text-[0.62rem] px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+                <span className="text-3xs px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
                   LVL {pieceMaxLevel} (MAX)
                 </span>
               )}
-              <span className="text-[0.62rem] px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+              <span className="text-3xs px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
                 ✓ ACTIVE LOADOUT BASE
               </span>
             </div>
@@ -193,14 +193,14 @@ export default function ArmoryMatrixSection({
 
         {/* Smart Synergy Recommendation Panel */}
         <div className="pt-2 border-t border-border/20 space-y-2 font-mono">
-          <div className="text-[0.72rem] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="text-2xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
             <Sparkle className="h-3.5 w-3.5" />
             <span>⚡ Smart Synergy Recommendations for {piece.label}</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {getEquipmentSynergies(piece.id).map((syn) => (
               <RollHelperTooltip key={syn.id} title={syn.name} kind="perk" cardId={syn.id}>
-                <span className="text-[0.68rem] px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-1">
+                <span className="text-2xs px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-1">
                   {syn.name} ({syn.boostLabel})
                 </span>
               </RollHelperTooltip>
@@ -218,10 +218,10 @@ export default function ArmoryMatrixSection({
             )}
           >
             <div className="min-w-0">
-              <div className="text-[0.72rem] font-black uppercase text-accent tracking-wider">
+              <div className="text-2xs font-black uppercase text-accent tracking-wider">
                 Plan Registry Sync
               </div>
-              <div className="text-[0.72rem] text-foreground/45 mt-0.5 uppercase">
+              <div className="text-2xs text-foreground/45 mt-0.5 uppercase">
                 {isSignedIn ? "Database persistent" : "Offline draft"}
               </div>
             </div>

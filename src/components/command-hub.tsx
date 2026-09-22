@@ -7,6 +7,7 @@ import { BookOpen, ChevronDown, ChevronUp, Compass, FlaskConical, Palette, Searc
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/components/filter-context";
 import { cn } from "@/lib/utils";
+import { trapTabKey } from "@/lib/focus-trap";
 import { useThemeSettings } from "@/components/theme-provider";
 import { updateUserSettings } from "@/actions/settings";
 import { useLocalProgress } from "@/components/use-local-progress";
@@ -133,17 +134,29 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
     };
   }, [showQuickFiltersFab]);
 
-  // Below 1200px the open hub is a full-screen overlay: lock the page behind it.
+  const expandButtonRef = React.useRef<HTMLButtonElement | null>(null);
+  const [isOverlay, setIsOverlay] = React.useState(false);
+
+  // Below 1200px the open hub is a full-screen overlay: lock the page behind it, keep Tab
+  // inside it, and put focus in it when it opens from the floating button.
   React.useEffect(() => {
     if (!expanded) return;
     const overlay = window.matchMedia("(max-width: 1199px)");
     const root = document.documentElement;
-    const apply = () => root.classList.toggle("command-hub-scroll-lock", overlay.matches);
+    const apply = () => {
+      root.classList.toggle("command-hub-scroll-lock", overlay.matches);
+      setIsOverlay(overlay.matches);
+    };
     apply();
     overlay.addEventListener("change", apply);
+    const hub = hubRef.current;
+    if (overlay.matches && hub && !hub.contains(document.activeElement)) {
+      expandButtonRef.current?.focus();
+    }
     return () => {
       overlay.removeEventListener("change", apply);
       root.classList.remove("command-hub-scroll-lock");
+      setIsOverlay(false);
     };
   }, [expanded]);
 
@@ -156,8 +169,23 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
       setExpanded(false);
     }
 
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setExpanded(false);
+        expandButtonRef.current?.focus();
+        return;
+      }
+      if (window.matchMedia("(max-width: 1199px)").matches) {
+        trapTabKey(event, hubRef.current);
+      }
+    }
+
     document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [expanded]);
 
   async function persistSettings(next: { theme?: string; accent?: string; colorBlind?: string; density?: string }) {
@@ -205,7 +233,13 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
   return (
     <>
-      <div ref={hubRef} className={cn("command-hub", expanded && "command-hub--open")}>
+      <div
+        ref={hubRef}
+        role={expanded && isOverlay ? "dialog" : undefined}
+        aria-modal={expanded && isOverlay ? true : undefined}
+        aria-label={expanded && isOverlay ? "Command hub" : undefined}
+        className={cn("command-hub", expanded && "command-hub--open")}
+      >
       <div className="command-hub__bar">
         <div className="command-hub__search relative">
           <Search className="h-4 w-4 text-foreground/50 shrink-0" />
@@ -249,6 +283,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           <div className="command-hub__stat-value text-base font-semibold">{displayPercent}%</div>
         </div>
         <button
+          ref={expandButtonRef}
           type="button"
           onClick={() => setExpanded((value) => !value)}
           className="command-hub__expand"
@@ -342,7 +377,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                 <Link
                   href={`/perks?q=${encodeURIComponent(query)}`}
                   onClick={() => setExpanded(false)}
-                  className="text-[0.7rem] text-emerald-400 hover:underline uppercase tracking-wider"
+                  className="text-2xs text-emerald-400 hover:underline uppercase tracking-wider"
                 >
                   View All in P.E.R.K. →
                 </Link>
@@ -355,15 +390,15 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                     onClick={() => setExpanded(false)}
                     className="flex items-start gap-2.5 p-2 rounded-lg border border-slate-800 bg-slate-950/90 hover:bg-slate-900/90 hover:border-emerald-500/50 transition-all group"
                   >
-                    <span className="text-[0.65rem] font-bold font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/40 shrink-0">
+                    <span className="text-2xs font-bold font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/40 shrink-0">
                       [{card.special}]
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-1">
                         <span className="text-xs font-bold font-mono text-white group-hover:text-emerald-400 truncate">{card.name}</span>
-                        <span className="text-[0.65rem] font-mono text-amber-400 font-bold shrink-0">{card.maxRank}★</span>
+                        <span className="text-2xs font-mono text-amber-400 font-bold shrink-0">{card.maxRank}★</span>
                       </div>
-                      <p className="text-[0.68rem] font-mono text-slate-400 line-clamp-1 mt-0.5">
+                      <p className="text-2xs font-mono text-slate-400 line-clamp-1 mt-0.5">
                         {card.ranks[0]?.description}
                       </p>
                     </div>
@@ -378,7 +413,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             <div className="space-y-4 font-mono">
               {/* Status Filter */}
               <div className="space-y-1.5">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Status</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Status</span>
                 <div className="flex flex-wrap gap-2">
                   {(["unlocked", "locked"] as const).map((status) => {
                     const active = statusFilters.includes(status);
@@ -403,7 +438,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
               {/* Source Filter */}
               <div className="space-y-1.5">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Source</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Source</span>
                 <div className="flex flex-wrap gap-2">
                   {(["default", "imported", "edited"] as const).map((source) => {
                     const active = sourceFilters.includes(source);
@@ -428,7 +463,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
               {/* Category Filter */}
               <div className="space-y-1.5">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Categories</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Categories</span>
                 <div className="flex flex-wrap gap-2">
                   {categoryOptions.map((category) => {
                     const active = categoryFilters.includes(category);
@@ -454,7 +489,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               {/* Origins Filter (Only shown if origin options exist) */}
               {originOptions.length > 0 && (
                 <div className="space-y-1.5">
-                  <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Origins</span>
+                  <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Origins</span>
                   <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto max-xl:max-h-none max-xl:overflow-visible">
                     {originOptions.map((origin) => {
                       const active = originFilters.includes(origin);
@@ -464,7 +499,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                           type="button"
                           onClick={() => toggleOrigin(origin)}
                           className={cn(
-                            "px-2.5 py-1 rounded-md text-[0.72rem] font-bold transition-all border cursor-pointer",
+                            "px-2.5 py-1 rounded-md text-2xs font-bold transition-all border cursor-pointer",
                             active
                               ? "bg-accent/20 border-accent text-accent"
                               : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
@@ -516,14 +551,14 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             <div className="space-y-4 font-mono">
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 rounded-lg border border-emerald-500/40 bg-emerald-950/20">
-                  <div className="text-[0.7rem] uppercase text-emerald-400 font-bold">Unlocked</div>
+                  <div className="text-2xs uppercase text-emerald-400 font-bold">Unlocked</div>
                   <div className="text-xl font-bold text-emerald-300 mt-0.5">{displayUnlocked} / {summary.total}</div>
                   <div className="hub-bar mt-2">
                     <div className="hub-bar__fill hub-bar__fill--success" style={{ width: animateBars ? `${unlockedPercent}%` : "0%" }} />
                   </div>
                 </div>
                 <div className="p-3 rounded-lg border border-amber-500/40 bg-amber-950/20">
-                  <div className="text-[0.7rem] uppercase text-amber-400 font-bold">Remaining</div>
+                  <div className="text-2xs uppercase text-amber-400 font-bold">Remaining</div>
                   <div className="text-xl font-bold text-amber-300 mt-0.5">{locked}</div>
                   <div className="hub-bar mt-2">
                     <div className="hub-bar__fill hub-bar__fill--warning" style={{ width: animateBars ? `${lockedPercent}%` : "0%" }} />
@@ -539,7 +574,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
               )}
 
               <div className="space-y-2">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Per Tier Breakdown</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Per Tier Breakdown</span>
                 <div className="space-y-2">
                   {displayTierProgress.map((tier) => (
                     <div key={tier.tierLabel} className="p-2.5 rounded-lg border border-border/40 bg-panel/40">
@@ -562,7 +597,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
             <div className="space-y-4 font-mono">
               {/* Architecture Mode */}
               <div className="space-y-1.5">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">UI Architecture</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">UI Architecture</span>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -593,7 +628,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
               {/* Density */}
               <div className="space-y-1.5">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">UI Density</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">UI Density</span>
                 <div className="grid grid-cols-2 gap-2">
                   {(["comfortable", "compact"] as const).map((opt) => (
                     <button
@@ -618,7 +653,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
               {/* Theme & Accent */}
               <div className="space-y-1.5">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Color Accent</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Color Accent</span>
                 <div className="flex flex-wrap gap-1.5">
                   {(["ember", "vault", "radburst", "glow", "brass", "frost", "sunset", "mint", "nightfall"] as const).map((acc) => (
                     <button
@@ -629,7 +664,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                         persistSettings({ accent: acc });
                       }}
                       className={cn(
-                        "px-2.5 py-1 rounded-md text-[0.72rem] font-bold capitalize transition-all border cursor-pointer",
+                        "px-2.5 py-1 rounded-md text-2xs font-bold capitalize transition-all border cursor-pointer",
                         accent === acc
                           ? "bg-accent text-accent-foreground border-accent shadow-sm"
                           : "border-border/60 bg-panel/60 text-foreground/60 hover:text-foreground"
@@ -643,7 +678,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
 
               {/* Quick Navigation Links */}
               <div className="pt-3 border-t border-border/40 space-y-2">
-                <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Quick Navigation</span>
+                <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Quick Navigation</span>
                 <div className="grid grid-cols-2 gap-2">
                   <Button type="button" variant="outline" size="sm" asChild className="font-mono text-xs border-accent/40 text-accent hover:bg-accent/10">
                     <Link href="/overview/achievements" onClick={() => setExpanded(false)}>Achievements</Link>
@@ -664,7 +699,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
           {/* TAB 4: QUICK NAVIGATION */}
           {activeTab === "nav" && (
             <div className="space-y-3 font-mono">
-              <span className="text-[0.72rem] uppercase font-bold text-foreground/50 tracking-wider">Navigation & Account</span>
+              <span className="text-2xs uppercase font-bold text-foreground/50 tracking-wider">Navigation & Account</span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <Link
                   href="/overview/general"
@@ -674,7 +709,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <User className="h-4 w-4 text-accent shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-accent">Account & Profile</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">Manage account baseline & data</div>
+                    <div className="text-2xs text-foreground/50 truncate">Manage account baseline & data</div>
                   </div>
                 </Link>
 
@@ -686,7 +721,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <Trophy className="h-4 w-4 text-emerald-400 shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-emerald-400">Achievements</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">Milestones & Wasteland easter eggs</div>
+                    <div className="text-2xs text-foreground/50 truncate">Milestones & Wasteland easter eggs</div>
                   </div>
                 </Link>
 
@@ -698,7 +733,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <FlaskConical className="h-4 w-4 text-amber-400 shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-amber-400">PTS Experimental Lab</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">Ghoul Sandbox, The Pitt & Atlantic City drop tables</div>
+                    <div className="text-2xs text-foreground/50 truncate">Ghoul Sandbox, The Pitt & Atlantic City drop tables</div>
                   </div>
                 </Link>
 
@@ -710,7 +745,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <Settings className="h-4 w-4 text-foreground/70 shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-accent">App Settings</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">General preferences & backups</div>
+                    <div className="text-2xs text-foreground/50 truncate">General preferences & backups</div>
                   </div>
                 </Link>
 
@@ -722,7 +757,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <Shield className="h-4 w-4 text-foreground/70 shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-accent">Password & Security</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">Account credentials & safety</div>
+                    <div className="text-2xs text-foreground/50 truncate">Account credentials & safety</div>
                   </div>
                 </Link>
 
@@ -734,7 +769,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <Palette className="h-4 w-4 text-foreground/70 shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-accent">Theme & Appearance</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">Custom colors, density & scanlines</div>
+                    <div className="text-2xs text-foreground/50 truncate">Custom colors, density & scanlines</div>
                   </div>
                 </Link>
 
@@ -746,7 +781,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                   <BookOpen className="h-4 w-4 text-foreground/70 shrink-0" />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-foreground group-hover:text-accent">Readme & Docs</div>
-                    <div className="text-[0.68rem] text-foreground/50 truncate">Features guide & documentation</div>
+                    <div className="text-2xs text-foreground/50 truncate">Features guide & documentation</div>
                   </div>
                 </Link>
 
@@ -759,7 +794,7 @@ export default function CommandHub({ summary, tierProgress, isAdmin = false, dat
                     <Wrench className="h-4 w-4 text-amber-400 shrink-0" />
                     <div className="min-w-0">
                       <div className="text-xs font-bold text-amber-300">Admin Tools & System Import</div>
-                      <div className="text-[0.68rem] text-amber-400/60 truncate">Database management & dataset updates</div>
+                      <div className="text-2xs text-amber-400/60 truncate">Database management & dataset updates</div>
                     </div>
                   </Link>
                 )}

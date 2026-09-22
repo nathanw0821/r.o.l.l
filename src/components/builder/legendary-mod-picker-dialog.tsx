@@ -96,7 +96,7 @@ export default function LegendaryModPickerDialog({
                 ? "Search compatible catalog mods. Tap row to equip."
                 : "Search compatibilities. Unlocked entries sync from legendary ledger tracker database values."}
               {ghoulMode ? (
-                <span className="mt-1.5 block text-[0.72rem] text-warning/90 font-bold bg-warning/5 p-1 rounded border border-warning/20">
+                <span className="mt-1.5 block text-2xs text-warning/90 font-bold bg-warning/5 p-1 rounded border border-warning/20">
                   GHOUL NOTICE: FOOD/WATER ACCENTS STRIPPED FROM EFFECT MATH.
                 </span>
               ) : null}
@@ -116,7 +116,7 @@ export default function LegendaryModPickerDialog({
             />
           </div>
 
-          <div className="flex items-center gap-1.5 mt-2 text-[0.72rem] font-mono shrink-0 relative z-10">
+          <div className="flex items-center gap-1.5 mt-2 text-2xs font-mono shrink-0 relative z-10">
             <button
               type="button"
               onClick={() => setModalTrackerFilter("all")}
@@ -156,7 +156,7 @@ export default function LegendaryModPickerDialog({
           </div>
           
           {slotQuery.trim() !== deferredSlotQuery.trim() ? (
-            <p className="mt-1 text-[0.72rem] text-foreground/35 uppercase tracking-wider relative z-10 animate-pulse">
+            <p className="mt-1 text-2xs text-foreground/35 uppercase tracking-wider relative z-10 animate-pulse">
               &gt; searching matrices database...
             </p>
           ) : null}

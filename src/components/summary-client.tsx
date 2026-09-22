@@ -530,7 +530,7 @@ export default function SummaryClient({
           onClick={() => setActiveTab("summary")}
           className={cn(
             "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
-            activeTab === "summary" ? "bg-accent text-white" : "hover:bg-accent/10"
+            activeTab === "summary" ? "bg-accent text-accent-foreground" : "hover:bg-accent/10"
           )}
         >
           Summary
@@ -539,7 +539,7 @@ export default function SummaryClient({
           onClick={() => setActiveTab("seeking")}
           className={cn(
             "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
-            activeTab === "seeking" ? "bg-accent text-white" : "hover:bg-accent/10"
+            activeTab === "seeking" ? "bg-accent text-accent-foreground" : "hover:bg-accent/10"
           )}
         >
           Seeking
@@ -548,7 +548,7 @@ export default function SummaryClient({
           onClick={() => setActiveTab("still-need")}
           className={cn(
             "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
-            activeTab === "still-need" ? "bg-accent text-white" : "hover:bg-accent/10"
+            activeTab === "still-need" ? "bg-accent text-accent-foreground" : "hover:bg-accent/10"
           )}
         >
           Still Need
@@ -557,7 +557,7 @@ export default function SummaryClient({
           onClick={() => setActiveTab("owned")}
           className={cn(
             "flex-1 rounded-[calc(var(--radius)-4px)] px-4 py-2 text-sm font-semibold transition",
-            activeTab === "owned" ? "bg-accent text-white" : "hover:bg-accent/10"
+            activeTab === "owned" ? "bg-accent text-accent-foreground" : "hover:bg-accent/10"
           )}
         >
           Owned Mods
@@ -664,7 +664,7 @@ export default function SummaryClient({
             <div key={tierLabel} className="rounded-lg border border-border/70 bg-panel/90 p-3 flex flex-col font-mono text-xs shadow-md">
               <div className="flex items-center justify-between border-b-2 border-accent pb-1.5 mb-2 font-bold font-mono">
                 <span className="text-accent tracking-wider font-mono text-xs" title={tierDisplay.label}>{tierDisplay.stars || tierLabel}</span>
-                <span className="text-[0.68rem] text-foreground/50">{items.length} MODS</span>
+                <span className="text-2xs text-foreground/50">{items.length} MODS</span>
               </div>
               <div className="flex flex-col gap-1">
                 {items.map((row) => {
@@ -716,7 +716,7 @@ export default function SummaryClient({
                         )}
 
                         {/* Owned Inventory Counter */}
-                        <div className="flex items-center gap-0.5 px-1.5 py-0.5 touch:p-0 rounded bg-background/60 border border-border/40 text-[0.68rem] touch:text-sm">
+                        <div className="flex items-center gap-0.5 px-1.5 py-0.5 touch:p-0 rounded bg-background/60 border border-border/40 text-2xs touch:text-sm">
                           {!isExportingImage && (
                             <button
                               type="button"
@@ -724,7 +724,7 @@ export default function SummaryClient({
                               data-count-step="down"
                               aria-label={`Decrease owned count of ${cleanEffectName(row.effect.name)}`}
                               onClick={() => updateCount(row, row.modCount - 1)}
-                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem] touch:h-11 touch:w-11 touch:text-base"
+                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-3xs touch:h-11 touch:w-11 touch:text-base"
                             >
                               -
                             </button>
@@ -739,7 +739,7 @@ export default function SummaryClient({
                               data-count-step="up"
                               aria-label={`Increase owned count of ${cleanEffectName(row.effect.name)}`}
                               onClick={() => updateCount(row, row.modCount + 1)}
-                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-[0.62rem] touch:h-11 touch:w-11 touch:text-base"
+                              className="text-foreground/40 hover:text-foreground font-bold px-0.5 text-3xs touch:h-11 touch:w-11 touch:text-base"
                             >
                               +
                             </button>

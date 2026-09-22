@@ -40,7 +40,7 @@ export default function PtsClient() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1.5">
+              <span className="text-3xs uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1.5">
                 <FlaskConical className="h-3.5 w-3.5" />
                 <span>Public Test Server (P.T.S.)</span>
               </span>
@@ -105,7 +105,7 @@ export default function PtsClient() {
               <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
                 TEST SERVER TRACKER
               </span>
-              <span className="text-[10px] bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 text-amber-300 font-bold">
+              <span className="text-3xs bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 text-amber-300 font-bold">
                 NO ACTIVE PTS · LAST CYCLE: PATCH {gameVersion.patch} ({gameVersion.name})
               </span>
             </div>
@@ -150,13 +150,13 @@ export default function PtsClient() {
                         className={cn(
                           "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap border",
                           isActive
-                            ? "bg-accent text-white border-accent shadow-sm"
+                            ? "bg-accent text-accent-foreground border-accent shadow-sm"
                             : "bg-panel border-border text-foreground/75 hover:bg-background hover:text-foreground"
                         )}
                       >
                         <span>{sec.icon}</span>
                         <span>{sec.label}</span>
-                        <span className="ml-1 text-[0.65rem] opacity-70 bg-black/20 px-1.5 py-0.2 rounded-full">
+                        <span className="ml-1 text-2xs opacity-70 bg-black/20 px-1.5 py-0.2 rounded-full">
                           {count}
                         </span>
                       </button>
@@ -220,11 +220,11 @@ function PtsCard({ item }: { item: PtsItem }) {
         {/* Card Header: Tier Badge & Source Link */}
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider rounded border bg-amber-500/15 border-amber-500/30 text-amber-400 flex items-center gap-1">
+            <span className="px-2 py-0.5 text-2xs font-bold uppercase tracking-wider rounded border bg-amber-500/15 border-amber-500/30 text-amber-400 flex items-center gap-1">
               <FlaskConical className="h-3 w-3" />
               <span>{item.tier}</span>
             </span>
-            <span className="text-[0.65rem] bg-foreground/10 px-2 py-0.5 rounded text-foreground/70 font-mono">
+            <span className="text-2xs bg-foreground/10 px-2 py-0.5 rounded text-foreground/70 font-mono">
               {item.status}
             </span>
           </div>
@@ -234,14 +234,14 @@ function PtsCard({ item }: { item: PtsItem }) {
               href={item.sourceUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-[0.65rem] text-foreground/50 hover:text-accent flex items-center gap-1 transition font-mono"
+              className="text-2xs text-foreground/50 hover:text-accent flex items-center gap-1 transition font-mono"
               title="View source on NukaKnights"
             >
               <span>{item.sourceName}</span>
               <ExternalLink className="h-2.5 w-2.5" />
             </a>
           ) : (
-            <span className="text-[0.65rem] text-foreground/50 font-mono">
+            <span className="text-2xs text-foreground/50 font-mono">
               {item.sourceName}
             </span>
           )}
@@ -261,16 +261,16 @@ function PtsCard({ item }: { item: PtsItem }) {
         </div>
 
         {/* Requirements & Extra Components */}
-        <div className="grid grid-cols-2 gap-2 text-[0.72rem] font-mono">
+        <div className="grid grid-cols-2 gap-2 text-2xs font-mono">
           {item.extraComponent && (
             <div className="bg-slate-950/60 border border-slate-800 p-2 rounded-lg">
-              <span className="text-slate-400 block text-[0.62rem] font-bold uppercase tracking-wider">Required Material</span>
+              <span className="text-slate-400 block text-3xs font-bold uppercase tracking-wider">Required Material</span>
               <span className="font-bold text-cyan-300">{item.extraComponent}</span>
             </div>
           )}
           {item.scripCost !== undefined && item.scripCost > 0 && (
             <div className="bg-slate-950/60 border border-slate-800 p-2 rounded-lg">
-              <span className="text-slate-400 block text-[0.62rem] font-bold uppercase tracking-wider">Scrip Cost</span>
+              <span className="text-slate-400 block text-3xs font-bold uppercase tracking-wider">Scrip Cost</span>
               <span className="font-bold text-amber-400">{item.scripCost} Scrip</span>
             </div>
           )}
@@ -278,13 +278,13 @@ function PtsCard({ item }: { item: PtsItem }) {
 
         {/* Notes */}
         {item.notes && (
-          <p className="text-[0.70rem] text-slate-400 italic border-l-2 border-amber-500/50 pl-2 py-1 leading-relaxed bg-slate-900/30 rounded-r">
+          <p className="text-2xs text-slate-400 italic border-l-2 border-amber-500/50 pl-2 py-1 leading-relaxed bg-slate-900/30 rounded-r">
             💡 Note: {item.notes}
           </p>
         )}
 
         {/* Source Attribution & Binary Verification Badge */}
-        <div className="pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-[0.65rem] font-mono">
+        <div className="pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-2xs font-mono">
           {item.sourceUrl ? (
             <a
               href={item.sourceUrl}

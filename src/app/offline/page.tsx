@@ -29,7 +29,7 @@ export default function OfflinePage() {
       <p>
         <Link
           href="/"
-          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-5 font-bold text-white"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-5 font-bold text-accent-foreground"
           style={{ display: "inline-block", padding: "0.75rem 1.25rem" }}
         >
           Open the start page

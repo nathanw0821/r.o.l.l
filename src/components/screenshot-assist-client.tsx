@@ -507,6 +507,7 @@ export default function ScreenshotAssistClient({
 
   const isWindow = mode === "window";
   const fileInputId = React.useId();
+  const ocrLangId = React.useId();
   const aiSuggestionSet = React.useMemo(() => new Set(aiSuggestedIds), [aiSuggestedIds]);
   const presetContent = assistPresetContent[preset];
 
@@ -590,7 +591,7 @@ export default function ScreenshotAssistClient({
   }
 
   return (
-    <div className={cn("space-y-6", isWindow ? "space-y-4" : "grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]")}>
+    <div className={cn("space-y-6", isWindow ? "space-y-4" : "grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]")}>
       <style>{`
         @keyframes scan-sweep {
           0% { transform: translateY(-100%); }
@@ -651,7 +652,7 @@ export default function ScreenshotAssistClient({
               <div className="text-sm font-semibold tracking-wide text-foreground/90 uppercase font-mono">{presetContent.label}</div>
               <div className="mt-0.5 text-xs text-foreground/50">{presetContent.checklistHint}</div>
             </div>
-            <span className="rounded bg-accent/15 px-2 py-0.5 font-mono text-[0.72rem] uppercase tracking-wider text-accent border border-accent/25">
+            <span className="rounded bg-accent/15 px-2 py-0.5 font-mono text-2xs uppercase tracking-wider text-accent border border-accent/25">
               MODE: {preset.toUpperCase()}
             </span>
           </div>
@@ -705,7 +706,7 @@ export default function ScreenshotAssistClient({
               {/* Touch screens: pasting is awkward, so lead with the file picker. */}
               <label
                 htmlFor={fileInputId}
-                className="hidden touch:inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-accent px-6 font-mono text-sm font-bold uppercase tracking-wide text-accent-foreground shadow-md active:scale-95 cursor-pointer"
+                className="sr-only touch:not-sr-only touch:inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-accent px-6 font-mono text-sm font-bold uppercase tracking-wide text-accent-foreground shadow-md active:scale-95 cursor-pointer"
               >
                 <Upload className="h-4 w-4" aria-hidden="true" />
                 Choose screenshot
@@ -727,7 +728,7 @@ export default function ScreenshotAssistClient({
                 <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded border border-border bg-background/50 cursor-pointer shadow-sm hover:border-accent transition-all duration-200">
                   <img src={url} alt={`Queue ${idx}`} className="h-full w-full object-cover" />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[0.72rem] font-bold uppercase tracking-wider text-destructive flex items-center gap-1" onClick={() => setImageQueue(prev => prev.filter((_, i) => i !== idx))}>
+                    <span className="text-2xs font-bold uppercase tracking-wider text-destructive flex items-center gap-1" onClick={() => setImageQueue(prev => prev.filter((_, i) => i !== idx))}>
                       <Trash2 className="h-3 w-3" /> Remove
                     </span>
                   </div>
@@ -817,8 +818,9 @@ export default function ScreenshotAssistClient({
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <label className="text-[0.72rem] font-mono uppercase tracking-wider text-foreground/40">OCR Language</label>
-                <select 
+                <label htmlFor={ocrLangId} className="text-2xs font-mono uppercase tracking-wider text-foreground/40">OCR Language</label>
+                <select
+                  id={ocrLangId}
                   value={ocrLang}
                   onChange={(e) => setOcrLang(e.target.value)}
                   className="rounded border border-border bg-background/60 px-2.5 py-1 text-xs font-mono tracking-wide focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
@@ -928,7 +930,7 @@ export default function ScreenshotAssistClient({
                   <div className="text-[0.78rem] font-bold uppercase tracking-wider text-foreground/45">SPECIAL Core Stats</div>
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {Object.entries(buildScanResult.special).map(([k, v]) => (
-                      <span key={k} className="inline-flex items-center rounded bg-accent/20 px-2 py-0.5 text-[0.72rem] font-black text-accent border border-accent/30 tabular-nums cursor-help" title={SPECIAL_FULL_NAMES[k.toLowerCase()] || k.toUpperCase()}>
+                      <span key={k} className="inline-flex items-center rounded bg-accent/20 px-2 py-0.5 text-2xs font-black text-accent border border-accent/30 tabular-nums cursor-help" title={SPECIAL_FULL_NAMES[k.toLowerCase()] || k.toUpperCase()}>
                         {k.toUpperCase()} {v}
                       </span>
                     ))}
@@ -939,7 +941,7 @@ export default function ScreenshotAssistClient({
                   <div className="text-[0.78rem] font-bold uppercase tracking-wider text-foreground/45">Active Legendary Perks</div>
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {buildScanResult.legendaryPerks.map(p => (
-                      <span key={p} className="inline-flex items-center rounded bg-blue-500/15 px-2.5 py-0.5 text-[0.72rem] font-bold text-blue-300 border border-blue-400/20 uppercase tracking-wide">
+                      <span key={p} className="inline-flex items-center rounded bg-blue-500/15 px-2.5 py-0.5 text-2xs font-bold text-blue-300 border border-blue-400/20 uppercase tracking-wide">
                         {p.replace("legendary-", "").replace("-", " ")}
                       </span>
                     ))}
@@ -950,7 +952,7 @@ export default function ScreenshotAssistClient({
                   <div className="text-[0.78rem] font-bold uppercase tracking-wider text-foreground/45">Detected Bench Modifications ({buildScanResult.legendaryMods.length})</div>
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {buildScanResult.legendaryMods.map(m => (
-                      <span key={m} className="inline-flex items-center rounded bg-background/50 px-2.5 py-0.5 text-[0.72rem] font-medium text-foreground/80 border border-border/40">
+                      <span key={m} className="inline-flex items-center rounded bg-background/50 px-2.5 py-0.5 text-2xs font-medium text-foreground/80 border border-border/40">
                         {m}
                       </span>
                     ))}
@@ -979,7 +981,7 @@ export default function ScreenshotAssistClient({
               <span className="text-accent">4.</span> Preview
             </div>
             {imageQueue.length > 0 && (
-              <span className="rounded-full bg-accent/10 px-2.5 py-0.5 font-mono text-[0.72rem] text-accent font-bold uppercase border border-accent/20 tracking-wider">
+              <span className="rounded-full bg-accent/10 px-2.5 py-0.5 font-mono text-2xs text-accent font-bold uppercase border border-accent/20 tracking-wider">
                 Active Feed
               </span>
             )}
@@ -1084,7 +1086,7 @@ export default function ScreenshotAssistClient({
                         <span className="uppercase">{categories || "misc gear"}</span>
                       </div>
                       {aiSuggested && aiReasonById[row.id] && (
-                        <div className="mt-1.5 border-t border-accent/15 pt-1 text-[0.72rem] text-accent/85 leading-snug italic font-sans">
+                        <div className="mt-1.5 border-t border-accent/15 pt-1 text-2xs text-accent/85 leading-snug italic font-sans">
                           {aiReasonById[row.id]}
                         </div>
                       )}
@@ -1101,7 +1103,7 @@ export default function ScreenshotAssistClient({
               </div>
             ) : null}
 
-            <div className="font-mono text-[0.72rem] text-foreground/40 uppercase tracking-widest leading-normal text-center">
+            <div className="font-mono text-2xs text-foreground/40 uppercase tracking-widest leading-normal text-center">
               Matches stay in this session until you commit them; committed unlocks are saved to your account.
             </div>
           </div>

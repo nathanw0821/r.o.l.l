@@ -48,11 +48,11 @@ export default function AuxLogisticsColumn({
             <div className="text-xs font-black uppercase tracking-widest text-accent">
               [ ARCHIVED LOADOUT TAPE ]
             </div>
-            <span className="px-2 py-0.5 rounded text-[0.68rem] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
+            <span className="px-2 py-0.5 rounded text-2xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
               VERIFIED SNAPSHOT
             </span>
           </div>
-          <p className="text-[0.7rem] text-foreground/60 leading-normal">
+          <p className="text-2xs text-foreground/60 leading-normal">
             Viewing archived 4-tab transmission snapshot. To tweak or modify, use{" "}
             <span className="text-accent font-bold">Clone in Builder</span> at the top header to
             load it into your local terminal.
@@ -84,6 +84,7 @@ export default function AuxLogisticsColumn({
 
           <div className="flex items-center gap-2">
             <select
+              aria-label="Active loadout slot"
               className="h-8 flex-1 min-w-0 rounded border border-border/30 bg-background/90 px-2 text-xs font-mono uppercase text-foreground/80 cursor-pointer truncate focus:outline-none focus:border-accent"
               value={activeLoadoutIndex ?? -1}
               onChange={(e) => {
@@ -109,7 +110,7 @@ export default function AuxLogisticsColumn({
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 text-[0.72rem] uppercase font-mono px-2.5 font-bold shrink-0 hover:text-accent hover:border-accent"
+              className="h-8 text-2xs uppercase font-mono px-2.5 font-bold shrink-0 hover:text-accent hover:border-accent"
               onClick={() => {
                 const idx = activeLoadoutIndex ?? 0;
                 saveLoadout(idx);
@@ -133,7 +134,7 @@ export default function AuxLogisticsColumn({
               variant="secondary"
               size="sm"
               onClick={clearAllSelections}
-              className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20"
+              className="gap-1.5 h-7 text-2xs uppercase font-mono bg-danger/10 hover:bg-danger/25 text-danger font-bold border border-danger/20"
             >
               <Trash2 className="h-3 w-3" />
               <span>Flush Registry</span>
@@ -143,7 +144,7 @@ export default function AuxLogisticsColumn({
                 variant="outline"
                 size="sm"
                 onClick={undoClear}
-                className="gap-1.5 h-7 text-[0.72rem] uppercase font-mono font-bold"
+                className="gap-1.5 h-7 text-2xs uppercase font-mono font-bold"
               >
                 <RotateCcw className="h-3 w-3" />
                 <span>Restore</span>
@@ -158,22 +159,22 @@ export default function AuxLogisticsColumn({
         <div className="flex items-center justify-between border-b border-border/20 pb-1.5 text-xs font-black uppercase tracking-widest text-accent">
           <span>[ BENCH MATERIALS LIST ]</span>
           {shopping.modules > 0 && (
-            <span className="text-[0.65rem] px-1.5 py-0.2 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
+            <span className="text-2xs px-1.5 py-0.2 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
               {shopping.modules} MODS TOTAL
             </span>
           )}
         </div>
 
         {shopping.lines.length === 0 ? (
-          <p className="text-[0.72rem] text-foreground/30 italic uppercase py-1">
+          <p className="text-2xs text-foreground/30 italic uppercase py-1">
             &gt; legendary bench is idle. no modules required.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-36 overflow-y-auto pr-1">
+          <div tabIndex={0} role="region" aria-label="Legendary module shopping list" className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-36 overflow-y-auto pr-1">
             {shopping.lines.map((line) => (
               <div
                 key={line.label}
-                className="flex items-center justify-between gap-1 rounded border border-border/20 bg-background/30 px-2 py-1 text-[0.68rem] font-bold text-foreground/80 hover:border-accent/30 transition-colors"
+                className="flex items-center justify-between gap-1 rounded border border-border/20 bg-background/30 px-2 py-1 text-2xs font-bold text-foreground/80 hover:border-accent/30 transition-colors"
               >
                 <span className="truncate">{line.label}</span>
                 <span className="text-accent font-black shrink-0">×{line.count}</span>

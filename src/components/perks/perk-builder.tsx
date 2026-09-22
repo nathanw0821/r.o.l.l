@@ -353,7 +353,8 @@ export default function PerkBuilder({
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && searchQuery) {
+      // Escape clears the search unless a modal (rank inspector, import dialog) is taking it.
+      if (e.key === "Escape" && searchQuery && !document.querySelector('[role="dialog"][aria-modal="true"]')) {
         setSearchQuery("");
       }
     };
@@ -637,7 +638,7 @@ export default function PerkBuilder({
       <div className="bg-[#0c121a] border border-slate-800 p-5 shadow-xl font-mono relative">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-amber-400 font-bold">
+            <span className="text-3xs uppercase tracking-widest text-amber-400 font-bold">
               PUNCH CARD MACHINE // {PERK_CATALOG.length} REGISTERED CARDS
             </span>
             <h1 className="text-2xl font-black tracking-tight mt-0.5 text-white uppercase">
@@ -683,7 +684,7 @@ export default function PerkBuilder({
             <div className="flex items-start gap-2.5">
               <Sparkles className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <span className="font-bold text-amber-400 block uppercase tracking-wider text-[0.7rem] mb-0.5">[ BUILD TACTICS ]</span>
+                <span className="font-bold text-amber-400 block uppercase tracking-wider text-2xs mb-0.5">[ BUILD TACTICS ]</span>
                 <p className="leading-relaxed text-amber-100">{aiAdvice}</p>
               </div>
             </div>
@@ -734,7 +735,7 @@ export default function PerkBuilder({
                 <button
                   type="button"
                   onClick={handleResetSpecials}
-                  className="text-[0.68rem] px-2 py-0.5 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition-all font-mono"
+                  className="text-2xs px-2 py-0.5 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition-all font-mono"
                 >
                   Reset (1-1-1-1-1-1-1)
                 </button>
@@ -797,11 +798,11 @@ export default function PerkBuilder({
                         className="h-20 w-20 object-contain transition-transform duration-200 hover:scale-105"
                       />
                     </div>
-                    <span className="text-[0.72rem] font-mono text-[#f3efe0] uppercase tracking-widest font-bold drop-shadow mt-1">
+                    <span className="text-2xs font-mono text-[#f3efe0] uppercase tracking-widest font-bold drop-shadow mt-1">
                       {theme.name}
                     </span>
                     {legBonus > 0 ? (
-                      <span className="mt-0.5 text-[0.62rem] font-mono px-2 py-0.5 bg-amber-950/90 text-amber-300 border border-amber-500/60 rounded-full font-bold shadow">
+                      <span className="mt-0.5 text-3xs font-mono px-2 py-0.5 bg-amber-950/90 text-amber-300 border border-amber-500/60 rounded-full font-bold shadow">
                         +{legBonus}⭐ Legendary
                       </span>
                     ) : null}
@@ -837,13 +838,13 @@ export default function PerkBuilder({
                   {/* Stat Total & Card Capacity Badge */}
                   <div className="flex flex-col items-center gap-1 z-10 pb-0.5">
                     {legBonus > 0 ? (
-                      <span className="text-[0.6rem] font-mono text-amber-200/90 font-semibold drop-shadow">
+                      <span className="text-3xs font-mono text-amber-200/90 font-semibold drop-shadow">
                         Total Stat: {effectiveTotal}
                       </span>
                     ) : null}
                     <span
                       className={cn(
-                        "text-[0.66rem] font-mono font-bold px-2 py-0.5 rounded-full border shadow-sm",
+                        "text-2xs font-mono font-bold px-2 py-0.5 rounded-full border shadow-sm",
                         isOver
                           ? "bg-red-950/90 text-red-300 border-red-500/80 animate-pulse"
                           : "bg-[#121619]/80 text-[#f3efe0] border-[#e8dfc8]/30"
@@ -871,7 +872,7 @@ export default function PerkBuilder({
               </span>
             </div>
           </div>
-          <span className="text-[0.68rem] px-2.5 py-1 rounded bg-red-900 border border-red-500/40 text-red-300 font-bold shrink-0">
+          <span className="text-2xs px-2.5 py-1 rounded bg-red-900 border border-red-500/40 text-red-300 font-bold shrink-0">
             Increase Base S.P.E.C.I.A.L. or Unequip Cards
           </span>
         </div>
@@ -889,7 +890,7 @@ export default function PerkBuilder({
               </span>
             </div>
           </div>
-          <span className="text-[0.68rem] px-2.5 py-1 rounded bg-amber-900 border border-amber-500/40 text-amber-300 font-bold shrink-0">
+          <span className="text-2xs px-2.5 py-1 rounded bg-amber-900 border border-amber-500/40 text-amber-300 font-bold shrink-0">
             Unequip {equippedLegendaryCards.length - 6} Legendary Perk Card{equippedLegendaryCards.length - 6 > 1 ? "s" : ""}
           </span>
         </div>
@@ -947,7 +948,7 @@ export default function PerkBuilder({
                 <button
                   type="button"
                   onClick={handleClearDeck}
-                  className="text-[0.68rem] px-2 py-0.5 rounded bg-red-950/60 border border-red-500/40 hover:border-red-400 text-red-300 hover:text-white transition-all font-mono"
+                  className="text-2xs px-2 py-0.5 rounded bg-red-950/60 border border-red-500/40 hover:border-red-400 text-red-300 hover:text-white transition-all font-mono"
                 >
                   Clear Deck
                 </button>
@@ -955,7 +956,7 @@ export default function PerkBuilder({
               <button
                 type="button"
                 onClick={() => setIsNdImportOpen(true)}
-                className="text-[0.68rem] px-2.5 py-0.5 rounded border border-emerald-500/50 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 font-mono font-bold transition-all flex items-center gap-1"
+                className="text-2xs px-2.5 py-0.5 rounded border border-emerald-500/50 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 font-mono font-bold transition-all flex items-center gap-1"
               >
                 <Link2 className="h-3 w-3" />
                 Import N&amp;D Spec
@@ -963,7 +964,7 @@ export default function PerkBuilder({
               <button
                 type="button"
                 onClick={() => setShowRoadmap((prev) => !prev)}
-                className={`text-[0.68rem] px-2.5 py-0.5 rounded border font-mono font-bold transition-all ${
+                className={`text-2xs px-2.5 py-0.5 rounded border font-mono font-bold transition-all ${
                   showRoadmap
                     ? "bg-emerald-500 text-slate-950 border-emerald-400 font-black"
                     : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
@@ -972,11 +973,11 @@ export default function PerkBuilder({
                 {showRoadmap ? "Hide Leveling Roadmap" : "View Leveling Roadmap (Lvl 2–100+)"}
               </button>
               {mode === "pts" ? (
-                <span className="text-[0.68rem] px-2.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 font-mono font-bold">
+                <span className="text-2xs px-2.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 font-mono font-bold">
                   [PTS EXPERIMENTAL - 15 CAP]
                 </span>
               ) : (
-                <span className="text-[0.68rem] px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
+                <span className="text-2xs px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
                   [LIVE GAME RULES - 15 CAP]
                 </span>
               )}
@@ -1043,7 +1044,7 @@ export default function PerkBuilder({
               </div>
             </div>
           ) : safeEquippedCards.length === 0 ? (
-            <div className="py-10 text-center text-xs font-mono text-slate-500 border border-dashed border-slate-800 rounded-lg">
+            <div className="py-10 text-center text-xs font-mono text-dim border border-dashed border-slate-800 rounded-lg">
               No perk cards equipped in this loadout yet. Select cards below from the Vault-Tec catalog!
             </div>
           ) : (
@@ -1112,7 +1113,7 @@ export default function PerkBuilder({
                   placeholder="Search perk cards..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-3 py-1.5 rounded-md border border-slate-800 bg-slate-900 text-xs font-mono text-white placeholder:text-slate-500 w-full md:w-64 focus:outline-none focus:border-emerald-500"
+                  className="px-3 py-1.5 rounded-md border border-slate-800 bg-slate-900 text-xs font-mono text-white placeholder:text-dim w-full md:w-64 focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>
