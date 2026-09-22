@@ -424,8 +424,8 @@ describe("combat-firepower-engine", () => {
     expect(critCycleResult.targetDummy.activeDPSLanded).toBe(critCycleResult.targetDummy.criticalCycleDPSLanded);
   });
 
-  it("guarantees 100% catalog coverage for all 114 weapons in WEAPON_BASE_PIECES with maxLevel 50 or 45", () => {
-    expect(WEAPON_BASE_PIECES.length).toBe(114);
+  it("guarantees 100% catalog coverage for all 116 weapons in WEAPON_BASE_PIECES with maxLevel 50 or 45", () => {
+    expect(WEAPON_BASE_PIECES.length).toBe(116);
 
     for (const piece of WEAPON_BASE_PIECES) {
       const stats = getWeaponCombatBaseStats(piece.id);
@@ -774,7 +774,8 @@ describe("unique innate effects (src/data/truth/unique-items.json)", () => {
   it("adds Civil Unrest's +50 action points to the V.A.T.S. pool", () => {
     const civil = run("civil-unrest");
     expect(civil.vats.totalApPool).toBe(250);
-    expect(civil.vats.maxShotsInPool).toBe(10);
+    // Civil Unrest is a Pump Action Shotgun (32 AP per V.A.T.S. shot): 250 AP → 7 shots (200 AP → 6).
+    expect(civil.vats.maxShotsInPool).toBe(7);
     expect(civil.vats.breakdown.find((row) => row.source === "Civil Unrest (Innate)")?.value).toBe("+50 AP");
 
     const plain = run("the-fixer");
