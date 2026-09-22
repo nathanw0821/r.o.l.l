@@ -585,8 +585,10 @@ test.describe("phone layout", () => {
     await expect(feedback).toBeVisible({ timeout: 20_000 });
     await expect(quickFilters).toBeVisible({ timeout: 20_000 });
 
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    // Since the accessibility pass the phone footer (14 px reading text) is taller than one screen,
+    // so "Next" is checked where a reader would have it: at the bottom edge, where the buttons float.
     const next = page.getByRole("navigation", { name: "Pagination" }).getByRole("link", { name: "Next" });
+    await next.evaluate((el) => el.scrollIntoView({ block: "end" }));
     await expect(next).toBeInViewport();
 
     // Whatever sits at the centre of "Next" must be the link itself (or inside it), not a floating button.
@@ -598,6 +600,7 @@ test.describe("phone layout", () => {
     expect(nextIsOnTop).toBe(true);
 
     // The last footer line ends above both floating buttons.
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     const lastLine = page.getByRole("link", { name: /Atomic Shop tracker/ });
     const lineBottom = await lastLine.evaluate((el) => el.getBoundingClientRect().bottom);
     const feedbackBox = await feedback.boundingBox();

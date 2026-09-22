@@ -41,6 +41,7 @@ STATUS.md
 
 # Playwright
 e2e/.output
+e2e/a11y-report
 /test-results
 /playwright-report
 /blob-report
