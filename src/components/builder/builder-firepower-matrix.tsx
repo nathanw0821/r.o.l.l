@@ -64,12 +64,12 @@ export default function BuilderFirepowerMatrix({
             <span className="text-xs font-bold text-white">
               {baseStats.label}
             </span>
-            <span className="rounded bg-amber-500/15 border border-amber-500/40 px-2 py-0.5 font-bold uppercase text-amber-300 text-[0.68rem] tracking-wider">
+            <span className="rounded bg-amber-500/15 border border-amber-500/40 px-2 py-0.5 font-bold uppercase text-amber-300 text-2xs tracking-wider">
               LVL {baseStats.maxLevel || 50} (MAX)
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 text-[0.68rem]">
+          <div className="flex flex-wrap items-center gap-1.5 text-2xs">
             {/* Active Firing Mode Indicator */}
             {firepower.firingMode === "vats_crit_cycle" ? (
               <span className="rounded bg-amber-950/90 border border-amber-400 px-2 py-0.5 font-black uppercase text-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.35)] animate-pulse">
@@ -110,7 +110,7 @@ export default function BuilderFirepowerMatrix({
               </span>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button type="button" aria-label="Damage calculation breakdown" className="touch-hit text-slate-500 hover:text-slate-300">
+                  <button type="button" aria-label="Damage calculation breakdown" className="touch-hit text-dim hover:text-slate-300">
                     <HelpCircle className="h-3 w-3" aria-hidden="true" />
                   </button>
                 </TooltipTrigger>
@@ -119,7 +119,7 @@ export default function BuilderFirepowerMatrix({
                     Damage Calculations Breakdown:
                   </div>
                   {damagePerShot.breakdown.map((b, idx) => (
-                    <div key={idx} className="flex justify-between gap-2 text-[0.68rem]">
+                    <div key={idx} className="flex justify-between gap-2 text-2xs">
                       <span className="text-slate-400">{b.source}:</span>
                       <span className="text-emerald-300 font-bold">{b.value}</span>
                     </div>
@@ -157,7 +157,7 @@ export default function BuilderFirepowerMatrix({
               <span className="font-bold uppercase tracking-wider flex items-center gap-1">
                 <Zap className="h-3.5 w-3.5 text-cyan-400" /> Burst &amp; Crit DPS
               </span>
-              <span className="text-[0.65rem] text-slate-400">
+              <span className="text-2xs text-slate-400">
                 {fireRate.rps.toFixed(1)} rps ({fireRate.rpm} rpm)
               </span>
             </div>
@@ -169,7 +169,7 @@ export default function BuilderFirepowerMatrix({
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs text-slate-400">Burst DPS:</span>
                   {firepower.firingMode !== "vats_crit_cycle" && (
-                    <span className="text-[0.55rem] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">
+                    <span className="text-3xs px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">
                       ACTIVE
                     </span>
                   )}
@@ -186,7 +186,7 @@ export default function BuilderFirepowerMatrix({
                     2nd-Shot Crit DPS:
                   </span>
                   {firepower.firingMode === "vats_crit_cycle" && (
-                    <span className="text-[0.55rem] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-black">
+                    <span className="text-3xs px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-black">
                       ACTIVE
                     </span>
                   )}
@@ -204,7 +204,7 @@ export default function BuilderFirepowerMatrix({
               <span className="font-bold uppercase tracking-wider flex items-center gap-1">
                 <Activity className="h-3.5 w-3.5 text-emerald-400" /> V.A.T.S. AP Cost
               </span>
-              <span className="text-[0.65rem] text-emerald-400 font-bold">
+              <span className="text-2xs text-emerald-400 font-bold">
                 {vats.totalApPool} Max AP
               </span>
             </div>
@@ -233,22 +233,22 @@ export default function BuilderFirepowerMatrix({
               </span>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button type="button" className="touch-hit text-purple-300 font-bold text-[0.65rem] hover:underline flex items-center gap-0.5">
+                  <button type="button" className="touch-hit text-purple-300 font-bold text-2xs hover:underline flex items-center gap-0.5">
                     <span>Luck: {critCycle.currentLuck} / {critCycle.requiredLuck}</span>
-                    <HelpCircle className="h-3 w-3 text-slate-500 ml-0.5" />
+                    <HelpCircle className="h-3 w-3 text-dim ml-0.5" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="bg-slate-950 border-emerald-500/40 text-xs font-mono p-2.5 max-w-xs space-y-1.5">
                   <div className="font-bold text-emerald-400 border-b border-slate-800 pb-1">
                     Fallout 76 Luck &amp; Critical Savvy Chart:
                   </div>
-                  <div className="text-[0.68rem] text-slate-300 space-y-0.5">
+                  <div className="text-2xs text-slate-300 space-y-0.5">
                     <div>• Crit Savvy Rank 3: 33 Luck (23 with 3★ Lucky Hit)</div>
                     <div>• Crit Savvy Rank 2: 43 Luck (33 with 3★ Lucky Hit)</div>
                     <div>• Crit Savvy Rank 1: 53 Luck (43 with 3★ Lucky Hit)</div>
                     <div>• No Crit Savvy: 63 Luck (53 with 3★ Lucky Hit)</div>
                   </div>
-                  <div className="border-t border-slate-800 pt-1 text-[0.65rem] text-slate-400">
+                  <div className="border-t border-slate-800 pt-1 text-2xs text-slate-400">
                     Fill/Shot = (Luck × 1.5) + 5 + (Lucky Hit ? 15 : 0)
                   </div>
                 </TooltipContent>
@@ -262,7 +262,7 @@ export default function BuilderFirepowerMatrix({
                   <span>CRIT EVERY 2ND SHOT READY</span>
                 </div>
               ) : (
-                <div className="rounded bg-amber-950/60 border border-amber-500/40 p-1.5 text-center flex items-center justify-center gap-1.5 text-[0.68rem] text-amber-300 font-bold">
+                <div className="rounded bg-amber-950/60 border border-amber-500/40 p-1.5 text-center flex items-center justify-center gap-1.5 text-2xs text-amber-300 font-bold">
                   <AlertCircle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
                   <span>
                     Need +{critCycle.missingLuck} Luck (or 3★ Lucky Hit)
@@ -270,7 +270,7 @@ export default function BuilderFirepowerMatrix({
                 </div>
               )}
 
-              <div className="flex items-center justify-between text-[0.68rem] text-slate-400 pt-0.5">
+              <div className="flex items-center justify-between text-2xs text-slate-400 pt-0.5">
                 <span>Savvy: {critCycle.critSavvyRank > 0 ? `R${critCycle.critSavvyRank} (${critCycle.fillCostPct}%)` : "None"}</span>
                 <span className="text-emerald-400 font-bold">
                   {critCycle.fillPerShotPct}% / shot · {armorPenetration.effectiveArmorPenetrationPct}% AP
@@ -288,7 +288,7 @@ export default function BuilderFirepowerMatrix({
               <span className="text-xs font-bold uppercase tracking-wider text-rose-300">
                 Target Dummy Combat Simulator
               </span>
-              <span className="text-[0.65rem] px-2 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/40 font-bold">
+              <span className="text-2xs px-2 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/40 font-bold">
                 DR &amp; FLAT MITIGATION
               </span>
             </div>
@@ -302,7 +302,7 @@ export default function BuilderFirepowerMatrix({
                     key={dummy.id}
                     type="button"
                     onClick={() => setSelectedDummyId(dummy.id)}
-                    className={`px-2.5 py-1 rounded text-[0.68rem] font-bold uppercase tracking-wider transition-all ${
+                    className={`px-2.5 py-1 rounded text-2xs font-bold uppercase tracking-wider transition-all ${
                       isActive
                         ? "bg-rose-600 text-white shadow-[0_0_10px_rgba(244,63,94,0.4)] border border-rose-400"
                         : "bg-slate-800/80 text-slate-400 border border-slate-700/60 hover:text-slate-200 hover:bg-slate-700/60"
@@ -323,10 +323,10 @@ export default function BuilderFirepowerMatrix({
                 <Target className="h-3.5 w-3.5 text-rose-400" />
                 <span className="font-bold text-white text-xs">{dummyCalc.dummy.name}</span>
               </div>
-              <p className="text-[0.68rem] text-slate-400 leading-relaxed">
+              <p className="text-2xs text-slate-400 leading-relaxed">
                 {dummyCalc.dummy.description}
               </p>
-              <div className="flex flex-wrap gap-2 text-[0.68rem] pt-1">
+              <div className="flex flex-wrap gap-2 text-2xs pt-1">
                 <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
                   Target DR: <strong className="text-white">{baseStats.isEnergy ? dummyCalc.dummy.energyResistance : dummyCalc.dummy.damageResistance}</strong>
                 </span>
@@ -344,27 +344,27 @@ export default function BuilderFirepowerMatrix({
             {/* Landed Telemetry Grid */}
             <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="rounded border border-slate-800 bg-slate-950/60 p-2 text-center space-y-0.5">
-                <span className="text-[0.65rem] text-slate-400 uppercase tracking-wider block">Landed Hit</span>
+                <span className="text-2xs text-slate-400 uppercase tracking-wider block">Landed Hit</span>
                 <span className="text-base font-black text-white">{dummyCalc.normalLanded}</span>
-                <span className="text-[0.62rem] text-slate-500 block">vs {damagePerShot.totalPerShot} sheet</span>
+                <span className="text-3xs text-dim block">vs {damagePerShot.totalPerShot} sheet</span>
               </div>
 
               <div className="rounded border border-amber-500/30 bg-amber-950/20 p-2 text-center space-y-0.5">
-                <span className="text-[0.65rem] text-amber-400 uppercase tracking-wider block">Landed Crit</span>
+                <span className="text-2xs text-amber-400 uppercase tracking-wider block">Landed Crit</span>
                 <span className="text-base font-black text-amber-300">{dummyCalc.criticalLanded}</span>
-                <span className="text-[0.62rem] text-amber-400/60 block">vs {damagePerShot.critical} sheet</span>
+                <span className="text-3xs text-amber-400/60 block">vs {damagePerShot.critical} sheet</span>
               </div>
 
               <div className="rounded border border-cyan-500/30 bg-cyan-950/20 p-2 text-center space-y-0.5">
-                <span className="text-[0.65rem] text-cyan-400 uppercase tracking-wider block">Landed Burst</span>
+                <span className="text-2xs text-cyan-400 uppercase tracking-wider block">Landed Burst</span>
                 <span className="text-base font-black text-cyan-300">{dummyCalc.burstDPSLanded.toLocaleString()}</span>
-                <span className="text-[0.62rem] text-cyan-400/60 block">DPS</span>
+                <span className="text-3xs text-cyan-400/90 block">DPS</span>
               </div>
 
               <div className="rounded border border-emerald-500/30 bg-emerald-950/20 p-2 text-center space-y-0.5">
-                <span className="text-[0.65rem] text-emerald-400 uppercase tracking-wider block">Landed 2nd Crit</span>
+                <span className="text-2xs text-emerald-400 uppercase tracking-wider block">Landed 2nd Crit</span>
                 <span className="text-base font-black text-emerald-300">{dummyCalc.criticalCycleDPSLanded.toLocaleString()}</span>
-                <span className="text-[0.62rem] text-emerald-400/60 block">DPS</span>
+                <span className="text-3xs text-emerald-400/90 block">DPS</span>
               </div>
             </div>
           </div>

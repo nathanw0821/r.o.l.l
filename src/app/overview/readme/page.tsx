@@ -14,7 +14,7 @@ export default async function OverviewReadmePage() {
               <Cpu className="h-4 w-4" />
               <span>R.O.L.L. Guide</span>
             </div>
-            <span className="text-[0.72rem] text-foreground/45 uppercase tracking-wider">v0.1.0</span>
+            <span className="text-2xs text-foreground/45 uppercase tracking-wider">v0.1.0</span>
           </div>
           <h1 className="text-2xl font-bold uppercase tracking-wider text-foreground">
             Record Of Legendary Loadouts

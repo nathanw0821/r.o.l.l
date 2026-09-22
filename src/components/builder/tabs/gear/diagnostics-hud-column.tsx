@@ -203,12 +203,12 @@ export default function DiagnosticsHudColumn({
                     />
                   </div>
                   {/* Mini inline baseline increment/decrement */}
-                  <div className="flex items-center gap-1 mt-0.5 justify-end text-[0.72rem]">
+                  <div className="flex items-center gap-1 mt-0.5 justify-end text-2xs">
                     <span className="text-foreground/30 mr-1">Base: {base}</span>
                     <button
                       type="button"
                       aria-label={`Lower base ${SPECIAL_FULL_NAMES[key] || key.toUpperCase()}`}
-                      className="w-3.5 h-3.5 touch:w-11 touch:h-11 touch:text-base rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
+                      className="h-6 w-6 -my-1 touch:w-11 touch:h-11 touch:my-0 touch:text-base rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
                       onClick={() => {
                         const val = Math.max(1, base - 1);
                         setPayload((p) => ({
@@ -223,7 +223,7 @@ export default function DiagnosticsHudColumn({
                     <button
                       type="button"
                       aria-label={`Raise base ${SPECIAL_FULL_NAMES[key] || key.toUpperCase()}`}
-                      className="w-3.5 h-3.5 touch:w-11 touch:h-11 touch:text-base rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
+                      className="h-6 w-6 -my-1 touch:w-11 touch:h-11 touch:my-0 touch:text-base rounded border border-border/30 hover:border-accent hover:text-accent flex items-center justify-center font-bold bg-background/40 transition-colors"
                       onClick={() => {
                         const val = Math.min(15, base + 1);
                         setPayload((p) => ({
@@ -321,14 +321,14 @@ export default function DiagnosticsHudColumn({
                 <Tooltip key={k}>
                   <TooltipTrigger asChild>
                     <div className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors cursor-help">
-                      <div className="flex items-center gap-1 text-[0.72rem] text-foreground/45 font-black uppercase tracking-wider">
+                      <div className="flex items-center gap-1 text-2xs text-foreground/45 font-black uppercase tracking-wider">
                         <Icon className={cn("h-3 w-3 shrink-0", col)} />
                         <span>{l}</span>
                       </div>
                       <div className="flex items-baseline justify-between mt-1">
                         <span className="text-sm font-black text-foreground">{live}</span>
                         {delta !== 0 && (
-                          <span className="text-[0.72rem] text-accent font-black tracking-tight bg-accent/5 px-1 border border-accent/20 rounded">
+                          <span className="text-2xs text-accent font-black tracking-tight bg-accent/5 px-1 border border-accent/20 rounded">
                             +{delta}
                           </span>
                         )}
@@ -367,41 +367,41 @@ export default function DiagnosticsHudColumn({
       <div className="pip-terminal-panel p-3 rounded-xl space-y-2 font-mono">
         <div className="flex items-center justify-between border-b border-border/20 pb-1.5 text-xs font-black uppercase tracking-widest text-accent">
           <span>[ ACTIVE LEGENDARY MATRICES ]</span>
-          <span className="text-[0.65rem] px-1.5 py-0.2 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
+          <span className="text-2xs px-1.5 py-0.2 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
             {groupedLegendaryEffects.length} ACTIVE
           </span>
         </div>
 
         {groupedLegendaryEffects.length === 0 ? (
-          <p className="text-[0.72rem] text-foreground/35 italic uppercase py-1">
+          <p className="text-2xs text-foreground/35 italic uppercase py-1">
             &gt; no legendary effects currently loaded.
           </p>
         ) : (
-          <ul className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+          <ul tabIndex={0} aria-label="Loaded legendary effects" className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
             {groupedLegendaryEffects.map(({ mod, count, benchLabels }) => {
               const descRaw = mod.description?.trim() ?? "";
               const desc = sandboxLegendaryDescription(descRaw, piece) || descRaw;
               return (
                 <li
                   key={mod.id}
-                  className="text-[0.72rem] leading-tight bg-background/30 p-1.5 rounded border border-border/20 hover:border-accent/30 transition-colors"
+                  className="text-2xs leading-tight bg-background/30 p-1.5 rounded border border-border/20 hover:border-accent/30 transition-colors"
                 >
                   <div className="flex items-center justify-between gap-1">
                     <span className="font-bold text-accent truncate">
                       {mod.starRank}★ {mod.name}
                     </span>
                     {count > 1 && (
-                      <span className="rounded bg-accent/20 px-1 py-0.2 text-[0.65rem] font-black text-accent border border-accent/40 shrink-0">
+                      <span className="rounded bg-accent/20 px-1 py-0.2 text-2xs font-black text-accent border border-accent/40 shrink-0">
                         ×{count}
                       </span>
                     )}
                   </div>
-                  <div className="text-[0.62rem] text-foreground/45 truncate mt-0.5 uppercase">
+                  <div className="text-3xs text-foreground/45 truncate mt-0.5 uppercase">
                     {benchLabels.join(" · ")}
                   </div>
                   {desc ? (
                     <p
-                      className="mt-0.5 text-foreground/70 text-[0.65rem] line-clamp-1 font-sans italic"
+                      className="mt-0.5 text-foreground/70 text-2xs line-clamp-1 font-sans italic"
                       title={desc}
                     >
                       {desc}

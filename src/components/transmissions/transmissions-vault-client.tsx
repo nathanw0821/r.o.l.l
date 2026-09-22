@@ -223,7 +223,7 @@ export default function TransmissionsVaultClient({
               <Zap className="h-4 w-4" />
               <span>[ Open B.U.I.L.D. Workbench ]</span>
             </Link>
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-dim">
               ⚡ Total Transmissions In Vault: <span className="text-emerald-400 font-bold">{totalCount}</span>
             </div>
           </div>
@@ -287,7 +287,7 @@ export default function TransmissionsVaultClient({
             </div>
 
             {scope === "mine" && !currentUserId && localUploads.length === 0 && (
-              <span className="text-[0.7rem] text-amber-400/90 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded">
+              <span className="text-2xs text-amber-400/90 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded">
                 💡 Tip: Sign in to sync your builds across all devices!
               </span>
             )}
@@ -298,7 +298,7 @@ export default function TransmissionsVaultClient({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Search Box */}
           <div className="relative md:col-span-2">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-dim" />
             <input
               type="text"
               value={searchQuery}
@@ -307,7 +307,7 @@ export default function TransmissionsVaultClient({
                 setPage(1);
               }}
               placeholder="Search by build title, weapon, legendary stars, or author..."
-              className="w-full rounded-lg bg-slate-900 border border-slate-800 pl-9 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/60 font-mono"
+              className="w-full rounded-lg bg-slate-900 border border-slate-800 pl-9 pr-4 py-2 text-xs text-white placeholder:text-dim focus:outline-none focus:border-emerald-500/60 font-mono"
             />
           </div>
 
@@ -360,7 +360,7 @@ export default function TransmissionsVaultClient({
 
         {/* Equipment Category Toggles */}
         <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-800/80">
-          <span className="text-[0.68rem] text-slate-500 font-bold uppercase mr-1">Gear Category:</span>
+          <span className="text-2xs text-dim font-bold uppercase mr-1">Gear Category:</span>
           {[
             { id: "all", label: "All Gear" },
             { id: "weapon", label: "🔫 Weapons" },
@@ -374,7 +374,7 @@ export default function TransmissionsVaultClient({
                 setKindFilter(cat.id as "all" | "weapon" | "armor" | "powerArmor");
                 setPage(1);
               }}
-              className={`px-2.5 py-1 rounded text-[0.7rem] font-bold uppercase tracking-wider transition-all border ${
+              className={`px-2.5 py-1 rounded text-2xs font-bold uppercase tracking-wider transition-all border ${
                 kindFilter === cat.id
                   ? "bg-cyan-600 text-slate-950 border-cyan-400 font-black shadow-[0_0_10px_rgba(6,182,212,0.3)]"
                   : "bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700"
@@ -387,7 +387,7 @@ export default function TransmissionsVaultClient({
 
         {/* Archetype Tag Pills */}
         <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-800/80">
-          <span className="text-[0.68rem] text-slate-500 font-bold uppercase mr-1">Archetypes:</span>
+          <span className="text-2xs text-dim font-bold uppercase mr-1">Archetypes:</span>
           {ARCHETYPE_TAGS.map((tag) => {
             const isSelected = selectedTag === tag;
             return (
@@ -398,7 +398,7 @@ export default function TransmissionsVaultClient({
                   setSelectedTag(tag);
                   setPage(1);
                 }}
-                className={`px-2.5 py-1 rounded text-[0.7rem] font-bold uppercase tracking-wider transition-all border ${
+                className={`px-2.5 py-1 rounded text-2xs font-bold uppercase tracking-wider transition-all border ${
                   isSelected
                     ? "bg-emerald-500 text-slate-950 border-emerald-400 font-black shadow-[0_0_10px_rgba(16,185,129,0.3)]"
                     : "bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700"
@@ -423,7 +423,7 @@ export default function TransmissionsVaultClient({
               ? ">> YOU HAVE NOT UPLOADED ANY TRANSMISSIONS YET."
               : ">> NO TRANSMISSIONS FOUND MATCHING YOUR CRITERIA."}
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-dim">
             {scope === "mine"
               ? "Publish your custom build from the B.U.I.L.D. Workbench to share it with the community!"
               : "Try adjusting your search query or selecting a different archetype filter."}
@@ -467,12 +467,12 @@ export default function TransmissionsVaultClient({
 
                     <div className="flex items-center gap-1.5 shrink-0">
                       {isOwned && (
-                        <span className="text-[0.62rem] px-2 py-0.5 rounded font-black uppercase tracking-wider bg-amber-950/90 text-amber-400 border border-amber-500/50 shadow-sm">
+                        <span className="text-3xs px-2 py-0.5 rounded font-black uppercase tracking-wider bg-amber-950/90 text-amber-400 border border-amber-500/50 shadow-sm">
                           ★ AUTHOR
                         </span>
                       )}
                       <span
-                        className={`text-[0.65rem] px-2 py-0.5 rounded font-black uppercase tracking-wider border ${
+                        className={`text-2xs px-2 py-0.5 rounded font-black uppercase tracking-wider border ${
                           t.isGhoul
                             ? "bg-lime-950/80 text-lime-400 border-lime-500/40"
                             : "bg-emerald-950/80 text-emerald-400 border-emerald-500/40"
@@ -489,7 +489,7 @@ export default function TransmissionsVaultClient({
                       {t.title}
                     </h3>
                     {t.description && (
-                      <p className="text-[0.72rem] text-slate-400 line-clamp-2 mt-0.5">
+                      <p className="text-2xs text-slate-400 line-clamp-2 mt-0.5">
                         {t.description}
                       </p>
                     )}
@@ -502,7 +502,7 @@ export default function TransmissionsVaultClient({
                         {t.equipmentKind === "powerArmor" ? "🦾 " : "🔫 "}
                         {t.basePieceId.replace(/-/g, " ")}
                       </span>
-                      <span className="text-[0.65rem] text-slate-500 uppercase">
+                      <span className="text-2xs text-dim uppercase">
                         {t.equipmentKind}
                       </span>
                     </div>
@@ -515,7 +515,7 @@ export default function TransmissionsVaultClient({
                           return (
                             <span
                               key={`${modId}-${starIdx}`}
-                              className="px-1.5 py-0.2 rounded bg-amber-950/60 border border-amber-500/30 text-[0.62rem] font-bold text-amber-300 uppercase"
+                              className="px-1.5 py-0.2 rounded bg-amber-950/60 border border-amber-500/30 text-3xs font-bold text-amber-300 uppercase"
                             >
                               ★ {modId.replace(/-/g, " ")}
                             </span>
@@ -526,8 +526,8 @@ export default function TransmissionsVaultClient({
                   </div>
 
                   {/* S.P.E.C.I.A.L. Spread Mini Bar */}
-                  <div className="flex items-center justify-between text-[0.68rem] bg-slate-900/60 rounded px-2 py-1 border border-slate-800">
-                    <span className="text-slate-500 font-bold">SPECIAL:</span>
+                  <div className="flex items-center justify-between text-2xs bg-slate-900/60 rounded px-2 py-1 border border-slate-800">
+                    <span className="text-dim font-bold">SPECIAL:</span>
                     <div className="flex items-center gap-1.5 font-bold">
                       <span className="text-rose-400">S:{t.specials.S}</span>
                       <span className="text-orange-400">P:{t.specials.P}</span>
@@ -539,7 +539,7 @@ export default function TransmissionsVaultClient({
                     </div>
                   </div>
 
-                  <div className="text-[0.68rem] text-slate-500">
+                  <div className="text-2xs text-dim">
                     {t.gamePatch ? `Built on Patch ${t.gamePatch}` : "Built before the patch stamp (Patch 69 or earlier)"}
                     {t.createdAt ? ` · ${new Date(t.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}` : ""}
                   </div>
@@ -550,7 +550,7 @@ export default function TransmissionsVaultClient({
                       {t.archetypeTags.slice(0, 4).map((tag) => (
                         <span
                           key={tag}
-                          className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-[0.62rem] font-bold text-slate-400 uppercase"
+                          className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-3xs font-bold text-slate-400 uppercase"
                         >
                           #{tag}
                         </span>
@@ -564,7 +564,7 @@ export default function TransmissionsVaultClient({
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <Link
                       href={`/l/${t.slug}`}
-                      className="py-1.5 px-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-bold text-center uppercase transition-colors flex items-center justify-center gap-1 text-[0.7rem]"
+                      className="py-1.5 px-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-bold text-center uppercase transition-colors flex items-center justify-center gap-1 text-2xs"
                     >
                       <ExternalLink className="h-3 w-3" />
                       <span>Inspect</span>
@@ -572,7 +572,7 @@ export default function TransmissionsVaultClient({
                     <button
                       type="button"
                       onClick={() => handleCloneBuild(t.slug)}
-                      className="py-1.5 px-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-500/50 text-emerald-300 font-black uppercase transition-colors flex items-center justify-center gap-1 text-[0.7rem]"
+                      className="py-1.5 px-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-500/50 text-emerald-300 font-black uppercase transition-colors flex items-center justify-center gap-1 text-2xs"
                     >
                       <Zap className="h-3 w-3 text-emerald-400" />
                       <span>{clonedSlug === t.slug ? "Loading..." : "Load Build"}</span>
@@ -584,7 +584,7 @@ export default function TransmissionsVaultClient({
                     <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-800/50">
                       <Link
                         href={`/build?edit=${t.slug}`}
-                        className="py-1.5 px-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500/50 text-amber-300 font-bold text-center uppercase transition-colors flex items-center justify-center gap-1 text-[0.7rem]"
+                        className="py-1.5 px-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500/50 text-amber-300 font-bold text-center uppercase transition-colors flex items-center justify-center gap-1 text-2xs"
                       >
                         <Edit3 className="h-3 w-3 text-amber-400" />
                         <span>Edit Build</span>
@@ -593,7 +593,7 @@ export default function TransmissionsVaultClient({
                         type="button"
                         onClick={() => handleDeleteTransmission(t)}
                         disabled={isDeleting}
-                        className="py-1.5 px-2 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-500/40 text-red-300 font-bold uppercase transition-colors flex items-center justify-center gap-1 text-[0.7rem] disabled:opacity-50"
+                        className="py-1.5 px-2 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-500/40 text-red-300 font-bold uppercase transition-colors flex items-center justify-center gap-1 text-2xs disabled:opacity-50"
                       >
                         <Trash2 className="h-3 w-3 text-red-400" />
                         <span>{isDeleting ? "Deleting..." : "Delete"}</span>

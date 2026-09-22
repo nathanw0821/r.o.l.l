@@ -45,7 +45,7 @@ function LegendaryModDetailFootprint({
         ) : deltas ? (
           <p className="font-semibold text-accent/85 tabular-nums">{deltas}</p>
         ) : null}
-        <div className="flex items-center gap-2 text-[0.68rem] text-foreground/50 font-mono">
+        <div className="flex items-center gap-2 text-2xs text-foreground/50 font-mono">
           <span className="text-amber-400 font-semibold">{modules} Mod</span>
           {catalyst && <span>• {catalyst}</span>}
         </div>
@@ -65,16 +65,16 @@ function LegendaryModDetailFootprint({
           {deltas}
         </div>
       ) : !desc ? (
-        <div className="text-[0.74rem] text-foreground/45 italic font-mono">
+        <div className="text-2xs text-foreground/45 italic font-mono">
           Active combat effect (see live telemetry).
         </div>
       ) : null}
       {extras.length > 0 ? (
         <div className="border-t border-border/10 pt-1">
-          <div className="font-bold text-foreground/40 uppercase text-[0.72rem] tracking-tight">
+          <div className="font-bold text-foreground/40 uppercase text-2xs tracking-tight">
             Extras
           </div>
-          <ul className="list-disc pl-3 text-[0.70rem] text-foreground/50 space-y-0.5 font-mono">
+          <ul className="list-disc pl-3 text-2xs text-foreground/50 space-y-0.5 font-mono">
             {extras.map((e) => (
               <li key={e.key}>
                 <span className="text-accent/80">{e.key}</span>: {e.value}
@@ -83,7 +83,7 @@ function LegendaryModDetailFootprint({
           </ul>
         </div>
       ) : null}
-      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/10 text-[0.70rem] font-mono">
+      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/10 text-2xs font-mono">
         <span className="text-amber-400 font-bold">{modules} Modules</span>
         {catalyst ? (
           <span className="text-slate-400">
@@ -171,7 +171,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
               </span>
             )}
           </span>
-          <div className="shrink-0 flex items-center gap-1.5 text-[0.68rem] font-mono">
+          <div className="shrink-0 flex items-center gap-1.5 text-2xs font-mono">
             {isUnlocked ? (
               <span className="px-1.5 py-0.5 rounded font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex items-center gap-0.5 shadow-sm">
                 <Check className="w-2.5 h-2.5" /> Unlocked
@@ -213,7 +213,7 @@ const ModPickerOption = React.memo(function ModPickerOption({
         href={trackerSearchHref(mod.name)}
         data-track-mod
         aria-label={`Track this mod: ${mod.name}`}
-        className="absolute bottom-2 right-2.5 z-10 font-mono text-[0.68rem] text-foreground/55 underline decoration-border/60 underline-offset-2 hover:text-accent hover:decoration-accent"
+        className="absolute bottom-2 right-2.5 z-10 font-mono text-2xs text-foreground/55 underline decoration-border/60 underline-offset-2 hover:text-accent hover:decoration-accent"
       >
         Track this mod
       </Link>

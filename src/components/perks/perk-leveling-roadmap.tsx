@@ -64,11 +64,11 @@ export default function PerkLevelingRoadmap({ equippedCards }: PerkLevelingRoadm
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {hasGhoulPerks && (
-            <span className="text-[0.62rem] px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/50 text-emerald-300 font-bold uppercase tracking-wider flex items-center gap-1">
+            <span className="text-3xs px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/50 text-emerald-300 font-bold uppercase tracking-wider flex items-center gap-1">
               <Sparkles className="h-3 w-3 fill-emerald-400" /> Ghoul 50–100+ Unlocks
             </span>
           )}
-          <span className="text-[0.68rem] px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-bold">
+          <span className="text-2xs px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-bold">
             {roadmapSteps.length} CARDS UNLOCKED
           </span>
         </div>
@@ -93,7 +93,7 @@ export default function PerkLevelingRoadmap({ equippedCards }: PerkLevelingRoadm
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 gap-1">
                 <span
-                  className={`text-[0.68rem] font-bold font-mono px-2 py-0.5 rounded border ${
+                  className={`text-2xs font-bold font-mono px-2 py-0.5 rounded border ${
                     step.isGhoul
                       ? "bg-emerald-950 text-emerald-300 border-emerald-500/70"
                       : isPost50
@@ -106,11 +106,11 @@ export default function PerkLevelingRoadmap({ equippedCards }: PerkLevelingRoadm
 
                 <div className="flex items-center gap-1">
                   {step.isGhoul && (
-                    <span className="text-[0.58rem] font-black px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/40">
+                    <span className="text-3xs font-black px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/40">
                       GHOUL
                     </span>
                   )}
-                  <span className={`text-[0.62rem] font-bold font-mono px-1.5 py-0.5 rounded border ${theme.badge}`}>
+                  <span className={`text-3xs font-bold font-mono px-1.5 py-0.5 rounded border ${theme.badge}`}>
                     {step.special}
                   </span>
                 </div>
@@ -120,7 +120,7 @@ export default function PerkLevelingRoadmap({ equippedCards }: PerkLevelingRoadm
                 {step.cardName}
               </div>
 
-              <div className="flex items-center justify-between text-[0.68rem] font-mono text-slate-400 border-t border-slate-800/80 pt-1.5">
+              <div className="flex items-center justify-between text-2xs font-mono text-slate-400 border-t border-slate-800/80 pt-1.5">
                 <span>Rank: {"★".repeat(step.rank)}</span>
                 <span className="text-emerald-400 font-bold flex items-center gap-1">
                   <CheckCircle2 className="h-3 w-3" /> Ready

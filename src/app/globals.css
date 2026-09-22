@@ -29,7 +29,9 @@
   --text-primary: #f8fafc;
   --text-muted: #cbd5e1;
   --text-soft: #94a3b8;
+  --text-dim-rgb: 131 145 168; /* #8391a8: 4.5:1+ on every dark panel (slate-500 was 3.9-4.2) */
   --color-accent: #f59e0b;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #78350f;
   --color-success: #10b981;
   --color-warning: #f59e0b;
@@ -96,7 +98,9 @@ html {
   --text-primary: #161310;
   --text-muted: #62584d;
   --text-soft: #857a6d;
+  --text-dim-rgb: 91 102 118; /* #5b6676: 4.5:1+ on the light panels */
   --color-accent: #c86a12;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #f0c590;
   --color-success: #1e7a51;
   --color-warning: #9b6a00;
@@ -148,7 +152,9 @@ html {
   --text-primary: #f8fafc;
   --text-muted: #cbd5e1;
   --text-soft: #94a3b8;
+  --text-dim-rgb: 131 145 168; /* #8391a8: 4.5:1+ on every dark panel (slate-500 was 3.9-4.2) */
   --color-accent: #f59e0b;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #78350f;
   --color-success: #10b981;
   --color-warning: #f59e0b;
@@ -219,56 +225,67 @@ html {
 
 [data-accent="ember"] {
   --color-accent: #d4761a;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #f5d2a5;
 }
 
 [data-accent="vault"] {
   --color-accent: #1c6fa8;
+  --color-accent-foreground: #ffffff;
   --color-accent-muted: #c9e3f6;
 }
 
 [data-accent="radburst"] {
   --color-accent: #b0303a;
+  --color-accent-foreground: #ffffff;
   --color-accent-muted: #f4c7cb;
 }
 
 [data-accent="glow"] {
   --color-accent: #3f8d5d;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #c9ecd7;
 }
 
 [data-accent="brass"] {
   --color-accent: #b88a2a;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #f1e2b4;
 }
 
 [data-accent="frost"] {
   --color-accent: #4f87c4;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #d7e7f7;
 }
 
 [data-accent="sunset"] {
   --color-accent: #d86f52;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #f5cdc0;
 }
 
 [data-accent="mint"] {
   --color-accent: #3ca37e;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #c7eddc;
 }
 
 [data-accent="nightfall"] {
   --color-accent: #6c6cda;
+  --color-accent-foreground: #0b0704;
   --color-accent-muted: #d5d5fb;
 }
 
 [data-accent="nuka"] {
   --color-accent: #c22d2d;
+  --color-accent-foreground: #ffffff;
   --color-accent-muted: #f4c2c2;
 }
 
 [data-accent="raider"] {
   --color-accent: #8b5e3c;
+  --color-accent-foreground: #ffffff;
   --color-accent-muted: #dcc8b8;
 }
 
@@ -754,7 +771,7 @@ html[data-scanlines="strong"] .pip-shell::before {
 
 .hub-section__title {
   margin-bottom: 0.45rem;
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -807,7 +824,7 @@ html[data-scanlines="strong"] .pip-shell::before {
 }
 
 .hub-choice__meta {
-  font-size: 0.71rem;
+  font-size: var(--text-2xs);
   color: var(--text-muted);
 }
 
@@ -823,7 +840,7 @@ html[data-scanlines="strong"] .pip-shell::before {
   border: 1px solid var(--hub-panel-border);
   background: color-mix(in srgb, var(--surface-secondary) 84%, transparent);
   padding: 0.65rem 0.75rem;
-  font-size: 0.74rem;
+  font-size: var(--text-2xs);
   color: var(--text-muted);
 }
 
@@ -862,6 +879,11 @@ a {
 .skip-link:focus-visible {
   left: 1rem;
   top: 1rem;
+}
+
+/* The skip link's target takes focus programmatically; no ring around the whole page. */
+#main-content:focus {
+  outline: none;
 }
 
 .container-app {
@@ -1022,14 +1044,14 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 
 .brand-stack__subtitle {
   font-family: "Share Tech Mono", monospace;
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--sidebar-muted-text);
 }
 
 .brand-stack__support {
-  font-size: 0.69rem;
+  font-size: var(--text-2xs);
   letter-spacing: 0.06em;
   color: var(--sidebar-soft-text);
 }
@@ -1137,7 +1159,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   border: 1px solid color-mix(in srgb, var(--color-success) 55%, var(--sidebar-hover-border));
   background: color-mix(in srgb, var(--color-success) 12%, var(--surface));
   color: var(--color-success);
-  font-size: 0.74rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-align: center;
   padding: 0.42rem 0.65rem;
@@ -1286,7 +1308,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   border: 1px solid var(--hub-panel-border);
   background: color-mix(in srgb, var(--surface-secondary) 78%, transparent);
   padding: 0.32rem 0.7rem;
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1410,7 +1432,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
     font-size: 0.88rem;
   }
   .brand-stack--auth .brand-stack__support {
-    font-size: 0.72rem;
+    font-size: var(--text-2xs);
   }
   .session-assist-window-wrap {
     width: min(680px, calc(100vw - 8rem));
@@ -1502,13 +1524,13 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
     letter-spacing: 0.14em;
   }
   .brand-stack__subtitle {
-    font-size: 0.72rem;
+    font-size: var(--text-2xs);
   }
   .brand-stack--auth .brand-stack__subtitle {
     font-size: 0.92rem;
   }
   .brand-stack__support {
-    font-size: 0.64rem;
+    font-size: var(--text-3xs);
   }
   .brand-stack--auth .brand-stack__support {
     font-size: 0.76rem;
@@ -1629,7 +1651,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   border-radius: 999px;
   border: 1px solid currentColor;
   padding: 0.18rem 0.5rem;
-  font-size: 0.64rem;
+  font-size: var(--text-3xs);
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1657,12 +1679,12 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
 }
 
 .effect-tile__origins {
-  font-size: 0.68rem;
+  font-size: var(--text-2xs);
   color: var(--text-muted);
 }
 
 .effect-tile__notes {
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   color: var(--text-soft);
 }
 
@@ -1695,7 +1717,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   background: color-mix(in srgb, var(--craft-color) 12%, var(--color-panel));
   color: color-mix(in srgb, var(--craft-color) 74%, var(--text-primary));
   padding: 0.3rem 0.65rem;
-  font-size: 0.74rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   line-height: 1.1;
   width: fit-content;
@@ -1908,7 +1930,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
   border-radius: 999px;
   border: 1px solid var(--color-border);
   padding: 0.15rem 0.55rem;
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   line-height: 1.2;
   background: color-mix(in srgb, var(--surface-secondary) 72%, transparent);
@@ -2156,7 +2178,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.25rem 0.5rem;
-    font-size: 0.68rem;
+    font-size: var(--text-2xs);
   }
   .guest-banner-slim__primary {
     display: inline-flex;
@@ -2166,7 +2188,7 @@ html[data-sidebar-collapsed="1"] .app-sidebar {
     padding: 0 0.55rem;
     border-radius: 8px;
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-accent-foreground);
     font-weight: 700;
   }
   .guest-banner-slim__link {
@@ -2560,5 +2582,45 @@ html[data-guest-banner-dismissed="1"] [data-guest-banner] {
   }
   .guest-banner-slim__close {
     grid-column: 3;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Type floor tokens (accessibility pass, 2026-09-22).
+ * Desktop keeps its density. Phones and touch screens raise the floor: secondary
+ * text is at least 12px and reading text at least 14px. Tailwind exposes the
+ * tokens as text-3xs / text-2xs / text-prose (tailwind.config.js).
+ * ------------------------------------------------------------------------- */
+:root {
+  --text-3xs: 0.62rem; /* 9.9px: chips, badges, meta */
+  --text-2xs: 0.7rem; /* 11.2px: secondary labels */
+  --text-prose: 0.8125rem; /* 13px: guides reader data and tables */
+}
+
+@media (max-width: 860px), (pointer: coarse) {
+  :root {
+    --text-3xs: 0.75rem;
+    --text-2xs: 0.75rem;
+    --text-prose: 0.875rem;
+  }
+
+  /* Reading text (paragraphs, list items, table cells) never drops under 14px: inherited sizes
+     are raised with max(), and the small utilities are overridden where they sit on those elements.
+     Tables that no longer fit scroll inside their own wrapper (.guides-table-wrap, overflow-x-auto). */
+  body :is(p, li, dd, blockquote, td, th) {
+    font-size: max(0.875rem, 1em);
+  }
+  body :is(p, li, dd, blockquote, td, th):is(
+      .text-xs,
+      .text-2xs,
+      .text-3xs,
+      .text-prose,
+      .text-\[12px\],
+      .text-\[0\.78rem\],
+      .text-\[0\.8rem\],
+      .text-\[0\.84rem\]
+    ) {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }

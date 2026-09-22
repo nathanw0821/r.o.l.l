@@ -410,7 +410,7 @@ export default function EffectTable({
         title={`Search ${value} in Truth Wiki Codex`}
       >
         <span className="truncate max-w-[130px]">{value}</span>
-        <span className="text-[0.65rem] text-amber-400/70 group-hover/comp:text-amber-300">↗</span>
+        <span className="text-2xs text-amber-400/70 group-hover/comp:text-amber-300">↗</span>
       </Link>
     );
   }
@@ -479,7 +479,7 @@ export default function EffectTable({
       >
         {/* Tier */}
         <td className="py-2 px-3 text-center">
-          <span className="inline-block font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/30 text-[11px]">
+          <span className="inline-block font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/30 text-2xs">
             {tierDisplay.stars || row.tier?.label?.replace(" Star", "★") || "1★"}
           </span>
         </td>
@@ -489,14 +489,14 @@ export default function EffectTable({
           <div className="flex items-center gap-1.5 flex-wrap">
             <Link
               href={`/wiki?q=${encodeURIComponent(cleanEffectName(row.effect.name))}`}
-              className="hover:underline flex items-center gap-1"
+              className="hover:underline flex min-h-6 items-center gap-1"
               title={`Search ${cleanEffectName(row.effect.name)} in Truth Wiki`}
             >
               <span>{cleanEffectName(row.effect.name)}</span>
-              <span className="text-[0.65rem] text-amber-400/80 font-mono">↗</span>
+              <span className="text-2xs text-amber-400/80 font-mono">↗</span>
             </Link>
             {isNewMod(row.effect.name) && (
-              <span className="rounded border border-amber-400/50 bg-amber-400/20 px-1 py-0.2 text-[9px] uppercase tracking-wider text-amber-300 font-black animate-pulse">
+              <span className="rounded border border-amber-400/50 bg-amber-400/20 px-1 py-0.2 text-3xs uppercase tracking-wider text-amber-300 font-black animate-pulse">
                 New
               </span>
             )}
@@ -504,7 +504,7 @@ export default function EffectTable({
           <Link
             href={builderModHref(row.effect.name, starFromTierLabel(row.tier?.label))}
             data-use-in-builder
-            className="mt-0.5 inline-block font-mono text-[10px] font-normal text-slate-400 underline decoration-slate-600 underline-offset-2 hover:text-amber-300 hover:decoration-amber-400"
+            className="mt-0.5 inline-flex min-h-6 items-center font-mono text-3xs font-normal text-slate-400 underline decoration-slate-600 underline-offset-2 hover:text-amber-300 hover:decoration-amber-400"
             aria-label={`Use in builder: ${cleanEffectName(row.effect.name)}`}
           >
             Use in builder
@@ -512,11 +512,11 @@ export default function EffectTable({
         </td>
 
         {/* Equipment Slot */}
-        <td className="py-2 px-3 text-slate-400 text-[11px]">
+        <td className="py-2 px-3 text-slate-400 text-2xs">
           {categoryList.length > 0 ? (
             <div className="flex flex-wrap gap-1">
               {categoryList.map((c) => (
-                <span key={c} className="bg-[#111720] border border-slate-800 px-1.5 py-0.5 text-[10px] text-slate-300">
+                <span key={c} className="bg-[#111720] border border-slate-800 px-1.5 py-0.5 text-3xs text-slate-300">
                   {c}
                 </span>
               ))}
@@ -530,7 +530,7 @@ export default function EffectTable({
         <td className="py-2 px-4 text-slate-300 font-sans text-xs leading-relaxed">
           {renderInlineMarkdown(row.description, { currentPath: pathname })}
           {row.origins && row.origins.length > 0 && (
-            <div className="text-[10px] text-slate-500 font-mono mt-1">
+            <div className="text-3xs text-dim font-mono mt-1">
               <span className="text-amber-500/70 font-bold">Source: </span>
               {row.origins.join(" • ")}
             </div>
@@ -543,7 +543,7 @@ export default function EffectTable({
         </td>
 
         {/* Craft Catalyst */}
-        <td className="py-2 px-4 text-slate-400 text-[11px]">
+        <td className="py-2 px-4 text-slate-400 text-2xs">
           {renderComponent(row.extraComponent)}
         </td>
 
@@ -552,7 +552,7 @@ export default function EffectTable({
           <div className="inline-flex items-center gap-1.5 justify-center">
             <button
               onClick={() => toggleRow(row)}
-              className={`px-2 py-1 touch:min-h-11 text-[10px] font-bold border transition flex items-center gap-1 ${
+              className={`px-2 py-1 touch:min-h-11 text-3xs font-bold border transition flex items-center gap-1 ${
                 row.unlocked
                   ? "bg-emerald-500 text-black border-emerald-400 font-black shadow-sm"
                   : "bg-[#111720] text-slate-400 border-slate-700 hover:text-emerald-300 hover:border-emerald-600"
@@ -565,7 +565,7 @@ export default function EffectTable({
 
             <button
               onClick={() => updateSeeking(row, !row.isSeeking)}
-              className={`px-2 py-1 touch:min-h-11 text-[10px] font-bold border transition flex items-center gap-1 ${
+              className={`px-2 py-1 touch:min-h-11 text-3xs font-bold border transition flex items-center gap-1 ${
                 row.isSeeking && !row.unlocked
                   ? "bg-amber-400 text-black border-amber-300 font-black shadow-sm"
                   : "bg-[#111720] text-slate-400 border-slate-700 hover:text-amber-300 hover:border-amber-600"
@@ -583,7 +583,7 @@ export default function EffectTable({
                 data-count-step="down"
                 aria-label={`Decrease owned count of ${cleanEffectName(row.effect.name)}`}
                 onClick={() => updateCount(row, row.modCount - 1)}
-                className="text-slate-500 hover:text-white px-0.5 touch:h-11 touch:w-11 touch:flex touch:items-center touch:justify-center"
+                className="flex h-6 w-6 items-center justify-center text-dim hover:text-white touch:h-11 touch:w-11"
               >
                 <Minus className="w-2.5 h-2.5 touch:w-4 touch:h-4" aria-hidden="true" />
               </button>
@@ -595,14 +595,14 @@ export default function EffectTable({
                 value={row.modCount === 0 ? "" : row.modCount}
                 onChange={(e) => updateCount(row, parseInt(e.target.value) || 0)}
                 placeholder="0"
-                className="w-5 touch:w-9 text-center text-[10px] font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-slate-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="h-6 w-6 touch:h-11 touch:w-9 text-center text-3xs font-bold bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-slate-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
               <button
                 type="button"
                 data-count-step="up"
                 aria-label={`Increase owned count of ${cleanEffectName(row.effect.name)}`}
                 onClick={() => updateCount(row, row.modCount + 1)}
-                className="text-slate-500 hover:text-white px-0.5 touch:h-11 touch:w-11 touch:flex touch:items-center touch:justify-center"
+                className="flex h-6 w-6 items-center justify-center text-dim hover:text-white touch:h-11 touch:w-11"
               >
                 <Plus className="w-2.5 h-2.5 touch:w-4 touch:h-4" aria-hidden="true" />
               </button>
@@ -722,13 +722,13 @@ export default function EffectTable({
         {/* Crafting Costs & Catalyst */}
         <div className="effect-tile__costs flex flex-wrap items-center gap-2 mt-1">
           {row.legendaryModules !== null && row.legendaryModules !== undefined ? (
-            <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
+            <span className="inline-flex items-center gap-1 text-2xs font-mono px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
               {renderModules(row.legendaryModules)}
             </span>
           ) : null}
           {row.extraComponent ? (
-            <span className="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-slate-800/60 border border-slate-700/60 text-slate-300" onClick={(e) => e.stopPropagation()}>
-              <span className="text-slate-500 text-[9px] uppercase font-bold">Catalyst:</span>
+            <span className="inline-flex items-center gap-1 text-2xs font-mono px-1.5 py-0.5 rounded bg-slate-800/60 border border-slate-700/60 text-slate-300" onClick={(e) => e.stopPropagation()}>
+              <span className="text-dim text-3xs uppercase font-bold">Catalyst:</span>
               {renderComponent(row.extraComponent)}
             </span>
           ) : null}
@@ -736,12 +736,12 @@ export default function EffectTable({
 
         {/* Origins / Scrapping Source */}
         {row.origins && row.origins.length > 0 ? (
-          <div className="effect-tile__origins text-[10px] text-slate-400 font-mono mt-1 flex items-center gap-1.5 flex-wrap">
-            <span className="text-amber-400/80 font-bold uppercase text-[9px]">Source:</span>
+          <div className="effect-tile__origins text-3xs text-slate-400 font-mono mt-1 flex items-center gap-1.5 flex-wrap">
+            <span className="text-amber-400/80 font-bold uppercase text-3xs">Source:</span>
             <span>{row.origins.join(" • ")}</span>
           </div>
         ) : row.notes ? (
-          <div className="effect-tile__notes text-[10px] text-slate-400 font-mono mt-1">
+          <div className="effect-tile__notes text-3xs text-slate-400 font-mono mt-1">
             {renderInlineMarkdown(row.notes)}
           </div>
         ) : null}
@@ -780,7 +780,7 @@ export default function EffectTable({
           {/* Header Row: Title & Telemetry */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-3.5">
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+              <div className="text-3xs font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Legendary mod effects, live catalog</span>
               </div>
@@ -793,15 +793,15 @@ export default function EffectTable({
             {/* Quick Stat Counters */}
             <div className="grid grid-cols-3 gap-2 text-xs">
               <div className="px-3 py-1.5 bg-[#080d13] border border-slate-800 text-left">
-                <div className="text-[10px] text-slate-400 font-bold uppercase">Total Mods</div>
+                <div className="text-3xs text-slate-400 font-bold uppercase">Total Mods</div>
                 <div className="text-sm font-black text-white">{totalCount}</div>
               </div>
               <div className="px-3 py-1.5 bg-[#080d13] border border-slate-800 text-left">
-                <div className="text-[10px] text-emerald-400 font-bold uppercase">Learned</div>
+                <div className="text-3xs text-emerald-400 font-bold uppercase">Learned</div>
                 <div className="text-sm font-black text-emerald-400">{unlockedCount}</div>
               </div>
               <div className="px-3 py-1.5 bg-[#080d13] border border-slate-800 text-left">
-                <div className="text-[10px] text-amber-400 font-bold uppercase">Completion</div>
+                <div className="text-3xs text-amber-400 font-bold uppercase">Completion</div>
                 <div className="text-sm font-black text-amber-400">{percent}%</div>
               </div>
             </div>
@@ -809,7 +809,7 @@ export default function EffectTable({
 
           {/* Master Segmented Progress Bar */}
           <div className="space-y-1.5">
-            <div className="flex justify-between text-[11px] text-slate-400">
+            <div className="flex justify-between text-2xs text-slate-400">
               <span className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 bg-emerald-500 inline-block" /> Learned ({percent}%)
                 {seekingCount > 0 && (
@@ -850,8 +850,8 @@ export default function EffectTable({
                 >
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="font-bold text-amber-400">{st.tierLabel}</span>
-                    <span className="text-slate-300 text-[11px] font-bold">
-                      {st.unlocked}/{st.total} <span className="text-slate-500">({st.pct}%)</span>
+                    <span className="text-slate-300 text-2xs font-bold">
+                      {st.unlocked}/{st.total} <span className="text-dim">({st.pct}%)</span>
                     </span>
                   </div>
                   <div className="h-1.5 w-full bg-black border border-slate-800 overflow-hidden">
@@ -885,7 +885,7 @@ export default function EffectTable({
 
         {/* Tier Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-slate-500 text-[10px] uppercase font-bold mr-1">Tier:</span>
+          <span className="text-dim text-3xs uppercase font-bold mr-1">Tier:</span>
           {(["ALL", "1 Star", "2 Star", "3 Star", "4 Star"] as const).map((star) => (
             <button
               key={star}
@@ -903,7 +903,7 @@ export default function EffectTable({
 
         {/* Category Slot Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-slate-500 text-[10px] uppercase font-bold mr-1">Slot:</span>
+          <span className="text-dim text-3xs uppercase font-bold mr-1">Slot:</span>
           {(["ALL", "Weapon", "Armor", "Power Armor"] as const).map((cat) => (
             <button
               key={cat}
@@ -921,7 +921,7 @@ export default function EffectTable({
 
         {/* Status Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-slate-500 text-[10px] uppercase font-bold mr-1">Status:</span>
+          <span className="text-dim text-3xs uppercase font-bold mr-1">Status:</span>
           {(["ALL", "learned", "seeking", "locked", "changed"] as const).map((st) => (
             <button
               key={st}
@@ -973,7 +973,7 @@ export default function EffectTable({
         <div className="bg-[#090d12] border border-slate-800 overflow-x-auto shadow-2xl">
           <table className="w-full text-left border-collapse font-mono text-xs">
             <thead>
-              <tr className="bg-[#10161f] border-b border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
+              <tr className="bg-[#10161f] border-b border-slate-800 text-slate-400 text-2xs uppercase tracking-wider">
                 <th className="py-2 px-3 w-12 text-center">Tier</th>
                 <th className="py-2 px-4 w-44">Mod Name</th>
                 <th className="py-2 px-3 w-36">Equipment Slot</th>
@@ -988,7 +988,7 @@ export default function EffectTable({
                 {filteredRows.length === 0 ? (
                   <tbody>
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-slate-500">
+                      <td colSpan={7} className="py-8 text-center text-dim">
                         No legendary mods match your active search and filter criteria.
                       </td>
                     </tr>
@@ -1017,7 +1017,7 @@ export default function EffectTable({
               <tbody className="divide-y divide-slate-800/80">
                 {filteredRows.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-8 text-center text-slate-500">
+                    <td colSpan={7} className="py-8 text-center text-dim">
                       No legendary mods match your active search and filter criteria.
                     </td>
                   </tr>
@@ -1066,7 +1066,7 @@ export default function EffectTable({
           Showing <strong className="text-white">{filteredRows.length}</strong> matching mod formulas • Scrapping 1★–3★ gear yields <strong className="text-emerald-400">1.0% Plan</strong> / <strong className="text-amber-400">1.5% Box Mod</strong>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-slate-500">R.O.L.L. Tactical Telemetry Engine</span>
+          <span className="text-dim">R.O.L.L. Tactical Telemetry Engine</span>
         </div>
       </div>
     </div>

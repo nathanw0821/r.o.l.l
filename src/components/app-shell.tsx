@@ -481,7 +481,7 @@ interface AccountLinksResponse {
                             key={sub.href}
                             href={sub.href}
                             className={cn(
-                              "flex items-center justify-between px-2.5 py-1 rounded transition-all text-[0.72rem]",
+                              "flex items-center justify-between px-2.5 py-1 rounded transition-all text-2xs",
                               subActive
                                 ? "bg-amber-950/80 text-amber-300 font-bold border border-amber-500/50 shadow-sm"
                                 : "text-slate-400 hover:text-white hover:bg-slate-900"
@@ -489,7 +489,7 @@ interface AccountLinksResponse {
                           >
                             <span>{sub.label}</span>
                             {subTier && (
-                              <span className="text-[0.62rem] px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-amber-400">
+                              <span className="text-3xs px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-amber-400">
                                 {subTier.percent}%
                               </span>
                             )}
@@ -590,7 +590,7 @@ interface AccountLinksResponse {
             <DeferredLocalProgressSync />
             <DeferredCommandHubShell authKey={authKey} isSignedIn={isSignedIn} />
             <DeferredFeedbackWidget />
-            <main id="main-content" className="content-panel flex-1 min-h-[60vh]">
+            <main id="main-content" tabIndex={-1} className="content-panel flex-1 min-h-[60vh]">
               <GuestSignupBanner />
               {children}
             </main>
@@ -624,9 +624,9 @@ interface AccountLinksResponse {
             {/* Retro pip-boy styled footer */}
             <footer className="mt-auto border-t border-border/40 pt-6 pb-6 text-xs text-slate-400 font-mono space-y-3">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <span className="text-[0.70rem] text-slate-300 font-bold">© 2026 R.O.L.L. RECORD OF LEGENDARY LOADOUTS</span>
-                <span className="text-[0.68rem] text-slate-400" title={`Build ${gameVersion.build}, released ${gameVersion.released}`}>Game data: Patch {gameVersion.patch} · {gameVersion.name} · checked {gameVersion.verifiedAt}</span>
-                <div className="flex items-center gap-3 text-[0.68rem]">
+                <span className="text-2xs text-slate-300 font-bold">© 2026 R.O.L.L. RECORD OF LEGENDARY LOADOUTS</span>
+                <span className="text-2xs text-slate-400" title={`Build ${gameVersion.build}, released ${gameVersion.released}`}>Game data: Patch {gameVersion.patch} · {gameVersion.name} · checked {gameVersion.verifiedAt}</span>
+                <div className="flex items-center gap-3 text-2xs">
                   <Link href="/rules" className="hover:text-amber-400 transition-colors">&gt; COMMUNITY RULES</Link>
                   <span className="text-slate-700">|</span>
                   <Link href="/terms" className="hover:text-amber-400 transition-colors">&gt; TERMS OF SERVICE</Link>
@@ -636,15 +636,15 @@ interface AccountLinksResponse {
               </div>
 
               {/* Official Bethesda Fan Content & Legal Attribution Banner */}
-              <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 text-[0.62rem] text-slate-400 leading-relaxed font-sans space-y-1">
-                <div className="flex items-center justify-between text-[0.65rem] font-mono text-amber-400/90 font-bold uppercase tracking-wider">
+              <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 text-3xs text-slate-400 leading-relaxed font-sans space-y-1">
+                <div className="flex items-center justify-between text-2xs font-mono text-amber-400/90 font-bold uppercase tracking-wider">
                   <span>OFFICIAL BETHESDA FAN CONTENT DISCLAIMER</span>
                   <span>100% NON-COMMERCIAL / FAIR USE</span>
                 </div>
                 <p>
                   Fallout, Fallout 76, Vault-Tec, S.P.E.C.I.A.L., and related trademarks, logos, and game artwork are registered trademarks and copyrighted property of Bethesda Softworks LLC / ZeniMax Media Inc. R.O.L.L. is an independent community tool created under Fair Use (17 U.S.C. § 107) and Bethesda Fan Content guidelines.
                 </p>
-                <div className="pt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.62rem] font-mono text-slate-400">
+                <div className="pt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-3xs font-mono text-slate-400">
                   <span>Outbound Credits:</span>
                   <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">NukaKnights Datamines</a>
                   <span>•</span>

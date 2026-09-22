@@ -460,7 +460,7 @@ export default function BuilderExperimentClient({
         <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-emerald-400 font-bold flex items-center gap-1.5">
+            <span className="text-2xs uppercase font-mono tracking-widest text-emerald-400 font-bold flex items-center gap-1.5">
               <Terminal className="h-3.5 w-3.5 animate-pulse" />{" "}
               {readOnly ? "VAULT-TEC ARCHIVAL TRANSMISSION // SPECTATOR LOADOUT" : "VAULT-TEC PUNCH CARD MACHINE // B.U.I.L.D. SANDBOX"}
             </span>
@@ -501,7 +501,7 @@ export default function BuilderExperimentClient({
                     } catch {}
                     window.location.href = "/build";
                   }}
-                  className="h-8 px-3 text-[0.72rem] font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5 cursor-pointer"
+                  className="h-8 px-3 text-2xs font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5 cursor-pointer"
                   title="Clone this loadout into your interactive B.U.I.L.D. workspace"
                 >
                   <GitFork className="h-3.5 w-3.5" />
@@ -521,7 +521,7 @@ export default function BuilderExperimentClient({
                       setTimeout(() => setShareCopied(false), 2000);
                     }
                   }}
-                  className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="h-8 px-3 text-2xs font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   {shareCopied ? (
                     <>
@@ -538,7 +538,7 @@ export default function BuilderExperimentClient({
                 {isOwner && sharedTransmissionSlug && (
                   <Link
                     href={`/build?transmission=${encodeURIComponent(sharedTransmissionSlug)}`}
-                    className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-amber-500/60 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60 transition-all flex items-center gap-1.5"
+                    className="h-8 px-3 text-2xs font-bold uppercase tracking-wider rounded border border-amber-500/60 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60 transition-all flex items-center gap-1.5"
                   >
                     <Radio className="h-3.5 w-3.5 text-amber-400" />
                     Edit Transmission
@@ -547,7 +547,7 @@ export default function BuilderExperimentClient({
 
                 <Link
                   href="/build"
-                  className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-slate-700 bg-slate-900/60 text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5"
+                  className="h-8 px-3 text-2xs font-bold uppercase tracking-wider rounded border border-slate-700 bg-slate-900/60 text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5"
                 >
                   New Build ↗
                 </Link>
@@ -598,7 +598,7 @@ export default function BuilderExperimentClient({
                 {activeTransmission && (
                   <div className="flex items-center gap-2 rounded border border-amber-500/60 bg-amber-950/50 px-2.5 py-1 text-xs backdrop-blur-sm">
                     <Radio className="h-3.5 w-3.5 text-amber-400 shrink-0 animate-pulse" />
-                    <div className="flex items-center gap-1 font-mono text-[0.7rem]">
+                    <div className="flex items-center gap-1 font-mono text-2xs">
                       <span className="text-amber-400 font-black uppercase">
                         {activeTransmission.isOwner ? "TRANSMISSION:" : "VIEWING:"}
                       </span>
@@ -612,7 +612,7 @@ export default function BuilderExperimentClient({
                         size="sm"
                         onClick={updateTransmission}
                         disabled={updateBusy}
-                        className="h-7 px-2.5 text-[0.68rem] font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-all shrink-0 flex items-center gap-1"
+                        className="h-7 px-2.5 text-2xs font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-all shrink-0 flex items-center gap-1"
                       >
                         <RefreshCw className={cn("h-3 w-3", updateBusy && "animate-spin")} />
                         {updateBusy ? "SAVING..." : "UPDATE"}
@@ -634,7 +634,7 @@ export default function BuilderExperimentClient({
                 {/* Publish / Clone Controls */}
                 <div className="flex items-center gap-1 rounded border border-emerald-500/50 bg-emerald-950/40 p-0.5">
                   <Input
-                    className="h-8 w-36 sm:w-44 text-xs bg-transparent border-0 font-mono text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2.5"
+                    className="h-8 w-36 sm:w-44 text-xs bg-transparent border-0 font-mono text-white placeholder:text-dim focus-visible:ring-0 focus-visible:ring-offset-0 px-2.5"
                     value={shareTitle}
                     onChange={(e) => setShareTitle(e.target.value)}
                     placeholder="Loadout name..."
@@ -642,7 +642,7 @@ export default function BuilderExperimentClient({
                   <Button
                     type="button"
                     size="sm"
-                    className="h-8 px-3 text-[0.72rem] font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5"
+                    className="h-8 px-3 text-2xs font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5"
                     onClick={shareBuild}
                     disabled={shareBusy}
                     title={activeTransmission ? "Publish as a new transmission" : "Publish transmission to vault"}
@@ -664,7 +664,7 @@ export default function BuilderExperimentClient({
                   type="button"
                   size="sm"
                   onClick={() => setIsNdImportOpen(true)}
-                  className="h-8 px-3 text-[0.72rem] font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+                  className="h-8 px-3 text-2xs font-bold uppercase tracking-wider rounded border border-emerald-500/60 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
                 >
                   <Link2 className="h-3.5 w-3.5" />
                   Import N&amp;D Spec
@@ -731,7 +731,7 @@ export default function BuilderExperimentClient({
                     setShareCopied(true);
                     setTimeout(() => setShareCopied(false), 2000);
                   }}
-                  className="ml-1 flex items-center gap-1 text-[0.68rem] px-1.5 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 uppercase transition-colors"
+                  className="ml-1 flex items-center gap-1 text-2xs px-1.5 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 uppercase transition-colors"
                 >
                   {shareCopied ? (
                     <>
@@ -745,7 +745,7 @@ export default function BuilderExperimentClient({
                 </button>
               </div>
             ) : shareResult ? (
-              <div className="rounded border border-red-500/40 bg-red-950/60 px-2.5 py-1 text-[0.72rem] text-red-300 font-bold">
+              <div className="rounded border border-red-500/40 bg-red-950/60 px-2.5 py-1 text-2xs text-red-300 font-bold">
                 &gt;&gt; ERROR: {shareResult}
               </div>
             ) : null}

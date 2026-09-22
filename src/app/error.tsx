@@ -34,7 +34,7 @@ export default function ErrorBoundary({
             <h2 className="text-base sm:text-lg font-black uppercase tracking-wider text-amber-300">
               [ Tactical Diagnostic Interrupted ]
             </h2>
-            <p className="text-[0.68rem] text-slate-400 uppercase tracking-widest">
+            <p className="text-2xs text-slate-400 uppercase tracking-widest">
               Interface Telemetry Exception
             </p>
           </div>
@@ -50,17 +50,17 @@ export default function ErrorBoundary({
             <button
               type="button"
               onClick={() => setShowDetails((p) => !p)}
-              className="flex items-center justify-between w-full text-[0.7rem] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 font-bold transition cursor-pointer"
+              className="flex items-center justify-between w-full text-2xs uppercase tracking-wider text-amber-400/90 hover:text-amber-300 font-bold transition cursor-pointer"
             >
               <span>Telemetry Diagnostic Details</span>
               {showDetails ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
             </button>
 
             {showDetails && (
-              <div className="pt-2 border-t border-slate-800 space-y-1.5 text-[0.68rem] text-slate-400 break-words font-mono">
+              <div className="pt-2 border-t border-slate-800 space-y-1.5 text-2xs text-slate-400 break-words font-mono">
                 <div className="text-amber-200/90 font-semibold">{error.message}</div>
                 {error.digest && (
-                  <div className="text-slate-500 text-[0.62rem]">
+                  <div className="text-dim text-3xs">
                     Digest: <span className="text-slate-400">{error.digest}</span>
                   </div>
                 )}

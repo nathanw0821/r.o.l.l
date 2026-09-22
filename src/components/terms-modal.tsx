@@ -138,7 +138,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
             <div className="flex items-center gap-3 text-accent border-b border-border pb-3">
               <ShieldAlert className="h-7 w-7 text-accent animate-pulse" />
               <div>
-                <span className="text-[0.65rem] font-bold tracking-widest text-accent/60 block uppercase">SYSTEM REVISION REQ_12JUL2026</span>
+                <span className="text-2xs font-bold tracking-widest text-accent/60 block uppercase">SYSTEM REVISION REQ_12JUL2026</span>
                 <h2 className="text-xl font-bold tracking-tight">Terms &amp; Privacy Update Required</h2>
               </div>
             </div>
@@ -165,7 +165,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                   className="w-full flex items-center justify-between text-left px-3 py-2 border border-border bg-panel rounded-[var(--radius)] text-xs font-bold text-accent hover:border-accent/40 transition-colors font-mono"
                 >
                   <span>{activeSection === "tos" ? "[-] HIDE FULL TERMS OF SERVICE" : "[+] READ FULL TERMS OF SERVICE"}</span>
-                  <span className="text-[0.65rem] opacity-65 font-normal">July 12, 2026</span>
+                  <span className="text-2xs opacity-65 font-normal">July 12, 2026</span>
                 </button>
                 {activeSection === "tos" && (
                   <div className="mt-1.5 border border-border/80 bg-panel/40 p-4 rounded-[var(--radius)] text-xs text-foreground/80 leading-relaxed max-h-48 overflow-y-auto font-sans">
@@ -216,7 +216,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                   className="w-full flex items-center justify-between text-left px-3 py-2 border border-border bg-panel rounded-[var(--radius)] text-xs font-bold text-accent hover:border-accent/40 transition-colors font-mono"
                 >
                   <span>{activeSection === "privacy" ? "[-] HIDE FULL PRIVACY POLICY" : "[+] READ FULL PRIVACY POLICY"}</span>
-                  <span className="text-[0.65rem] opacity-65 font-normal">July 12, 2026</span>
+                  <span className="text-2xs opacity-65 font-normal">July 12, 2026</span>
                 </button>
                 {activeSection === "privacy" && (
                   <div className="mt-1.5 border border-border/80 bg-panel/40 p-4 rounded-[var(--radius)] text-xs text-foreground/80 leading-relaxed max-h-48 overflow-y-auto font-sans">
@@ -226,7 +226,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
                       <div>
                         <h4 className="font-bold border-b border-border/30 pb-0.5 mb-1 font-mono text-[0.75rem] text-accent">1. Information We Collect</h4>
                         <p>We collect only the bare minimum information required to operate your account and save your legendary loadouts:</p>
-                        <ul className="list-disc pl-4 space-y-1 mt-1 text-[0.7rem] text-foreground/75">
+                        <ul className="list-disc pl-4 space-y-1 mt-1 text-2xs text-foreground/75">
                           <li><strong>Account Information:</strong> Username and email address strictly for authentication.</li>
                           <li><strong>Google/Discord OAuth:</strong> Basic profile info for sign-in and account linking. Never sold or shared.</li>
                           <li><strong>Usage Logs &amp; Metrics:</strong> Anonymized session metrics for debugging and server optimization.</li>
@@ -291,7 +291,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
             <div className="flex items-center gap-3 text-red-500 border-b border-border pb-3">
               <AlertTriangle className="h-7 w-7 text-red-500" />
               <div>
-                <span className="text-[0.65rem] font-bold tracking-widest text-red-500/60 block uppercase">STAGE 1 // IDENTITY VERIFICATION</span>
+                <span className="text-2xs font-bold tracking-widest text-red-500/60 block uppercase">STAGE 1 // IDENTITY VERIFICATION</span>
                 <h2 className="text-xl font-bold tracking-tight">Enter Registered Email</h2>
               </div>
             </div>
@@ -302,7 +302,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
             </p>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[0.7rem] uppercase text-foreground/50 tracking-wider">Email Address</label>
+              <label className="text-2xs uppercase text-foreground/50 tracking-wider">Email Address</label>
               <input
                 type="email"
                 required
@@ -348,7 +348,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
             <div className="flex items-center gap-3 text-red-500 border-b border-border pb-3">
               <AlertTriangle className="h-7 w-7 text-red-500 animate-bounce" />
               <div>
-                <span className="text-[0.65rem] font-bold tracking-widest text-red-500/60 block uppercase">STAGE 2 // FINAL DESTRUCTION WARNING</span>
+                <span className="text-2xs font-bold tracking-widest text-red-500/60 block uppercase">STAGE 2 // FINAL DESTRUCTION WARNING</span>
                 <h2 className="text-xl font-bold tracking-tight">Confirm Deletion</h2>
               </div>
             </div>
@@ -358,7 +358,7 @@ export default function TermsAndPrivacyModal({ userEmail }: TermsModalProps) {
             </p>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[0.7rem] uppercase text-foreground/50 tracking-wider">
+              <label className="text-2xs uppercase text-foreground/50 tracking-wider">
                 Type <span className="font-bold text-red-500">DELETE</span> in caps below to verify:
               </label>
               <input

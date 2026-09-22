@@ -105,7 +105,7 @@ export default function RollHelperTooltip({
             <button
               type="button"
               onClick={handleAddToBuild}
-              className="w-full flex items-center justify-between text-[0.68rem] font-bold uppercase font-mono px-2 py-1.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-400 transition-all"
+              className="w-full flex items-center justify-between text-2xs font-bold uppercase font-mono px-2 py-1.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-400 transition-all"
             >
               <span className="flex items-center gap-1">
                 <Boxes className="h-3 w-3" /> Add to B.U.I.L.D.
@@ -116,7 +116,7 @@ export default function RollHelperTooltip({
             <button
               type="button"
               onClick={handleAddToPerk}
-              className="w-full flex items-center justify-between text-[0.68rem] font-bold uppercase font-mono px-2 py-1.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-400 transition-all"
+              className="w-full flex items-center justify-between text-2xs font-bold uppercase font-mono px-2 py-1.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-400 transition-all"
             >
               <span className="flex items-center gap-1">
                 <Sparkles className="h-3 w-3" /> Add to P.E.R.K.
@@ -126,7 +126,7 @@ export default function RollHelperTooltip({
 
             <Link
               href={`/wiki?q=${encodeURIComponent(title)}`}
-              className="w-full flex items-center justify-between text-[0.68rem] font-bold uppercase font-mono px-2 py-1.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-400 transition-all"
+              className="w-full flex items-center justify-between text-2xs font-bold uppercase font-mono px-2 py-1.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-400 transition-all"
             >
               <span className="flex items-center gap-1">
                 <BookOpen className="h-3 w-3" /> Truth Bible Guide

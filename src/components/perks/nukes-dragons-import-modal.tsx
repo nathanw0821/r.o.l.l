@@ -83,12 +83,12 @@ export default function NukesDragonsImportModal({
         <div className="space-y-4 pt-2">
           {/* Input field and example button */}
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-[0.72rem] text-slate-400">
+            <div className="flex items-center justify-between text-2xs text-slate-400">
               <span className="font-bold uppercase text-emerald-400/90">&gt; Target Share URL or Parameters:</span>
               <button
                 type="button"
                 onClick={handleLoadExample}
-                className="text-[0.68rem] text-emerald-400 underline hover:text-emerald-300 transition-colors"
+                className="text-2xs text-emerald-400 underline hover:text-emerald-300 transition-colors"
               >
                 Paste Example N&amp;D Spec
               </button>
@@ -118,17 +118,17 @@ export default function NukesDragonsImportModal({
                     <Sparkles className="h-3.5 w-3.5" /> DECODED TELEMETRY
                   </span>
                   {parsedBuild.isGhoul && (
-                    <span className="text-[0.65rem] px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/60 text-emerald-300 font-bold uppercase tracking-wider">
+                    <span className="text-2xs px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/60 text-emerald-300 font-bold uppercase tracking-wider">
                       Ghoul Deck
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="text-[0.68rem] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-bold">
+                  <span className="text-2xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-bold">
                     {parsedBuild.equippedCards.length} CARDS ({parsedBuild.totalCardPoints} PTS)
                   </span>
                   {parsedBuild.legendaryPerks.length > 0 && (
-                    <span className="text-[0.68rem] px-2 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-500/40 font-bold">
+                    <span className="text-2xs px-2 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-500/40 font-bold">
                       {parsedBuild.legendaryPerks.length} LEGENDARY PERKS
                     </span>
                   )}
@@ -137,7 +137,7 @@ export default function NukesDragonsImportModal({
 
               {/* S.P.E.C.I.A.L. Distribution */}
               <div className="space-y-1.5">
-                <div className="text-[0.7rem] uppercase tracking-widest text-slate-400 font-bold">
+                <div className="text-2xs uppercase tracking-widest text-slate-400 font-bold">
                   S.P.E.C.I.A.L. ALLOCATION
                 </div>
                 <div className="grid grid-cols-7 gap-1.5 text-center">
@@ -158,7 +158,7 @@ export default function NukesDragonsImportModal({
                         key={k}
                         className="rounded-lg border border-slate-800 bg-slate-950 p-2 flex flex-col items-center justify-center space-y-0.5"
                       >
-                        <span className={`text-[0.7rem] font-black ${theme.text}`}>
+                        <span className={`text-2xs font-black ${theme.text}`}>
                           {label}
                         </span>
                         <span className="text-sm font-bold text-white">{val}</span>
@@ -171,9 +171,9 @@ export default function NukesDragonsImportModal({
               {/* Regular Perk Cards Decoded */}
               {parsedBuild.cardDetails.length > 0 && (
                 <div className="space-y-1.5">
-                  <div className="text-[0.7rem] uppercase tracking-widest text-slate-400 font-bold flex items-center justify-between">
+                  <div className="text-2xs uppercase tracking-widest text-slate-400 font-bold flex items-center justify-between">
                     <span>EQUIPPED PERK CARDS ({parsedBuild.cardDetails.length})</span>
-                    <span className="text-[0.65rem] text-slate-500">Auto-clamped to in-game max ranks</span>
+                    <span className="text-2xs text-dim">Auto-clamped to in-game max ranks</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 max-h-48 overflow-y-auto pr-1">
                     {parsedBuild.cardDetails.map((card, idx) => {
@@ -181,15 +181,15 @@ export default function NukesDragonsImportModal({
                       return (
                         <div
                           key={`${card.cardId}-${idx}`}
-                          className="flex items-center justify-between gap-1.5 rounded-lg border border-slate-800 bg-slate-950/80 px-2.5 py-1.5 text-[0.72rem]"
+                          className="flex items-center justify-between gap-1.5 rounded-lg border border-slate-800 bg-slate-950/80 px-2.5 py-1.5 text-2xs"
                         >
                           <div className="flex items-center gap-1.5 min-w-0">
-                            <span className={`font-black text-[0.65rem] px-1 rounded border ${theme.badge} shrink-0`}>
+                            <span className={`font-black text-2xs px-1 rounded border ${theme.badge} shrink-0`}>
                               {card.special}
                             </span>
                             <span className="truncate font-bold text-slate-200">{card.name}</span>
                           </div>
-                          <span className="text-amber-400 font-bold shrink-0 text-[0.7rem]">
+                          <span className="text-amber-400 font-bold shrink-0 text-2xs">
                             {"★".repeat(card.rank)}
                           </span>
                         </div>
@@ -202,7 +202,7 @@ export default function NukesDragonsImportModal({
               {/* Legendary Perks Decoded */}
               {parsedBuild.legendaryPerkDetails.length > 0 && (
                 <div className="space-y-1.5">
-                  <div className="text-[0.7rem] uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1.5">
+                  <div className="text-2xs uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1.5">
                     <Flame className="h-3.5 w-3.5" />
                     LEGENDARY PERKS ({parsedBuild.legendaryPerkDetails.length})
                   </div>
@@ -210,7 +210,7 @@ export default function NukesDragonsImportModal({
                     {parsedBuild.legendaryPerkDetails.map((lp) => (
                       <div
                         key={lp.id}
-                        className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-950/20 px-2.5 py-1 text-[0.72rem] text-amber-200"
+                        className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-950/20 px-2.5 py-1 text-2xs text-amber-200"
                       >
                         <span className="truncate font-bold">{lp.label}</span>
                         <span className="text-amber-400 font-black shrink-0">Rank {lp.rank}</span>
@@ -223,7 +223,7 @@ export default function NukesDragonsImportModal({
               {/* Mutations Decoded */}
               {parsedBuild.mutations.length > 0 && (
                 <div className="space-y-1.5">
-                  <div className="text-[0.7rem] uppercase tracking-widest text-purple-400 font-bold flex items-center gap-1.5">
+                  <div className="text-2xs uppercase tracking-widest text-purple-400 font-bold flex items-center gap-1.5">
                     <Shield className="h-3.5 w-3.5" />
                     ACTIVE MUTATIONS ({parsedBuild.mutations.length})
                   </div>
@@ -231,7 +231,7 @@ export default function NukesDragonsImportModal({
                     {parsedBuild.mutations.map((mut) => (
                       <span
                         key={mut}
-                        className="px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/40 text-purple-200 text-[0.68rem] font-bold uppercase"
+                        className="px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/40 text-purple-200 text-2xs font-bold uppercase"
                       >
                         {mut.replace(/-/g, " ")}
                       </span>
@@ -242,7 +242,7 @@ export default function NukesDragonsImportModal({
 
               {/* Diagnostics / Warnings */}
               {parsedBuild.warnings.length > 0 && (
-                <div className="rounded p-2 bg-slate-950/90 border border-amber-500/30 text-amber-400/90 text-[0.68rem] space-y-0.5">
+                <div className="rounded p-2 bg-slate-950/90 border border-amber-500/30 text-amber-400/90 text-2xs space-y-0.5">
                   {parsedBuild.warnings.map((w, idx) => (
                     <div key={idx} className="flex items-center gap-1.5">
                       <AlertTriangle className="h-3 w-3 shrink-0" />

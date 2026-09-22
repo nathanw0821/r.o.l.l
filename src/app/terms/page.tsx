@@ -13,7 +13,7 @@ export default function TermsPage() {
         <div className="absolute top-0 left-0 w-full h-[3px] bg-accent" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-[0.7rem] uppercase font-mono tracking-widest text-accent font-bold">TERMS OF SERVICE</span>
+            <span className="text-2xs uppercase font-mono tracking-widest text-accent font-bold">TERMS OF SERVICE</span>
             <h1 className="text-2xl font-bold tracking-tight mt-1 font-mono">Terms of Service</h1>
             <p className="text-xs text-foreground/50 mt-1 font-mono">Updated: August 2026</p>
           </div>

@@ -80,7 +80,7 @@ export default function BuilderGearComparisonModal({ isOpen, onClose }: BuilderG
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse font-mono">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-[#0e1622] text-amber-400 uppercase text-[0.7rem] font-bold">
+                  <tr className="border-b border-slate-800 bg-[#0e1622] text-amber-400 uppercase text-2xs font-bold">
                     <th className="p-2.5">Armor Set Name</th>
                     <th className="p-2.5 text-center">DR (Damage)</th>
                     <th className="p-2.5 text-center">ER (Energy)</th>
@@ -114,7 +114,7 @@ export default function BuilderGearComparisonModal({ isOpen, onClose }: BuilderG
 
           {activeTab === "powerArmor" && (
             <div className="overflow-x-auto space-y-4">
-              <div className="p-2.5 bg-amber-950/40 border border-amber-500/30 rounded-lg text-[0.72rem] text-amber-300 flex items-center gap-2">
+              <div className="p-2.5 bg-amber-950/40 border border-amber-500/30 rounded-lg text-2xs text-amber-300 flex items-center gap-2">
                 <Shield className="h-4 w-4 shrink-0 text-amber-400" />
                 <span>
                   All Power Armor frames include inherent <strong>42% Damage Reduction</strong> &amp; <strong>90% Radiation Reduction</strong> before raw stat calculations.
@@ -122,7 +122,7 @@ export default function BuilderGearComparisonModal({ isOpen, onClose }: BuilderG
               </div>
               <table className="w-full text-left text-xs border-collapse font-mono">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-[#0e1622] text-amber-400 uppercase text-[0.7rem] font-bold">
+                  <tr className="border-b border-slate-800 bg-[#0e1622] text-amber-400 uppercase text-2xs font-bold">
                     <th className="p-2.5">Power Armor Frame</th>
                     <th className="p-2.5 text-center">DR</th>
                     <th className="p-2.5 text-center">ER</th>
@@ -140,7 +140,7 @@ export default function BuilderGearComparisonModal({ isOpen, onClose }: BuilderG
                       <tr key={row.key} className="hover:bg-slate-900/50 transition-colors">
                         <td className="p-2.5 font-bold text-slate-100 whitespace-nowrap">
                           {row.label}
-                          {row.notes && <div className="text-[0.68rem] text-slate-400 font-normal">{row.notes}</div>}
+                          {row.notes && <div className="text-2xs text-slate-400 font-normal">{row.notes}</div>}
                         </td>
                         <td className="p-2.5 text-center text-amber-300 font-bold">{row.stats.dr}</td>
                         <td className="p-2.5 text-center text-cyan-300 font-bold">{row.stats.er}</td>
@@ -148,7 +148,7 @@ export default function BuilderGearComparisonModal({ isOpen, onClose }: BuilderG
                         <td className="p-2.5 text-center text-purple-300">{row.stats.pr || "—"}</td>
                         <td className="p-2.5 text-center text-blue-300">{row.stats.cr || "—"}</td>
                         <td className="p-2.5 text-center font-black text-amber-400 whitespace-nowrap">{total} pts</td>
-                        <td className="p-2.5 text-[0.72rem] text-emerald-300 font-medium">{row.setBonus}</td>
+                        <td className="p-2.5 text-2xs text-emerald-300 font-medium">{row.setBonus}</td>
                       </tr>
                     );
                   })}
@@ -163,11 +163,11 @@ export default function BuilderGearComparisonModal({ isOpen, onClose }: BuilderG
                 <div key={w.id} className="bg-slate-900/70 border border-slate-800 rounded-lg p-3 space-y-2 hover:border-amber-500/40 transition-colors">
                   <div className="text-xs font-black uppercase text-amber-400 flex items-center justify-between">
                     <span>{w.label}</span>
-                    <span className="text-[0.62rem] px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400 uppercase font-mono">
+                    <span className="text-3xs px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400 uppercase font-mono">
                       {w.weaponSub || "Tactical"}
                     </span>
                   </div>
-                  <div className="text-[0.68rem] text-emerald-400 font-mono bg-slate-950 p-2 rounded border border-slate-800/80 flex items-center gap-1.5">
+                  <div className="text-2xs text-emerald-400 font-mono bg-slate-950 p-2 rounded border border-slate-800/80 flex items-center gap-1.5">
                     <Zap className="h-3 w-3 text-emerald-400" />
                     <span>✓ High-VATS &amp; 1★–4★ Legendary Mod Ready</span>
                   </div>

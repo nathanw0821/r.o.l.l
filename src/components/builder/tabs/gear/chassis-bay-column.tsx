@@ -133,7 +133,7 @@ export default function ChassisBayColumn({
       >
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between text-[0.72rem] uppercase font-black text-foreground/50 tracking-widest border-b border-border/20 pb-1 mb-1.5">
+          <div className="flex items-center justify-between text-2xs uppercase font-black text-foreground/50 tracking-widest border-b border-border/20 pb-1 mb-1.5">
             <span>{label}</span>
             {isPA && payloadIndex !== null && !readOnly && (
               <button
@@ -166,7 +166,7 @@ export default function ChassisBayColumn({
           {!isPA && payloadIndex !== null && (
             <div className="mb-1.5">
               {readOnly ? (
-                <div className="w-full text-[0.68rem] bg-background/90 border border-border/30 rounded px-1.5 py-0.5 font-mono uppercase text-accent font-bold truncate">
+                <div className="w-full text-2xs bg-background/90 border border-border/30 rounded px-1.5 py-0.5 font-mono uppercase text-accent font-bold truncate">
                   {ARMOR_SET_ROWS.find(
                     (r) =>
                       r.key ===
@@ -177,7 +177,8 @@ export default function ChassisBayColumn({
                 </div>
               ) : (
                 <select
-                  className="w-full text-[0.68rem] bg-background/90 border border-border/40 rounded px-1 py-0.5 font-mono uppercase text-accent font-bold cursor-pointer hover:border-accent"
+                  aria-label={`Armor set for ${label}`}
+                  className="w-full text-2xs bg-background/90 border border-border/40 rounded px-1 py-0.5 font-mono uppercase text-accent font-bold cursor-pointer hover:border-accent"
                   value={
                     payload.armorPieceSetKeys?.[payloadIndex] ||
                     piece.armorSetKey ||
@@ -225,6 +226,7 @@ export default function ChassisBayColumn({
                 <div className="flex flex-col gap-1 mt-1">
                   {!isPA && (
                     <select
+                      aria-label={`Material mod for ${label}`}
                       className="h-5 text-[0.84rem] w-full rounded border border-border/35 bg-background/60 px-1 font-mono uppercase text-foreground/80 cursor-pointer"
                       value={craft?.materialModId ?? "none"}
                       onChange={(e) =>
@@ -239,6 +241,7 @@ export default function ChassisBayColumn({
                     </select>
                   )}
                   <select
+                    aria-label={`Misc mod for ${label}`}
                     className="h-5 text-[0.84rem] w-full rounded border border-border/35 bg-background/60 px-1 font-mono uppercase text-foreground/80 cursor-pointer"
                     value={craft?.miscModId ?? "none"}
                     onChange={(e) =>
@@ -271,29 +274,35 @@ export default function ChassisBayColumn({
                         <div
                           key={starIndex}
                           className={cn(
-                            "flex items-center justify-between text-[0.72rem] rounded px-1.5 py-0.5 transition-all border",
-                            !readOnly && "cursor-pointer",
+                            "flex items-center justify-between text-2xs rounded px-1.5 py-0.5 transition-all border",
                             mod
                               ? "border-accent/30 bg-accent/[0.04] text-foreground/90 hover:border-accent/60"
                               : "border-dashed border-border/30 text-foreground/40 hover:border-accent/40 hover:text-foreground/75",
                           )}
-                          onClick={() => {
-                            if (!readOnly) {
-                              setActivePick({
-                                scope: "armorSet",
-                                pieceIndex: payloadIndex,
-                                starIndex,
-                              });
-                            }
-                          }}
                         >
-                          <span className="truncate max-w-[100px] font-bold">
+                          {/* A real button, so the bench opens from the keyboard too. */}
+                          <button
+                            type="button"
+                            disabled={readOnly}
+                            aria-label={`${starLabel} legendary mod for ${label}: ${mod ? mod.name : "empty"}`}
+                            className="min-h-6 min-w-0 flex-1 truncate text-left font-bold enabled:cursor-pointer"
+                            onClick={() => {
+                              if (!readOnly) {
+                                setActivePick({
+                                  scope: "armorSet",
+                                  pieceIndex: payloadIndex,
+                                  starIndex,
+                                });
+                              }
+                            }}
+                          >
                             {starIndex + 1}★ {mod ? mod.name : "empty"}
-                          </span>
+                          </button>
                           {mod && !readOnly && (
                             <button
                               type="button"
-                              className="text-[0.84rem] text-foreground/40 hover:text-destructive px-1 font-bold"
+                              aria-label={`Clear ${starLabel} mod for ${label}`}
+                              className="min-h-6 min-w-6 text-[0.84rem] text-foreground/40 hover:text-destructive px-1 font-bold"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 clearStarSlot("armorSet", payloadIndex, starIndex);
@@ -327,14 +336,14 @@ export default function ChassisBayColumn({
 
         <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 relative z-10">
           <span>[ Chassis Bay schematic ]</span>
-          <span className="text-[0.72rem] text-foreground/40 font-normal flex items-center gap-1.5">
+          <span className="text-2xs text-foreground/40 font-normal flex items-center gap-1.5">
             <span>Active frame: {activeChassisPiece.label}</span>
             {activeChassisPiece.kind === "powerArmor" ? (
-              <span className="text-[0.62rem] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+              <span className="text-3xs px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
                 LVL {getPowerArmorMaxLevel(activeChassisPiece.id)} (MAX)
               </span>
             ) : (
-              <span className="text-[0.62rem] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+              <span className="text-3xs px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
                 LVL {getArmorSetMaxLevel(activeChassisPiece.armorSetKey || activeChassisPiece.id)} (MAX)
               </span>
             )}
@@ -351,7 +360,7 @@ export default function ChassisBayColumn({
                   <div className="text-xs font-black uppercase tracking-wider text-accent truncate">
                     {activeWeaponPiece.label}
                   </div>
-                  <div className="text-[0.62rem] text-foreground/45 uppercase truncate">
+                  <div className="text-3xs text-foreground/45 uppercase truncate">
                     Primary Weapon · {activeWeaponPiece.weaponSub || "Tactical"}
                   </div>
                 </div>
@@ -390,10 +399,10 @@ export default function ChassisBayColumn({
                     ))}
                   </select>
                 )}
-                <span className="text-[0.62rem] px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
+                <span className="text-3xs px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
                   LVL {getWeaponMaxLevel(activeWeaponPiece.id)} (MAX)
                 </span>
-                <span className="text-[0.62rem] px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
+                <span className="text-3xs px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent font-bold">
                   ACTIVE WEAPON
                 </span>
               </div>
@@ -403,12 +412,12 @@ export default function ChassisBayColumn({
             {activeWeaponUnique && (
               <div className="rounded-lg border border-amber-500/25 bg-slate-950/70 p-2.5 space-y-1.5 font-mono">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[0.66rem] font-black uppercase tracking-widest text-amber-300">
+                  <span className="text-2xs font-black uppercase tracking-widest text-amber-300">
                     Unique effect
                   </span>
                   <span
                     className={cn(
-                      "text-[0.62rem] px-1.5 py-0.2 rounded border font-bold shrink-0",
+                      "text-3xs px-1.5 py-0.2 rounded border font-bold shrink-0",
                       activeWeaponUnique.model
                         ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
                         : "bg-slate-500/15 border-slate-500/40 text-slate-300",
@@ -417,10 +426,10 @@ export default function ChassisBayColumn({
                     {activeWeaponUnique.model ? "Modelled in damage numbers" : "Shown for reference"}
                   </span>
                 </div>
-                <p className="text-[0.7rem] text-slate-200 leading-relaxed">
+                <p className="text-2xs text-slate-200 leading-relaxed">
                   <LinkifiedText text={activeWeaponUnique.innateEffect} currentPath={pathname} />
                 </p>
-                <p className="text-[0.64rem] text-foreground/45 leading-relaxed">
+                <p className="text-3xs text-foreground/45 leading-relaxed">
                   Mods can be changed and a 4th star added since Patch 70 (10x scrip).
                 </p>
               </div>
@@ -433,14 +442,14 @@ export default function ChassisBayColumn({
                   type="button"
                   onClick={() => setWeaponSubMenu("attachments")}
                   className={cn(
-                    "px-2.5 py-1 rounded text-[0.72rem] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
+                    "px-2.5 py-1 rounded text-2xs font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
                     weaponSubMenu === "attachments"
                       ? "bg-amber-500/20 text-amber-300 border border-amber-500/60 shadow-sm"
                       : "text-foreground/50 hover:text-foreground hover:bg-background/30 border border-transparent",
                   )}
                 >
                   <span>⚙️ Attachments</span>
-                  <span className="text-[0.65rem] px-1 py-0.2 rounded bg-amber-500/20 text-amber-200">
+                  <span className="text-2xs px-1 py-0.2 rounded bg-amber-500/20 text-amber-200">
                     {listWeaponAvailableSlots(activeWeaponPiece.id).length}
                   </span>
                 </button>
@@ -448,14 +457,14 @@ export default function ChassisBayColumn({
                   type="button"
                   onClick={() => setWeaponSubMenu("stars")}
                   className={cn(
-                    "px-2.5 py-1 rounded text-[0.72rem] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
+                    "px-2.5 py-1 rounded text-2xs font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
                     weaponSubMenu === "stars"
                       ? "bg-accent/20 text-accent border border-accent/60 shadow-sm"
                       : "text-foreground/50 hover:text-foreground hover:bg-background/30 border border-transparent",
                   )}
                 >
                   <span>★ Legendary Stars</span>
-                  <span className="text-[0.65rem] px-1 py-0.2 rounded bg-accent/20 text-accent">
+                  <span className="text-2xs px-1 py-0.2 rounded bg-accent/20 text-accent">
                     4
                   </span>
                 </button>
@@ -463,7 +472,7 @@ export default function ChassisBayColumn({
                   type="button"
                   onClick={() => setWeaponSubMenu("matrix")}
                   className={cn(
-                    "px-2.5 py-1 rounded text-[0.72rem] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
+                    "px-2.5 py-1 rounded text-2xs font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap",
                     weaponSubMenu === "matrix"
                       ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/60 shadow-sm"
                       : "text-foreground/50 hover:text-foreground hover:bg-background/30 border border-transparent",
@@ -479,44 +488,44 @@ export default function ChassisBayColumn({
               <div className="space-y-2.5 pt-0.5">
                 {/* Active Aggregate Summary Banner */}
                 <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-lg bg-slate-950/70 border border-amber-500/20 text-xs font-mono">
-                  <span className="text-foreground/50 font-bold uppercase text-[0.66rem] mr-1">
+                  <span className="text-foreground/50 font-bold uppercase text-2xs mr-1">
                     Innate Mod Bonuses:
                   </span>
                   {activeWeaponAttachments.damagePct !== 0 && (
-                    <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-bold text-[0.68rem]">
+                    <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-bold text-2xs">
                       {activeWeaponAttachments.damagePct > 0 ? "+" : ""}
                       {Math.round(activeWeaponAttachments.damagePct * 100)}% Dmg
                     </span>
                   )}
                   {activeWeaponAttachments.apCostPct !== 0 && (
-                    <span className="px-1.5 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 font-bold text-[0.68rem]">
+                    <span className="px-1.5 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 font-bold text-2xs">
                       {activeWeaponAttachments.apCostPct > 0 ? "+" : ""}
                       {Math.round(activeWeaponAttachments.apCostPct * 100)}% AP
                     </span>
                   )}
                   {activeWeaponAttachments.armorPenetrationPct > 0 && (
-                    <span className="px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-bold text-[0.68rem]">
+                    <span className="px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-bold text-2xs">
                       +{activeWeaponAttachments.armorPenetrationPct}% Armor Pen
                     </span>
                   )}
                   {activeWeaponAttachments.critDamagePct > 0 && (
-                    <span className="px-1.5 py-0.5 rounded bg-yellow-500/15 border border-yellow-500/40 text-yellow-300 font-bold text-[0.68rem]">
+                    <span className="px-1.5 py-0.5 rounded bg-yellow-500/15 border border-yellow-500/40 text-yellow-300 font-bold text-2xs">
                       +{Math.round(activeWeaponAttachments.critDamagePct * 100)}% Crit
                     </span>
                   )}
                   {activeWeaponAttachments.fireRatePct !== 0 && (
-                    <span className="px-1.5 py-0.5 rounded bg-blue-500/15 border border-blue-500/40 text-blue-300 font-bold text-[0.68rem]">
+                    <span className="px-1.5 py-0.5 rounded bg-blue-500/15 border border-blue-500/40 text-blue-300 font-bold text-2xs">
                       {activeWeaponAttachments.fireRatePct > 0 ? "+" : ""}
                       {Math.round(activeWeaponAttachments.fireRatePct * 100)}% Fire Rate
                     </span>
                   )}
                   {activeWeaponAttachments.isSuppressed && (
-                    <span className="px-1.5 py-0.5 rounded bg-purple-500/15 border border-purple-500/40 text-purple-300 font-bold text-[0.68rem]">
+                    <span className="px-1.5 py-0.5 rounded bg-purple-500/15 border border-purple-500/40 text-purple-300 font-bold text-2xs">
                       🔇 Silenced
                     </span>
                   )}
                   {activeWeaponAttachments.durabilityPct > 0 && (
-                    <span className="px-1.5 py-0.5 rounded bg-slate-500/15 border border-slate-500/40 text-slate-300 font-bold text-[0.68rem]">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-500/15 border border-slate-500/40 text-slate-300 font-bold text-2xs">
                       +{Math.round(activeWeaponAttachments.durabilityPct * 100)}% Durability
                     </span>
                   )}
@@ -525,7 +534,7 @@ export default function ChassisBayColumn({
                       type="button"
                       size="sm"
                       variant="ghost"
-                      className="ml-auto h-5 px-2 text-[0.65rem] text-foreground/45 hover:text-amber-400 font-mono cursor-pointer"
+                      className="ml-auto h-5 px-2 text-2xs text-foreground/45 hover:text-amber-400 font-mono cursor-pointer"
                       onClick={() => {
                         setPayload((p) => ({
                           ...p,
@@ -568,18 +577,18 @@ export default function ChassisBayColumn({
                         className="flex flex-col gap-1.5 rounded-lg border border-amber-500/25 bg-background/30 p-2.5 font-mono text-xs transition-all hover:border-amber-500/40"
                       >
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-bold text-amber-300 text-[0.72rem] uppercase flex items-center gap-1.5">
+                          <span className="font-bold text-amber-300 text-2xs uppercase flex items-center gap-1.5">
                             <span>{slotInfo.icon}</span>
                             <span>{slotInfo.label}</span>
                           </span>
                           {activeOpt?.effectMath.apCostPct && (
-                            <span className="text-[0.62rem] px-1 py-0.2 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold">
+                            <span className="text-3xs px-1 py-0.2 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold">
                               {activeOpt.effectMath.apCostPct < 0 ? "" : "+"}
                               {Math.round(activeOpt.effectMath.apCostPct * 100)}% AP
                             </span>
                           )}
                           {activeOpt?.effectMath.armorPenetrationPct && (
-                            <span className="text-[0.62rem] px-1 py-0.2 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-semibold">
+                            <span className="text-3xs px-1 py-0.2 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-semibold">
                               +{activeOpt.effectMath.armorPenetrationPct}% Pen
                             </span>
                           )}
@@ -591,6 +600,7 @@ export default function ChassisBayColumn({
                           </div>
                         ) : (
                           <select
+                            aria-label={`${slotInfo.label} mod for ${activeWeaponPiece.label}`}
                             value={activeOpt?.id || ""}
                             onChange={(e) => setWeaponInnateSlot(slotKey, e.target.value)}
                             className="w-full h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-slate-100 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer truncate shadow-inner"
@@ -604,7 +614,7 @@ export default function ChassisBayColumn({
                         )}
 
                         {activeOpt?.description && (
-                          <p className="text-[0.65rem] text-foreground/50 leading-relaxed truncate">
+                          <p className="text-2xs text-foreground/50 leading-relaxed truncate">
                             {activeOpt.description}
                           </p>
                         )}
@@ -634,7 +644,7 @@ export default function ChassisBayColumn({
                       <div
                         key={starIndex}
                         className={cn(
-                          "flex flex-col gap-1.5 rounded-lg border p-2.5 text-[0.72rem] transition-all font-mono",
+                          "flex flex-col gap-1.5 rounded-lg border p-2.5 text-2xs transition-all font-mono",
                           mod
                             ? "border-accent/40 bg-accent/10 text-accent"
                             : "border-border/20 bg-background/20 text-foreground/50",
@@ -642,7 +652,7 @@ export default function ChassisBayColumn({
                       >
                         <div className="flex items-center justify-between gap-1.5">
                           <div className="min-w-0 flex items-center gap-1.5 truncate">
-                            <span className="font-black px-1.5 py-0.5 rounded bg-accent/20 text-accent text-[0.7rem]">
+                            <span className="font-black px-1.5 py-0.5 rounded bg-accent/20 text-accent text-2xs">
                               {starIndex + 1}★
                             </span>
                             <span className="text-foreground font-bold truncate">
@@ -655,7 +665,7 @@ export default function ChassisBayColumn({
                                 type="button"
                                 size="sm"
                                 variant="ghost"
-                                className="h-6 px-2 text-[0.66rem] uppercase font-mono font-bold hover:text-accent bg-accent/15 border border-accent/40 cursor-pointer"
+                                className="h-6 px-2 text-2xs uppercase font-mono font-bold hover:text-accent bg-accent/15 border border-accent/40 cursor-pointer"
                                 onClick={() => setActivePick({ scope: "single", starIndex })}
                               >
                                 Bench
@@ -665,7 +675,7 @@ export default function ChassisBayColumn({
                                   type="button"
                                   size="sm"
                                   variant="ghost"
-                                  className="h-6 px-1.5 text-[0.66rem] uppercase font-mono hover:text-destructive text-foreground/40 cursor-pointer"
+                                  className="h-6 px-1.5 text-2xs uppercase font-mono hover:text-destructive text-foreground/40 cursor-pointer"
                                   onClick={() => clearStarSlot("single", undefined, starIndex)}
                                   title="Remove Mod"
                                 >
@@ -678,8 +688,8 @@ export default function ChassisBayColumn({
 
                         {/* Live Mod Tracker Status */}
                         {mod ? (
-                          <div className="flex items-center justify-between gap-2 border-t border-border/15 pt-1 mt-0.5 text-[0.66rem]">
-                            <span className="text-foreground/50 truncate text-[0.64rem] italic">
+                          <div className="flex items-center justify-between gap-2 border-t border-border/15 pt-1 mt-0.5 text-2xs">
+                            <span className="text-foreground/50 truncate text-3xs italic">
                               {mod.description || "Active Legendary Effect"}
                             </span>
                             <div className="flex items-center gap-1 shrink-0">
@@ -705,7 +715,7 @@ export default function ChassisBayColumn({
                             </div>
                           </div>
                         ) : (
-                          <div className="text-[0.64rem] text-foreground/35 italic">
+                          <div className="text-3xs text-foreground/35 italic">
                             Empty slot. Click [Bench] to equip unlocked legendary mods or craft with mod boxes.
                           </div>
                         )}
@@ -722,17 +732,17 @@ export default function ChassisBayColumn({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {/* Attachments Column */}
                   <div className="p-2.5 rounded-lg border border-amber-500/30 bg-background/40 space-y-1.5">
-                    <div className="text-[0.7rem] font-black uppercase tracking-wider text-amber-300 flex items-center justify-between">
+                    <div className="text-2xs font-black uppercase tracking-wider text-amber-300 flex items-center justify-between">
                       <span>⚙️ Installed Attachments</span>
                       <button
                         type="button"
                         onClick={() => setWeaponSubMenu("attachments")}
-                        className="text-[0.65rem] text-accent hover:underline cursor-pointer"
+                        className="text-2xs text-accent hover:underline cursor-pointer"
                       >
                         Edit Attachments &gt;
                       </button>
                     </div>
-                    <div className="space-y-1 text-[0.68rem]">
+                    <div className="space-y-1 text-2xs">
                       {activeWeaponAttachments.installedMods.length > 0 ? (
                         activeWeaponAttachments.installedMods.map((m, idx) => (
                           <div
@@ -753,17 +763,17 @@ export default function ChassisBayColumn({
 
                   {/* Stars Column */}
                   <div className="p-2.5 rounded-lg border border-accent/30 bg-background/40 space-y-1.5">
-                    <div className="text-[0.7rem] font-black uppercase tracking-wider text-accent flex items-center justify-between">
+                    <div className="text-2xs font-black uppercase tracking-wider text-accent flex items-center justify-between">
                       <span>★ Legendary Stars</span>
                       <button
                         type="button"
                         onClick={() => setWeaponSubMenu("stars")}
-                        className="text-[0.65rem] text-accent hover:underline cursor-pointer"
+                        className="text-2xs text-accent hover:underline cursor-pointer"
                       >
                         Edit Stars &gt;
                       </button>
                     </div>
-                    <div className="space-y-1 text-[0.68rem]">
+                    <div className="space-y-1 text-2xs">
                       {SLOT_LABELS.map((starLabel, starIndex) => {
                         const id = payload.legendaryModIds[starIndex];
                         const mod = findModByIdOrSlug(mods, id, starIndex + 1);
@@ -790,7 +800,7 @@ export default function ChassisBayColumn({
                             {mod && (
                               <span
                                 className={cn(
-                                  "text-[0.6rem] font-bold px-1 rounded",
+                                  "text-3xs font-bold px-1 rounded",
                                   isUnlocked
                                     ? "bg-emerald-500/20 text-emerald-300"
                                     : "bg-rose-500/20 text-rose-400",
@@ -808,7 +818,7 @@ export default function ChassisBayColumn({
 
                 {/* Quick Firepower Stat Chips */}
                 {weaponFirepowerResult && (
-                  <div className="p-2.5 rounded-lg bg-slate-950/80 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-2 text-[0.72rem]">
+                  <div className="p-2.5 rounded-lg bg-slate-950/80 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-2 text-2xs">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-emerald-400">⚡ Single Shot:</span>
                       <span className="font-mono text-slate-100">
@@ -881,7 +891,7 @@ export default function ChassisBayColumn({
           </div>
 
           {/* SECTION C: ACTIVE UNDERARMOR SUBSYSTEM STATUS CHIP */}
-          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-[0.72rem]">
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-2xs">
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-sm">👕</span>
               <div className="min-w-0">
@@ -889,7 +899,7 @@ export default function ChassisBayColumn({
                   {findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label ||
                     "Underarmor"}
                 </div>
-                <div className="text-[0.62rem] text-slate-400 truncate">
+                <div className="text-3xs text-slate-400 truncate">
                   Lining:{" "}
                   <span className="text-cyan-300 font-bold">
                     {findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label
@@ -908,11 +918,11 @@ export default function ChassisBayColumn({
 
             <div className="shrink-0">
               {isPA ? (
-                <span className="text-[0.62rem] px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-500/30 font-bold">
+                <span className="text-3xs px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-500/30 font-bold">
                   ⚠️ SUPPRESSED IN PA
                 </span>
               ) : (
-                <span className="text-[0.62rem] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 font-bold">
+                <span className="text-3xs px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 font-bold">
                   ✓ ACTIVE WITH ARMOR
                 </span>
               )}
@@ -920,7 +930,7 @@ export default function ChassisBayColumn({
           </div>
         </div>
 
-        <div className="text-[0.72rem] text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
+        <div className="text-2xs text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
           Telemetric calculations updated instant client-side. Cloudflare 0ms CPU load.
         </div>
       </div>

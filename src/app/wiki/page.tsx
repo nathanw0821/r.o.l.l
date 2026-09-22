@@ -240,7 +240,7 @@ function parseCleanArticleContent(
           `px-3 py-2 align-top leading-snug ${cell.length > 40 ? "min-w-[16rem]" : "whitespace-nowrap"}`;
         return (
           <div key={idx} role="region" aria-label={table.caption ?? "Table"} tabIndex={0} className="guides-table-wrap my-5">
-            <table data-guide-table className="guides-mono w-full border-collapse text-left text-[13px]">
+            <table data-guide-table className="guides-mono w-full border-collapse text-left text-prose">
               {table.caption ? (
                 <caption className={`${TABLE_HEAD_ROW} border-b px-3 py-2 text-left leading-snug`}>{table.caption}</caption>
               ) : null}
@@ -358,7 +358,7 @@ function parseCleanArticleContent(
             />
           </div>
           {altText && !altText.includes("Writer:") && !altText.includes("http") && altText !== "Fallout 76 Guide Visual" && (
-            <div className="px-3 py-2 text-[11px] font-mono text-amber-400/90 text-center font-medium border-t border-slate-800 mt-1">
+            <div className="px-3 py-2 text-2xs font-mono text-amber-400/90 text-center font-medium border-t border-slate-800 mt-1">
               {altText}
             </div>
           )}
@@ -425,7 +425,7 @@ function parseCleanArticleContent(
     }
     if (headingLevel === 6) {
       return (
-        <h6 key={idx} className="guides-heading guides-mono mt-4 mb-1.5 text-[13px] leading-snug text-[var(--text-muted)]">
+        <h6 key={idx} className="guides-heading guides-mono mt-4 mb-1.5 text-prose leading-snug text-[var(--text-muted)]">
           {guideHeadingText(trimmed)}
         </h6>
       );
@@ -516,10 +516,10 @@ function getEquipmentKeyFromTitle(title: string, content: string): string {
 
 
 const PILL =
-  "guides-pill guides-mono inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]";
+  "guides-pill guides-mono inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-prose text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]";
 const RAIL_OPTION =
-  "guides-pill guides-mono flex w-full items-center justify-between gap-2 rounded-md border border-transparent px-2 py-1.5 text-left text-[13px] text-[var(--text-muted)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)]";
-const GROUP_HEADING = "guides-heading guides-mono mb-1.5 text-[13px] text-[var(--text-soft)]";
+  "guides-pill guides-mono flex w-full items-center justify-between gap-2 rounded-md border border-transparent px-2 py-1.5 text-left text-prose text-[var(--text-muted)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)]";
+const GROUP_HEADING = "guides-heading guides-mono mb-1.5 text-prose text-[var(--text-soft)]";
 
 function CategoryList({
   state,
@@ -613,7 +613,7 @@ function FilterGroups({
 
       <section aria-labelledby={`${idPrefix}-options`} className="space-y-2">
         <h2 id={`${idPrefix}-options`} className={GROUP_HEADING}>Options</h2>
-        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-[13px] text-[var(--text-muted)]">
+        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-prose text-[var(--text-muted)]">
           <input
             type="checkbox"
             checked={state.archive}
@@ -622,7 +622,7 @@ function FilterGroups({
           />
           <span>Include archive ({ARCHIVED_ARTICLES.toLocaleString()})</span>
         </label>
-        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-[13px] text-[var(--text-muted)]">
+        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-prose text-[var(--text-muted)]">
           <input
             type="checkbox"
             checked={state.hideStubs}
@@ -631,7 +631,7 @@ function FilterGroups({
           />
           <span>Hide stubs ({STUB_ARTICLES.toLocaleString()})</span>
         </label>
-        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-[13px] text-[var(--text-muted)]">
+        <label className="guides-mono flex cursor-pointer items-center gap-2 px-2 text-prose text-[var(--text-muted)]">
           <input
             type="checkbox"
             checked={state.hideOutdated}
@@ -646,7 +646,7 @@ function FilterGroups({
 }
 
 const READER_BUTTON =
-  "guides-mono inline-flex items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-[13px] text-[var(--text-primary)] hover:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:border-[var(--border)] disabled:text-[var(--text-soft)] disabled:opacity-60";
+  "guides-mono inline-flex items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-prose text-[var(--text-primary)] hover:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:border-[var(--border)] disabled:text-[var(--text-soft)] disabled:opacity-60";
 
 /** Left-button click without modifiers: handle in place; anything else keeps the native link. */
 function isPlainClick(e: React.MouseEvent): boolean {
@@ -843,7 +843,7 @@ function GuideReader({
         </button>
         <div className="flex flex-wrap items-center gap-2">
           {position.index >= 0 ? (
-            <span className="guides-mono hidden text-[13px] text-[var(--text-soft)] sm:inline">
+            <span className="guides-mono hidden text-prose text-[var(--text-soft)] sm:inline">
               {position.index + 1} of {position.total} on this page
             </span>
           ) : null}
@@ -871,7 +871,7 @@ function GuideReader({
       </nav>
 
       <header className="mt-6 max-w-[72ch] space-y-2">
-        <p className="guides-mono flex flex-wrap gap-x-3 gap-y-1 text-[13px] text-[var(--text-soft)]">
+        <p className="guides-mono flex flex-wrap gap-x-3 gap-y-1 text-prose text-[var(--text-soft)]">
           <span>{category}</span>
           <span>{article.source}</span>
           {date ? <span>Updated {date}</span> : null}
@@ -888,7 +888,7 @@ function GuideReader({
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="guides-mono inline-flex items-start gap-1.5 text-[13px] text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
+          className="guides-mono inline-flex items-start gap-1.5 text-prose text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
         >
           <ExternalLink aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]" />
           View Original Guide Source on {article.source} ↗
@@ -903,7 +903,7 @@ function GuideReader({
                   href={sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="guides-mono inline-flex items-baseline gap-1 whitespace-nowrap text-[13px] text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
+                  className="guides-mono inline-flex items-baseline gap-1 whitespace-nowrap text-prose text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
                 >
                   <ExternalLink aria-hidden="true" className="h-3.5 w-3.5 shrink-0 self-center text-[var(--color-accent)]" />
                   view them on the original page
@@ -926,7 +926,7 @@ function GuideReader({
           <p className="guides-prose text-[15px] leading-[1.6] text-[var(--text-muted)]">{outdatedStatus.reason}</p>
           <Link
             href={outdatedStatus.replacementHref}
-            className="guides-mono inline-block text-[13px] text-[var(--color-accent)] underline underline-offset-4"
+            className="guides-mono inline-block text-prose text-[var(--color-accent)] underline underline-offset-4"
           >
             Current version: {outdatedStatus.replacementTitle}
           </Link>
@@ -957,7 +957,7 @@ function GuideReader({
                 </p>
                 <Link
                   href={rule.currentHref}
-                  className="guides-mono inline-block text-[13px] text-[var(--color-accent)] underline underline-offset-4"
+                  className="guides-mono inline-block text-prose text-[var(--color-accent)] underline underline-offset-4"
                 >
                   See the current value
                 </Link>
@@ -988,7 +988,7 @@ function GuideReader({
 
           <div className="guides-reader-body min-w-0 max-w-[72ch]">
             {loadingContent ? (
-              <p role="status" className="guides-mono py-12 text-[13px] text-[var(--color-accent)]">
+              <p role="status" className="guides-mono py-12 text-prose text-[var(--color-accent)]">
                 Loading guide…
               </p>
             ) : (
@@ -1000,7 +1000,7 @@ function GuideReader({
             <nav aria-label="Previous and next guide" className="mt-12 grid max-w-[72ch] gap-3 sm:grid-cols-2">
               {prev ? (
                 <a href={guideHref(prev.id)} onClick={openFromLink(prev)} className="guides-adjacent">
-                  <span className="guides-mono block text-[13px] text-[var(--text-soft)]">Previous</span>
+                  <span className="guides-mono block text-prose text-[var(--text-soft)]">Previous</span>
                   <span className="guides-mono mt-0.5 block text-[15px] leading-snug">{cleanTitle(prev.title)}</span>
                 </a>
               ) : (
@@ -1008,14 +1008,14 @@ function GuideReader({
               )}
               {next ? (
                 <a href={guideHref(next.id)} onClick={openFromLink(next)} className="guides-adjacent sm:text-right">
-                  <span className="guides-mono block text-[13px] text-[var(--text-soft)]">Next</span>
+                  <span className="guides-mono block text-prose text-[var(--text-soft)]">Next</span>
                   <span className="guides-mono mt-0.5 block text-[15px] leading-snug">{cleanTitle(next.title)}</span>
                 </a>
               ) : null}
             </nav>
           ) : null}
 
-          <p className="guides-mono mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[var(--text-soft)]">
+          <p className="guides-mono mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-prose text-[var(--text-soft)]">
             <span>Something in this guide wrong or out of date?</span>
             <button
               type="button"
@@ -1027,7 +1027,7 @@ function GuideReader({
             </button>
           </p>
 
-          <p className="guides-mono mt-6 hidden text-[13px] text-[var(--text-soft)] lg:block">
+          <p className="guides-mono mt-6 hidden text-prose text-[var(--text-soft)] lg:block">
             Keys: <kbd>[</kbd> and <kbd>]</kbd> previous and next guide, <kbd>Esc</kbd> back to results.
           </p>
         </div>
@@ -1058,7 +1058,7 @@ function GuideReader({
               </a>
             )}
 
-            <dl className="guides-mono space-y-1.5 text-[13px]">
+            <dl className="guides-mono space-y-1.5 text-prose">
               <div className="flex justify-between gap-3 border-b border-[var(--border)] pb-1.5">
                 <dt className="text-[var(--text-soft)]">Category</dt>
                 <dd className="text-right text-[var(--text-primary)]">{article.category || "General"}</dd>
@@ -1078,13 +1078,13 @@ function GuideReader({
             <div className="flex flex-col gap-2">
               <Link
                 href={`/build?equip=${encodeURIComponent(getEquipmentKeyFromTitle(article.title, article.content))}`}
-                className="guides-mono flex items-center justify-center gap-1.5 rounded-md border border-[var(--color-accent)] px-3 py-2 text-center text-[13px] text-[var(--color-accent)] hover:bg-[color-mix(in_srgb,var(--color-accent)_10%,transparent)]"
+                className="guides-mono flex items-center justify-center gap-1.5 rounded-md border border-[var(--color-accent)] px-3 py-2 text-center text-prose text-[var(--color-accent)] hover:bg-[color-mix(in_srgb,var(--color-accent)_10%,transparent)]"
               >
                 🛠️ Test in B.U.I.L.D. Sandbox
               </Link>
               <Link
                 href="/perks"
-                className="guides-mono flex items-center justify-center gap-1.5 rounded-md border border-[var(--border-strong)] px-3 py-2 text-center text-[13px] text-[var(--text-primary)] hover:border-[var(--color-accent)]"
+                className="guides-mono flex items-center justify-center gap-1.5 rounded-md border border-[var(--border-strong)] px-3 py-2 text-center text-prose text-[var(--text-primary)] hover:border-[var(--color-accent)]"
               >
                 🃏 View in P.E.R.K. Matrix
               </Link>
@@ -1093,7 +1093,7 @@ function GuideReader({
 
           {showToc ? (
             <nav aria-label="On this page" className="guides-toc-rail hidden lg:block">
-              <h2 className="guides-heading guides-mono mb-2 px-2 text-[13px] text-[var(--text-soft)]">On this page</h2>
+              <h2 className="guides-heading guides-mono mb-2 px-2 text-prose text-[var(--text-soft)]">On this page</h2>
               <GuideToc entries={toc.entries} activeSlug={activeSlug} onJump={jumpTo} keepActiveVisible />
             </nav>
           ) : null}
@@ -1116,7 +1116,7 @@ function GuideReader({
                       {summary ? (
                         <span className="guides-prose mt-1 line-clamp-2 text-[15px] leading-normal text-[var(--text-muted)]">{summary}</span>
                       ) : null}
-                      <span className="guides-mono mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[var(--text-soft)]">
+                      <span className="guides-mono mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-prose text-[var(--text-soft)]">
                         <span>{item.source}</span>
                         <span>{categoryLabel(item.category || "General")}</span>
                         {getArticleOutdatedStatus(item) ? (
@@ -1545,7 +1545,7 @@ function TruthWikiContent() {
               <h1 className="guides-display guides-heading text-[32px] leading-none text-[var(--color-accent)]">Fallout 76 guides</h1>
               <Link
                 href="/wiki/glossary"
-                className="guides-mono text-[13px] text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
+                className="guides-mono text-prose text-[var(--text-primary)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--color-accent)]"
               >
                 Glossary
               </Link>
@@ -1574,7 +1574,7 @@ function TruthWikiContent() {
               />
               <kbd
                 aria-hidden="true"
-                className="guides-mono pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-[var(--border-strong)] px-1.5 text-[13px] text-[var(--text-soft)] sm:block"
+                className="guides-mono pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-[var(--border-strong)] px-1.5 text-prose text-[var(--text-soft)] sm:block"
               >
                 /
               </kbd>
@@ -1588,14 +1588,14 @@ function TruthWikiContent() {
                   </>
                 )}
               </p>
-              <label className="guides-mono flex items-center gap-2 text-[13px] text-[var(--text-soft)]">
+              <label className="guides-mono flex items-center gap-2 text-prose text-[var(--text-soft)]">
                 <ArrowUpDown aria-hidden="true" className="h-4 w-4" />
                 <span>Sort</span>
                 <select
                   id="guides-sort"
                   value={listState.sort}
                   onChange={(e) => writeState({ ...listState, sort: e.target.value as GuideSort, page: 1 }, "push")}
-                  className="cursor-pointer rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-[13px] text-[var(--text-primary)]"
+                  className="cursor-pointer rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-prose text-[var(--text-primary)]"
                 >
                   <option value="newest">Newest first</option>
                   <option value="oldest">Oldest first</option>
@@ -1641,7 +1641,7 @@ function TruthWikiContent() {
                         type="button"
                         onClick={() => removeChip(chip.key)}
                         aria-label={`Remove ${chip.label}`}
-                        className="guides-mono inline-flex max-w-full items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-2 py-1 text-[13px] text-[var(--text-primary)] hover:border-[var(--color-accent)]"
+                        className="guides-mono inline-flex max-w-full items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-2 py-1 text-prose text-[var(--text-primary)] hover:border-[var(--color-accent)]"
                       >
                         <span className="truncate">{chip.label}</span>
                         <X aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-[var(--text-soft)]" />
@@ -1652,7 +1652,7 @@ function TruthWikiContent() {
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="guides-mono px-1 text-[13px] text-[var(--color-accent)] underline underline-offset-2"
+                  className="guides-mono px-1 text-prose text-[var(--color-accent)] underline underline-offset-2"
                 >
                   Clear all
                 </button>
@@ -1660,7 +1660,7 @@ function TruthWikiContent() {
             ) : null}
 
             {loading ? (
-              <p className="guides-mono text-[13px] text-[var(--color-accent)]">Loading guides…</p>
+              <p className="guides-mono text-prose text-[var(--color-accent)]">Loading guides…</p>
             ) : null}
 
             {/* EMPTY STATE */}
@@ -1691,7 +1691,7 @@ function TruthWikiContent() {
                 ) : (
                   <p className="guides-mono text-[15px] text-[var(--text-primary)]">No guides match these filters.</p>
                 )}
-                <button type="button" onClick={clearAll} className="guides-mono text-[13px] text-[var(--color-accent)] underline underline-offset-2">
+                <button type="button" onClick={clearAll} className="guides-mono text-prose text-[var(--color-accent)] underline underline-offset-2">
                   Clear all filters and search
                 </button>
               </div>
@@ -1728,7 +1728,7 @@ function TruthWikiContent() {
                             {summary}
                           </span>
                         ) : null}
-                        <span className="guides-mono mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[var(--text-soft)]">
+                        <span className="guides-mono mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-prose text-[var(--text-soft)]">
                           <span>{item.source}</span>
                           <span>{categoryLabel(item.category || "General")}</span>
                           {outdatedInfo ? (
@@ -1754,7 +1754,7 @@ function TruthWikiContent() {
 
             {/* PAGINATION */}
             {total !== null && total > 0 ? (
-              <nav aria-label="Pagination" className="guides-mono flex items-center justify-between gap-3 text-[13px]">
+              <nav aria-label="Pagination" className="guides-mono flex items-center justify-between gap-3 text-prose">
                 {listState.page > 1 ? (
                   <a
                     href={pageHref(listState.page - 1)}
@@ -1769,7 +1769,7 @@ function TruthWikiContent() {
                     <ChevronLeft aria-hidden="true" className="h-4 w-4" /> Previous
                   </a>
                 ) : (
-                  <span aria-hidden="true" className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-3 py-2 text-[var(--text-soft)] opacity-60">
+                  <span aria-hidden="true" className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-3 py-2 text-dim">
                     <ChevronLeft className="h-4 w-4" /> Previous
                   </span>
                 )}
@@ -1790,14 +1790,14 @@ function TruthWikiContent() {
                     Next <ChevronRight aria-hidden="true" className="h-4 w-4" />
                   </a>
                 ) : (
-                  <span aria-hidden="true" className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-3 py-2 text-[var(--text-soft)] opacity-60">
+                  <span aria-hidden="true" className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-3 py-2 text-dim">
                     Next <ChevronRight className="h-4 w-4" />
                   </span>
                 )}
               </nav>
             ) : null}
 
-            <p className="guides-mono hidden text-[13px] text-[var(--text-soft)] lg:block">
+            <p className="guides-mono hidden text-prose text-[var(--text-soft)] lg:block">
               Keys: <kbd>/</kbd> search, <kbd>j</kbd> and <kbd>k</kbd> move between guides, <kbd>Enter</kbd> opens one.
             </p>
           </div>

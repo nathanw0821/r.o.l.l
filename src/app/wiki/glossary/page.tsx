@@ -63,7 +63,7 @@ export default function GlossaryPage() {
       <HashAnchorScroll />
 
       <header className="space-y-3">
-        <nav aria-label="Breadcrumb" className="guides-mono text-[13px] text-[var(--text-soft)]">
+        <nav aria-label="Breadcrumb" className="guides-mono text-prose text-[var(--text-soft)]">
           <ol className="flex flex-wrap items-center gap-x-2">
             <li>
               <Link href="/wiki" className={LINK_CLASS}>
@@ -125,7 +125,7 @@ export default function GlossaryPage() {
                       <LinkifiedText text={entry.definition} skipKeys={new Set([normalizeEntityKey(entry.term)])} />
                     </p>
                     {entry.seeAlso.length > 0 ? (
-                      <p className="guides-mono text-[13px]">
+                      <p className="guides-mono text-prose">
                         <span className="text-[var(--text-soft)]">See also: </span>
                         {entry.seeAlso.map((href, i) => (
                           <span key={href}>
@@ -148,7 +148,7 @@ export default function GlossaryPage() {
         ))}
       </div>
 
-      <p className="guides-mono text-[13px] text-[var(--text-soft)]">
+      <p className="guides-mono text-prose text-[var(--text-soft)]">
         <Link href="/wiki" className={LINK_CLASS}>
           Back to guides
         </Link>

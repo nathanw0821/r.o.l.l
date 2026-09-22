@@ -41,7 +41,7 @@ export default function PipBoyLegendaryRack({
           <button
             type="button"
             onClick={onFilterLegendary}
-            className="text-[0.68rem] font-mono font-bold px-2.5 py-0.5 rounded bg-yellow-950/60 border border-yellow-500/40 hover:bg-yellow-900/60 text-yellow-300 transition-all flex items-center gap-1"
+            className="text-2xs font-mono font-bold px-2.5 py-0.5 rounded bg-yellow-950/60 border border-yellow-500/40 hover:bg-yellow-900/60 text-yellow-300 transition-all flex items-center gap-1"
           >
             <Plus className="h-3 w-3" />
             Browse Legendary Catalog
@@ -66,7 +66,7 @@ export default function PipBoyLegendaryRack({
                 className="w-full flex flex-col items-center relative group transition-all"
               >
                 <div className="w-full text-center pb-1">
-                  <span className="text-[0.62rem] font-mono font-bold text-yellow-400/90 tracking-wider">
+                  <span className="text-3xs font-mono font-bold text-yellow-400/90 tracking-wider">
                     SLOT {index + 1} • LVL {unlockLevel}
                   </span>
                 </div>
@@ -107,11 +107,11 @@ export default function PipBoyLegendaryRack({
               <span className="text-xs font-mono font-bold text-yellow-200 uppercase tracking-wider">
                 Slot {index + 1}
               </span>
-              <span className="text-[0.62rem] font-mono text-yellow-500/80 mt-0.5">
+              <span className="text-3xs font-mono text-yellow-500/80 mt-0.5">
                 Level {unlockLevel}
               </span>
               {!readOnly && (
-                <span className="mt-3 text-[0.60rem] font-mono font-bold px-2 py-0.5 rounded bg-yellow-950/60 border border-yellow-500/40 text-yellow-300 group-hover:bg-yellow-900/80 transition-all">
+                <span className="mt-3 text-3xs font-mono font-bold px-2 py-0.5 rounded bg-yellow-950/60 border border-yellow-500/40 text-yellow-300 group-hover:bg-yellow-900/80 transition-all">
                   + Equip
                 </span>
               )}
