@@ -279,7 +279,7 @@ describe("parseGuideTable", () => {
     expect(table.rows[0].cells[0]).toBe("");
   });
 
-  it("guide 211: weapon stat rows (x0.13, 1.5, 42.9) have no header", () => {
+  it("weapon stat rows (x0.13, 1.5, 42.9) have no header (fixture from former guide 211, a Fallout 3 page)", () => {
     const table = parseGuideTable(
       [
         "| Assault Rifle | 8 | 64 | 8 | x0.13 | 8 | 3 | 23 | 1 | 1.5 | 24 | 1250 | 7 | 300 | 42.9 |",
