@@ -93,6 +93,27 @@ describe("stripSiteBoilerplate", () => {
     expect(stripSiteBoilerplate(raw)).toBe(guide);
   });
 
+  it("removes a reply thread without timestamps, from the quoted parent comment on (id 3640)", () => {
+    const guide = "### Cut Content\n\n| Alien Shooting Target |\n| Spaceship Balloon |";
+    const quote = "...it just gets worse every season, and I've only been around since S16, so disappointing...";
+    const raw = `${guide}\n\n${quote}\n\nSYDESH0W:\n${quote}`;
+    expect(stripSiteBoilerplate(raw)).toBe(guide);
+    expect(siteBoilerplateKinds(raw)).toContain("nk-comments");
+  });
+
+  it("keeps a 'Name:' line whose text is not a repeated quote", () => {
+    const raw = "Talk to the vendor.\n\nMac:\nHe sells the plan on Tuesdays.";
+    expect(stripSiteBoilerplate(raw)).toBe(raw);
+  });
+
+  it("drops a trailing heading or bold-only line with nothing under it (ids 4443, 1383)", () => {
+    expect(stripSiteBoilerplate("Pack for combat.\n\n**Rewards**\n\nXP\n\n__Rewards__")).toBe("Pack for combat.\n\n**Rewards**\n\nXP");
+    expect(stripSiteBoilerplate("The vault is north of the river.\n\n## Gallery")).toBe("The vault is north of the river.");
+    expect(stripSiteBoilerplate("The vault is north of the river.\n\n## See Also\n\n* Vault 63")).toBe(
+      "The vault is north of the river.\n\n## See Also\n\n* Vault 63",
+    );
+  });
+
   it("removes the German donation box (id 3534)", () => {
     const guide = "Army Paint (Gatling Plasma)";
     const raw = `${guide}\n\nUnterstütze uns\n\nMit Deiner Spende\n\n#### Unterstütze uns\n\nMit Deiner Spende\n\nHat Dir dieser Artikel weitergeholfen? Dann unterstütze uns gern mit einer Spende oder einem Abonnement.`;

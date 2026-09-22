@@ -1813,6 +1813,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Mo, 10.08.2026 (18:00) - Mi, 12.08.2026 (18:00) Ort: Foundation Jetzt aktiv. Endet i…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1824,6 +1825,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Thu, August 13th, 2026 (6:00 p.m.) - Mon, August…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1835,6 +1837,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Mon, 08/17/2026 (6:00 p.m.) - Wed, 08/19/2026 (6:00 p.m.) Location: Craters Launch in 5 d…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1846,6 +1849,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Di, 18.08.2026 (18:00) - Di…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1857,6 +1861,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Starting in 8 days 7 hours",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1868,6 +1873,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Mon, 08/24/2026 (6:00 p.m.) - Wed, 08/26/2026 (6:00 p.m.) Location: Fort Atlas Start…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1879,6 +1885,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Thu, August 27th, 2026 (6:00 p.m.) - Mon, August 31st…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1890,6 +1897,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Thu, September 3rd, 2026 (6:00 p.m.) - Mon, September 7th, 2026 (6:00 p.m.) Location: Whitespring…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1901,6 +1909,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Event: Mottenmann Äquinoktium Di, 08.09.2026 (18:00) - Di, 22.09.2026 (…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1912,6 +1921,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Sham blessings and double mutations Thu, September 10th, 2026 (6:00 p.m.) - Mon…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1923,6 +1933,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Thu, September 17th, 2026 (6:00 p.m.) - Mon, September 21st, 2026 (6:00 p.m.) Starti…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1934,6 +1945,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Thu, September 24th, 2026 (6:00 p.m.) - Mon…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -1945,6 +1957,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Mutierte Öffentliche Events Di, 29.09.2026 (…",
     "main_image": "static/images/b4879c9db99dc89bb391cd5d7f4b2558.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -11838,7 +11851,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "General",
     "snippet": "constructed by the Civilian Conservation Corps in the 1930's, offers drivers miles of stunning views.”— Loading Screen Skyline Drive appears in Fallout 76, introduc…",
     "main_image": "static/images/27fdba15a71d959edd51b5c196dc3cfc.jpg",
-    "content": ""
+    "content": "",
+    "stub": true
   },
   {
     "id": 1659,
@@ -21728,6 +21742,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "The following information includes Fallout 76 world maps and external resources including…",
     "main_image": "static/images/928d2c6d59a052fef28a7f0a51edb829.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
@@ -31178,6 +31193,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Reward Checklist - Black n White Reward Checklist - SugarBombsRAD's Downloadable Reward Checklist for Mobile Your progress will be automatically saved as you mark the boxes on the checklist below",
     "main_image": "static/images/1af5b2e6c26d6f2edc02cfb2309d7918.png",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {
