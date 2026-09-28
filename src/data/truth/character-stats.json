@@ -1,0 +1,47 @@
+{
+  "$comment": "Base character stats for the builder's vitals rows (Max HP, AP, carry weight, regen). Formulas are fallout.wiki's Fallout 76 pages (game settings quoted where the wiki quotes them). Perk numbers are the Patch 70 card texts; the SPECIAL-scaled single-rank cards (Thirst Quencher, Strong Back) have unpublished curves and are modelled as linear ranges marked approximate, like Lifegiver in defensive-perks.json.",
+  "verifiedAt": "2026-09-28",
+  "hp": {
+    "base": 250,
+    "perEndurance": 5,
+    "enduranceOffset": 1,
+    "formula": "250 + (END − 1) × 5",
+    "source": "https://fallout.wiki/wiki/Hit_Points_(Fallout_76): '250 + ((Endurance − 1) × 5)', max 320 at END 15; no per-level growth",
+    "confidence": "verified"
+  },
+  "ap": {
+    "base": 100,
+    "perAgility": 10,
+    "formula": "100 + AGI × 10",
+    "regenPerSecond": 6,
+    "source": "AP pool as the firepower engine has used it since WS-3; fallout.wiki's Action Points page text says 60 + 10 × AGI while its infobox says 105 + 10 × AGI, so the base is flagged for an in-game check (backlog item 11). Regen: 'base action point regeneration rate is 6.0 per second'.",
+    "confidence": "approximate"
+  },
+  "carryWeight": {
+    "base": 150,
+    "perStrength": 5,
+    "formula": "150 + STR × 5",
+    "source": "https://fallout.wiki/wiki/Carry_Weight_(Fallout_76): fAVDCarryWeightBase = 150, fAVDCarryWeightMult = 5; over-encumbered movement drains AP like sprinting; hard cap +1,500 lb over max",
+    "confidence": "verified"
+  },
+  "perks": {
+    "thirst-quencher": { "model": "max-ap-flat-by-end", "min": 0, "max": 90, "condition": "not diseased", "confidence": "approximate", "source": "Card text 'Increased Max AP based on END while not diseased'; legacy ranks were +30/60/90, range unpublished since Patch 62" },
+    "strong-back": { "model": "carry-flat-by-str", "min": 10, "max": 40, "confidence": "approximate", "source": "Card text 'Gain more carry weight based on your STR'; legacy ranks were +10/20/30/40 (fallout.wiki)" },
+    "nocturnal-fortitude": { "model": "max-hp-flat-at-night", "byRank": [50, 100], "confidence": "verified", "source": "Card text (Patch 70)" },
+    "photosynthetic": { "model": "hp-regen-per-second-by-day", "byRank": [3, 6], "confidence": "verified", "source": "Card text (Patch 70)" },
+    "battle-genes": { "model": "hp-regen-per-second-in-combat", "byRank": [2, 4], "confidence": "verified", "source": "Card text (Patch 70)" },
+    "action-boy": { "model": "ap-regen-pct", "byRank": [0.15, 0.3, 0.45], "confidence": "verified", "source": "Card text (Patch 70)" },
+    "action-ghoul": { "model": "ap-regen-pct", "byRank": [0.15, 0.3, 0.45], "condition": "Ghoul", "confidence": "verified", "source": "Card text (Patch 70)" },
+    "gun-runner": { "model": "move-speed-pct", "byRank": [0.1, 0.2], "condition": "ranged weapon equipped", "confidence": "verified", "source": "Card text (Patch 70)" },
+    "squad-maneuvers": { "model": "move-speed-pct", "byRank": [0.1, 0.2], "condition": "on a team", "confidence": "verified", "source": "Card text (Patch 70)" },
+    "portable-power": { "model": "move-speed-pct", "byRank": [0.1, 0.2, 0.3], "condition": "power armor", "confidence": "verified", "source": "Card text (Patch 70)" },
+    "jaguar-speed": { "model": "sprint-speed-pct", "byRank": [0.1, 0.2], "condition": "Ghoul, Glow high", "confidence": "verified", "source": "Card text (Patch 70)" },
+    "united-ordeal": { "model": "special-all-flat", "byRank": [1, 2, 3], "condition": "Ghoul, on a team with another ghoul", "confidence": "verified", "source": "Card text (Patch 70)" }
+  },
+  "states": {
+    "foodMaxHp": { "well_fed": 25, "fully_fed": 35, "source": "Well Fed / Fully Fed as the switchboard describes them" },
+    "thirstApRegenPct": { "well_hydrated": 0.25, "fully_hydrated": 0.35, "source": "Well Hydrated / Fully Hydrated as the switchboard describes them" },
+    "campWellTunedApRegenPct": 0.25,
+    "overeatersMaxHpPerPiece": 40
+  }
+}

@@ -32,8 +32,11 @@ import {
 import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-description";
 import type { AggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
 import type { UseBuilderTotalsResult } from "@/components/builder/hooks/use-builder-totals";
+import type { VitalsSheet, VitalsLine } from "@/lib/builder/vitals-sheet";
 
 export interface DiagnosticsHudColumnProps {
+  /** Vitals rows (Max HP, AP, carry weight…) from vitals-sheet.ts. */
+  vitals?: VitalsSheet | null;
   payload: BuilderPayload;
   setPayload: React.Dispatch<React.SetStateAction<BuilderPayload>>;
   totals: BuilderEffectTotals;
@@ -47,6 +50,7 @@ export interface DiagnosticsHudColumnProps {
 }
 
 export default function DiagnosticsHudColumn({
+  vitals,
   payload,
   setPayload,
   totals,
@@ -244,6 +248,47 @@ export default function DiagnosticsHudColumn({
       </div>
 
       {/* Tactical Resistance cards */}
+      {vitals && (
+        <section aria-labelledby="hud-vitals-heading" className="pip-terminal-panel p-4 rounded-xl space-y-3">
+          <h3 id="hud-vitals-heading" className="text-xs font-black font-mono uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center gap-1.5">
+            <Activity className="h-3.5 w-3.5" aria-hidden="true" /> [ VITALS ]
+          </h3>
+          <TooltipProvider delayDuration={150}>
+            <dl className="grid grid-cols-2 gap-2 font-mono">
+              {([
+                { label: "Max HP", value: `${vitals.maxHp}`, lines: vitals.lines.maxHp },
+                { label: "HP regen", value: `${vitals.hpRegenPerSecond} /s`, lines: vitals.lines.hpRegen },
+                { label: "Max AP", value: `${vitals.maxAp}`, lines: vitals.lines.maxAp },
+                { label: "AP regen", value: `${vitals.apRegenPerSecond} /s`, lines: vitals.lines.apRegen },
+                { label: "Carry weight", value: `${vitals.carryWeight}`, lines: vitals.lines.carryWeight },
+                { label: "Move speed", value: `${vitals.moveSpeedPct > 0 ? "+" : ""}${vitals.moveSpeedPct}%`, lines: vitals.lines.moveSpeed },
+              ] as Array<{ label: string; value: string; lines: VitalsLine[] }>).map((row) => (
+                <Tooltip key={row.label}>
+                  <TooltipTrigger asChild>
+                    <div className="rounded border border-border/20 bg-background/30 px-2 py-1.5 cursor-help" tabIndex={0}>
+                      <dt className="text-3xs uppercase tracking-wider text-dim">{row.label}</dt>
+                      <dd className="text-sm font-black text-foreground">{row.value}</dd>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-background border-accent/40 text-xs font-mono p-2.5 max-w-xs space-y-1">
+                    {row.lines.length === 0 ? (
+                      <div className="text-dim">No modifiers from the deck or the board.</div>
+                    ) : (
+                      row.lines.map((l, i) => (
+                        <div key={i} className="flex justify-between gap-3 text-2xs">
+                          <span className="text-foreground/70">{l.source}</span>
+                          <span className="text-accent font-bold">{l.value}</span>
+                        </div>
+                      ))
+                    )}
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </dl>
+          </TooltipProvider>
+        </section>
+      )}
+
       <div className="pip-terminal-panel p-4 rounded-xl space-y-3">
         <div className="text-xs font-black font-mono uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center gap-1.5">
           <Shield className="h-3.5 w-3.5" /> [ RESISTANCE RATINGS ]

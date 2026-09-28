@@ -436,6 +436,17 @@ describe("perk-card SPECIAL bonuses on the character sheet", () => {
     expect(run(board({ teamState: "solo" }), [{ cardId: "magnetic-personality", rank: 2 }]).layer.cha).toBe(0);
   });
 
+  it("United Ordeal needs a Ghoul, a team and a ghoul teammate", () => {
+    const cards = [{ cardId: "united-ordeal", rank: 3 }];
+    const on = calculateStanceAndBiometricModifiers({ switchboard: board({ teamState: "casual", hasGhoulTeammate: true }), equippedMods: [], isGhoul: true, equippedPerkCards: cards });
+    expect(on.layer.str).toBe(3);
+    expect(on.layer.lck).toBe(3);
+    const human = calculateStanceAndBiometricModifiers({ switchboard: board({ teamState: "casual", hasGhoulTeammate: true }), equippedMods: [], isGhoul: false, equippedPerkCards: cards });
+    expect(human.layer.str).toBe(0);
+    const noGhoulMate = calculateStanceAndBiometricModifiers({ switchboard: board({ teamState: "casual", hasGhoulTeammate: false }), equippedMods: [], isGhoul: true, equippedPerkCards: cards });
+    expect(noGhoulMate.layer.str).toBe(0);
+  });
+
   it("does nothing without perk cards (existing callers unchanged)", () => {
     const r = calculateStanceAndBiometricModifiers({ switchboard: board({ timeOfDay: "night" }), equippedMods: [], isGhoul: false });
     expect(r.layer.int).toBe(0);

@@ -34,6 +34,7 @@ import ArmoryMatrixSection from "@/components/builder/tabs/gear/armory-matrix-se
 import GearPickerDialog from "@/components/builder/gear-picker-dialog";
 import { underarmorBasePieceIdForShell } from "@/lib/builder/loadout-mode";
 import { sanitizeMutationIds } from "@/lib/builder/sandbox-mutations";
+import { calculateVitalsSheet } from "@/lib/builder/vitals-sheet";
 import type { BuilderEquipmentKind } from "@/lib/builder/types";
 import { useBuilderModCatalog } from "@/components/builder/hooks/use-builder-mod-catalog";
 import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals";
@@ -319,6 +320,7 @@ export default function BuilderExperimentClient({
         agility: statsBand.special.agi,
         luck: statsBand.special.lck,
         strength: statsBand.special.str,
+        endurance: statsBand.special.end,
         healthPct: switchboardState?.healthPct ?? 20,
         caps: switchboardState?.caps ?? 30000,
         isPowerArmor: isPA,
@@ -359,6 +361,34 @@ export default function BuilderExperimentClient({
     isPA,
   ]);
 
+
+  // Vitals rows for the HUD and the Biometrics band (vitals-sheet.ts).
+  const vitals = React.useMemo(() => {
+    const overeatersPieces = equippedModsOrdered.filter(
+      (m) => (m.allowedOnArmor || m.allowedOnPowerArmor || m.category === "Armor") && /overeater/i.test(`${m.slug} ${m.name}`),
+    ).length;
+    return calculateVitalsSheet({
+      special: statsBand.special,
+      perkCards: equippedPerkCards,
+      totals: { hp: totals.hp, apRegen: totals.apRegen, carryWeight: totals.carryWeight },
+      lifegiverMaxHpPct: defensiveProfile?.maxHpPct ?? 0,
+      engineApPool: weaponFirepowerResult?.vats.totalApPool ?? null,
+      isGhoul: payload.ghoul,
+      isPowerArmor: isPA,
+      timeOfDay: switchboardState?.timeOfDay ?? "day",
+      foodState: switchboardState?.foodState ?? "fully_fed",
+      thirstState: switchboardState?.thirstState ?? "fully_hydrated",
+      isOnTeam: (switchboardState?.teamState ?? "casual") !== "solo",
+      hasWellTunedFurniture: Boolean(switchboardState?.activeCampBuffs?.includes("camp-instrument")),
+      overeatersPieces,
+      glowPct: switchboardState?.glowPct ?? 0,
+      rangedWeaponEquipped: activeWeaponPiece.weaponSub !== "melee",
+    });
+  }, [equippedModsOrdered, statsBand.special, equippedPerkCards, totals.hp, totals.apRegen, totals.carryWeight, defensiveProfile, weaponFirepowerResult, payload.ghoul, isPA, switchboardState, activeWeaponPiece.weaponSub]);
+  const statsBandWithVitals = React.useMemo(
+    () => ({ ...statsBand, maxHp: vitals.maxHp, maxAp: vitals.maxAp, carryWeight: vitals.carryWeight }),
+    [statsBand, vitals],
+  );
 
   const shopping = React.useMemo(
     () =>
@@ -851,7 +881,7 @@ export default function BuilderExperimentClient({
         playerResists={{ dr: totals.dr, er: totals.er }}
         armorModeIsPA={isPA}
         onArmorModeChange={(nextPA) => setArmorMode(nextPA ? "powerArmor" : "regular")}
-        statsBand={statsBand}
+        statsBand={statsBandWithVitals}
         isCompactDensity={isCompactDensity}
       />
 
@@ -877,6 +907,7 @@ export default function BuilderExperimentClient({
         {/* COLUMN 1: DIAGNOSTICS HUD */}
         <div className="min-w-0 lg:[grid-area:hud]">
         <DiagnosticsHudColumn
+          vitals={vitals}
           payload={payload}
           setPayload={setPayload}
           totals={totals}

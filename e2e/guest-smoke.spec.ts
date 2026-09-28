@@ -226,6 +226,19 @@ test.describe("guest smoke", () => {
     await expectPageSane(page);
   });
 
+  test("gear HUD shows the vitals rows with the wiki base formulas", async ({ page }) => {
+    await page.goto("/build?tab=gear");
+    const vitals = page.getByRole("region", { name: /VITALS/ }).or(page.locator("section[aria-labelledby='hud-vitals-heading']")).first();
+    await expect(vitals).toBeVisible({ timeout: 45_000 });
+    for (const label of ["Max HP", "HP regen", "Max AP", "AP regen", "Carry weight", "Move speed"]) {
+      await expect(vitals.getByText(label, { exact: true })).toBeVisible();
+    }
+    const hp = Number.parseInt((await vitals.getByText("Max HP", { exact: true }).locator("xpath=following-sibling::dd").innerText()).replace(/[^0-9]/g, ""), 10);
+    expect(hp).toBeGreaterThanOrEqual(250);
+    expect(hp).toBeLessThanOrEqual(1000);
+    await expectPageSane(page);
+  });
+
   test("perks page can find Night Person via search and shows its effect text", async ({ page }) => {
     await page.goto("/perks");
 

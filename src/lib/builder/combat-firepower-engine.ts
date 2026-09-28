@@ -10,6 +10,8 @@ import { requireEffectNumber } from "@/lib/truth/legendary-effect-model";
 import { normalizeActiveBuffs } from "@/lib/builder/buff-id-normalize";
 import { getWeaponInnateModOption } from "@/lib/builder/weapon-piece-mods";
 import weakSpotTruth from "@/data/truth/weak-spot.json";
+import characterStats from "@/data/truth/character-stats.json";
+import { lerpSpecial } from "@/lib/builder/perk-defensive-layer";
 import {
   resolveUniqueForBuilderId,
   type UniqueEffectKind,
@@ -299,6 +301,9 @@ export type CombatFirepowerCalculationInput = {
     agility: number;
     luck: number;
     strength: number;
+    /** Live Endurance; Thirst Quencher adds END-scaled max AP to the pool when given. */
+    endurance?: number;
+    isDiseased?: boolean;
     healthPct?: number; // 0.2 for 20% bloodied
     caps?: number; // for Aristocrat's
     isPowerArmor?: boolean;
@@ -1314,7 +1319,15 @@ export function calculateCombatFirepower(
   const uniqueApPoolBonus = apPoolModel?.value ?? 0;
 
   const vatsApCost = resolveVatsApCost(base.baseVatsApCost, innateMods.apCostPct, hasVatsOptimized);
-  const totalApPool = 100 + input.playerStats.agility * 10 + uniqueApPoolBonus;
+  // Thirst Quencher: END-scaled max AP (approximate range, character-stats.json), not while diseased.
+  const thirstQuencherAp =
+    (perkRanks.get("thirst-quencher") || 0) > 0 && input.playerStats.endurance !== undefined && !input.playerStats.isDiseased
+      ? Math.round(lerpSpecial(input.playerStats.endurance, characterStats.perks["thirst-quencher"].min, characterStats.perks["thirst-quencher"].max))
+      : 0;
+  const totalApPool = characterStats.ap.base + input.playerStats.agility * characterStats.ap.perAgility + uniqueApPoolBonus + thirstQuencherAp;
+  if (thirstQuencherAp > 0) {
+    vatsBreakdown.push({ source: `Thirst Quencher (END ${input.playerStats.endurance}, approx.)`, value: `+${thirstQuencherAp} AP` });
+  }
   const maxShotsInPool = Math.floor(totalApPool / vatsApCost);
 
   vatsBreakdown.push({ source: "Base VATS AP Cost", value: `${base.baseVatsApCost} AP` });

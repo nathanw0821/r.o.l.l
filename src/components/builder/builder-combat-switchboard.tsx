@@ -61,6 +61,8 @@ export type CombatSwitchboardState = {
   thirstState?: ThirstSurvivalState;
   teamState?: TeamCategory;
   hasMutatedTeammate?: boolean;
+  /** Another Ghoul on the team (United Ordeal). */
+  hasGhoulTeammate?: boolean;
   timeOfDay?: "day" | "night";
   addictionsCount?: number;
   adrenalineStacks?: number;
@@ -206,6 +208,10 @@ export type StatsBandData = {
   dr: number;
   er: number;
   rr: number;
+  /** Vitals rows (vitals-sheet.ts); absent in read-only embeds without a sheet. */
+  maxHp?: number;
+  maxAp?: number;
+  carryWeight?: number;
 };
 
 const STATE_GROUP_IDS = [
@@ -756,6 +762,14 @@ export default function BuilderCombatSwitchboard({
           <FlashStat label="DR" value={statsBand.dr} />
           <FlashStat label="ER" value={statsBand.er} />
           <FlashStat label="RR" value={statsBand.rr} />
+          {statsBand.maxHp !== undefined && statsBand.maxAp !== undefined && statsBand.carryWeight !== undefined && (
+            <>
+              <span className="mx-1 h-4 w-px bg-slate-800" aria-hidden="true" />
+              <FlashStat label="HP" value={statsBand.maxHp} />
+              <FlashStat label="AP" value={statsBand.maxAp} />
+              <FlashStat label="CARRY" value={statsBand.carryWeight} />
+            </>
+          )}
         </div>
       )}
 
@@ -1303,6 +1317,17 @@ export default function BuilderCombatSwitchboard({
                   />
                   <span>Mutated Teammates (Strange in Numbers +25%)</span>
                 </label>
+                {isGhoul && (
+                  <label className="flex items-center gap-1.5 cursor-pointer text-lime-400 font-bold">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(switchboard.hasGhoulTeammate)}
+                      onChange={(e) => updateField("hasGhoulTeammate", e.target.checked)}
+                      className="rounded bg-slate-900 border-slate-700 text-lime-500 focus:ring-0 cursor-pointer"
+                    />
+                    <span>Another Ghoul on the team (United Ordeal)</span>
+                  </label>
+                )}
               </div>
             </div>
           </div>

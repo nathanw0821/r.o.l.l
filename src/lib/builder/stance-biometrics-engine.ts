@@ -317,6 +317,13 @@ export function calculateStanceAndBiometricModifiers(
     addSpecial("lck", bonus, "Happy-Go-Lucky (alcohol active)");
     activeTacticalTags.push(`Happy-Go-Lucky (+${bonus} LCK · Drinking)`);
   }
+  const united = perkRank("united-ordeal");
+  if (united > 0 && isGhoul && (switchboard?.teamState ?? "casual") !== "solo" && switchboard?.hasGhoulTeammate) {
+    for (const st of ["str", "per", "end", "cha", "int", "agi", "lck"] as const) {
+      addSpecial(st, united, `United Ordeal (ghoul teammate, rank ${united})`);
+    }
+    activeTacticalTags.push(`United Ordeal (+${united} all S.P.E.C.I.A.L. · Ghoul team)`);
+  }
   const magnetic = perkRank("magnetic-personality");
   const teammates = (switchboard?.teamState ?? "casual") === "solo" ? 0 : 3;
   if (magnetic > 0 && teammates > 0) {
