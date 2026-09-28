@@ -164,6 +164,24 @@ test.describe("guest smoke", () => {
     await expectPageSane(page);
   });
 
+  test("season calendar lists the months from the truth pack and offers an .ics feed", async ({ page }) => {
+    await page.goto("/calendar");
+    await expectPageSane(page);
+    await expect(page.getByRole("heading", { level: 1, name: /Season 26/ })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "September 2026" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "December 2026" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 3, name: "Treasure Hunter" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Guides about Treasure Hunter" }).first()).toHaveAttribute("href", /\/wiki\?q=Treasure/);
+    const ics = page.getByRole("link", { name: /Subscribe/ });
+    await expect(ics).toHaveAttribute("href", "/calendar.ics");
+    const res = await page.request.get("/calendar.ics");
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toContain("text/calendar");
+    const body = await res.text();
+    expect(body).toContain("BEGIN:VCALENDAR");
+    expect(body).toContain("SUMMARY:Treasure Hunter (Fallout 76)");
+  });
+
   test("perks page can find Night Person via search and shows its effect text", async ({ page }) => {
     await page.goto("/perks");
 

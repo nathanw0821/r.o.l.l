@@ -10,6 +10,10 @@ export default function SeasonBanner() {
     <p className="rounded-[var(--radius)] border border-rose-900/50 bg-rose-950/20 px-4 py-2 text-sm font-mono text-foreground/80 season-banner">
       <span className="font-bold text-rose-300">{phase.event}</span>, week {phase.week}: {phase.title}
       {phase.note ? ` (${phase.note.toLowerCase()})` : ""}. Season {phase.seasonNumber}, {phase.seasonName}, runs until {endText}.{" "}
+      <Link href="/calendar" className="text-accent hover:underline">
+        Season calendar
+      </Link>
+      {" · "}
       <Link href="/overview/appearance" className="text-accent hover:underline">
         Seasonal look settings
       </Link>

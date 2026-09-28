@@ -17,7 +17,8 @@ import {
   PanelLeftOpen,
   Radio,
   Sparkles,
-  Trophy
+  Trophy,
+  CalendarDays
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandStack from "@/components/brand-stack";
@@ -83,6 +84,7 @@ const trackingLinks: AppNavLink[] = [
       { href: "/build?tab=combat", label: "Damage and V.A.T.S." }
     ]
   },
+  { href: "/calendar", label: "Season calendar", icon: CalendarDays, activePrefixes: ["/calendar"] },
   { href: "/pts", label: "Test server", ariaLabel: "Test server (P.T.S.)", icon: FlaskConical, activePrefixes: ["/pts"] },
   { href: "/screenshot-assist", label: "Screenshot import", ariaLabel: "Screenshot import (S.C.A.N.)", icon: Sparkles },
   { href: "/transmissions", label: "Shared builds", icon: Radio, activePrefixes: ["/transmissions"] },

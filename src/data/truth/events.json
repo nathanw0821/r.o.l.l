@@ -1,0 +1,49 @@
+{
+  "season": 26,
+  "title": "Season 26: Beware the Blood Moon",
+  "source": {
+    "label": "Bethesda's Fallout 76 Community Calendar for Season 26 (September to December 2026)",
+    "note": "Transcribed 2026-09-28 from the official calendar image (nukaknights.com/roadmaps.html mirrors it as fallou76-community-calendar-2026-q4-en.jpg). Event days run from daily reset to daily reset, noon Eastern. Mechanics notes are Bethesda's published event descriptions."
+  },
+  "resetEastern": "12:00",
+  "kinds": {
+    "update": "Game update",
+    "double": "Double XP or S.C.O.R.E.",
+    "seasonal": "Seasonal event",
+    "bonus": "Bonus weekend",
+    "limit": "Limit increase",
+    "community": "Community"
+  },
+  "entries": [
+    { "id": "scrip-surplus-sep", "start": "2026-09-10", "end": "2026-09-14", "kind": "limit", "name": "Scrip Surplus", "note": "Daily legendary scrip limit doubles from 500 to 1,000 per character at the Legendary Exchange." },
+    { "id": "double-mutations-sep-1", "start": "2026-09-10", "end": "2026-09-14", "kind": "double", "name": "Double Mutations", "note": "Daily Ops enemies carry two mutations; runs pay double XP, currency and Legendary Cores at Elder tier." },
+    { "id": "slasher-update", "start": "2026-09-15", "end": "2026-09-15", "kind": "update", "name": "The Slasher update", "note": "Patch 70 and Season 26 begin. The Breaking News station starts the multi-week Slasher investigation; Legacy Seasons arrive." },
+    { "id": "caps-a-plenty-sep", "start": "2026-09-17", "end": "2026-09-21", "kind": "bonus", "name": "Caps-a-Plenty", "note": "NPC vendors' daily caps pool doubles from 1,400 to 2,800." },
+    { "id": "fish-run-sep", "start": "2026-09-24", "end": "2026-09-28", "kind": "seasonal", "name": "Seasonal Fish Run", "note": "Seasonal fish bite more often; Captain Raymond's note points at the fall fishing spots." },
+    { "id": "treasure-hunter-sep", "start": "2026-09-24", "end": "2026-09-28", "kind": "seasonal", "name": "Treasure Hunter", "note": "Legendary Treasure Hunter mole miners drop Mole Miner Pails (dusty, regular, ornate)." },
+    { "id": "double-mutations-sep-2", "start": "2026-09-24", "end": "2026-09-28", "kind": "double", "name": "Double Mutations", "note": "Daily Ops enemies carry two mutations; runs pay double XP, currency and Legendary Cores at Elder tier." },
+    { "id": "mutated-public-events-oct", "start": "2026-09-29", "end": "2026-10-06", "kind": "seasonal", "name": "Mutated Public Events", "note": "Hourly public events run with Daily Ops mutations; completion grants a Mutated Package (Mutated Party Pack for groups with three or more Fallout 1st members)." },
+    { "id": "double-score-oct", "start": "2026-10-01", "end": "2026-10-05", "kind": "double", "name": "Double Score Weekend", "note": "Daily and weekly challenges award double S.C.O.R.E. toward Season 26 ranks." },
+    { "id": "slasher-camp-contest", "start": "2026-10-02", "end": "2026-10-26", "kind": "community", "name": "Slasher C.A.M.P. Contest", "note": "Themed C.A.M.P. building contest run on Bethesda's Discord." },
+    { "id": "mischief-night", "start": "2026-10-06", "end": "2026-10-20", "kind": "seasonal", "name": "Mischief Night", "note": "JES-2R's hourly rampage at Rapidan Camp: fill three mayhem meters, then beat the security force for XP, caps, Legendary Modules and Halloween plans." },
+    { "id": "double-mutations-oct", "start": "2026-10-15", "end": "2026-10-19", "kind": "double", "name": "Double Mutations", "note": "Daily Ops enemies carry two mutations; runs pay double XP, currency and Legendary Cores at Elder tier." },
+    { "id": "spooky-scorched", "start": "2026-10-20", "end": "2026-11-03", "kind": "seasonal", "name": "Spooky Scorched", "note": "Costumed Scorched spawn outdoors as legendaries and drop Spooky Treat Bags with Halloween plans and Mystery Candy." },
+    { "id": "double-xp-oct", "start": "2026-10-22", "end": "2026-10-26", "kind": "double", "name": "Double XP", "note": "All XP gains doubled." },
+    { "id": "legendary-sale-oct", "start": "2026-10-22", "end": "2026-10-26", "kind": "bonus", "name": "Legendary Sale", "note": "Purveyor Murmrgh sells legendary weapons and armor for 25% less scrip." },
+    { "id": "double-score-nov", "start": "2026-11-05", "end": "2026-11-09", "kind": "double", "name": "Double Score", "note": "Daily and weekly challenges award double S.C.O.R.E. toward Season 26 ranks." },
+    { "id": "caps-a-plenty-nov", "start": "2026-11-05", "end": "2026-11-09", "kind": "bonus", "name": "Caps-a-Plenty", "note": "NPC vendors' daily caps pool doubles from 1,400 to 2,800." },
+    { "id": "anniversary", "start": "2026-11-10", "end": "2026-11-17", "kind": "seasonal", "name": "Anniversary Events", "note": "Fallout 76 turns eight on November 14; the line-up is announced closer to the date." },
+    { "id": "gold-rush-nov", "start": "2026-11-19", "end": "2026-11-23", "kind": "bonus", "name": "Gold Rush", "note": "Daily gold bullion from Treasury Notes doubles from 400 to 800 per character." },
+    { "id": "double-mutations-nov", "start": "2026-11-19", "end": "2026-11-23", "kind": "double", "name": "Double Mutations", "note": "Daily Ops enemies carry two mutations; runs pay double XP, currency and Legendary Cores at Elder tier." },
+    { "id": "mutated-public-events-nov", "start": "2026-11-24", "end": "2026-12-01", "kind": "seasonal", "name": "Mutated Public Events", "note": "Hourly public events run with Daily Ops mutations; completion grants a Mutated Package (Mutated Party Pack for groups with three or more Fallout 1st members)." },
+    { "id": "double-xp-nov", "start": "2026-11-26", "end": "2026-11-30", "kind": "double", "name": "Double XP", "note": "All XP gains doubled." },
+    { "id": "treasure-hunter-dec", "start": "2026-12-03", "end": "2026-12-07", "kind": "seasonal", "name": "Treasure Hunter", "note": "Legendary Treasure Hunter mole miners drop Mole Miner Pails (dusty, regular, ornate)." },
+    { "id": "double-mutations-dec-1", "start": "2026-12-03", "end": "2026-12-07", "kind": "double", "name": "Double Mutations", "note": "Daily Ops enemies carry two mutations; runs pay double XP, currency and Legendary Cores at Elder tier." },
+    { "id": "murmrgh-special-pick", "start": "2026-12-10", "end": "2026-12-14", "kind": "bonus", "name": "Murmrgh's Special Pick", "note": "Purveyor Murmrgh offers a random three-star legendary weapon or armor piece for 60 scrip." },
+    { "id": "holiday-scorched", "start": "2026-12-15", "end": "2026-12-29", "kind": "seasonal", "name": "Holiday Scorched", "note": "Festive Scorched spawn at set locations and drop Holiday Gifts with decoration and apparel plans." },
+    { "id": "double-score-dec", "start": "2026-12-17", "end": "2026-12-21", "kind": "double", "name": "Double Score", "note": "Daily and weekly challenges award double S.C.O.R.E. toward Season 26 ranks." },
+    { "id": "caps-a-plenty-dec", "start": "2026-12-17", "end": "2026-12-21", "kind": "bonus", "name": "Caps-a-Plenty", "note": "NPC vendors' daily caps pool doubles from 1,400 to 2,800." },
+    { "id": "double-mutations-dec-2", "start": "2026-12-17", "end": "2026-12-21", "kind": "double", "name": "Double Mutations", "note": "Daily Ops enemies carry two mutations; runs pay double XP, currency and Legendary Cores at Elder tier." },
+    { "id": "double-xp-dec", "start": "2026-12-24", "end": "2026-12-28", "kind": "double", "name": "Double XP", "note": "All XP gains doubled." }
+  ]
+}
