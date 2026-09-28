@@ -4,6 +4,11 @@ import * as React from "react";
 import { getPerkCardById, PerkCard } from "@/lib/perks/catalog";
 import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
 import { Sparkles, Plus } from "lucide-react";
+import {
+  LEGENDARY_PERK_COSTS_SOURCE,
+  rank1CardsScrappedFor,
+  totalLegendaryPerkCoins,
+} from "@/lib/perks/legendary-perk-costs";
 
 export interface PipBoyLegendaryRackProps {
   equippedLegendaryCards: { cardId: string; rank: number }[];
@@ -24,6 +29,8 @@ export default function PipBoyLegendaryRack({
   onFilterLegendary,
   readOnly = false,
 }: PipBoyLegendaryRackProps) {
+  const perkCoins = totalLegendaryPerkCoins(equippedLegendaryCards);
+  const cardsScrapped = rank1CardsScrappedFor(perkCoins);
   return (
     <div className="w-full rounded-xl border border-yellow-500/40 bg-gradient-to-r from-yellow-950/20 via-slate-950 to-yellow-950/20 p-3 shadow-xl">
       {/* Header */}
@@ -119,6 +126,18 @@ export default function PipBoyLegendaryRack({
           );
         })}
       </div>
+
+      {/* Perk Coins to buy the equipped perks at their current ranks (rank 1 is the free slot unlock). */}
+      {equippedLegendaryCards.length > 0 && (
+        <p className="mt-3 pt-2 border-t border-yellow-500/20 text-2xs font-mono text-dim">
+          <span className="font-bold uppercase tracking-wider text-yellow-300/80">Perk Coins:</span>{" "}
+          <span className="text-foreground/80">{perkCoins.toLocaleString()}</span>{" "}
+          <span>(≈ {cardsScrapped.toLocaleString()} rank-1 card{cardsScrapped === 1 ? "" : "s"} scrapped)</span>
+          <span className="sr-only">
+            {" "}Rank-ups cost 50, 100 and 150 coins; scrapping gives 2 coins per card rank. Source: {LEGENDARY_PERK_COSTS_SOURCE}
+          </span>
+        </p>
+      )}
     </div>
   );
 }

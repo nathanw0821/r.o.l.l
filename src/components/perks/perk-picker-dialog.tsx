@@ -9,7 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { PERK_CATALOG, isGhoulPerkCard, type PerkCard, type SpecialCategory } from "@/lib/perks/catalog";
+import {
+  LEGENDARY_SPECIAL_CARD_MAP,
+  PERK_CATALOG,
+  isGhoulPerkCard,
+  type PerkCard,
+  type SpecialCategory,
+} from "@/lib/perks/catalog";
 import { getInGamePerkCardImage } from "@/lib/perks/clean-perk-assets";
 import { webpSiblingForCardImage } from "@/lib/perks/card-webp";
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
@@ -31,6 +37,8 @@ export type PerkPickerDialogProps = {
   /** Equips at rank 1; the rank is adjusted on the equipped card afterwards. */
   onEquip: (card: PerkCard) => void;
   equippedIds: ReadonlySet<string>;
+  /** Equipped rank per card id, shown as "Equipped · rank 2/3" on marked rows. */
+  equippedRanks?: ReadonlyMap<string, number>;
   isFemale?: boolean;
   /** Opener button, refocused on close (Radix only returns focus to a DialogTrigger). */
   returnFocusRef?: React.RefObject<HTMLElement | null>;
@@ -41,6 +49,25 @@ export function perkPickerTitle(scope: PerkPickerScope): string {
   if (scope === "LEGENDARY") return "Add legendary perk";
   if (scope === "GHOUL") return "Add Ghoul perks";
   return `Add ${OFFICIAL_SPECIAL_THEMES[scope].name} perks`;
+}
+
+/**
+ * S.P.E.C.I.A.L. names a search query may match for a card: its own category and, for the
+ * Legendary S.P.E.C.I.A.L. cards, the stat they raise (so "luck" finds Legendary Luck).
+ */
+export function perkPickerSpecialTerms(card: PerkCard): string[] {
+  const terms = [OFFICIAL_SPECIAL_THEMES[card.special]?.name ?? card.special];
+  const boosted = LEGENDARY_SPECIAL_CARD_MAP[card.id] ?? LEGENDARY_SPECIAL_CARD_MAP[card.id.toLowerCase()];
+  if (boosted) terms.push(OFFICIAL_SPECIAL_THEMES[boosted].name);
+  return terms.map((t) => t.toLowerCase());
+}
+
+export function perkPickerMatchesQuery(card: PerkCard, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  if (card.name.toLowerCase().includes(q)) return true;
+  if (card.ranks[0]?.description.toLowerCase().includes(q)) return true;
+  return perkPickerSpecialTerms(card).some((t) => t.includes(q));
 }
 
 export function perkPickerCards(scope: PerkPickerScope): PerkCard[] {
@@ -61,6 +88,7 @@ export default function PerkPickerDialog({
   onClose,
   onEquip,
   equippedIds,
+  equippedRanks,
   isFemale,
   returnFocusRef,
   isCompactDensity,
@@ -82,11 +110,9 @@ export default function PerkPickerDialog({
     return PERK_EFFECT_TAG_ORDER.filter((t) => (counts[t] ?? 0) > 0).map((t) => ({ tag: t, count: counts[t] ?? 0 }));
   }, [cards]);
   const filtered = React.useMemo(() => {
-    const q = query.trim().toLowerCase();
     return cards.filter((c) => {
       if (tag !== "all" && !perkEffectTags(c).includes(tag)) return false;
-      if (!q) return true;
-      return c.name.toLowerCase().includes(q) || (c.ranks[0]?.description.toLowerCase().includes(q) ?? false);
+      return perkPickerMatchesQuery(c, query);
     });
   }, [cards, query, tag]);
 
@@ -120,7 +146,7 @@ export default function PerkPickerDialog({
               <input
                 type="search"
                 aria-label={`Search ${title.toLowerCase()}`}
-                placeholder="Search by name or effect…"
+                placeholder="Search by name, effect or S.P.E.C.I.A.L.…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 autoFocus={!isCompactDensity}
@@ -169,6 +195,9 @@ export default function PerkPickerDialog({
               ) : (
                 filtered.map((card) => {
                   const equipped = equippedIds.has(card.id);
+                  const equippedRank = equipped ? equippedRanks?.get(card.id) : undefined;
+                  const equippedLabel =
+                    equippedRank !== undefined ? `Equipped · rank ${equippedRank}/${card.maxRank}` : "Equipped";
                   const png = getInGamePerkCardImage(card.id || card.name, 1, isFemale);
                   const webp = webpSiblingForCardImage(png);
                   const first = card.ranks[0];
@@ -177,7 +206,7 @@ export default function PerkPickerDialog({
                     <button
                       key={card.id}
                       type="button"
-                      aria-label={`${equipped ? "Equipped" : "Equip"} ${card.name}`}
+                      aria-label={equipped ? `${equippedLabel} ${card.name}` : `Equip ${card.name}`}
                       aria-current={equipped ? "true" : undefined}
                       aria-disabled={equipped || undefined}
                       onClick={() => {
@@ -228,7 +257,7 @@ export default function PerkPickerDialog({
                         <span className="mt-1 flex items-center gap-1.5 text-3xs uppercase tracking-wider">
                           <span className="text-dim">{card.maxRank} rank{card.maxRank === 1 ? "" : "s"}</span>
                           {ghoul ? <span className="text-emerald-400">Ghoul</span> : null}
-                          {equipped ? <span className="text-emerald-300 font-bold">Equipped</span> : null}
+                          {equipped ? <span className="text-emerald-300 font-bold">{equippedLabel}</span> : null}
                         </span>
                       </span>
                     </button>

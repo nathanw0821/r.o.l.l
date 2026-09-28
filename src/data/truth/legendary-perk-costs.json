@@ -1,0 +1,22 @@
+{
+  "$comment": "Perk Coin economy for the legendary perk rack's cost line. Every number is quoted from fallout.wiki (fetched 2026-09-28); nothing here is derived from memory. Rank 1 has no price on either page: slotting a legendary perk is gated by the level milestone, so it is modelled as 0 coins and flagged approximate. Perk Coins per level-up are not on the wiki, so the UI shows a cards-scrapped equivalent instead of a level-up count.",
+  "verifiedAt": "2026-09-28",
+  "source": "https://fallout.wiki/wiki/Perk_Coin and https://fallout.wiki/wiki/Legendary_perks",
+  "rankUpCostCoins": {
+    "1": 0,
+    "2": 50,
+    "3": 100,
+    "4": 150
+  },
+  "rankUpCostSource": "https://fallout.wiki/wiki/Perk_Coin: 'Leveling up a perk card costs 50 coins to advance to rank 2, 100 coins to rank 3 and 150 coins to rank 4.' Legendary_perks: 'Ranking up varies at the following prices of 50, 100, and 150 coins for their respective ranks.' Rank 1 is not priced on either page.",
+  "rankUpCostConfidence": { "1": "approximate", "2": "verified", "3": "verified", "4": "verified" },
+  "maxRankTotalCoins": 300,
+  "coinsPerScrappedCardRank": 2,
+  "scrapSource": "https://fallout.wiki/wiki/Perk_Coin: 'Two perk coins are received for scrapping each rank of a perk card. Higher-ranked cards will yield a number of coins corresponding to the card's rank.'",
+  "unequipCostCoins": 1,
+  "unequipSource": "https://fallout.wiki/wiki/Perk_Coin: removing an equipped legendary perk costs 1 coin.",
+  "slotUnlockLevels": [50, 75, 100, 150, 200, 300],
+  "slotUnlockSource": "https://fallout.wiki/wiki/Legendary_perks: 'The first legendary slot unlocking at level 50, and new ones at certain level milestones onward at 75, 100, 150, 200, and 300.'",
+  "coinsPerLevelUp": null,
+  "coinsPerLevelUpSource": "Not stated on either wiki page; the UI does not show a level-up estimate."
+}

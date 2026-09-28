@@ -752,6 +752,8 @@ export default function PerkBuilder({
               const effectiveCap = effectiveCapacities[stat];
               const effectiveTotal = totalEffectiveSpecials[stat];
               const isOver = used > effectiveCap;
+              const freePoints = Math.max(0, effectiveCap - used);
+              const addHint = freePoints === 0 ? "(full)" : `(${freePoints} free)`;
 
               const styleMap: Record<keyof SpecialsState, { bg: string; rotation: string }> = {
                 S: { bg: "bg-[#2b473b]", rotation: "-rotate-1.5" },
@@ -853,10 +855,13 @@ export default function PerkBuilder({
                       <button
                         type="button"
                         onClick={() => openPerkPicker(stat)}
-                        aria-label={`Add ${theme.name} perks`}
-                        className="mt-1 min-h-8 touch:min-h-11 px-2.5 rounded-md border border-[#e8dfc8]/40 bg-[#121619]/80 text-2xs font-mono font-bold uppercase tracking-wider text-[#f3efe0] hover:bg-[#121619] hover:border-[#e8dfc8] transition-colors"
+                        aria-label={`Add ${theme.name} perks ${addHint}`}
+                        className={cn(
+                          "mt-1 min-h-8 touch:min-h-11 px-2.5 rounded-md border border-[#e8dfc8]/40 bg-[#121619]/80 text-2xs font-mono font-bold uppercase tracking-wider hover:bg-[#121619] hover:border-[#e8dfc8] transition-colors",
+                          freePoints === 0 ? "text-dim" : "text-[#f3efe0]",
+                        )}
                       >
-                        + Add {theme.name} perks
+                        + Add {theme.name} perks <span className={cn("font-normal normal-case tracking-normal", freePoints === 0 ? "text-dim" : "text-[#f3efe0]/70")}>{addHint}</span>
                       </button>
                     )}
                   </div>
@@ -1240,6 +1245,7 @@ export default function PerkBuilder({
           onClose={() => setPickerScope(null)}
           onEquip={(card) => handleEquipCard(card, 1)}
           equippedIds={new Set(safeEquippedCards.map((item) => item.cardId))}
+          equippedRanks={new Map(safeEquippedCards.map((item) => [item.cardId, item.rank]))}
           isFemale={isFemale}
           returnFocusRef={pickerOpenerRef}
         />

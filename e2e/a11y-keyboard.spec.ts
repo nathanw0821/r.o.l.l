@@ -137,7 +137,7 @@ test.describe("keyboard", () => {
   test("perk picker: 'Add Strength perks' opens a scoped picker, Enter equips at rank 1, focus returns", async ({ page }) => {
     test.setTimeout(90_000);
     await page.goto("/build?tab=perks");
-    const add = page.getByRole("button", { name: "Add Strength perks" }).first();
+    const add = page.getByRole("button", { name: /^Add Strength perks/ }).first();
     await expect(add).toBeVisible({ timeout: 45_000 });
     // The catalog behind it is collapsed section headers, not a wall of card images.
     await expect(page.locator("[data-perk-catalog-groups]")).toBeVisible();
@@ -156,7 +156,7 @@ test.describe("keyboard", () => {
     await expect(page.locator("#main-content").getByRole("img", { name: "Bandolier", exact: true }).first()).toBeVisible();
     // Reopening marks it as equipped instead of offering it again.
     await add.click();
-    await expect(page.getByRole("dialog", { name: /add strength perks/i }).getByRole("button", { name: "Equipped Bandolier" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: /add strength perks/i }).getByRole("button", { name: /^Equipped · rank 1\/\d Bandolier$/ })).toBeVisible();
     await page.keyboard.press("Escape");
   });
 
