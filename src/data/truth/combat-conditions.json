@@ -1,0 +1,87 @@
+{
+  "$comment": "Condition-gated damage perks for the builder's combat conditions (hit location, target range, target type, crippled limbs, V.A.T.S. AP cost). Every number is read from the Patch 70 card text in src/data/perk-cards.json; the `source` string quotes the rank-1 card. Fractions add to the same additive base pool as the other perks (post-Patch 22 rule); `exterminator` is an armor-penetration source and goes through the 90 % cap in creation-engine-math instead. Nothing here is verified against a datamine: where the card text is the only source, the entry says so.",
+  "verifiedAt": "2026-09-28",
+  "source": "Patch 70 card texts (src/data/perk-cards.json); https://fallout.wiki/wiki/Fallout_76_combat for the hit-location and range vocabulary",
+  "hitLocations": {
+    "body": "Any limb or body shot with no body-part multiplier (×1.00).",
+    "torso": "Torso shot: ×1.00 body-part multiplier, Center Masochist applies.",
+    "weakSpot": "Head / weak point: body-part multiplier from src/data/truth/weak-spot.json, weak-spot perks apply."
+  },
+  "targetRanges": {
+    "close": "Within the game's 'close enemies' band (Guerrilla, Guerrilla Master). The exact distance is unpublished.",
+    "mid": "Neither close nor far: no range perk applies. Default.",
+    "far": "Within the game's 'far enemies' band (Down Ranger). The exact distance is unpublished."
+  },
+  "perks": {
+    "center-masochist": {
+      "byRank": [0.25, 0.5, 0.75],
+      "condition": "ranged weapons; hit location = torso",
+      "source": "Card text (Patch 70): '+25% ranged damage when attacking the torso.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "guerrilla": {
+      "byRank": [0.1, 0.15, 0.2],
+      "condition": "ranged weapons; target range = close",
+      "source": "Card text (Patch 70): 'You do +10% ranged damage to close enemies.' Card text is the only source.",
+      "note": "Until 2026-09-28 the engine applied Guerrilla as always-on class damage for automatic pistols (0.1 + rank × 0.05), the same mistake Gunslinger had before the weak-spot state. There are no Expert/Master Guerrilla cards in Patch 70.",
+      "confidence": "card-text"
+    },
+    "guerrilla-master": {
+      "perUnit": 0.05,
+      "unit": "Onslaught stack",
+      "condition": "ranged weapons; target range = close; per Onslaught stack",
+      "source": "Card text (Patch 70): '+5% ranged damage to close enemies per Onslaught stack, +5 max stacks.' Card text is the only source.",
+      "note": "The '+5 max stacks' raises the Onslaught cap; the engine's pre-existing 5-stack cap on this perk is kept unchanged and is not a verified number.",
+      "confidence": "card-text"
+    },
+    "down-ranger": {
+      "byRank": [0.1, 0.15, 0.2],
+      "condition": "ranged weapons; target range = far",
+      "source": "Card text (Patch 70): 'You do +10% ranged damage to far enemies.' Card text is the only source (the unification plan's '+10/20 %' was a two-rank misread; the card has three ranks).",
+      "confidence": "card-text"
+    },
+    "glow-sight": {
+      "byRank": [0.2, 0.4, 0.6],
+      "condition": "any weapon; target is a Glowing enemy",
+      "source": "Card text (Patch 70): 'Deal +20% damage to Glowing Enemies.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "exterminator": {
+      "kind": "armor-penetration",
+      "byRank": [25, 50, 75],
+      "unit": "percent of the target's armor ignored",
+      "condition": "any weapon; target is an insect; capped with every other penetration source at 90 % by creation-engine-math",
+      "source": "Card text (Patch 70): 'Your attacks ignore 25% armor of any insect.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "easy-target": {
+      "byRank": [0.25, 0.5, 0.75],
+      "condition": "ranged weapons; target has at least one crippled limb",
+      "source": "Card text (Patch 70): '+25% ranged damage to crippled targets.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "tormentor": {
+      "perUnit": 0.2,
+      "unit": "crippled limb on the target",
+      "condition": "any weapon (the card names no weapon class); per crippled limb, no cap stated on the card (the switchboard allows at most 4 limbs)",
+      "source": "Card text (Patch 70): 'You deal 20% more damage per crippled limb your target has.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "shotgun-champ": {
+      "perUnit": 0.1,
+      "unit": "projectile the weapon fires",
+      "condition": "target has at least one crippled limb; multiplied by the weapon's projectile count",
+      "defaultShotgunProjectiles": 8,
+      "source": "Card text (Patch 70): '+10% damage to crippled targets per projectile your weapon fires.' Card text is the only source.",
+      "note": "combat-firepower-catalog.ts has no projectile counts yet. Weapons of the shotgunner class are assumed to fire 8 projectiles (fallout.wiki lists 8 for the combat, pump-action and double-barrel shotguns; not verified per weapon). Other weapons get no bonus until the catalog carries a `projectiles` field for them.",
+      "confidence": "approximate"
+    },
+    "number-cruncher": {
+      "perUnit": 0.02,
+      "unit": "point of the weapon's V.A.T.S. AP cost per shot",
+      "condition": "any weapon; uses the resolved AP cost per shot (base × attachments × V.A.T.S. Optimized), so a cheaper V.A.T.S. shot also lowers this bonus",
+      "source": "Card text (Patch 70): 'Your weapons have 2% increased damage per AP cost.' Card text is the only source.",
+      "confidence": "card-text"
+    }
+  }
+}

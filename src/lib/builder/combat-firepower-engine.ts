@@ -10,6 +10,7 @@ import { requireEffectNumber } from "@/lib/truth/legendary-effect-model";
 import { normalizeActiveBuffs } from "@/lib/builder/buff-id-normalize";
 import { getWeaponInnateModOption } from "@/lib/builder/weapon-piece-mods";
 import weakSpotTruth from "@/data/truth/weak-spot.json";
+import combatConditionsTruth from "@/data/truth/combat-conditions.json";
 import characterStats from "@/data/truth/character-stats.json";
 import { lerpSpecial } from "@/lib/builder/perk-defensive-layer";
 import {
@@ -23,6 +24,7 @@ import {
   WEAPON_ALIASES,
   WEAPON_COMBAT_BASE_CATALOG,
   type BossTargetDummy,
+  type TargetDummyTag,
   type WeaponCombatBaseStats
 } from "./combat-firepower-catalog";
 
@@ -86,6 +88,7 @@ export {
   WEAPON_ALIASES,
   WEAPON_COMBAT_BASE_CATALOG,
   type BossTargetDummy,
+  type TargetDummyTag,
   type WeaponClassCategory,
   type WeaponCombatBaseStats,
   type WeaponDamageType
@@ -253,6 +256,31 @@ export function getWeaponMaxLevel(weaponId: string): 50 | 45 {
 
 export type CombatFiringMode = "hip_fire" | "aiming_ads" | "vats_standard" | "vats_crit_cycle";
 
+/** Where the shot lands (src/data/truth/combat-conditions.json `hitLocations`). */
+export type CombatHitLocation = "body" | "torso" | "weakSpot";
+/** How far the target is (combat-conditions.json `targetRanges`); "mid" means no range perk applies. */
+export type CombatTargetRange = "close" | "mid" | "far";
+
+/**
+ * Condition-gated perk numbers (Patch 70 card texts). Typed here so a missing key is a compile
+ * error, like the weak-spot pack.
+ */
+const CC = combatConditionsTruth as {
+  perks: {
+    "center-masochist": { byRank: number[] };
+    guerrilla: { byRank: number[] };
+    "guerrilla-master": { perUnit: number };
+    "down-ranger": { byRank: number[] };
+    "glow-sight": { byRank: number[] };
+    exterminator: { byRank: number[] };
+    "easy-target": { byRank: number[] };
+    tormentor: { perUnit: number };
+    "shotgun-champ": { perUnit: number; defaultShotgunProjectiles: number };
+    "number-cruncher": { perUnit: number };
+  };
+};
+const byRank = (ranks: number[], rank: number): number => ranks[Math.min(ranks.length, Math.max(0, rank)) - 1] ?? 0;
+
 export type VatsCritQualification = {
   everySecondShotReady: boolean;
   currentLuck: number;
@@ -330,8 +358,18 @@ export type CombatFirepowerCalculationInput = {
     feralPct?: number;
     foodState?: string;
     thirstState?: string;
-    /** Biometrics "Targeting weak spot": the hit lands on the target's head / weak point. */
+    /**
+     * @deprecated Alias kept for one release so saved switchboard state still loads; read as
+     * `hitLocation: "weakSpot"` only when `hitLocation` is absent.
+     */
     isTargetingWeakSpot?: boolean;
+    /** Biometrics hit location: body (default), torso (Center Masochist) or weak spot (head multiplier). */
+    hitLocation?: CombatHitLocation;
+    /** Biometrics target range: close (Guerrilla, Guerrilla Master), mid (default) or far (Down Ranger). */
+    targetRange?: CombatTargetRange;
+    /** Target-type overrides; when absent the target dummy's `tags` decide (none of the shipped dummies has one). */
+    targetIsGlowing?: boolean;
+    targetIsInsect?: boolean;
   };
 };
 
@@ -538,6 +576,16 @@ export function calculateCombatFirepower(
     perkRanks.set(p.cardId.toLowerCase().trim(), p.rank);
   }
 
+  // Combat conditions (Biometrics → Stances & V.A.T.S., Target impairments). `isTargetingWeakSpot`
+  // is the pre-2026-09-28 boolean and only counts when `hitLocation` is absent.
+  const hitLocation: CombatHitLocation =
+    input.playerStats.hitLocation ?? (input.playerStats.isTargetingWeakSpot ? "weakSpot" : "body");
+  const targetRange: CombatTargetRange = input.playerStats.targetRange ?? "mid";
+  const targetDummyForTags = TARGET_DUMMY_CATALOG[input.targetDummyId || "scorchbeast-queen"];
+  const dummyTags: TargetDummyTag[] = targetDummyForTags?.tags ?? [];
+  const targetIsGlowing = input.playerStats.targetIsGlowing ?? dummyTags.includes("glowing");
+  const targetIsInsect = input.playerStats.targetIsInsect ?? dummyTags.includes("insect");
+
   // Unique innate effects (src/data/truth/unique-items.json). Only the equipped
   // weapon's own row counts; a shared chassis id never inherits a unique.
   const uniqueItem = resolveUniqueForBuilderId(input.weaponId);
@@ -661,15 +709,6 @@ export function calculateCombatFirepower(
     // damage: it is applied in the weak-spot block below and only when a weak spot is targeted.
     if ((perkRanks.get("gunslinger") || 0) > 0) {
       breakdown.push({ source: "Gunslinger Perks", value: "weak-spot damage only (see Weak spot)" });
-    }
-  } else if (base.weaponClass === "guerrilla") {
-    const g1 = perkRanks.get("guerrilla") || 0;
-    const g2 = perkRanks.get("expert-guerrilla") || 0;
-    const g3 = perkRanks.get("master-guerrilla") || 0;
-    const total = (g1 > 0 ? 0.1 + (g1 - 1) * 0.05 : 0) + (g2 > 0 ? 0.1 + (g2 - 1) * 0.05 : 0) + (g3 > 0 ? 0.1 + (g3 - 1) * 0.05 : 0);
-    if (total > 0) {
-      additiveDamagePct += total;
-      breakdown.push({ source: "Guerrilla Perks", value: `+${Math.round(total * 100)}%` });
     }
   } else if (base.weaponClass === "bow") {
     const a1 = perkRanks.get("archer") || 0;
@@ -895,10 +934,13 @@ export function calculateCombatFirepower(
       additiveDamagePct += st * LEG.poundersPerStack;
       breakdown.push({ source: `Pounder's 4★ (${st} Onslaught stacks)`, value: `+${Math.round(st * LEG.poundersPerStack * 100)}%` });
     }
-    if ((perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0) > 0 && base.weaponClass === "guerrilla") {
+    // Guerrilla Master (combat-conditions.json): ranged damage to close enemies per stack. Like
+    // Guerrilla it needs the target-range state; the pre-existing 5-stack cap is kept (unverified).
+    if ((perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0) > 0 && base.isRanged && targetRange === "close") {
       const st = Math.min(5, onslaughtStacks);
-      additiveDamagePct += st * 0.05;
-      breakdown.push({ source: `Guerrilla Master (${st} Onslaught stacks, close targets)`, value: `+${st * 5}%` });
+      const gm = st * CC.perks["guerrilla-master"].perUnit;
+      additiveDamagePct += gm;
+      breakdown.push({ source: `Guerrilla Master (${st} Onslaught stacks, close range)`, value: `+${Math.round(gm * 100)}%` });
     }
 
     // Unique innate: power-attack damage per Onslaught stack (Whacker Smacker).
@@ -1067,6 +1109,77 @@ export function calculateCombatFirepower(
     }
   }
 
+  // 3b. Condition-gated perks, src/data/truth/combat-conditions.json (Patch 70 card texts).
+  // Hit location, target range and target type come from the Biometrics switchboard; the
+  // crippled-limb count is the same one Bully's and Deal Sealer read above.
+  const centerMasochistRank = perkRanks.get("center-masochist") || 0;
+  if (centerMasochistRank > 0 && base.isRanged && hitLocation === "torso") {
+    const v = byRank(CC.perks["center-masochist"].byRank, centerMasochistRank);
+    additiveDamagePct += v;
+    breakdown.push({ source: `Center Masochist (Rank ${centerMasochistRank}, torso)`, value: `+${Math.round(v * 100)}%` });
+  }
+  const guerrillaRank = perkRanks.get("guerrilla") || 0;
+  if (guerrillaRank > 0 && base.isRanged) {
+    if (targetRange === "close") {
+      const v = byRank(CC.perks.guerrilla.byRank, guerrillaRank);
+      additiveDamagePct += v;
+      breakdown.push({ source: `Guerrilla (Rank ${guerrillaRank}, close range)`, value: `+${Math.round(v * 100)}%` });
+    } else {
+      breakdown.push({ source: "Guerrilla", value: `close range only (target at ${targetRange} range)` });
+    }
+  }
+  const downRangerRank = perkRanks.get("down-ranger") || 0;
+  if (downRangerRank > 0 && base.isRanged) {
+    if (targetRange === "far") {
+      const v = byRank(CC.perks["down-ranger"].byRank, downRangerRank);
+      additiveDamagePct += v;
+      breakdown.push({ source: `Down Ranger (Rank ${downRangerRank}, far range)`, value: `+${Math.round(v * 100)}%` });
+    } else {
+      breakdown.push({ source: "Down Ranger", value: `far range only (target at ${targetRange} range)` });
+    }
+  }
+  const glowSightRank = perkRanks.get("glow-sight") || 0;
+  if (glowSightRank > 0 && targetIsGlowing) {
+    const v = byRank(CC.perks["glow-sight"].byRank, glowSightRank);
+    additiveDamagePct += v;
+    breakdown.push({ source: `Glow Sight (Rank ${glowSightRank}, glowing target)`, value: `+${Math.round(v * 100)}%` });
+  }
+  const easyTargetRank = perkRanks.get("easy-target") || 0;
+  if (easyTargetRank > 0 && base.isRanged && targetCrippledLimbs > 0) {
+    const v = byRank(CC.perks["easy-target"].byRank, easyTargetRank);
+    additiveDamagePct += v;
+    breakdown.push({ source: `Easy Target (Rank ${easyTargetRank}, crippled target)`, value: `+${Math.round(v * 100)}%` });
+  }
+  if ((perkRanks.get("tormentor") || 0) > 0 && targetCrippledLimbs > 0) {
+    const v = targetCrippledLimbs * CC.perks.tormentor.perUnit;
+    additiveDamagePct += v;
+    breakdown.push({ source: `Tormentor (${targetCrippledLimbs} Crippled Limbs)`, value: `+${Math.round(v * 100)}%` });
+  }
+  if ((perkRanks.get("shotgun-champ") || 0) > 0 && targetCrippledLimbs > 0) {
+    // The catalog has no projectile counts yet: shotgunner-class weapons are assumed to fire the
+    // pack's default (8), every other weapon gets nothing rather than an invented count.
+    const projectiles = base.projectiles ?? (base.weaponClass === "shotgunner" ? CC.perks["shotgun-champ"].defaultShotgunProjectiles : null);
+    if (projectiles) {
+      const v = projectiles * CC.perks["shotgun-champ"].perUnit;
+      additiveDamagePct += v;
+      breakdown.push({
+        source: `Shotgun Champ (${projectiles} projectiles${base.projectiles === undefined ? ", assumed" : ""}, crippled target)`,
+        value: `+${Math.round(v * 100)}%`,
+      });
+    } else {
+      breakdown.push({ source: "Shotgun Champ", value: "projectile count unknown for this weapon" });
+    }
+  }
+  // Number Cruncher needs the resolved V.A.T.S. AP cost per shot, so §7's cost is computed here
+  // (it depends only on the base weapon, the attachments and the V.A.T.S. Optimized star, all
+  // known by now); §7 reuses the same value for the AP pool.
+  const vatsApCost = resolveVatsApCost(base.baseVatsApCost, innateMods.apCostPct, hasVatsOptimized);
+  if ((perkRanks.get("number-cruncher") || 0) > 0) {
+    const v = vatsApCost * CC.perks["number-cruncher"].perUnit;
+    additiveDamagePct += v;
+    breakdown.push({ source: `Number Cruncher (${vatsApCost} AP per shot)`, value: `+${Math.round(v * 100)}%` });
+  }
+
   // Weak spot (body-part multiplier), src/data/truth/weak-spot.json. Bonuses add together, then
   // the creature's head multiplier is scaled by them; the whole thing multiplies the hit.
   const WS = weakSpotTruth as {
@@ -1078,7 +1191,7 @@ export function calculateCombatFirepower(
       "faulty-spots": { value: number };
     };
   };
-  const targetingWeakSpot = Boolean(input.playerStats.isTargetingWeakSpot);
+  const targetingWeakSpot = hitLocation === "weakSpot";
   const weakSpotDummy = WS.dummies[input.targetDummyId || "scorchbeast-queen"] ?? null;
   const weakSpotBreakdown: { source: string; value: string }[] = [];
   let weakSpotBonusPct = 0;
@@ -1318,7 +1431,7 @@ export function calculateCombatFirepower(
   const apPoolModel = uniqueModelOfKind(uniqueItem, "flat-action-points");
   const uniqueApPoolBonus = apPoolModel?.value ?? 0;
 
-  const vatsApCost = resolveVatsApCost(base.baseVatsApCost, innateMods.apCostPct, hasVatsOptimized);
+  // `vatsApCost` was resolved in §3b (Number Cruncher reads it).
   // Thirst Quencher: END-scaled max AP (approximate range, character-stats.json), not while diseased.
   const thirstQuencherAp =
     (perkRanks.get("thirst-quencher") || 0) > 0 && input.playerStats.endurance !== undefined && !input.playerStats.isDiseased
@@ -1403,6 +1516,13 @@ export function calculateCombatFirepower(
     const stabPen = stabilizedRank === 3 ? 0.45 : stabilizedRank === 2 ? 0.3 : 0.15;
     penetrationSourcesPct.push(stabPen * 100);
     apBreakdown.push({ source: `Stabilized in PA (Rank ${stabilizedRank})`, value: `${Math.round(stabPen * 100)}% Penetration` });
+  }
+
+  const exterminatorRank = perkRanks.get("exterminator") || 0;
+  if (exterminatorRank > 0 && targetIsInsect) {
+    const exPen = byRank(CC.perks.exterminator.byRank, exterminatorRank);
+    penetrationSourcesPct.push(exPen);
+    apBreakdown.push({ source: `Exterminator (Rank ${exterminatorRank}, insect)`, value: `${exPen}% Penetration` });
   }
 
   const incisorRank = perkRanks.get("incisor") || 0;

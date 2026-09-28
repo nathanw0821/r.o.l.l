@@ -48,6 +48,7 @@ import { useBuilderBootstrap } from "@/components/builder/hooks/use-builder-boot
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { calculateCombatFirepower } from "@/lib/builder/combat-firepower-engine";
+import { resolveHitLocation, resolveTargetRange } from "@/components/builder/builder-combat-switchboard";
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
 import {
@@ -333,7 +334,10 @@ export default function BuilderExperimentClient({
         isStationary: Boolean(switchboardState?.combatStance?.isStationary),
         isInVats: Boolean(switchboardState?.combatStance?.isInVats),
         vatsCritEveryOtherShot: Boolean(switchboardState?.combatStance?.vatsCritEveryOtherShot),
-        isTargetingWeakSpot: Boolean(switchboardState?.combatStance?.isTargetingWeakSpot),
+        hitLocation: resolveHitLocation(switchboardState?.combatStance),
+        targetRange: resolveTargetRange(switchboardState?.combatStance),
+        targetIsGlowing: Boolean(switchboardState?.targetIsGlowing),
+        targetIsInsect: Boolean(switchboardState?.targetIsInsect),
         addictionsCount: switchboardState?.addictionsCount ?? 0,
         adrenalineStacks: switchboardState?.adrenalineStacks ?? 0,
         bulletStormStacks: switchboardState?.bulletStormStacks ?? 0,
@@ -887,7 +891,13 @@ export default function BuilderExperimentClient({
 
 
       {/* VIEWPORT: COMBAT DPS & VATS (TAB 4) */}
-      <CombatDpsTab active={masterTab === "combat"} weaponFirepowerResult={weaponFirepowerResult} weaponLabel={activeWeaponPiece?.label} />
+      <CombatDpsTab
+        active={masterTab === "combat"}
+        weaponFirepowerResult={weaponFirepowerResult}
+        weaponLabel={activeWeaponPiece?.label}
+        hitLocation={resolveHitLocation(switchboardState?.combatStance)}
+        targetRange={resolveTargetRange(switchboardState?.combatStance)}
+      />
 
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}
       <div className={cn("space-y-6 animate-in fade-in duration-200", masterTab === "gear" ? "block" : "hidden")}>

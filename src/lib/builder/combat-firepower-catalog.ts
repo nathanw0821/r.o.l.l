@@ -40,6 +40,11 @@ export type WeaponCombatBaseStats = {
   isRanged: boolean;
   isEnergy: boolean;
   isExplosiveInherent?: boolean;
+  /**
+   * Projectiles per shot (shotgun pellets). Not filled in yet for any weapon: Shotgun Champ
+   * falls back to combat-conditions.json `defaultShotgunProjectiles` for the shotgunner class.
+   */
+  projectiles?: number;
 };
 
 /**
@@ -1816,6 +1821,13 @@ export const WEAPON_ALIASES: Record<string, string> = {
   "deathclaw-gauntlet": "dc-gauntlet",
 };
 
+/**
+ * Creature-type tags the condition perks read (Glow Sight: glowing, Exterminator: insect).
+ * None of the shipped dummies carries one; the Biometrics "Target impairments" checkboxes
+ * override them per build until a tagged dummy with a wiki-sourced DR exists.
+ */
+export type TargetDummyTag = "glowing" | "insect" | "scorched" | "robot" | "ghoul" | "super-mutant" | "animal";
+
 export type BossTargetDummy = {
   id: string;
   name: string;
@@ -1825,6 +1837,8 @@ export type BossTargetDummy = {
   energyResistance: number;
   flatDamageReductionPct: number; // e.g. 0.70 for Queen (70% flat reduction)
   description: string;
+  /** Creature-type tags (see TargetDummyTag). Absent when none applies (all shipped dummies). */
+  tags?: TargetDummyTag[];
 };
 
 export const TARGET_DUMMY_CATALOG: Record<string, BossTargetDummy> = {

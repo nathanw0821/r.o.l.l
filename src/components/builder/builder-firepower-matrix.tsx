@@ -3,6 +3,8 @@
 import * as React from "react";
 import {
   type CombatFirepowerResult,
+  type CombatHitLocation,
+  type CombatTargetRange,
   TARGET_DUMMY_LIST,
   calculateTargetMitigation,
 } from "@/lib/builder/combat-firepower-engine";
@@ -28,10 +30,16 @@ import {
 
 interface BuilderFirepowerMatrixProps {
   firepower: CombatFirepowerResult;
+  /** Biometrics hit location the numbers assume; "body" (the default) shows no chip. */
+  hitLocation?: CombatHitLocation;
+  /** Biometrics target range the numbers assume; "mid" (the default) shows no chip. */
+  targetRange?: CombatTargetRange;
 }
 
 export default function BuilderFirepowerMatrix({
   firepower,
+  hitLocation = "body",
+  targetRange = "mid",
 }: BuilderFirepowerMatrixProps) {
   const [selectedDummyId, setSelectedDummyId] = React.useState<string>(
     firepower.targetDummy?.dummy?.id || "scorchbeast-queen"
@@ -156,6 +164,19 @@ export default function BuilderFirepowerMatrix({
                       ? `×${firepower.weakSpot.multiplier.toFixed(2)}${firepower.weakSpot.bonusPct > 0 ? ` (${firepower.weakSpot.part} ×${firepower.weakSpot.baseMultiplier} +${Math.round(firepower.weakSpot.bonusPct * 100)}%)` : ` (${firepower.weakSpot.part})`}`
                       : "no multiplier data for this target"}
                   </span>
+                </div>
+              )}
+              {(hitLocation === "torso" || targetRange !== "mid") && (
+                <div className="pt-1 border-t border-slate-800 flex flex-wrap items-center gap-1 text-2xs">
+                  {hitLocation === "torso" && (
+                    <span className="rounded bg-rose-950 border border-rose-500/50 px-1.5 py-0.5 font-bold text-rose-200">🎯 Torso</span>
+                  )}
+                  {targetRange === "close" && (
+                    <span className="rounded bg-sky-950 border border-sky-500/50 px-1.5 py-0.5 font-bold text-sky-200">📏 Close range</span>
+                  )}
+                  {targetRange === "far" && (
+                    <span className="rounded bg-sky-950 border border-sky-500/50 px-1.5 py-0.5 font-bold text-sky-200">📏 Far range</span>
+                  )}
                 </div>
               )}
             </div>

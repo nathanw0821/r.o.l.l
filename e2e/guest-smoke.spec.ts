@@ -191,7 +191,7 @@ test.describe("guest smoke", () => {
     await expectPageSane(page);
   });
 
-  test("biometrics 'Target weak spot' doubles the head-shot damage on the combat tab", async ({ page }) => {
+  test("biometrics hit location 'Weak spot' scales the head-shot damage on the combat tab", async ({ page }) => {
     await page.goto("/build?tab=combat");
     await expect(page.getByText("Showing damage for")).toBeVisible({ timeout: 45_000 });
     const normalShot = page.locator("#main-content").getByText("Normal Shot:").locator("xpath=following-sibling::span[1]");
@@ -211,11 +211,14 @@ test.describe("guest smoke", () => {
     const stances = page.getByRole("button", { name: /^Stances & V\.A\.T\.S\./ });
     await expect(stances).toBeVisible({ timeout: 45_000 });
     if ((await stances.getAttribute("aria-expanded")) === "false") await stances.click();
-    const toggle = page.getByRole("button", { name: /Target weak spot|Targeting weak spot/ });
-    await expect(toggle).toHaveAttribute("aria-pressed", "false");
-    await toggle.click();
-    await expect(toggle).toHaveAttribute("aria-pressed", "true");
-    await expect(toggle).toContainText(/×/);
+    const hitLocation = page.getByRole("group", { name: "Hit location" });
+    const weakSpotOption = hitLocation.getByRole("button", { name: "Weak spot" });
+    await expect(hitLocation.getByRole("button", { name: "Body" })).toHaveAttribute("aria-pressed", "true");
+    await expect(weakSpotOption).toHaveAttribute("aria-pressed", "false");
+    await weakSpotOption.click();
+    await expect(weakSpotOption).toHaveAttribute("aria-pressed", "true");
+    // The caption under the control names the body part and the resulting multiplier.
+    await expect(hitLocation.locator("xpath=following-sibling::span[1]")).toContainText(/×/);
 
     await page.getByRole("tab", { name: /Combat/i }).or(page.getByRole("button", { name: /4\. Combat/i })).first().click();
     await expect(page.getByText("🎯 Weak spot")).toBeVisible({ timeout: 30_000 });
@@ -223,6 +226,38 @@ test.describe("guest smoke", () => {
     // Default dummy is the Scorchbeast Queen: head ×1.5 in the wiki table (paper damage is
     // rounded once at the end, so allow one point either way).
     expect(Math.abs(after - before * 1.5)).toBeLessThanOrEqual(1);
+    await expectPageSane(page);
+  });
+
+  test("biometrics range 'Close' and hit location 'Torso' show as chips on the combat tab", async ({ page }) => {
+    await page.goto("/build?tab=combat");
+    await expect(page.getByText("Showing damage for")).toBeVisible({ timeout: 45_000 });
+    await expect(page.getByText("🎯 Torso")).toHaveCount(0);
+    await expect(page.getByText("📏 Close range")).toHaveCount(0);
+
+    await page.getByRole("tab", { name: /Biometrics/i }).or(page.getByRole("button", { name: /3\. Biometrics/i })).first().click();
+    const stances = page.getByRole("button", { name: /^Stances & V\.A\.T\.S\./ });
+    await expect(stances).toBeVisible({ timeout: 45_000 });
+    if ((await stances.getAttribute("aria-expanded")) === "false") await stances.click();
+
+    const range = page.getByRole("group", { name: "Target range" });
+    await expect(range.getByRole("button", { name: "Mid" })).toHaveAttribute("aria-pressed", "true");
+    await range.getByRole("button", { name: "Close" }).click();
+    await expect(range.getByRole("button", { name: "Close" })).toHaveAttribute("aria-pressed", "true");
+    await expect(range.getByRole("button", { name: "Mid" })).toHaveAttribute("aria-pressed", "false");
+
+    const hitLocation = page.getByRole("group", { name: "Hit location" });
+    await hitLocation.getByRole("button", { name: "Torso" }).click();
+    await expect(hitLocation.getByRole("button", { name: "Torso" })).toHaveAttribute("aria-pressed", "true");
+    await expect(hitLocation.getByRole("button", { name: "Body" })).toHaveAttribute("aria-pressed", "false");
+    // The group summary reflects both choices.
+    await expect(stances).toContainText(/Torso/);
+    await expect(stances).toContainText(/Close range/);
+
+    await page.getByRole("tab", { name: /Combat/i }).or(page.getByRole("button", { name: /4\. Combat/i })).first().click();
+    await expect(page.getByText("🎯 Torso")).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText("📏 Close range")).toBeVisible();
+    await expect(page.getByText("🎯 Weak spot")).toHaveCount(0);
     await expectPageSane(page);
   });
 

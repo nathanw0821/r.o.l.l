@@ -11,11 +11,11 @@ const base = (over: Partial<CombatFirepowerCalculationInput> = {}): CombatFirepo
   ...over,
 });
 
-describe("weak spot (Targeting weak spot)", () => {
+describe("weak spot (hit location = weakSpot)", () => {
   it("is ×1 until the biometrics state says the shot lands on a weak spot", () => {
     const off = calculateCombatFirepower(base());
     expect(off.weakSpot).toMatchObject({ targeting: false, multiplier: 1, baseMultiplier: 2 });
-    const on = calculateCombatFirepower(base({ playerStats: { agility: 10, luck: 10, strength: 5, healthPct: 1, isTargetingWeakSpot: true } }));
+    const on = calculateCombatFirepower(base({ playerStats: { agility: 10, luck: 10, strength: 5, healthPct: 1, hitLocation: "weakSpot" } }));
     expect(on.weakSpot).toMatchObject({ targeting: true, baseMultiplier: 2, bonusPct: 0, multiplier: 2 });
     expect(on.damagePerShot.normal).toBe(off.damagePerShot.normal * 2);
     // The crit bonus is scaled by the same multiplier; splash is not.
@@ -24,9 +24,9 @@ describe("weak spot (Targeting weak spot)", () => {
   });
 
   it("uses the target's own head multiplier and admits missing data", () => {
-    const sbq = calculateCombatFirepower(base({ targetDummyId: "scorchbeast-queen", playerStats: { agility: 10, luck: 10, strength: 5, isTargetingWeakSpot: true } }));
+    const sbq = calculateCombatFirepower(base({ targetDummyId: "scorchbeast-queen", playerStats: { agility: 10, luck: 10, strength: 5, hitLocation: "weakSpot" } }));
     expect(sbq.weakSpot.baseMultiplier).toBe(weakSpot.dummies["scorchbeast-queen"].multiplier);
-    const titan = calculateCombatFirepower(base({ targetDummyId: "ultracite-titan", playerStats: { agility: 10, luck: 10, strength: 5, isTargetingWeakSpot: true } }));
+    const titan = calculateCombatFirepower(base({ targetDummyId: "ultracite-titan", playerStats: { agility: 10, luck: 10, strength: 5, hitLocation: "weakSpot" } }));
     expect(titan.weakSpot).toMatchObject({ targeting: true, baseMultiplier: null, multiplier: 1 });
   });
 
@@ -45,7 +45,7 @@ describe("weak spot (Targeting weak spot)", () => {
         { cardId: "gunslinger-expert", rank: 1 },
         { cardId: "faulty-spots", rank: 1 },
       ],
-      playerStats: { agility: 10, luck: 10, strength: 5, healthPct: 1, isTargetingWeakSpot: true, onslaughtStacks: 3 },
+      playerStats: { agility: 10, luck: 10, strength: 5, healthPct: 1, hitLocation: "weakSpot", onslaughtStacks: 3 },
     }));
     // 2.0 × (1 + 0.12 + 0.03 + 0.15)
     expect(head.weakSpot.bonusPct).toBeCloseTo(0.3, 5);
@@ -58,7 +58,7 @@ describe("weak spot (Targeting weak spot)", () => {
   });
 
   it("Smart Shot needs a scoped sight and aiming outside V.A.T.S.", () => {
-    const stats = { agility: 10, luck: 10, strength: 5, isTargetingWeakSpot: true, isAiming: true };
+    const stats = { agility: 10, luck: 10, strength: 5, hitLocation: "weakSpot" as const, isAiming: true };
     const scoped = calculateCombatFirepower(base({
       weaponId: "hunting-rifle",
       weaponCrafting: { sightId: "medium-scope" },
@@ -82,12 +82,12 @@ describe("weak spot (Targeting weak spot)", () => {
   });
 
   it("applies the modelled unique weak-point innates", () => {
-    const fist = calculateCombatFirepower(base({ weaponId: "face-breaker", playerStats: { agility: 10, luck: 10, strength: 5, isTargetingWeakSpot: true } }));
+    const fist = calculateCombatFirepower(base({ weaponId: "face-breaker", playerStats: { agility: 10, luck: 10, strength: 5, hitLocation: "weakSpot" } }));
     expect(fist.weakSpot.bonusPct).toBeCloseTo(0.1, 5);
-    const finder = calculateCombatFirepower(base({ weaponId: "the-fact-finder", playerStats: { agility: 10, luck: 10, strength: 5, isTargetingWeakSpot: true, isAiming: true } }));
+    const finder = calculateCombatFirepower(base({ weaponId: "the-fact-finder", playerStats: { agility: 10, luck: 10, strength: 5, hitLocation: "weakSpot", isAiming: true } }));
     expect(finder.weakSpot.breakdown.some((b) => b.source.includes("aiming"))).toBe(true);
     expect(finder.weakSpot.bonusPct).toBeCloseTo(0.15, 5);
-    const survivor = calculateCombatFirepower(base({ weaponId: "sole-survivor", playerStats: { agility: 10, luck: 10, strength: 5, isTargetingWeakSpot: true, killStreak: 12 } }));
+    const survivor = calculateCombatFirepower(base({ weaponId: "sole-survivor", playerStats: { agility: 10, luck: 10, strength: 5, hitLocation: "weakSpot", killStreak: 12 } }));
     expect(survivor.weakSpot.bonusPct).toBeCloseTo(0.3, 5); // capped at 10 kills
   });
 });

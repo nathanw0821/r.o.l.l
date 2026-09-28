@@ -44,7 +44,7 @@ import type {
   ThirstSurvivalState,
   TeamCategory,
 } from "@/lib/builder/unified-builder-state";
-import type { VatsCritQualification } from "@/lib/builder/combat-firepower-engine";
+import type { CombatHitLocation, CombatTargetRange, VatsCritQualification } from "@/lib/builder/combat-firepower-engine";
 import {
   calculateDamageTaken,
   type DefensiveProfile,
@@ -75,6 +75,9 @@ export type CombatSwitchboardState = {
   targetBurning?: boolean;
   targetPoisoned?: boolean;
   targetCrippledLimbs?: number;
+  /** Target-type overrides for Glow Sight / Exterminator (no shipped dummy carries the tag). */
+  targetIsGlowing?: boolean;
+  targetIsInsect?: boolean;
   combatStance?: {
     isSneaking: boolean;
     isCrouched?: boolean;
@@ -84,8 +87,15 @@ export type CombatSwitchboardState = {
     isStationary?: boolean;
     isInVats?: boolean;
     vatsCritEveryOtherShot?: boolean;
-    /** The shot lands on the target's head / weak point (body-part multiplier, weak-spot perks). */
+    /**
+     * @deprecated Derived alias of `hitLocation === "weakSpot"`, written on every change and kept
+     * for one release so switchboard state saved before 2026-09-28 still loads. Read `hitLocation`.
+     */
     isTargetingWeakSpot?: boolean;
+    /** Where the shot lands: body (default), torso (Center Masochist) or weak spot (head multiplier). */
+    hitLocation?: CombatHitLocation;
+    /** Target distance band: close (Guerrilla), mid (default, no range perk) or far (Down Ranger). */
+    targetRange?: CombatTargetRange;
   };
   caps?: number;
   /** Damage-taken preview: size of the incoming hit and its damage type. */
@@ -109,6 +119,30 @@ export type CombatSwitchboardState = {
   activeCampBuffs: string[];
   targetEnemy: string;
 };
+
+type CombatStanceState = NonNullable<CombatSwitchboardState["combatStance"]>;
+
+/** Hit location of a stance; a pre-2026-09-28 save with only `isTargetingWeakSpot: true` reads as "weakSpot". */
+export function resolveHitLocation(stance: Partial<CombatStanceState> | null | undefined): CombatHitLocation {
+  return stance?.hitLocation ?? (stance?.isTargetingWeakSpot === true ? "weakSpot" : "body");
+}
+
+/** Target range of a stance; absent means "mid" (no range perk applies). */
+export function resolveTargetRange(stance: Partial<CombatStanceState> | null | undefined): CombatTargetRange {
+  return stance?.targetRange ?? "mid";
+}
+
+export const HIT_LOCATION_OPTIONS: { id: CombatHitLocation; label: string }[] = [
+  { id: "body", label: "Body" },
+  { id: "torso", label: "Torso" },
+  { id: "weakSpot", label: "Weak spot" },
+];
+
+export const TARGET_RANGE_OPTIONS: { id: CombatTargetRange; label: string }[] = [
+  { id: "close", label: "Close" },
+  { id: "mid", label: "Mid" },
+  { id: "far", label: "Far" },
+];
 
 export const TARGET_ENEMIES: Record<string, { name: string; dr: number; pctReduction: number }> = {
   superMutant: { name: "Super Mutant Firestarter (150 DR)", dr: 150, pctReduction: 0 },
@@ -434,6 +468,8 @@ export default function BuilderCombatSwitchboard({
       targetBurning: false,
       targetPoisoned: false,
       targetCrippledLimbs: 0,
+      targetIsGlowing: false,
+      targetIsInsect: false,
       combatStance: {
         isSneaking: false,
         isCrouched: false,
@@ -444,6 +480,8 @@ export default function BuilderCombatSwitchboard({
         isInVats: false,
         vatsCritEveryOtherShot: false,
         isTargetingWeakSpot: false,
+        hitLocation: "body",
+        targetRange: "mid",
       },
       caps: 30000,
       incomingDamage: 100,
@@ -475,7 +513,9 @@ export default function BuilderCombatSwitchboard({
         isStationary: initialState?.combatStance?.isStationary ?? false,
         isInVats: initialState?.combatStance?.isInVats ?? false,
         vatsCritEveryOtherShot: initialState?.combatStance?.vatsCritEveryOtherShot ?? false,
-        isTargetingWeakSpot: initialState?.combatStance?.isTargetingWeakSpot ?? false,
+        isTargetingWeakSpot: resolveHitLocation(initialState?.combatStance) === "weakSpot",
+        hitLocation: resolveHitLocation(initialState?.combatStance),
+        targetRange: resolveTargetRange(initialState?.combatStance),
       },
       activeFoods: {
         ...defaults.activeFoods,
@@ -488,6 +528,9 @@ export default function BuilderCombatSwitchboard({
   React.useEffect(() => {
     onStateChangeRef.current = onStateChange;
   }, [onStateChange]);
+
+  const hitLocation = resolveHitLocation(switchboard.combatStance);
+  const targetRange = resolveTargetRange(switchboard.combatStance);
 
   const isInternalChangeRef = React.useRef(false);
 
@@ -514,7 +557,10 @@ export default function BuilderCombatSwitchboard({
         const next = { ...prev };
         for (const k of Object.keys(initialState) as Array<keyof CombatSwitchboardState>) {
           if (k === "combatStance") {
-            const nextStance = {
+            const nextHitLocation: CombatHitLocation =
+              initialState.combatStance?.hitLocation ??
+              (initialState.combatStance?.isTargetingWeakSpot === true ? "weakSpot" : prev.combatStance?.hitLocation ?? "body");
+            const nextStance: CombatStanceState = {
               isSneaking: initialState.combatStance?.isSneaking ?? prev.combatStance?.isSneaking ?? false,
               isCrouched: initialState.combatStance?.isCrouched ?? prev.combatStance?.isCrouched ?? false,
               isSprinting: initialState.combatStance?.isSprinting ?? prev.combatStance?.isSprinting ?? false,
@@ -523,7 +569,9 @@ export default function BuilderCombatSwitchboard({
               isStationary: initialState.combatStance?.isStationary ?? prev.combatStance?.isStationary ?? false,
               isInVats: initialState.combatStance?.isInVats ?? prev.combatStance?.isInVats ?? false,
               vatsCritEveryOtherShot: initialState.combatStance?.vatsCritEveryOtherShot ?? prev.combatStance?.vatsCritEveryOtherShot ?? false,
-              isTargetingWeakSpot: initialState.combatStance?.isTargetingWeakSpot ?? prev.combatStance?.isTargetingWeakSpot ?? false,
+              isTargetingWeakSpot: nextHitLocation === "weakSpot",
+              hitLocation: nextHitLocation,
+              targetRange: initialState.combatStance?.targetRange ?? prev.combatStance?.targetRange ?? "mid",
             };
             if (JSON.stringify(nextStance) !== JSON.stringify(prev.combatStance)) {
               next.combatStance = nextStance;
@@ -553,12 +601,9 @@ export default function BuilderCombatSwitchboard({
     onStateChangeRef.current?.(next);
   };
 
-  const updateStance = (
-    key: keyof NonNullable<CombatSwitchboardState["combatStance"]>,
-    val: boolean
-  ) => {
+  const updateStance = <K extends keyof CombatStanceState>(key: K, val: CombatStanceState[K]) => {
     if (readOnly) return;
-    const curr = switchboard.combatStance || {
+    const curr: CombatStanceState = switchboard.combatStance || {
       isSneaking: false,
       isCrouched: false,
       isSprinting: false,
@@ -567,38 +612,43 @@ export default function BuilderCombatSwitchboard({
       isStationary: false,
       isInVats: false,
       vatsCritEveryOtherShot: false,
+      hitLocation: "body",
+      targetRange: "mid",
     };
-    const nextStance = { ...curr, [key]: val };
+    const nextStance: CombatStanceState = { ...curr, [key]: val };
+    const flag = Boolean(val);
     if (key === "isCrouched") {
-      nextStance.isSneaking = val;
+      nextStance.isSneaking = flag;
     } else if (key === "isSneaking") {
-      nextStance.isCrouched = val;
+      nextStance.isCrouched = flag;
     }
-    if (key === "isSprinting" && val) {
+    if (key === "isSprinting" && flag) {
       nextStance.isStationary = false;
     }
-    if (key === "isStationary" && val) {
+    if (key === "isStationary" && flag) {
       nextStance.isSprinting = false;
     }
     if (key === "isInVats") {
-      if (val) {
+      if (flag) {
         nextStance.isAiming = false;
       } else {
         nextStance.vatsCritEveryOtherShot = false;
       }
     }
     if (key === "isAiming") {
-      if (val) {
+      if (flag) {
         nextStance.isInVats = false;
         nextStance.vatsCritEveryOtherShot = false;
       }
     }
     if (key === "vatsCritEveryOtherShot") {
-      if (val) {
+      if (flag) {
         nextStance.isInVats = true;
         nextStance.isAiming = false;
       }
     }
+    // The boolean stays a derived alias of the hit location for one release (saved-state compatibility).
+    nextStance.isTargetingWeakSpot = nextStance.hitLocation === "weakSpot";
     const next = { ...switchboard, combatStance: nextStance };
     isInternalChangeRef.current = true;
     setSwitchboard(next);
@@ -1338,7 +1388,12 @@ export default function BuilderCombatSwitchboard({
             id="stances"
             title="Stances & V.A.T.S."
             icon={<Target className="h-3.5 w-3.5" />}
-            summary={`${switchboard.combatStance?.isCrouched ? "Stealthed" : "Upright"} · ${switchboard.combatStance?.isInVats ? "In V.A.T.S." : switchboard.combatStance?.isAiming ? "Aiming" : "Hip fire"}`}
+            summary={[
+              switchboard.combatStance?.isCrouched ? "Stealthed" : "Upright",
+              switchboard.combatStance?.isInVats ? "In V.A.T.S." : switchboard.combatStance?.isAiming ? "Aiming" : "Hip fire",
+              hitLocation === "weakSpot" ? "Weak spot" : hitLocation === "torso" ? "Torso" : null,
+              targetRange === "close" ? "Close range" : targetRange === "far" ? "Far range" : null,
+            ].filter(Boolean).join(" · ")}
             open={openGroups.has("stances")}
             onToggle={() => toggleGroup("stances")}
           >
@@ -1477,29 +1532,75 @@ export default function BuilderCombatSwitchboard({
                   </span>
                 </button>
 
-                {/* 2b. Targeting weak spot (head / weak point) */}
-                <button
-                  type="button"
-                  aria-pressed={Boolean(switchboard.combatStance?.isTargetingWeakSpot)}
-                  onClick={() => updateStance("isTargetingWeakSpot", !switchboard.combatStance?.isTargetingWeakSpot)}
-                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
-                    switchboard.combatStance?.isTargetingWeakSpot
-                      ? "bg-rose-950 border-rose-500 text-rose-200 shadow-[0_0_12px_rgba(244,63,94,0.35)] font-black"
-                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-rose-400">🎯</span>
-                    <span>{switchboard.combatStance?.isTargetingWeakSpot ? "Targeting weak spot" : "Target weak spot"}</span>
+                {/* 2b. Hit location: body / torso / weak spot (Center Masochist, body-part multiplier) */}
+                <div className="p-2.5 rounded border border-slate-800 bg-slate-950 flex flex-col items-center gap-1.5 text-center">
+                  <span className="text-2xs font-bold uppercase text-slate-400 flex items-center gap-1.5">
+                    <span className="text-rose-400">🎯</span> Hit location
+                  </span>
+                  <div role="group" aria-label="Hit location" className="flex w-full gap-1">
+                    {HIT_LOCATION_OPTIONS.map((opt) => {
+                      const active = hitLocation === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          aria-pressed={active}
+                          onClick={() => updateStance("hitLocation", opt.id)}
+                          className={`flex-1 touch:min-h-11 rounded border px-1.5 py-1.5 text-2xs font-bold uppercase transition-all cursor-pointer ${
+                            active
+                              ? "bg-rose-950 border-rose-500 text-rose-200 shadow-[0_0_12px_rgba(244,63,94,0.35)] font-black"
+                              : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      );
+                    })}
                   </div>
                   <span className="text-3xs font-normal text-dim">
-                    {switchboard.combatStance?.isTargetingWeakSpot
+                    {hitLocation === "weakSpot"
                       ? weakSpot?.baseMultiplier
                         ? `${weakSpot.part} ×${weakSpot.baseMultiplier}${weakSpot.bonusPct > 0 ? ` +${Math.round(weakSpot.bonusPct * 100)}% perks` : ""} = ×${weakSpot.multiplier.toFixed(2)}`
                         : "No multiplier data for this target"
-                      : "Body shots (×1.00)"}
+                      : hitLocation === "torso"
+                        ? "Center Masochist · body-part ×1.00"
+                        : "Body shots (×1.00)"}
                   </span>
-                </button>
+                </div>
+
+                {/* 2c. Target range: close / mid / far (Guerrilla, Guerrilla Master, Down Ranger) */}
+                <div className="p-2.5 rounded border border-slate-800 bg-slate-950 flex flex-col items-center gap-1.5 text-center">
+                  <span className="text-2xs font-bold uppercase text-slate-400 flex items-center gap-1.5">
+                    <span className="text-sky-400">📏</span> Target range
+                  </span>
+                  <div role="group" aria-label="Target range" className="flex w-full gap-1">
+                    {TARGET_RANGE_OPTIONS.map((opt) => {
+                      const active = targetRange === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          aria-pressed={active}
+                          onClick={() => updateStance("targetRange", opt.id)}
+                          className={`flex-1 touch:min-h-11 rounded border px-1.5 py-1.5 text-2xs font-bold uppercase transition-all cursor-pointer ${
+                            active
+                              ? "bg-sky-950 border-sky-500 text-sky-200 shadow-[0_0_12px_rgba(14,165,233,0.35)] font-black"
+                              : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <span className="text-3xs font-normal text-dim">
+                    {targetRange === "close"
+                      ? "Guerrilla · Guerrilla Master"
+                      : targetRange === "far"
+                        ? "Down Ranger"
+                        : "No range perk (Guerrilla close · Down Ranger far)"}
+                  </span>
+                </div>
 
                 {/* 3. V.A.T.S. Crit Every Other Shot */}
                 <button
@@ -1839,6 +1940,8 @@ export default function BuilderCombatSwitchboard({
               switchboard.targetBurning && "Burning",
               switchboard.targetPoisoned && "Poisoned",
               (switchboard.targetCrippledLimbs ?? 0) > 0 && `${switchboard.targetCrippledLimbs} crippled`,
+              switchboard.targetIsGlowing && "Glowing",
+              switchboard.targetIsInsect && "Insect",
             ].filter(Boolean).join(" · ") || "None"}
             open={openGroups.has("impairments")}
             onToggle={() => toggleGroup("impairments")}
@@ -1851,7 +1954,7 @@ export default function BuilderCombatSwitchboard({
                 <span>Target Impairments (Enemy Debuffs)</span>
               </div>
               <span className="text-2xs text-dim font-mono">
-                Triggers Severing, Pyromaniac&apos;s, Viper&apos;s, Bully&apos;s, Wound Salter, Deal Sealer
+                Triggers Severing, Pyromaniac&apos;s, Viper&apos;s, Bully&apos;s, Wound Salter, Deal Sealer, Easy Target, Tormentor, Shotgun Champ, Glow Sight, Exterminator
               </span>
             </div>
 
@@ -1902,6 +2005,38 @@ export default function BuilderCombatSwitchboard({
                   className="rounded bg-slate-900 border-slate-700 text-lime-500 focus:ring-0 cursor-pointer"
                 />
                 <span>🧪 Poisoned</span>
+              </label>
+
+              {/* Glowing target (Glow Sight) */}
+              <label className={cn(
+                "flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors text-xs select-none",
+                switchboard.targetIsGlowing
+                  ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300 font-semibold"
+                  : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
+              )}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(switchboard.targetIsGlowing)}
+                  onChange={(e) => updateField("targetIsGlowing", e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer"
+                />
+                <span>☢️ Glowing</span>
+              </label>
+
+              {/* Insect target (Exterminator) */}
+              <label className={cn(
+                "flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors text-xs select-none",
+                switchboard.targetIsInsect
+                  ? "border-yellow-500/50 bg-yellow-500/10 text-yellow-300 font-semibold"
+                  : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
+              )}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(switchboard.targetIsInsect)}
+                  onChange={(e) => updateField("targetIsInsect", e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-yellow-500 focus:ring-0 cursor-pointer"
+                />
+                <span>🐛 Insect</span>
               </label>
 
               {/* Crippled Limbs */}
