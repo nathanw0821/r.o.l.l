@@ -22,6 +22,9 @@ Legacy vector SVGs, unslanted wiki cutouts, and synthetic cover boxes are perman
 2. **Desktop Prototype & Agent Exchange**:  
    `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`
 
+### 2.1a Derived WebP siblings (added 2026-09-28)
+`public/images/in_game_cards_webp/<name>.webp` are generated from the PNGs by `scripts/perks/build-card-webp.mjs` (320 px wide, quality 82, same pixels). They are a delivery optimisation only: `<InGamePerkCard>` renders `<picture><source type="image/webp"><img src=".png"></picture>`, so the PNG remains the asset of record and the fallback. Regenerate after any PNG change; the unit test `src/lib/perks/card-webp.test.ts` pins one sibling per PNG.
+
 ### 2.2 Numerical Ingestion Totals
 * **Total Unique Perk Cards**: **274 cards**
   * **Standard Perk Cards**: 245 cards (S: 37, P: 38, E: 40, C: 31, I: 36, A: 33, L: 30)

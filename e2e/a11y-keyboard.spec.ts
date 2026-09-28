@@ -134,6 +134,32 @@ test.describe("keyboard", () => {
     await expect(page.getByLabel("Armor set for Left Leg")).toHaveValue("civil-engineer");
   });
 
+  test("perk picker: 'Add Strength perks' opens a scoped picker, Enter equips at rank 1, focus returns", async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.goto("/build?tab=perks");
+    const add = page.getByRole("button", { name: "Add Strength perks" }).first();
+    await expect(add).toBeVisible({ timeout: 45_000 });
+    // The catalog behind it is collapsed section headers, not a wall of card images.
+    await expect(page.locator("[data-perk-catalog-groups]")).toBeVisible();
+    await add.focus();
+    await page.keyboard.press("Enter");
+    const dialog = page.getByRole("dialog", { name: /add strength perks/i });
+    await expect(dialog).toBeVisible();
+    expect(await focusIsInside(page, '[role="dialog"]')).toBe(true);
+    // Scoped: a Perception card is not offered here.
+    await expect(dialog.getByRole("button", { name: /Night Person/ })).toHaveCount(0);
+    const option = dialog.getByRole("button", { name: /^Equip Bandolier/ });
+    await option.focus();
+    await page.keyboard.press("Enter");
+    await expect(dialog).toBeHidden();
+    await expect(add).toBeFocused();
+    await expect(page.locator("#main-content").getByRole("img", { name: "Bandolier", exact: true }).first()).toBeVisible();
+    // Reopening marks it as equipped instead of offering it again.
+    await add.click();
+    await expect(page.getByRole("dialog", { name: /add strength perks/i }).getByRole("button", { name: "Equipped Bandolier" })).toBeVisible();
+    await page.keyboard.press("Escape");
+  });
+
   test("guides reader: the contents list is keyboard reachable and jumps to the heading", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium", "The desktop contents rail; phones use the disclosure.");
     await page.goto("/wiki?id=193");

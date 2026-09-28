@@ -16,6 +16,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **DYNAMIC MULTI-RANK PROGRESSION**: Ensure cards dynamically cycle ranks (e.g. `bullet_storm_r1.png`, `bullet_storm_r2.png`, `bullet_storm_r3.png`) with working star ribbons and flawless in-place cost badges.
 - **NO SYNTHETIC OVERLAY BOXES**: Never draw flat color rectangles over title banners or badges when native Bethesda assets exist.
 - **NO WEB SCRAPING**: All 274 perk cards (578 rank tiers, 868 PNGs) are pre-compiled locally in `public/images/in_game_cards/` and `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`.
+- **WEBP DELIVERY (2026-09-28)**: the PNGs stay the canonical, untouched 1:1 assets. `scripts/perks/build-card-webp.mjs` writes a same-pixels 320 px WebP for each into `public/images/in_game_cards_webp/` (301 MB → 22 MB), and `InGamePerkCard` / the perk picker offer it first through `<picture>` with the PNG as the fallback `src`. Re-run the script after adding or changing a card PNG; `src/lib/perks/card-webp.test.ts` fails when a sibling is missing.
 
 ## 🚫 Sovereign Vault Development Firewall & Isolation Policy
 - **MASTER DIRECTIVE**: Under NO circumstances during development may any code, schema, data, dependency, runtime service, or asset from R.O.L.L. be overlapped, imported, bridged, or merged into the Sovereign Vault (`/home/nathanw/sovereign_vault_ui`), nor may anything from the Sovereign Vault be injected into R.O.L.L.

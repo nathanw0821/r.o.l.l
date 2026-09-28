@@ -14,7 +14,7 @@ import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
 import PipBoyPerkAccordionColumn from "@/components/perks/pipboy-perk-accordion-column";
 import PipBoyLegendaryRack from "@/components/perks/pipboy-legendary-rack";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
-import { useIsPhoneWidth } from "@/lib/hooks/use-is-phone-width";
+import PerkPickerDialog, { type PerkPickerScope } from "@/components/perks/perk-picker-dialog";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 
 type EquippedItem = { cardId: string; rank: number };
@@ -524,10 +524,18 @@ export default function PerkBuilder({
   }, [searchedAllCards, selectedCategory]);
 
   // Phones: the flat catalog of every card is ~35 screens tall, so "ALL" without a
-  // search shows collapsible S.P.E.C.I.A.L. sections instead. Desktop is unchanged.
-  const isPhoneCatalog = useIsPhoneWidth();
+  // Scoped "Add <SPECIAL> perks" picker: one category, equips at rank 1, closes, refocuses the opener.
+  const [pickerScope, setPickerScope] = React.useState<PerkPickerScope | null>(null);
+  const pickerOpenerRef = React.useRef<HTMLElement | null>(null);
+  const openPerkPicker = (scope: PerkPickerScope) => {
+    if (readOnly) return;
+    pickerOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setPickerScope(scope);
+  };
   const [openCatalogGroups, setOpenCatalogGroups] = React.useState<SpecialCategory[]>([]);
-  const groupCatalogOnPhone = isPhoneCatalog && selectedCategory === "ALL" && searchQuery.trim().length === 0;
+  // "ALL" with no search: collapsed S.P.E.C.I.A.L. sections on every width, so the catalog is
+  // a short list of headers (no card images) until a section or a scoped picker is opened.
+  const groupCatalog = selectedCategory === "ALL" && searchQuery.trim().length === 0;
   const catalogGroups = React.useMemo(() => {
     const order: SpecialCategory[] = ["S", "P", "E", "C", "I", "A", "L", "LEGENDARY"];
     return order
@@ -841,6 +849,16 @@ export default function PerkBuilder({
                     >
                       Cards: {used} / {effectiveCap}
                     </span>
+                    {!readOnly && (
+                      <button
+                        type="button"
+                        onClick={() => openPerkPicker(stat)}
+                        aria-label={`Add ${theme.name} perks`}
+                        className="mt-1 min-h-8 touch:min-h-11 px-2.5 rounded-md border border-[#e8dfc8]/40 bg-[#121619]/80 text-2xs font-mono font-bold uppercase tracking-wider text-[#f3efe0] hover:bg-[#121619] hover:border-[#e8dfc8] transition-colors"
+                      >
+                        + Add {theme.name} perks
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -986,7 +1004,10 @@ export default function PerkBuilder({
                 isFemale={isFemale}
                 onEquipCard={handleEquipCard}
                 onUnequipCard={handleUnequipCard}
-                onFilterLegendary={() => setSelectedCategory("LEGENDARY")}
+                onFilterLegendary={() => {
+                  setSelectedCategory("LEGENDARY");
+                  openPerkPicker("LEGENDARY");
+                }}
                 readOnly={readOnly}
               />
 
@@ -1161,9 +1182,9 @@ export default function PerkBuilder({
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            {groupCatalogOnPhone ? (
-              /* Phones, "ALL", no search: one collapsible section per S.P.E.C.I.A.L. so the
-                 catalog is a short list of headers instead of ~35 screens of cards. */
+            {groupCatalog ? (
+              /* "ALL", no search: one collapsible section per S.P.E.C.I.A.L. so the catalog is a
+                 short list of headers instead of ~35 screens of cards (every width). */
               <div className="space-y-2" data-perk-catalog-groups>
                 {catalogGroups.map((group) => {
                   const open = openCatalogGroups.includes(group.category);
@@ -1196,7 +1217,7 @@ export default function PerkBuilder({
                         </button>
                       </h3>
                       {open ? (
-                        <div id={panelId} className="grid grid-cols-2 gap-3 px-2 pb-3">
+                        <div id={panelId} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3 px-2 pb-3">
                           {group.cards.map((card, idx) => renderCatalogCard(card, idx))}
                         </div>
                       ) : null}
@@ -1211,6 +1232,17 @@ export default function PerkBuilder({
             )}
           </CardContent>
         </Card>
+      )}
+
+      {!readOnly && (
+        <PerkPickerDialog
+          scope={pickerScope}
+          onClose={() => setPickerScope(null)}
+          onEquip={(card) => handleEquipCard(card, 1)}
+          equippedIds={new Set(safeEquippedCards.map((item) => item.cardId))}
+          isFemale={isFemale}
+          returnFocusRef={pickerOpenerRef}
+        />
       )}
 
       {!readOnly && (

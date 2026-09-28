@@ -241,7 +241,7 @@ export default function BuilderGearSelector(props: BuilderGearSelectorProps) {
         aria-label={`${gearKindLabel(activeKind)} ${props.mode === "pick" ? "to equip" : "ledger"}`}
         tabIndex={0}
         className={cn(
-          "grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto pr-1 border border-slate-800/80 rounded-lg p-2 bg-[#06090e]",
+          "grid grid-cols-1 sm:grid-cols-2 auto-rows-max gap-2 overflow-y-auto pr-1 border border-slate-800/80 rounded-lg p-2 bg-[#06090e]",
           props.mode === "pick" ? "md:grid-cols-3 max-h-[min(60vh,28rem)]" : "md:grid-cols-3 lg:grid-cols-4 max-h-72",
         )}
       >

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { webpSiblingForCardImage } from "@/lib/perks/card-webp";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard, getPerkCardById, OutdatedPerkMeta, ReworkedPerkMeta } from "@/lib/perks/catalog";
@@ -541,22 +542,27 @@ function InGamePerkCardComponent({
       >
         {/* 1. Literal 1:1 In-Game Bitmap Cards (Pip-Boy Slanted & Curved for Regular, Ghoul, and Legendary) */}
         {inGameCardImage && !imgError ? (
-          <img
-            src={inGameCardImage}
-            alt={displayName}
-            className={`w-full h-full object-contain bg-transparent block select-none transform-none transition-all duration-200 ${
-              isAccordion
-                ? isForefront
-                  ? "drop-shadow-[0_0_14px_rgba(251,191,36,0.85)] drop-shadow-[0_12px_24px_rgba(0,0,0,0.95)]"
-                  : "drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
-                : "rounded-xl drop-shadow-xl"
-            }`}
-            loading={priority ? "eager" : "lazy"}
-            decoding={priority ? "sync" : "async"}
-            fetchPriority={priority ? "high" : "auto"}
-            draggable={false}
-            onError={() => setImgError(true)}
-          />
+          <picture className="contents">
+            {webpSiblingForCardImage(inGameCardImage) ? (
+              <source type="image/webp" srcSet={webpSiblingForCardImage(inGameCardImage) ?? undefined} />
+            ) : null}
+            <img
+              src={inGameCardImage}
+              alt={displayName}
+              className={`w-full h-full object-contain bg-transparent block select-none transform-none transition-all duration-200 ${
+                isAccordion
+                  ? isForefront
+                    ? "drop-shadow-[0_0_14px_rgba(251,191,36,0.85)] drop-shadow-[0_12px_24px_rgba(0,0,0,0.95)]"
+                    : "drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
+                  : "rounded-xl drop-shadow-xl"
+              }`}
+              loading={priority ? "eager" : "lazy"}
+              decoding={priority ? "sync" : "async"}
+              fetchPriority={priority ? "high" : "auto"}
+              draggable={false}
+              onError={() => setImgError(true)}
+            />
+          </picture>
         ) : isLegendary && cleanForeground ? (
           /* 2. Scaleform Legendary Vector Recreation Fallback */
           <ScaleformLegendaryVisual
@@ -877,14 +883,19 @@ function InGamePerkCardComponent({
                   }`}
                 >
                   {inGameInspectImage ? (
-                    <img
-                      src={inGameInspectImage}
-                      alt={displayName}
-                      className="w-full h-full object-contain rounded-xl block drop-shadow-xl select-none"
-                      loading="eager"
-                      decoding="async"
-                      draggable={false}
-                    />
+                    <picture className="contents">
+                      {webpSiblingForCardImage(inGameInspectImage) ? (
+                        <source type="image/webp" srcSet={webpSiblingForCardImage(inGameInspectImage) ?? undefined} />
+                      ) : null}
+                      <img
+                        src={inGameInspectImage}
+                        alt={displayName}
+                        className="w-full h-full object-contain rounded-xl block drop-shadow-xl select-none"
+                        loading="eager"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </picture>
                   ) : cleanForeground ? (
                     isLegendary ? (
                       <ScaleformLegendaryVisual
