@@ -31,7 +31,10 @@ export type LegendaryEffectKind =
   | "reducer"
   | "fire-rate-mult"
   | "mag-mult"
-  | "explosive-damage";
+  | "explosive-damage"
+  | "carry-weight"
+  | "heal-on-hit"
+  | "stealth-field";
 
 export type LegendaryEffectAppliesTo = "weapon" | "armor" | "universal";
 
@@ -86,6 +89,9 @@ const KINDS = new Set<string>([
   "fire-rate-mult",
   "mag-mult",
   "explosive-damage",
+  "carry-weight",
+  "heal-on-hit",
+  "stealth-field",
 ]);
 
 const APPLIES_TO = new Set<string>(["weapon", "armor", "universal"]);

@@ -113,6 +113,24 @@ describe("legendary effect truth pack", () => {
     expect(requireEffectNumber("powered", "value")).toBe(0.05);
   });
 
+  it("pins the post-Patch 70 gap rows sourced from the 2026-09-22 Slasher guide", () => {
+    expect(requireEffectNumber("berserkers", "cap")).toBe(0.5);
+    expect(requireEffectNumber("tarnished", "cap")).toBe(1.2);
+    expect(requireEffectNumber("raging", "perUnit")).toBe(0.03);
+    expect(requireEffectNumber("raging", "maxStacks")).toBe(5);
+    expect(requireEffectNumber("raging", "cap")).toBe(0.15);
+    expect(requireEffectNumber("haulers", "perUnit")).toBe(30);
+    expect(requireEffectNumber("haulers", "cap")).toBe(150);
+    expect(requireEffectNumber("vampires", "value")).toBe(0.02);
+    expect(requireEffectNumber("chameleon", "value")).toBe(20);
+    for (const slug of ["berserkers", "tarnished", "raging", "haulers", "vampires", "chameleon"]) {
+      const entry = getEffectModel(slug);
+      expect(entry?.confidence, slug).toBe("approximate");
+      expect(entry?.source, slug).toContain("timesaver.gg");
+      expect(entry?.catalogMath, slug).toBeUndefined();
+    }
+  });
+
   it("throws on an unknown slug or a missing numeric field", () => {
     expect(() => requireEffectNumber("not-an-effect", "value")).toThrow(/no effect "not-an-effect"/);
     expect(() => requireEffectNumber("two-shot", "capAtMissingHealth")).toThrow(/no numeric/);

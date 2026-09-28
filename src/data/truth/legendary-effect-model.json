@@ -533,6 +533,72 @@
       "confidence": "verified",
       "source": "3-star weapon SPECIAL mod: +3 Luck.",
       "catalogMath": { "lck": 3 }
+    },
+    "berserkers": {
+      "slug": "berserkers",
+      "star": 1,
+      "appliesTo": "weapon",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "damage-resistance-low",
+      "confidence": "approximate",
+      "source": "Berserker's 1-star: 'Up to +50% Damage When DR is Low'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28). The DR value at which the cap is reached is unpublished, so no threshold is modelled."
+    },
+    "tarnished": {
+      "slug": "tarnished",
+      "star": 4,
+      "appliesTo": "weapon",
+      "kind": "conditional-damage",
+      "value": 1.2,
+      "cap": 1.2,
+      "condition": "durability-missing",
+      "confidence": "approximate",
+      "source": "Tarnished 4-star: 'Damage increases by up to +120% as the weapon's durability decreases'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28). The scaling curve is unpublished."
+    },
+    "raging": {
+      "slug": "raging",
+      "star": 4,
+      "appliesTo": "armor",
+      "kind": "stack-damage",
+      "perUnit": 0.03,
+      "maxStacks": 5,
+      "cap": 0.15,
+      "condition": "hit-recently-stacks",
+      "confidence": "approximate",
+      "source": "Raging 4-star armor: 'Upon being hit, deal +3% more damage for 10 seconds, stacking to +15%'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28). Whether the five stacks are per armor piece or shared is not stated, so the +15% ceiling is taken as the total."
+    },
+    "haulers": {
+      "slug": "haulers",
+      "star": 4,
+      "appliesTo": "armor",
+      "kind": "carry-weight",
+      "perUnit": 30,
+      "maxStacks": 5,
+      "cap": 150,
+      "condition": "per-armor-piece",
+      "confidence": "approximate",
+      "source": "Hauler's 4-star armor: 'Each piece grants +30 carry weight, stacking to +150 at five pieces'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28)."
+    },
+    "vampires": {
+      "slug": "vampires",
+      "star": 1,
+      "appliesTo": "weapon",
+      "kind": "heal-on-hit",
+      "value": 0.02,
+      "condition": "per-hit",
+      "confidence": "approximate",
+      "source": "Vampire's 1-star: 'Restore 2% Health over 2 Seconds per Hit' (value is the fraction of maximum health; the 2 s duration is not modelled). https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28)."
+    },
+    "chameleon": {
+      "slug": "chameleon",
+      "star": 1,
+      "appliesTo": "armor",
+      "kind": "stealth-field",
+      "value": 20,
+      "condition": "sneaking-and-still",
+      "confidence": "approximate",
+      "source": "Chameleon 1-star armor: '20% Stealth Field While Sneaking and Not Moving'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28)."
     }
   }
 }
