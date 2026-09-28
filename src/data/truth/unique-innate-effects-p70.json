@@ -1,0 +1,1406 @@
+{
+ "$comment": "Innate-effect numbers for named unique weapons, read from the Patch 70 client data (the enchantments applied by each unique's custom mod). Only uniques whose custom mod matched R.O.L.L.'s unique list by name are included (23 of 83); the rest use perk-driven or differently structured effects and are not guessed here. magnitude is the effect's base value; when a curve is present it is the game's level scaling of that value (x is assumed to be the item level, 1-50, and the base value equals the curve at x = 1). For Damage-archetype effects the magnitude is read as damage per second for durationSeconds, which is how the game phrases the equivalent armor effects, but this was not observed in game. Nothing in the builder reads this file yet.",
+ "source": {
+  "patch": 70,
+  "build": "1.7.26.13",
+  "extractedAt": "2026-09-28",
+  "file": "SeventySix.esm (2026-09-16): OMOD custom mods, ENCH effects, CURV tables"
+ },
+ "notes": {
+  "v63LaserCarbine": "No weapon record exists for a 'V63 Laser Carbine': the client data only has cosmetic paint mods for it (a skin of the Laser Carbine). It is not a missing weapon.",
+  "vault63LaserRifle": "The unique Vault 63 Laser Rifle (V63-OLGA) carries RefractingProjectileChance = 63, matching the official Patch 70 note."
+ },
+ "uniques": {
+  "the-gutter": {
+   "name": "The Gutter",
+   "officialEffect": "Poison Damage",
+   "mod": "mod_Custom_TheGutter",
+   "enchantments": [
+    {
+     "enchantment": "ench_Weapon_PoisonT10",
+     "effects": [
+      {
+       "effect": "dtPoisonEffectChanceAlways",
+       "magnitude": 6.0,
+       "durationSeconds": 10,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier10",
+        "points": [
+         [
+          1,
+          6
+         ],
+         [
+          5,
+          7
+         ],
+         [
+          10,
+          8
+         ],
+         [
+          15,
+          9
+         ],
+         [
+          20,
+          10
+         ],
+         [
+          25,
+          11
+         ],
+         [
+          30,
+          13
+         ],
+         [
+          35,
+          14
+         ],
+         [
+          40,
+          16
+         ],
+         [
+          45,
+          18
+         ],
+         [
+          50,
+          20
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "camden-whacker": {
+   "name": "Camden Whacker",
+   "officialEffect": "Random Elemental Damage",
+   "mod": "mod_Custom_CamdenWhacker_Poison",
+   "enchantments": [
+    {
+     "enchantment": "ench_Weapon_PoisonT10",
+     "effects": [
+      {
+       "effect": "dtPoisonEffectChanceAlways",
+       "magnitude": 6.0,
+       "durationSeconds": 10,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier10",
+        "points": [
+         [
+          1,
+          6
+         ],
+         [
+          5,
+          7
+         ],
+         [
+          10,
+          8
+         ],
+         [
+          15,
+          9
+         ],
+         [
+          20,
+          10
+         ],
+         [
+          25,
+          11
+         ],
+         [
+          30,
+          13
+         ],
+         [
+          35,
+          14
+         ],
+         [
+          40,
+          16
+         ],
+         [
+          45,
+          18
+         ],
+         [
+          50,
+          20
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "kingfisher": {
+   "name": "Kingfisher",
+   "officialEffect": "+10% Damage per Local Legend Challenge Completed",
+   "mod": "mod_Custom_Kingfisher",
+   "enchantments": [
+    {
+     "enchantment": "ench_Kingfisher",
+     "effects": [
+      {
+       "effect": "abPerkFortifyDmgAll",
+       "magnitude": 0.0,
+       "durationSeconds": 0
+      },
+      {
+       "effect": "abPerkFortifyDmgAll",
+       "magnitude": 0.0,
+       "durationSeconds": 0
+      },
+      {
+       "effect": "abPerkFortifyDmgAll",
+       "magnitude": 0.0,
+       "durationSeconds": 0
+      },
+      {
+       "effect": "abPerkFortifyDmgAll",
+       "magnitude": 0.0,
+       "durationSeconds": 0
+      },
+      {
+       "effect": "abPerkFortifyDmgAll",
+       "magnitude": 0.0,
+       "durationSeconds": 0
+      },
+      {
+       "effect": "abPerkFortifyDmgAll",
+       "magnitude": 0.0,
+       "durationSeconds": 0
+      }
+     ]
+    }
+   ]
+  },
+  "the-quick-fix": {
+   "name": "The Quick Fix",
+   "officialEffect": "+5% Swing Speed per Addiction",
+   "mod": "mod_Custom_TheQuickFix",
+   "enchantments": [
+    {
+     "enchantment": "ench_QuickFix",
+     "effects": [
+      {
+       "effect": "AbQucikFix_Description",
+       "magnitude": 0.0,
+       "durationSeconds": 0,
+       "curve": {
+        "name": "Bonus_QuickFix",
+        "points": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0.05
+         ],
+         [
+          10,
+          0.5
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "holy-fire": {
+   "name": "Holy Fire",
+   "officialEffect": "You and Teammates Hit by Your Flame Gain +30% Damage and +50 DR for 15 Seconds",
+   "mod": "mod_custom_HolyFire_Effect",
+   "enchantments": [
+    {
+     "enchantment": "FlamerFXEnchFireHit_Blue",
+     "effects": [
+      {
+       "effect": "FXFireHitVisuals_Blue",
+       "magnitude": 3.0,
+       "durationSeconds": 3
+      }
+     ]
+    }
+   ]
+  },
+  "kabloom": {
+   "name": "Kabloom",
+   "officialEffect": "Poison Damage",
+   "mod": "mod_custom_TheKabloom_Effect",
+   "enchantments": [
+    {
+     "enchantment": "EnchPumppActionShotgun_KabloomPoisonDoT",
+     "effects": [
+      {
+       "effect": "dtPoisonEffectChanceAlways",
+       "magnitude": 5.0,
+       "durationSeconds": 10
+      },
+      {
+       "effect": "dtPoisonEffectChanceAlways",
+       "magnitude": 6.0,
+       "durationSeconds": 7,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier10",
+        "points": [
+         [
+          1,
+          6
+         ],
+         [
+          5,
+          7
+         ],
+         [
+          10,
+          8
+         ],
+         [
+          15,
+          9
+         ],
+         [
+          20,
+          10
+         ],
+         [
+          25,
+          11
+         ],
+         [
+          30,
+          13
+         ],
+         [
+          35,
+          14
+         ],
+         [
+          40,
+          16
+         ],
+         [
+          45,
+          18
+         ],
+         [
+          50,
+          20
+         ]
+        ]
+       }
+      },
+      {
+       "effect": "dtPoisonEffectChanceAlways",
+       "magnitude": 5.0,
+       "durationSeconds": 1
+      },
+      {
+       "effect": "dtPoisonEffectChanceAlways",
+       "magnitude": 6.0,
+       "durationSeconds": 1,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier10",
+        "points": [
+         [
+          1,
+          6
+         ],
+         [
+          5,
+          7
+         ],
+         [
+          10,
+          8
+         ],
+         [
+          15,
+          9
+         ],
+         [
+          20,
+          10
+         ],
+         [
+          25,
+          11
+         ],
+         [
+          30,
+          13
+         ],
+         [
+          35,
+          14
+         ],
+         [
+          40,
+          16
+         ],
+         [
+          45,
+          18
+         ],
+         [
+          50,
+          20
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "branding-iron": {
+   "name": "Branding Iron",
+   "officialEffect": "Fire Damage",
+   "mod": "mod_custom_BlueRidgeBrandingIron_Custom",
+   "enchantments": [
+    {
+     "enchantment": "ench_Shishkebab_BlueRidgeBrandingIron_Fire",
+     "effects": [
+      {
+       "effect": "dtFireFlameEffectChanceAlways",
+       "magnitude": 13.0,
+       "durationSeconds": 3,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier15",
+        "points": [
+         [
+          1,
+          13
+         ],
+         [
+          5,
+          14
+         ],
+         [
+          10,
+          16
+         ],
+         [
+          15,
+          18
+         ],
+         [
+          20,
+          20
+         ],
+         [
+          25,
+          23
+         ],
+         [
+          30,
+          26
+         ],
+         [
+          35,
+          29
+         ],
+         [
+          40,
+          33
+         ],
+         [
+          45,
+          37
+         ],
+         [
+          50,
+          42
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "boiling-point": {
+   "name": "Boiling Point",
+   "officialEffect": "Poison Damage",
+   "mod": "RD01_Mod_Custom_BoilingPoint_CustomName",
+   "enchantments": [
+    {
+     "enchantment": "RD01_Weapon_BoilingPoint_PoisonEnch",
+     "effects": [
+      {
+       "effect": "dtPoisonEffectChanceAlways",
+       "magnitude": 0.0,
+       "durationSeconds": 12,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier12",
+        "points": [
+         [
+          1,
+          8
+         ],
+         [
+          5,
+          9
+         ],
+         [
+          10,
+          11
+         ],
+         [
+          15,
+          12
+         ],
+         [
+          20,
+          14
+         ],
+         [
+          25,
+          15
+         ],
+         [
+          30,
+          17
+         ],
+         [
+          35,
+          19
+         ],
+         [
+          40,
+          22
+         ],
+         [
+          45,
+          25
+         ],
+         [
+          50,
+          28
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "drill-fist": {
+   "name": "Drill Fist",
+   "officialEffect": "Fire Damage",
+   "mod": "RD01_Mod_Custom_DrillFist_CustomName",
+   "enchantments": [
+    {
+     "enchantment": "RD01_Weapon_DrillFist_FireDamageEnch",
+     "effects": [
+      {
+       "effect": "RD01_Weapon_DrillFist_FireDamageEffect",
+       "magnitude": 18.0,
+       "durationSeconds": 4,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier18",
+        "points": [
+         [
+          1,
+          18
+         ],
+         [
+          5,
+          20
+         ],
+         [
+          10,
+          22
+         ],
+         [
+          15,
+          25
+         ],
+         [
+          20,
+          29
+         ],
+         [
+          25,
+          32
+         ],
+         [
+          30,
+          36
+         ],
+         [
+          35,
+          41
+         ],
+         [
+          40,
+          46
+         ],
+         [
+          45,
+          52
+         ],
+         [
+          50,
+          59
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "ultracite-terror-sword": {
+   "name": "Ultracite Terror Sword",
+   "officialEffect": "Poison Damage",
+   "mod": "RD01_Mod_Custom_UltraciteTerrorSword_CustomName",
+   "enchantments": [
+    {
+     "enchantment": "RD01_Weapon_UltraciteTerrorSword_PoisonAttackEnch",
+     "effects": [
+      {
+       "effect": "RD01_Weapon_UltraciteTerrorSword_PoisonDamageEffect",
+       "magnitude": 14.0,
+       "durationSeconds": 25,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier16",
+        "points": [
+         [
+          1,
+          14
+         ],
+         [
+          5,
+          16
+         ],
+         [
+          10,
+          18
+         ],
+         [
+          15,
+          20
+         ],
+         [
+          20,
+          23
+         ],
+         [
+          25,
+          26
+         ],
+         [
+          30,
+          29
+         ],
+         [
+          35,
+          33
+         ],
+         [
+          40,
+          37
+         ],
+         [
+          45,
+          42
+         ],
+         [
+          50,
+          47
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "longshot": {
+   "name": "Longshot",
+   "officialEffect": "+30% Damage to Far Targets While Aiming",
+   "mod": "mod_Custom_Longshot",
+   "enchantments": [
+    {
+     "enchantment": "ench_Longshot",
+     "effects": [
+      {
+       "effect": "abPerkFortifyDmgFar",
+       "magnitude": 30.0,
+       "durationSeconds": 0
+      }
+     ]
+    }
+   ]
+  },
+  "peacemaker": {
+   "name": "Peacemaker",
+   "officialEffect": "Bonus Explosive Damage Base on CHA",
+   "mod": "mod_Custom_ThePeacemaker",
+   "enchantments": [
+    {
+     "enchantment": "ench_ThePeacemaker",
+     "effects": [
+      {
+       "effect": "abThePeacemaker",
+       "magnitude": 0.0,
+       "durationSeconds": 0,
+       "curve": {
+        "name": "Peacemaker_Bonus",
+        "points": [
+         [
+          1,
+          5
+         ],
+         [
+          15,
+          22
+         ],
+         [
+          30,
+          35
+         ],
+         [
+          60,
+          45
+         ],
+         [
+          100,
+          50
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "the-fact-finder": {
+   "name": "The Fact Finder",
+   "officialEffect": "+15% Damage to Weak Point While Aiming",
+   "mod": "mod_Custom_TheFactFinder",
+   "enchantments": [
+    {
+     "enchantment": "ench_TheFactFinder",
+     "effects": [
+      {
+       "effect": "AbPerkFortifyDmgWeakSpot",
+       "magnitude": 15.0,
+       "durationSeconds": 0
+      }
+     ]
+    }
+   ]
+  },
+  "crowd-control": {
+   "name": "Crowd Control",
+   "officialEffect": "Bleed Damage",
+   "mod": "E08B_mod_Custom_CrowdControl",
+   "enchantments": [
+    {
+     "enchantment": "ench_LegendaryWeapon_Bleed",
+     "effects": [
+      {
+       "effect": "DamageHealthContact",
+       "magnitude": 0.0,
+       "durationSeconds": 10,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier09",
+        "points": [
+         [
+          1,
+          5
+         ],
+         [
+          5,
+          6
+         ],
+         [
+          10,
+          6
+         ],
+         [
+          15,
+          7
+         ],
+         [
+          20,
+          8
+         ],
+         [
+          25,
+          9
+         ],
+         [
+          30,
+          11
+         ],
+         [
+          35,
+          12
+         ],
+         [
+          40,
+          13
+         ],
+         [
+          45,
+          15
+         ],
+         [
+          50,
+          17
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "pirate-punch": {
+   "name": "Pirate Punch",
+   "officialEffect": "+5% Damage per Lockpick Skill",
+   "mod": "E08B_mod_Custom_Blackpowder_PiratePunch",
+   "enchantments": [
+    {
+     "enchantment": "ench_mod_PiratePunch",
+     "effects": [
+      {
+       "effect": "AbPerkFortifyDmgPistolsNonAuto",
+       "magnitude": 0.0,
+       "durationSeconds": 0,
+       "curve": {
+        "name": "PiratePunchBonus",
+        "points": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          20,
+          100
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "the-debilitator": {
+   "name": "The Debilitator",
+   "officialEffect": "+2% Limb Damage per STR",
+   "mod": "E08B_mod_Custom_TheDebilitator",
+   "enchantments": [
+    {
+     "enchantment": "ench_TheDebilitator",
+     "effects": [
+      {
+       "effect": "abTheDebilitator",
+       "magnitude": 0.0,
+       "durationSeconds": 0,
+       "curve": {
+        "name": "Debilitator_Bonus",
+        "points": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          100,
+          200
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "the-farmhand": {
+   "name": "The Farmhand",
+   "officialEffect": "Bonus Melee Damage per END",
+   "mod": "mod_Custom_SuperSledge_TheFarmhand",
+   "enchantments": [
+    {
+     "enchantment": "ench_TheFarmhand",
+     "effects": [
+      {
+       "effect": "abTheFarmhand",
+       "magnitude": 0.0,
+       "durationSeconds": 0,
+       "curve": {
+        "name": "Farmhand_Bonus",
+        "points": [
+         [
+          1,
+          5
+         ],
+         [
+          15,
+          22
+         ],
+         [
+          30,
+          35
+         ],
+         [
+          60,
+          45
+         ],
+         [
+          100,
+          50
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "whacker-smacker": {
+   "name": "Whacker Smacker",
+   "officialEffect": "+5% Power Attack Damage per Onslaught Stack",
+   "mod": "E09B_mod_Custom_WhackerSmacker",
+   "enchantments": [
+    {
+     "enchantment": "ench_mod_WhackerSmacker",
+     "effects": [
+      {
+       "effect": "AbFortifyPowerAttack",
+       "magnitude": 0.0,
+       "durationSeconds": 0,
+       "curve": {
+        "name": "PowerAttackPerOnslaught_WhackerSmacker",
+        "points": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          100,
+          500
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "shattered-grounds": {
+   "name": "Shattered Grounds",
+   "officialEffect": "Bleed Damage",
+   "mod": "mod_custom_ShatteredGrounds_Custom",
+   "enchantments": [
+    {
+     "enchantment": "ench_LegendaryWeapon_Bleed",
+     "effects": [
+      {
+       "effect": "DamageHealthContact",
+       "magnitude": 0.0,
+       "durationSeconds": 10,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier09",
+        "points": [
+         [
+          1,
+          5
+         ],
+         [
+          5,
+          6
+         ],
+         [
+          10,
+          6
+         ],
+         [
+          15,
+          7
+         ],
+         [
+          20,
+          8
+         ],
+         [
+          25,
+          9
+         ],
+         [
+          30,
+          11
+         ],
+         [
+          35,
+          12
+         ],
+         [
+          40,
+          13
+         ],
+         [
+          45,
+          15
+         ],
+         [
+          50,
+          17
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "red-terror": {
+   "name": "Red Terror",
+   "officialEffect": "Fire Damage",
+   "mod": "mod_custom_RedTerror_customName",
+   "enchantments": [
+    {
+     "enchantment": "enchmod_RedTerror_Burning",
+     "effects": [
+      {
+       "effect": "dtFireFlameEffectChanceAlways",
+       "magnitude": 5.0,
+       "durationSeconds": 3,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier09",
+        "points": [
+         [
+          1,
+          5
+         ],
+         [
+          5,
+          6
+         ],
+         [
+          10,
+          6
+         ],
+         [
+          15,
+          7
+         ],
+         [
+          20,
+          8
+         ],
+         [
+          25,
+          9
+         ],
+         [
+          30,
+          11
+         ],
+         [
+          35,
+          12
+         ],
+         [
+          40,
+          13
+         ],
+         [
+          45,
+          15
+         ],
+         [
+          50,
+          17
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "meadow-breeze-sprayer": {
+   "name": "Meadow Breeze Sprayer",
+   "officialEffect": "Sprays Toxic Meadow Breeze",
+   "mod": "Bounty_Mod_Custom_AbraxoGun",
+   "enchantments": [
+    {
+     "enchantment": "crFlamerFireDOT",
+     "effects": [
+      {
+       "effect": "FXFireHitVisuals",
+       "magnitude": 6.0,
+       "durationSeconds": 5,
+       "curve": {
+        "name": "CT_Creatures_Damage_Universal_Tier17",
+        "points": [
+         [
+          1,
+          8
+         ],
+         [
+          12,
+          9
+         ],
+         [
+          23,
+          11
+         ],
+         [
+          34,
+          13
+         ],
+         [
+          45,
+          15
+         ],
+         [
+          56,
+          17
+         ],
+         [
+          67,
+          19
+         ],
+         [
+          78,
+          22
+         ],
+         [
+          89,
+          26
+         ],
+         [
+          100,
+          30
+         ],
+         [
+          111,
+          34
+         ],
+         [
+          122,
+          39
+         ],
+         [
+          133,
+          45
+         ],
+         [
+          144,
+          52
+         ],
+         [
+          155,
+          60
+         ],
+         [
+          166,
+          69
+         ],
+         [
+          177,
+          79
+         ],
+         [
+          188,
+          91
+         ],
+         [
+          199,
+          105
+         ],
+         [
+          210,
+          121
+         ],
+         [
+          221,
+          139
+         ],
+         [
+          232,
+          160
+         ],
+         [
+          243,
+          185
+         ],
+         [
+          254,
+          212
+         ],
+         [
+          265,
+          245
+         ],
+         [
+          276,
+          282
+         ],
+         [
+          287,
+          324
+         ],
+         [
+          298,
+          373
+         ],
+         [
+          309,
+          430
+         ],
+         [
+          320,
+          495
+         ],
+         [
+          331,
+          570
+         ],
+         [
+          342,
+          656
+         ],
+         [
+          353,
+          756
+         ],
+         [
+          364,
+          871
+         ],
+         [
+          375,
+          1003
+         ],
+         [
+          386,
+          1155
+         ],
+         [
+          397,
+          1330
+         ],
+         [
+          408,
+          1533
+         ],
+         [
+          419,
+          1765
+         ],
+         [
+          430,
+          2034
+         ],
+         [
+          441,
+          2343
+         ],
+         [
+          452,
+          2699
+         ],
+         [
+          463,
+          3110
+         ],
+         [
+          474,
+          3583
+         ],
+         [
+          485,
+          4127
+         ],
+         [
+          496,
+          4755
+         ],
+         [
+          507,
+          5479
+         ],
+         [
+          518,
+          6312
+         ],
+         [
+          529,
+          7273
+         ],
+         [
+          540,
+          8379
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "prototype-abx03": {
+   "name": "Prototype ABX03",
+   "officialEffect": "Sprays Burning Meadow Breeze",
+   "mod": "mod_Custom_Plasma_Abraxolator",
+   "enchantments": [
+    {
+     "enchantment": "FlamerFireDOT",
+     "effects": [
+      {
+       "effect": "FXFireHitVisuals",
+       "magnitude": 6.0,
+       "durationSeconds": 5,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier10",
+        "points": [
+         [
+          1,
+          6
+         ],
+         [
+          5,
+          7
+         ],
+         [
+          10,
+          8
+         ],
+         [
+          15,
+          9
+         ],
+         [
+          20,
+          10
+         ],
+         [
+          25,
+          11
+         ],
+         [
+          30,
+          13
+         ],
+         [
+          35,
+          14
+         ],
+         [
+          40,
+          16
+         ],
+         [
+          45,
+          18
+         ],
+         [
+          50,
+          20
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "super-slasher": {
+   "name": "Super Slasher",
+   "officialEffect": "Bleed Damage",
+   "mod": "SDOW_Mod_Custom_SlasherAxe_CustomName",
+   "enchantments": [
+    {
+     "enchantment": "SDOW_EnchLegendaryWeap_SlasherAxeBleeding",
+     "effects": [
+      {
+       "effect": "SDOW_modWeapBleedEffect",
+       "magnitude": 11.0,
+       "durationSeconds": 4,
+       "curve": {
+        "name": "CT_Player_Damage_Universal_Tier14",
+        "points": [
+         [
+          1,
+          11
+         ],
+         [
+          5,
+          12
+         ],
+         [
+          10,
+          14
+         ],
+         [
+          15,
+          16
+         ],
+         [
+          20,
+          18
+         ],
+         [
+          25,
+          20
+         ],
+         [
+          30,
+          23
+         ],
+         [
+          35,
+          26
+         ],
+         [
+          40,
+          29
+         ],
+         [
+          45,
+          33
+         ],
+         [
+          50,
+          37
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  }
+ }
+}
