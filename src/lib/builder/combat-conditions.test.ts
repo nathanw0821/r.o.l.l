@@ -106,6 +106,24 @@ describe("target range", () => {
     expect(normal(input({ equippedPerks: perks }, { onslaughtStacks: 4 }))).toBe(normal(input()));
     expectPlusPct(input({ equippedPerks: perks }, { onslaughtStacks: 4, targetRange: "close" }), 4 * truth.perks["guerrilla-master"].perUnit);
     expect(normal(input({ equippedPerks: perks }, { onslaughtStacks: 0, targetRange: "close" }))).toBe(normal(input()));
+    expect(normal(input({ weaponId: "chainsaw", equippedPerks: perks }, { onslaughtStacks: 4, targetRange: "close" }))).toBe(
+      normal(input({ weaponId: "chainsaw" }, { targetRange: "close" })),
+    );
+  });
+
+  it("Guerrilla Master's '+5 max stacks' raises the Onslaught limit; the bonus counts every held stack", () => {
+    const gm = [{ cardId: "guerrilla-master", rank: 1 }];
+    const per = truth.perks["guerrilla-master"].perUnit;
+    // Alone: base limit 0 + 5 → 12 stacks set, 5 held.
+    expectPlusPct(input({ equippedPerks: gm }, { onslaughtStacks: 12, targetRange: "close" }), 5 * per);
+    expect(sources(input({ equippedPerks: gm }, { onslaughtStacks: 12, targetRange: "close" }))).toContain("Guerrilla Master (5 Onslaught stacks, close range)");
+    expect(sources(input({ equippedPerks: gm }, { onslaughtStacks: 12, targetRange: "close" }))).toContain("Onslaught stack limit");
+    // With Gunslinger Master (+10) the limit is 15: all 12 stacks count, 20 set → 15 held.
+    const both = [...gm, { cardId: "gunslinger-master", rank: 1 }];
+    expectPlusPct(input({ equippedPerks: both }, { onslaughtStacks: 12, targetRange: "close" }), 12 * per);
+    expectPlusPct(input({ equippedPerks: both }, { onslaughtStacks: 20, targetRange: "close" }), 15 * per);
+    // Nothing set: no limit line either.
+    expect(sources(input({ equippedPerks: both }, { onslaughtStacks: 5, targetRange: "close" }))).not.toContain("Onslaught stack limit");
   });
 
   it("Down Ranger is ranged damage at far range only, by rank", () => {
@@ -119,6 +137,47 @@ describe("target range", () => {
     expect(normal(input({ weaponId: "chainsaw", equippedPerks: perks(3) }, { targetRange: "far" }))).toBe(
       normal(input({ weaponId: "chainsaw" }, { targetRange: "far" })),
     );
+  });
+});
+
+describe("Onslaught stack limit (combat-conditions.json `onslaught`)", () => {
+  /** "+N max stacks" from a Patch 70 card's rank-1 text. */
+  const cardCapRaise = (id: string): number => {
+    const card = (perkCards as { id: string; ranks: { description: string }[] }[]).find((c) => c.id === id);
+    if (!card) throw new Error(`card ${id} missing`);
+    return Number.parseInt(/\+(\d+) max stacks/.exec(card.ranks[0].description)?.[1] ?? "NaN", 10);
+  };
+
+  it("base limit 0 (fallout.wiki), card raises mirror the '+N max stacks' texts, 40 in all with Furious and Pounder's", () => {
+    expect(truth.onslaught.baseCap).toBe(0);
+    expect(truth.onslaught.source).toMatch(/fallout\.wiki\/wiki\/Onslaught/);
+    for (const [id, raise] of Object.entries(truth.onslaught.capRaises)) expect(raise, id).toBe(cardCapRaise(id));
+    expect(Object.keys(truth.onslaught.capRaises).sort()).toEqual(["guerrilla-expert", "guerrilla-master", "gunslinger-expert", "gunslinger-master"]);
+    const cardTotal = Object.values(truth.onslaught.capRaises).reduce((a, b) => a + b, 0);
+    expect(cardTotal + 9 + 10).toBe(truth.onslaught.maxCap);
+  });
+
+  it("Furious counts the held stacks: 9 alone, more when a card raises the limit", () => {
+    const furious = [{ slug: "furious" }];
+    const row = (i: CombatFirepowerCalculationInput) => calculateCombatFirepower(i).damagePerShot.breakdown.find((b) => b.source.startsWith("Furious"));
+    expect(row(input({ equippedMods: furious }, { onslaughtStacks: 12 }))?.value).toBe("+45%");
+    expect(row(input({ equippedMods: furious, equippedPerks: [{ cardId: "gunslinger-master", rank: 1 }] }, { onslaughtStacks: 12 }))?.value).toBe("+60%");
+    expect(row(input({ equippedMods: furious, equippedPerks: [{ cardId: "guerrilla-expert", rank: 1 }] }, { onslaughtStacks: 12 }))?.value).toBe("+60%"); // 9 + 3 = 12
+    expect(row(input({ equippedMods: furious, equippedPerks: [{ cardId: "guerrilla-expert", rank: 1 }] }, { onslaughtStacks: 30 }))?.value).toBe("+60%");
+  });
+
+  it("Gunslinger Expert's weak-spot bonus uses the same held stacks (+3 limit alone)", () => {
+    const ws = (perks: { cardId: string; rank: number }[], stacks: number) =>
+      calculateCombatFirepower(input({ equippedPerks: perks }, { onslaughtStacks: stacks, hitLocation: "weakSpot" })).weakSpot.bonusPct;
+    const ge = [{ cardId: "gunslinger-expert", rank: 1 }];
+    expect(ws(ge, 2)).toBeCloseTo(0.02, 6);
+    expect(ws(ge, 10)).toBeCloseTo(0.03, 6);
+    expect(ws([...ge, { cardId: "gunslinger-master", rank: 1 }], 10)).toBeCloseTo(0.1, 6);
+  });
+
+  it("unique innates keep their own pack maxUnits (no shared-limit clamp)", () => {
+    const em = calculateCombatFirepower(input({ weaponId: "elders-mark" }, { onslaughtStacks: 4 }));
+    expect(em.damagePerShot.breakdown.find((b) => b.source.startsWith("Elder's Mark"))?.value).toBe("+8% Crit");
   });
 });
 
@@ -349,7 +408,7 @@ describe("weapon damage type (Pyro-Technician, Cryologist)", () => {
     expectPlusPct(input({ weaponId: "holy-fire", equippedPerks: perks }, { intelligence: 1 }), 0.05);
   });
 
-  it("Pyro-Technician needs Intelligence and a fire weapon; a secondary fire type earns only a note", () => {
+  it("Pyro-Technician needs Intelligence and a fire weapon; a secondary fire type is scaled on its own base", () => {
     const perks = [{ cardId: "pyro-technician", rank: 1 }];
     // No INT given: no number, a note.
     const noInt = calculateCombatFirepower(input({ weaponId: "flamer", equippedPerks: perks }));
@@ -359,17 +418,24 @@ describe("weapon damage type (Pyro-Technician, Cryologist)", () => {
     const rifle = calculateCombatFirepower(input({ equippedPerks: perks }, { intelligence: 15 }));
     expect(rifle.damagePerShot.normal).toBe(normal(input()));
     expect(rifle.damagePerShot.breakdown).toContainEqual({ source: "Pyro-Technician", value: "fire weapons only" });
-    // Shishkebab: physical primary, fire secondary.
-    const kebab = calculateCombatFirepower(input({ weaponId: "shishkebab", equippedPerks: perks }, { intelligence: 15 }));
-    expect(kebab.damagePerShot.normal).toBe(normal(input({ weaponId: "shishkebab" }, { intelligence: 15 })));
-    expect(kebab.damagePerShot.breakdown).toContainEqual({ source: "Pyro-Technician", value: "secondary fire damage not modelled" });
+    // Shishkebab: physical primary (untouched), fire secondary (scaled). STR 0 keeps the melee pool at 0.
+    const kebab = calculateCombatFirepower(input({ weaponId: "shishkebab", equippedPerks: perks }, { intelligence: 15, strength: 0 }));
+    const v = interpolateByInt(truth.perks["pyro-technician"].byInt, 15);
+    const base = WEAPON_COMBAT_BASE_CATALOG.shishkebab;
+    expect(kebab.damagePerShot.secondary).toBe(Math.round((base.secondaryDamage ?? 0) * (1 + v)));
+    expect(kebab.damagePerShot.normal).toBe(base.baseDamage + Math.round((base.secondaryDamage ?? 0) * (1 + v)));
+    expect(kebab.damagePerShot.breakdown).toContainEqual({ source: "Pyro-Technician (INT 15, approx., secondary)", value: `+${Math.round(v * 1000) / 10}% fire` });
   });
 
-  it("Cryologist: no catalog weapon has cryo as primary damage yet, the Cold Shoulder gets the secondary note", () => {
+  it("Cryologist: no catalog weapon has cryo as primary damage yet; the Cold Shoulder's secondary cryo is scaled", () => {
     const perks = [{ cardId: "cryologist", rank: 1 }];
     const cs = calculateCombatFirepower(input({ weaponId: "cold-shoulder", equippedPerks: perks }, { intelligence: 15 }));
-    expect(cs.damagePerShot.normal).toBe(normal(input({ weaponId: "cold-shoulder" })));
-    expect(cs.damagePerShot.breakdown).toContainEqual({ source: "Cryologist", value: "secondary cryo damage not modelled" });
+    const plain = calculateCombatFirepower(input({ weaponId: "cold-shoulder" }, { intelligence: 15 }));
+    const v = interpolateByInt(truth.perks.cryologist.byInt, 15);
+    const cryo = WEAPON_COMBAT_BASE_CATALOG["cold-shoulder"].secondaryDamage ?? 0;
+    expect(cs.damagePerShot.normal - (cs.damagePerShot.secondary ?? 0)).toBe(plain.damagePerShot.normal - (plain.damagePerShot.secondary ?? 0));
+    expect(cs.damagePerShot.secondary).toBe(Math.round(cryo * (1 + v)));
+    expect(cs.damagePerShot.breakdown).toContainEqual({ source: "Cryologist (INT 15, approx., secondary)", value: `+${Math.round(v * 1000) / 10}% cryo` });
     expect(calculateCombatFirepower(input({ weaponId: "flamer", equippedPerks: perks }, { intelligence: 15 })).damagePerShot.breakdown).toContainEqual({
       source: "Cryologist",
       value: "cryo weapons only",

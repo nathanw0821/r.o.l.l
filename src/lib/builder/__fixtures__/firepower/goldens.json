@@ -3711,11 +3711,12 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 156,
-        "critical": 262,
+        "normal": 429,
+        "secondary": 273,
+        "critical": 535,
         "explosiveBonus": 26,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 455,
+        "activeShotDamage": 455,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -3728,6 +3729,10 @@
           {
             "source": "Two Shot (+75% Base, Patch 60)",
             "value": "+75%"
+          },
+          {
+            "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
+            "value": "+273"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3747,9 +3752,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 273,
-        "criticalCycleDPS": 333,
-        "activeDPS": 273,
+        "burstDPS": 683,
+        "criticalCycleDPS": 743,
+        "activeDPS": 683,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3816,13 +3821,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4169,
-        "normalLanded": 23,
-        "criticalLanded": 37,
-        "burstDPSLanded": 35,
-        "criticalCycleDPSLanded": 45,
-        "activeDPSLanded": 35
+        "armorMitigationPct": 42,
+        "mitigationRatio": 0.5825,
+        "normalLanded": 80,
+        "criticalLanded": 99,
+        "burstDPSLanded": 120,
+        "criticalCycleDPSLanded": 134,
+        "activeDPSLanded": 120
       }
     },
     "earle-williams": {
@@ -3846,11 +3851,12 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 156,
-        "critical": 262,
+        "normal": 429,
+        "secondary": 273,
+        "critical": 535,
         "explosiveBonus": 26,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 455,
+        "activeShotDamage": 455,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -3863,6 +3869,10 @@
           {
             "source": "Two Shot (+75% Base, Patch 60)",
             "value": "+75%"
+          },
+          {
+            "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
+            "value": "+273"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3882,9 +3892,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 273,
-        "criticalCycleDPS": 333,
-        "activeDPS": 273,
+        "burstDPS": 683,
+        "criticalCycleDPS": 743,
+        "activeDPS": 683,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3951,13 +3961,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4169,
-        "normalLanded": 15,
-        "criticalLanded": 25,
-        "burstDPSLanded": 23,
-        "criticalCycleDPSLanded": 30,
-        "activeDPSLanded": 23
+        "armorMitigationPct": 42,
+        "mitigationRatio": 0.5825,
+        "normalLanded": 53,
+        "criticalLanded": 66,
+        "burstDPSLanded": 80,
+        "criticalCycleDPSLanded": 89,
+        "activeDPSLanded": 80
       }
     },
     "ultracite-titan": {
@@ -3981,11 +3991,12 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 156,
-        "critical": 262,
+        "normal": 429,
+        "secondary": 273,
+        "critical": 535,
         "explosiveBonus": 26,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 455,
+        "activeShotDamage": 455,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -3998,6 +4009,10 @@
           {
             "source": "Two Shot (+75% Base, Patch 60)",
             "value": "+75%"
+          },
+          {
+            "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
+            "value": "+273"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -4017,9 +4032,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 273,
-        "criticalCycleDPS": 333,
-        "activeDPS": 273,
+        "burstDPS": 683,
+        "criticalCycleDPS": 743,
+        "activeDPS": 683,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4086,13 +4101,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 61,
-        "mitigationRatio": 0.39409999999999995,
-        "normalLanded": 18,
-        "criticalLanded": 29,
-        "burstDPSLanded": 27,
-        "criticalCycleDPSLanded": 35,
-        "activeDPSLanded": 27
+        "armorMitigationPct": 45,
+        "mitigationRatio": 0.5506,
+        "normalLanded": 63,
+        "criticalLanded": 78,
+        "burstDPSLanded": 95,
+        "criticalCycleDPSLanded": 106,
+        "activeDPSLanded": 95
       }
     },
     "level-100-super-mutant": {
@@ -4116,11 +4131,12 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 156,
-        "critical": 262,
+        "normal": 429,
+        "secondary": 273,
+        "critical": 535,
         "explosiveBonus": 26,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 455,
+        "activeShotDamage": 455,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4133,6 +4149,10 @@
           {
             "source": "Two Shot (+75% Base, Patch 60)",
             "value": "+75%"
+          },
+          {
+            "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
+            "value": "+273"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -4152,9 +4172,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 273,
-        "criticalCycleDPS": 333,
-        "activeDPS": 273,
+        "burstDPS": 683,
+        "criticalCycleDPS": 743,
+        "activeDPS": 683,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4221,13 +4241,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 53,
-        "mitigationRatio": 0.47490000000000004,
-        "normalLanded": 86,
-        "criticalLanded": 142,
-        "burstDPSLanded": 129,
-        "criticalCycleDPSLanded": 171,
-        "activeDPSLanded": 129
+        "armorMitigationPct": 34,
+        "mitigationRatio": 0.6635,
+        "normalLanded": 302,
+        "criticalLanded": 377,
+        "burstDPSLanded": 453,
+        "criticalCycleDPSLanded": 509,
+        "activeDPSLanded": 453
       }
     },
     "raw-unarmored": {
@@ -4251,11 +4271,12 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 156,
-        "critical": 262,
+        "normal": 429,
+        "secondary": 273,
+        "critical": 535,
         "explosiveBonus": 26,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 455,
+        "activeShotDamage": 455,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4268,6 +4289,10 @@
           {
             "source": "Two Shot (+75% Base, Patch 60)",
             "value": "+75%"
+          },
+          {
+            "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
+            "value": "+273"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -4287,9 +4312,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 273,
-        "criticalCycleDPS": 333,
-        "activeDPS": 273,
+        "burstDPS": 683,
+        "criticalCycleDPS": 743,
+        "activeDPS": 683,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4358,11 +4383,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 180,
-        "criticalLanded": 259,
-        "burstDPSLanded": 270,
-        "criticalCycleDPSLanded": 329,
-        "activeDPSLanded": 270
+        "normalLanded": 450,
+        "criticalLanded": 530,
+        "burstDPSLanded": 675,
+        "criticalCycleDPSLanded": 735,
+        "activeDPSLanded": 675
       }
     }
   },

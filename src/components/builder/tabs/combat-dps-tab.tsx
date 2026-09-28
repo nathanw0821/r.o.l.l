@@ -17,9 +17,21 @@ export type CombatDpsTabProps = {
   targetRange?: CombatTargetRange;
   /** A Ghoul Glow card is contributing (engine result `glow`); card 1 shows a "☢ Glow" chip. */
   glowActive?: boolean;
+  /** Target dummy the engine call ran against; the matrix's selector changes it for the whole call. */
+  targetDummyId?: string;
+  onTargetDummyChange?: (dummyId: string) => void;
 };
 
-export default function CombatDpsTab({ active, weaponFirepowerResult, weaponLabel, hitLocation, targetRange, glowActive }: CombatDpsTabProps) {
+export default function CombatDpsTab({
+  active,
+  weaponFirepowerResult,
+  weaponLabel,
+  hitLocation,
+  targetRange,
+  glowActive,
+  targetDummyId,
+  onTargetDummyChange,
+}: CombatDpsTabProps) {
   return (
 <div className={cn("space-y-4 animate-in fade-in duration-200", active ? "block" : "hidden")}>
   {weaponFirepowerResult ? (
@@ -30,7 +42,14 @@ export default function CombatDpsTab({ active, weaponFirepowerResult, weaponLabe
           <Link href="/build?tab=gear" className="text-amber-300 hover:underline">Change the weapon in the Gear tab</Link>
         </p>
       ) : null}
-      <BuilderFirepowerMatrix firepower={weaponFirepowerResult} hitLocation={hitLocation} targetRange={targetRange} glowActive={glowActive} />
+      <BuilderFirepowerMatrix
+        firepower={weaponFirepowerResult}
+        hitLocation={hitLocation}
+        targetRange={targetRange}
+        glowActive={glowActive}
+        targetDummyId={targetDummyId}
+        onTargetDummyChange={onTargetDummyChange}
+      />
     </>
   ) : (
     <div className="rounded-xl border border-slate-800 bg-slate-950/90 p-8 text-center text-slate-400 font-mono space-y-3">

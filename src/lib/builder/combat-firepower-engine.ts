@@ -289,6 +289,8 @@ const CC = combatConditionsTruth as {
     "science-monster": { byRank: number[] };
   };
   glow: { highThresholdPct: number };
+  /** Onslaught stack limit: base cap plus the "+N max stacks" of each equipped card (fallout.wiki Onslaught page). */
+  onslaught: { baseCap: number; maxCap: number; capRaises: Record<string, number> };
 };
 const byRank = (ranks: number[], rank: number): number => ranks[Math.min(ranks.length, Math.max(0, rank)) - 1] ?? 0;
 
@@ -420,6 +422,11 @@ export type CombatFirepowerResult = {
   firingModeLabel: string;
   damagePerShot: {
     normal: number;
+    /**
+     * Catalog `secondaryDamage` (Cremator burn, Shishkebab fire) after the same additive pool, already
+     * counted inside `normal`. Present only for weapons that carry a secondary damage number.
+     */
+    secondary?: number;
     critical: number;
     explosiveBonus: number;
     totalPerShot: number;
@@ -963,27 +970,59 @@ export function calculateCombatFirepower(
   }
 
   // Onslaught stacks only matter through the effects that spend them (Gleaming Depths rework):
-  // Furious 1★ +5% per stack (max 9), Pounder's 4★ melee +10% per stack (max 10),
-  // Guerrilla Master +5% ranged damage to close enemies per stack (max 5).
+  // Furious 1★ +5% per stack, Pounder's 4★ melee +10% per stack, Guerrilla Master +5% ranged
+  // damage to close enemies per stack, Gunslinger Expert +1% weak-spot damage per stack (below).
+  //
+  // Stack limit (combat-conditions.json `onslaught`, fallout.wiki Onslaught page): the base
+  // limit is 0 and every equipped source adds its "+N max stacks" to it, additively, so the
+  // stacks a build can hold are min(slider, base + Σ raises). The card raises come from the
+  // pack, Furious (+9) and Pounder's (+10) from legendary-effect-model.json `maxStacks`. The
+  // perk cards and the two legendary effects all count the same held stacks (no per-effect
+  // cap); unique innates keep their own pack `maxUnits` (their pack does not say whether the
+  // weapon itself lets the player hold stacks).
   const onslaughtStacks = Math.max(0, input.playerStats.onslaughtStacks || 0);
   const onslaughtModSlugs = new Set(
     (input.equippedMods || []).filter((m) => m && typeof m.slug === "string").map((m) => (m as { slug: string }).slug.toLowerCase())
   );
+  const hasGuerrillaMaster = (perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0) > 0;
+  const onslaughtCapSources: string[] = [];
+  let onslaughtCap = CC.onslaught.baseCap;
+  for (const [cardId, raise] of Object.entries(CC.onslaught.capRaises)) {
+    const equipped = cardId === "guerrilla-master" ? hasGuerrillaMaster : (perkRanks.get(cardId) || 0) > 0;
+    if (!equipped) continue;
+    onslaughtCap += raise;
+    onslaughtCapSources.push(`${cardId} +${raise}`);
+  }
+  if (onslaughtModSlugs.has("furious")) {
+    onslaughtCap += LEG.furiousMaxStacks;
+    onslaughtCapSources.push(`furious +${LEG.furiousMaxStacks}`);
+  }
+  if (onslaughtModSlugs.has("pounders")) {
+    onslaughtCap += LEG.poundersMaxStacks;
+    onslaughtCapSources.push(`pounders +${LEG.poundersMaxStacks}`);
+  }
+  onslaughtCap = Math.min(CC.onslaught.maxCap, onslaughtCap);
+  /** Stacks the build can actually hold: the slider clamped to the additive limit. */
+  const onslaughtStacksHeld = Math.min(onslaughtStacks, onslaughtCap);
+  if (onslaughtStacks > 0 && onslaughtCap > 0 && onslaughtStacks > onslaughtCap) {
+    breakdown.push({ source: "Onslaught stack limit", value: `${onslaughtCap} (${onslaughtCapSources.join(", ")}); ${onslaughtStacks} set` });
+  }
   if (onslaughtStacks > 0) {
     if (onslaughtModSlugs.has("furious")) {
-      const st = Math.min(LEG.furiousMaxStacks, onslaughtStacks);
+      const st = onslaughtStacksHeld;
       additiveDamagePct += st * LEG.furiousPerStack;
       breakdown.push({ source: `Furious 1★ (${st} Onslaught stacks)`, value: `+${Math.round(st * LEG.furiousPerStack * 100)}%` });
     }
     if (onslaughtModSlugs.has("pounders") && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
-      const st = Math.min(LEG.poundersMaxStacks, onslaughtStacks);
+      const st = onslaughtStacksHeld;
       additiveDamagePct += st * LEG.poundersPerStack;
       breakdown.push({ source: `Pounder's 4★ (${st} Onslaught stacks)`, value: `+${Math.round(st * LEG.poundersPerStack * 100)}%` });
     }
-    // Guerrilla Master (combat-conditions.json): ranged damage to close enemies per stack. Like
-    // Guerrilla it needs the target-range state; the pre-existing 5-stack cap is kept (unverified).
-    if ((perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0) > 0 && base.isRanged && targetRange === "close") {
-      const st = Math.min(5, onslaughtStacks);
+    // Guerrilla Master (combat-conditions.json): ranged damage to close enemies per held stack.
+    // Like Guerrilla it needs the target-range state. The card's "+5 max stacks" raises the
+    // limit (counted above); it is not a 5-stack cap on this bonus.
+    if (hasGuerrillaMaster && base.isRanged && targetRange === "close" && onslaughtStacksHeld > 0) {
+      const st = onslaughtStacksHeld;
       const gm = st * CC.perks["guerrilla-master"].perUnit;
       additiveDamagePct += gm;
       breakdown.push({ source: `Guerrilla Master (${st} Onslaught stacks, close range)`, value: `+${Math.round(gm * 100)}%` });
@@ -1226,27 +1265,37 @@ export function calculateCombatFirepower(
     breakdown.push({ source: `Number Cruncher (${vatsApCost} AP per shot)`, value: `+${Math.round(v * 100)}%` });
   }
 
-  // Damage type (Pyro-Technician, Cryologist): INT-scaled bonus to the weapon's primary damage
-  // type, read off the fallout.wiki rows in combat-conditions.json. The engine carries one damage
-  // number per weapon, so a matching secondary type (Shishkebab fire, Cold Shoulder cryo) earns a
-  // note and no number.
+  // Damage type (Pyro-Technician, Cryologist): INT-scaled bonus to the damage of the matching
+  // type, read off the fallout.wiki rows in combat-conditions.json. The primary base gets it
+  // through the shared pool; a matching secondary base (Shishkebab fire, Cold Shoulder cryo) gets
+  // it in its own pool below (combat-conditions.json `secondaryDamage`).
+  const hasSecondary = (base.secondaryDamage ?? 0) > 0 && base.secondaryDamageType !== undefined;
+  let primaryIntTypeBonus = 0;
+  let secondaryIntTypeBonus = 0;
   for (const id of ["pyro-technician", "cryologist"] as const) {
     if ((perkRanks.get(id) || 0) === 0) continue;
     const model = CC.perks[id];
     const label = id === "pyro-technician" ? "Pyro-Technician" : "Cryologist";
-    if (base.damageType === model.damageType) {
-      const int = input.playerStats.intelligence;
-      if (int === undefined) {
-        breakdown.push({ source: label, value: "needs Intelligence" });
-      } else {
-        const v = interpolateByInt(model.byInt, int);
-        additiveDamagePct += v;
-        breakdown.push({ source: `${label} (INT ${int}, approx.)`, value: `+${Math.round(v * 1000) / 10}% ${model.damageType}` });
-      }
-    } else if (base.secondaryDamageType === model.damageType) {
-      breakdown.push({ source: label, value: `secondary ${model.damageType} damage not modelled` });
-    } else {
+    const onPrimary = base.damageType === model.damageType;
+    const onSecondary = hasSecondary && base.secondaryDamageType === model.damageType;
+    if (!onPrimary && !onSecondary) {
       breakdown.push({ source: label, value: `${model.damageType} weapons only` });
+      continue;
+    }
+    const int = input.playerStats.intelligence;
+    if (int === undefined) {
+      breakdown.push({ source: label, value: "needs Intelligence" });
+      continue;
+    }
+    const v = interpolateByInt(model.byInt, int);
+    if (onPrimary) {
+      primaryIntTypeBonus += v;
+      additiveDamagePct += v;
+      breakdown.push({ source: `${label} (INT ${int}, approx.)`, value: `+${Math.round(v * 1000) / 10}% ${model.damageType}` });
+    }
+    if (onSecondary) {
+      secondaryIntTypeBonus += v;
+      breakdown.push({ source: `${label} (INT ${int}, approx., secondary)`, value: `+${Math.round(v * 1000) / 10}% ${model.damageType}` });
     }
   }
 
@@ -1326,8 +1375,9 @@ export function calculateCombatFirepower(
     weakSpotBonusPct += v;
     weakSpotBreakdown.push({ source: `Gunslinger (Rank ${gunslingerRank})`, value: `+${Math.round(v * 100)}%` });
   }
+  // Gunslinger Expert: +1% per held Onslaught stack; its "+3 max stacks" raises the shared limit above.
   const gunslingerExpertRank = perkRanks.get("gunslinger-expert") || 0;
-  const wsOnslaught = Math.max(0, input.playerStats.onslaughtStacks || 0);
+  const wsOnslaught = onslaughtStacksHeld;
   if (base.isRanged && gunslingerExpertRank > 0 && wsOnslaught > 0) {
     const v = wsOnslaught * WS.perks["gunslinger-expert"].perUnit;
     weakSpotBonusPct += v;
@@ -1376,12 +1426,35 @@ export function calculateCombatFirepower(
   // primary in this engine adds to BASE (additiveDamagePct is a fraction; the calculator takes
   // percent). The multiplicative list is intentionally empty: sneak attack, Nocturnal and
   // Stalker's stay linearised into the additive pool for parity (tracked as a follow-up).
-  const normalDamage = Math.round(
+  const primaryDamage = Math.round(
     calculatePaperDamage(base.baseDamage, additiveDamagePct * 100, [
       ...(tenderizerMultiplier > 1 ? [(tenderizerMultiplier - 1) * 100] : []),
       ...(weakSpotMultiplier !== 1 ? [(weakSpotMultiplier - 1) * 100] : []),
     ])
   );
+
+  // Secondary damage (catalog `secondaryDamage`: Cremator burn, Shishkebab fire, Cold Shoulder
+  // cryo …), rule in combat-conditions.json `secondaryDamage`. It is a second BASE: it takes the
+  // same additive pool as the primary (class perks, legendary primaries, chems, mutations,
+  // sneak) with the INT damage-type perk swapped for its own type, and the Tenderizer target
+  // debuff. It takes no body-part multiplier (the weak-spot table is a hit-location multiplier;
+  // the secondary is elemental / over-time damage the engine cannot place on a limb), no crit
+  // bonus (the engine's V.A.T.S. crit bonus is base × critBonusPct on the primary only) and no
+  // explosive fraction. Each base is rounded once, then they add up into `normal`.
+  let secondaryDamage = 0;
+  if (hasSecondary) {
+    const secondaryPool = additiveDamagePct - primaryIntTypeBonus + secondaryIntTypeBonus;
+    secondaryDamage = Math.round(
+      calculatePaperDamage(base.secondaryDamage ?? 0, secondaryPool * 100, [
+        ...(tenderizerMultiplier > 1 ? [(tenderizerMultiplier - 1) * 100] : []),
+      ])
+    );
+    breakdown.push({
+      source: `Secondary ${base.secondaryDamageType} damage (${base.secondaryDamage} base, same additive pool, no body-part or crit multiplier)`,
+      value: `+${secondaryDamage}`,
+    });
+  }
+  const normalDamage = primaryDamage + secondaryDamage;
 
   // Explosive Area Damage
   let explosiveDamage = 0;
@@ -1485,7 +1558,8 @@ export function calculateCombatFirepower(
   }
 
   // The body-part multiplier applies to the whole hit, so the crit bonus is scaled by it too;
-  // explosive splash is area damage and takes no body-part multiplier.
+  // explosive splash is area damage and takes no body-part multiplier. The crit bonus is on the
+  // primary base only: the secondary damage inside `normalDamage` earns no crit bonus.
   const criticalDamage = normalDamage + Math.round(base.baseDamage * critBonusPct * weakSpotMultiplier) + explosiveDamage;
 
   // 5. Fire Rate & DPS
@@ -1722,6 +1796,7 @@ export function calculateCombatFirepower(
     firingModeLabel,
     damagePerShot: {
       normal: normalDamage,
+      ...(hasSecondary ? { secondary: secondaryDamage } : {}),
       critical: criticalDamage,
       explosiveBonus: explosiveDamage,
       totalPerShot: normalDamage + explosiveDamage,

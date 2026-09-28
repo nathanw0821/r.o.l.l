@@ -180,6 +180,9 @@ export default function BuilderExperimentClient({
 
   const { map: localProgress } = useLocalProgress(true);
   const [weaponSubMenu, setWeaponSubMenu] = React.useState<"attachments" | "stars" | "matrix">("attachments");
+  // One target dummy for the whole firepower call: weak-spot multiplier, Exterminator penetration
+  // and the landed numbers all read it (the matrix's selector used to re-run only the mitigation).
+  const [targetDummyId, setTargetDummyId] = React.useState<string>("scorchbeast-queen");
   const isCompactDensity = useDensityCompact();
   const [isComparisonOpen, setIsComparisonOpen] = React.useState(false);
   // Scoped gear picker (one category at a time), opened from the Chassis Bay.
@@ -303,6 +306,7 @@ export default function BuilderExperimentClient({
     const targetWeapon = activeWeaponPiece;
     return calculateCombatFirepower({
       weaponId: targetWeapon.id,
+      targetDummyId,
       weaponCrafting: payload.weaponCrafting,
       equippedMods: equippedModsOrdered,
       equippedPerks: equippedPerkCards,
@@ -361,6 +365,7 @@ export default function BuilderExperimentClient({
     });
   }, [
     activeWeaponPiece,
+    targetDummyId,
     payload.weaponCrafting,
     equippedModsOrdered,
     equippedPerkCards,
@@ -911,6 +916,8 @@ export default function BuilderExperimentClient({
         hitLocation={resolveHitLocation(switchboardState?.combatStance)}
         targetRange={resolveTargetRange(switchboardState?.combatStance)}
         glowActive={Boolean(weaponFirepowerResult?.glow)}
+        targetDummyId={targetDummyId}
+        onTargetDummyChange={setTargetDummyId}
       />
 
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}

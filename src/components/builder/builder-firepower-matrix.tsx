@@ -36,6 +36,13 @@ interface BuilderFirepowerMatrixProps {
   targetRange?: CombatTargetRange;
   /** A Ghoul Glow card contributed to the numbers (engine result `glow`); off shows no chip. */
   glowActive?: boolean;
+  /**
+   * Target dummy the whole engine call was run against (weak-spot multiplier, Exterminator, mitigation).
+   * When given with `onTargetDummyChange` the selector is controlled by the client; without it the
+   * selector only re-runs the mitigation card locally.
+   */
+  targetDummyId?: string;
+  onTargetDummyChange?: (dummyId: string) => void;
 }
 
 export default function BuilderFirepowerMatrix({
@@ -43,10 +50,14 @@ export default function BuilderFirepowerMatrix({
   hitLocation = "body",
   targetRange = "mid",
   glowActive = false,
+  targetDummyId,
+  onTargetDummyChange,
 }: BuilderFirepowerMatrixProps) {
-  const [selectedDummyId, setSelectedDummyId] = React.useState<string>(
+  const [localDummyId, setLocalDummyId] = React.useState<string>(
     firepower.targetDummy?.dummy?.id || "scorchbeast-queen"
   );
+  const selectedDummyId = targetDummyId ?? localDummyId;
+  const setSelectedDummyId = onTargetDummyChange ?? setLocalDummyId;
   const {
     baseStats,
     damagePerShot,
@@ -58,7 +69,10 @@ export default function BuilderFirepowerMatrix({
     armorPenetration,
   } = firepower;
 
+  // The engine result already carries the mitigation for its own dummy; only a locally
+  // selected other dummy needs a re-run.
   const dummyCalc = React.useMemo(() => {
+    if (firepower.targetDummy?.dummy?.id === selectedDummyId) return firepower.targetDummy;
     return calculateTargetMitigation(firepower, selectedDummyId);
   }, [firepower, selectedDummyId]);
 
@@ -144,6 +158,11 @@ export default function BuilderFirepowerMatrix({
                 <span className="text-xs text-slate-400">Normal Shot:</span>
                 <span className="text-lg font-black text-white">
                   {damagePerShot.normal}
+                  {damagePerShot.secondary !== undefined && baseStats.secondaryDamageType && (
+                    <span className="text-2xs font-bold text-orange-300 ml-1" title="Secondary damage, counted in the normal shot; same perk pool, no weak-spot or crit multiplier">
+                      (incl. {damagePerShot.secondary} {baseStats.secondaryDamageType})
+                    </span>
+                  )}
                   {damagePerShot.explosiveBonus > 0 && (
                     <span className="text-xs font-bold text-amber-400 ml-1">
                       (+{damagePerShot.explosiveBonus} Exp)
@@ -341,16 +360,17 @@ export default function BuilderFirepowerMatrix({
               </span>
             </div>
 
-            {/* Target Selectors */}
-            <div className="flex flex-wrap items-center gap-1">
+            {/* Target Selectors: one dummy for the whole engine call (weak spot, Exterminator, mitigation) */}
+            <div role="group" aria-label="Target dummy" className="flex flex-wrap items-center gap-1">
               {TARGET_DUMMY_LIST.map((dummy) => {
                 const isActive = dummy.id === selectedDummyId;
                 return (
                   <button
                     key={dummy.id}
                     type="button"
+                    aria-pressed={isActive}
                     onClick={() => setSelectedDummyId(dummy.id)}
-                    className={`px-2.5 py-1 rounded text-2xs font-bold uppercase tracking-wider transition-all ${
+                    className={`px-2.5 py-1 touch:min-h-11 rounded text-2xs font-bold uppercase tracking-wider transition-all ${
                       isActive
                         ? "bg-rose-600 text-white shadow-[0_0_10px_rgba(244,63,94,0.4)] border border-rose-400"
                         : "bg-slate-800/80 text-slate-400 border border-slate-700/60 hover:text-slate-200 hover:bg-slate-700/60"
