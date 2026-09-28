@@ -75,4 +75,12 @@ describe("calculateVitalsSheet", () => {
     expect(r.carryWeight).toBe(225 + 40 + 20);
     expect(r.moveSpeedPct).toBe(40); // Gun Runner 20 + Squad 20; Portable Power needs power armor
   });
+
+  it("over-encumbered adds the AP-drain line to the carry-weight breakdown without changing the number", () => {
+    const normal = calculateVitalsSheet(base());
+    const over = calculateVitalsSheet(base({ isOverEncumbered: true }));
+    expect(over.carryWeight).toBe(normal.carryWeight);
+    expect(normal.lines.carryWeight.some((l) => /Over-encumbered/.test(l.source))).toBe(false);
+    expect(over.lines.carryWeight).toContainEqual({ source: "Over-encumbered: moving drains AP like sprinting", value: "on" });
+  });
 });

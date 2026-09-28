@@ -373,6 +373,9 @@ export default function BuilderExperimentClient({
   ]);
 
 
+  // Card ids the switchboard's Diseased / Over-encumbered hints look up (names only when equipped).
+  const equippedPerkIds = React.useMemo(() => equippedPerkCards.map((c) => c.cardId), [equippedPerkCards]);
+
   // Vitals rows for the HUD and the Biometrics band (vitals-sheet.ts).
   const vitals = React.useMemo(() => {
     const overeatersPieces = equippedModsOrdered.filter(
@@ -395,6 +398,7 @@ export default function BuilderExperimentClient({
       glowPct: switchboardState?.glowPct ?? 0,
       rangedWeaponEquipped: activeWeaponPiece.weaponSub !== "melee",
       isDiseased: Boolean(switchboardState?.isDiseased),
+      isOverEncumbered: Boolean(switchboardState?.isOverEncumbered),
     });
   }, [equippedModsOrdered, statsBand.special, equippedPerkCards, totals.hp, totals.apRegen, totals.carryWeight, defensiveProfile, weaponFirepowerResult, payload.ghoul, isPA, switchboardState, activeWeaponPiece.weaponSub]);
   const statsBandWithVitals = React.useMemo(
@@ -895,6 +899,7 @@ export default function BuilderExperimentClient({
         onArmorModeChange={(nextPA) => setArmorMode(nextPA ? "powerArmor" : "regular")}
         statsBand={statsBandWithVitals}
         isCompactDensity={isCompactDensity}
+        equippedPerkIds={equippedPerkIds}
       />
 
 

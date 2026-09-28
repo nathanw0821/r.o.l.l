@@ -51,9 +51,12 @@ import {
   type IncomingDamageType,
 } from "@/lib/builder/perk-defensive-layer";
 import combatConditions from "@/data/truth/combat-conditions.json";
+import { equippedSwitchPerkNames } from "@/lib/builder/switch-perk-hints";
 
 /** Glow meter reading that counts as "Glow high" for the Ghoul cards (combat-conditions.json `glow`). */
 const GLOW_HIGH_THRESHOLD_PCT: number = combatConditions.glow.highThresholdPct;
+
+const NO_PERK_IDS: string[] = [];
 
 export type CombatSwitchboardState = {
   isGhoul?: boolean;
@@ -69,6 +72,8 @@ export type CombatSwitchboardState = {
   hasGhoulTeammate?: boolean;
   /** Carrying a disease: Iron Stomach, Natural Resistance and Thirst Quencher switch off. */
   isDiseased?: boolean;
+  /** Above max carry weight: Evasive is off and moving drains AP like sprinting. */
+  isOverEncumbered?: boolean;
   timeOfDay?: "day" | "night";
   addictionsCount?: number;
   adrenalineStacks?: number;
@@ -361,6 +366,8 @@ interface BuilderCombatSwitchboardProps {
   playerResists?: { dr: number; er: number };
   readOnly?: boolean;
   initialState?: Partial<CombatSwitchboardState>;
+  /** Equipped perk card ids: the Vitals switches name the equipped cards they change. */
+  equippedPerkIds?: string[];
 }
 
 export default function BuilderCombatSwitchboard({
@@ -384,7 +391,10 @@ export default function BuilderCombatSwitchboard({
   playerResists,
   readOnly = false,
   initialState,
+  equippedPerkIds = NO_PERK_IDS,
 }: BuilderCombatSwitchboardProps) {
+  const diseasedPerkNames = equippedSwitchPerkNames("diseased", equippedPerkIds);
+  const overEncumberedPerkNames = equippedSwitchPerkNames("overEncumbered", equippedPerkIds);
   const isCarnivore = activeMutations.includes("carnivore");
   const isHerbivore = activeMutations.includes("herbivore");
 
@@ -467,6 +477,7 @@ export default function BuilderCombatSwitchboard({
       teamState: "casual",
       hasMutatedTeammate: true,
       isDiseased: false,
+      isOverEncumbered: false,
       timeOfDay: "day",
       addictionsCount: 0,
       adrenalineStacks: 0,
@@ -608,6 +619,7 @@ export default function BuilderCombatSwitchboard({
     }
   }, [initialState]);
 
+  const vitalsHintId = React.useId();
   const updateField = <K extends keyof CombatSwitchboardState>(key: K, val: CombatSwitchboardState[K]) => {
     if (readOnly) return;
     isInternalChangeRef.current = true;
@@ -915,7 +927,7 @@ export default function BuilderCombatSwitchboard({
             id="vitals"
             title="Vitals"
             icon={<Heart className="h-3.5 w-3.5" />}
-            summary={`HP ${switchboard.healthPct}% · ${isGhoul ? `Glow ${switchboard.glowPct || 0}%` : `Rads ${switchboard.radsPct || 0}%`} · ${currentTeamDef.label}${switchboard.isDiseased ? " · Diseased" : ""}`}
+            summary={`HP ${switchboard.healthPct}% · ${isGhoul ? `Glow ${switchboard.glowPct || 0}%` : `Rads ${switchboard.radsPct || 0}%`} · ${currentTeamDef.label}${switchboard.isDiseased ? " · Diseased" : ""}${switchboard.isOverEncumbered ? " · Over-encumbered" : ""}`}
             open={openGroups.has("vitals")}
             onToggle={() => toggleGroup("vitals")}
           >
@@ -1342,16 +1354,44 @@ export default function BuilderCombatSwitchboard({
             )}
 
             {/* Disease switch: sits beside Food / Thirst; Iron Stomach, Natural Resistance and Thirst Quencher read it */}
-            <label className="md:col-span-2 flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 min-h-9 touch:min-h-11 cursor-pointer text-2xs">
-              <input
-                type="checkbox"
-                checked={Boolean(switchboard.isDiseased)}
-                onChange={(e) => updateField("isDiseased", e.target.checked)}
-                className="rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-0 cursor-pointer"
-              />
-              <span className="font-bold uppercase text-rose-300">Diseased</span>
-              <span className="text-dim">Iron Stomach, Natural Resistance and Thirst Quencher switch off while diseased</span>
-            </label>
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-2xs">
+              <label className="flex items-center gap-2 min-h-9 touch:min-h-11 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={Boolean(switchboard.isDiseased)}
+                  onChange={(e) => updateField("isDiseased", e.target.checked)}
+                  aria-describedby={diseasedPerkNames.length ? `${vitalsHintId}-diseased` : undefined}
+                  className="rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-0 cursor-pointer"
+                />
+                <span className="font-bold uppercase text-rose-300">Diseased</span>
+                <span className="text-dim">Iron Stomach, Natural Resistance and Thirst Quencher switch off while diseased</span>
+              </label>
+              {diseasedPerkNames.length > 0 && (
+                <p id={`${vitalsHintId}-diseased`} className="text-3xs text-dim pl-6">
+                  In your deck: {diseasedPerkNames.join(", ")}
+                </p>
+              )}
+            </div>
+
+            {/* Over-encumbered switch: Evasive (defensive layer) and the carry-weight sheet read it */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-2xs">
+              <label className="flex items-center gap-2 min-h-9 touch:min-h-11 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={Boolean(switchboard.isOverEncumbered)}
+                  onChange={(e) => updateField("isOverEncumbered", e.target.checked)}
+                  aria-describedby={overEncumberedPerkNames.length ? `${vitalsHintId}-over-encumbered` : undefined}
+                  className="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0 cursor-pointer"
+                />
+                <span className="font-bold uppercase text-amber-300">Over-encumbered</span>
+                <span className="text-dim">Evasive off, AP drains</span>
+              </label>
+              {overEncumberedPerkNames.length > 0 && (
+                <p id={`${vitalsHintId}-over-encumbered`} className="text-3xs text-dim pl-6">
+                  In your deck: {overEncumberedPerkNames.join(", ")}
+                </p>
+              )}
+            </div>
 
             {/* Team Category Stepper */}
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5 md:col-span-2">

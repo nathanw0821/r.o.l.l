@@ -47,6 +47,8 @@ export type VitalsInput = {
   glowPct?: number;
   rangedWeaponEquipped: boolean;
   isDiseased?: boolean;
+  /** Above max carry weight: moving drains AP like sprinting (fallout.wiki Carry Weight page). */
+  isOverEncumbered?: boolean;
 };
 
 const rank = (cards: VitalsInput["perkCards"], id: string) => cards.find((c) => c.cardId === id)?.rank ?? 0;
@@ -160,6 +162,10 @@ export function calculateVitalsSheet(input: VitalsInput): VitalsSheet {
   if (input.totals.carryWeight !== 0) {
     carry += input.totals.carryWeight;
     lines.carryWeight.push({ source: "Mods, mutations & buffs (sheet totals)", value: `${input.totals.carryWeight > 0 ? "+" : ""}${input.totals.carryWeight}` });
+  }
+  if (input.isOverEncumbered) {
+    // No published drain rate; the wiki states the rule, not a number.
+    lines.carryWeight.push({ source: "Over-encumbered: moving drains AP like sprinting", value: "on" });
   }
 
   // Movement speed (percent from perks; base speed has no published number)

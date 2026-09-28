@@ -270,7 +270,8 @@ export function useBuilderTotals({
       matchingSet,
       wearingNoArmor:
         activeChassisPiece.kind !== "armor" && activeChassisPiece.kind !== "powerArmor",
-      isOverEncumbered: false,
+      // Vitals "Over-encumbered" switch: Evasive is off above max carry weight.
+      isOverEncumbered: Boolean(switchboardState?.isOverEncumbered),
       // Vitals "Diseased" switch: Iron Stomach and Natural Resistance are off while diseased.
       isDiseased: Boolean(switchboardState?.isDiseased),
       // Ironclad multiplies the worn armor's own DR/ER (base table + crafting + PA frame).

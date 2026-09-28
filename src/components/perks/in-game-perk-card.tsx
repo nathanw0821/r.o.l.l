@@ -5,6 +5,7 @@ import { webpSiblingForCardImage } from "@/lib/perks/card-webp";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { SpecialCategory, PERK_CATALOG, isGhoulPerkCard, getPerkCardById, OutdatedPerkMeta, ReworkedPerkMeta } from "@/lib/perks/catalog";
+import { perkCardCostBadge, perkCardCostText } from "@/lib/perks/legendary-perk-costs";
 import PipBoyCardArt from "@/components/perks/pipboy-card-art";
 import { getPerkCardArtworkUrl, getGenderedPerkName } from "@/lib/perks/perk-artwork";
 import {
@@ -380,6 +381,10 @@ function InGamePerkCardComponent({
   const displayName = getGenderedPerkName(name, isFemale);
   const isLegendary = special === "LEGENDARY" || cardId?.includes("legendary");
   const isGhoul = isGhoulPerkCard(cardId || name);
+  // Legendary cards have no SPECIAL cost (the JSON carries 0): the badge is the rank's Perk Coin
+  // price when the truth file has one, otherwise no badge at all. The card art is untouched.
+  const costBadge = perkCardCostBadge(special, rank, cost);
+  const costTitle = costBadge ? ` · Cost: ${costBadge.text}` : "";
 
   // Full Catalog Card for All Ranks Inspection & Outdated Metadata Resolution
   const fullCard = React.useMemo(() => {
@@ -534,10 +539,10 @@ function InGamePerkCardComponent({
         }}
         title={
           isAccordion && !isForefront
-            ? `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to bring to forefront]`
+            ? `${displayName} (Rank ${rank}/${maxRank}${costTitle})\n\n"${description}"\n\n[Click to bring to forefront]`
             : isAccordion && isForefront
-            ? `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to inspect all ranks • Use control bar below to adjust rank or remove]`
-            : `${displayName} (Rank ${rank}/${maxRank} · Cost: ${cost} ${special})\n\n"${description}"\n\n[Click to ${isEquipped ? "unequip" : "equip"} • Right-click, long-press or Info icon to inspect all ranks]`
+            ? `${displayName} (Rank ${rank}/${maxRank}${costTitle})\n\n"${description}"\n\n[Click to inspect all ranks • Use control bar below to adjust rank or remove]`
+            : `${displayName} (Rank ${rank}/${maxRank}${costTitle})\n\n"${description}"\n\n[Click to ${isEquipped ? "unequip" : "equip"} • Right-click, long-press or Info icon to inspect all ranks]`
         }
       >
         {/* 1. Literal 1:1 In-Game Bitmap Cards (Pip-Boy Slanted & Curved for Regular, Ghoul, and Legendary) */}
@@ -599,11 +604,14 @@ function InGamePerkCardComponent({
           >
             {/* Header Stamp Bar */}
             <div className="flex items-center justify-between gap-1.5 border-b border-slate-700/80 pb-1.5">
-              <span
-                className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}
-              >
-                {cost}
-              </span>
+              {costBadge && (
+                <span
+                  className={`h-6 w-6 rounded flex items-center justify-center font-bold text-xs border ${theme.badgeBg}`}
+                  title={costBadge.text}
+                >
+                  {costBadge.label}
+                </span>
+              )}
               <span className="text-2xs font-black uppercase tracking-wider text-slate-100 truncate">
                 {displayName}
               </span>
@@ -961,7 +969,7 @@ function InGamePerkCardComponent({
                             </span>
                           </span>
                           <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-2xs text-slate-400 font-mono">
-                            Cost: {r.cost} SPECIAL Pt{r.cost > 1 ? "s" : ""}
+                            Cost: {perkCardCostText(special, r.rank, r.cost)}
                           </span>
                         </div>
                         <p className="text-xs sm:text-sm text-slate-200 leading-snug">{r.description}</p>

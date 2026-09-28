@@ -24,6 +24,8 @@ export type BiometricsTabProps = {
   onArmorModeChange?: (isPA: boolean) => void;
   statsBand?: SwitchboardProps["statsBand"];
   isCompactDensity?: boolean;
+  /** Equipped perk card ids for the switch dependency hints. */
+  equippedPerkIds?: SwitchboardProps["equippedPerkIds"];
 };
 
 export default function BiometricsTab({
@@ -41,6 +43,7 @@ export default function BiometricsTab({
   onArmorModeChange,
   statsBand,
   isCompactDensity,
+  equippedPerkIds,
 }: BiometricsTabProps) {
   return (
 <div className={cn("space-y-4 animate-in fade-in duration-200", active ? "block" : "hidden")}>
@@ -71,6 +74,7 @@ export default function BiometricsTab({
     onArmorModeChange={onArmorModeChange}
     statsBand={statsBand}
     isCompactDensity={isCompactDensity}
+    equippedPerkIds={equippedPerkIds}
     weakSpot={weaponFirepowerResult?.weakSpot ?? null}
   />
 </div>

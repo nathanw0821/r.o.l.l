@@ -18,6 +18,7 @@ import {
 } from "@/lib/perks/catalog";
 import { getInGamePerkCardImage } from "@/lib/perks/clean-perk-assets";
 import { webpSiblingForCardImage } from "@/lib/perks/card-webp";
+import { perkCardCostBadge } from "@/lib/perks/legendary-perk-costs";
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import {
   PERK_EFFECT_TAG_LABEL,
@@ -201,6 +202,8 @@ export default function PerkPickerDialog({
                   const png = getInGamePerkCardImage(card.id || card.name, 1, isFemale);
                   const webp = webpSiblingForCardImage(png);
                   const first = card.ranks[0];
+                  // Legendary cards: no SPECIAL cost, rank 1 has no coin price, so only the level shows.
+                  const firstCost = first ? perkCardCostBadge(card.special, first.rank, first.cost) : null;
                   const ghoul = isGhoulPerkCard(card.id || card.name);
                   return (
                     <button
@@ -243,7 +246,7 @@ export default function PerkPickerDialog({
                             {card.name}
                           </span>
                           <span className="shrink-0 text-3xs uppercase tracking-wider text-slate-400">
-                            {first ? `${first.cost} pt` : ""} · lvl {card.minLevel}
+                            {firstCost ? `${firstCost.label} ${firstCost.unit === "SPECIAL" ? "pt" : "coins"} · ` : ""}lvl {card.minLevel}
                           </span>
                         </span>
                         {first?.description ? (
