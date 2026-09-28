@@ -1,0 +1,891 @@
+{
+  "$comment": "Base reload time per builder weapon id (no perks, no mods), for the sustained-DPS term of the firepower engine. reloadSeconds is the 'Reload' figure printed in the Technical section of the weapon's fallout.wiki infobox, quoted verbatim in `quote`; the page is `source`. null means the wiki prints no usable figure (`note: not published`), the weapon is melee/unarmed (`note: melee`) or the page was not fetched in this pass (`note: not fetched yet`); nothing is estimated. Uniques and alias ids carry `inheritedFrom` and copy their chassis entry. Perk numbers are the Patch 70 card texts in src/data/perk-cards.json.",
+  "verifiedAt": "2026-09-28",
+  "weapons": {
+    "elders-mark": {
+      "label": "Elder's Mark (Submachine Gun · Unique)",
+      "reloadSeconds": 3.23,
+      "source": "https://fallout.wiki/wiki/Submachine_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 3.23, Draw 0.15, Sight 0.20, Unsight 0.20; Fire Rate 86, Capacity 50",
+      "confidence": "verified",
+      "inheritedFrom": "submachine-gun"
+    },
+    "holy-fire": {
+      "label": "Holy Fire (Flamer · Unique)",
+      "reloadSeconds": 3.83,
+      "source": "https://fallout.wiki/wiki/Flamer_(Fallout_76)",
+      "quote": "Technical: Reload 3.83, Draw 0.25, Sight 0.25; Fire Rate 91, Capacity 100",
+      "confidence": "verified",
+      "inheritedFrom": "flamer"
+    },
+    "anchorage-ace": {
+      "label": "Anchorage Ace (10mm SMG · Unique)",
+      "reloadSeconds": 3.0,
+      "source": "https://fallout.wiki/wiki/10mm_Submachine_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 3.00, Draw 0.15, Sight 0.12, Unsight 0.15; Fire Rate 82, Capacity 30",
+      "confidence": "verified",
+      "inheritedFrom": "10mm-smg"
+    },
+    "cold-shoulder": {
+      "label": "Cold Shoulder (Double-Barrel · Unique)",
+      "reloadSeconds": 3.07,
+      "source": "https://fallout.wiki/wiki/Double-Barrel_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 3.07, Draw 0.20, Sight 0.20; Fire Rate 25, Capacity 2",
+      "confidence": "verified",
+      "inheritedFrom": "double-barrel"
+    },
+    "red-terror": {
+      "label": "Red Terror (LMG · Unique)",
+      "reloadSeconds": 3.66,
+      "source": "https://fallout.wiki/wiki/Light_Machine_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 3.66, Draw 0.20, Sight 0.25; Fire Rate 159, Capacity 75",
+      "confidence": "verified",
+      "inheritedFrom": "lmg"
+    },
+    "v63-bertha": {
+      "label": "V63 Bertha (Tesla Rifle · Unique)",
+      "reloadSeconds": 4.2,
+      "source": "https://fallout.wiki/wiki/Tesla_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 4.20, Draw 0.45, Sight 0.25, Unsight 0.20; Fire Rate 20, Capacity 15",
+      "confidence": "verified",
+      "inheritedFrom": "tesla"
+    },
+    "v63-helga": {
+      "label": "V63 Helga (Gatling Laser · Unique)",
+      "reloadSeconds": 0.3,
+      "source": "https://fallout.wiki/wiki/Gatling_Laser_(Fallout_76)",
+      "quote": "Technical: Reload 0.30, Draw 0.20, Sight 0.30; Fire Rate 182, Capacity 500 (can be increased with Power User)",
+      "confidence": "approximate",
+      "detail": "Printed 0.30 s is far below a fusion-core swap animation; recorded as the page gives it and flagged for an in-game check.",
+      "inheritedFrom": "gatling-laser"
+    },
+    "v63-olga": {
+      "label": "V63 Olga (Laser Rifle · Unique)",
+      "reloadSeconds": null,
+      "source": "https://fallout.wiki/wiki/Laser_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 0.00 (base), Draw 0.15, Sight 0.15, Unsight 0.18, Attack Delay 0.25; Fire Rate 40, Capacity 30",
+      "note": "not published",
+      "detail": "The page prints '0.00 (base)' for Reload, which is a placeholder, not a time.",
+      "inheritedFrom": "laser-rifle"
+    },
+    "v63-zweihander": {
+      "label": "V63 Zweihänder (Super Sledge · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "v63-shock-baton": {
+      "label": "V63 Shock Baton (Security Baton · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "ticket-to-revenge": {
+      "label": "Ticket to Revenge (Railway Rifle · Unique)",
+      "reloadSeconds": 3.37,
+      "source": "https://fallout.wiki/wiki/Railway_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 3.37, Draw 0.25, Sight 0.25; Fire Rate 10, Capacity 10",
+      "confidence": "verified",
+      "inheritedFrom": "railway"
+    },
+    "shattered-grounds": {
+      "label": "Shattered Grounds (Handmade · Unique)",
+      "reloadSeconds": 3.03,
+      "source": "https://fallout.wiki/wiki/Handmade_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 3.03, Draw 0.35, Sight 0.20; Fire Rate 40, Capacity 20",
+      "confidence": "verified",
+      "inheritedFrom": "handmade"
+    },
+    "love-tap": {
+      "label": "Love Tap (Submachine Gun · Unique)",
+      "reloadSeconds": 3.23,
+      "source": "https://fallout.wiki/wiki/Submachine_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 3.23, Draw 0.15, Sight 0.20, Unsight 0.20; Fire Rate 86, Capacity 50",
+      "confidence": "verified",
+      "inheritedFrom": "submachine-gun"
+    },
+    "western-spirit": {
+      "label": "Western Spirit (Lever Action · Unique)",
+      "reloadSeconds": 1.77,
+      "source": "https://fallout.wiki/wiki/Lever_Action_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 1.77, Draw 0.25, Sight 0.20; Fire Rate 5, Capacity 5",
+      "confidence": "verified",
+      "inheritedFrom": "lever-action"
+    },
+    "gunthers-big-iron": {
+      "label": "Gunther's Big Iron (Single Action · Unique)",
+      "reloadSeconds": 3.0,
+      "source": "https://fallout.wiki/wiki/Single_Action_Revolver",
+      "quote": "Technical: Reload 3.00, Draw 0.20, Sight 0.12, Unsight 0.15; Fire Rate 6, Capacity 6",
+      "confidence": "verified",
+      "inheritedFrom": "single-action"
+    },
+    "the-fact-finder": {
+      "label": "The Fact Finder (.44 Pistol · Unique)",
+      "reloadSeconds": 3.33,
+      "source": "https://fallout.wiki/wiki/.44_Pistol_(Fallout_76)",
+      "quote": "Technical: Reload 3.33, Draw 0.30, Sight 0.12; Fire Rate 7, Capacity 6",
+      "confidence": "verified",
+      "inheritedFrom": "44-pistol"
+    },
+    "the-kabloom": {
+      "label": "The Kabloom (Pump Shotgun · Unique)",
+      "reloadSeconds": 2.5,
+      "source": "https://fallout.wiki/wiki/Pump_Action_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 2.50, Draw 0.20, Sight 0.20; Fire Rate 5, Capacity 8",
+      "confidence": "verified",
+      "inheritedFrom": "pump-shotgun"
+    },
+    "civil-unrest": {
+      "label": "Civil Unrest (Pump Shotgun · Unique)",
+      "reloadSeconds": 2.5,
+      "source": "https://fallout.wiki/wiki/Pump_Action_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 2.50, Draw 0.20, Sight 0.20; Fire Rate 5, Capacity 8",
+      "confidence": "verified",
+      "inheritedFrom": "pump-shotgun"
+    },
+    "the-quick-fix": {
+      "label": "The Quick Fix (Switchblade · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "grand-finale": {
+      "label": "Grand Finale (Broadsider · Unique)",
+      "reloadSeconds": 3.93,
+      "source": "https://fallout.wiki/wiki/Broadsider_(Fallout_76)",
+      "quote": "Technical: Reload 3.93, Draw 0.25, Sight 0.30, Unsight 0.30, Attack Speed 1.00, Attack Delay 0.50, Bolt Draw 3.83; Fire Rate 3, Capacity 1",
+      "confidence": "verified",
+      "inheritedFrom": "broadsider"
+    },
+    "boomstick": {
+      "label": "Boomstick (Missile Launcher · Unique)",
+      "reloadSeconds": 4.27,
+      "source": "https://fallout.wiki/wiki/Missile_Launcher_(Fallout_76)",
+      "quote": "Technical: Reload 4.27, Draw 0.80, Sight 0.25; Fire Rate 2, Capacity 1",
+      "confidence": "verified",
+      "inheritedFrom": "missile-launcher"
+    },
+    "overkill": {
+      "label": "Overkill (Fat Man · Unique)",
+      "reloadSeconds": 5.63,
+      "source": "https://fallout.wiki/wiki/Fat_Man_(Fallout_76)",
+      "quote": "Technical: Reload 5.63, Draw 0.80, Sight 0.30, Unsight 0.20; Fire Rate 2, Capacity 1",
+      "confidence": "verified",
+      "inheritedFrom": "fat-man"
+    },
+    "sole-survivor": {
+      "label": "Sole Survivor (Lever Action · Unique)",
+      "reloadSeconds": 1.77,
+      "source": "https://fallout.wiki/wiki/Lever_Action_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 1.77, Draw 0.25, Sight 0.20; Fire Rate 5, Capacity 5",
+      "confidence": "verified",
+      "inheritedFrom": "lever-action"
+    },
+    "face-breaker": {
+      "label": "Face Breaker (Power Fist · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "unstoppable-monster": {
+      "label": "Unstoppable Monster (Deathclaw Gauntlet · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "the-gutter": {
+      "label": "The Gutter (Chinese Officer Sword · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "whacker-smacker": {
+      "label": "Whacker Smacker (Super Sledge · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "crowd-control": {
+      "label": "Crowd Control (Combat Shotgun · Unique)",
+      "reloadSeconds": 3.2,
+      "source": "https://fallout.wiki/wiki/Combat_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 3.20, Draw 0.35, Sight 0.20, Attack Speed 0.83, Attack Delay 0.50; Fire Rate 20, Capacity 8",
+      "confidence": "verified",
+      "inheritedFrom": "combat-shotgun"
+    },
+    "medical-malpractice": {
+      "label": "Medical Malpractice (.44 Pistol · Unique)",
+      "reloadSeconds": 3.33,
+      "source": "https://fallout.wiki/wiki/.44_Pistol_(Fallout_76)",
+      "quote": "Technical: Reload 3.33, Draw 0.30, Sight 0.12; Fire Rate 7, Capacity 6",
+      "confidence": "verified",
+      "inheritedFrom": "44-pistol"
+    },
+    "mechanics-best-friend": {
+      "label": "Mechanic's Best Friend (Pipe Wrench · Unique)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "the-action-hero": {
+      "label": "The Action Hero (.50 Cal · Unique)",
+      "reloadSeconds": 5.0,
+      "source": "https://fallout.wiki/wiki/.50_Cal_Machine_Gun",
+      "quote": "Technical: Reload 5.00, Draw 0.25, Sight 0.3, Unsight 0.3; Fire Rate 91, Capacity 250",
+      "confidence": "verified",
+      "inheritedFrom": "cal50"
+    },
+    "resolute-veteran": {
+      "label": "Resolute Veteran (Gatling Gun · Unique)",
+      "reloadSeconds": 3.17,
+      "source": "https://fallout.wiki/wiki/Gatling_Gun",
+      "quote": "Technical: Reload 3.17, Draw 0.25, Sight 0.30, Unsight 0.30; Fire Rate 20, Capacity 250",
+      "confidence": "verified",
+      "inheritedFrom": "gatling-gun"
+    },
+    "night-light": {
+      "label": "Night Light (Tesla Rifle · Unique)",
+      "reloadSeconds": 4.2,
+      "source": "https://fallout.wiki/wiki/Tesla_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 4.20, Draw 0.45, Sight 0.25, Unsight 0.20; Fire Rate 20, Capacity 15",
+      "confidence": "verified",
+      "inheritedFrom": "tesla"
+    },
+    "doctors-orders": {
+      "label": "Doctor's Orders (Hunting Rifle · Unique)",
+      "reloadSeconds": 1.25,
+      "source": "https://fallout.wiki/wiki/Hunting_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 1.25(4.00), Draw 0.20, Sight 0.20, Bolt Draw 2.67, Attack Speed 1.25(0.83); Fire Rate 3, Capacity 5",
+      "confidence": "approximate",
+      "detail": "The page prints 1.25 with an unlabelled parenthetical 4.00 (same pattern as its Attack Speed 1.25(0.83)); the first figure is taken as the base and the variant is not modelled.",
+      "inheritedFrom": "hunting-rifle"
+    },
+    "fixer": {
+      "label": "The Fixer",
+      "reloadSeconds": 3.2,
+      "source": "https://fallout.wiki/wiki/The_Fixer",
+      "quote": "Technical: Reload 3.20, Draw 0.35, Sight 0.20; Fire Rate 33, Capacity 20",
+      "confidence": "verified"
+    },
+    "the-fixer": {
+      "label": "The Fixer",
+      "reloadSeconds": 3.2,
+      "source": "https://fallout.wiki/wiki/The_Fixer",
+      "quote": "Technical: Reload 3.20, Draw 0.35, Sight 0.20; Fire Rate 33, Capacity 20",
+      "confidence": "verified",
+      "inheritedFrom": "fixer"
+    },
+    "handmade": {
+      "label": "Handmade Rifle",
+      "reloadSeconds": 3.03,
+      "source": "https://fallout.wiki/wiki/Handmade_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 3.03, Draw 0.35, Sight 0.20; Fire Rate 40, Capacity 20",
+      "confidence": "verified"
+    },
+    "handmade-rifle": {
+      "label": "Handmade Rifle",
+      "reloadSeconds": 3.03,
+      "source": "https://fallout.wiki/wiki/Handmade_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 3.03, Draw 0.35, Sight 0.20; Fire Rate 40, Capacity 20",
+      "confidence": "verified",
+      "inheritedFrom": "handmade"
+    },
+    "railway": {
+      "label": "Railway Rifle",
+      "reloadSeconds": 3.37,
+      "source": "https://fallout.wiki/wiki/Railway_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 3.37, Draw 0.25, Sight 0.25; Fire Rate 10, Capacity 10",
+      "confidence": "verified"
+    },
+    "railway-rifle": {
+      "label": "Railway Rifle",
+      "reloadSeconds": 3.37,
+      "source": "https://fallout.wiki/wiki/Railway_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 3.37, Draw 0.25, Sight 0.25; Fire Rate 10, Capacity 10",
+      "confidence": "verified",
+      "inheritedFrom": "railway"
+    },
+    "combat-rifle": {
+      "label": "Combat Rifle",
+      "reloadSeconds": 2.68,
+      "source": "https://fallout.wiki/wiki/Combat_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 2.68, Draw 0.35, Sight 0.20; Fire Rate 33, Capacity 20",
+      "confidence": "verified"
+    },
+    "assault-rifle": {
+      "label": "Assault Rifle",
+      "reloadSeconds": 1.93,
+      "source": "https://fallout.wiki/wiki/Assault_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 1.93, Draw 0.35, Sight 0.20; Fire Rate 40, Capacity 20",
+      "confidence": "verified"
+    },
+    "hunting-rifle": {
+      "label": "Hunting Rifle / Sniper",
+      "reloadSeconds": 1.25,
+      "source": "https://fallout.wiki/wiki/Hunting_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 1.25(4.00), Draw 0.20, Sight 0.20, Bolt Draw 2.67, Attack Speed 1.25(0.83); Fire Rate 3, Capacity 5",
+      "confidence": "approximate",
+      "detail": "The page prints 1.25 with an unlabelled parenthetical 4.00 (same pattern as its Attack Speed 1.25(0.83)); the first figure is taken as the base and the variant is not modelled."
+    },
+    "lever-action": {
+      "label": "Lever Action Rifle",
+      "reloadSeconds": 1.77,
+      "source": "https://fallout.wiki/wiki/Lever_Action_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 1.77, Draw 0.25, Sight 0.20; Fire Rate 5, Capacity 5",
+      "confidence": "verified"
+    },
+    "gauss-rifle": {
+      "label": "Gauss Rifle",
+      "reloadSeconds": 4.2,
+      "source": "https://fallout.wiki/wiki/Gauss_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 4.20, Draw 0.25, Sight 0.25; Fire Rate 67, Capacity 15",
+      "confidence": "verified"
+    },
+    "radium-rifle": {
+      "label": "Radium Rifle",
+      "reloadSeconds": 2.58,
+      "source": "https://fallout.wiki/wiki/Radium_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 2.58, Draw 0.25, Sight 0.20, Unsight 0.20; Fire Rate 40, Capacity 20",
+      "confidence": "verified"
+    },
+    "submachine-gun": {
+      "label": "Submachine Gun (.45)",
+      "reloadSeconds": 3.23,
+      "source": "https://fallout.wiki/wiki/Submachine_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 3.23, Draw 0.15, Sight 0.20, Unsight 0.20; Fire Rate 86, Capacity 50",
+      "confidence": "verified"
+    },
+    "10mm-smg": {
+      "label": "10mm Submachine Gun",
+      "reloadSeconds": 3.0,
+      "source": "https://fallout.wiki/wiki/10mm_Submachine_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 3.00, Draw 0.15, Sight 0.12, Unsight 0.15; Fire Rate 82, Capacity 30",
+      "confidence": "verified"
+    },
+    "pipe-gun": {
+      "label": "Pipe Gun / Bolt-Action",
+      "reloadSeconds": 10.0,
+      "source": "https://fallout.wiki/wiki/Pipe_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 10.0 (base value), Draw 0.15, Sight 0.15, Unsight 0.175; Fire Rate 60, Capacity 12",
+      "confidence": "approximate",
+      "detail": "Printed '10.0 (base value)' looks like a placeholder for the receiver-less base form rather than a measured reload; recorded as the page gives it and flagged for an in-game check."
+    },
+    "cremator": {
+      "label": "Cremator",
+      "reloadSeconds": 3.833,
+      "source": "https://fallout.wiki/wiki/Cremator",
+      "quote": "Technical: Reload 3.833, Draw 0.25, Sight 0.25; Fire Rate 15, Capacity 90",
+      "confidence": "verified",
+      "detail": "The wiki's Fire Rate 15 / Capacity 90 differ from the catalog's 1.5 rps / 12 rounds; only the reload is recorded here."
+    },
+    "flamer": {
+      "label": "Flamer",
+      "reloadSeconds": 3.83,
+      "source": "https://fallout.wiki/wiki/Flamer_(Fallout_76)",
+      "quote": "Technical: Reload 3.83, Draw 0.25, Sight 0.25; Fire Rate 91, Capacity 100",
+      "confidence": "verified"
+    },
+    "gatling-plasma": {
+      "label": "Gatling Plasma",
+      "reloadSeconds": 6.83,
+      "source": "https://fallout.wiki/wiki/Gatling_Plasma",
+      "quote": "Technical: Reload 6.83, Draw 0.25, Sight 0.30, Unsight 0.30; Fire Rate 91, Capacity 500",
+      "confidence": "verified"
+    },
+    "gatling-laser": {
+      "label": "Gatling Laser / Ultracite",
+      "reloadSeconds": 0.3,
+      "source": "https://fallout.wiki/wiki/Gatling_Laser_(Fallout_76)",
+      "quote": "Technical: Reload 0.30, Draw 0.20, Sight 0.30; Fire Rate 182, Capacity 500 (can be increased with Power User)",
+      "confidence": "approximate",
+      "detail": "Printed 0.30 s is far below a fusion-core swap animation; recorded as the page gives it and flagged for an in-game check."
+    },
+    "plasma-caster": {
+      "label": "Plasma Caster",
+      "reloadSeconds": 5.33,
+      "source": "https://fallout.wiki/wiki/Plasma_Caster_(Fallout_76)",
+      "quote": "Technical: Reload 5.33, Draw 0.25, Sight 0.30; Fire Rate 20, Capacity 20",
+      "confidence": "verified"
+    },
+    "gauss-minigun": {
+      "label": "Gauss Minigun",
+      "reloadSeconds": 3.37,
+      "source": "https://fallout.wiki/wiki/Gauss_Minigun_(Fallout_76)",
+      "quote": "Technical: Reload 3.37, Draw 0.25, Sight 0.30; Fire Rate 91, Capacity 500",
+      "confidence": "verified"
+    },
+    "minigun": {
+      "label": "Minigun",
+      "reloadSeconds": null,
+      "source": "https://fallout.wiki/wiki/Minigun_(Fallout_76)",
+      "quote": "Technical section lists only Editor ID, Form ID and Keywords; Fire Rate 182, Capacity 500",
+      "note": "not published"
+    },
+    "cal50": {
+      "label": ".50 Cal Machine Gun",
+      "reloadSeconds": 5.0,
+      "source": "https://fallout.wiki/wiki/.50_Cal_Machine_Gun",
+      "quote": "Technical: Reload 5.00, Draw 0.25, Sight 0.3, Unsight 0.3; Fire Rate 91, Capacity 250",
+      "confidence": "verified"
+    },
+    "50-cal-machine-gun": {
+      "label": ".50 Cal Machine Gun",
+      "reloadSeconds": 5.0,
+      "source": "https://fallout.wiki/wiki/.50_Cal_Machine_Gun",
+      "quote": "Technical: Reload 5.00, Draw 0.25, Sight 0.3, Unsight 0.3; Fire Rate 91, Capacity 250",
+      "confidence": "verified",
+      "inheritedFrom": "cal50"
+    },
+    "lmg": {
+      "label": "Light Machine Gun (LMG)",
+      "reloadSeconds": 3.66,
+      "source": "https://fallout.wiki/wiki/Light_Machine_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 3.66, Draw 0.20, Sight 0.25; Fire Rate 159, Capacity 75",
+      "confidence": "verified"
+    },
+    "gatling-gun": {
+      "label": "Gatling Gun (5mm)",
+      "reloadSeconds": 3.17,
+      "source": "https://fallout.wiki/wiki/Gatling_Gun",
+      "quote": "Technical: Reload 3.17, Draw 0.25, Sight 0.30, Unsight 0.30; Fire Rate 20, Capacity 250",
+      "confidence": "verified"
+    },
+    "pepper-shaker": {
+      "label": "Pepper Shaker",
+      "reloadSeconds": 3.37,
+      "source": "https://fallout.wiki/wiki/Pepper_Shaker",
+      "quote": "Technical: Reload 3.37, Draw 0.25, Sight 0.30, Unsight 0.30; Fire Rate 41, Capacity 50",
+      "confidence": "verified"
+    },
+    "harpoon-gun": {
+      "label": "Harpoon Gun",
+      "reloadSeconds": null,
+      "note": "not fetched yet"
+    },
+    "broadsider": {
+      "label": "Broadsider",
+      "reloadSeconds": 3.93,
+      "source": "https://fallout.wiki/wiki/Broadsider_(Fallout_76)",
+      "quote": "Technical: Reload 3.93, Draw 0.25, Sight 0.30, Unsight 0.30, Attack Speed 1.00, Attack Delay 0.50, Bolt Draw 3.83; Fire Rate 3, Capacity 1",
+      "confidence": "verified"
+    },
+    "missile-launcher": {
+      "label": "Missile Launcher",
+      "reloadSeconds": 4.27,
+      "source": "https://fallout.wiki/wiki/Missile_Launcher_(Fallout_76)",
+      "quote": "Technical: Reload 4.27, Draw 0.80, Sight 0.25; Fire Rate 2, Capacity 1",
+      "confidence": "verified"
+    },
+    "fat-man": {
+      "label": "Fat Man / Mini Nuke",
+      "reloadSeconds": 5.63,
+      "source": "https://fallout.wiki/wiki/Fat_Man_(Fallout_76)",
+      "quote": "Technical: Reload 5.63, Draw 0.80, Sight 0.30, Unsight 0.20; Fire Rate 2, Capacity 1",
+      "confidence": "verified"
+    },
+    "auto-grenade-launcher": {
+      "label": "Auto Grenade Launcher",
+      "reloadSeconds": 5.0,
+      "source": "https://fallout.wiki/wiki/Auto_Grenade_Launcher",
+      "quote": "Technical: Reload 5.00, Draw 0.25, Sight 0.30, Unsight 0.30; Fire Rate 100, Capacity 12",
+      "confidence": "verified"
+    },
+    "m79-grenade": {
+      "label": "M79 Grenade Launcher",
+      "reloadSeconds": null,
+      "note": "not fetched yet"
+    },
+    "alien-disintegrator": {
+      "label": "Alien Disintegrator",
+      "reloadSeconds": 3.2,
+      "source": "https://fallout.wiki/wiki/Alien_Disintegrator_(Fallout_76)",
+      "quote": "Technical: Reload 3.20, Draw 0.35, Sight 0.20; Fire Rate 13, Capacity 25",
+      "confidence": "verified"
+    },
+    "enclave-plasma": {
+      "label": "Enclave Plasma Gun",
+      "reloadSeconds": 2.33,
+      "source": "https://fallout.wiki/wiki/Enclave_Plasma_Gun",
+      "quote": "Technical: Reload 2.33, Draw 0.15, Sight 0.15; Fire Rate 33, Capacity 30",
+      "confidence": "verified"
+    },
+    "enclave-plasma-rifle": {
+      "label": "Enclave Plasma Rifle",
+      "reloadSeconds": 2.33,
+      "source": "https://fallout.wiki/wiki/Enclave_Plasma_Gun",
+      "quote": "Technical: Reload 2.33, Draw 0.15, Sight 0.15; Fire Rate 33, Capacity 30",
+      "confidence": "verified",
+      "inheritedFrom": "enclave-plasma"
+    },
+    "plasma-flamer": {
+      "label": "Plasma Flamer",
+      "reloadSeconds": 2.33,
+      "source": "https://fallout.wiki/wiki/Plasma_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 2.33, Draw 0.15, Sight 0.15, Unsight 0.20; Fire Rate 33, Capacity 30; the mod table lists no reload change for the flamer barrel",
+      "confidence": "approximate",
+      "inheritedFrom": "plasma-gun",
+      "detail": "Plasma gun with the flamer barrel; the wiki mod table lists no reload change for that barrel, so the chassis value is carried over."
+    },
+    "plasma-gun": {
+      "label": "Plasma Gun",
+      "reloadSeconds": 2.33,
+      "source": "https://fallout.wiki/wiki/Plasma_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 2.33, Draw 0.15, Sight 0.15, Unsight 0.20; Fire Rate 33, Capacity 30; the mod table lists no reload change for the flamer barrel",
+      "confidence": "verified"
+    },
+    "laser-rifle": {
+      "label": "Laser Rifle / Pistol",
+      "reloadSeconds": null,
+      "source": "https://fallout.wiki/wiki/Laser_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 0.00 (base), Draw 0.15, Sight 0.15, Unsight 0.18, Attack Delay 0.25; Fire Rate 40, Capacity 30",
+      "note": "not published",
+      "detail": "The page prints '0.00 (base)' for Reload, which is a placeholder, not a time."
+    },
+    "ultracite-laser": {
+      "label": "Ultracite Laser Rifle",
+      "reloadSeconds": null,
+      "source": "https://fallout.wiki/wiki/Ultracite_Laser_Gun",
+      "quote": "Technical: Reload 0.00 (base), Draw 0.15, Sight 0.15, Unsight 0.18; Fire Rate 40, Capacity 30",
+      "note": "not published",
+      "detail": "The page prints '0.00 (base)' for Reload, which is a placeholder, not a time."
+    },
+    "tesla": {
+      "label": "Tesla Rifle",
+      "reloadSeconds": 4.2,
+      "source": "https://fallout.wiki/wiki/Tesla_Rifle_(Fallout_76)",
+      "quote": "Technical: Reload 4.20, Draw 0.45, Sight 0.25, Unsight 0.20; Fire Rate 20, Capacity 15",
+      "confidence": "verified"
+    },
+    "gamma-gun": {
+      "label": "Gamma Gun",
+      "reloadSeconds": 4.33,
+      "source": "https://fallout.wiki/wiki/Gamma_Gun_(Fallout_76)",
+      "quote": "Technical: Reload 4.33, Draw 0.25, Sight 0.12; Fire Rate 67, Capacity 8",
+      "confidence": "verified"
+    },
+    "alien-blaster": {
+      "label": "Alien Blaster",
+      "reloadSeconds": 2.87,
+      "source": "https://fallout.wiki/wiki/Alien_Blaster_(Fallout_76)",
+      "quote": "Technical: Reload 2.87, Draw 0.15, Sight 0.12; Fire Rate 100, Capacity 42",
+      "confidence": "verified"
+    },
+    "laser-musket": {
+      "label": "Laser Musket",
+      "reloadSeconds": null,
+      "note": "not fetched yet"
+    },
+    "gauss-shotgun": {
+      "label": "Gauss Shotgun",
+      "reloadSeconds": 2.67,
+      "source": "https://fallout.wiki/wiki/Gauss_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 2.67, Draw 0.35, Sight 0.20, Unsight 0.20; Fire Rate 67, Capacity 40",
+      "confidence": "verified"
+    },
+    "combat-shotgun": {
+      "label": "Combat Shotgun",
+      "reloadSeconds": 3.2,
+      "source": "https://fallout.wiki/wiki/Combat_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 3.20, Draw 0.35, Sight 0.20, Attack Speed 0.83, Attack Delay 0.50; Fire Rate 20, Capacity 8",
+      "confidence": "verified"
+    },
+    "pump-shotgun": {
+      "label": "Pump Action Shotgun",
+      "reloadSeconds": 2.5,
+      "source": "https://fallout.wiki/wiki/Pump_Action_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 2.50, Draw 0.20, Sight 0.20; Fire Rate 5, Capacity 8",
+      "confidence": "verified"
+    },
+    "double-barrel": {
+      "label": "Double-Barrel Shotgun",
+      "reloadSeconds": 3.07,
+      "source": "https://fallout.wiki/wiki/Double-Barrel_Shotgun_(Fallout_76)",
+      "quote": "Technical: Reload 3.07, Draw 0.20, Sight 0.20; Fire Rate 25, Capacity 2",
+      "confidence": "verified"
+    },
+    "crusader-pistol": {
+      "label": "Crusader Pistol",
+      "reloadSeconds": 1.97,
+      "source": "https://fallout.wiki/wiki/Crusader_Pistol",
+      "quote": "Technical: Reload 1.97, Draw 0.15, Sight 0.12; Fire Rate 43, Capacity 12",
+      "confidence": "verified"
+    },
+    "10mm-pistol": {
+      "label": "10mm Pistol",
+      "reloadSeconds": 1.97,
+      "source": "https://fallout.wiki/wiki/10mm_Pistol_(Fallout_76)",
+      "quote": "Technical: Reload 1.97, Draw 0.15, Sight 0.12, Unsight 0.15; Fire Rate 43, Capacity 12",
+      "confidence": "verified"
+    },
+    "western-revolver": {
+      "label": "Western Revolver",
+      "reloadSeconds": 3.33,
+      "source": "https://fallout.wiki/wiki/Western_Revolver_(Fallout_76)",
+      "quote": "Technical: Reload 3.33, Draw 0.30, Sight 0.12, Unsight 0.15, Bolt Draw 0.93; Fire Rate 6, Capacity 6",
+      "confidence": "verified"
+    },
+    "44-pistol": {
+      "label": ".44 Pistol",
+      "reloadSeconds": 3.33,
+      "source": "https://fallout.wiki/wiki/.44_Pistol_(Fallout_76)",
+      "quote": "Technical: Reload 3.33, Draw 0.30, Sight 0.12; Fire Rate 7, Capacity 6",
+      "confidence": "verified"
+    },
+    "single-action": {
+      "label": "Single Action Revolver",
+      "reloadSeconds": 3.0,
+      "source": "https://fallout.wiki/wiki/Single_Action_Revolver",
+      "quote": "Technical: Reload 3.00, Draw 0.20, Sight 0.12, Unsight 0.15; Fire Rate 6, Capacity 6",
+      "confidence": "verified"
+    },
+    "black-powder-pistol": {
+      "label": "Black Powder Pistol / Rifle",
+      "reloadSeconds": null,
+      "note": "not fetched yet"
+    },
+    "the-dragon": {
+      "label": "The Dragon",
+      "reloadSeconds": 13.0,
+      "source": "https://fallout.wiki/wiki/The_Dragon",
+      "quote": "Technical: Reload 13.00, Draw 0.25, Sight 0.20, Unsight 0.20; Fire Rate 1, Capacity 1",
+      "confidence": "verified"
+    },
+    "compound-bow": {
+      "label": "Compound Bow",
+      "reloadSeconds": 2.67,
+      "source": "https://fallout.wiki/wiki/Compound_Bow_(Fallout_76)",
+      "quote": "Technical: Reload 2.67, Draw 0.50, Sight 0.15, Attack Speed 0.83, Attack Delay 0.50; Fire Rate 100, Capacity 1",
+      "confidence": "verified"
+    },
+    "bow": {
+      "label": "Hunting Bow",
+      "reloadSeconds": 0.1,
+      "source": "https://fallout.wiki/wiki/Bow_(Fallout_76)",
+      "quote": "Technical: Reload 0.10, Draw 0.25, Sight 0.15; Fire Rate 100, Capacity 1",
+      "confidence": "approximate",
+      "detail": "Printed 0.10 s covers nocking only; drawing the bow is the Draw/attack timing and is not part of this value (the Compound Bow page prints 2.67 for the same field)."
+    },
+    "crossbow": {
+      "label": "Crossbow",
+      "reloadSeconds": null,
+      "note": "not fetched yet"
+    },
+    "chainsaw": {
+      "label": "Chainsaw",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "auto-axe": {
+      "label": "Auto Axe",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "mr-handy-buzz-blade": {
+      "label": "Mr. Handy Buzz Blade",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "drill": {
+      "label": "Drill",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "ripper": {
+      "label": "The Ripper",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "power-fist": {
+      "label": "Power Fist",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "dc-gauntlet": {
+      "label": "Deathclaw Gauntlet",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "deathclaw-gauntlet": {
+      "label": "Deathclaw Gauntlet",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "gauntlet": {
+      "label": "Gauntlet (Settlers)",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "bear-arm": {
+      "label": "Bear Arm",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "meat-hook": {
+      "label": "Meat Hook",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "mole-miner-gauntlet": {
+      "label": "Mole Miner Gauntlet",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "boxing-glove": {
+      "label": "Boxing Glove",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "knuckles": {
+      "label": "Knuckles",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "war-glaive": {
+      "label": "War Glaive",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "plasma-cutter": {
+      "label": "Plasma Cutter",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "super-sledge": {
+      "label": "Super Sledge",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "sledgehammer": {
+      "label": "Sledgehammer",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "grognak-axe": {
+      "label": "Grognak's Axe",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "fire-axe": {
+      "label": "Fire Axe",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "tenderizer": {
+      "label": "The Tenderizer",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "sheepsquatch-staff": {
+      "label": "Sheepsquatch Staff",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "sheepsquatch-club": {
+      "label": "Sheepsquatch Club",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "baseball-bat": {
+      "label": "Baseball Bat",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "combat-knife": {
+      "label": "Combat Knife / Bowie",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "switchblade": {
+      "label": "Switchblade",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "pipe-wrench": {
+      "label": "Pipe Wrench",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "shishkebab": {
+      "label": "Shishkebab",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "cultist-dagger": {
+      "label": "Cultist Dagger / Blade",
+      "reloadSeconds": null,
+      "note": "melee"
+    },
+    "cattleprod": {
+      "label": "Cattle Prod",
+      "reloadSeconds": null,
+      "note": "melee"
+    }
+  },
+  "perks": {
+    "gun-tricks": {
+      "model": "reload-speed-pct",
+      "byRank": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "cardText": "Your enhanced reflexes allow you to reload weapons 10/20/30% faster.",
+      "confidence": "verified",
+      "source": "card text"
+    },
+    "ground-pounder": {
+      "model": "reload-speed-pct",
+      "byRank": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "condition": "small guns",
+      "cardText": "Your small guns reload 10/20/30% faster and have 10/20/30% more hip fire accuracy.",
+      "confidence": "verified",
+      "source": "card text"
+    },
+    "quick-hands": {
+      "model": "instant-reload-chance",
+      "byRank": [
+        0.06,
+        0.12,
+        0.18
+      ],
+      "condition": "clip empty",
+      "cardText": "Gain a 6/12/18% chance to instantly reload when your clip is empty.",
+      "confidence": "verified",
+      "source": "card text"
+    },
+    "wild-west-hands": {
+      "model": "instant-reload-chance",
+      "byRank": [
+        0.12,
+        0.24,
+        0.36
+      ],
+      "condition": "magazine empty",
+      "cardText": "12/24/36% chance to instantly reload your entire magazine when empty.",
+      "confidence": "verified",
+      "source": "card text"
+    },
+    "lock-and-load": {
+      "model": "reload-speed-pct-per-stack",
+      "perStack": 0.01,
+      "stackSource": "bullet-storm",
+      "keepsHalfStacksOnReload": true,
+      "cardText": "You keep half of your Bullet Storm stacks when you reload. +1% reload speed per stack.",
+      "confidence": "verified",
+      "source": "card text"
+    },
+    "guerrilla-expert": {
+      "model": "reload-speed-pct-per-stack",
+      "perStack": 0.01,
+      "stackSource": "onslaught",
+      "bonusMaxStacks": 3,
+      "cardText": "+1% reload speed per Onslaught stack, +3 max stacks.",
+      "confidence": "verified",
+      "source": "card text"
+    },
+    "fast-fighter": {
+      "model": "reload-speed-pct-from-move-speed",
+      "fractionOfBonusMoveSpeed": 0.5,
+      "cardText": "Gain 50% of your bonus movement speed as reload speed.",
+      "confidence": "verified",
+      "source": "card text"
+    }
+  }
+}
