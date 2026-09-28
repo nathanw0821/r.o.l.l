@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { SANDBOX_MUTATIONS } from "@/lib/builder/sandbox-mutations";
 import {
   ALLOWED_ENTITY_HREF_PATTERNS,
   ENTITY_LINKS,
@@ -16,6 +17,8 @@ import { UPDATE_PATCH_IDS } from "@/lib/wiki/update-patches";
 
 const names = (text: string) => findEntityMatches(text).map((m) => m.entity.name);
 
+const MUTATION_IDS = new Set(SANDBOX_MUTATIONS.map((m) => m.id));
+
 describe("entity link map", () => {
   it("has no duplicate lower-cased keys", () => {
     const keys = ENTITY_LINKS.map((e) => normalizeEntityKey(e.name));
@@ -25,7 +28,9 @@ describe("entity link map", () => {
 
   it("covers every source kind", () => {
     const kinds = new Set(ENTITY_LINKS.map((e) => e.kind));
-    expect([...kinds].sort()).toEqual(["effect", "glossary", "perk", "unique", "update"]);
+    expect([...kinds].sort()).toEqual(["effect", "glossary", "mutation", "perk", "unique", "update"]);
+    expect(getEntityLink("Marsupial")?.href).toBe("/build?tab=biometrics&mutation=marsupial");
+    expect(getEntityLink("Herd Mentality")?.href).toBe("/build?tab=biometrics&mutation=herd-mentality");
     expect(getEntityLink("Severing")?.href).toBe("/all-effects?q=Severing");
     expect(getEntityLink("Night Person")?.href).toBe("/perks?q=Night%20Person");
     expect(getEntityLink("The Slasher")?.href).toBe("/wiki?update=the-slasher");
@@ -51,6 +56,8 @@ describe("entity link map", () => {
       if (update !== null) expect(UPDATE_PATCH_IDS.has(update), `${e.name} update=${update}`).toBe(true);
       const q = url.searchParams.get("q");
       if (q !== null) expect(normalizeEntityKey(q)).toBe(e.key);
+      const mutation = url.searchParams.get("mutation");
+      if (mutation !== null) expect(MUTATION_IDS.has(mutation), `${e.name} mutation=${mutation}`).toBe(true);
     }
     expect(ENTITY_LINKS.some((e) => e.kind === "unique")).toBe(true);
   });

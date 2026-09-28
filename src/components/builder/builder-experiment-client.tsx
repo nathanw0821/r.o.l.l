@@ -33,6 +33,7 @@ import AuxLogisticsColumn from "@/components/builder/tabs/gear/aux-logistics-col
 import ArmoryMatrixSection from "@/components/builder/tabs/gear/armory-matrix-section";
 import GearPickerDialog from "@/components/builder/gear-picker-dialog";
 import { underarmorBasePieceIdForShell } from "@/lib/builder/loadout-mode";
+import { sanitizeMutationIds } from "@/lib/builder/sandbox-mutations";
 import type { BuilderEquipmentKind } from "@/lib/builder/types";
 import { useBuilderModCatalog } from "@/components/builder/hooks/use-builder-mod-catalog";
 import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals";
@@ -216,6 +217,19 @@ export default function BuilderExperimentClient({
     if (!BASE_GEAR_PIECES.some((p) => p.id === pieceParam)) return;
     setBase(pieceParam);
   }, [isMounted, readOnly, targetTransmissionSlug, pieceParam, setBase]);
+
+  // Deep link `?mutation=<id>` (from a linkified mutation name in the guides): adds that mutation
+  // to the working build once. Same guards as `?piece=`; unknown ids are ignored.
+  const mutationParam = searchParams?.get("mutation")?.trim() ?? "";
+  const appliedMutationRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!isMounted || readOnly || targetTransmissionSlug) return;
+    if (!mutationParam || appliedMutationRef.current === mutationParam) return;
+    appliedMutationRef.current = mutationParam;
+    const [id] = sanitizeMutationIds([mutationParam]);
+    if (!id) return;
+    setPayload((p) => (p.mutationIds.includes(id) ? p : { ...p, mutationIds: [...p.mutationIds, id] }));
+  }, [isMounted, readOnly, targetTransmissionSlug, mutationParam, setPayload]);
 
   const {
     learnedBasePieceIds,

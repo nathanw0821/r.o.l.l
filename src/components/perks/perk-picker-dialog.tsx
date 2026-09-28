@@ -13,6 +13,13 @@ import { PERK_CATALOG, isGhoulPerkCard, type PerkCard, type SpecialCategory } fr
 import { getInGamePerkCardImage } from "@/lib/perks/clean-perk-assets";
 import { webpSiblingForCardImage } from "@/lib/perks/card-webp";
 import { OFFICIAL_SPECIAL_THEMES } from "@/lib/perks/special-theme";
+import {
+  PERK_EFFECT_TAG_LABEL,
+  PERK_EFFECT_TAG_ORDER,
+  countPerkEffectTags,
+  perkEffectTags,
+  type PerkEffectTag,
+} from "@/lib/perks/perk-effect-categories";
 import { cn } from "@/lib/utils";
 
 export type PerkPickerScope = SpecialCategory | "GHOUL";
@@ -59,21 +66,29 @@ export default function PerkPickerDialog({
   isCompactDensity,
 }: PerkPickerDialogProps) {
   const [query, setQuery] = React.useState("");
+  const [tag, setTag] = React.useState<PerkEffectTag | "all">("all");
   const open = scope !== null;
   React.useEffect(() => {
-    if (!open) setQuery("");
+    if (!open) {
+      setQuery("");
+      setTag("all");
+    }
   }, [open]);
 
   const cards = React.useMemo(() => (scope ? perkPickerCards(scope) : []), [scope]);
+  // Effect categories present in this scope (derived from the cards' effect text), with counts.
+  const tagChips = React.useMemo(() => {
+    const counts = countPerkEffectTags(cards);
+    return PERK_EFFECT_TAG_ORDER.filter((t) => (counts[t] ?? 0) > 0).map((t) => ({ tag: t, count: counts[t] ?? 0 }));
+  }, [cards]);
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return cards;
-    return cards.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        (c.ranks[0]?.description.toLowerCase().includes(q) ?? false),
-    );
-  }, [cards, query]);
+    return cards.filter((c) => {
+      if (tag !== "all" && !perkEffectTags(c).includes(tag)) return false;
+      if (!q) return true;
+      return c.name.toLowerCase().includes(q) || (c.ranks[0]?.description.toLowerCase().includes(q) ?? false);
+    });
+  }, [cards, query, tag]);
 
   const title = scope ? perkPickerTitle(scope) : "";
 
@@ -112,6 +127,35 @@ export default function PerkPickerDialog({
                 className="w-full min-h-9 touch:min-h-11 pl-8 pr-2 py-1 rounded border border-slate-800 bg-slate-900/90 text-base sm:text-xs text-slate-200 placeholder:text-dim focus:outline-none focus:border-emerald-500 font-mono"
               />
             </div>
+            {tagChips.length > 1 && (
+              <div className="mt-2 flex flex-wrap gap-1" role="group" aria-label="Filter by effect">
+                <button
+                  type="button"
+                  aria-pressed={tag === "all"}
+                  onClick={() => setTag("all")}
+                  className={cn(
+                    "min-h-7 touch:min-h-11 px-2 rounded border text-3xs uppercase tracking-wider font-bold",
+                    tag === "all" ? "bg-emerald-500 text-slate-950 border-emerald-400" : "border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white",
+                  )}
+                >
+                  All ({cards.length})
+                </button>
+                {tagChips.map(({ tag: t, count }) => (
+                  <button
+                    key={t}
+                    type="button"
+                    aria-pressed={tag === t}
+                    onClick={() => setTag(t)}
+                    className={cn(
+                      "min-h-7 touch:min-h-11 px-2 rounded border text-3xs uppercase tracking-wider font-bold",
+                      tag === t ? "bg-emerald-500 text-slate-950 border-emerald-400" : "border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white",
+                    )}
+                  >
+                    {PERK_EFFECT_TAG_LABEL[t]} ({count})
+                  </button>
+                ))}
+              </div>
+            )}
             <div
               role="region"
               aria-label={`${title} options`}

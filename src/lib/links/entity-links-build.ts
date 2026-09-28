@@ -9,6 +9,7 @@ import { FALLBACK_LEGENDARY_EFFECTS } from "@/lib/static-fallback-catalog";
 import perkCards from "@/data/perk-cards.json";
 import { UNIQUE_ITEMS } from "@/lib/truth/unique-items";
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
+import { SANDBOX_MUTATIONS } from "@/lib/builder/sandbox-mutations";
 import { UPDATE_PATCHES } from "@/lib/wiki/update-patches";
 import { GLOSSARY_TERMS, glossaryHref } from "@/lib/truth/mechanics-glossary";
 import {
@@ -77,6 +78,14 @@ export function buildEntityLinks(): EntityLink[] {
     const name = row.effectName;
     if (!name || EFFECT_LINK_STOPLIST.has(normalizeEntityKey(name))) continue;
     add(name, `/all-effects?q=${encodeURIComponent(name)}`, "effect");
+  }
+
+  // 4a. Mutations: a guide that names one links straight into the builder's Biometrics tab with
+  //     that mutation added (`?mutation=`), N&D's "Create a build with Marsupial" idea. The
+  //     "(on team)" variant shares its name with the solo row, so only the solo row is linked.
+  for (const m of SANDBOX_MUTATIONS) {
+    if (m.id.endsWith("-team")) continue;
+    add(m.label.replace(/\s*\(.*\)\s*$/, ""), `/build?tab=biometrics&mutation=${m.id}`, "mutation");
   }
 
   // 5. Mechanics glossary, lowest priority. A term is left out when its key is taken or when it

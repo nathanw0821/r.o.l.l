@@ -23,7 +23,7 @@
 
 import entityLinkIndex from "@/lib/links/entity-link-index.json";
 
-export type EntityKind = "update" | "unique" | "perk" | "effect" | "glossary";
+export type EntityKind = "update" | "unique" | "perk" | "effect" | "mutation" | "glossary";
 
 export type EntityLink = {
   /** Lower-cased name with ’ folded to ' (unique across the map). */
@@ -117,6 +117,7 @@ export const ALLOWED_ENTITY_HREF_PATTERNS: readonly RegExp[] = [
   /^\/all-effects\?q=[^&]+$/,
   /^\/perks\?q=[^&]+$/,
   /^\/build\?tab=gear&piece=[a-z0-9-]+$/,
+  /^\/build\?tab=biometrics&mutation=[a-z0-9-]+$/,
   /^\/wiki\?update=[a-z0-9-]+$/,
   /^\/wiki\/glossary#[a-z0-9-]+$/
 ];

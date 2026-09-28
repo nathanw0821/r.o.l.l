@@ -182,6 +182,15 @@ test.describe("guest smoke", () => {
     expect(body).toContain("SUMMARY:Treasure Hunter (Fallout 76)");
   });
 
+  test("builder deep link ?mutation= lands on Biometrics with that mutation added once", async ({ page }) => {
+    await page.goto("/build?tab=biometrics&mutation=marsupial");
+    const group = page.getByRole("button", { name: /^Mutations/ });
+    await expect(group).toBeVisible({ timeout: 45_000 });
+    if ((await group.getAttribute("aria-expanded")) === "false") await group.click();
+    await expect(page.getByRole("button", { name: "Remove Marsupial" })).toHaveCount(1);
+    await expectPageSane(page);
+  });
+
   test("perks page can find Night Person via search and shows its effect text", async ({ page }) => {
     await page.goto("/perks");
 
