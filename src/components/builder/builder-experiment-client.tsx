@@ -350,6 +350,11 @@ export default function BuilderExperimentClient({
         targetPoisoned: Boolean(switchboardState?.targetPoisoned),
         targetCrippledLimbs: switchboardState?.targetCrippledLimbs ?? 0,
         feralPct: switchboardState?.feralPct ?? 100,
+        intelligence: statsBand.special.int,
+        isGhoul: payload.ghoul,
+        glowPct: switchboardState?.glowPct ?? 0,
+        isSpendingGlow: Boolean(switchboardState?.combatStance?.isSpendingGlow),
+        wasHitRecently: Boolean(switchboardState?.combatStance?.wasHitRecently),
         foodState: switchboardState?.foodState,
         thirstState: switchboardState?.thirstState,
       },
@@ -362,6 +367,7 @@ export default function BuilderExperimentClient({
     switchboardState,
     payload.mutationIds,
     payload.hasStrangeInNumbers,
+    payload.ghoul,
     statsBand,
     isPA,
   ]);
@@ -899,6 +905,7 @@ export default function BuilderExperimentClient({
         weaponLabel={activeWeaponPiece?.label}
         hitLocation={resolveHitLocation(switchboardState?.combatStance)}
         targetRange={resolveTargetRange(switchboardState?.combatStance)}
+        glowActive={Boolean(weaponFirepowerResult?.glow)}
       />
 
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}

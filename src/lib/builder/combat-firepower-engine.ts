@@ -25,7 +25,8 @@ import {
   WEAPON_COMBAT_BASE_CATALOG,
   type BossTargetDummy,
   type TargetDummyTag,
-  type WeaponCombatBaseStats
+  type WeaponCombatBaseStats,
+  type WeaponDamageType
 } from "./combat-firepower-catalog";
 
 /**
@@ -115,7 +116,7 @@ export function getWeaponCombatBaseStats(weaponId: string): WeaponCombatBaseStat
       label: weaponId,
       maxLevel: 50,
       baseDamage: 45,
-      damageType: cleanId.includes("plasma") || cleanId.includes("laser") ? "energy" : "ballistic",
+      damageType: cleanId.includes("flamer") ? "fire" : cleanId.includes("plasma") || cleanId.includes("laser") ? "energy" : "ballistic",
       fireRate: 9.1,
       baseVatsApCost: 30,
       magazineSize: 100,
@@ -277,9 +278,39 @@ const CC = combatConditionsTruth as {
     tormentor: { perUnit: number };
     "shotgun-champ": { perUnit: number; defaultShotgunProjectiles: number };
     "number-cruncher": { perUnit: number };
+    "martial-artist": { byRank: number[] };
+    "tightly-wound": { byRank: number[] };
+    "pyro-technician": { damageType: WeaponDamageType; byInt: number[][] };
+    cryologist: { damageType: WeaponDamageType; byInt: number[][] };
+    "glowing-criticals": { byRank: number[] };
+    "mad-scientist": { byRank: number[] };
+    "radiation-power": { byRank: number[] };
+    "radioactive-strength": { byRank: number[] };
+    "science-monster": { byRank: number[] };
   };
+  glow: { highThresholdPct: number };
 };
 const byRank = (ranks: number[], rank: number): number => ranks[Math.min(ranks.length, Math.max(0, rank)) - 1] ?? 0;
+
+/**
+ * Piecewise-linear read of a `[[special, fraction], …]` table (combat-conditions.json `byInt`,
+ * the fallout.wiki scaling rows), clamped to the table's first and last row.
+ */
+export function interpolateByInt(rows: number[][], special: number): number {
+  const first = rows[0];
+  const last = rows[rows.length - 1];
+  if (!first || !last) return 0;
+  const s = Number.isFinite(special) ? special : first[0];
+  if (s <= first[0]) return first[1];
+  for (let i = 1; i < rows.length; i++) {
+    const [x1, y1] = rows[i];
+    if (s <= x1) {
+      const [x0, y0] = rows[i - 1];
+      return y0 + ((y1 - y0) * (s - x0)) / (x1 - x0);
+    }
+  }
+  return last[1];
+}
 
 export type VatsCritQualification = {
   everySecondShotReady: boolean;
@@ -356,6 +387,16 @@ export type CombatFirepowerCalculationInput = {
     targetPoisoned?: boolean;
     targetCrippledLimbs?: number;
     feralPct?: number;
+    /** Live Intelligence; Pyro-Technician / Cryologist scale fire / cryo weapon damage by it (combat-conditions.json). */
+    intelligence?: number;
+    /** Playable Ghoul: the Glow cards (Glowing Criticals, Mad Scientist, Radiation Power, Radioactive Strength, Science Monster) need it. */
+    isGhoul?: boolean;
+    /** Ghoul Glow meter 0–100; "high" is combat-conditions.json `glow.highThresholdPct`. */
+    glowPct?: number;
+    /** Stances toggle: the attack spends Glow (Mad Scientist, Radiation Power, Radioactive Strength). */
+    isSpendingGlow?: boolean;
+    /** Stances toggle: hit in the last 10 s (Science Monster). */
+    wasHitRecently?: boolean;
     foodState?: string;
     thirstState?: string;
     /**
@@ -423,6 +464,11 @@ export type CombatFirepowerResult = {
     breakdown: { source: string; value: string }[];
   };
   targetDummy: TargetDummyCalculation;
+  /**
+   * Ghoul Glow cards that contributed to this result (combat tab chip). Present only when at
+   * least one did, so non-ghoul results (and their goldens) are untouched.
+   */
+  glow?: { cards: string[] };
 };
 
 /**
@@ -1180,6 +1226,84 @@ export function calculateCombatFirepower(
     breakdown.push({ source: `Number Cruncher (${vatsApCost} AP per shot)`, value: `+${Math.round(v * 100)}%` });
   }
 
+  // Damage type (Pyro-Technician, Cryologist): INT-scaled bonus to the weapon's primary damage
+  // type, read off the fallout.wiki rows in combat-conditions.json. The engine carries one damage
+  // number per weapon, so a matching secondary type (Shishkebab fire, Cold Shoulder cryo) earns a
+  // note and no number.
+  for (const id of ["pyro-technician", "cryologist"] as const) {
+    if ((perkRanks.get(id) || 0) === 0) continue;
+    const model = CC.perks[id];
+    const label = id === "pyro-technician" ? "Pyro-Technician" : "Cryologist";
+    if (base.damageType === model.damageType) {
+      const int = input.playerStats.intelligence;
+      if (int === undefined) {
+        breakdown.push({ source: label, value: "needs Intelligence" });
+      } else {
+        const v = interpolateByInt(model.byInt, int);
+        additiveDamagePct += v;
+        breakdown.push({ source: `${label} (INT ${int}, approx.)`, value: `+${Math.round(v * 1000) / 10}% ${model.damageType}` });
+      }
+    } else if (base.secondaryDamageType === model.damageType) {
+      breakdown.push({ source: label, value: `secondary ${model.damageType} damage not modelled` });
+    } else {
+      breakdown.push({ source: label, value: `${model.damageType} weapons only` });
+    }
+  }
+
+  // Ghoul Glow cards (combat-conditions.json `glow`): "spending Glow" and "hit in the last 10 s"
+  // are Stances toggles, "Glow high" is the meter at or above the pack's threshold. Ghouls only.
+  const isGhoul = Boolean(input.playerStats.isGhoul);
+  const glowPct = Math.max(0, Math.min(100, input.playerStats.glowPct ?? 0));
+  const glowHigh = glowPct >= CC.glow.highThresholdPct;
+  const spendingGlow = Boolean(input.playerStats.isSpendingGlow);
+  const glowCards: string[] = [];
+  if (isGhoul) {
+    const madScientistRank = perkRanks.get("mad-scientist") || 0;
+    if (madScientistRank > 0 && base.isEnergy) {
+      if (spendingGlow) {
+        const v = byRank(CC.perks["mad-scientist"].byRank, madScientistRank);
+        additiveDamagePct += v;
+        glowCards.push("Mad Scientist");
+        breakdown.push({ source: `Mad Scientist (Rank ${madScientistRank}, spending Glow)`, value: `+${Math.round(v * 100)}%` });
+      } else {
+        breakdown.push({ source: "Mad Scientist", value: "spending Glow only" });
+      }
+    }
+    const radiationPowerRank = perkRanks.get("radiation-power") || 0;
+    if (radiationPowerRank > 0) {
+      if (spendingGlow) {
+        const v = byRank(CC.perks["radiation-power"].byRank, radiationPowerRank);
+        additiveDamagePct += v;
+        glowCards.push("Radiation Power");
+        breakdown.push({ source: `Radiation Power (Rank ${radiationPowerRank}, spending Glow)`, value: `+${Math.round(v * 100)}%` });
+      } else {
+        breakdown.push({ source: "Radiation Power", value: "spending Glow only" });
+      }
+    }
+    const radioactiveStrengthRank = perkRanks.get("radioactive-strength") || 0;
+    if (radioactiveStrengthRank > 0) {
+      if (spendingGlow && input.playerStats.isPowerAttacking) {
+        const v = byRank(CC.perks["radioactive-strength"].byRank, radioactiveStrengthRank);
+        additiveDamagePct += v;
+        glowCards.push("Radioactive Strength");
+        breakdown.push({ source: `Radioactive Strength (Rank ${radioactiveStrengthRank}, power attack, spending Glow)`, value: `+${Math.round(v * 100)}%` });
+      } else {
+        breakdown.push({ source: "Radioactive Strength", value: "power attack while spending Glow only (bash not modelled)" });
+      }
+    }
+    const scienceMonsterRank = perkRanks.get("science-monster") || 0;
+    if (scienceMonsterRank > 0) {
+      if (glowPct > 0 && input.playerStats.wasHitRecently) {
+        const v = byRank(CC.perks["science-monster"].byRank, scienceMonsterRank);
+        additiveDamagePct += v;
+        glowCards.push("Science Monster");
+        breakdown.push({ source: `Science Monster (Rank ${scienceMonsterRank}, hit in last 10 s, Glow ${glowPct}%)`, value: `+${Math.round(v * 100)}%` });
+      } else {
+        breakdown.push({ source: "Science Monster", value: glowPct > 0 ? "hit in the last 10 s only" : "needs Glow above 0" });
+      }
+    }
+  }
+
   // Weak spot (body-part multiplier), src/data/truth/weak-spot.json. Bonuses add together, then
   // the creature's head multiplier is scaled by them; the whole thing multiplies the hit.
   const WS = weakSpotTruth as {
@@ -1305,6 +1429,19 @@ export function calculateCombatFirepower(
     breakdown.push({ source: `Better Criticals (Rank ${betterCritsRank})`, value: `+${Math.round(bc * 100)}% Crit` });
   }
 
+  // Glowing Criticals (combat-conditions.json): Ghoul V.A.T.S. crit damage while Glow is high.
+  const glowingCriticalsRank = perkRanks.get("glowing-criticals") || 0;
+  if (isGhoul && glowingCriticalsRank > 0) {
+    if (glowHigh) {
+      const gc = byRank(CC.perks["glowing-criticals"].byRank, glowingCriticalsRank);
+      critBonusPct += gc;
+      glowCards.push("Glowing Criticals");
+      breakdown.push({ source: `Glowing Criticals (Rank ${glowingCriticalsRank}, Glow ${glowPct}%)`, value: `+${Math.round(gc * 100)}% Crit` });
+    } else {
+      breakdown.push({ source: "Glowing Criticals", value: `Glow high only (≥ ${CC.glow.highThresholdPct}%, at ${glowPct}%)` });
+    }
+  }
+
   if (hasVitalCrit) {
     critBonusPct += LEG.vitalCrit;
     breakdown.push({ source: "Vital 2★ (+50% Crit)", value: `+${Math.round(LEG.vitalCrit * 100)}% Crit` });
@@ -1378,12 +1515,26 @@ export function calculateCombatFirepower(
     }
   }
 
+  // Martial Artist (combat-conditions.json): melee / unarmed swing speed by rank, counted before the cap.
+  const martialArtistRank = perkRanks.get("martial-artist") || 0;
+  if (martialArtistRank > 0 && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
+    const ma = byRank(CC.perks["martial-artist"].byRank, martialArtistRank);
+    fireRateMultiplier *= 1 + ma;
+    dpsBreakdown.push({ source: `Martial Artist (Rank ${martialArtistRank})`, value: `+${Math.round(ma * 100)}% Swing Speed` });
+  }
+
   // Melee & Unarmed swing speed cap: +100% max (multiplier capped at 2.0x) since Patch 70
   if (base.weaponClass === "melee" || base.weaponClass === "unarmed") {
     if (fireRateMultiplier > 2.0) {
       fireRateMultiplier = 2.0;
       dpsBreakdown.push({ source: "Melee Swing Speed Cap (Patch 70)", value: "Capped at +100% (2.0× max)" });
     }
+  }
+
+  // Tightly Wound (note-only in combat-conditions.json): the engine has no spin-up model, so the
+  // line touches no number.
+  if ((perkRanks.get("tightly-wound") || 0) > 0 && base.weaponClass === "heavy") {
+    dpsBreakdown.push({ source: "Tightly Wound", value: `spin-up ${Math.round(CC.perks["tightly-wound"].byRank[0] * 100)}% faster (not modelled)` });
   }
 
   const effectiveRPS = base.fireRate * fireRateMultiplier;
@@ -1627,6 +1778,7 @@ export function calculateCombatFirepower(
   return {
     ...intermediateFirepower,
     targetDummy,
+    ...(glowCards.length > 0 ? { glow: { cards: glowCards } } : {}),
   };
 }
 

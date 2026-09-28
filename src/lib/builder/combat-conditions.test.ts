@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateCombatFirepower, type CombatFirepowerCalculationInput } from "./combat-firepower-engine";
+import { calculateCombatFirepower, interpolateByInt, WEAPON_COMBAT_BASE_CATALOG, type CombatFirepowerCalculationInput } from "./combat-firepower-engine";
 import truth from "@/data/truth/combat-conditions.json";
 import perkCards from "@/data/perk-cards.json";
 
@@ -230,5 +230,253 @@ describe("Number Cruncher", () => {
     const base = calculateCombatFirepower(input({ weaponId: "chainsaw" }));
     expect(r.damagePerShot.normal).toBeGreaterThan(base.damagePerShot.normal);
     expect(r.damagePerShot.breakdown.some((b) => b.source.startsWith("Number Cruncher"))).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// 2026-09-28 additions: melee swing speed, weapon damage type, Ghoul Glow cards.
+// ---------------------------------------------------------------------------------------------
+
+const GLOW_PERKS = ["glowing-criticals", "mad-scientist", "radiation-power", "radioactive-strength", "science-monster"] as const;
+
+describe("combat-conditions.json mirrors the Patch 70 card texts (swing speed, damage type, Glow)", () => {
+  it.each(GLOW_PERKS)("%s byRank", (id) => {
+    expect(truth.perks[id].byRank).toEqual(cardPercents(id));
+  });
+  it("Martial Artist reads the swing-speed number, not the weight number, of each rank", () => {
+    const card = (perkCards as { id: string; ranks: { description: string }[] }[]).find((c) => c.id === "martial-artist")!;
+    const swing = card.ranks.map((r) => Number.parseInt(/swing them (\d+)% faster/.exec(r.description)![1], 10) / 100);
+    expect(truth.perks["martial-artist"].byRank).toEqual(swing);
+    expect(swing).toEqual([0.1, 0.2, 0.3]);
+  });
+  it("Tightly Wound is a single-rank, note-only 60 %", () => {
+    expect(truth.perks["tightly-wound"].byRank).toEqual(cardPercents("tightly-wound"));
+    expect(truth.perks["tightly-wound"].byRank).toEqual([0.6]);
+    expect(truth.perks["tightly-wound"].model).toBe("note-only");
+  });
+  it("Pyro-Technician and Cryologist carry the fallout.wiki INT table (5 % at INT 1, 50 % cap at INT 100)", () => {
+    for (const id of ["pyro-technician", "cryologist"] as const) {
+      const rows = truth.perks[id].byInt;
+      expect(rows[0]).toEqual([1, 0.05]);
+      expect(rows[rows.length - 1]).toEqual([100, 0.5]);
+      for (let i = 1; i < rows.length; i++) {
+        expect(rows[i][0]).toBeGreaterThan(rows[i - 1][0]);
+        expect(rows[i][1]).toBeGreaterThan(rows[i - 1][1]);
+      }
+      expect(truth.perks[id].confidence).toBe("approximate");
+      expect(truth.perks[id].source).toMatch(/fallout\.wiki/);
+    }
+    expect(truth.perks["pyro-technician"].damageType).toBe("fire");
+    expect(truth.perks.cryologist.damageType).toBe("cryo");
+  });
+  it("Glow high is 80 % (approximate, shared with the vitals sheet)", () => {
+    expect(truth.glow.highThresholdPct).toBe(80);
+    expect(truth.glow.confidence).toBe("approximate");
+  });
+});
+
+describe("melee swing speed", () => {
+  const multiplier = (i: CombatFirepowerCalculationInput) => calculateCombatFirepower(i).fireRate.fireRateMultiplier;
+
+  it("Martial Artist multiplies the swing rate by rank for melee and unarmed weapons", () => {
+    for (const weaponId of ["chainsaw", "deathclaw-gauntlet"]) {
+      const base = multiplier(input({ weaponId }));
+      for (const rank of [1, 2, 3]) {
+        const r = calculateCombatFirepower(input({ weaponId, equippedPerks: [{ cardId: "martial-artist", rank }] }));
+        expect(r.fireRate.fireRateMultiplier).toBeCloseTo(base * (1 + truth.perks["martial-artist"].byRank[rank - 1]), 10);
+        expect(r.dps.breakdown).toContainEqual({ source: `Martial Artist (Rank ${rank})`, value: `+${rank * 10}% Swing Speed` });
+      }
+    }
+  });
+
+  it("does nothing for ranged weapons", () => {
+    const r = calculateCombatFirepower(input({ equippedPerks: [{ cardId: "martial-artist", rank: 3 }] }));
+    expect(r.fireRate.fireRateMultiplier).toBe(multiplier(input()));
+    expect(r.dps.breakdown.some((b) => b.source.startsWith("Martial Artist"))).toBe(false);
+  });
+
+  it("the Patch 70 swing-speed cap still holds at 2.0× with Martial Artist on top of The Quick Fix", () => {
+    // The Quick Fix alone reaches the +100 % cap at 20+ addictions; Martial Artist 3 must not push past it.
+    const capped = calculateCombatFirepower(
+      input({ weaponId: "the-quick-fix", equippedPerks: [{ cardId: "martial-artist", rank: 3 }] }, { addictionsCount: 30 }),
+    );
+    expect(capped.fireRate.fireRateMultiplier).toBe(2.0);
+    expect(capped.dps.breakdown).toContainEqual({ source: "Melee Swing Speed Cap (Patch 70)", value: "Capped at +100% (2.0× max)" });
+    expect(capped.fireRate.rps).toBeCloseTo(capped.baseStats.fireRate * 2, 10);
+    // Below the cap the two sources multiply.
+    const under = calculateCombatFirepower(
+      input({ weaponId: "the-quick-fix", equippedPerks: [{ cardId: "martial-artist", rank: 3 }] }, { addictionsCount: 4 }),
+    );
+    expect(under.fireRate.fireRateMultiplier).toBeCloseTo(1.2 * 1.3, 10);
+  });
+
+  it("Tightly Wound is a breakdown line on heavy guns and changes no number", () => {
+    const plain = calculateCombatFirepower(input({ weaponId: "holy-fire" }));
+    const wound = calculateCombatFirepower(input({ weaponId: "holy-fire", equippedPerks: [{ cardId: "tightly-wound", rank: 1 }] }));
+    expect(wound.fireRate).toEqual(plain.fireRate);
+    expect(wound.dps.burstDPS).toBe(plain.dps.burstDPS);
+    expect(wound.dps.breakdown).toContainEqual({ source: "Tightly Wound", value: "spin-up 60% faster (not modelled)" });
+    const rifle = calculateCombatFirepower(input({ equippedPerks: [{ cardId: "tightly-wound", rank: 1 }] }));
+    expect(rifle.dps.breakdown.some((b) => b.source === "Tightly Wound")).toBe(false);
+  });
+});
+
+describe("weapon damage type (Pyro-Technician, Cryologist)", () => {
+  const rows = truth.perks["pyro-technician"].byInt;
+
+  it("interpolateByInt reads the published rows exactly and interpolates between them", () => {
+    expect(interpolateByInt(rows, 1)).toBe(0.05);
+    expect(interpolateByInt(rows, 10)).toBe(0.1592);
+    expect(interpolateByInt(rows, 100)).toBe(0.5);
+    expect(interpolateByInt(rows, 15)).toBeCloseTo((0.1592 + 0.2633) / 2, 10);
+    // Clamped to the table's ends.
+    expect(interpolateByInt(rows, 0)).toBe(0.05);
+    expect(interpolateByInt(rows, 250)).toBe(0.5);
+    expect(interpolateByInt(rows, Number.NaN)).toBe(0.05);
+  });
+
+  it("Pyro-Technician scales fire weapons by Intelligence", () => {
+    const perks = [{ cardId: "pyro-technician", rank: 1 }];
+    for (const [int, pct] of [[1, 0.05], [10, 0.1592], [30, 0.35], [100, 0.5]] as const) {
+      expectPlusPct(input({ weaponId: "flamer", equippedPerks: perks }, { intelligence: int }), pct);
+    }
+    expect(sources(input({ weaponId: "flamer", equippedPerks: perks }, { intelligence: 10 }))).toContain("Pyro-Technician (INT 10, approx.)");
+    expect(calculateCombatFirepower(input({ weaponId: "flamer", equippedPerks: perks }, { intelligence: 10 })).damagePerShot.breakdown).toContainEqual({
+      source: "Pyro-Technician (INT 10, approx.)",
+      value: "+15.9% fire",
+    });
+    // Cremator and Holy Fire are fire weapons too.
+    expectPlusPct(input({ weaponId: "holy-fire", equippedPerks: perks }, { intelligence: 1 }), 0.05);
+  });
+
+  it("Pyro-Technician needs Intelligence and a fire weapon; a secondary fire type earns only a note", () => {
+    const perks = [{ cardId: "pyro-technician", rank: 1 }];
+    // No INT given: no number, a note.
+    const noInt = calculateCombatFirepower(input({ weaponId: "flamer", equippedPerks: perks }));
+    expect(noInt.damagePerShot.normal).toBe(normal(input({ weaponId: "flamer" })));
+    expect(noInt.damagePerShot.breakdown).toContainEqual({ source: "Pyro-Technician", value: "needs Intelligence" });
+    // Ballistic rifle: nothing.
+    const rifle = calculateCombatFirepower(input({ equippedPerks: perks }, { intelligence: 15 }));
+    expect(rifle.damagePerShot.normal).toBe(normal(input()));
+    expect(rifle.damagePerShot.breakdown).toContainEqual({ source: "Pyro-Technician", value: "fire weapons only" });
+    // Shishkebab: physical primary, fire secondary.
+    const kebab = calculateCombatFirepower(input({ weaponId: "shishkebab", equippedPerks: perks }, { intelligence: 15 }));
+    expect(kebab.damagePerShot.normal).toBe(normal(input({ weaponId: "shishkebab" }, { intelligence: 15 })));
+    expect(kebab.damagePerShot.breakdown).toContainEqual({ source: "Pyro-Technician", value: "secondary fire damage not modelled" });
+  });
+
+  it("Cryologist: no catalog weapon has cryo as primary damage yet, the Cold Shoulder gets the secondary note", () => {
+    const perks = [{ cardId: "cryologist", rank: 1 }];
+    const cs = calculateCombatFirepower(input({ weaponId: "cold-shoulder", equippedPerks: perks }, { intelligence: 15 }));
+    expect(cs.damagePerShot.normal).toBe(normal(input({ weaponId: "cold-shoulder" })));
+    expect(cs.damagePerShot.breakdown).toContainEqual({ source: "Cryologist", value: "secondary cryo damage not modelled" });
+    expect(calculateCombatFirepower(input({ weaponId: "flamer", equippedPerks: perks }, { intelligence: 15 })).damagePerShot.breakdown).toContainEqual({
+      source: "Cryologist",
+      value: "cryo weapons only",
+    });
+    expect(Object.values(WEAPON_COMBAT_BASE_CATALOG).some((w) => w.damageType === "cryo")).toBe(false);
+  });
+});
+
+describe("Ghoul Glow cards", () => {
+  const ghoul = (over: Partial<CombatFirepowerCalculationInput>, stats: Partial<Stats> = {}) => input(over, { isGhoul: true, ...stats });
+  const glowCards = (i: CombatFirepowerCalculationInput) => calculateCombatFirepower(i).glow?.cards;
+
+  it("nothing applies to a human, whatever the toggles say", () => {
+    const perks = GLOW_PERKS.map((cardId) => ({ cardId, rank: 3 }));
+    const r = calculateCombatFirepower(
+      input({ weaponId: "holy-fire", equippedPerks: perks }, { isGhoul: false, glowPct: 100, isSpendingGlow: true, wasHitRecently: true, isPowerAttacking: true }),
+    );
+    const plain = calculateCombatFirepower(input({ weaponId: "holy-fire" }, { isPowerAttacking: true }));
+    expect(r.damagePerShot).toEqual(plain.damagePerShot);
+    expect(r.glow).toBeUndefined();
+  });
+
+  it("Mad Scientist: energy weapons while spending Glow, by rank", () => {
+    for (const rank of [1, 2, 3]) {
+      const perks = [{ cardId: "mad-scientist", rank }];
+      expectPlusPct(ghoul({ weaponId: "holy-fire", equippedPerks: perks }, { isSpendingGlow: true }), truth.perks["mad-scientist"].byRank[rank - 1]);
+      // Not spending: nothing but a hint.
+      const holding = calculateCombatFirepower(ghoul({ weaponId: "holy-fire", equippedPerks: perks }));
+      expect(holding.damagePerShot.normal).toBe(normal(input({ weaponId: "holy-fire" })));
+      expect(holding.damagePerShot.breakdown).toContainEqual({ source: "Mad Scientist", value: "spending Glow only" });
+      expect(holding.glow).toBeUndefined();
+      // Ballistic weapon: nothing.
+      expect(normal(ghoul({ equippedPerks: perks }, { isSpendingGlow: true }))).toBe(normal(input()));
+    }
+    expect(glowCards(ghoul({ weaponId: "holy-fire", equippedPerks: [{ cardId: "mad-scientist", rank: 2 }] }, { isSpendingGlow: true }))).toEqual(["Mad Scientist"]);
+  });
+
+  it("Radiation Power: any weapon while spending Glow, by rank", () => {
+    for (const rank of [1, 2, 3]) {
+      const perks = [{ cardId: "radiation-power", rank }];
+      expectPlusPct(ghoul({ equippedPerks: perks }, { isSpendingGlow: true }), truth.perks["radiation-power"].byRank[rank - 1]);
+      expectPlusPct(ghoul({ weaponId: "chainsaw", equippedPerks: perks }, { isSpendingGlow: true, strength: 0 }), truth.perks["radiation-power"].byRank[rank - 1]);
+      expect(normal(ghoul({ equippedPerks: perks }))).toBe(normal(input()));
+    }
+  });
+
+  it("Radioactive Strength: power attacks while spending Glow, by rank", () => {
+    for (const rank of [1, 2, 3]) {
+      const perks = [{ cardId: "radioactive-strength", rank }];
+      const on = ghoul({ weaponId: "chainsaw", equippedPerks: perks }, { isSpendingGlow: true, isPowerAttacking: true, strength: 0 });
+      expectPlusPct(on, truth.perks["radioactive-strength"].byRank[rank - 1]);
+      expect(sources(on)).toContain(`Radioactive Strength (Rank ${rank}, power attack, spending Glow)`);
+      // Either half missing: nothing.
+      const baseline = normal(input({ weaponId: "chainsaw" }, { strength: 0 }));
+      expect(normal(ghoul({ weaponId: "chainsaw", equippedPerks: perks }, { isSpendingGlow: true, strength: 0 }))).toBe(baseline);
+      expect(normal(ghoul({ weaponId: "chainsaw", equippedPerks: perks }, { isPowerAttacking: true, strength: 0 }))).toBe(baseline);
+    }
+  });
+
+  it("Science Monster: hit in the last 10 s while holding any Glow, by rank", () => {
+    for (const rank of [1, 2, 3]) {
+      const perks = [{ cardId: "science-monster", rank }];
+      expectPlusPct(ghoul({ equippedPerks: perks }, { glowPct: 1, wasHitRecently: true }), truth.perks["science-monster"].byRank[rank - 1]);
+      expectPlusPct(ghoul({ equippedPerks: perks }, { glowPct: 100, wasHitRecently: true }), truth.perks["science-monster"].byRank[rank - 1]);
+      const noGlow = calculateCombatFirepower(ghoul({ equippedPerks: perks }, { glowPct: 0, wasHitRecently: true }));
+      expect(noGlow.damagePerShot.normal).toBe(normal(input()));
+      expect(noGlow.damagePerShot.breakdown).toContainEqual({ source: "Science Monster", value: "needs Glow above 0" });
+      const notHit = calculateCombatFirepower(ghoul({ equippedPerks: perks }, { glowPct: 50 }));
+      expect(notHit.damagePerShot.normal).toBe(normal(input()));
+      expect(notHit.damagePerShot.breakdown).toContainEqual({ source: "Science Monster", value: "hit in the last 10 s only" });
+    }
+  });
+
+  it("Glowing Criticals: crit damage while Glow is high (≥ 80 %), by rank; normal damage untouched", () => {
+    const critBonus = (i: CombatFirepowerCalculationInput) => {
+      const r = calculateCombatFirepower(i);
+      return r.damagePerShot.critical - r.damagePerShot.normal - r.damagePerShot.explosiveBonus;
+    };
+    const base = baseDamage("fixer");
+    expect(critBonus(input())).toBe(Math.round(base * 1.0));
+    for (const rank of [1, 2, 3]) {
+      const perks = [{ cardId: "glowing-criticals", rank }];
+      const v = truth.perks["glowing-criticals"].byRank[rank - 1];
+      const high = ghoul({ equippedPerks: perks }, { glowPct: 80 });
+      expect(critBonus(high)).toBe(Math.round(base * (1 + v)));
+      expect(normal(high)).toBe(normal(input()));
+      expect(glowCards(high)).toEqual(["Glowing Criticals"]);
+      // Just under the line, or a human: base crit only.
+      const low = ghoul({ equippedPerks: perks }, { glowPct: 79 });
+      expect(critBonus(low)).toBe(Math.round(base));
+      expect(calculateCombatFirepower(low).damagePerShot.breakdown).toContainEqual({ source: "Glowing Criticals", value: "Glow high only (≥ 80%, at 79%)" });
+      expect(critBonus(input({ equippedPerks: perks }, { glowPct: 100 }))).toBe(Math.round(base));
+    }
+    // Stacks with Better Criticals in the same crit pool.
+    const both = ghoul({ equippedPerks: [{ cardId: "glowing-criticals", rank: 3 }, { cardId: "better-criticals", rank: 3 }] }, { glowPct: 100 });
+    expect(critBonus(both)).toBe(Math.round(base * (1 + 1.0 + 0.5)));
+  });
+
+  it("the result lists every contributing Glow card for the combat tab chip", () => {
+    const r = calculateCombatFirepower(
+      ghoul(
+        { weaponId: "holy-fire", equippedPerks: GLOW_PERKS.map((cardId) => ({ cardId, rank: 1 })) },
+        { glowPct: 90, isSpendingGlow: true, wasHitRecently: true, isPowerAttacking: true },
+      ),
+    );
+    expect(r.glow?.cards).toEqual(["Mad Scientist", "Radiation Power", "Radioactive Strength", "Science Monster", "Glowing Criticals"]);
+    // Every additive Glow card lands in the same base pool: 10 + 10 + 50 + 5 = +75 %.
+    expect(r.damagePerShot.normal).toBe(Math.round(baseDamage("holy-fire") * 1.75));
   });
 });

@@ -1,5 +1,5 @@
 {
-  "$comment": "Condition-gated damage perks for the builder's combat conditions (hit location, target range, target type, crippled limbs, V.A.T.S. AP cost). Every number is read from the Patch 70 card text in src/data/perk-cards.json; the `source` string quotes the rank-1 card. Fractions add to the same additive base pool as the other perks (post-Patch 22 rule); `exterminator` is an armor-penetration source and goes through the 90 % cap in creation-engine-math instead. Nothing here is verified against a datamine: where the card text is the only source, the entry says so.",
+  "$comment": "Condition-gated damage perks for the builder's combat conditions (hit location, target range, target type, crippled limbs, V.A.T.S. AP cost, melee swing speed, weapon damage type, Ghoul Glow). Every number is read from the Patch 70 card text in src/data/perk-cards.json; the `source` string quotes the rank-1 card. Fractions add to the same additive base pool as the other perks (post-Patch 22 rule); `exterminator` is an armor-penetration source and goes through the 90 % cap in creation-engine-math instead. Nothing here is verified against a datamine: where the card text is the only source, the entry says so.",
   "verifiedAt": "2026-09-28",
   "source": "Patch 70 card texts (src/data/perk-cards.json); https://fallout.wiki/wiki/Fallout_76_combat for the hit-location and range vocabulary",
   "hitLocations": {
@@ -11,6 +11,12 @@
     "close": "Within the game's 'close enemies' band (Guerrilla, Guerrilla Master). The exact distance is unpublished.",
     "mid": "Neither close nor far: no range perk applies. Default.",
     "far": "Within the game's 'far enemies' band (Down Ranger). The exact distance is unpublished."
+  },
+  "glow": {
+    "highThresholdPct": 80,
+    "condition": "Ghoul only. 'Glow high' = Glow meter at or above highThresholdPct; 'spending Glow' = the Stances toggle combatStance.isSpendingGlow (the cards expend Glow per attack, the rate is unpublished); 'has Glow' = Glow meter above 0.",
+    "source": "Patch 70 card texts say only 'When your Glow is high' / 'Expend a small amount of Glow' / 'While you have Glow'. The 80 % line is the builder's reading, shared with the vitals sheet (Jaguar Speed) and the Lucid 1★ threshold; no datamine confirms it.",
+    "confidence": "approximate"
   },
   "perks": {
     "center-masochist": {
@@ -81,6 +87,74 @@
       "unit": "point of the weapon's V.A.T.S. AP cost per shot",
       "condition": "any weapon; uses the resolved AP cost per shot (base × attachments × V.A.T.S. Optimized), so a cheaper V.A.T.S. shot also lowers this bonus",
       "source": "Card text (Patch 70): 'Your weapons have 2% increased damage per AP cost.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "martial-artist": {
+      "kind": "swing-speed",
+      "byRank": [0.1, 0.2, 0.3],
+      "condition": "melee and unarmed weapons; multiplies the swing rate before the Patch 70 +100 % swing-speed cap (2.0×)",
+      "source": "Card text (Patch 70): 'Your melee weapons weigh 20% less, and you can swing them 10% faster.' Card text is the only source; the weight part is a carry-weight effect and is not modelled here.",
+      "note": "Unarmed weapons (gauntlets, knuckles) are melee weapons in the game's weapon classes, so the catalog's 'unarmed' class gets the bonus too.",
+      "confidence": "card-text"
+    },
+    "tightly-wound": {
+      "kind": "spin-up",
+      "model": "note-only",
+      "byRank": [0.6],
+      "unit": "spin-up speed",
+      "condition": "heavy guns that spin up (Gatling family, minigun); the catalog has no spin-up flag, so the line is shown for every heavy gun",
+      "source": "Card text (Patch 70): 'Weapons spin up 60% faster.' Card text is the only source. The Patch 70 card has one rank; the unification plan's '+30/60 %' was a two-rank misread.",
+      "note": "The engine has no spin-up model (fire rate is steady-state), so this is a breakdown line only and touches no number.",
+      "confidence": "card-text"
+    },
+    "pyro-technician": {
+      "kind": "damage-by-int",
+      "damageType": "fire",
+      "byInt": [[1, 0.05], [5, 0.0986], [10, 0.1592], [20, 0.2633], [30, 0.35], [40, 0.3833], [50, 0.4167], [60, 0.45], [70, 0.4625], [80, 0.475], [90, 0.4875], [100, 0.5]],
+      "condition": "weapon whose primary damage type is fire (Flamer, Holy Fire, Cremator); scales with live Intelligence; values between the published rows are interpolated linearly, INT is clamped to 1..100",
+      "source": "Card text (Patch 70): 'Increase fire damage based on your INT.' Scaling rows from https://fallout.wiki/wiki/Pyro-Technician (INT 1 → 5.00 %, 5 → 9.86 %, 10 → 15.92 %, 20 → 26.33 %, 30 → 35.00 %, 40 → 38.33 %, 50 → 41.67 %, 60 → 45.00 %, 70 → 46.25 %, 80 → 47.50 %, 90 → 48.75 %, 100 → 50.00 %, cap 50 %); the formula behind the rows is unpublished.",
+      "note": "Only the primary damage type is scaled: the engine carries one damage number per weapon, so a weapon whose secondary damage is fire (Shishkebab) gets a breakdown note and no number. The pre-rework card ('Science Expert', 5/10 % energy damage) is unrelated.",
+      "confidence": "approximate"
+    },
+    "cryologist": {
+      "kind": "damage-by-int",
+      "damageType": "cryo",
+      "byInt": [[1, 0.05], [5, 0.0986], [10, 0.1592], [20, 0.2633], [30, 0.35], [40, 0.3833], [50, 0.4167], [60, 0.45], [70, 0.4625], [80, 0.475], [90, 0.4875], [100, 0.5]],
+      "condition": "weapon whose primary damage type is cryo; scales with live Intelligence; values between the published rows are interpolated linearly, INT is clamped to 1..100",
+      "source": "Card text (Patch 70): 'Increase cryo damage based on your INT.' Scaling rows from https://fallout.wiki/wiki/Cryologist (the same INT 1 → 5.00 % … 100 → 50.00 % table as Pyro-Technician, cap 50 %); the formula behind the rows is unpublished.",
+      "note": "No catalog weapon has cryo as its primary damage type yet (the Cold Shoulder's cryo is its secondary damage), so today this card only produces the 'secondary cryo not modelled' note; the number is ready for a Cryolator row.",
+      "confidence": "approximate"
+    },
+    "glowing-criticals": {
+      "kind": "crit-damage",
+      "byRank": [0.2, 0.35, 0.5],
+      "condition": "Ghoul; Glow high (see `glow`); V.A.T.S. critical damage, added to the crit bonus pool like Better Criticals",
+      "source": "Card text (Patch 70): 'When your Glow is high, Gain 20% bonus Critical damage in V.A.T.S.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "mad-scientist": {
+      "byRank": [0.1, 0.15, 0.2],
+      "condition": "Ghoul; energy weapons (catalog `isEnergy`); spending Glow",
+      "source": "Card text (Patch 70): 'Energy Weapons expend a small amount of Glow per attack for +10% Damage.' Card text is the only source (the unification plan's '+10/20 %' skipped the 15 % middle rank).",
+      "confidence": "card-text"
+    },
+    "radiation-power": {
+      "byRank": [0.1, 0.15, 0.2],
+      "condition": "Ghoul; any weapon; spending Glow",
+      "source": "Card text (Patch 70): 'Expend a small amount of Glow per hit to deal 10% bonus damage to targets.' Card text is the only source (the plan's '+10/20 %' skipped the 15 % middle rank).",
+      "confidence": "card-text"
+    },
+    "radioactive-strength": {
+      "byRank": [0.5, 1.0, 1.5],
+      "condition": "Ghoul; spending Glow; power attack (the Stances 'Power Attack' toggle). Bashing is not an attack mode in the engine, so the bash half of the card is not modelled.",
+      "source": "Card text (Patch 70): 'Expend a Moderate amount of Glow to deal 50% more damage with Power Attacks & Bashing.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "science-monster": {
+      "byRank": [0.05, 0.1, 0.15],
+      "condition": "Ghoul; Glow above 0; hit in the last 10 s (the Stances 'Hit in last 10 s' toggle, combatStance.wasHitRecently); any weapon",
+      "source": "Card text (Patch 70): 'While you have Glow, gain 5% bonus damage for 10 seconds upon getting hit.' Card text is the only source (the plan's '+5/15 %' skipped the 10 % middle rank).",
+      "note": "The engine has no combat timeline, so 'upon getting hit' is a manual toggle rather than a timer.",
       "confidence": "card-text"
     }
   }

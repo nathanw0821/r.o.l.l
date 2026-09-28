@@ -34,12 +34,15 @@ interface BuilderFirepowerMatrixProps {
   hitLocation?: CombatHitLocation;
   /** Biometrics target range the numbers assume; "mid" (the default) shows no chip. */
   targetRange?: CombatTargetRange;
+  /** A Ghoul Glow card contributed to the numbers (engine result `glow`); off shows no chip. */
+  glowActive?: boolean;
 }
 
 export default function BuilderFirepowerMatrix({
   firepower,
   hitLocation = "body",
   targetRange = "mid",
+  glowActive = false,
 }: BuilderFirepowerMatrixProps) {
   const [selectedDummyId, setSelectedDummyId] = React.useState<string>(
     firepower.targetDummy?.dummy?.id || "scorchbeast-queen"
@@ -166,7 +169,7 @@ export default function BuilderFirepowerMatrix({
                   </span>
                 </div>
               )}
-              {(hitLocation === "torso" || targetRange !== "mid") && (
+              {(hitLocation === "torso" || targetRange !== "mid" || glowActive) && (
                 <div className="pt-1 border-t border-slate-800 flex flex-wrap items-center gap-1 text-2xs">
                   {hitLocation === "torso" && (
                     <span className="rounded bg-rose-950 border border-rose-500/50 px-1.5 py-0.5 font-bold text-rose-200">🎯 Torso</span>
@@ -176,6 +179,14 @@ export default function BuilderFirepowerMatrix({
                   )}
                   {targetRange === "far" && (
                     <span className="rounded bg-sky-950 border border-sky-500/50 px-1.5 py-0.5 font-bold text-sky-200">📏 Far range</span>
+                  )}
+                  {glowActive && (
+                    <span
+                      className="rounded bg-lime-950 border border-lime-500/50 px-1.5 py-0.5 font-bold text-lime-200"
+                      title={firepower.glow?.cards.join(" · ")}
+                    >
+                      ☢ Glow
+                    </span>
                   )}
                 </div>
               )}

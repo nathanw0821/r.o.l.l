@@ -50,6 +50,10 @@ import {
   type DefensiveProfile,
   type IncomingDamageType,
 } from "@/lib/builder/perk-defensive-layer";
+import combatConditions from "@/data/truth/combat-conditions.json";
+
+/** Glow meter reading that counts as "Glow high" for the Ghoul cards (combat-conditions.json `glow`). */
+const GLOW_HIGH_THRESHOLD_PCT: number = combatConditions.glow.highThresholdPct;
 
 export type CombatSwitchboardState = {
   isGhoul?: boolean;
@@ -98,6 +102,10 @@ export type CombatSwitchboardState = {
     hitLocation?: CombatHitLocation;
     /** Target distance band: close (Guerrilla), mid (default, no range perk) or far (Down Ranger). */
     targetRange?: CombatTargetRange;
+    /** Ghoul: the attack expends Glow (Mad Scientist, Radiation Power, Radioactive Strength). */
+    isSpendingGlow?: boolean;
+    /** Ghoul: hit in the last 10 s (Science Monster). */
+    wasHitRecently?: boolean;
   };
   caps?: number;
   /** Damage-taken preview: size of the incoming hit and its damage type. */
@@ -519,6 +527,8 @@ export default function BuilderCombatSwitchboard({
         isTargetingWeakSpot: resolveHitLocation(initialState?.combatStance) === "weakSpot",
         hitLocation: resolveHitLocation(initialState?.combatStance),
         targetRange: resolveTargetRange(initialState?.combatStance),
+        isSpendingGlow: initialState?.combatStance?.isSpendingGlow ?? false,
+        wasHitRecently: initialState?.combatStance?.wasHitRecently ?? false,
       },
       activeFoods: {
         ...defaults.activeFoods,
@@ -575,6 +585,8 @@ export default function BuilderCombatSwitchboard({
               isTargetingWeakSpot: nextHitLocation === "weakSpot",
               hitLocation: nextHitLocation,
               targetRange: initialState.combatStance?.targetRange ?? prev.combatStance?.targetRange ?? "mid",
+              isSpendingGlow: initialState.combatStance?.isSpendingGlow ?? prev.combatStance?.isSpendingGlow ?? false,
+              wasHitRecently: initialState.combatStance?.wasHitRecently ?? prev.combatStance?.wasHitRecently ?? false,
             };
             if (JSON.stringify(nextStance) !== JSON.stringify(prev.combatStance)) {
               next.combatStance = nextStance;
@@ -1408,6 +1420,8 @@ export default function BuilderCombatSwitchboard({
               switchboard.combatStance?.isInVats ? "In V.A.T.S." : switchboard.combatStance?.isAiming ? "Aiming" : "Hip fire",
               hitLocation === "weakSpot" ? "Weak spot" : hitLocation === "torso" ? "Torso" : null,
               targetRange === "close" ? "Close range" : targetRange === "far" ? "Far range" : null,
+              isGhoul && switchboard.combatStance?.isSpendingGlow ? "Spending Glow" : null,
+              isGhoul && switchboard.combatStance?.wasHitRecently ? "Hit recently" : null,
             ].filter(Boolean).join(" · ")}
             open={openGroups.has("stances")}
             onToggle={() => toggleGroup("stances")}
@@ -1501,6 +1515,55 @@ export default function BuilderCombatSwitchboard({
                 </button>
               </div>
             </div>
+
+            {/* Row 1b: Ghoul Glow economy (combat-conditions.json `glow`), ghouls only */}
+            {isGhoul && (
+              <div className="space-y-1">
+                <div className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between gap-2">
+                  <span>☢ Glow economy</span>
+                  <span className="text-3xs text-dim lowercase font-normal text-right">
+                    glow {switchboard.glowPct || 0}% · high from {GLOW_HIGH_THRESHOLD_PCT}% (Glowing Criticals)
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Spending Glow: Mad Scientist, Radiation Power, Radioactive Strength */}
+                  <button
+                    type="button"
+                    aria-pressed={Boolean(switchboard.combatStance?.isSpendingGlow)}
+                    onClick={() => updateStance("isSpendingGlow", !switchboard.combatStance?.isSpendingGlow)}
+                    className={`p-2 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                      switchboard.combatStance?.isSpendingGlow
+                        ? "bg-lime-950 border-lime-500 text-lime-300 shadow-[0_0_10px_rgba(132,204,22,0.3)] font-black"
+                        : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    <span>☢ Spending Glow</span>
+                    <span className="text-3xs font-normal text-dim">
+                      {switchboard.combatStance?.isSpendingGlow
+                        ? "Mad Scientist · Radiation Power · Radioactive Strength"
+                        : "Holding Glow: cards that expend it are idle"}
+                    </span>
+                  </button>
+
+                  {/* Hit in the last 10 s: Science Monster */}
+                  <button
+                    type="button"
+                    aria-pressed={Boolean(switchboard.combatStance?.wasHitRecently)}
+                    onClick={() => updateStance("wasHitRecently", !switchboard.combatStance?.wasHitRecently)}
+                    className={`p-2 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                      switchboard.combatStance?.wasHitRecently
+                        ? "bg-lime-950 border-lime-500 text-lime-300 shadow-[0_0_10px_rgba(132,204,22,0.3)] font-black"
+                        : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    <span>💢 Hit in last 10 s</span>
+                    <span className="text-3xs font-normal text-dim">
+                      {switchboard.combatStance?.wasHitRecently ? "Science Monster (needs Glow above 0)" : "Science Monster idle"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Row 2: Targeting & V.A.T.S. Fire Control */}
             <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
