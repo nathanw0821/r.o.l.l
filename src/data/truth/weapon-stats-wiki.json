@@ -1,5 +1,5 @@
 {
-  "$comment": "Which builder weapons really deal a second damage type, checked against fallout.wiki on 2026-09-28 for every WEAPON_COMBAT_BASE_CATALOG row that carried `secondaryDamage` (combat-firepower-catalog.ts). `printed` is the infobox damage as the page prints it (icon labels written as words, per-level values left to right, highest level last); `components` is the highest-level row; `catalog` is the row's values at the time of the check. `verdict`: split-verified = the page prints two damage lines, so the catalog's baseDamage is one component and the secondary stays; secondary-mod-only = the page prints one base line and the second type comes from a mod, so the secondary is dropped; unverified = the page prints no figure, so the secondary is off until a source appears. Component VALUES are not settled here: where they differ from the catalog the note says 'wider audit' (Agent_Exchange/ROLL_WEAPON_STATS_AUDIT_2026-09-28.md) and Nathan decides which numbers move. Nothing is estimated. weapon-stats-wiki.test.ts pins the catalog to these verdicts.",
+  "$comment": "Which builder weapons really deal a second damage type, checked against fallout.wiki on 2026-09-28 for every WEAPON_COMBAT_BASE_CATALOG row that carried `secondaryDamage` (combat-firepower-catalog.ts). `printed` is the infobox damage as the page prints it (icon labels written as words, per-level values left to right, highest level last); `components` is the highest-level row; `catalog` is the row's values at the time of the check. `verdict`: split-verified = the page prints two damage lines, so the catalog's baseDamage is one component and the secondary stays; secondary-mod-only = the page prints one base line and the second type comes from a mod, so the secondary is dropped; official-p70 = the page prints no figure (or is older than the weapon's Patch 70 rework) but the official Patch 70 notes in unique-items-official-p70.json state the second damage type, so the secondary stays with its catalog amount unverified; unverified = no source at all, secondary off. Rule (Nathan, 2026-09-28): a value never moves to an OLDER source; fallout.wiki pages of uniques reworked in Patch 70 (unique-items.json sourceNotes) are informational only. Component VALUES are not settled here: where they differ from the catalog the note says 'wider audit' (Agent_Exchange/ROLL_WEAPON_STATS_AUDIT_2026-09-28.md) and Nathan decides which numbers move. Nothing is estimated. weapon-stats-wiki.test.ts pins the catalog to these verdicts.",
   "verifiedAt": "2026-09-28",
   "mechanics": {
     "splitDamage": {
@@ -79,9 +79,14 @@
         "secondaryDamage": 30,
         "secondaryDamageType": "energy"
       },
-      "verdict": "unverified",
-      "secondaryKept": false,
-      "note": "The page prints no damage figure and names only physical damage; no energy or electrical damage is stated anywhere. The catalog's 30 energy secondary has no source, so it is off."
+      "verdict": "official-p70",
+      "secondaryKept": true,
+      "note": "fallout.wiki prints no damage figure for this unique, but the page predates its Patch 70 rework; the official Patch 70 notes (unique-items-official-p70.json, mirrored in unique-items.json with sourceNotes 'Reworked in Patch 70') give it innate Energy Damage, so the secondary stays. Its amount (30) is the catalog's and unverified: a newer source only.",
+      "officialSource": {
+        "file": "src/data/truth/unique-items-official-p70.json",
+        "quote": "V63 Shock Baton: Energy Damage",
+        "patch": 70
+      }
     },
     "the-kabloom": {
       "label": "The Kabloom (Pump Shotgun · Unique)",
@@ -96,9 +101,14 @@
         "secondaryDamage": 40,
         "secondaryDamageType": "poison"
       },
-      "verdict": "unverified",
-      "secondaryKept": false,
-      "note": "The page prints '?' for damage and never mentions poison (damage types on the page: physical, ballistic, explosive; 8 projectiles). The catalog's 40 poison secondary has no source, so it is off."
+      "verdict": "official-p70",
+      "secondaryKept": true,
+      "note": "fallout.wiki prints no damage figure for this unique, but the page predates its Patch 70 rework; the official Patch 70 notes (unique-items-official-p70.json, mirrored in unique-items.json with sourceNotes 'Reworked in Patch 70') give it innate Poison Damage, so the secondary stays. Its amount (40) is the catalog's and unverified: a newer source only.",
+      "officialSource": {
+        "file": "src/data/truth/unique-items-official-p70.json",
+        "quote": "Kabloom: Poison Damage",
+        "patch": 70
+      }
     },
     "radium-rifle": {
       "label": "Radium Rifle",
@@ -436,5 +446,9 @@
       "secondaryKept": true,
       "note": "Two equal infobox lines across ten tiers (wiki title is one word, 'Cattleprod'). The catalog's 42 / 25 vs the printed 84 / 84: wider audit."
     }
+  },
+  "rule": {
+    "noOlderSources": "A catalog number moves only to a source at least as new as the game version in game-version.json (official patch notes, the Patch 70 uniques table, in-game reading). fallout.wiki is older than Patch 70 for the reworked named uniques and must not overwrite them.",
+    "setBy": "Nathan, 2026-09-28"
   }
 }

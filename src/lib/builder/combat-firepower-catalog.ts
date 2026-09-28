@@ -181,13 +181,15 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isRanged": false,
     "isEnergy": false
   },
-  // fallout.wiki prints no damage figure and names only physical damage: the 30 energy secondary is off (weapon-stats-wiki.json, 2026-09-28)
+  // official Patch 70 notes: innate Energy Damage (unique-items-official-p70.json); amount is the catalog's, unverified (weapon-stats-wiki.json)
   "v63-shock-baton": {
     "id": "v63-shock-baton",
     "label": "V63 Shock Baton (Security Baton · Unique)",
     "maxLevel": 45,
     "baseDamage": 65,
+    "secondaryDamage": 30,
     "damageType": "physical",
+    "secondaryDamageType": "energy",
     "fireRate": 2.2,
     "baseVatsApCost": 20,
     "magazineSize": 1,
@@ -283,13 +285,15 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isEnergy": false,
     "isExplosiveInherent": true
   },
-  // fallout.wiki prints '?' for damage and never mentions poison: the 40 poison secondary is off (weapon-stats-wiki.json, 2026-09-28)
+  // official Patch 70 notes: innate Poison Damage (unique-items-official-p70.json); amount is the catalog's, unverified (weapon-stats-wiki.json)
   "the-kabloom": {
     "id": "the-kabloom",
     "label": "The Kabloom (Pump Shotgun · Unique)",
     "maxLevel": 45,
     "baseDamage": 95,
+    "secondaryDamage": 40,
     "damageType": "ballistic",
+    "secondaryDamageType": "poison",
     "fireRate": 2,
     "baseVatsApCost": 32,
     "magazineSize": 8,
