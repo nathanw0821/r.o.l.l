@@ -181,14 +181,13 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isRanged": false,
     "isEnergy": false
   },
+  // fallout.wiki prints no damage figure and names only physical damage: the 30 energy secondary is off (weapon-stats-wiki.json, 2026-09-28)
   "v63-shock-baton": {
     "id": "v63-shock-baton",
     "label": "V63 Shock Baton (Security Baton · Unique)",
     "maxLevel": 45,
     "baseDamage": 65,
-    "secondaryDamage": 30,
     "damageType": "physical",
-    "secondaryDamageType": "energy",
     "fireRate": 2.2,
     "baseVatsApCost": 20,
     "magazineSize": 1,
@@ -284,14 +283,13 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isEnergy": false,
     "isExplosiveInherent": true
   },
+  // fallout.wiki prints '?' for damage and never mentions poison: the 40 poison secondary is off (weapon-stats-wiki.json, 2026-09-28)
   "the-kabloom": {
     "id": "the-kabloom",
     "label": "The Kabloom (Pump Shotgun · Unique)",
     "maxLevel": 45,
     "baseDamage": 95,
-    "secondaryDamage": 40,
     "damageType": "ballistic",
-    "secondaryDamageType": "poison",
     "fireRate": 2,
     "baseVatsApCost": 32,
     "magazineSize": 8,
@@ -833,14 +831,13 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isRanged": true,
     "isEnergy": true
   },
+  // fallout.wiki prints one physical line; energy comes only from the Prime / Tesla capacitor mods: secondary dropped (weapon-stats-wiki.json, 2026-09-28)
   "gauss-minigun": {
     "id": "gauss-minigun",
     "label": "Gauss Minigun",
     "maxLevel": 45,
     "baseDamage": 45,
-    "secondaryDamage": 15,
     "damageType": "energy",
-    "secondaryDamageType": "energy",
     "fireRate": 15,
     "baseVatsApCost": 35,
     "magazineSize": 500,
@@ -1143,14 +1140,13 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isRanged": true,
     "isEnergy": true
   },
+  // fallout.wiki prints physical + radiation area (standard dish); energy only with the antennae muzzle mod: secondary dropped (weapon-stats-wiki.json, 2026-09-28)
   "gamma-gun": {
     "id": "gamma-gun",
     "label": "Gamma Gun",
     "maxLevel": 45,
     "baseDamage": 110,
-    "secondaryDamage": 60,
     "damageType": "radiation",
-    "secondaryDamageType": "energy",
     "fireRate": 3.5,
     "baseVatsApCost": 24,
     "magazineSize": 8,

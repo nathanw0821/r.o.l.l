@@ -1,0 +1,440 @@
+{
+  "$comment": "Which builder weapons really deal a second damage type, checked against fallout.wiki on 2026-09-28 for every WEAPON_COMBAT_BASE_CATALOG row that carried `secondaryDamage` (combat-firepower-catalog.ts). `printed` is the infobox damage as the page prints it (icon labels written as words, per-level values left to right, highest level last); `components` is the highest-level row; `catalog` is the row's values at the time of the check. `verdict`: split-verified = the page prints two damage lines, so the catalog's baseDamage is one component and the secondary stays; secondary-mod-only = the page prints one base line and the second type comes from a mod, so the secondary is dropped; unverified = the page prints no figure, so the secondary is off until a source appears. Component VALUES are not settled here: where they differ from the catalog the note says 'wider audit' (Agent_Exchange/ROLL_WEAPON_STATS_AUDIT_2026-09-28.md) and Nathan decides which numbers move. Nothing is estimated. weapon-stats-wiki.test.ts pins the catalog to these verdicts.",
+  "verifiedAt": "2026-09-28",
+  "mechanics": {
+    "splitDamage": {
+      "source": "https://fallout.wiki/wiki/Damage_(Fallout_76)",
+      "quote": "many weapons are able to deal multiple Damage Types per attack, such as the Shishkebab which deals both Physical and Fire Damage.",
+      "fetchedAt": "2026-09-28"
+    },
+    "meleeStrengthDisplay": {
+      "source": "https://fallout.wiki/wiki/Damage_(Fallout_76)",
+      "quote": "the damage bonus from Strength is not reflected on the PipBoy for any non-Physical Damage on melee weapons.",
+      "fetchedAt": "2026-09-28"
+    }
+  },
+  "weapons": {
+    "cold-shoulder": {
+      "label": "Cold Shoulder (Double-Barrel · Unique)",
+      "source": "https://fallout.wiki/wiki/Cold_Shoulder",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 99 / 126 / 160 / 204; Cryo Damage 99 / 126 / 160 / 204",
+      "maxLevelRow": "Level 45: 204 physical + 204 cryo",
+      "components": [
+        {
+          "value": 204,
+          "type": "physical"
+        },
+        {
+          "value": 204,
+          "type": "cryo"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 115,
+        "damageType": "ballistic",
+        "secondaryDamage": 75,
+        "secondaryDamageType": "cryo"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two infobox damage lines, equal halves scaling per level. The catalog's 115 / 75 matches no printed tier: wider audit."
+    },
+    "v63-zweihander": {
+      "label": "V63 Zweihänder (Super Sledge · Unique)",
+      "source": "https://fallout.wiki/wiki/V63_Zweihaender",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 150 / 191 / 244; Energy Damage 64; Physical Damage +5% × STR",
+      "maxLevelRow": "Level 50: 244 physical + 64 energy (flat)",
+      "components": [
+        {
+          "value": 244,
+          "type": "physical"
+        },
+        {
+          "value": 64,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 125,
+        "damageType": "physical",
+        "secondaryDamage": 40,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Energy is a flat 64 at every tier while physical scales. The catalog's 125 / 40 matches no printed tier: wider audit."
+    },
+    "v63-shock-baton": {
+      "label": "V63 Shock Baton (Security Baton · Unique)",
+      "source": "https://fallout.wiki/wiki/V63_Shock_Baton",
+      "fetchedAt": "2026-09-28",
+      "printed": "Damage: [Physical Damage icon] (no figure); Physical Damage +% × STR (placeholder)",
+      "maxLevelRow": null,
+      "components": [],
+      "catalog": {
+        "baseDamage": 65,
+        "damageType": "physical",
+        "secondaryDamage": 30,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "unverified",
+      "secondaryKept": false,
+      "note": "The page prints no damage figure and names only physical damage; no energy or electrical damage is stated anywhere. The catalog's 30 energy secondary has no source, so it is off."
+    },
+    "the-kabloom": {
+      "label": "The Kabloom (Pump Shotgun · Unique)",
+      "source": "https://fallout.wiki/wiki/The_Kabloom",
+      "fetchedAt": "2026-09-28",
+      "printed": "Damage: [Physical Damage icon] ?",
+      "maxLevelRow": null,
+      "components": [],
+      "catalog": {
+        "baseDamage": 95,
+        "damageType": "ballistic",
+        "secondaryDamage": 40,
+        "secondaryDamageType": "poison"
+      },
+      "verdict": "unverified",
+      "secondaryKept": false,
+      "note": "The page prints '?' for damage and never mentions poison (damage types on the page: physical, ballistic, explosive; 8 projectiles). The catalog's 40 poison secondary has no source, so it is off."
+    },
+    "radium-rifle": {
+      "label": "Radium Rifle",
+      "source": "https://fallout.wiki/wiki/Radium_Rifle_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 52 / 66; Radiation Damage 37 / 47",
+      "maxLevelRow": "Highest printed tier: 66 physical + 47 radiation",
+      "components": [
+        {
+          "value": 66,
+          "type": "physical"
+        },
+        {
+          "value": 47,
+          "type": "radiation"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 38,
+        "damageType": "ballistic",
+        "secondaryDamage": 15,
+        "secondaryDamageType": "radiation"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two infobox damage lines (only two tiers printed). The catalog's 38 / 15 matches neither: wider audit."
+    },
+    "cremator": {
+      "label": "Cremator",
+      "source": "https://fallout.wiki/wiki/Cremator",
+      "fetchedAt": "2026-09-28",
+      "printed": "Fire Damage 86 / 110 / 150; burn 20 / 25 / 32 Fire Damage per second for 6 seconds",
+      "maxLevelRow": "Level 50: 150 fire impact + 32 fire per second × 6 s burn",
+      "components": [
+        {
+          "value": 150,
+          "type": "fire (impact)"
+        },
+        {
+          "value": 32,
+          "type": "fire (burn per second, 6 s)"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 80,
+        "damageType": "fire",
+        "secondaryDamage": 140,
+        "secondaryDamageType": "fire"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Impact plus burn-over-time, both fire, as the engine models it. The catalog's 140 is a burn total (wiki 32 × 6 = 192 at level 50) and its 80 impact vs the printed 150: wider audit. Golden weapon, values untouched."
+    },
+    "gatling-plasma": {
+      "label": "Gatling Plasma",
+      "source": "https://fallout.wiki/wiki/Gatling_Plasma",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 17 / 22 / 28; Energy Damage 17 / 22 / 28",
+      "maxLevelRow": "Level 50: 28 physical + 28 energy",
+      "components": [
+        {
+          "value": 28,
+          "type": "physical"
+        },
+        {
+          "value": 28,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 58,
+        "damageType": "ballistic",
+        "secondaryDamage": 58,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two equal infobox lines; the page notes the physical half follows energy resistance rules. The catalog's 58 / 58 vs the printed 28 / 28: wider audit."
+    },
+    "plasma-caster": {
+      "label": "Plasma Caster",
+      "source": "https://fallout.wiki/wiki/Plasma_Caster_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 81 / 91 / 103; Energy Damage 81 / 91 / 103",
+      "maxLevelRow": "Level 50: 103 physical + 103 energy",
+      "components": [
+        {
+          "value": 103,
+          "type": "physical"
+        },
+        {
+          "value": 103,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 76,
+        "damageType": "ballistic",
+        "secondaryDamage": 76,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two equal infobox lines. The catalog's 76 / 76 vs the printed 103 / 103: wider audit."
+    },
+    "gauss-minigun": {
+      "label": "Gauss Minigun",
+      "source": "https://fallout.wiki/wiki/Gauss_Minigun_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 52 / 59; mods: Prime capacitor +13 Energy Damage, Tesla capacitor +6 Energy Damage, Tesla dynamo +3 Energy Damage",
+      "maxLevelRow": "Level 50: 59 physical",
+      "components": [
+        {
+          "value": 59,
+          "type": "physical"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 45,
+        "damageType": "energy",
+        "secondaryDamage": 15,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "secondary-mod-only",
+      "secondaryKept": false,
+      "note": "The base weapon prints one physical line; energy exists only with the Prime / Tesla capacitor mods. Secondary dropped. The catalog's energy primary type and 45 vs 59: wider audit."
+    },
+    "enclave-plasma": {
+      "label": "Enclave Plasma Gun",
+      "source": "https://fallout.wiki/wiki/Enclave_Plasma_Gun",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 35 / 44 / 57; Energy Damage 35 / 44 / 57",
+      "maxLevelRow": "Level 45: 57 physical + 57 energy",
+      "components": [
+        {
+          "value": 57,
+          "type": "physical"
+        },
+        {
+          "value": 57,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 48,
+        "damageType": "ballistic",
+        "secondaryDamage": 48,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two equal infobox lines. The catalog's 48 / 48 vs the printed 57 / 57: wider audit."
+    },
+    "enclave-plasma-rifle": {
+      "label": "Enclave Plasma Rifle",
+      "source": "https://fallout.wiki/wiki/Enclave_Plasma_Gun",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 35 / 44 / 57; Energy Damage 35 / 44 / 57",
+      "maxLevelRow": "Level 45: 57 physical + 57 energy",
+      "components": [
+        {
+          "value": 57,
+          "type": "physical"
+        },
+        {
+          "value": 57,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 48,
+        "damageType": "ballistic",
+        "secondaryDamage": 48,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Alias of the Enclave Plasma Gun page.",
+      "inheritedFrom": "enclave-plasma"
+    },
+    "plasma-gun": {
+      "label": "Plasma Gun",
+      "source": "https://fallout.wiki/wiki/Plasma_Gun_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 20 / 26 / 33 / 42; Energy Damage 20 / 26 / 33 / 42",
+      "maxLevelRow": "Level 45: 42 physical + 42 energy",
+      "components": [
+        {
+          "value": 42,
+          "type": "physical"
+        },
+        {
+          "value": 42,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 42,
+        "damageType": "ballistic",
+        "secondaryDamage": 42,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "The catalog equals the printed level-45 halves exactly: baseDamage is the ballistic half, not a total, so adding the energy half does not double-count."
+    },
+    "plasma-flamer": {
+      "label": "Plasma Flamer",
+      "source": "https://fallout.wiki/wiki/Plasma_Gun_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 20 / 26 / 33 / 42; Energy Damage 20 / 26 / 33 / 42",
+      "maxLevelRow": "Level 45: 42 physical + 42 energy",
+      "components": [
+        {
+          "value": 42,
+          "type": "physical"
+        },
+        {
+          "value": 42,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 45,
+        "damageType": "ballistic",
+        "secondaryDamage": 45,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Plasma Gun with the flamer barrel; the split is the chassis's. The mods table's flamer barrel row could not be read cleanly ('+30' in one column), so the catalog's 45 / 45 is unchecked: wider audit.",
+      "inheritedFrom": "plasma-gun"
+    },
+    "gamma-gun": {
+      "label": "Gamma Gun",
+      "source": "https://fallout.wiki/wiki/Gamma_Gun_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Damage: Physical Damage 56 / 71 / 90 / 115; Area Damage: Radiation Damage 50; mods: Standard dish +50 Radiation Damage (baseline), Deep dish +125 Radiation Damage, Electric Signal Carrier Antennae +40 Energy Damage",
+      "maxLevelRow": "Level 45: 115 physical + 50 radiation area (standard dish)",
+      "components": [
+        {
+          "value": 115,
+          "type": "physical"
+        },
+        {
+          "value": 50,
+          "type": "radiation (area, standard dish)"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 110,
+        "damageType": "radiation",
+        "secondaryDamage": 60,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "secondary-mod-only",
+      "secondaryKept": false,
+      "note": "Energy exists only with the antennae muzzle mod: secondary dropped. The printed structure (115 physical + 50 radiation area from the default dish) differs from the catalog's 110 radiation primary: wider audit."
+    },
+    "plasma-cutter": {
+      "label": "Plasma Cutter",
+      "source": "https://fallout.wiki/wiki/Plasma_Cutter",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 70 / 87 / 109; Physical Damage +5% × STR; Energy Damage 70 / 87 / 109",
+      "maxLevelRow": "Level 50: 109 physical + 109 energy",
+      "components": [
+        {
+          "value": 109,
+          "type": "physical"
+        },
+        {
+          "value": 109,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 50,
+        "damageType": "physical",
+        "secondaryDamage": 35,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two equal infobox lines (the '(Fallout_76)' URL 404s). The catalog's 50 / 35 vs the printed 109 / 109: wider audit."
+    },
+    "shishkebab": {
+      "label": "Shishkebab",
+      "source": "https://fallout.wiki/wiki/Shishkebab_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 50 / 64; Fire Damage 50 / 64; Physical Damage +5% × STR",
+      "maxLevelRow": "Level 45: 64 physical + 64 fire",
+      "components": [
+        {
+          "value": 64,
+          "type": "physical"
+        },
+        {
+          "value": 64,
+          "type": "fire"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 45,
+        "damageType": "physical",
+        "secondaryDamage": 30,
+        "secondaryDamageType": "fire"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two infobox lines; Damage_(Fallout_76) names it as the split-damage example. The catalog's 45 / 30 vs the printed 64 / 64: wider audit."
+    },
+    "cattleprod": {
+      "label": "Cattle Prod",
+      "source": "https://fallout.wiki/wiki/Cattleprod_(Fallout_76)",
+      "fetchedAt": "2026-09-28",
+      "printed": "Physical Damage 26 / 31 / 39 / 44 / 47 / 51 / 58 / 65 / 74 / 84; Energy Damage 26 / 31 / 39 / 44 / 47 / 51 / 58 / 65 / 74 / 84; +5% × STR",
+      "maxLevelRow": "Level 50: 84 physical + 84 energy",
+      "components": [
+        {
+          "value": 84,
+          "type": "physical"
+        },
+        {
+          "value": 84,
+          "type": "energy"
+        }
+      ],
+      "catalog": {
+        "baseDamage": 42,
+        "damageType": "physical",
+        "secondaryDamage": 25,
+        "secondaryDamageType": "energy"
+      },
+      "verdict": "split-verified",
+      "secondaryKept": true,
+      "note": "Two equal infobox lines across ten tiers (wiki title is one word, 'Cattleprod'). The catalog's 42 / 25 vs the printed 84 / 84: wider audit."
+    }
+  }
+}
