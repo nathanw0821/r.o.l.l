@@ -1983,21 +1983,22 @@ export default function BuilderCombatSwitchboard({
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1">
               <div className="flex justify-between text-xs text-slate-400 font-bold uppercase">
                 <span>Onslaught:</span>
-                <span className="text-orange-400">{switchboard.onslaughtStacks || 0} / 30</span>
+                <span className="text-orange-400">{switchboard.onslaughtStacks || 0} / {combatConditions.onslaught.maxCap}</span>
               </div>
               <input
                 disabled={readOnly}
                 aria-label="Onslaught stacks"
                 type="range"
                 min="0"
-                max="30"
+                max={combatConditions.onslaught.maxCap}
                 step="1"
                 value={switchboard.onslaughtStacks || 0}
                 onChange={(e) => updateField("onslaughtStacks", parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-orange-500"
               />
               <div className="text-2xs text-dim">
-                +{(switchboard.onslaughtStacks || 0) * 5}% Damage (+5% per stack)
+                Held stacks are capped by the equipped sources (Guerrilla Expert +3, Guerrilla Master +5, Gunslinger Expert +3,
+                Gunslinger Master +10, Furious +9, Pounder&apos;s +10); each source reads the held stacks with its own per-stack value.
               </div>
             </div>
 
