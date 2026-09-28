@@ -542,8 +542,8 @@
       "value": 0.5,
       "cap": 0.5,
       "condition": "damage-resistance-low",
-      "confidence": "approximate",
-      "source": "Berserker's 1-star: 'Up to +50% Damage When DR is Low'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28). The DR value at which the cap is reached is unpublished, so no threshold is modelled."
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): Berserker's curve CT_Legendary_Weapon_DamageUnarmored: +50% at 0 damage resistance falling to +30% at 20, +17% at 40, +5% at 60 (non-linear; the cap is modelled, not the curve). Raw record: legendary-datamine-p70.json."
     },
     "tarnished": {
       "slug": "tarnished",
@@ -553,20 +553,20 @@
       "value": 1.2,
       "cap": 1.2,
       "condition": "durability-missing",
-      "confidence": "approximate",
-      "source": "Tarnished 4-star: 'Damage increases by up to +120% as the weapon's durability decreases'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28). The scaling curve is unpublished."
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): Tarnished curve HTO_CT_Legendary_Weapon_Tarnished_DMG: +120% at ~0% durability falling linearly (6 per 5%) to +0% at 100% durability; cap modelled. Raw record: legendary-datamine-p70.json."
     },
     "raging": {
       "slug": "raging",
       "star": 4,
       "appliesTo": "armor",
       "kind": "stack-damage",
-      "perUnit": 0.03,
+      "perUnit": 0.05,
       "maxStacks": 5,
-      "cap": 0.15,
+      "cap": 0.25,
       "condition": "hit-recently-stacks",
-      "confidence": "approximate",
-      "source": "Raging 4-star armor: 'Upon being hit, deal +3% more damage for 10 seconds, stacking to +15%'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28). Whether the five stacks are per armor piece or shared is not stated, so the +15% ceiling is taken as the total."
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): Raging spell HTO_Legendary_Armor_RagingSpell: five fortify-damage effects of +5, +10, +15, +20, +25 for 10 seconds each, i.e. +5% per stack to +25%. This corrects the +3%/+15% earlier taken from a third-party guide (2026-09-22) that the client data does not support; whether stacks are per hit or per piece is not stated in the data. Raw record: legendary-datamine-p70.json."
     },
     "haulers": {
       "slug": "haulers",
@@ -577,8 +577,8 @@
       "maxStacks": 5,
       "cap": 150,
       "condition": "per-armor-piece",
-      "confidence": "approximate",
-      "source": "Hauler's 4-star armor: 'Each piece grants +30 carry weight, stacking to +150 at five pieces'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28)."
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): Hauler's effect AbPerkFortifyCarryWeight magnitude 30 per piece; five pieces give the +150 cap (the cap is the piece count times 30). Raw record: legendary-datamine-p70.json."
     },
     "vampires": {
       "slug": "vampires",
@@ -587,8 +587,8 @@
       "kind": "heal-on-hit",
       "value": 0.02,
       "condition": "per-hit",
-      "confidence": "approximate",
-      "source": "Vampire's 1-star: 'Restore 2% Health over 2 Seconds per Hit' (value is the fraction of maximum health; the 2 s duration is not modelled). https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28)."
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): Vampire's spell Legendary_VampireRegen: magnitude 1 for 2 seconds; the game's own text reads 'Restore 2% Health over 2 seconds when you Hit a Target'. Raw record: legendary-datamine-p70.json."
     },
     "chameleon": {
       "slug": "chameleon",
@@ -597,8 +597,191 @@
       "kind": "stealth-field",
       "value": 20,
       "condition": "sneaking-and-still",
-      "confidence": "approximate",
-      "source": "Chameleon 1-star armor: '20% Stealth Field While Sneaking and Not Moving'. https://timesaver.gg/blog/fallout-76-best-legendary-effects-guide-2026 (dated 2026-09-22, 'updated for The Slasher update (Update 28, September 15, 2026)'; fetched 2026-09-28)."
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): Chameleon actor value LGND_Chameleon ADD 20 per piece. Raw record: legendary-datamine-p70.json."
+    },
+    "assassins": {
+      "slug": "assassins",
+      "star": 1,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "target-human",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): weapon side: STAT_DmgVsHumans scaled by curve CT_Legendary_Weapon_DMGvsPlayers = +50% damage. The armor side (-15% damage from the same target per piece, x0.85 x0.7225 x0.6141 x0.522 x0.4437 for 1-5 pieces, curve CT_Legendary_Armor_LessDMG*) is matched to the mod by its actor-value name and is not modelled here; it belongs with the defensive reducers. Raw record: legendary-datamine-p70.json."
+    },
+    "hunters": {
+      "slug": "hunters",
+      "star": 1,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "target-animal",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): weapon side: STAT_DmgVsAnimals scaled by curve CT_Legendary_Weapon_DMGvsAnimals = +50% damage. The armor side (-15% damage from the same target per piece, x0.85 x0.7225 x0.6141 x0.522 x0.4437 for 1-5 pieces, curve CT_Legendary_Armor_LessDMG*) is matched to the mod by its actor-value name and is not modelled here; it belongs with the defensive reducers. Raw record: legendary-datamine-p70.json."
+    },
+    "exterminators": {
+      "slug": "exterminators",
+      "star": 1,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "target-mirelurk-or-insect",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): weapon side: STAT_DmgVsBugs / STAT_DmgVsMirelurks scaled by curve CT_Legendary_Weapon_DMGvsBugs = +50% damage. The armor side (-15% damage from the same target per piece, x0.85 x0.7225 x0.6141 x0.522 x0.4437 for 1-5 pieces, curve CT_Legendary_Armor_LessDMG*) is matched to the mod by its actor-value name and is not modelled here; it belongs with the defensive reducers. Raw record: legendary-datamine-p70.json."
+    },
+    "ghoul-slayers": {
+      "slug": "ghoul-slayers",
+      "star": 1,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "target-ghoul",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): weapon side: STAT_DmgVsGhouls scaled by curve CT_Legendary_Weapon_DMGvsGhouls = +50% damage. The armor side (-15% damage from the same target per piece, x0.85 x0.7225 x0.6141 x0.522 x0.4437 for 1-5 pieces, curve CT_Legendary_Armor_LessDMG*) is matched to the mod by its actor-value name and is not modelled here; it belongs with the defensive reducers. Raw record: legendary-datamine-p70.json."
+    },
+    "mutant-slayers": {
+      "slug": "mutant-slayers",
+      "star": 1,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "target-super-mutant",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): weapon side: STAT_DmgVsSuperMutants scaled by curve CT_Legendary_Weapon_DMGvsSuperMutants = +50% damage. The armor side (-15% damage from the same target per piece, x0.85 x0.7225 x0.6141 x0.522 x0.4437 for 1-5 pieces, curve CT_Legendary_Armor_LessDMG*) is matched to the mod by its actor-value name and is not modelled here; it belongs with the defensive reducers. Raw record: legendary-datamine-p70.json."
+    },
+    "troubleshooters": {
+      "slug": "troubleshooters",
+      "star": 1,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "target-robot",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): weapon side: STAT_DmgVsRobots scaled by curve CT_Legendary_Weapon_DMGvsRobots = +50% damage. The armor side (-15% damage from the same target per piece, x0.85 x0.7225 x0.6141 x0.522 x0.4437 for 1-5 pieces, curve CT_Legendary_Armor_LessDMG*) is matched to the mod by its actor-value name and is not modelled here; it belongs with the defensive reducers. Raw record: legendary-datamine-p70.json."
+    },
+    "zealots": {
+      "slug": "zealots",
+      "star": 1,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "condition": "target-scorched",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): weapon side: STAT_DmgVsScorched scaled by curve CT_Legendary_Weapon_DMGvsScorched = +50% damage. The armor side (-15% damage from the same target per piece, x0.85 x0.7225 x0.6141 x0.522 x0.4437 for 1-5 pieces, curve CT_Legendary_Armor_LessDMG*) is matched to the mod by its actor-value name and is not modelled here; it belongs with the defensive reducers. Raw record: legendary-datamine-p70.json."
+    },
+    "executioners": {
+      "slug": "executioners",
+      "star": 1,
+      "appliesTo": "weapon",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "cap": 0.5,
+      "threshold": 0.4,
+      "condition": "target-health-below-threshold",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): curve CT_Legendary_Weapon_Execute = +50% damage; health threshold global LGND_ExecuteHealthThreshold = 0.4 (the direction, target below 40%, follows the effect's name and is not stated by the value). Raw record: legendary-datamine-p70.json."
+    },
+    "bashers": {
+      "slug": "bashers",
+      "star": 2,
+      "appliesTo": "weapon",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "condition": "bash-attacks",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): actor value STAT_DmgBash ADD 50. Raw record: legendary-datamine-p70.json."
+    },
+    "crippling": {
+      "slug": "crippling",
+      "star": 2,
+      "appliesTo": "weapon",
+      "kind": "conditional-damage",
+      "value": 0.5,
+      "condition": "limb-damage-only",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): actor value STAT_DmgLimbs scaled by curve CT_Legendary_Weapon_DmgLimbs = +50% limb damage (not body damage). Raw record: legendary-datamine-p70.json."
+    },
+    "pin-pointers": {
+      "slug": "pin-pointers",
+      "star": 4,
+      "appliesTo": "weapon",
+      "kind": "conditional-damage",
+      "value": 0.2,
+      "condition": "weak-spot-hits",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): actor value STAT_DmgVsWeakSpot ADD 20 = +20% weak-spot damage (settles the 20% vs 50% conflict in the slasher dataset). Raw record: legendary-datamine-p70.json."
+    },
+    "polished": {
+      "slug": "polished",
+      "star": 4,
+      "appliesTo": "universal",
+      "kind": "conditional-damage",
+      "value": 0.6,
+      "cap": 0.6,
+      "threshold": 1.0,
+      "capThreshold": 2.0,
+      "condition": "durability-above-full",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): curve weapon_polished_dmg: 0% at 100% condition rising linearly to +60% at 200% condition (threshold and capThreshold are the condition ratio). Raw record: legendary-datamine-p70.json."
+    },
+    "medics": {
+      "slug": "medics",
+      "star": 1,
+      "appliesTo": "weapon",
+      "kind": "heal-on-hit",
+      "value": 0.05,
+      "condition": "friendly-target",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): actor value LGND_Medic ADD 5 = heals a friendly target for 5% of health per hit. Raw record: legendary-datamine-p70.json."
+    },
+    "steadfast": {
+      "slug": "steadfast",
+      "star": 3,
+      "appliesTo": "weapon",
+      "kind": "flat-resist",
+      "value": 50,
+      "resist": "dr",
+      "condition": "aiming",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): effect AbPerkFortifyResistDamage magnitude 50 while aiming. Raw record: legendary-datamine-p70.json."
+    },
+    "rangers": {
+      "slug": "rangers",
+      "star": 4,
+      "appliesTo": "armor",
+      "kind": "stack-damage",
+      "perUnit": 0.05,
+      "condition": "ranged-damage-stacks",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): global Legendary_Ranger_DamageBonus = 5 (+5% ranged damage per stack); the number of stacks is not in the data. Raw record: legendary-datamine-p70.json."
+    },
+    "bruisers": {
+      "slug": "bruisers",
+      "star": 4,
+      "appliesTo": "armor",
+      "kind": "stack-damage",
+      "perUnit": 0.05,
+      "condition": "melee-damage-stacks",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): global Legendary_Bruiser_DamageBonus = 5 (+5% melee damage per stack); the number of stacks is not in the data. Raw record: legendary-datamine-p70.json."
+    },
+    "healthy": {
+      "slug": "healthy",
+      "star": 3,
+      "appliesTo": "universal",
+      "kind": "max-hp",
+      "value": 20,
+      "condition": "always",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm 2026-09-16, build 1.7.26.13): global BOUNTY_LegendaryHealthBonus = 20 maximum Health. Raw record: legendary-datamine-p70.json."
     }
   }
 }

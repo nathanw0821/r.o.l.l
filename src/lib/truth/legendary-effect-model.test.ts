@@ -113,22 +113,53 @@ describe("legendary effect truth pack", () => {
     expect(requireEffectNumber("powered", "value")).toBe(0.05);
   });
 
-  it("pins the post-Patch 70 gap rows sourced from the 2026-09-22 Slasher guide", () => {
+  it("pins the six gap rows re-sourced from the Patch 70 client data", () => {
     expect(requireEffectNumber("berserkers", "cap")).toBe(0.5);
     expect(requireEffectNumber("tarnished", "cap")).toBe(1.2);
-    expect(requireEffectNumber("raging", "perUnit")).toBe(0.03);
+    // Raging: five stacks of +5% (client data), not the +3% / +15% a third-party guide printed.
+    expect(requireEffectNumber("raging", "perUnit")).toBe(0.05);
     expect(requireEffectNumber("raging", "maxStacks")).toBe(5);
-    expect(requireEffectNumber("raging", "cap")).toBe(0.15);
+    expect(requireEffectNumber("raging", "cap")).toBe(0.25);
     expect(requireEffectNumber("haulers", "perUnit")).toBe(30);
     expect(requireEffectNumber("haulers", "cap")).toBe(150);
     expect(requireEffectNumber("vampires", "value")).toBe(0.02);
     expect(requireEffectNumber("chameleon", "value")).toBe(20);
     for (const slug of ["berserkers", "tarnished", "raging", "haulers", "vampires", "chameleon"]) {
       const entry = getEffectModel(slug);
-      expect(entry?.confidence, slug).toBe("approximate");
-      expect(entry?.source, slug).toContain("timesaver.gg");
+      expect(entry?.confidence, slug).toBe("datamined");
+      expect(entry?.source, slug).toContain("SeventySix.esm");
       expect(entry?.catalogMath, slug).toBeUndefined();
     }
+  });
+
+  it("pins the slayer family, the threshold effects and the other client-data rows", () => {
+    for (const slug of [
+      "assassins",
+      "hunters",
+      "exterminators",
+      "ghoul-slayers",
+      "mutant-slayers",
+      "troubleshooters",
+      "zealots",
+    ]) {
+      expect(requireEffectNumber(slug, "value"), slug).toBe(0.5);
+      expect(getEffectModel(slug)?.star, slug).toBe(1);
+      expect(getEffectModel(slug)?.confidence, slug).toBe("datamined");
+    }
+    expect(requireEffectNumber("executioners", "value")).toBe(0.5);
+    expect(requireEffectNumber("executioners", "threshold")).toBe(0.4);
+    expect(requireEffectNumber("bashers", "value")).toBe(0.5);
+    expect(requireEffectNumber("crippling", "value")).toBe(0.5);
+    expect(requireEffectNumber("pin-pointers", "value")).toBe(0.2);
+    expect(requireEffectNumber("polished", "cap")).toBe(0.6);
+    expect(requireEffectNumber("polished", "threshold")).toBe(1);
+    expect(requireEffectNumber("polished", "capThreshold")).toBe(2);
+    expect(requireEffectNumber("medics", "value")).toBe(0.05);
+    expect(requireEffectNumber("steadfast", "value")).toBe(50);
+    expect(getEffectModel("steadfast")?.resist).toBe("dr");
+    expect(requireEffectNumber("rangers", "perUnit")).toBe(0.05);
+    expect(requireEffectNumber("bruisers", "perUnit")).toBe(0.05);
+    expect(requireEffectNumber("healthy", "value")).toBe(20);
   });
 
   it("throws on an unknown slug or a missing numeric field", () => {

@@ -1,0 +1,6965 @@
+{
+ "$comment": "Raw numeric extraction of every named legendary mod from the Patch 70 client data. Numbers only (no game text). properties = OMOD property rows (value is the property's own number; curve = the curve table that scales it, evaluated by the game at the given x); effects = ENCH/MGEF rows (magnitude, duration, curve). Curve x is the game's own input (health fraction, stacks, pieces worn, level...). No entry here changes a builder number by itself: legendary-effect-model.json rows cite these.",
+ "source": {
+  "patch": 70,
+  "build": "1.7.26.13",
+  "extractedAt": "2026-09-28",
+  "files": [
+   "SeventySix.esm (2026-09-16)",
+   "SeventySix - Startup.ba2 misc/curvetables/json/legendarymods/*.json",
+   "SeventySix - Localization.ba2 strings (names only)"
+  ],
+  "method": "xEdit 4.1.5f record dump (OMOD, ENCH and the linked MGEF/CURV records) + direct BA2 read of the curve JSONs; read-only local copy of the game files"
+ },
+ "calibration": [
+  {
+   "effect": "Bloodied",
+   "expected": "up to +130% damage at 5% health, linear to 0 at full health",
+   "datamine": "curve CT_Legendary_Weapon_DamageInverseHealth: (0.05,130) (1,0)"
+  },
+  {
+   "effect": "Junkie's",
+   "expected": "+10% per addiction to +100%",
+   "datamine": "curve CT_Legendary_Weapon_DamageAddiction: (n,10n) n=0..10"
+  },
+  {
+   "effect": "Two Shot",
+   "expected": "+1 projectile, +75% damage",
+   "datamine": "properties NumProjectiles ADD 1, DamageBonusMult ADD 0.75"
+  },
+  {
+   "effect": "Severing",
+   "expected": "+50% damage vs bleeding targets",
+   "datamine": "property STAT_DmgVsBleeding ADD 50"
+  },
+  {
+   "effect": "Anti-Armor",
+   "expected": "50% armor penetration",
+   "datamine": "property ArmorPenetration ADD 50"
+  },
+  {
+   "effect": "Bully's",
+   "expected": "+25% per crippled limb",
+   "datamine": "property STAT_DmgPerCrippled ADD 25"
+  },
+  {
+   "effect": "Viper's / Pyromaniac's",
+   "expected": "+50% vs poisoned / burning",
+   "datamine": "STAT_DmgVsPoisoned 50 / STAT_DmgVsBurning 50"
+  },
+  {
+   "effect": "Stalker's",
+   "expected": "+100% sneak attack",
+   "datamine": "STAT_SneakAttackBonus 100"
+  },
+  {
+   "effect": "Rapid",
+   "expected": "+25% ranged, +40% melee speed",
+   "datamine": "curves CT_Legendary_Weapon_Guns_RoF 0.25, CT_Legendary_Weapon_Melee_SwingSpeed 0.4"
+  }
+ ],
+ "unresolved": [
+  {
+   "effect": "Cavalier's",
+   "note": "two sprint curves exist in the data (armor_cavalier x0.9 per piece; armor_lessdamagesprinting x0.95 per step) and the perk does not say which applies; needs an in-game reading"
+  },
+  {
+   "effect": "Armor slayer mods (Assassin's, Hunter's, ... armor side)",
+   "note": "the -15% per piece curve (CT_Legendary_Armor_LessDMG*) is matched to the mod by the actor-value name (LGND_DmgFrom<X>); the perk record does not name the curve"
+  }
+ ],
+ "effects": {
+  "explosive-1star": {
+   "name": "Explosive",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon_ExplosiveBullets"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "OverrideProjectile",
+     "function": "SET",
+     "target": "Projectile_mod_Legendary_Explosive",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "low-weight-1star": {
+   "name": "Low Weight",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_PowerArmor_Legendary_Any_Low_Weight"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "punishing-1star": {
+   "name": "Punishing",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor_ReflectDamage"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtPhysical",
+     "value": 0.0
+    },
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtEnergy",
+     "value": 2.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "ReflectMeleeDamage",
+     "value": 10.0
+    }
+   ],
+   "effects": []
+  },
+  "powered-1star": {
+   "name": "Powered",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor_APRegen"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtPhysical",
+     "value": 0.0
+    },
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtEnergy",
+     "value": 2.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "ActionPointsRate",
+     "value": 5.0
+    }
+   ],
+   "effects": []
+  },
+  "exterminators-1star": {
+   "name": "Exterminator's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DmgVsBugs",
+     "mod_Legendary_Armor1_LessDMGBugs",
+     "mod_Legendary_PowerArmor1_LessDMGBugs"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsBugs",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsBugs",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsMirelurks",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsBugs",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromMirelurksAndInsects",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_Exterminators",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "vats-enhanced-2star": {
+   "name": "V.A.T.S. Enhanced",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "TEST_mod_Legendary_Weapon_VATSGun",
+     "mod_Legendary_Weapon2_Guns_VATSAccuracy"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "AttackActionPointCost",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": -0.25
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_VATSAccuracy",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "steadfast-3star": {
+   "name": "Steadfast",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon_IronSightsIncreaseDamageResist",
+     "mod_Legendary_Weapon3_Guns_ResistSights"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DamageResistSights"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DamageResistSights",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbPerkFortifyResistDamage",
+     "magnitude": 50.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbDamageResistSights_Description",
+     "magnitude": 50.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "incendiary-4star": {
+   "name": "Incendiary",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon_IncendiaryBullets"
+    ],
+    "enchantments": [
+     "dtFireEnchFlameChanceAlways"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "ImpactDataSet",
+     "function": "SET",
+     "target": "BulletIncendiaryImpactSet",
+     "value": 3.0
+    },
+    {
+     "property": "CritEffect",
+     "function": "ADD",
+     "target": "CritFire",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "dtFireEnchFlameChanceAlways",
+     "value": 1.0
+    },
+    {
+     "property": "OverrideProjectile",
+     "function": "SET",
+     "target": "ProjectileIncendiaryBullet",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "titans-3star": {
+   "name": "Titan's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "TEST_mod_Legendary_Armor_LessDamageStandStill"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtPhysical",
+     "value": 0.0
+    },
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtEnergy",
+     "value": 2.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgTakenWhileStandStill",
+     "value": 15.0
+    }
+   ],
+   "effects": []
+  },
+  "ghoul-slayers-1star": {
+   "name": "Ghoul Slayer's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon_DamageVsGhouls",
+     "mod_Legendary_Weapon1_DmgVsGhouls",
+     "mod_Legendary_Armor1_LessDMGGhouls",
+     "mod_Legendary_PowerArmor1_LessDMGGhouls"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Value",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 4.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgLimbs",
+     "value": 50.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsGhouls",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsGhouls",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromGhouls",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_GhoulSlayers",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "wounding-4star": {
+   "name": "Wounding",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon4_Bleed"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "crippling-2star": {
+   "name": "Crippling",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_DmgLimbs"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgLimbs",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DmgLimbs",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "nimble-3star": {
+   "name": "Nimble",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Guns_MoveSpeedSights"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_MovementSpeedSights"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_MovementSpeedSights",
+     "value": 1.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_SpeedMultWhileAiming",
+     "value": 100.0
+    }
+   ],
+   "effects": []
+  },
+  "zealots-1star": {
+   "name": "Zealot's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DmgVsScorched",
+     "mod_Legendary_Armor1_LessDmgScorched",
+     "mod_Legendary_PowerArmor1_LessDmgScorched"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsScorched",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsScorched",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromScorched",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_Zealots",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "strength-2star": {
+   "name": "Strength",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_StatStrength",
+     "mod_Legendary_PowerArmor2_StatStrength"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Strength",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "sentinels-3star": {
+   "name": "Sentinel's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_LessDamageStandStill",
+     "mod_Legendary_PowerArmor3_LessDamageStandStill"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_EquippedArmorCount_Sentinel",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_LessDamageStandStill",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "hunters-1star": {
+   "name": "Hunter's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DmgVsAnimals",
+     "mod_Legendary_Armor1_LessDMGAnimals",
+     "mod_Legendary_PowerArmor1_LessDMGAnimals"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsAnimals",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsAnimals",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromAnimals",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_Hunters",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "mutant-slayers-1star": {
+   "name": "Mutant Slayer's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DmgVsSupermutants",
+     "mod_Legendary_Armor1_LessDMGSuperMutants",
+     "mod_Legendary_PowerArmor1_LessDMGSuperMutants"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsSuperMutants",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsSuperMutants",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromSupermutants",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_MutantSlayers",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "furious-1star": {
+   "name": "Furious",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DmgConsecutiveHits"
+    ],
+    "enchantments": [
+     "ench_Legendary_Weapon_DmgConsecutiveHits"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_Legendary_Weapon_DmgConsecutiveHits",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "irradiated-2star": {
+   "name": "Irradiated",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon2_RadiationDamage"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "DamageTypeValues",
+     "function": "MUL+ADD",
+     "target": "dtRadiationExposure",
+     "value": 1.1
+    }
+   ],
+   "effects": []
+  },
+  "resilient-3star": {
+   "name": "Resilient",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Guns_ResistReload"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DamageResistReload"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DamageResistReload",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbResistReload_Description",
+     "magnitude": 500.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyResistDamage",
+     "magnitude": 500.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyResistEnergy",
+     "magnitude": 500.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyResistFire",
+     "magnitude": 500.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyResistPoison",
+     "magnitude": 500.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyResistCryo",
+     "magnitude": 500.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyResistRadiationExpose",
+     "magnitude": 500.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "explosive-2star": {
+   "name": "Explosive",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Guns_ExplosiveBullets",
+     "mod_Legendary_Weapon2_Guns_ExplosiveBullets_Shotgun_LEGACY"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "LGND_ExplosivePayload",
+     "value": 20.0
+    },
+    {
+     "property": "OverrideProjectile",
+     "function": "SET",
+     "target": "Projectile_mod_Legendary_Explosive_Shotgun",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "troubleshooters-1star": {
+   "name": "Troubleshooter's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DmgVsRobots",
+     "mod_Legendary_Armor1_LessDMGRobots",
+     "mod_Legendary_PowerArmor1_LessDMGRobots"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsRobots",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsRobots",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromRobots",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_Troubleshooters",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "assassins-1star": {
+   "name": "Assassin's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DmgVsPlayers",
+     "mod_Legendary_Armor1_LessDMGPlayers",
+     "mod_Legendary_PowerArmor1_LessDMGPlayers"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsHumans",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DMGvsPlayers",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromHumans",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_Assassins",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "poisoners-4star": {
+   "name": "Poisoner's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon4_Poison"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DamagePoison"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DamagePoison",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "dtPoisonEffectChanceAlways",
+     "magnitude": 5.0,
+     "durationSeconds": 10.0
+    }
+   ]
+  },
+  "quad-1star": {
+   "name": "Quad",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Guns_AmmoCapacity4x"
+    ],
+    "enchantments": [
+     "enchMod_Legendary_AmmoCapacityx4"
+    ]
+   },
+   "properties": [
+    {
+     "property": "AmmoCapacity",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 3.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "enchMod_Legendary_AmmoCapacityx4",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Mod_Legendary_AmmoCapacityx4",
+     "magnitude": 20.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "instigating-1star": {
+   "name": "Instigating",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DamageFirstBlood"
+    ],
+    "enchantments": [
+     "ench_Legendary_Weapon_DamageFirstBlood"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_Legendary_Weapon_DamageFirstBlood",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "berserkers-1star": {
+   "name": "Berserker's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DamageUnarmored"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DamageUnarmored"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DamageUnarmored",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_DamageUnarmoredEffect",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DamageUnarmored",
+      "points": [
+       [
+        0,
+        50
+       ],
+       [
+        20,
+        30
+       ],
+       [
+        40,
+        17
+       ],
+       [
+        60,
+        5
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "bloodied-1star": {
+   "name": "Bloodied",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DamageInverseHealth"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddDamageInverseHealth"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddDamageInverseHealth",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_DamageInverseHealth_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DamageInverseHealth",
+      "points": [
+       [
+        0.05,
+        130
+       ],
+       [
+        1,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "executioners-1star": {
+   "name": "Executioner's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Execute"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Execute"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Execute",
+     "value": 1.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "LGND_ExecuteDmg",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_Execute",
+      "points": [
+       [
+        1,
+        50
+       ],
+       [
+        100,
+        50
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "junkies-1star": {
+   "name": "Junkie's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DamageAddiction"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DamageAddiction"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DamageAddiction",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abFortifyDamageAll",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DamageAddiction",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        10
+       ],
+       [
+        2,
+        20
+       ],
+       [
+        3,
+        30
+       ],
+       [
+        4,
+        40
+       ],
+       [
+        5,
+        50
+       ],
+       [
+        6,
+        60
+       ],
+       [
+        7,
+        70
+       ],
+       [
+        8,
+        80
+       ],
+       [
+        9,
+        90
+       ],
+       [
+        10,
+        100
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "nocturnal-1star": {
+   "name": "Nocturnal",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DamageNight",
+     "mod_Legendary_Armor1_ResistancesNight",
+     "mod_Legendary_PowerArmor1_ResistancesNight"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddDamageNight",
+     "ench_LegendaryArmor_AddResistNight"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddDamageNight",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_AddResistNight",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_ResistancesNight",
+     "value": 4.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_DamageNightEffect",
+     "magnitude": 50.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyPerception",
+     "magnitude": 4.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyAgility",
+     "magnitude": 4.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "perception-2star": {
+   "name": "Perception",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_StatPerception",
+     "mod_Legendary_PowerArmor2_StatPerception"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Perception",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "charisma-2star": {
+   "name": "Charisma",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_StatCharisma",
+     "mod_Legendary_PowerArmor2_StatCharisma"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Charisma",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "endurance-2star": {
+   "name": "Endurance",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_StatEndurance",
+     "mod_Legendary_PowerArmor2_StatEndurance"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Endurance",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "intelligence-2star": {
+   "name": "Intelligence",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_StatIntelligence",
+     "mod_Legendary_PowerArmor2_StatIntelligence"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Intelligence",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "agility-2star": {
+   "name": "Agility",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_StatAgility",
+     "mod_Legendary_PowerArmor2_StatAgility"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Agility",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "two-shot-1star": {
+   "name": "Two Shot",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Guns_TwoShot"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "AimModelMinConeDegrees",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.5
+    },
+    {
+     "property": "AimModelMaxConeDegrees",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.5
+    },
+    {
+     "property": "AimModelRecoilMaxDegPerShot",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.25
+    },
+    {
+     "property": "AimModelRecoilMinDegPerShot",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.25
+    },
+    {
+     "property": "NumProjectiles",
+     "function": "ADD",
+     "target": null,
+     "value": 1.0
+    },
+    {
+     "property": "DamageBonusMult",
+     "function": "ADD",
+     "target": null,
+     "value": 0.75
+    }
+   ],
+   "effects": []
+  },
+  "luck-2star": {
+   "name": "Luck",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_StatLuck",
+     "mod_Legendary_PowerArmor2_StatLuck"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Luck",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "stalkers-1star": {
+   "name": "Stalker's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Guns_AccuracyNotInCombat"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_SneakAttackBonus",
+     "value": 100.0
+    }
+   ],
+   "effects": []
+  },
+  "auto-stim-1star": {
+   "name": "Auto Stim",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_LowHealthTriggersStimpak",
+     "mod_Legendary_PowerArmor1_LowHealthTriggersStimpak"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_AutoStimpak"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_AutoStimpak",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_AutoStimpakEffect",
+     "magnitude": 0.0,
+     "durationSeconds": 1.0
+    }
+   ]
+  },
+  "bolstering-1star": {
+   "name": "Bolstering",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_ResistancesInverseHealth",
+     "mod_Legendary_PowerArmor1_ResistancesInverseHealth"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_EquippedArmorCount_Bolstering",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_Bolstering",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "vital-2star": {
+   "name": "Vital",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_DmgCrits"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "CriticalDamageMult",
+     "function": "ADD",
+     "target": null,
+     "value": 0.5
+    }
+   ],
+   "effects": []
+  },
+  "unyielding-1star": {
+   "name": "Unyielding",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_LowHealthIncreasesStats"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_LowHealthIncreasesStats"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_LowHealthIncreasesStats",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbUnyielding_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_LowHealthIncreasesStats",
+      "points": [
+       [
+        0,
+        3
+       ],
+       [
+        0.2,
+        3
+       ],
+       [
+        0.4,
+        2
+       ],
+       [
+        0.6,
+        1
+       ],
+       [
+        0.61,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "cloaking-1star": {
+   "name": "Cloaking",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_CloakOnMelee",
+     "mod_Legendary_PowerArmor1_CloakOnMelee"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_CloakOnHit"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_CloakOnHit",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "chameleon-1star": {
+   "name": "Chameleon",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_Chameleon",
+     "mod_Legendary_PowerArmor1_Chameleon"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Chameleon"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Chameleon",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_Chameleon",
+     "value": 20.0
+    }
+   ],
+   "effects": []
+  },
+  "vats-optimized-3star": {
+   "name": "V.A.T.S. Optimized",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_VATSCostAP"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "AttackActionPointCost",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": -0.35
+    }
+   ],
+   "effects": []
+  },
+  "lightweight-3star": {
+   "name": "Lightweight",
+   "star": 3,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Weight",
+     "zzz_mod_Legendary_PowerArmor3_Weight",
+     "zzz_mod_Legendary_Armor3_Weight"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "108",
+     "function": "ADD",
+     "target": null,
+     "value": -0.9
+    }
+   ],
+   "effects": []
+  },
+  "swift-3star": {
+   "name": "Swift",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Guns_ReloadSpeed",
+     "zzz_mod_Legendary_Weapon3_Guns_ReloadSpeed_CircuitBreaker"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ReloadSpeed",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.15
+    }
+   ],
+   "effects": []
+  },
+  "rapid-2star": {
+   "name": "Rapid",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Guns_RoF",
+     "mod_Legendary_Weapon2_Melee_SwingSpeed"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Speed",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_Guns_RoF",
+      "points": null
+     }
+    },
+    {
+     "property": "Speed",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_Melee_SwingSpeed",
+      "points": null
+     }
+    }
+   ],
+   "effects": []
+  },
+  "hitmans-2star": {
+   "name": "Hitman's",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Guns_DmgSights"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DmgSights"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DmgSights",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abPerkFortifyDmgAll",
+     "magnitude": 25.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbDmgSights_Description",
+     "magnitude": 25.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "lucky-hit-3star": {
+   "name": "Lucky Hit",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_CritSpeed"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "CriticalChargeBonus",
+     "function": "ADD",
+     "target": null,
+     "value": 15.0
+    }
+   ],
+   "effects": []
+  },
+  "blocker-3star": {
+   "name": "Blocker",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Melee_LessDamageBlock"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "LGND_DmgFromBlocking",
+     "value": 15.0
+    },
+    {
+     "property": "116",
+     "function": "ADD",
+     "target": "Legendary_LessDamageBlock",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "staggering-4star": {
+   "name": "Staggering",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon4_Stagger"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Stagger"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Stagger",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_OnHitEffect_Stagger",
+     "magnitude": 4.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "safecrackers-3star": {
+   "name": "Safecracker's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_LockPick",
+     "mod_Legendary_PowerArmor3_LockPick"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "STAT_LockpickingTier",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "STAT_HackingTier",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "divers-3star": {
+   "name": "Diver's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Waterbreathing"
+    ],
+    "enchantments": [
+     "ench_Legendary_Divers"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_Legendary_Divers",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abRestoreHealth",
+     "magnitude": 3.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "acrobats-3star": {
+   "name": "Acrobat's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_LessFallDamage"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "FallingDamageMod",
+     "value": -0.5
+    }
+   ],
+   "effects": []
+  },
+  "cavaliers-3star": {
+   "name": "Cavalier's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_LessDamageSprinting",
+     "mod_Legendary_PowerArmor3_LessDamageSprinting"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_EquippedArmorCount_Cavalier",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_LessDamageSprinting",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "defenders-3star": {
+   "name": "Defender's",
+   "star": 3,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Defenders",
+     "mod_Legendary_Weapon3_Melee_Defenders",
+     "mod_Legendary_PowerArmor3_Defenders"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_AutoBlockChance",
+     "value": 5.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "LGND_AutoBlockChance",
+     "value": 40.0
+    }
+   ],
+   "effects": []
+  },
+  "arms-keepers-3star": {
+   "name": "Arms Keeper's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_WeightWeapons",
+     "mod_Legendary_PowerArmor3_WeightWeapons"
+    ],
+    "enchantments": [
+     "ench_Legendary_Armor_WeightWeaponsDUPLICATE000"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_Legendary_Armor_WeightWeaponsDUPLICATE000",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_WeightWeaponsValue",
+     "value": 20.0
+    }
+   ],
+   "effects": []
+  },
+  "medics-1star": {
+   "name": "Medic's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_CritsHealGroup_LEGACY",
+     "mod_Legendary_Weapon1_Medic"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Medic"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Medic",
+     "value": 1.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "LGND_Medic",
+     "value": 5.0
+    },
+    {
+     "property": "116",
+     "function": "ADD",
+     "target": "Legendary_Weapon_MedicPerk",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "vampires-1star": {
+   "name": "Vampire's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Vampire"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Vampire"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Vampire",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "enraging-4star": {
+   "name": "Enraging",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon4_Guns_CritFrenzy"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_CritFrenzy"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_CritFrenzy",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_FrenzyEffect",
+     "magnitude": 999.0,
+     "durationSeconds": 30.0
+    }
+   ]
+  },
+  "powered-2star": {
+   "name": "Powered",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_APRegen",
+     "mod_Legendary_PowerArmor2_APRegen"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "ActionPointsRate",
+     "value": 5.0
+    }
+   ],
+   "effects": []
+  },
+  "poisoners-2star": {
+   "name": "Poisoner's",
+   "star": 2,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_PoisonResistance",
+     "mod_Legendary_PowerArmor2_PoisonResistance",
+     "POST_mod_Legendary_Weapon2_Poison"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtPoison",
+     "value": 50.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgMultPoison",
+     "value": 0.2
+    }
+   ],
+   "effects": []
+  },
+  "antiseptic-2star": {
+   "name": "Antiseptic",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_DiseaseResistance",
+     "mod_Legendary_PowerArmor2_DiseaseResistance"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "SURV_DiseaseChanceMult_EnvironmentalHazard",
+     "value": 25.0
+    }
+   ],
+   "effects": []
+  },
+  "hazmat-2star": {
+   "name": "HazMat",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_RadResistance",
+     "mod_Legendary_PowerArmor2_RadResistance"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtRadiationExposure",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "anti-armor-1star": {
+   "name": "Anti-armor",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_AntiArmor"
+    ],
+    "enchantments": [
+     "enchModArmorPenetration"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "enchModArmorPenetration",
+     "value": 1.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "ArmorPenetration",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "suppressors-1star": {
+   "name": "Suppressor's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DebuffDamage"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DebuffDamage"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DebuffDamage",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "endurance-3star": {
+   "name": "Endurance",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_StatEndurance"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "Endurance",
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "agility-3star": {
+   "name": "Agility",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_StatAgility"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "Agility",
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "vanguards-1star": {
+   "name": "Vanguard's",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_ResistancesProportionalHealth",
+     "mod_Legendary_PowerArmor1_ResistancesProportionalHealth"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_EquippedArmorCount_Vanguards",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_Vanguard",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "strength-3star": {
+   "name": "Strength",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_StatStrength"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "Strength",
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "perception-3star": {
+   "name": "Perception",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_StatPerception"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "Perception",
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "bashers-2star": {
+   "name": "Basher's",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Guns_Bashing"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgBash",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "regenerating-1star": {
+   "name": "Regenerating",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_HealthRegen",
+     "mod_Legendary_PowerArmor1_HealthRegen"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "HealRate",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_HealthRegen",
+      "points": [
+       [
+        1,
+        0.5
+       ],
+       [
+        100,
+        0.5
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "mutants-1star": {
+   "name": "Mutant's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_ResistancesMutation",
+     "mod_Legendary_Weapon1_DmgWithMutation",
+     "mod_Legendary_PowerArmor1_ResistancesMutation"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_DamageWithMutation"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_EquippedArmorCount_Mutants",
+     "value": 1.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_ResistancesMutation_Perk",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_DamageWithMutation",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abFortifyDamageAll",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DmgWithMutation",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        5
+       ],
+       [
+        2,
+        10
+       ],
+       [
+        3,
+        15
+       ],
+       [
+        4,
+        20
+       ],
+       [
+        5,
+        25
+       ],
+       [
+        6,
+        30
+       ],
+       [
+        7,
+        35
+       ],
+       [
+        8,
+        40
+       ],
+       [
+        9,
+        45
+       ],
+       [
+        10,
+        50
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "life-saving-1star": {
+   "name": "Life Saving",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_AutoRevive"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_AutoRevive"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_AutoRevive",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LifeSaver",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "freezing-4star": {
+   "name": "Freezing",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon4_Guns_CritFreeze"
+    ],
+    "enchantments": [
+     "zzz_ench_LegendaryWeapon_CritFreeze"
+    ]
+   },
+   "properties": [
+    {
+     "property": "MaxRange",
+     "function": "ADD",
+     "target": null,
+     "value": 0.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "zzz_ench_LegendaryWeapon_CritFreeze",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "CritCryoFreezeEffect",
+     "magnitude": 0.0,
+     "durationSeconds": 10.0
+    },
+    {
+     "effect": "CritCryoAPDrainEffect",
+     "magnitude": 100.0,
+     "durationSeconds": 10.0
+    }
+   ]
+  },
+  "heavyweight-1star": {
+   "name": "Heavyweight",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_Heavyweight"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Heavyweight"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Heavyweight",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_EquippedArmorCount_Heavyweight",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "adamantium-3star": {
+   "name": "Adamantium",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_ReducedLimbDamage"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "STAT_LimbDamageResistance",
+     "value": 15.0
+    }
+   ],
+   "effects": []
+  },
+  "durability-3star": {
+   "name": "Durability",
+   "star": 3,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Durability",
+     "mod_Legendary_Weapon3_Durability",
+     "mod_Legendary_PowerArmor3_Durability"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Durability",
+     "ench_LegendaryWeapon_Durability",
+     "ench_LegendaryPowerArmor_Durability"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Durability",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Durability",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_Durability",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "secret-agents-3star": {
+   "name": "Secret Agent's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Sneak"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "STAT_Sneak",
+     "value": 25.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "STAT_SneakSound",
+     "value": 25.0
+    }
+   ],
+   "effects": []
+  },
+  "pack-rats-3star": {
+   "name": "Pack Rat's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_WeightJunk",
+     "mod_Legendary_PowerArmor3_WeightJunk"
+    ],
+    "enchantments": [
+     "ench_Legendary_Armor_WeightJunk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_Legendary_Armor_WeightJunk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_WeightJunkValue",
+     "value": 20.0
+    }
+   ],
+   "effects": []
+  },
+  "thru-hikers-3star": {
+   "name": "Thru-hiker's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_WeightFoodDrinkChems",
+     "mod_Legendary_PowerArmor3_WeightFoodDrinkChems"
+    ],
+    "enchantments": [
+     "ench_Legendary_Armor_WeightFoodDrinkChemsDUPLICATE000"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_Legendary_Armor_WeightFoodDrinkChemsDUPLICATE000",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_WeightFoodDrinkChemsValue",
+     "value": 20.0
+    }
+   ],
+   "effects": []
+  },
+  "belted-3star": {
+   "name": "Belted",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_WeightAmmo",
+     "mod_Legendary_PowerArmor3_WeightAmmo"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_WeightAmmoValue",
+     "value": 20.0
+    },
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "Legendary_Armor_WeightAmmoPerkDUPLICATE000",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "riposting-2star": {
+   "name": "Riposting",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Melee_BlockReflects"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "ReflectBlockedDamage",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "heavy-hitters-2star": {
+   "name": "Heavy Hitter's",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Melee_DamagePowerAttack"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgPowerAttack",
+     "value": 40.0
+    }
+   ],
+   "effects": []
+  },
+  "reduced-limb-damage-3star": {
+   "name": "Reduced limb damage",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_PowerArmor3_ReducedLimbDamage"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "glutton-2star": {
+   "name": "Glutton",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_Glutton",
+     "mod_Legendary_PowerArmor2_Glutton"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Glutton"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Glutton",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "last-shot-2star": {
+   "name": "Last Shot",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Guns_LastShot"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_LastShot"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_LastShot",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "gourmands-1star": {
+   "name": "Gourmand's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Gourmand"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Gourmand"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Gourmand",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abFortifyDamageAll",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_Gourmand",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        5
+       ],
+       [
+        2,
+        10
+       ],
+       [
+        3,
+        15
+       ],
+       [
+        4,
+        20
+       ],
+       [
+        5,
+        25
+       ],
+       [
+        6,
+        30
+       ],
+       [
+        7,
+        35
+       ],
+       [
+        8,
+        40
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "rugged-3star": {
+   "name": "Rugged",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzzmod_Legendary_Weapon3_Rugged"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Durability"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Durability",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "pyro-technicians-2star": {
+   "name": "Pyro-Technician's",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor2_Fireproof",
+     "mod_Legendary_Armor2_Fireproof"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtFire",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "dissipating-3star": {
+   "name": "Dissipating",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_RadsRegen",
+     "mod_Legendary_PowerArmor3_RadsRegen"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "RadsRate",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_RadsRegen",
+      "points": [
+       [
+        1,
+        100.0
+       ],
+       [
+        100,
+        100.0
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "cryologists-2star": {
+   "name": "Cryologist's",
+   "star": 2,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_CryoResistance",
+     "mod_Legendary_PowerArmor2_CryoResistance",
+     "POST_mod_Legendary_Weapon2_Cryo"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Damage Type Value",
+     "function": "ADD",
+     "target": "dtCryo",
+     "value": 50.0
+    },
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgMultCryo",
+     "value": 0.2
+    }
+   ],
+   "effects": []
+  },
+  "aristocrats-1star": {
+   "name": "Aristocrat's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DamageViaCaps",
+     "mod_Legendary_Armor1_ResistancesProportionalCaps",
+     "mod_Legendary_PowerArmor1_ResistancesProportionalCaps"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddDamageViaCaps",
+     "ench_Legendary_Aristocrat_ReflectDamage"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddDamageViaCaps",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_Legendary_Aristocrat_ReflectDamage",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_EquippedArmorCount_Aristocrats",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_DamageViaCaps_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DamageViaCaps",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1000,
+        3
+       ],
+       [
+        2000,
+        5
+       ],
+       [
+        15000,
+        27
+       ],
+       [
+        16000,
+        28
+       ],
+       [
+        17000,
+        30
+       ],
+       [
+        29000,
+        50
+       ]
+      ]
+     }
+    },
+    {
+     "effect": "Legendary_Aristocrat_ReflectiveEffect",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_Aristocrat01",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        2000,
+        0.13
+       ],
+       [
+        4000,
+        0.16
+       ],
+       [
+        6000,
+        0.2
+       ],
+       [
+        8000,
+        0.25
+       ],
+       [
+        10000,
+        0.32
+       ],
+       [
+        12000,
+        0.4
+       ],
+       [
+        14000,
+        0.5
+       ],
+       [
+        16000,
+        0.63
+       ],
+       [
+        18000,
+        0.79
+       ],
+       [
+        20000,
+        1
+       ],
+       [
+        22000,
+        1.26
+       ],
+       [
+        24000,
+        1.58
+       ],
+       [
+        26000,
+        2
+       ],
+       [
+        28000,
+        2.51
+       ],
+       [
+        30000,
+        3.16
+       ],
+       [
+        32000,
+        3.98
+       ],
+       [
+        34000,
+        5.01
+       ],
+       [
+        36000,
+        6.31
+       ],
+       [
+        38000,
+        7.94
+       ],
+       [
+        40000,
+        10
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "inertial-2star": {
+   "name": "Inertial",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_APViaKill"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "LGND_APOnKill",
+     "value": 15.0
+    },
+    {
+     "property": "116",
+     "function": "ADD",
+     "target": "LegendaryAPViaKillPerk",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "juggernauts-1star": {
+   "name": "Juggernaut's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_DamageViaHealth"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddDamageViaHealth"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddDamageViaHealth",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_DamageViaHealth_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DamageViaHealth",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1000,
+        100
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "overeaters-1star": {
+   "name": "Overeater's",
+   "star": 1,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor1_Overeater",
+     "mod_Legendary_PowerArmor1_Overeater"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Overeater"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Overeater",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbLegendary_Overeater_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_Overeater",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        0.4,
+        0
+       ],
+       [
+        0.8,
+        0
+       ],
+       [
+        1.2,
+        0
+       ],
+       [
+        1.6,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2.4,
+        1
+       ],
+       [
+        2.8,
+        1
+       ],
+       [
+        3.2,
+        1
+       ],
+       [
+        3.6,
+        2
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4.4,
+        4
+       ],
+       [
+        4.8,
+        5
+       ],
+       [
+        5.2,
+        6
+       ],
+       [
+        5.6,
+        8
+       ],
+       [
+        6,
+        11
+       ],
+       [
+        6.4,
+        14
+       ],
+       [
+        6.8,
+        19
+       ],
+       [
+        7.2,
+        25
+       ],
+       [
+        7.6,
+        32
+       ],
+       [
+        8,
+        40
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "steady-2star": {
+   "name": "Steady",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Melee_Steady"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Steady"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Steady",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_Weapon_Steady_FortifyMeleeDamage",
+     "magnitude": 25.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "burning-3star": {
+   "name": "Burning",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Burning",
+     "mod_Legendary_PowerArmor3_Burning"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_BurningAddPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_BurningAddPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_BurningCount",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbLegendary_Burning_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 3.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_BurningDmg",
+      "points": [
+       [
+        1,
+        19
+       ],
+       [
+        2,
+        38
+       ],
+       [
+        3,
+        56
+       ],
+       [
+        4,
+        77
+       ],
+       [
+        5,
+        96
+       ],
+       [
+        6,
+        115
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "frozen-3star": {
+   "name": "Frozen",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Frozen",
+     "mod_Legendary_PowerArmor3_Frozen"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_FrozenAddPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_FrozenAddPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_FrozenCount",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbLegendary_Frozen_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 4.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_FrozenDmg",
+      "points": [
+       [
+        1,
+        12
+       ],
+       [
+        2,
+        24
+       ],
+       [
+        3,
+        36
+       ],
+       [
+        4,
+        48
+       ],
+       [
+        5,
+        60
+       ],
+       [
+        6,
+        72
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "electrified-3star": {
+   "name": "Electrified",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Electrified",
+     "mod_Legendary_PowerArmor3_Electrified"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_ElectrifiedAddPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_ElectrifiedAddPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_ElectrifiedCount",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbLegendary_Electrified_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 3.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_ElectrifiedDmg",
+      "points": [
+       [
+        1,
+        18
+       ],
+       [
+        2,
+        35
+       ],
+       [
+        3,
+        53
+       ],
+       [
+        4,
+        70
+       ],
+       [
+        5,
+        88
+       ],
+       [
+        6,
+        105
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "toxic-3star": {
+   "name": "Toxic",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Toxic",
+     "mod_Legendary_PowerArmor3_Toxic"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_ToxicAddPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_ToxicAddPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Armor_ToxicCount",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbLegendary_Toxic_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 7.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_ToxicDmg",
+      "points": [
+       [
+        1,
+        12
+       ],
+       [
+        2,
+        23
+       ],
+       [
+        3,
+        35
+       ],
+       [
+        4,
+        47
+       ],
+       [
+        5,
+        58
+       ],
+       [
+        6,
+        70
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "doctors-3star": {
+   "name": "Doctor's",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor3_IncreaseHealing",
+     "mod_Legendary_Armor3_IncreaseHealing"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_IncreaseHealing"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_IncreaseHealing",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "hardy-2star": {
+   "name": "Hardy",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_ReduceExplosionDamage",
+     "mod_Legendary_PowerArmor2_ReduceExplosionDamage"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "18",
+     "function": "ADD",
+     "target": "LegendaryReduceExplosionDamagePerk",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "ghosts-3star": {
+   "name": "Ghost's",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Guns_CloakOnHit"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_CloakOnHit"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_CloakOnHit",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "charisma-3star": {
+   "name": "Charisma",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_StatCharisma"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "Charisma",
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "intelligence-3star": {
+   "name": "Intelligence",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_StatIntelligence"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "Intelligence",
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "luck-3star": {
+   "name": "Luck",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_StatLuck"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "Luck",
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "deadly-4star": {
+   "name": "Deadly",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Weapon4_Deadly"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "polished-4star": {
+   "name": "Polished",
+   "star": 4,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Polished",
+     "DEL_WIP4_mod_Legendary_Armor4_Polished",
+     "DEL_WIP4_mod_Legendary_PowerArmor4_Polished"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Polished"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Polished",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_Weapon_PolishedPerkApplyEffect",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_Polished_DMG",
+      "points": [
+       [
+        0.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.0
+       ],
+       [
+        1.01,
+        1.0
+       ],
+       [
+        1.04,
+        2.5
+       ],
+       [
+        1.08,
+        5.0
+       ],
+       [
+        1.13,
+        7.5
+       ],
+       [
+        1.17,
+        10.0
+       ],
+       [
+        1.21,
+        12.5
+       ],
+       [
+        1.25,
+        15.0
+       ],
+       [
+        1.29,
+        17.5
+       ],
+       [
+        1.33,
+        20.0
+       ],
+       [
+        1.38,
+        22.5
+       ],
+       [
+        1.42,
+        25.0
+       ],
+       [
+        1.46,
+        27.5
+       ],
+       [
+        1.5,
+        30.0
+       ],
+       [
+        1.54,
+        32.5
+       ],
+       [
+        1.58,
+        35.0
+       ],
+       [
+        1.63,
+        37.5
+       ],
+       [
+        1.67,
+        40.0
+       ],
+       [
+        1.71,
+        42.5
+       ],
+       [
+        1.75,
+        45.0
+       ],
+       [
+        1.79,
+        47.5
+       ],
+       [
+        1.83,
+        50.0
+       ],
+       [
+        1.88,
+        52.5
+       ],
+       [
+        1.92,
+        55.0
+       ],
+       [
+        1.96,
+        57.5
+       ],
+       [
+        2.0,
+        60.0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "vipers-4star": {
+   "name": "Viper's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Vipers"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsPoisoned",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "electricians-4star": {
+   "name": "Electrician's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Guns_Electricians"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Electricians_Explosion"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Electricians_Explosion",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "bullys-4star": {
+   "name": "Bully's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Bully"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgPerCrippled",
+     "value": 25.0
+    }
+   ],
+   "effects": []
+  },
+  "duelists-4star": {
+   "name": "Duelist's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Weapon4_Duelists"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "slayers-4star": {
+   "name": "Slayer's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_WIP4_mod_Legendary_Weapon4_Slayers"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "pyromaniacs-4star": {
+   "name": "Pyromaniac's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Pyromaniac"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsBurning",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  },
+  "combo-breakers-4star": {
+   "name": "Combo-Breaker's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Melee_ComboBreaker"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_ComboBreaker"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_ComboBreaker",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "fracturers-4star": {
+   "name": "Fracturer's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Fracturers"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Fracturers"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Fracturers",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "sawbones-4star": {
+   "name": "Sawbones",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_Sawbones",
+     "mod_Legendary_PowerArmor4_Sawbones"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Sawbones"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Sawbones",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_Armor_SawbonesApplyHealPerkEffect",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "icemens-4star": {
+   "name": "Icemen's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Icemens"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "DamageTypeValues",
+     "function": "MUL+ADD",
+     "target": "dtCryo",
+     "value": 0.2
+    }
+   ],
+   "effects": []
+  },
+  "super-resilient-4star": {
+   "name": "Super Resilient",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Weapon4_Guns_SuperResilient"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "stunning-4star": {
+   "name": "Stunning",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Weapon4_Melee_Stunning"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "propelling-4star": {
+   "name": "Propelling",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_Propelling"
+    ],
+    "enchantments": [
+     "ench_LegendaryPowerArmor_Propelling"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_Propelling",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_PowerArmor_PropellingApplyMoveSpeedPerkEffect",
+     "magnitude": 5.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "Legendary_PowerArmor_PropellingApplySprintSpeedPerkEffect",
+     "magnitude": 5.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "radioactive-powered-4star": {
+   "name": "Radioactive-Powered",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_RadioactivePowered"
+    ],
+    "enchantments": [
+     "ench_LegendaryPowerArmor_RadioactivePowered"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_RadioactivePowered",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_PowerArmor_RadioActivePoweredApplyGainAPPerkEffect",
+     "magnitude": 2.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "Legendary_PowerArmor_RadioactivePoweredApplyRADDrainPerkEffect",
+     "magnitude": 2.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "rangers-4star": {
+   "name": "Ranger's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_Ranger",
+     "mod_Legendary_PowerArmor4_Ranger"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Ranger"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Ranger",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "bruisers-4star": {
+   "name": "Bruiser's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_Bruiser",
+     "mod_Legendary_PowerArmor4_Bruiser"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Bruiser"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Bruiser",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "reflective-4star": {
+   "name": "Reflective",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_Reflective"
+    ],
+    "enchantments": [
+     "ench_LegendaryPowerArmor_Reflective"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_Reflective",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "runners-4star": {
+   "name": "Runner's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_Runner",
+     "mod_Legendary_PowerArmor4_Runner"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Runner"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Runner",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_Armor_RunnerApplyFortifySprintAPCostPerkEffect",
+     "magnitude": 20.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "choo-choos-4star": {
+   "name": "Choo-Choo's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_ChooChoo"
+    ],
+    "enchantments": [
+     "ench_LegendaryPowerArmor_ChooChoo"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_ChooChoo",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "PainTrain",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "PainTrainBleed",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_PowerArmor_ChooChooAddPerkEffect",
+     "magnitude": 20.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "PainTrainBleedBonus",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        20
+       ],
+       [
+        2,
+        40
+       ],
+       [
+        3,
+        60
+       ],
+       [
+        4,
+        80
+       ],
+       [
+        5,
+        100
+       ],
+       [
+        6,
+        120
+       ],
+       [
+        7,
+        140
+       ],
+       [
+        8,
+        160
+       ],
+       [
+        9,
+        180
+       ],
+       [
+        10,
+        200
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "stagger-proof-4star": {
+   "name": "Stagger-Proof",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Armor4_StaggerProof",
+     "P62_mod_Legendary_PowerArmor4_StaggerProof"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryPowerArmor_StaggerProof"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryPowerArmor_StaggerProof",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "tankys-4star": {
+   "name": "Tanky's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_Tanky",
+     "mod_Legendary_PowerArmor4_Tanky"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Tanky"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Tanky",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "Legendary_Tankys_PowerArmorCount",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "limit-breaking-4star": {
+   "name": "Limit-Breaking",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_LimitBreak",
+     "mod_Legendary_PowerArmor4_LimitBreak"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_LimitBreak"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_LimitBreak",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "scanners-4star": {
+   "name": "Scanner's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_Scanners"
+    ],
+    "enchantments": [
+     "ench_LegendaryPowerArmor_Scanners"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_Scanners",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "auto-repair-4star": {
+   "name": "Auto Repair",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_PowerArmor4_AutoRepair"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "aero-flight-4star": {
+   "name": "Aero Flight",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Armor4_AeroFlight",
+     "DEL_WIP4_mod_Legendary_PowerArmor4_AeroFlight"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "miasmas-4star": {
+   "name": "Miasma's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_Miasma",
+     "mod_Legendary_PowerArmor4_Miasma"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_Miasma"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Miasma",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "AcidCloak",
+     "value": 10.0
+    }
+   ],
+   "effects": []
+  },
+  "moneybags-4star": {
+   "name": "Moneybag's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Armor4_Moneybags",
+     "DEL_WIP4_mod_Legendary_PowerArmor4_Moneybags"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "battle-loaders-4star": {
+   "name": "Battle-Loader's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor4_BattleLoaders",
+     "mod_Legendary_PowerArmor4_BattleLoaders"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_BattleLoaders"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_BattleLoaders",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_Armor_BattleLoadersAddPerkEffect",
+     "magnitude": 0.0,
+     "durationSeconds": 5.0
+    }
+   ]
+  },
+  "stabilizers-4star": {
+   "name": "Stabilizer's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Guns_Stabilizers"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "AimModelMaxConeDegrees",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": -0.4
+    },
+    {
+     "property": "AimModelRecoilDiminishSightsMult",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.4
+    },
+    {
+     "property": "AimModelRecoilMaxDegPerShot",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": -0.4
+    },
+    {
+     "property": "AimModelRecoilMinDegPerShot",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": -0.4
+    },
+    {
+     "property": "AimModelBaseStability",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 0.4
+    }
+   ],
+   "effects": []
+  },
+  "toppers-4star": {
+   "name": "Topper's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "DEL_WIP4_mod_Legendary_Weapon4_Guns_Toppers"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "pin-pointers-4star": {
+   "name": "Pin-Pointer's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Guns_PinPointers"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsWeakSpot",
+     "value": 20.0
+    }
+   ],
+   "effects": []
+  },
+  "conductors-4star": {
+   "name": "Conductor's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Conductors"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Conductors"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Conductors",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "pounders-4star": {
+   "name": "Pounder's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Melee_Pounders"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Pounders"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Pounders",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "fencers-4star": {
+   "name": "Fencer's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Melee_Fencers"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Fencers"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Fencers",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "encirclers-4star": {
+   "name": "Encircler's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Encirclers"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Encirclers"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Encirclers",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "rejuvenators-4star": {
+   "name": "Rejuvenator's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_Rejuvenators"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_RejuvenatorTier",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "aegis-4star": {
+   "name": "Aegis",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_Aegis"
+    ],
+    "enchantments": [
+     "ench_LegendaryPowerArmor_AegisCloak",
+     "ench_LegendaryPowerArmor_AegisPlayerResists"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_AegisCloak",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_AegisPlayerResists",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_PowerArmor_AegisApplyCloakEffect",
+     "magnitude": 100.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "stalwarts-4star": {
+   "name": "Stalwart's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor4_Stalwarts"
+    ],
+    "enchantments": [
+     "ench_LegendaryPowerArmor_StalwartsPlayerDurability",
+     "ench_LegendaryPowerArmor_StalwartsCloak"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_StalwartsPlayerDurability",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryPowerArmor_StalwartsCloak",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_PowerArmor_StalwartsApplyCloakPerkEffect",
+     "magnitude": 100.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "rebounders-4star": {
+   "name": "Rebounders",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_Armor4_Rebounders"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryArmor_Rebounders"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryArmor_Rebounders",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "crusaders-4star": {
+   "name": "Crusaders",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_PowerArmor4_Crusaders",
+     "P62_mod_Legendary_Armor4_Crusaders"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryArmor_Crusaders"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryArmor_Crusaders",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "metabolic-4star": {
+   "name": "Metabolic",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_Armor4_Metabolic",
+     "P62_mod_Legendary_PowerArmor4_Metabolic"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryArmor_Metabolic"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryArmor_Metabolic",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "brutalists-4star": {
+   "name": "Brutalist's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_Weapon4_Melee_Brutalists"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryWeapon_Brutalists"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryWeapon_Brutalists",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "satiated-4star": {
+   "name": "Satiated",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_Weapon4_Satiated",
+     "HTO_mod_Legendary_Weapon4_Satiated"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryWeapon_Satiated",
+     "HTO_ench_LegendaryWeapon_Satiated"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryWeapon_Satiated",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "HTO_ench_LegendaryWeapon_Satiated",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "sightseers-4star": {
+   "name": "Sightseer's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_Weapon4_Guns_SightSeers"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryWeapon_SightSeers"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryWeapon_SightSeers",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "ruiners-4star": {
+   "name": "Ruiner's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_Weapon4_Guns_Ruiners"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryWeapon_Ruiners"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryWeapon_Ruiners",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "over-loaders-4star": {
+   "name": "Over-Loader's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_PowerArmor4_OverLoaders"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryPowerArmor_OverLoaders_EMP"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryPowerArmor_OverLoaders_EMP",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "voltaic-4star": {
+   "name": "Voltaic",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "P62_mod_Legendary_PowerArmor4_Voltaic"
+    ],
+    "enchantments": [
+     "P62_ench_LegendaryPowerArmor_Voltaic_EMP"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "P62_ench_LegendaryPowerArmor_Voltaic_EMP",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "P62_Legendary_Armor_Voltaic_ActorValue",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "adrenal-1star": {
+   "name": "Adrenal",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Adrenal",
+     "mod_Legendary_PowerArmor1_Adrenal",
+     "mod_Legendary_Armor1_Adrenal"
+    ],
+    "enchantments": [
+     "enchModAdrenal",
+     "ench_LegendaryArmor_Adrenal"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "enchModAdrenal",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_Adrenal",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbPerkFortifyResistDamage",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_Adrenal",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        10
+       ],
+       [
+        10,
+        100
+       ]
+      ]
+     }
+    },
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "bloodied-2star": {
+   "name": "Bloodied",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Custom_Legendary_WarBloodied"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_AddDamageInverseHealth"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_AddDamageInverseHealth",
+     "value": 1.0
+    },
+    {
+     "property": "OverrideProjectile",
+     "function": "SET",
+     "target": "Bounty_War_ProjectileCremator",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "Legendary_DamageInverseHealth_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Weapon_DamageInverseHealth",
+      "points": [
+       [
+        0.05,
+        130
+       ],
+       [
+        1,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "mad-scientists-3star": {
+   "name": "Mad Scientist's",
+   "star": 3,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_Weapon3_MadScientist",
+     "zzz_BOUNTY_mod_Legendary_Armor3_MadScientist"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "CriticalChargeBonus",
+     "function": "ADD",
+     "target": null,
+     "value": 15.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromAnimals",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_LessDMGAnimals",
+      "points": [
+       [
+        1,
+        0.85
+       ],
+       [
+        2,
+        0.7225
+       ],
+       [
+        3,
+        0.6141
+       ],
+       [
+        4,
+        0.522
+       ],
+       [
+        5,
+        0.4437
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "glowing-3star": {
+   "name": "Glowing",
+   "star": 3,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Glowing",
+     "zzz_BOUNTY_mod_Legendary_Armor3_Glowing",
+     "zzz_BOUNTY_mod_Legendary_PowerArmor3_Glowing"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryWeapon_GlowingAddPerk",
+     "zzz_BOUNTY_ench_LegendaryArmor_Glowing"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryWeapon_GlowingAddPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "zzz_BOUNTY_ench_LegendaryArmor_Glowing",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "zzz_BOUNTY_LegendaryArmor_GlowingEffect",
+     "magnitude": 2.0,
+     "durationSeconds": 1.0
+    }
+   ]
+  },
+  "barbarian-3star": {
+   "name": "Barbarian",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon3_Melee_Barbarian"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryWeapon_Barbarian"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryWeapon_Barbarian",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "pick-pocketers-2star": {
+   "name": "Pick Pocketer's",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon2_Melee_PickPocket"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryWeapon_PickpocketAddPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryWeapon_PickpocketAddPerk",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "BOUNTY_AbLegendary_Weapon_PickPocket_Description",
+     "magnitude": 50.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "lucid-1star": {
+   "name": "Lucid",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Lucid",
+     "mod_Legendary_Armor1_Lucid",
+     "mod_Legendary_PowerArmor1_Lucid"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryWeapon_Lucid",
+     "BOUNTY_ench_LegendaryArmor_LucidAddPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryWeapon_Lucid",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_LucidAddPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "BOUNTY_LGND_Armor_Lucid",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abFortifyDamageAll",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "BOUNTY_CT_Legendary_Weapon_Lucid",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        5
+       ],
+       [
+        2,
+        10
+       ],
+       [
+        3,
+        15
+       ],
+       [
+        4,
+        20
+       ],
+       [
+        5,
+        25
+       ],
+       [
+        6,
+        30
+       ],
+       [
+        7,
+        35
+       ],
+       [
+        8,
+        40
+       ]
+      ]
+     }
+    },
+    {
+     "effect": "BOUNTY_AbLegendary_LucidArmor_Description",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_Lucid_Desc",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        0.39
+       ],
+       [
+        2,
+        0.58
+       ],
+       [
+        3,
+        0.85
+       ],
+       [
+        4,
+        1.26
+       ],
+       [
+        5,
+        1.87
+       ],
+       [
+        6,
+        2.77
+       ],
+       [
+        7,
+        4.1
+       ],
+       [
+        8,
+        6
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "recollecting-1star": {
+   "name": "Recollecting",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_Weapon1_Recollecting",
+     "zzz_BOUNTY_mod_Legendary_Armor1_Recollecting"
+    ],
+    "enchantments": [
+     "enchModAdrenal",
+     "ench_LegendaryArmor_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "enchModAdrenal",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromAnimals",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_LessDMGAnimals",
+      "points": [
+       [
+        1,
+        0.85
+       ],
+       [
+        2,
+        0.7225
+       ],
+       [
+        3,
+        0.6141
+       ],
+       [
+        4,
+        0.522
+       ],
+       [
+        5,
+        0.4437
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "snipers-1star": {
+   "name": "Sniper's",
+   "star": 1,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Guns_Sniper"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryWeapon_Snipers"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryWeapon_Snipers",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "ferals-1star": {
+   "name": "Feral's",
+   "star": 1,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon1_Melee_Feral",
+     "zzz_BOUNTY_mod_Legendary_Armor1_Feral",
+     "zzz_BOUNTY_mod_Legendary_PowerArmor1_Feral"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryWeapon_IncreaseFeralAddPerk",
+     "zzz_BOUNTY_ench_LegendaryArmor_FeralRate"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryWeapon_IncreaseFeralAddPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "zzz_BOUNTY_ench_LegendaryArmor_FeralRate",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "healthy-3star": {
+   "name": "Healthy",
+   "star": 3,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_Weapon3_Healthy",
+     "mod_Legendary_Armor3_Healthy",
+     "mod_Legendary_PowerArmor3_Healthy"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryArmor_MaxHealthBonus"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_MaxHealthBonus",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "self-repairing-3star": {
+   "name": "Self-Repairing",
+   "star": 3,
+   "appliesTo": [
+    "armor",
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_Armor3_SelfRepair",
+     "zzz_BOUNTY_mod_Legendary_Weapon3_SelfRepair"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromAnimals",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_LessDMGAnimals",
+      "points": [
+       [
+        1,
+        0.85
+       ],
+       [
+        2,
+        0.7225
+       ],
+       [
+        3,
+        0.6141
+       ],
+       [
+        4,
+        0.522
+       ],
+       [
+        5,
+        0.4437
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "reflex-3star": {
+   "name": "Reflex",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Reflex"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "STAT_EvadeChance",
+     "value": 2.0
+    }
+   ],
+   "effects": []
+  },
+  "active-3star": {
+   "name": "Active",
+   "star": 3,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor3_Active",
+     "mod_Legendary_PowerArmor3_Active"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryArmor_MaxActionPointBonus"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_MaxActionPointBonus",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "insane-2star": {
+   "name": "Insane",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_Armor2_Insane"
+    ],
+    "enchantments": [
+     "ench_LegendaryArmor_AddCommonPerk"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryArmor_AddCommonPerk",
+     "value": 1.0
+    },
+    {
+     "property": "Actor Values",
+     "function": "ADD",
+     "target": "LGND_DmgFromAnimals",
+     "value": 0.0,
+     "curve": {
+      "name": "CT_Legendary_Armor_LessDMGAnimals",
+      "points": [
+       [
+        1,
+        0.85
+       ],
+       [
+        2,
+        0.7225
+       ],
+       [
+        3,
+        0.6141
+       ],
+       [
+        4,
+        0.522
+       ],
+       [
+        5,
+        0.4437
+       ]
+      ]
+     }
+    }
+   ],
+   "effects": []
+  },
+  "jagged-2star": {
+   "name": "Jagged",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_Armor2_Jagged",
+     "zzz_BOUNTY_mod_Legendary_PowerArmor2_Jagged"
+    ],
+    "enchantments": [
+     "zzz_BOUNTY_ench_LegendaryArmor_Jagged"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "zzz_BOUNTY_ench_LegendaryArmor_Jagged",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "fierce-2star": {
+   "name": "Fierce",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_Fierce",
+     "zzz_mod_Legendary_PowerArmor2_Fierce"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryArmor_Fierce"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_Fierce",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "elementalist-2star": {
+   "name": "Elementalist",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Armor2_Elementalist",
+     "mod_Legendary_PowerArmor2_Elementalist"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryArmor_Elementalist"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_Elementalist",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "savages-4star": {
+   "name": "Savage's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_PowerArmor4_Savage"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryArmor_Savage"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_Savage",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.01,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.02,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.03,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.04,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.05,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.06,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.07,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.08,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.09,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.1,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "barbarians-4star": {
+   "name": "Barbarian's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "zzz_BOUNTY_mod_Legendary_PowerArmor4_Barbarian"
+    ],
+    "enchantments": [
+     "zzz_BOUNTY_ench_LegendaryArmor_Barbarian"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "zzz_BOUNTY_ench_LegendaryArmor_Barbarian",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.01,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.02,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.03,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.04,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.05,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.06,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.07,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.08,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.09,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.1,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "healing-spear-3star": {
+   "name": "Healing Spear",
+   "star": 3,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "zzz_mod_Legendary_Weapon3_HealingSpear"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "rushing-2star": {
+   "name": "Rushing",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor2_Rushing",
+     "mod_Legendary_Armor2_Rushing"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryArmor_Rushing"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_Rushing",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "pain-killer-2star": {
+   "name": "Pain Killer",
+   "star": 2,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_PowerArmor2_PainKiller",
+     "mod_Legendary_Armor2_PainKiller"
+    ],
+    "enchantments": [
+     "BOUNTY_ench_LegendaryArmor_PainKiller"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "BOUNTY_ench_LegendaryArmor_PainKiller",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "thrill-seekers-4star": {
+   "name": "Thrill-Seeker's",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "RA_mod_Legendary_Weapon4_ThrillSeeker"
+    ],
+    "enchantments": [
+     "RA_ench_LegendaryWeapon_ThrillSeeker"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "RA_ench_LegendaryWeapon_ThrillSeeker",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abEnableKillStreak",
+     "magnitude": 1.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.03,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.06,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.09,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.12,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.15,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.18,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.21,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.24,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.27,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyMeleeSpeedEffect",
+     "magnitude": 0.3,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.03,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.06,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.09,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.12,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.15,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.18,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.21,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.24,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.27,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbPerkFortifyReloadSpeedMult",
+     "magnitude": 0.3,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "charged-4star": {
+   "name": "Charged",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Melee_Charged"
+    ],
+    "enchantments": []
+   },
+   "properties": [],
+   "effects": []
+  },
+  "quad-2star": {
+   "name": "Quad",
+   "star": 2,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "Bounty_mod_Custom_QuadLegendary2"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "AmmoCapacity",
+     "function": "MUL+ADD",
+     "target": null,
+     "value": 3.0
+    }
+   ],
+   "effects": []
+  },
+  "vector-4star": {
+   "name": "Vector",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "HTO_mod_Legendary_PowerArmor4_Vector",
+     "HTO_mod_Legendary_Armor4_Vector"
+    ],
+    "enchantments": [
+     "HTO_ench_LegendaryArmor_Vector"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "HTO_ench_LegendaryArmor_Vector",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "raging-4star": {
+   "name": "Raging",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "HTO_mod_Legendary_Armor4_Raging",
+     "HTO_mod_Legendary_PowerArmor4_Raging"
+    ],
+    "enchantments": [
+     "HTO_ench_LegendaryArmor_Raging"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "HTO_ench_LegendaryArmor_Raging",
+     "value": 1.0
+    }
+   ],
+   "effects": []
+  },
+  "tarnished-4star": {
+   "name": "Tarnished",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "HTO_mod_Legendary_Weapon4_Tarnished"
+    ],
+    "enchantments": [
+     "HTO_ench_LegendaryWeapon_Tarnished"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "HTO_ench_LegendaryWeapon_Tarnished",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "HTO_Legendary_Weapon_TarnishedPerkApplyEffect",
+     "magnitude": 0.0,
+     "durationSeconds": 0.0,
+     "curve": {
+      "name": "HTO_CT_Legendary_Weapon_Tarnished_DMG",
+      "points": [
+       [
+        0.0,
+        0
+       ],
+       [
+        0.01,
+        120
+       ],
+       [
+        0.05,
+        114
+       ],
+       [
+        0.1,
+        108
+       ],
+       [
+        0.15,
+        102
+       ],
+       [
+        0.2,
+        96
+       ],
+       [
+        0.25,
+        90
+       ],
+       [
+        0.3,
+        84
+       ],
+       [
+        0.35,
+        78
+       ],
+       [
+        0.4,
+        72
+       ],
+       [
+        0.45,
+        66
+       ],
+       [
+        0.5,
+        60
+       ],
+       [
+        0.55,
+        54
+       ],
+       [
+        0.6,
+        48
+       ],
+       [
+        0.65,
+        42
+       ],
+       [
+        0.7,
+        36
+       ],
+       [
+        0.75,
+        30
+       ],
+       [
+        0.8,
+        24
+       ],
+       [
+        0.85,
+        18
+       ],
+       [
+        0.9,
+        12
+       ],
+       [
+        0.95,
+        6
+       ],
+       [
+        0.99,
+        1
+       ],
+       [
+        1.0,
+        0
+       ],
+       [
+        2.0,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  "haulers-4star": {
+   "name": "Hauler's",
+   "star": 4,
+   "appliesTo": [
+    "armor"
+   ],
+   "records": {
+    "omods": [
+     "HTO_mod_Legendary_Armor4_Haulers",
+     "HTO_mod_Legendary_PowerArmor4_Haulers"
+    ],
+    "enchantments": [
+     "HTO_ench_LegendaryArmor_Hauler"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "HTO_ench_LegendaryArmor_Hauler",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "AbPerkFortifyCarryWeight",
+     "magnitude": 30.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "locked-4star": {
+   "name": "Locked",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "mod_Legendary_Weapon4_Guns_Locked"
+    ],
+    "enchantments": [
+     "ench_LegendaryWeapon_Locked"
+    ]
+   },
+   "properties": [
+    {
+     "property": "Enchantments",
+     "function": "ADD",
+     "target": "ench_LegendaryWeapon_Locked",
+     "value": 1.0
+    }
+   ],
+   "effects": [
+    {
+     "effect": "abPerkFortifyDmgFar",
+     "magnitude": 40.0,
+     "durationSeconds": 0.0
+    },
+    {
+     "effect": "AbLocked_Description",
+     "magnitude": 40.0,
+     "durationSeconds": 0.0
+    }
+   ]
+  },
+  "severing-4star": {
+   "name": "Severing",
+   "star": 4,
+   "appliesTo": [
+    "weapon"
+   ],
+   "records": {
+    "omods": [
+     "SDOW_mod_Legendary_Weapon4_Severing"
+    ],
+    "enchantments": []
+   },
+   "properties": [
+    {
+     "property": "ActorValues",
+     "function": "ADD",
+     "target": "STAT_DmgVsBleeding",
+     "value": 50.0
+    }
+   ],
+   "effects": []
+  }
+ }
+}
