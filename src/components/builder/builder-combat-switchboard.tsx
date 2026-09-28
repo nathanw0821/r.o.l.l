@@ -20,8 +20,15 @@ import {
   ChevronRight,
   Skull,
   Shield,
+  Dna,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import StateGroup from "@/components/builder/state-group";
+import ScopedPickerDialog, { type ScopedPickerItem } from "@/components/builder/scoped-picker-dialog";
+import { SANDBOX_MUTATIONS, type SandboxMutationDef } from "@/lib/builder/sandbox-mutations";
+import { vitalsBarModel } from "@/lib/builder/vitals-bars";
+import { useIsPhoneWidth } from "@/lib/hooks/use-is-phone-width";
+import { BUILDER_SPECIAL_KEYS } from "@/lib/builder/compatibility";
 import {
   ALL_BOBBLEHEADS,
   ALL_MAGAZINES,
@@ -30,6 +37,7 @@ import {
   ALL_MEAT_FOODS,
   ALL_ALCOHOL,
   ALL_COMPANIONS,
+  type Fallout76BuffDef,
 } from "@/lib/builder/all-fallout76-buffs";
 import type {
   FoodSurvivalState,
@@ -190,8 +198,91 @@ const TEAM_STATES: { id: TeamCategory; label: string; desc: string }[] = [
   { id: "exploration", label: "Exploration Team", desc: "+4 Endurance (+20 Max HP)" },
 ];
 
+/** Live totals shown in the sticky band above the state groups (from useBuilderTotals). */
+export type StatsBandData = {
+  special: Record<(typeof BUILDER_SPECIAL_KEYS)[number], number>;
+  dr: number;
+  er: number;
+  rr: number;
+};
+
+const STATE_GROUP_IDS = [
+  "vitals",
+  "stances",
+  "damage",
+  "stacks",
+  "impairments",
+  "mutations",
+  "consumables",
+  "audit",
+] as const;
+type StateGroupId = (typeof STATE_GROUP_IDS)[number];
+
+type ConsumableSlotField = "activeDrug" | "activeBobblehead" | "activeMagazine" | "activeAlcohol" | "activeCompanion";
+type PickerKind = "mutation" | "food" | ConsumableSlotField;
+
+const CONSUMABLE_SLOTS: Array<{
+  field: ConsumableSlotField;
+  label: string;
+  items: Fallout76BuffDef[];
+  icon: React.ReactNode;
+}> = [
+  { field: "activeDrug", label: "Chem", items: ALL_CHEMS, icon: <Pill className="h-3.5 w-3.5 text-rose-400" /> },
+  { field: "activeBobblehead", label: "Bobblehead", items: ALL_BOBBLEHEADS, icon: <Sparkles className="h-3.5 w-3.5 text-amber-400" /> },
+  { field: "activeMagazine", label: "Magazine", items: ALL_MAGAZINES, icon: <Book className="h-3.5 w-3.5 text-cyan-400" /> },
+  { field: "activeAlcohol", label: "Brew / alcohol", items: ALL_ALCOHOL, icon: <Beer className="h-3.5 w-3.5 text-amber-500" /> },
+  { field: "activeCompanion", label: "Camp companion", items: ALL_COMPANIONS, icon: <Home className="h-3.5 w-3.5 text-purple-400" /> },
+];
+
+const MUTATION_STAT_LABEL: Record<string, string> = {
+  str: "STR", per: "PER", end: "END", cha: "CHA", int: "INT", agi: "AGI", lck: "LCK",
+  dr: "DR", er: "ER", rr: "RR", hp: "HP", carryWeight: "carry", damagePct: "damage", apRegen: "AP regen",
+  meleeDamagePct: "melee", sneakPct: "sneak",
+};
+function formatMutationLayer(layer: Record<string, number>): string {
+  return Object.entries(layer)
+    .filter(([, v]) => Number.isFinite(v) && v !== 0)
+    .map(([k, v]) => {
+      const pct = k.endsWith("Pct") || k === "apRegen";
+      const num = pct ? `${Math.round(v * 100)}%` : `${v}`;
+      return `${v > 0 ? "+" : ""}${num} ${MUTATION_STAT_LABEL[k] ?? k}`;
+    })
+    .join(", ");
+}
+export function formatMutationMath(def: SandboxMutationDef | undefined): string {
+  if (!def) return "";
+  return [formatMutationLayer(def.benefit), formatMutationLayer(def.penalty)].filter(Boolean).join(" · ");
+}
+
+/** One value in the sticky band; flashes for a moment when it changes. */
+function FlashStat({ label, value }: { label: string; value: number }) {
+  const [flash, setFlash] = React.useState(false);
+  const prev = React.useRef(value);
+  React.useEffect(() => {
+    if (prev.current === value) return;
+    prev.current = value;
+    setFlash(true);
+    const t = setTimeout(() => setFlash(false), 600);
+    return () => clearTimeout(t);
+  }, [value]);
+  return (
+    <span
+      className={cn(
+        "px-1.5 py-0.5 rounded border transition-colors",
+        flash ? "border-emerald-400 bg-emerald-500/20 text-emerald-200" : "border-slate-800 text-slate-300",
+      )}
+    >
+      <span className="text-dim mr-1">{label}</span>
+      <span className="font-bold text-slate-100">{value}</span>
+    </span>
+  );
+}
+
 interface BuilderCombatSwitchboardProps {
   rawDamage: number;
+  /** Live totals for the sticky band; omitted in read-only embeds. */
+  statsBand?: StatsBandData;
+  isCompactDensity?: boolean;
   isGhoul?: boolean;
   onSpeciesChange?: (isGhoul: boolean) => void;
   activeMutations?: string[];
@@ -222,8 +313,13 @@ export default function BuilderCombatSwitchboard({
   isGhoul = false,
   onSpeciesChange,
   activeMutations = [],
+  onMutationsChange,
   armorModeIsPA,
   onArmorModeChange,
+  ignoreMutationPenalties = false,
+  onIgnoreMutationPenaltiesChange,
+  statsBand,
+  isCompactDensity,
   hasStrangeInNumbers = false,
   onStrangeInNumbersChange,
   onStateChange,
@@ -237,7 +333,38 @@ export default function BuilderCombatSwitchboard({
   const isCarnivore = activeMutations.includes("carnivore");
   const isHerbivore = activeMutations.includes("herbivore");
 
-  const [activeTab, setActiveTab] = React.useState<"biometrics" | "registry" | "audit">("biometrics");
+  // One column of collapsible state groups. Desktop opens all; a phone opens one at a time
+  // (the first render is deterministic for hydration, the phone collapse follows on mount).
+  const isPhone = useIsPhoneWidth();
+  const [openGroups, setOpenGroups] = React.useState<Set<StateGroupId>>(() => new Set(STATE_GROUP_IDS));
+  const phoneCollapsedRef = React.useRef(false);
+  React.useEffect(() => {
+    if (isPhone && !phoneCollapsedRef.current) {
+      phoneCollapsedRef.current = true;
+      setOpenGroups(new Set<StateGroupId>(["vitals"]));
+    }
+  }, [isPhone]);
+  const toggleGroup = (id: StateGroupId) =>
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        if (isPhone) next.clear();
+        next.add(id);
+      }
+      return next;
+    });
+  const setAllGroups = (open: boolean) =>
+    setOpenGroups(open ? new Set(STATE_GROUP_IDS) : new Set<StateGroupId>());
+
+  // Scoped pickers (mutation, food, one consumable slot); the opener is refocused on close.
+  const [picker, setPicker] = React.useState<PickerKind | null>(null);
+  const pickerOpenerRef = React.useRef<HTMLElement | null>(null);
+  const openPicker = (kind: PickerKind) => {
+    pickerOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setPicker(kind);
+  };
   const [showMathInspector, setShowMathInspector] = React.useState(false);
 
   React.useEffect(() => {
@@ -533,6 +660,31 @@ export default function BuilderCombatSwitchboard({
   const currentFeralPct = switchboard.feralPct || 0;
   const currentFeralStage = FERAL_STAGES.find((s) => currentFeralPct >= s.min && currentFeralPct <= s.max) || FERAL_STAGES[0];
 
+  const eligibleFoods = isHerbivore ? ALL_PLANT_FOODS : isCarnivore ? ALL_MEAT_FOODS : [...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS];
+  const pickerItems: ScopedPickerItem[] =
+    picker === "mutation"
+      ? SANDBOX_MUTATIONS.filter((m) => !activeMutations.includes(m.id)).map((m) => ({
+          id: m.id,
+          label: m.label,
+          description: formatMutationMath(m),
+        }))
+      : picker === "food"
+        ? eligibleFoods.map((f) => ({ id: f.id, label: f.label, description: f.description, badge: f.foodBuffType }))
+        : picker
+          ? (CONSUMABLE_SLOTS.find((sl) => sl.field === picker)?.items ?? []).map((i) => ({
+              id: i.id,
+              label: i.label,
+              description: i.description,
+            }))
+          : [];
+  const pickerActiveIds = new Set<string>(
+    picker === "food"
+      ? Object.values(switchboard.activeFoods || {})
+      : picker && picker !== "mutation" && switchboard[picker]
+        ? [switchboard[picker] as string]
+        : [],
+  );
+
   return (
     <div className="rounded-xl border border-emerald-500/40 bg-slate-950/95 p-4 font-mono text-slate-100 shadow-[0_0_30px_rgba(16,185,129,0.12)] space-y-4">
       {readOnly && (
@@ -552,45 +704,42 @@ export default function BuilderCombatSwitchboard({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs">
+        <div className="flex items-center gap-1.5 text-2xs">
           <button
             type="button"
-            onClick={() => setActiveTab("biometrics")}
-            className={`px-3 py-1 rounded font-bold uppercase transition-all cursor-pointer ${
-              activeTab === "biometrics"
-                ? "bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] font-black"
-                : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
-            }`}
+            onClick={() => setAllGroups(true)}
+            className="min-h-7 touch:min-h-11 px-2.5 rounded font-bold uppercase bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
           >
-            Biometrics &amp; Stances
+            Expand all
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab("registry")}
-            className={`px-3 py-1 rounded font-bold uppercase transition-all cursor-pointer ${
-              activeTab === "registry"
-                ? "bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] font-black"
-                : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
-            }`}
+            onClick={() => setAllGroups(false)}
+            className="min-h-7 touch:min-h-11 px-2.5 rounded font-bold uppercase bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
           >
-            Consumables &amp; Buffs
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("audit")}
-            className={`px-3 py-1 rounded font-bold uppercase transition-all cursor-pointer ${
-              activeTab === "audit"
-                ? "bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)] font-black"
-                : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
-            }`}
-          >
-            Formula Math Audit
+            Collapse all
           </button>
         </div>
       </div>
 
-      {/* TAB 1: BIOMETRICS & COMBAT STANCES */}
-      {activeTab === "biometrics" && (
+      {/* Sticky live totals: what every switch below is changing */}
+      {statsBand && (
+        <div
+          role="group"
+          aria-label="Live totals"
+          className="sticky top-0 z-20 -mx-4 px-4 py-2 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-2xs font-mono"
+        >
+          {BUILDER_SPECIAL_KEYS.map((k) => (
+            <FlashStat key={k} label={k.toUpperCase()} value={statsBand.special[k]} />
+          ))}
+          <span className="mx-1 h-4 w-px bg-slate-800" aria-hidden="true" />
+          <FlashStat label="DR" value={statsBand.dr} />
+          <FlashStat label="ER" value={statsBand.er} />
+          <FlashStat label="RR" value={statsBand.rr} />
+        </div>
+      )}
+
+      {/* STATE GROUPS (species row first, then one collapsible group per concern) */}
         <div className={cn("space-y-4", readOnly && "pointer-events-none opacity-90")}>
           {/* Top Species & Frame Indicator */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -663,48 +812,75 @@ export default function BuilderCombatSwitchboard({
             </div>
           </div>
 
+          <StateGroup
+            id="vitals"
+            title="Vitals"
+            icon={<Heart className="h-3.5 w-3.5" />}
+            summary={`HP ${switchboard.healthPct}% · ${isGhoul ? `Glow ${switchboard.glowPct || 0}%` : `Rads ${switchboard.radsPct || 0}%`} · ${currentTeamDef.label}`}
+            open={openGroups.has("vitals")}
+            onToggle={() => toggleGroup("vitals")}
+          >
           {/* DUAL-LAYER PIP-BOY BIOMETRIC TELEMETRY GRAPHIC */}
           {isGhoul ? (
             <div className="rounded-lg border border-lime-500/40 bg-slate-950 p-3 space-y-2 font-mono">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-lime-400 font-bold uppercase flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-lime-400 animate-pulse" />
-                  <span>[ BIOMETRIC TELEMETRY: HP &amp; RADIANT GLOW OVERSHIELD ]</span>
-                </span>
-                <span className="text-2xs text-slate-400">
-                  Base HP: <span className="text-rose-400 font-bold">{switchboard.healthPct}%</span> · Glow Overshield: <span className="text-lime-300 font-bold">{switchboard.glowPct || 0}%</span>
-                </span>
-              </div>
+              {(() => {
+                const bars = vitalsBarModel({ isGhoul: true, healthPct: switchboard.healthPct, glowPct: switchboard.glowPct });
+                if (bars.kind !== "ghoul") return null;
+                return (
+                  <>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-lime-400 font-bold uppercase flex items-center gap-1.5">
+                        <Sparkles className="h-3.5 w-3.5 text-lime-400 animate-pulse" />
+                        <span>[ BIOMETRIC TELEMETRY: GLOW OVERSHIELD OVER HP ]</span>
+                      </span>
+                      <span className="text-2xs text-slate-400">
+                        Glow: <span className="text-lime-300 font-bold">{bars.glowPct}%</span> · HP: <span className="text-rose-400 font-bold">{bars.hpPct}%</span>
+                      </span>
+                    </div>
 
-              {/* The Layered Visual Bar */}
-              <div className="relative h-6 w-full rounded bg-slate-900 border border-slate-700 overflow-hidden shadow-inner flex">
-                {/* Base Health Layer (Rose/Red) */}
-                <div
-                  className="h-full bg-gradient-to-r from-rose-700 to-rose-500 transition-all duration-300 relative shrink-0"
-                  style={{ width: `${switchboard.healthPct}%` }}
-                >
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-2xs font-black text-white tracking-widest drop-shadow">
-                    HP {switchboard.healthPct}%
-                  </span>
-                </div>
+                    {/* Two bars: the overshield is a pool on top of health, not a cap on it. */}
+                    <div className="space-y-1.5">
+                      <div
+                        role="meter"
+                        aria-label="Glow overshield"
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={bars.glowPct}
+                        className="relative h-5 w-full rounded bg-slate-900 border border-lime-700/50 overflow-hidden shadow-inner"
+                      >
+                        <div
+                          className="h-full bg-gradient-to-r from-lime-500 via-emerald-400 to-lime-300 transition-all duration-300 shadow-[0_0_15px_rgba(132,204,22,0.6)]"
+                          style={{ width: `${bars.glowPct}%` }}
+                        />
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-3xs font-black text-slate-950 mix-blend-plus-lighter tracking-widest drop-shadow">
+                          GLOW {bars.glowPct}%
+                        </span>
+                      </div>
+                      <div
+                        role="meter"
+                        aria-label="Health"
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={bars.hpPct}
+                        className="relative h-5 w-full rounded bg-slate-900 border border-slate-700 overflow-hidden shadow-inner"
+                      >
+                        <div
+                          className="h-full bg-gradient-to-r from-rose-700 to-rose-500 transition-all duration-300"
+                          style={{ width: `${bars.hpPct}%` }}
+                        />
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-3xs font-black text-white tracking-widest drop-shadow">
+                          HP {bars.hpPct}%
+                        </span>
+                      </div>
+                    </div>
 
-                {/* Radiant Green Glow Overshield Layer (Lime/Emerald) */}
-                {(switchboard.glowPct || 0) > 0 && (
-                  <div
-                    className="h-full bg-gradient-to-r from-lime-500 via-emerald-400 to-lime-300 border-l border-lime-200 transition-all duration-300 relative shadow-[0_0_15px_rgba(132,204,22,0.8)] animate-pulse shrink-0"
-                    style={{ width: `${Math.min(100 - switchboard.healthPct, switchboard.glowPct || 0)}%` }}
-                  >
-                    <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-3xs font-black text-slate-950 tracking-wider">
-                      +GLOW {switchboard.glowPct}%
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between text-2xs text-slate-400 pt-0.5 gap-2">
-                <span>🛡️ GHOUL RAD CONVERSION: Radiation taken or consumed is converted into a Green Overshield.</span>
-                <span className="text-lime-400 font-bold">OVERSHIELD: {switchboard.glowPct || 0}% ACTIVE</span>
-              </div>
+                    <div className="flex flex-wrap items-center justify-between text-2xs text-slate-400 pt-0.5 gap-2">
+                      <span>🛡️ GHOUL RAD CONVERSION: radiation taken or consumed becomes Glow, a separate pool absorbed before HP.</span>
+                      <span className="text-lime-400 font-bold">OVERSHIELD: {bars.glowPct}% ACTIVE</span>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           ) : (
             <div className="rounded-lg border border-emerald-500/40 bg-slate-950 p-3 space-y-2 font-mono">
@@ -1111,6 +1287,16 @@ export default function BuilderCombatSwitchboard({
             </div>
           </div>
 
+          </StateGroup>
+
+          <StateGroup
+            id="stances"
+            title="Stances & V.A.T.S."
+            icon={<Target className="h-3.5 w-3.5" />}
+            summary={`${switchboard.combatStance?.isCrouched ? "Stealthed" : "Upright"} · ${switchboard.combatStance?.isInVats ? "In V.A.T.S." : switchboard.combatStance?.isAiming ? "Aiming" : "Hip fire"}`}
+            open={openGroups.has("stances")}
+            onToggle={() => toggleGroup("stances")}
+          >
           {/* Combat Stances & V.A.T.S. Matrix */}
           <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-3">
             <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-emerald-400">
@@ -1346,6 +1532,16 @@ export default function BuilderCombatSwitchboard({
             </div>
           </div>
 
+          </StateGroup>
+
+          <StateGroup
+            id="damage"
+            title="Damage taken"
+            icon={<Shield className="h-3.5 w-3.5" />}
+            summary={defensiveProfile ? `${incomingDamage} ${incomingDamageType} incoming` : "Needs a perk deck"}
+            open={openGroups.has("damage")}
+            onToggle={() => toggleGroup("damage")}
+          >
           {/* Damage taken preview (armor curve first, then multiplicative reducers) */}
           {defensiveProfile && (
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-2">
@@ -1421,6 +1617,16 @@ export default function BuilderCombatSwitchboard({
             </div>
           )}
 
+          </StateGroup>
+
+          <StateGroup
+            id="stacks"
+            title="Stacks & counters"
+            icon={<Skull className="h-3.5 w-3.5" />}
+            summary={`Bullet Storm ${switchboard.bulletStormStacks || 0} · Onslaught ${switchboard.onslaughtStacks || 0} · Caps ${switchboard.caps ?? 0}`}
+            open={openGroups.has("stacks")}
+            onToggle={() => toggleGroup("stacks")}
+          >
           {/* Dynamic Counters, Stacks & Aristocrat's Caps Slider */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {/* Bullet Storm Stacks */}
@@ -1550,6 +1756,21 @@ export default function BuilderCombatSwitchboard({
             </div>
           </div>
 
+          </StateGroup>
+
+          <StateGroup
+            id="impairments"
+            title="Target impairments"
+            icon={<Target className="h-3.5 w-3.5" />}
+            summary={[
+              switchboard.targetBleeding && "Bleeding",
+              switchboard.targetBurning && "Burning",
+              switchboard.targetPoisoned && "Poisoned",
+              (switchboard.targetCrippledLimbs ?? 0) > 0 && `${switchboard.targetCrippledLimbs} crippled`,
+            ].filter(Boolean).join(" · ") || "None"}
+            open={openGroups.has("impairments")}
+            onToggle={() => toggleGroup("impairments")}
+          >
           {/* Target Impairments (Enemy Debuffs & Impairment Triggers) */}
           <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-1">
@@ -1629,11 +1850,79 @@ export default function BuilderCombatSwitchboard({
               </div>
             </div>
           </div>
-        </div>
-      )}
+          </StateGroup>
 
-      {/* TAB 2: CONSUMABLES & BUFF REGISTRY */}
-      {activeTab === "registry" && (
+          <StateGroup
+            id="mutations"
+            title="Mutations"
+            icon={<Dna className="h-3.5 w-3.5" />}
+            summary={activeMutations.length > 0 ? `${activeMutations.length} active` : "None"}
+            open={openGroups.has("mutations")}
+            onToggle={() => toggleGroup("mutations")}
+          >
+            <div className="flex flex-wrap items-center gap-1.5">
+              {activeMutations.map((id) => {
+                const def = SANDBOX_MUTATIONS.find((m) => m.id === id);
+                return (
+                  <span
+                    key={id}
+                    className="flex items-center gap-1.5 pl-2.5 pr-1 py-1 rounded bg-slate-950 border border-lime-500/40 text-xs font-bold text-lime-300"
+                  >
+                    <span>{def?.label ?? id}</span>
+                    <span className="text-3xs font-normal text-slate-400">{formatMutationMath(def)}</span>
+                    {!readOnly && (
+                      <button
+                        type="button"
+                        aria-label={`Remove ${def?.label ?? id}`}
+                        onClick={() => onMutationsChange?.(activeMutations.filter((m) => m !== id))}
+                        className="flex min-h-6 min-w-6 touch:min-h-11 touch:min-w-11 items-center justify-center text-dim hover:text-rose-400"
+                      >
+                        <X className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    )}
+                  </span>
+                );
+              })}
+              {activeMutations.length === 0 && (
+                <span className="text-2xs text-dim italic">
+                  No mutations. Add the ones your character carries; serum and Strange in Numbers only matter once one is in.
+                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {!readOnly && (
+                <button
+                  type="button"
+                  onClick={() => openPicker("mutation")}
+                  className="min-h-9 touch:min-h-11 px-3 rounded border border-lime-500/40 bg-lime-500/10 text-xs font-bold uppercase text-lime-300 hover:bg-lime-500/20"
+                >
+                  + Add mutation
+                </button>
+              )}
+              <label className="flex items-center gap-1.5 text-2xs text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={ignoreMutationPenalties}
+                  disabled={readOnly}
+                  onChange={(e) => onIgnoreMutationPenaltiesChange?.(e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-lime-500 focus:ring-0 cursor-pointer"
+                />
+                <span>Ignore penalties (serum-style, benefits only)</span>
+              </label>
+              <span className="text-2xs text-dim">
+                Strange in Numbers: {hasStrangeInNumbers ? "+25% to positives" : "off"} (mutated teammates, under Vitals → Team)
+              </span>
+            </div>
+          </StateGroup>
+
+          <StateGroup
+            id="consumables"
+            title="Consumables & buffs"
+            icon={<Utensils className="h-3.5 w-3.5" />}
+            summary={`${CONSUMABLE_SLOTS.filter((sl) => switchboard[sl.field]).length} of ${CONSUMABLE_SLOTS.length} slots · ${Object.keys(switchboard.activeFoods || {}).length} foods`}
+            open={openGroups.has("consumables")}
+            onToggle={() => toggleGroup("consumables")}
+          >
         <div className="space-y-4">
           <div className="rounded-lg border border-emerald-500/30 bg-slate-900/50 p-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
             <span className="text-slate-300 flex items-center gap-2">
@@ -1645,119 +1934,65 @@ export default function BuilderCombatSwitchboard({
             </span>
           </div>
 
-          <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3", readOnly && "pointer-events-none opacity-90")}>
-            {/* Chems */}
-            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                <Pill className="h-3.5 w-3.5 text-rose-400" /> Active Primary Chem
-              </label>
-              <select
-                value={switchboard.activeDrug || ""}
-                onChange={(e) => updateField("activeDrug", e.target.value || null)}
-                className="w-full rounded bg-slate-950 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-200 font-mono"
-              >
-                <option value="">None (No Chem)</option>
-                {ALL_CHEMS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label} ({c.description})
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {CONSUMABLE_SLOTS.map((slot) => {
+              const current = slot.items.find((i) => i.id === switchboard[slot.field]) ?? null;
+              return (
+                <div key={slot.field} className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
+                  <div className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
+                    {slot.icon} {slot.label}
+                  </div>
+                  <div className={cn("text-xs font-bold truncate", current ? "text-slate-100" : "text-dim")}>
+                    {current?.label ?? "None"}
+                  </div>
+                  <div className="text-2xs text-slate-400 truncate min-h-4">{current?.description ?? ""}</div>
+                  {!readOnly && (
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      <button
+                        type="button"
+                        onClick={() => openPicker(slot.field)}
+                        className="min-h-8 touch:min-h-11 px-2.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-2xs font-bold uppercase text-emerald-300 hover:bg-emerald-500/20"
+                      >
+                        {current ? "Change" : "Add"} {slot.label.toLowerCase()}
+                      </button>
+                      {current && (
+                        <button
+                          type="button"
+                          aria-label={`Clear ${slot.label.toLowerCase()}`}
+                          onClick={() => updateField(slot.field, null)}
+                          className="min-h-8 touch:min-h-11 px-2.5 rounded border border-slate-700 text-2xs font-bold uppercase text-slate-300 hover:text-rose-300 hover:border-rose-500/40"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
 
-            {/* Bobblehead */}
+            {/* Food: stackable, one per buff type */}
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" /> Active Bobblehead
-              </label>
-              <select
-                value={switchboard.activeBobblehead || ""}
-                onChange={(e) => updateField("activeBobblehead", e.target.value || null)}
-                className="w-full rounded bg-slate-950 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-200 font-mono"
-              >
-                <option value="">None (No Bobblehead)</option>
-                {ALL_BOBBLEHEADS.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Magazine */}
-            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                <Book className="h-3.5 w-3.5 text-cyan-400" /> Active Magazine
-              </label>
-              <select
-                value={switchboard.activeMagazine || ""}
-                onChange={(e) => updateField("activeMagazine", e.target.value || null)}
-                className="w-full rounded bg-slate-950 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-200 font-mono"
-              >
-                <option value="">None (No Magazine)</option>
-                {ALL_MAGAZINES.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Alcohol */}
-            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                <Beer className="h-3.5 w-3.5 text-amber-500" /> Active Brew / Alcohol
-              </label>
-              <select
-                value={switchboard.activeAlcohol || ""}
-                onChange={(e) => updateField("activeAlcohol", e.target.value || null)}
-                className="w-full rounded bg-slate-950 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-200 font-mono"
-              >
-                <option value="">None (No Alcohol)</option>
-                {ALL_ALCOHOL.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Food Stacking */}
-            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                <Utensils className="h-3.5 w-3.5 text-emerald-400" /> Add Stackable Food
-              </label>
-              <select
-                value=""
-                onChange={(e) => handleSelectFood(e.target.value)}
-                className="w-full rounded bg-slate-950 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-200 font-mono"
-              >
-                <option value="">+ Select Food Buff to Add</option>
-                {(isHerbivore ? ALL_PLANT_FOODS : isCarnivore ? ALL_MEAT_FOODS : [...ALL_PLANT_FOODS, ...ALL_MEAT_FOODS]).map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.label} ({f.foodBuffType})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Companion Buff */}
-            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                <Home className="h-3.5 w-3.5 text-purple-400" /> Camp Companion
-              </label>
-              <select
-                value={switchboard.activeCompanion || ""}
-                onChange={(e) => updateField("activeCompanion", e.target.value || null)}
-                className="w-full rounded bg-slate-950 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-200 font-mono"
-              >
-                <option value="">None (No Companion)</option>
-                {ALL_COMPANIONS.map((comp) => (
-                  <option key={comp.id} value={comp.id}>
-                    {comp.label}
-                  </option>
-                ))}
-              </select>
+              <div className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5">
+                <Utensils className="h-3.5 w-3.5 text-emerald-400" /> Food buffs
+              </div>
+              <div className="text-xs font-bold text-slate-100">
+                {Object.keys(switchboard.activeFoods || {}).length} stacked
+              </div>
+              <div className="text-2xs text-slate-400 truncate min-h-4">
+                {isHerbivore ? "Herbivore: plant recipes only" : isCarnivore ? "Carnivore: meat recipes only" : "One recipe per buff type stacks"}
+              </div>
+              {!readOnly && (
+                <div className="pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => openPicker("food")}
+                    className="min-h-8 touch:min-h-11 px-2.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-2xs font-bold uppercase text-emerald-300 hover:bg-emerald-500/20"
+                  >
+                    + Add food
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1798,10 +2033,16 @@ export default function BuilderCombatSwitchboard({
             </div>
           )}
         </div>
-      )}
+          </StateGroup>
 
-      {/* TAB 3: FORMULA MATH AUDIT */}
-      {activeTab === "audit" && (
+          <StateGroup
+            id="audit"
+            title="Formula audit"
+            icon={<Calculator className="h-3.5 w-3.5" />}
+            summary="How the numbers above are put together"
+            open={openGroups.has("audit")}
+            onToggle={() => toggleGroup("audit")}
+          >
         <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-4 space-y-3 text-xs font-mono">
           <div className="font-bold text-emerald-400 uppercase flex items-center justify-between border-b border-slate-800 pb-2">
             <span className="flex items-center gap-1.5">
@@ -1834,7 +2075,41 @@ export default function BuilderCombatSwitchboard({
             <div>• <span className="text-white font-bold">Strange in Numbers:</span> {hasStrangeInNumbers ? "Active (25% boost to positive mutation effects)" : "Inactive"}</div>
           </div>
         </div>
-      )}
+          </StateGroup>
+        </div>
+
+      <ScopedPickerDialog
+        title={
+          picker === "mutation"
+            ? "Add mutation"
+            : picker === "food"
+              ? "Add food buff"
+              : picker
+                ? `Change ${CONSUMABLE_SLOTS.find((sl) => sl.field === picker)?.label.toLowerCase() ?? "item"}`
+                : null
+        }
+        hint={
+          picker === "mutation"
+            ? "Benefits first, then penalties. Serum-style play hides the penalties with the toggle."
+            : picker === "food"
+              ? "One recipe per buff type; adding another of the same type replaces it."
+              : undefined
+        }
+        items={pickerItems}
+        activeIds={pickerActiveIds}
+        onPick={(id) => {
+          if (picker === "mutation") {
+            onMutationsChange?.([...activeMutations, id]);
+          } else if (picker === "food") {
+            handleSelectFood(id);
+          } else if (picker) {
+            updateField(picker, id);
+          }
+        }}
+        onClose={() => setPicker(null)}
+        returnFocusRef={pickerOpenerRef}
+        isCompactDensity={isCompactDensity}
+      />
     </div>
   );
 }

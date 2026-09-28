@@ -151,6 +151,19 @@ export const SANDBOX_MUTATIONS: readonly SandboxMutationDef[] = [
 
 const MUTATION_BY_ID = new Map(SANDBOX_MUTATIONS.map((m) => [m.id, m]));
 
+/**
+ * Keep only known mutation ids, in first-seen order, no duplicates. The Nukes & Dragons
+ * importer feeds `ND_MUTATION_MAP` values through this before they reach `payload.mutationIds`.
+ */
+export function sanitizeMutationIds(ids: ReadonlyArray<string | null | undefined>): string[] {
+  const out: string[] = [];
+  for (const id of ids) {
+    if (typeof id !== "string" || !MUTATION_BY_ID.has(id) || out.includes(id)) continue;
+    out.push(id);
+  }
+  return out;
+}
+
 /** In-game SiN: +25% positive mutation effects per mutated teammate, max four (+100%). */
 export function strangeInNumbersBenefitMultiplier(mutatedTeammateCount: number): number {
   const n = Math.max(0, Math.min(4, Math.floor(mutatedTeammateCount)));

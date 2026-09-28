@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { sanitizeMutationIds } from "./sandbox-mutations";
 import { sandboxMutationMathLayer, strangeInNumbersBenefitMultiplier } from "./sandbox-mutations";
 
 describe("strangeInNumbersBenefitMultiplier", () => {
@@ -56,3 +57,12 @@ describe("sandboxMutationMathLayer + Class Freak", () => {
   });
 });
 
+describe("sanitizeMutationIds", () => {
+  it("keeps known ids once, in order, and drops the rest", () => {
+    expect(sanitizeMutationIds(["marsupial", "nope", "egg-head", "marsupial", null, undefined])).toEqual([
+      "marsupial",
+      "egg-head",
+    ]);
+    expect(sanitizeMutationIds([])).toEqual([]);
+  });
+});

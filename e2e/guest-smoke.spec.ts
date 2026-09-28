@@ -138,6 +138,32 @@ test.describe("guest smoke", () => {
     await expectPageSane(page);
   });
 
+  test("biometrics tab: mutations are added through a scoped picker and shown as chips", async ({ page }) => {
+    await page.goto("/build?tab=biometrics");
+    await expectPageSane(page);
+    const group = page.getByRole("button", { name: /^Mutations/ });
+    await expect(group).toBeVisible({ timeout: 45_000 });
+    if ((await group.getAttribute("aria-expanded")) === "false") await group.click();
+
+    const add = page.getByRole("button", { name: "+ Add mutation" });
+    await expect(add).toBeVisible();
+    await add.click();
+    const dialog = page.getByRole("dialog", { name: /add mutation/i });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: /^Marsupial/ }).click();
+    await expect(dialog).toBeHidden();
+
+    // The chip carries the mutation's numbers and a remove control; the picker no longer offers it.
+    await expect(page.getByText("Marsupial", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Remove Marsupial" })).toBeVisible();
+    await add.click();
+    await expect(page.getByRole("dialog", { name: /add mutation/i }).getByRole("button", { name: /^Marsupial/ })).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await page.getByRole("button", { name: "Remove Marsupial" }).click();
+    await expect(page.getByRole("button", { name: "Remove Marsupial" })).toHaveCount(0);
+    await expectPageSane(page);
+  });
+
   test("perks page can find Night Person via search and shows its effect text", async ({ page }) => {
     await page.goto("/perks");
 

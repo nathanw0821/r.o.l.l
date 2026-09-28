@@ -22,6 +22,8 @@ export type BiometricsTabProps = {
   playerResists?: SwitchboardProps["playerResists"];
   armorModeIsPA?: boolean;
   onArmorModeChange?: (isPA: boolean) => void;
+  statsBand?: SwitchboardProps["statsBand"];
+  isCompactDensity?: boolean;
 };
 
 export default function BiometricsTab({
@@ -37,6 +39,8 @@ export default function BiometricsTab({
   playerResists,
   armorModeIsPA,
   onArmorModeChange,
+  statsBand,
+  isCompactDensity,
 }: BiometricsTabProps) {
   return (
 <div className={cn("space-y-4 animate-in fade-in duration-200", active ? "block" : "hidden")}>
@@ -65,6 +69,8 @@ export default function BiometricsTab({
     playerResists={playerResists}
     armorModeIsPA={armorModeIsPA}
     onArmorModeChange={onArmorModeChange}
+    statsBand={statsBand}
+    isCompactDensity={isCompactDensity}
   />
 </div>
   );

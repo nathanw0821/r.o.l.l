@@ -52,6 +52,7 @@ import {
 } from "@/lib/builder/weapon-piece-mods";
 import type { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { areEquippedCardsEqual } from "@/lib/perks/catalog";
+import { sanitizeMutationIds } from "@/lib/builder/sandbox-mutations";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 
 export interface UseBuilderPayloadProps {
@@ -714,11 +715,14 @@ export function useBuilderPayload({
         importedLegCards.length > 0 ? importedLegCards : existingLegCards;
       const allEquipped = [...build.equippedCards, ...finalLegCards];
 
+      // Mutations ride along on `ef=`; the ids in ND_MUTATION_MAP are our SANDBOX_MUTATIONS ids.
+      const importedMutations = sanitizeMutationIds(build.mutations ?? []);
       setPayload((prev) => ({
         ...prev,
         baseSpecial: { ...build.specials },
         legendaryPerkIds: finalLegCards.map((p) => p.cardId),
         ghoul: build.isGhoul ? true : prev.ghoul,
+        mutationIds: importedMutations.length > 0 ? importedMutations : prev.mutationIds,
       }));
       setEquippedPerkCards(allEquipped);
 

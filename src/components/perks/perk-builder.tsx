@@ -14,6 +14,7 @@ import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
 import PipBoyPerkAccordionColumn from "@/components/perks/pipboy-perk-accordion-column";
 import PipBoyLegendaryRack from "@/components/perks/pipboy-legendary-rack";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
+import { useIsPhoneWidth } from "@/lib/hooks/use-is-phone-width";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 
 type EquippedItem = { cardId: string; rank: number };
@@ -103,18 +104,6 @@ function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => v
   return null;
 }
 
-/** True below the md breakpoint (phones). False on the server and on wider screens. */
-function useIsPhoneWidth() {
-  return React.useSyncExternalStore(
-    (onChange) => {
-      const media = window.matchMedia("(max-width: 767px)");
-      media.addEventListener("change", onChange);
-      return () => media.removeEventListener("change", onChange);
-    },
-    () => window.matchMedia("(max-width: 767px)").matches,
-    () => false
-  );
-}
 
 export default function PerkBuilder({
   characterId,

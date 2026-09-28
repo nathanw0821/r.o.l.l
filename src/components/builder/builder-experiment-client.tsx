@@ -263,6 +263,25 @@ export default function BuilderExperimentClient({
     isFiringHeavyGun: activeWeaponPiece?.weaponSub === "heavy",
   });
 
+  // Live totals for the Biometrics sticky band: the same numbers the Gear HUD shows.
+  const statsBand = React.useMemo(
+    () => ({
+      special: {
+        str: totals.str + (buffSpecial.totals.str || 0),
+        per: totals.per + (buffSpecial.totals.per || 0),
+        end: totals.end + (buffSpecial.totals.end || 0),
+        cha: totals.cha + (buffSpecial.totals.cha || 0),
+        int: totals.int + (buffSpecial.totals.int || 0),
+        agi: totals.agi + (buffSpecial.totals.agi || 0),
+        lck: totals.lck + (buffSpecial.totals.lck || 0),
+      },
+      dr: totals.dr,
+      er: totals.er,
+      rr: totals.rr,
+    }),
+    [totals, buffSpecial.totals],
+  );
+
   const weaponFirepowerResult = React.useMemo(() => {
     const targetWeapon = activeWeaponPiece;
     return calculateCombatFirepower({
@@ -816,6 +835,8 @@ export default function BuilderExperimentClient({
         playerResists={{ dr: totals.dr, er: totals.er }}
         armorModeIsPA={isPA}
         onArmorModeChange={(nextPA) => setArmorMode(nextPA ? "powerArmor" : "regular")}
+        statsBand={statsBand}
+        isCompactDensity={isCompactDensity}
       />
 
 
