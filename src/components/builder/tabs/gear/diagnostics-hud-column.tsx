@@ -22,8 +22,11 @@ import {
   SPECIAL_FULL_NAMES,
   RESIST_FULL_NAMES,
   LEGENDARY_PERK_CARDS,
+  readEffectMathNumber,
   type BuilderEffectTotals,
 } from "@/lib/builder/compatibility";
+import { isGhoulBlockedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
+import { SANDBOX_MUTATIONS, strangeInNumbersBenefitMultiplier } from "@/lib/builder/sandbox-mutations";
 import {
   findUnderarmorOption,
   UNDERARMOR_LININGS,
@@ -47,6 +50,117 @@ export interface DiagnosticsHudColumnProps {
   groupedLegendaryEffects: UseBuilderTotalsResult["groupedLegendaryEffects"];
   mods: BuilderModDTO[];
   piece: BaseGearPiece;
+}
+
+
+type ResistKey = "dr" | "er" | "fr" | "cr" | "pr" | "rr";
+
+const RESIST_TILES: ReadonlyArray<{
+  k: ResistKey;
+  l: string;
+  icon: React.ComponentType<{ className?: string }>;
+  col: string;
+}> = [
+  { k: "dr", l: "DR", icon: Shield, col: "text-blue-400/80" },
+  { k: "er", l: "ER", icon: Zap, col: "text-yellow-400/80" },
+  { k: "fr", l: "FR", icon: Flame, col: "text-orange-400/80" },
+  { k: "cr", l: "CR", icon: Snowflake, col: "text-cyan-400/80" },
+  { k: "pr", l: "PR", icon: Droplets, col: "text-green-400/80" },
+  { k: "rr", l: "RR", icon: Radiation, col: "text-lime-400/80" },
+];
+
+type BreakdownLine = { source: string; val: number };
+
+function formatSigned(n: number): string {
+  const rounded = Math.round(n * 10) / 10;
+  return rounded > 0 ? `+${rounded}` : `${rounded}`;
+}
+
+/**
+ * Attributed lines for one resistance tile, in the order the engine stacks them
+ * (`use-builder-totals.ts`): worn armor, underarmor lining, legendary perk cards,
+ * legendary armor effects, the perk deck's flat adds, stance / biometric layer,
+ * mutations. Whatever the total holds beyond those (per-piece set mixes, Class Freak
+ * penalty scaling, anything the hook adds later) is shown as one honest remainder
+ * line instead of a guessed label.
+ */
+function resistanceBreakdownLines({
+  key,
+  live,
+  base,
+  payload,
+  piece,
+  groupedLegendaryEffects,
+  perkDeckDefensiveLayer,
+  stanceBreakdowns,
+}: {
+  key: ResistKey;
+  live: number;
+  base: number;
+  payload: BuilderPayload;
+  piece: BaseGearPiece;
+  groupedLegendaryEffects: UseBuilderTotalsResult["groupedLegendaryEffects"];
+  perkDeckDefensiveLayer: UseBuilderTotalsResult["perkDeckDefensiveLayer"];
+  stanceBreakdowns: UseBuilderTotalsResult["stanceAndBiometricsLayer"]["resistanceBreakdowns"];
+}): BreakdownLine[] {
+  const lines: BreakdownLine[] = [];
+  const push = (source: string, val: number) => {
+    if (Number.isFinite(val) && val !== 0) lines.push({ source, val });
+  };
+  const inPowerArmor = piece.kind === "powerArmor";
+
+  // 1. Worn armor: set table (or PA frame + pieces) plus armor crafting mods.
+  push(inPowerArmor ? "Power armor frame & pieces" : "Armor set & crafting", base);
+
+  // 2. Underarmor lining (suppressed inside Power Armor, as in the engine).
+  if (!inPowerArmor) {
+    const lining = findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId);
+    if (lining?.effectMath) push(lining.label.split(" (")[0], readEffectMathNumber(lining.effectMath[key]));
+  }
+
+  // 3. Legendary perk cards with a resistance bonus, scaled by rank as the engine does.
+  payload.legendaryPerkIds.forEach((rawEntry) => {
+    const [id, rankStr] = rawEntry.split(":");
+    const rank = rawEntry.includes(":") ? parseInt(rankStr, 10) || 4 : 4;
+    const perk = LEGENDARY_PERK_CARDS[id];
+    const bonus = perk?.resBonus?.[key];
+    if (bonus) push(`Legendary perk: ${perk.label.split(" (")[0]}`, Math.round(bonus * (rank / 4)));
+  });
+
+  // 4. Legendary armor / weapon effects (one line per effect, × pieces carrying it).
+  groupedLegendaryEffects.forEach(({ mod, count }) => {
+    if (payload.ghoul && isGhoulBlockedLegendarySlug(mod.slug)) return;
+    const per = readEffectMathNumber(mod.effectMath[key]);
+    if (per === 0) return;
+    push(`${mod.name} (${mod.starRank}★${count > 1 ? ` ×${count}` : ""})`, per * count);
+  });
+
+  // 5. Perk deck flat adds (Ironclad, Fireproof, Rad Resistant, Barbarian ...).
+  if (perkDeckDefensiveLayer) push("Perk deck (flat adds)", perkDeckDefensiveLayer[key]);
+
+  // 6. Stance / biometric layer (Bolstering, Vanguard's, Steadfast, Mutant's ...).
+  stanceBreakdowns.filter((item) => item.res === key).forEach((item) => push(item.source, item.val));
+
+  // 7. Mutations at their listed values (Strange in Numbers applied; Class Freak's
+  //    penalty reduction is not known here and lands in the remainder).
+  const sinMult =
+    payload.hasStrangeInNumbers && payload.mutationIds.length > 0
+      ? strangeInNumbersBenefitMultiplier(4)
+      : 1;
+  for (const id of payload.mutationIds) {
+    const def = SANDBOX_MUTATIONS.find((m) => m.id === id);
+    if (!def) continue;
+    const benefit = readEffectMathNumber(def.benefit[key]);
+    const penalty = payload.ignoreMutationPenalties ? 0 : readEffectMathNumber(def.penalty[key]);
+    push(`Mutation: ${def.label}`, (benefit > 0 ? benefit * sinMult : benefit) + penalty);
+  }
+
+  // 8. Whatever the engine added that none of the above accounts for.
+  const attributed = lines.reduce((sum, line) => sum + line.val, 0);
+  const remainder = Math.round((live - attributed) * 10) / 10;
+  if (remainder !== 0) push("Other mods & buffs", remainder);
+
+  return lines;
 }
 
 export default function DiagnosticsHudColumn({
@@ -289,92 +403,53 @@ export default function DiagnosticsHudColumn({
         </section>
       )}
 
-      <div className="pip-terminal-panel p-4 rounded-xl space-y-3">
-        <div className="text-xs font-black font-mono uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center gap-1.5">
-          <Shield className="h-3.5 w-3.5" /> [ RESISTANCE RATINGS ]
-        </div>
+      <section aria-labelledby="hud-resist-heading" className="pip-terminal-panel p-4 rounded-xl space-y-3">
+        <h3 id="hud-resist-heading" className="text-xs font-black font-mono uppercase tracking-widest text-accent border-b border-border/20 pb-2 flex items-center gap-1.5">
+          <Shield className="h-3.5 w-3.5" aria-hidden="true" /> [ RESISTANCE RATINGS ]
+        </h3>
 
         <TooltipProvider delayDuration={150}>
           <div className="grid grid-cols-2 gap-2 font-mono">
-            {[
-              { k: "dr", l: "DR", icon: Shield, col: "text-blue-400/80" },
-              { k: "er", l: "ER", icon: Zap, col: "text-yellow-400/80" },
-              { k: "fr", l: "FR", icon: Flame, col: "text-orange-400/80" },
-              { k: "cr", l: "CR", icon: Snowflake, col: "text-cyan-400/80" },
-              { k: "pr", l: "PR", icon: Droplets, col: "text-green-400/80" },
-              { k: "rr", l: "RR", icon: Radiation, col: "text-lime-400/80" },
-            ].map(({ k, l, icon: Icon, col }) => {
-              const live = totals[k as keyof BuilderEffectTotals] as number;
-              const base = intrinsicBenchTotals[k as keyof BuilderEffectTotals] as number;
+            {RESIST_TILES.map(({ k, l, icon: Icon, col }) => {
+              const live = totals[k];
+              const base = intrinsicBenchTotals[k];
               const delta = live - base;
-
-              // Breakdown lines for Resistance
-              const rLines: { source: string; val: string }[] = [];
-              if (base > 0) rLines.push({ source: "Base / Gear Base", val: `${base}` });
-
-              const lining = findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId);
-              if (lining?.effectMath && lining.effectMath[k]) {
-                rLines.push({
-                  source: `${lining.label.split(" (")[0]}`,
-                  val: `+${lining.effectMath[k]}`,
-                });
-              }
-
-              payload.legendaryPerkIds.forEach((rawEntry) => {
-                const [id, rankStr] = rawEntry.split(":");
-                const rank = parseInt(rankStr, 10) || 4;
-                const perk = LEGENDARY_PERK_CARDS[id];
-                if (perk?.resBonus && perk.resBonus[k as keyof typeof perk.resBonus]) {
-                  const val = Math.round(
-                    (perk.resBonus[k as keyof typeof perk.resBonus] || 0) * (rank / 4),
-                  );
-                  if (val > 0) {
-                    rLines.push({ source: `Legendary: ${perk.label.split(" (")[0]}`, val: `+${val}` });
-                  }
-                }
+              const rLines = resistanceBreakdownLines({
+                key: k,
+                live,
+                base,
+                payload,
+                piece,
+                groupedLegendaryEffects,
+                perkDeckDefensiveLayer,
+                stanceBreakdowns: stanceAndBiometricsLayer.resistanceBreakdowns,
               });
-
-              if (
-                perkDeckDefensiveLayer &&
-                perkDeckDefensiveLayer[k as keyof typeof perkDeckDefensiveLayer] > 0
-              ) {
-                rLines.push({
-                  source: "Equipped Perk Deck",
-                  val: `+${perkDeckDefensiveLayer[k as keyof typeof perkDeckDefensiveLayer]}`,
-                });
-              }
-
-              payload.legendaryModIds.forEach((id, idx) => {
-                if (!id) return;
-                const mod = mods.find((m) => m.id === id || m.slug === id);
-                if (mod?.effectMath && mod.effectMath[k]) {
-                  rLines.push({
-                    source: `${mod.name} (${idx + 1}★)`,
-                    val: `+${mod.effectMath[k]}`,
-                  });
-                }
-              });
-
-              // Add dynamic Stance and Biometric Resistance Modifiers (Bolstering, Vanguard, Steadfast, Mutant's)
-              stanceAndBiometricsLayer.resistanceBreakdowns
-                .filter((item) => item.res === k)
-                .forEach((item) => {
-                  rLines.push({ source: item.source, val: `+${item.val}` });
-                });
 
               return (
                 <Tooltip key={k}>
                   <TooltipTrigger asChild>
-                    <div className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors cursor-help">
+                    <div
+                      tabIndex={0}
+                      data-resist-tile={k}
+                      className="bg-background/25 border border-border/20 p-2 rounded-lg relative overflow-hidden flex flex-col justify-between min-h-[56px] hover:border-accent/35 transition-colors cursor-help"
+                    >
                       <div className="flex items-center gap-1 text-2xs text-foreground/45 font-black uppercase tracking-wider">
-                        <Icon className={cn("h-3 w-3 shrink-0", col)} />
+                        <Icon className={cn("h-3 w-3 shrink-0", col)} aria-hidden="true" />
                         <span>{l}</span>
                       </div>
                       <div className="flex items-baseline justify-between mt-1">
                         <span className="text-sm font-black text-foreground">{live}</span>
                         {delta !== 0 && (
-                          <span className="text-2xs text-accent font-black tracking-tight bg-accent/5 px-1 border border-accent/20 rounded">
-                            +{delta}
+                          <span
+                            className={cn(
+                              "text-2xs font-black tracking-tight px-1 border rounded",
+                              delta > 0
+                                ? "text-accent bg-accent/5 border-accent/20"
+                                : "text-danger bg-danger/10 border-danger/20",
+                            )}
+                          >
+                            {delta > 0 ? "+" : ""}
+                            {delta}
                           </span>
                         )}
                       </div>
@@ -382,20 +457,22 @@ export default function DiagnosticsHudColumn({
                   </TooltipTrigger>
                   <TooltipContent
                     side="top"
-                    className="bg-[#0c1014] border-border/80 p-2.5 font-mono text-[0.78rem] shadow-2xl space-y-1.5 min-w-[210px] z-[10000] opacity-100"
+                    className="bg-[#0c1014] border-border/80 p-2.5 font-mono text-xs shadow-2xl space-y-1.5 min-w-[210px] z-[10000] opacity-100"
                   >
-                    <div className="font-black text-accent border-b border-border/20 pb-1 flex justify-between">
+                    <div className="font-black text-accent border-b border-border/20 pb-1 flex justify-between gap-3">
                       <span>{RESIST_FULL_NAMES[k] || l}</span>
                       <span>Total: {live}</span>
                     </div>
-                    <div className="space-y-1 text-foreground/80 text-[0.75rem]">
+                    <div className="space-y-1 text-foreground/80 text-2xs">
                       {rLines.length === 0 ? (
-                        <div className="text-foreground/40 italic">0 resistances active</div>
+                        <div className="text-dim italic">No {l} from armor, perks, stances or mutations.</div>
                       ) : (
                         rLines.map((r, i) => (
                           <div key={i} className="flex justify-between gap-3">
                             <span className="text-foreground/60">{r.source}</span>
-                            <span className="font-bold text-accent">{r.val}</span>
+                            <span className={cn("font-bold", r.val < 0 ? "text-danger" : "text-accent")}>
+                              {formatSigned(r.val)}
+                            </span>
                           </div>
                         ))
                       )}
@@ -406,7 +483,7 @@ export default function DiagnosticsHudColumn({
             })}
           </div>
         </TooltipProvider>
-      </div>
+      </section>
 
       {/* Active Effects Summarizer rollup list (Compact High-Density Matrix) */}
       <div className="pip-terminal-panel p-3 rounded-xl space-y-2 font-mono">

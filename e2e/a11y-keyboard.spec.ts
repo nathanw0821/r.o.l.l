@@ -160,6 +160,46 @@ test.describe("keyboard", () => {
     await page.keyboard.press("Escape");
   });
 
+  test("stance switchboard: Tab reaches a posture toggle and Space flips aria-pressed", async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.goto("/build?tab=biometrics");
+    // The group header is a real button; phones open one group at a time, so open it first.
+    const header = page.getByRole("button", { name: /^Stances & V\.A\.T\.S\./ });
+    await expect(header).toBeVisible({ timeout: 45_000 });
+    if ((await header.getAttribute("aria-expanded")) !== "true") {
+      await header.focus();
+      await page.keyboard.press("Enter");
+    }
+    await expect(header).toHaveAttribute("aria-expanded", "true");
+
+    // Row 1: the first Tab stop after the header is the Upright / Stealthed posture toggle.
+    await header.focus();
+    await page.keyboard.press("Tab");
+    const posture = page.getByRole("button", { name: /Normal Detection|Nocturnal \/ Sneak/ });
+    await expect(posture).toBeFocused();
+    const before = await posture.getAttribute("aria-pressed");
+    expect(["true", "false"]).toContain(before);
+    await page.keyboard.press("Space");
+    await expect(posture).toHaveAttribute("aria-pressed", before === "true" ? "false" : "true");
+    await expect(posture).toContainText(before === "true" ? "Upright" : "Stealthed");
+    await page.keyboard.press("Space");
+    await expect(posture).toHaveAttribute("aria-pressed", before!);
+  });
+
+  test("resistance tiles: focusing a HUD tile opens its breakdown tooltip", async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.goto("/build?tab=gear");
+    const tile = page.locator('[data-resist-tile="dr"]').filter({ visible: true }).first();
+    await expect(tile).toBeVisible({ timeout: 45_000 });
+    // Radix closes a tooltip on any window scroll: bring the tile into view and let the
+    // page settle before focusing it, or the still-loading page scrolls it shut.
+    await tile.scrollIntoViewIfNeeded();
+    await page.waitForLoadState("networkidle");
+    await tile.focus();
+    await expect(tile).toBeFocused();
+    await expect(page.getByRole("tooltip")).toContainText(/Damage Resistance[\s\S]*Total: \d+/);
+  });
+
   test("guides reader: the contents list is keyboard reachable and jumps to the heading", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium", "The desktop contents rail; phones use the disclosure.");
     await page.goto("/wiki?id=193");

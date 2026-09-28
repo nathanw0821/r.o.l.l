@@ -442,17 +442,6 @@ export default function BuilderCombatSwitchboard({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showMathInspector]);
 
-  const DEFAULT_COMBAT_STANCE = React.useMemo(() => ({
-    isSneaking: false,
-    isCrouched: false,
-    isSprinting: false,
-    isAiming: false,
-    isPowerAttacking: false,
-    isStationary: false,
-    isInVats: false,
-    vatsCritEveryOtherShot: false,
-  }), []);
-
   const [switchboard, setSwitchboard] = React.useState<CombatSwitchboardState>(() => {
     const initialFoods: Record<string, string> = {};
     if (isHerbivore) {
@@ -858,6 +847,7 @@ export default function BuilderCombatSwitchboard({
             <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3 flex items-center justify-between">
               <span className="text-xs text-slate-400 font-bold uppercase">Species:</span>
               <button
+                disabled={readOnly}
                 type="button"
                 onClick={() => {
                   const nextGhoul = !isGhoul;
@@ -878,6 +868,7 @@ export default function BuilderCombatSwitchboard({
             <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3 flex items-center justify-between">
               <span className="text-xs text-slate-400 font-bold uppercase">Armor Frame:</span>
               <button
+                disabled={readOnly}
                 type="button"
                 aria-pressed={armorModeIsPA ?? switchboard.inPowerArmor}
                 onClick={() => {
@@ -902,6 +893,7 @@ export default function BuilderCombatSwitchboard({
             <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3 flex items-center justify-between">
               <span className="text-xs text-slate-400 font-bold uppercase">Time of Day:</span>
               <button
+                disabled={readOnly}
                 type="button"
                 onClick={() => updateField("timeOfDay", switchboard.timeOfDay === "night" ? "day" : "night")}
                 className={`text-xs px-3 py-1 rounded font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 border cursor-pointer ${
@@ -1049,6 +1041,7 @@ export default function BuilderCombatSwitchboard({
               </div>
               <div className="flex items-center gap-2">
                 <input
+                  disabled={readOnly}
                   aria-label="Current health percent"
                   type="range"
                   min="5"
@@ -1061,6 +1054,7 @@ export default function BuilderCombatSwitchboard({
               </div>
               <div className="flex items-center justify-between text-2xs pt-1">
                 <button
+                  disabled={readOnly}
                   type="button"
                   onClick={() => updateField("healthPct", 20)}
                   className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
@@ -1072,6 +1066,7 @@ export default function BuilderCombatSwitchboard({
                   Bloodied / Nerd Rage (20%)
                 </button>
                 <button
+                  disabled={readOnly}
                   type="button"
                   onClick={() => updateField("healthPct", 100)}
                   className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
@@ -1096,6 +1091,7 @@ export default function BuilderCombatSwitchboard({
                   <span className="text-lime-300 font-bold">{switchboard.glowPct || 0}% Shield</span>
                 </div>
                 <input
+                  disabled={readOnly}
                   type="range"
                   min="0"
                   max="100"
@@ -1107,6 +1103,7 @@ export default function BuilderCombatSwitchboard({
                 <div className="flex items-center justify-between text-2xs pt-0.5">
                   <div className="flex items-center gap-1.5">
                     <button
+                      disabled={readOnly}
                       type="button"
                       onClick={() => updateField("glowPct", 0)}
                       className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
@@ -1118,6 +1115,7 @@ export default function BuilderCombatSwitchboard({
                       0% Clean
                     </button>
                     <button
+                      disabled={readOnly}
                       type="button"
                       onClick={() => updateField("glowPct", 50)}
                       className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
@@ -1129,6 +1127,7 @@ export default function BuilderCombatSwitchboard({
                       50% Shield
                     </button>
                     <button
+                      disabled={readOnly}
                       type="button"
                       onClick={() => updateField("glowPct", 100)}
                       className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
@@ -1153,6 +1152,7 @@ export default function BuilderCombatSwitchboard({
                   <span className="text-amber-300 font-bold">{switchboard.radsPct || 0}% Rads</span>
                 </div>
                 <input
+                  disabled={readOnly}
                   aria-label="Radiation saturation percent"
                   type="range"
                   min="0"
@@ -1165,6 +1165,7 @@ export default function BuilderCombatSwitchboard({
                 <div className="flex items-center justify-between text-2xs pt-0.5">
                   <div className="flex items-center gap-1.5">
                     <button
+                      disabled={readOnly}
                       type="button"
                       onClick={() => updateField("radsPct", 0)}
                       className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
@@ -1176,6 +1177,7 @@ export default function BuilderCombatSwitchboard({
                       0% Clean
                     </button>
                     <button
+                      disabled={readOnly}
                       type="button"
                       onClick={() => updateField("radsPct", 80)}
                       className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
@@ -1206,6 +1208,7 @@ export default function BuilderCombatSwitchboard({
                 </div>
 
                 <input
+                  disabled={readOnly}
                   type="range"
                   min="0"
                   max="100"
@@ -1218,6 +1221,7 @@ export default function BuilderCombatSwitchboard({
                 <div className="grid grid-cols-4 gap-1 pt-1">
                   {FERAL_STAGES.map((st) => (
                     <button
+                      disabled={readOnly}
                       key={st.id}
                       type="button"
                       onClick={() => updateField("feralPct", st.presetVal)}
@@ -1248,6 +1252,7 @@ export default function BuilderCombatSwitchboard({
                 </div>
                 <div className="flex items-center justify-between bg-slate-950 border border-slate-800 rounded px-2 py-1">
                   <button
+                    disabled={readOnly}
                     type="button"
                     onClick={() => stepFood(-1)}
                     aria-label="Previous food level"
@@ -1257,6 +1262,7 @@ export default function BuilderCombatSwitchboard({
                   </button>
                   <span className="text-xs font-black text-white uppercase">{currentFoodDef.label}</span>
                   <button
+                    disabled={readOnly}
                     type="button"
                     onClick={() => stepFood(1)}
                     aria-label="Next food level"
@@ -1308,6 +1314,7 @@ export default function BuilderCombatSwitchboard({
                 </div>
                 <div className="flex items-center justify-between bg-slate-950 border border-slate-800 rounded px-2 py-1">
                   <button
+                    disabled={readOnly}
                     type="button"
                     onClick={() => stepThirst(-1)}
                     aria-label="Previous thirst level"
@@ -1317,6 +1324,7 @@ export default function BuilderCombatSwitchboard({
                   </button>
                   <span className="text-xs font-black text-white uppercase">{currentThirstDef.label}</span>
                   <button
+                    disabled={readOnly}
                     type="button"
                     onClick={() => stepThirst(1)}
                     aria-label="Next thirst level"
@@ -1328,6 +1336,7 @@ export default function BuilderCombatSwitchboard({
                 <p className="text-2xs text-slate-400">{currentThirstDef.desc}</p>
                 <div className="flex items-center gap-1.5 pt-1">
                   <button
+                    disabled={readOnly}
                     type="button"
                     onClick={() => {
                       updateField("foodState", "fully_fed");
@@ -1339,6 +1348,7 @@ export default function BuilderCombatSwitchboard({
                     🍖💧 Max Overeater&apos;s
                   </button>
                   <button
+                    disabled={readOnly}
                     type="button"
                     onClick={() => {
                       updateField("foodState", "starving");
@@ -1357,6 +1367,7 @@ export default function BuilderCombatSwitchboard({
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-2xs">
               <label className="flex items-center gap-2 min-h-9 touch:min-h-11 cursor-pointer">
                 <input
+                  disabled={readOnly}
                   type="checkbox"
                   checked={Boolean(switchboard.isDiseased)}
                   onChange={(e) => updateField("isDiseased", e.target.checked)}
@@ -1377,6 +1388,7 @@ export default function BuilderCombatSwitchboard({
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-2xs">
               <label className="flex items-center gap-2 min-h-9 touch:min-h-11 cursor-pointer">
                 <input
+                  disabled={readOnly}
                   type="checkbox"
                   checked={Boolean(switchboard.isOverEncumbered)}
                   onChange={(e) => updateField("isOverEncumbered", e.target.checked)}
@@ -1403,6 +1415,7 @@ export default function BuilderCombatSwitchboard({
               </div>
               <div className="flex items-center justify-between bg-slate-950 border border-slate-800 rounded px-2 py-1">
                 <button
+                  disabled={readOnly}
                   type="button"
                   onClick={() => stepTeam(-1)}
                   aria-label="Smaller team"
@@ -1412,6 +1425,7 @@ export default function BuilderCombatSwitchboard({
                 </button>
                 <span className="text-xs font-black text-white uppercase">{currentTeamDef.label}</span>
                 <button
+                  disabled={readOnly}
                   type="button"
                   onClick={() => stepTeam(1)}
                   aria-label="Larger team"
@@ -1424,6 +1438,7 @@ export default function BuilderCombatSwitchboard({
                 <span>{currentTeamDef.desc}</span>
                 <label className="flex items-center gap-1.5 cursor-pointer text-emerald-400 font-bold">
                   <input
+                    disabled={readOnly}
                     type="checkbox"
                     checked={hasStrangeInNumbers}
                     onChange={(e) => {
@@ -1437,6 +1452,7 @@ export default function BuilderCombatSwitchboard({
                 {isGhoul && (
                   <label className="flex items-center gap-1.5 cursor-pointer text-lime-400 font-bold">
                     <input
+                      disabled={readOnly}
                       type="checkbox"
                       checked={Boolean(switchboard.hasGhoulTeammate)}
                       onChange={(e) => updateField("hasGhoulTeammate", e.target.checked)}
@@ -1492,9 +1508,11 @@ export default function BuilderCombatSwitchboard({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {/* 1. Crouched / Stealthed */}
                 <button
+                  disabled={readOnly}
                   type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isCrouched)}
                   onClick={() => updateStance("isCrouched", !switchboard.combatStance?.isCrouched)}
-                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                  className={`p-2 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
                     switchboard.combatStance?.isCrouched
                       ? "bg-emerald-950 border-emerald-500 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.3)] font-black"
                       : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
@@ -1508,9 +1526,11 @@ export default function BuilderCombatSwitchboard({
 
                 {/* 2. Sprinting */}
                 <button
+                  disabled={readOnly}
                   type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isSprinting)}
                   onClick={() => updateStance("isSprinting", !switchboard.combatStance?.isSprinting)}
-                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                  className={`p-2 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
                     switchboard.combatStance?.isSprinting
                       ? "bg-cyan-950 border-cyan-500 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.3)] font-black"
                       : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
@@ -1524,9 +1544,11 @@ export default function BuilderCombatSwitchboard({
 
                 {/* 3. Stationary / Standing Still */}
                 <button
+                  disabled={readOnly}
                   type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isStationary)}
                   onClick={() => updateStance("isStationary", !switchboard.combatStance?.isStationary)}
-                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                  className={`p-2 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
                     switchboard.combatStance?.isStationary
                       ? "bg-blue-950 border-blue-500 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.3)] font-black"
                       : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
@@ -1540,9 +1562,11 @@ export default function BuilderCombatSwitchboard({
 
                 {/* 4. Power Attack */}
                 <button
+                  disabled={readOnly}
                   type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isPowerAttacking)}
                   onClick={() => updateStance("isPowerAttacking", !switchboard.combatStance?.isPowerAttacking)}
-                  className={`p-2 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                  className={`p-2 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
                     switchboard.combatStance?.isPowerAttacking
                       ? "bg-amber-950 border-amber-500 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.3)] font-black"
                       : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
@@ -1568,6 +1592,7 @@ export default function BuilderCombatSwitchboard({
                 <div className="grid grid-cols-2 gap-2">
                   {/* Spending Glow: Mad Scientist, Radiation Power, Radioactive Strength */}
                   <button
+                    disabled={readOnly}
                     type="button"
                     aria-pressed={Boolean(switchboard.combatStance?.isSpendingGlow)}
                     onClick={() => updateStance("isSpendingGlow", !switchboard.combatStance?.isSpendingGlow)}
@@ -1587,6 +1612,7 @@ export default function BuilderCombatSwitchboard({
 
                   {/* Hit in the last 10 s: Science Monster */}
                   <button
+                    disabled={readOnly}
                     type="button"
                     aria-pressed={Boolean(switchboard.combatStance?.wasHitRecently)}
                     onClick={() => updateStance("wasHitRecently", !switchboard.combatStance?.wasHitRecently)}
@@ -1614,9 +1640,11 @@ export default function BuilderCombatSwitchboard({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {/* 1. Aiming Down Sights */}
                 <button
+                  disabled={readOnly}
                   type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isAiming)}
                   onClick={() => updateStance("isAiming", !switchboard.combatStance?.isAiming)}
-                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                  className={`p-2.5 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
                     switchboard.combatStance?.isAiming
                       ? "bg-purple-950 border-purple-500 text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.3)] font-black"
                       : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
@@ -1633,9 +1661,11 @@ export default function BuilderCombatSwitchboard({
 
                 {/* 2. In V.A.T.S. */}
                 <button
+                  disabled={readOnly}
                   type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isInVats)}
                   onClick={() => updateStance("isInVats", !switchboard.combatStance?.isInVats)}
-                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                  className={`p-2.5 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
                     switchboard.combatStance?.isInVats
                       ? "bg-emerald-950 border-emerald-500 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.35)] font-black"
                       : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
@@ -1660,6 +1690,7 @@ export default function BuilderCombatSwitchboard({
                       const active = hitLocation === opt.id;
                       return (
                         <button
+                          disabled={readOnly}
                           key={opt.id}
                           type="button"
                           aria-pressed={active}
@@ -1696,6 +1727,7 @@ export default function BuilderCombatSwitchboard({
                       const active = targetRange === opt.id;
                       return (
                         <button
+                          disabled={readOnly}
                           key={opt.id}
                           type="button"
                           aria-pressed={active}
@@ -1722,14 +1754,16 @@ export default function BuilderCombatSwitchboard({
 
                 {/* 3. V.A.T.S. Crit Every Other Shot */}
                 <button
+                  disabled={readOnly}
                   type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.vatsCritEveryOtherShot)}
                   onClick={() =>
                     updateStance(
                       "vatsCritEveryOtherShot",
                       !switchboard.combatStance?.vatsCritEveryOtherShot
                     )
                   }
-                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                  className={`p-2.5 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
                     switchboard.combatStance?.vatsCritEveryOtherShot
                       ? critQualification?.everySecondShotReady
                         ? "bg-amber-950 border-amber-400 text-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.4)] font-black"
@@ -1848,6 +1882,7 @@ export default function BuilderCombatSwitchboard({
                 <label className="flex flex-col gap-1 text-2xs text-slate-400">
                   <span>Incoming hit</span>
                   <input
+                    disabled={readOnly}
                     type="number"
                     min={1}
                     max={100000}
@@ -1859,6 +1894,7 @@ export default function BuilderCombatSwitchboard({
                 <label className="flex flex-col gap-1 text-2xs text-slate-400">
                   <span>Incoming damage type</span>
                   <select
+                    disabled={readOnly}
                     value={incomingDamageType}
                     onChange={(e) => updateField("incomingDamageType", e.target.value as IncomingDamageType)}
                     className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-white focus:border-sky-500 outline-none cursor-pointer"
@@ -1897,6 +1933,7 @@ export default function BuilderCombatSwitchboard({
               {switchboard.inPowerArmor && (
                 <label className="flex items-center gap-1.5 text-2xs text-slate-400 cursor-pointer">
                   <input
+                    disabled={readOnly}
                     type="checkbox"
                     checked={(switchboard.powerArmorInnatePct ?? 0) > 0}
                     onChange={(e) => updateField("powerArmorInnatePct", e.target.checked ? 7 : 0)}
@@ -1927,6 +1964,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-cyan-400">{switchboard.bulletStormStacks || 0} / 20</span>
               </div>
               <input
+                disabled={readOnly}
                 aria-label="Bullet Storm stacks"
                 type="range"
                 min="0"
@@ -1948,6 +1986,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-orange-400">{switchboard.onslaughtStacks || 0} / 30</span>
               </div>
               <input
+                disabled={readOnly}
                 aria-label="Onslaught stacks"
                 type="range"
                 min="0"
@@ -1969,6 +2008,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-rose-400">{switchboard.tenderizerStacks || 0} / 100 hits</span>
               </div>
               <input
+                disabled={readOnly}
                 aria-label="Tenderizer stacks"
                 type="range"
                 min="0"
@@ -1990,6 +2030,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-amber-400">{switchboard.adrenalineStacks || 0} / 6</span>
               </div>
               <input
+                disabled={readOnly}
                 aria-label="Adrenaline kill streak"
                 type="range"
                 min="0"
@@ -2011,6 +2052,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-purple-400">{switchboard.addictionsCount || 0} / 5</span>
               </div>
               <input
+                disabled={readOnly}
                 aria-label="Addictions count"
                 type="range"
                 min="0"
@@ -2032,6 +2074,7 @@ export default function BuilderCombatSwitchboard({
                 <span className="text-emerald-400">{(switchboard.caps ?? 30000).toLocaleString()}</span>
               </div>
               <input
+                disabled={readOnly}
                 aria-label="Caps carried"
                 type="range"
                 min="0"
@@ -2085,6 +2128,7 @@ export default function BuilderCombatSwitchboard({
                   : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
               )}>
                 <input
+                  disabled={readOnly}
                   type="checkbox"
                   checked={Boolean(switchboard.targetBleeding)}
                   onChange={(e) => updateField("targetBleeding", e.target.checked)}
@@ -2101,6 +2145,7 @@ export default function BuilderCombatSwitchboard({
                   : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
               )}>
                 <input
+                  disabled={readOnly}
                   type="checkbox"
                   checked={Boolean(switchboard.targetBurning)}
                   onChange={(e) => updateField("targetBurning", e.target.checked)}
@@ -2117,6 +2162,7 @@ export default function BuilderCombatSwitchboard({
                   : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
               )}>
                 <input
+                  disabled={readOnly}
                   type="checkbox"
                   checked={Boolean(switchboard.targetPoisoned)}
                   onChange={(e) => updateField("targetPoisoned", e.target.checked)}
@@ -2133,6 +2179,7 @@ export default function BuilderCombatSwitchboard({
                   : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
               )}>
                 <input
+                  disabled={readOnly}
                   type="checkbox"
                   checked={Boolean(switchboard.targetIsGlowing)}
                   onChange={(e) => updateField("targetIsGlowing", e.target.checked)}
@@ -2149,6 +2196,7 @@ export default function BuilderCombatSwitchboard({
                   : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
               )}>
                 <input
+                  disabled={readOnly}
                   type="checkbox"
                   checked={Boolean(switchboard.targetIsInsect)}
                   onChange={(e) => updateField("targetIsInsect", e.target.checked)}
@@ -2161,6 +2209,7 @@ export default function BuilderCombatSwitchboard({
               <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded border border-slate-800 bg-slate-950/60 text-xs">
                 <span className="text-slate-400">🦴 Crippled:</span>
                 <select
+                  disabled={readOnly}
                   aria-label="Crippled limbs on the target"
                   value={switchboard.targetCrippledLimbs ?? 0}
                   onChange={(e) => updateField("targetCrippledLimbs", parseInt(e.target.value, 10))}
@@ -2197,6 +2246,7 @@ export default function BuilderCombatSwitchboard({
                     <span className="text-3xs font-normal text-slate-400">{formatMutationMath(def)}</span>
                     {!readOnly && (
                       <button
+                        disabled={readOnly}
                         type="button"
                         aria-label={`Remove ${def?.label ?? id}`}
                         onClick={() => onMutationsChange?.(activeMutations.filter((m) => m !== id))}
@@ -2217,6 +2267,7 @@ export default function BuilderCombatSwitchboard({
             <div className="flex flex-wrap items-center gap-3">
               {!readOnly && (
                 <button
+                  disabled={readOnly}
                   type="button"
                   onClick={() => openPicker("mutation")}
                   className="min-h-9 touch:min-h-11 px-3 rounded border border-lime-500/40 bg-lime-500/10 text-xs font-bold uppercase text-lime-300 hover:bg-lime-500/20"
@@ -2274,6 +2325,7 @@ export default function BuilderCombatSwitchboard({
                   {!readOnly && (
                     <div className="flex flex-wrap gap-1.5 pt-0.5">
                       <button
+                        disabled={readOnly}
                         type="button"
                         onClick={() => openPicker(slot.field)}
                         className="min-h-8 touch:min-h-11 px-2.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-2xs font-bold uppercase text-emerald-300 hover:bg-emerald-500/20"
@@ -2282,6 +2334,7 @@ export default function BuilderCombatSwitchboard({
                       </button>
                       {current && (
                         <button
+                          disabled={readOnly}
                           type="button"
                           aria-label={`Clear ${slot.label.toLowerCase()}`}
                           onClick={() => updateField(slot.field, null)}
@@ -2310,6 +2363,7 @@ export default function BuilderCombatSwitchboard({
               {!readOnly && (
                 <div className="pt-0.5">
                   <button
+                    disabled={readOnly}
                     type="button"
                     onClick={() => openPicker("food")}
                     className="min-h-8 touch:min-h-11 px-2.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-2xs font-bold uppercase text-emerald-300 hover:bg-emerald-500/20"
@@ -2327,6 +2381,7 @@ export default function BuilderCombatSwitchboard({
               <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase">
                 <span>Active Stacked Food Buffs ({Object.keys(switchboard.activeFoods).length})</span>
                 <button
+                  disabled={readOnly}
                   type="button"
                   onClick={() => updateField("activeFoods", {})}
                   className="text-2xs text-rose-400 hover:underline cursor-pointer"
@@ -2345,6 +2400,7 @@ export default function BuilderCombatSwitchboard({
                     >
                       <span>{item?.label || id}</span>
                       <button
+                        disabled={readOnly}
                         type="button"
                         onClick={() => handleRemoveFoodCategory(category)}
                         className="text-dim hover:text-rose-400 cursor-pointer"
