@@ -82,6 +82,8 @@ export interface DefensiveProfileOptions {
   killStreak?: number;
   /** Junk Shield only counts while junk is carried; defaults to true. */
   holdingJunk?: boolean;
+  /** Iron Stomach and Natural Resistance switch off while the character carries a disease. */
+  isDiseased?: boolean;
   /**
    * Innate Power Armor reduction per piece. Unverified; the truth file keeps it
    * at 0 and the UI exposes it as a toggle labelled unverified.
@@ -128,6 +130,9 @@ type TruthPerk = {
   healthBelowPct?: number;
   baseBlockPct?: number;
   maxTeammates?: number;
+  /** Pre-Patch 62 rank values kept for note-only cards whose END curve is unpublished. */
+  legacyValues?: number[];
+  ghoul?: boolean;
 };
 
 const TRUTH = defensiveTruth as unknown as {
@@ -227,6 +232,7 @@ export function calculateDefensiveProfile(
     bulletStormStacks = 0,
     killStreak = 0,
     holdingJunk = true,
+    isDiseased = false,
     powerArmorInnatePct = TRUTH.powerArmorInnate.perPiecePct,
     armorPieceCount = isPowerArmor ? 6 : 5,
   } = options;
@@ -377,6 +383,48 @@ export function calculateDefensiveProfile(
         notes.push(`${label}: +${pct}% max HP from END ${special.end}`);
         break;
       }
+      case "iron-stomach": {
+        if (isDiseased) {
+          notes.push("Iron Stomach is off while diseased");
+          break;
+        }
+        const v = Math.round(lerpSpecial(special.end, perk.min ?? 0, perk.max ?? 0));
+        flat.dr += v;
+        flat.er += v;
+        notes.push(`${label}: +${v} DR/ER from END ${special.end} while not diseased`);
+        break;
+      }
+      case "natural-resistance": {
+        if (isDiseased) {
+          notes.push("Natural Resistance is off while diseased");
+          break;
+        }
+        const v = Math.round(lerpSpecial(special.end, perk.min ?? 0, perk.max ?? 0));
+        flat.fr += v;
+        flat.cr += v;
+        flat.pr += v;
+        notes.push(`${label}: +${v} fire/cryo/poison resistance from END ${special.end} while not diseased`);
+        break;
+      }
+      case "adamantium-skeleton":
+        notes.push(
+          `Adamantium Skeleton: limb damage reduction from END ${special.end} (no limb model on the sheet; legacy ranks were ${(perk.legacyValues ?? []).join("/")}%)`,
+        );
+        break;
+      case "vaccinated":
+        notes.push(
+          `Vaccinated: disease resistance from END ${special.end} (not a sheet stat; legacy ranks were ${(perk.legacyValues ?? []).join("/")}%)`,
+        );
+        break;
+      case "sturdy-frame":
+        notes.push(`Sturdy Frame rank ${rank}: ${rankValue(perk, rank)}% harder to stagger (stagger is not modelled)`);
+        break;
+      case "natural-stance":
+        notes.push(`Natural Stance: ${rankValue(perk, rank)}% less incoming stagger with a melee weapon (stagger is not modelled)`);
+        break;
+      case "brick-wall":
+        notes.push("Brick Wall: immune to stagger while Glow is high (stagger is not modelled)");
+        break;
       case "nerd-rage":
         notes.push("Nerd Rage no longer grants Damage Resistance (damage and AP regen only)");
         break;

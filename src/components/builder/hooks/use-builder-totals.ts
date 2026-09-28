@@ -271,6 +271,8 @@ export function useBuilderTotals({
       wearingNoArmor:
         activeChassisPiece.kind !== "armor" && activeChassisPiece.kind !== "powerArmor",
       isOverEncumbered: false,
+      // Vitals "Diseased" switch: Iron Stomach and Natural Resistance are off while diseased.
+      isDiseased: Boolean(switchboardState?.isDiseased),
       // Ironclad multiplies the worn armor's own DR/ER (base table + crafting + PA frame).
       baseArmor: { dr: intrinsicBenchTotals.dr, er: intrinsicBenchTotals.er },
       equippedModSlugs: armorModSlugs,

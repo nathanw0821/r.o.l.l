@@ -322,6 +322,7 @@ export default function BuilderExperimentClient({
         luck: statsBand.special.lck,
         strength: statsBand.special.str,
         endurance: statsBand.special.end,
+        isDiseased: Boolean(switchboardState?.isDiseased),
         healthPct: switchboardState?.healthPct ?? 20,
         caps: switchboardState?.caps ?? 30000,
         isPowerArmor: isPA,
@@ -387,6 +388,7 @@ export default function BuilderExperimentClient({
       overeatersPieces,
       glowPct: switchboardState?.glowPct ?? 0,
       rangedWeaponEquipped: activeWeaponPiece.weaponSub !== "melee",
+      isDiseased: Boolean(switchboardState?.isDiseased),
     });
   }, [equippedModsOrdered, statsBand.special, equippedPerkCards, totals.hp, totals.apRegen, totals.carryWeight, defensiveProfile, weaponFirepowerResult, payload.ghoul, isPA, switchboardState, activeWeaponPiece.weaponSub]);
   const statsBandWithVitals = React.useMemo(

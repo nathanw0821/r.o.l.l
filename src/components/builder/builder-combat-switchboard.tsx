@@ -63,6 +63,8 @@ export type CombatSwitchboardState = {
   hasMutatedTeammate?: boolean;
   /** Another Ghoul on the team (United Ordeal). */
   hasGhoulTeammate?: boolean;
+  /** Carrying a disease: Iron Stomach, Natural Resistance and Thirst Quencher switch off. */
+  isDiseased?: boolean;
   timeOfDay?: "day" | "night";
   addictionsCount?: number;
   adrenalineStacks?: number;
@@ -456,6 +458,7 @@ export default function BuilderCombatSwitchboard({
       thirstState: "fully_hydrated",
       teamState: "casual",
       hasMutatedTeammate: true,
+      isDiseased: false,
       timeOfDay: "day",
       addictionsCount: 0,
       adrenalineStacks: 0,
@@ -900,7 +903,7 @@ export default function BuilderCombatSwitchboard({
             id="vitals"
             title="Vitals"
             icon={<Heart className="h-3.5 w-3.5" />}
-            summary={`HP ${switchboard.healthPct}% · ${isGhoul ? `Glow ${switchboard.glowPct || 0}%` : `Rads ${switchboard.radsPct || 0}%`} · ${currentTeamDef.label}`}
+            summary={`HP ${switchboard.healthPct}% · ${isGhoul ? `Glow ${switchboard.glowPct || 0}%` : `Rads ${switchboard.radsPct || 0}%`} · ${currentTeamDef.label}${switchboard.isDiseased ? " · Diseased" : ""}`}
             open={openGroups.has("vitals")}
             onToggle={() => toggleGroup("vitals")}
           >
@@ -1325,6 +1328,18 @@ export default function BuilderCombatSwitchboard({
                 </div>
               </div>
             )}
+
+            {/* Disease switch: sits beside Food / Thirst; Iron Stomach, Natural Resistance and Thirst Quencher read it */}
+            <label className="md:col-span-2 flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 min-h-9 touch:min-h-11 cursor-pointer text-2xs">
+              <input
+                type="checkbox"
+                checked={Boolean(switchboard.isDiseased)}
+                onChange={(e) => updateField("isDiseased", e.target.checked)}
+                className="rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-0 cursor-pointer"
+              />
+              <span className="font-bold uppercase text-rose-300">Diseased</span>
+              <span className="text-dim">Iron Stomach, Natural Resistance and Thirst Quencher switch off while diseased</span>
+            </label>
 
             {/* Team Category Stepper */}
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-1.5 md:col-span-2">

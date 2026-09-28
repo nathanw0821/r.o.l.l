@@ -212,6 +212,81 @@
       "confidence": "approximate",
       "source": "Card text 'max HP based on END'; range unpublished, modelled +0..+45%."
     },
+    "iron-stomach": {
+      "id": "iron-stomach",
+      "label": "Iron Stomach",
+      "model": "special-scaled",
+      "special": "end",
+      "resists": ["dr", "er"],
+      "condition": "not-diseased",
+      "ranks": 1,
+      "min": 0,
+      "max": 30,
+      "confidence": "approximate",
+      "source": "Patch 70 card text: 'Increased Damage and Energy Resistance based on END while not diseased.' Range unpublished. The legacy Iron Stomach was a food/drink disease-chance card with no resistance number, so the ceiling is borrowed from the old three-rank +10/20/30 flat-resist family (the same 30 Junk Shield uses); modelled 0..30 DR and ER, off while diseased."
+    },
+    "natural-resistance": {
+      "id": "natural-resistance",
+      "label": "Natural Resistance",
+      "model": "special-scaled",
+      "special": "end",
+      "resists": ["fr", "cr", "pr"],
+      "condition": "not-diseased",
+      "ranks": 1,
+      "min": 0,
+      "max": 30,
+      "confidence": "approximate",
+      "source": "Patch 70 card text: 'Increased Elemental Resistances based on END while not diseased.' 'Elemental' is the game's fire / cryo / poison group (radiation is Rad Resistant). Range unpublished; the legacy Natural Resistance was a 30/60/90% environmental disease-chance card with no resistance number, so the ceiling is borrowed from the old three-rank +10/20/30 flat-resist family; modelled 0..30 each for FR, CR and PR, off while diseased."
+    },
+    "adamantium-skeleton": {
+      "id": "adamantium-skeleton",
+      "label": "Adamantium Skeleton",
+      "model": "note-only",
+      "special": "end",
+      "ranks": 1,
+      "legacyValues": [30, 60, 100],
+      "confidence": "verified",
+      "source": "Patch 70 card text: 'Gain Limb Damage Reduction based on your END.' The sheet has no limb-damage model (limb HP is separate from the DR/ER curve), so this is a note only. Legacy three ranks reduced limb damage by 30/60/100%; the END curve since Patch 62 is unpublished."
+    },
+    "vaccinated": {
+      "id": "vaccinated",
+      "label": "Vaccinated",
+      "model": "note-only",
+      "special": "end",
+      "ranks": 1,
+      "legacyValues": [30, 60, 90],
+      "confidence": "verified",
+      "source": "Patch 70 card text: 'Increased Disease Resistance based on END.' Disease resistance is not a sheet stat (it only lowers the chance of catching a disease), so this is a note only. Legacy three ranks were 30/60/90% disease resistance from creature attacks; the END curve since Patch 62 is unpublished."
+    },
+    "sturdy-frame": {
+      "id": "sturdy-frame",
+      "label": "Sturdy Frame",
+      "model": "note-only",
+      "ranks": 2,
+      "values": [25, 50],
+      "confidence": "verified",
+      "source": "Patch 70 card text: 'You are 25/50% harder to stagger.' Stagger is not modelled by the defensive profile (it is a hit-reaction chance, not damage), so the rank value is surfaced as a note. Pre-Patch 62 the card lowered armor weight instead."
+    },
+    "natural-stance": {
+      "id": "natural-stance",
+      "label": "Natural Stance",
+      "model": "note-only",
+      "condition": "melee-weapon",
+      "ranks": 1,
+      "values": [25],
+      "confidence": "verified",
+      "source": "Patch 70 card text: 'While equipping a melee weapon, reduce Incoming Stagger by 25%.' Stagger is not modelled; note only."
+    },
+    "brick-wall": {
+      "id": "brick-wall",
+      "label": "Brick Wall",
+      "model": "note-only",
+      "condition": "glow-high",
+      "ranks": 1,
+      "ghoul": true,
+      "confidence": "verified",
+      "source": "Patch 70 Ghoul card text: 'When your Glow is high, makes you immune to staggering attacks.' Stagger is not modelled; note only."
+    },
     "nerd-rage": {
       "id": "nerd-rage",
       "label": "Nerd Rage",

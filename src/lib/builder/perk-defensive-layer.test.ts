@@ -170,6 +170,87 @@ describe("calculateDefensiveProfile", () => {
     expect(noJunk.flat.dr).toBe(0);
   });
 
+  it("Iron Stomach adds 0..30 DR/ER by END (approximate) and is off while diseased", () => {
+    const cards = [{ cardId: "iron-stomach", rank: 1 }];
+    const end1 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 1 } });
+    expect(end1.flat.dr).toBe(0);
+    expect(end1.flat.er).toBe(0);
+    const end15 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 } });
+    expect(end15.flat.dr).toBe(30);
+    expect(end15.flat.er).toBe(30);
+    expect(end15.flat.fr).toBe(0);
+    expect(end15.notes.some((n) => n.startsWith("Iron Stomach (approx.)") && n.includes("END 15"))).toBe(true);
+    const end8 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 8 } });
+    expect(end8.flat.dr).toBe(15); // 0 + 30 * 7/14
+    const diseased = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 }, isDiseased: true });
+    expect(diseased.flat.dr).toBe(0);
+    expect(diseased.flat.er).toBe(0);
+    expect(diseased.notes).toContain("Iron Stomach is off while diseased");
+  });
+
+  it("Natural Resistance adds 0..30 fire/cryo/poison by END (approximate), never DR/ER/RR, off while diseased", () => {
+    const cards = [{ cardId: "natural-resistance", rank: 1 }];
+    const end1 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 1 } });
+    expect(end1.flat).toEqual({ dr: 0, er: 0, fr: 0, cr: 0, pr: 0, rr: 0 });
+    const end15 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 } });
+    expect(end15.flat).toEqual({ dr: 0, er: 0, fr: 30, cr: 30, pr: 30, rr: 0 });
+    expect(end15.notes.some((n) => n.startsWith("Natural Resistance (approx.)"))).toBe(true);
+    const diseased = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 }, isDiseased: true });
+    expect(diseased.flat.fr).toBe(0);
+    expect(diseased.flat.cr).toBe(0);
+    expect(diseased.flat.pr).toBe(0);
+    expect(diseased.notes).toContain("Natural Resistance is off while diseased");
+  });
+
+  it("Iron Stomach and Natural Resistance stack with Rad Resistant on the same END and reach the legacy flat layer", () => {
+    const cards = [
+      { cardId: "iron-stomach", rank: 1 },
+      { cardId: "natural-resistance", rank: 1 },
+      { cardId: "rad-resistant", rank: 1 },
+    ];
+    expect(calculatePerkDeckDefensiveLayer(cards, { isPowerArmor: false, special: { end: 15 } })).toEqual({
+      dr: 30,
+      er: 30,
+      fr: 30,
+      cr: 30,
+      pr: 30,
+      rr: 40,
+    });
+    expect(calculatePerkDeckDefensiveLayer(cards, { isPowerArmor: false, special: { end: 15 }, isDiseased: true })).toEqual({
+      dr: 0,
+      er: 0,
+      fr: 0,
+      cr: 0,
+      pr: 0,
+      rr: 40,
+    });
+  });
+
+  it("Adamantium Skeleton, Vaccinated, Sturdy Frame, Natural Stance and Brick Wall are note-only: a note each, no numbers", () => {
+    const p = calculateDefensiveProfile(
+      [
+        { cardId: "adamantium-skeleton", rank: 1 },
+        { cardId: "vaccinated", rank: 1 },
+        { cardId: "sturdy-frame", rank: 2 },
+        { cardId: "natural-stance", rank: 1 },
+        { cardId: "brick-wall", rank: 1 },
+      ],
+      { isPowerArmor: false, special: { end: 15 } },
+    );
+    expect(p.flat).toEqual({ dr: 0, er: 0, fr: 0, cr: 0, pr: 0, rr: 0 });
+    expect(p.reducers).toHaveLength(0);
+    expect(p.evadeChance).toBe(0);
+    expect(p.deflectChance).toBe(0);
+    expect(p.maxHpPct).toBe(0);
+    expect(p.notes).toHaveLength(5);
+    expect(p.notes.some((n) => n.startsWith("Adamantium Skeleton") && n.includes("30/60/100%"))).toBe(true);
+    expect(p.notes.some((n) => n.startsWith("Vaccinated") && n.includes("30/60/90%"))).toBe(true);
+    expect(p.notes.some((n) => n.startsWith("Sturdy Frame rank 2") && n.includes("50%"))).toBe(true);
+    expect(p.notes.some((n) => n.startsWith("Natural Stance") && n.includes("25%"))).toBe(true);
+    expect(p.notes.some((n) => n.startsWith("Brick Wall") && n.includes("Glow"))).toBe(true);
+    expect(p.notes.every((n) => n.includes("not modelled") || n.includes("no limb model") || n.includes("not a sheet stat"))).toBe(true);
+  });
+
   it("Blocker raises the 60% base block to 85% at rank 3 (+25); Nerd Rage grants no DR", () => {
     const p = calculateDefensiveProfile([{ cardId: "blocker", rank: 3 }, { cardId: "nerd-rage", rank: 1 }], { isPowerArmor: false });
     expect(p.blockPct).toBe(85);
@@ -264,5 +345,29 @@ describe("truth file", () => {
     expect(defensiveTruth.legendaryMods.cavaliers.pct).toBe(10);
     expect(defensiveTruth.legendaryMods.sentinels.pct).toBe(5);
     expect(defensiveTruth.powerArmorInnate.perPiecePct).toBe(0);
+  });
+
+  it("models the END defensive family from the Patch 70 card text and keeps the stagger / limb / disease cards note-only", () => {
+    for (const id of ["iron-stomach", "natural-resistance"] as const) {
+      expect(defensiveTruth.perks[id]).toMatchObject({
+        model: "special-scaled",
+        special: "end",
+        condition: "not-diseased",
+        min: 0,
+        max: 30,
+        confidence: "approximate",
+      });
+      expect(defensiveTruth.perks[id].source).toContain("while not diseased");
+    }
+    expect(defensiveTruth.perks["iron-stomach"].resists).toEqual(["dr", "er"]);
+    expect(defensiveTruth.perks["natural-resistance"].resists).toEqual(["fr", "cr", "pr"]);
+    for (const id of ["adamantium-skeleton", "vaccinated", "sturdy-frame", "natural-stance", "brick-wall"] as const) {
+      expect(defensiveTruth.perks[id].model).toBe("note-only");
+      expect("min" in defensiveTruth.perks[id]).toBe(false);
+    }
+    expect(defensiveTruth.perks["sturdy-frame"].values).toEqual([25, 50]);
+    expect(defensiveTruth.perks["natural-stance"].values).toEqual([25]);
+    expect(defensiveTruth.perks["adamantium-skeleton"].legacyValues).toEqual([30, 60, 100]);
+    expect(defensiveTruth.perks.vaccinated.legacyValues).toEqual([30, 60, 90]);
   });
 });
