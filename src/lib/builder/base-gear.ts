@@ -304,7 +304,7 @@ export function pairedPowerArmorHelmetId(torsoBaseId: string): string | null {
 
 export function isPowerArmorTorsoRowLearned(
   torsoPieceId: string,
-  learnedSet: Set<string>
+  learnedSet: ReadonlySet<string>
 ): boolean {
   if (!learnedSet.has(torsoPieceId)) return false;
   const helmId = pairedPowerArmorHelmetId(torsoPieceId);

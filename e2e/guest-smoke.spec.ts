@@ -108,6 +108,36 @@ test.describe("guest smoke", () => {
     await expect(page.getByRole("link", { name: "Change the weapon in the Gear tab" })).toBeVisible();
   });
 
+  test("gear tab: power armor mode removes underarmor and switching back restores the regular loadout", async ({ page }) => {
+    await page.goto("/build?tab=gear");
+    await expectPageSane(page);
+    const modeGroup = page.getByRole("group", { name: "Armor mode" });
+    await expect(modeGroup).toBeVisible({ timeout: 45_000 });
+    const regularBtn = modeGroup.getByRole("button", { name: /Regular armor$/ });
+    const paBtn = modeGroup.getByRole("button", { name: /Power armor$/ });
+    await expect(regularBtn).toHaveAttribute("aria-pressed", "true");
+
+    // Regular mode: an armor set is the frame and the underarmor controls exist.
+    const frameBefore = await page.getByRole("button", { name: /^Change armor set: / }).first().getAttribute("aria-label");
+    await expect(page.getByRole("button", { name: /^Change underarmor shell: / })).toBeVisible();
+
+    // Power armor: no armor-set or underarmor controls at all, a frame with a set badge instead.
+    await paBtn.click();
+    await expect(paBtn).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("button", { name: /^Change power armor frame: / })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Change armor set: / })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^Change underarmor shell: / })).toHaveCount(0);
+    await expect(page.getByText(/FULL SET 6\/6/)).toBeVisible();
+
+    // Back to regular armor: the same set is worn again.
+    await regularBtn.click();
+    await expect(regularBtn).toHaveAttribute("aria-pressed", "true");
+    const frameAfter = await page.getByRole("button", { name: /^Change armor set: / }).first().getAttribute("aria-label");
+    expect(frameAfter).toBe(frameBefore);
+    await expect(page.getByRole("button", { name: /^Change underarmor shell: / })).toBeVisible();
+    await expectPageSane(page);
+  });
+
   test("perks page can find Night Person via search and shows its effect text", async ({ page }) => {
     await page.goto("/perks");
 

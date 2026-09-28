@@ -10,9 +10,6 @@ import {
 } from "@/lib/builder/armor-sets";
 import { getPowerArmorMaxLevel } from "@/lib/builder/power-armor-frame-data";
 import {
-  defaultArmorPieceCrafting,
-} from "@/lib/builder/armor-piece-mods";
-import {
   BASE_GEAR_PIECES,
   formatBaseOptionLabel,
   getBaseGearPiece,
@@ -24,9 +21,20 @@ import {
 } from "@/lib/builder/compatibility";
 import {
   defaultPayload,
-  emptyArmorLegendaryGrid,
   normalizeBuilderPayload,
 } from "@/lib/builder/normalize-builder-payload";
+import {
+  applyChassisSelection,
+  applyPowerArmorSnapshot,
+  applyRegularSnapshot,
+  armorModeOf,
+  defaultChassisIdForMode,
+  snapshotPowerArmorLoadout,
+  snapshotRegularLoadout,
+  type ArmorMode,
+  type PowerArmorLoadoutSnapshot,
+  type RegularLoadoutSnapshot,
+} from "@/lib/builder/loadout-mode";
 import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
   type BuilderModDTO,
@@ -100,6 +108,9 @@ export interface UseBuilderPayloadResult {
   buffSpecial: ReturnType<typeof calculateAggregatedBuffSpecial>;
   selectActiveWeapon: (id: string) => void;
   setBase: (id: string) => void;
+  armorMode: ArmorMode;
+  setArmorMode: (mode: ArmorMode) => void;
+  completePowerArmorSet: () => void;
   setArmorCraftingField: (
     pieceIndex: number,
     field: "materialModId" | "miscModId",
@@ -520,6 +531,26 @@ export function useBuilderPayload({
     [activeWeaponId, mods, onClearPick],
   );
 
+  // Mode memory: the regular-armor and power-armor bays edit the same payload slots, so each
+  // mode's per-slot state is parked here while the other mode is active and restored on the way
+  // back. Component state only; the shared payload (schema v5) is unchanged.
+  const regularSnapshotRef = React.useRef<RegularLoadoutSnapshot | null>(null);
+  const powerArmorSnapshotRef = React.useRef<PowerArmorLoadoutSnapshot | null>(null);
+
+  const parkOutgoingMode = React.useCallback(
+    (p: BuilderPayload, nextMode: ArmorMode) => {
+      const current = getBaseGearPiece(activeChassisId);
+      const currentMode: ArmorMode = current ? armorModeOf(current) : "regular";
+      if (currentMode === nextMode) return;
+      if (currentMode === "regular") {
+        regularSnapshotRef.current = snapshotRegularLoadout(p, activeChassisId);
+      } else {
+        powerArmorSnapshotRef.current = snapshotPowerArmorLoadout(p, activeChassisId);
+      }
+    },
+    [activeChassisId],
+  );
+
   const setBase = React.useCallback(
     (id: string) => {
       const next = getBaseGearPiece(id);
@@ -528,24 +559,10 @@ export function useBuilderPayload({
         selectActiveWeapon(id);
       } else if (next.kind === "armor" || next.kind === "powerArmor") {
         setActiveChassisId(id);
-        const isNextPA = next.kind === "powerArmor";
-        setPayload((p) => ({
-          ...p,
-          basePieceId: id,
-          equipmentKind: next.kind,
-          armorLegendaryModIds:
-            p.armorLegendaryModIds.length === (isNextPA ? 6 : 5)
-              ? p.armorLegendaryModIds
-              : emptyArmorLegendaryGrid(isNextPA),
-          armorPieceCrafting:
-            p.armorPieceCrafting.length === (isNextPA ? 6 : 5)
-              ? p.armorPieceCrafting
-              : defaultArmorPieceCrafting(isNextPA),
-          powerArmorHelmetId: isNextPA ? p.powerArmorHelmetId : null,
-          powerArmorPiecesEquipped: isNextPA
-            ? p.powerArmorPiecesEquipped
-            : DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
-        }));
+        setPayload((p) => {
+          parkOutgoingMode(p, armorModeOf(next));
+          return applyChassisSelection(p, next);
+        });
       } else if (next.kind === "underarmor") {
         if (next.defaultUnderarmorShellId) {
           setPayload((p) => ({
@@ -559,8 +576,47 @@ export function useBuilderPayload({
       }
       onClearPick?.();
     },
-    [selectActiveWeapon, onClearPick],
+    [selectActiveWeapon, onClearPick, parkOutgoingMode],
   );
+
+  const armorMode: ArmorMode = armorModeOf(activeChassisPiece);
+
+  /** Switch between regular armor and power armor, restoring that mode's parked loadout. */
+  const setArmorMode = React.useCallback(
+    (mode: ArmorMode) => {
+      if (mode === armorMode) return;
+      const snap =
+        mode === "regular" ? regularSnapshotRef.current : powerArmorSnapshotRef.current;
+      const targetId =
+        (mode === "regular"
+          ? (snap as RegularLoadoutSnapshot | null)?.chassisId
+          : (snap as PowerArmorLoadoutSnapshot | null)?.frameId) ??
+        defaultChassisIdForMode(mode);
+      const target = getBaseGearPiece(targetId) ?? getBaseGearPiece(defaultChassisIdForMode(mode))!;
+      setActiveChassisId(target.id);
+      setPayload((p) => {
+        parkOutgoingMode(p, mode);
+        if (mode === "regular") {
+          return regularSnapshotRef.current
+            ? applyRegularSnapshot(p, regularSnapshotRef.current)
+            : applyChassisSelection(p, target);
+        }
+        return powerArmorSnapshotRef.current
+          ? applyPowerArmorSnapshot(p, powerArmorSnapshotRef.current)
+          : applyChassisSelection(p, target);
+      });
+      onClearPick?.();
+    },
+    [armorMode, parkOutgoingMode, onClearPick],
+  );
+
+  /** Fill every power armor attach point (N&D's "add missing pieces"). */
+  const completePowerArmorSet = React.useCallback(() => {
+    setPayload((p) => ({
+      ...p,
+      powerArmorPiecesEquipped: DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
+    }));
+  }, []);
 
   const setArmorCraftingField = React.useCallback(
     (
@@ -733,6 +789,9 @@ export function useBuilderPayload({
     buffSpecial,
     selectActiveWeapon,
     setBase,
+    armorMode,
+    setArmorMode,
+    completePowerArmorSet,
     setArmorCraftingField,
     clearPiece,
     setWeaponInnateSlot,

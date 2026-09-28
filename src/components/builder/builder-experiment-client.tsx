@@ -31,6 +31,9 @@ import DiagnosticsHudColumn from "@/components/builder/tabs/gear/diagnostics-hud
 import ChassisBayColumn from "@/components/builder/tabs/gear/chassis-bay-column";
 import AuxLogisticsColumn from "@/components/builder/tabs/gear/aux-logistics-column";
 import ArmoryMatrixSection from "@/components/builder/tabs/gear/armory-matrix-section";
+import GearPickerDialog from "@/components/builder/gear-picker-dialog";
+import { underarmorBasePieceIdForShell } from "@/lib/builder/loadout-mode";
+import type { BuilderEquipmentKind } from "@/lib/builder/types";
 import { useBuilderModCatalog } from "@/components/builder/hooks/use-builder-mod-catalog";
 import { useBuilderTotals } from "@/components/builder/hooks/use-builder-totals";
 import { useLegendaryBench } from "@/components/builder/hooks/use-legendary-bench";
@@ -146,7 +149,6 @@ export default function BuilderExperimentClient({
     setIsNdImportOpen,
     importedBuildForPerkBuilder,
     piece,
-    pieceMaxLevel,
     activeWeaponPiece,
     activeWeaponAttachments,
     activeChassisPiece,
@@ -154,8 +156,10 @@ export default function BuilderExperimentClient({
     isMultiPiece,
     baseStarsContextLabel,
     buffSpecial,
-    selectActiveWeapon,
     setBase,
+    armorMode,
+    setArmorMode,
+    completePowerArmorSet,
     setArmorCraftingField,
     clearPiece,
     setWeaponInnateSlot,
@@ -175,6 +179,16 @@ export default function BuilderExperimentClient({
   const [weaponSubMenu, setWeaponSubMenu] = React.useState<"attachments" | "stars" | "matrix">("attachments");
   const isCompactDensity = useDensityCompact();
   const [isComparisonOpen, setIsComparisonOpen] = React.useState(false);
+  // Scoped gear picker (one category at a time), opened from the Chassis Bay.
+  const [pickerKind, setPickerKind] = React.useState<BuilderEquipmentKind | null>(null);
+  const pickerOpenerRef = React.useRef<HTMLElement | null>(null);
+  const openPicker = React.useCallback((kind: BuilderEquipmentKind) => {
+    pickerOpenerRef.current =
+      typeof document !== "undefined" && document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    setPickerKind(kind);
+  }, []);
 
   const {
     showBetaPrompt,
@@ -207,13 +221,27 @@ export default function BuilderExperimentClient({
     learnedBasePieceIds,
     learnedToggleError,
     pendingLearnedPieceId,
-    currentBaseLearned,
     toggleLearnedBasePiece,
   } = useLearnedBasePieces({
     initialLearnedBasePieceIds,
     isSignedIn,
     piece,
   });
+
+  const inBayIds = React.useMemo(() => {
+    const ids = new Set<string>([activeChassisPiece.id, activeWeaponPiece.id]);
+    const shellRow = isPA ? null : underarmorBasePieceIdForShell(payload.underarmor.shellId);
+    if (shellRow) ids.add(shellRow);
+    return ids;
+  }, [activeChassisPiece.id, activeWeaponPiece.id, isPA, payload.underarmor.shellId]);
+
+  // The chassis decides the armor mode; the Biometrics switchboard's own flag mirrors it so the
+  // stance engine and the Gear tab never disagree about being in power armor.
+  React.useEffect(() => {
+    setSwitchboardState((prev) =>
+      prev && prev.inPowerArmor !== isPA ? { ...prev, inPowerArmor: isPA } : prev,
+    );
+  }, [isPA, setSwitchboardState]);
 
 
   const {
@@ -786,6 +814,8 @@ export default function BuilderExperimentClient({
         activeTacticalTags={[...stanceAndBiometricsLayer.activeTacticalTags, ...getArmorSetBonusTags(payload.armorPieceSetKeys)]}
         defensiveProfile={defensiveProfile}
         playerResists={{ dr: totals.dr, er: totals.er }}
+        armorModeIsPA={isPA}
+        onArmorModeChange={(nextPA) => setArmorMode(nextPA ? "powerArmor" : "regular")}
       />
 
 
@@ -795,9 +825,20 @@ export default function BuilderExperimentClient({
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}
       <div className={cn("space-y-6 animate-in fade-in duration-200", masterTab === "gear" ? "block" : "hidden")}>
           {/* Three Pane Responsive Tactical Grid */}
-          <div className="grid gap-6 xl:grid-cols-[280px_1fr_325px] lg:grid-cols-[250px_1fr_280px] grid-cols-1">
+          {/* Grid areas: phones stack HUD → Bay → presets; from lg the presets sit under the HUD
+              beside a wide Bay; only from 2xl (1536 px, room for the sidebar too) do all three
+              stand side by side. minmax(0,1fr) lets the Bay shrink, so the page never scrolls
+              sideways (it did at 1280 px). */}
+          <div
+            className={cn(
+              "grid gap-6 grid-cols-1 min-w-0 lg:items-start",
+              "lg:grid-cols-[250px_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:[grid-template-areas:'hud_bay'_'aux_bay']",
+              "2xl:grid-cols-[280px_minmax(0,1fr)_325px] 2xl:grid-rows-[auto] 2xl:[grid-template-areas:'hud_bay_aux']",
+            )}
+          >
         
         {/* COLUMN 1: DIAGNOSTICS HUD */}
+        <div className="min-w-0 lg:[grid-area:hud]">
         <DiagnosticsHudColumn
           payload={payload}
           setPayload={setPayload}
@@ -810,8 +851,10 @@ export default function BuilderExperimentClient({
           mods={mods}
           piece={piece}
         />
+        </div>
 
         {/* COLUMN 2: CENTER PANEL - REPAIR BAY SILHOUETTE & FULL LOADOUT COMPILATION */}
+        <div className="min-w-0 lg:[grid-area:bay]">
         <ChassisBayColumn
           payload={payload}
           setPayload={setPayload}
@@ -825,7 +868,14 @@ export default function BuilderExperimentClient({
           localProgress={localProgress}
           weaponSubMenu={weaponSubMenu}
           setWeaponSubMenu={setWeaponSubMenu}
-          selectActiveWeapon={selectActiveWeapon}
+          armorMode={armorMode}
+          setArmorMode={setArmorMode}
+          openPicker={openPicker}
+          completePowerArmorSet={completePowerArmorSet}
+          totals={totals}
+          groupedLegendaryEffects={groupedLegendaryEffects}
+          shopping={shopping}
+          setIsComparisonOpen={setIsComparisonOpen}
           setWeaponInnateSlot={setWeaponInnateSlot}
           clearPiece={clearPiece}
           setArmorCraftingField={setArmorCraftingField}
@@ -833,8 +883,10 @@ export default function BuilderExperimentClient({
           setActivePick={setActivePick}
           readOnly={readOnly}
         />
+        </div>
 
         {/* COLUMN 3: AUX LOGISTICS & PRESETS */}
+        <div className="min-w-0 lg:[grid-area:aux]">
         <AuxLogisticsColumn
           readOnly={readOnly}
           activeLoadoutIndex={activeLoadoutIndex}
@@ -846,33 +898,34 @@ export default function BuilderExperimentClient({
           undoClear={undoClear}
           shopping={shopping}
         />
+        </div>
 
       </div>
 
       {/* BOTTOM SECTION: Tactile Armory Station & Aux Base Picker */}
       <ArmoryMatrixSection
         payload={payload}
-        setPayload={setPayload}
-        setBase={setBase}
         activeChassisPiece={activeChassisPiece}
         activeWeaponPiece={activeWeaponPiece}
-        piece={piece}
         isPA={isPA}
-        pieceMaxLevel={pieceMaxLevel}
         learnedBasePieceIds={learnedBasePieceIds}
-        totals={totals}
-        groupedLegendaryEffects={groupedLegendaryEffects}
-        mods={mods}
-        shopping={shopping}
-        setIsComparisonOpen={setIsComparisonOpen}
-        currentBaseLearned={currentBaseLearned}
         isSignedIn={isSignedIn}
         pendingLearnedPieceId={pendingLearnedPieceId}
-        readOnly={readOnly}
         toggleLearnedBasePiece={toggleLearnedBasePiece}
         learnedToggleError={learnedToggleError}
       />
     </div>
+
+      {/* Scoped gear picker (weapon / armor set / power armor frame / underarmor shell) */}
+      <GearPickerDialog
+        kind={pickerKind}
+        onClose={() => setPickerKind(null)}
+        onPick={setBase}
+        inBayIds={inBayIds}
+        learnedBasePieceIds={learnedBasePieceIds}
+        isCompactDensity={isCompactDensity}
+        returnFocusRef={pickerOpenerRef}
+      />
 
       {/* Dialog Overlay Mod Picker with customized Fallout styling */}
       <LegendaryModPickerDialog

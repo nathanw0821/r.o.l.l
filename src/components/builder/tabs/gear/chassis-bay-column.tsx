@@ -1,9 +1,16 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Check } from "lucide-react";
+import { Check, Sparkle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import RollHelperTooltip from "@/components/roll-helper-tooltip";
+import { exportBuilderLoadoutCard } from "@/components/builder/builder-card-exporter";
+import { cleanGearLabel } from "@/components/builder/builder-gear-selector";
+import { getEquipmentSynergies } from "@/lib/builder/synergy-engine";
+import { getSortedMutationLabels } from "@/lib/builder/sandbox-mutations";
+import { ARMOR_MODE_LABEL, powerArmorSetCompletion, type ArmorMode } from "@/lib/builder/loadout-mode";
 import { cn } from "@/lib/utils";
 import { ARMOR_SET_ROWS, getArmorSetMaxLevel } from "@/lib/builder/armor-sets";
 import { getPowerArmorMaxLevel } from "@/lib/builder/power-armor-frame-data";
@@ -11,10 +18,7 @@ import {
   ARMOR_MATERIAL_MODS,
   listArmorMiscModOptions,
 } from "@/lib/builder/armor-piece-mods";
-import {
-  getGroupedWeaponCategories,
-  type BaseGearPiece,
-} from "@/lib/builder/base-gear";
+import type { BaseGearPiece } from "@/lib/builder/base-gear";
 import {
   getWeaponMaxLevel,
   type CombatFirepowerResult,
@@ -38,8 +42,11 @@ import {
 } from "@/lib/builder/weapon-piece-mods";
 import { resolveUniqueForBuilderId } from "@/lib/truth/unique-items";
 import LinkifiedText from "@/components/linkified-text";
-import type { BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
+import type { BuilderEquipmentKind, BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
+import type { BuilderEffectTotals } from "@/lib/builder/compatibility";
 import type { LocalProgressMap } from "@/components/use-local-progress";
+import type { UseBuilderTotalsResult } from "@/components/builder/hooks/use-builder-totals";
+import type { AuxLogisticsShoppingList } from "@/components/builder/tabs/gear/aux-logistics-column";
 
 export interface ChassisBayColumnProps {
   payload: BuilderPayload;
@@ -54,7 +61,16 @@ export interface ChassisBayColumnProps {
   localProgress: LocalProgressMap;
   weaponSubMenu: "attachments" | "stars" | "matrix";
   setWeaponSubMenu: React.Dispatch<React.SetStateAction<"attachments" | "stars" | "matrix">>;
-  selectActiveWeapon: (weaponId: string) => void;
+  /** Regular armor or power armor; the switch lives in this column's header. */
+  armorMode: ArmorMode;
+  setArmorMode: (mode: ArmorMode) => void;
+  /** Opens the scoped gear picker for one category (the only equip path per slot). */
+  openPicker: (kind: BuilderEquipmentKind) => void;
+  completePowerArmorSet: () => void;
+  totals: BuilderEffectTotals;
+  groupedLegendaryEffects: UseBuilderTotalsResult["groupedLegendaryEffects"];
+  shopping: AuxLogisticsShoppingList;
+  setIsComparisonOpen: (open: boolean) => void;
   setWeaponInnateSlot: (slot: WeaponInnateSlotKey, modId: string) => void;
   clearPiece: (payloadIndex: number) => void;
   setArmorCraftingField: (
@@ -84,7 +100,14 @@ export default function ChassisBayColumn({
   localProgress,
   weaponSubMenu,
   setWeaponSubMenu,
-  selectActiveWeapon,
+  armorMode,
+  setArmorMode,
+  openPicker,
+  completePowerArmorSet,
+  totals,
+  groupedLegendaryEffects,
+  shopping,
+  setIsComparisonOpen,
   setWeaponInnateSlot,
   clearPiece,
   setArmorCraftingField,
@@ -92,8 +115,22 @@ export default function ChassisBayColumn({
   setActivePick,
   readOnly,
 }: ChassisBayColumnProps) {
-  const groupedWeaponCategories = React.useMemo(() => getGroupedWeaponCategories(), []);
   const pathname = usePathname();
+  const frameMaxLevel = isPA
+    ? getPowerArmorMaxLevel(activeChassisPiece.id)
+    : getArmorSetMaxLevel(activeChassisPiece.armorSetKey || activeChassisPiece.id);
+  const paCompletion = powerArmorSetCompletion(payload);
+  const weaponSynergies = React.useMemo(
+    () => getEquipmentSynergies(activeWeaponPiece.id),
+    [activeWeaponPiece.id],
+  );
+  const shellLabel =
+    findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label ?? "Underarmor";
+  const liningLabel =
+    findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label ?? "No lining";
+  const styleLabel =
+    findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId)?.label ?? "No style";
+  const guideHref = (label: string) => `/wiki?q=${encodeURIComponent(cleanGearLabel(label))}`;
   // Named unique in the weapon bay: its innate text is read-only reference copy.
   const activeWeaponUnique = React.useMemo(
     () => resolveUniqueForBuilderId(activeWeaponPiece.id),
@@ -117,7 +154,7 @@ export default function ChassisBayColumn({
         : null;
     const misc =
       craft?.miscModId && craft.miscModId !== "none" && payloadIndex !== null
-        ? listArmorMiscModOptions(piece.armorSetKey ?? null, payloadIndex, { powerArmor: isPA }).find(
+        ? listArmorMiscModOptions(activeChassisPiece.armorSetKey ?? null, payloadIndex, { powerArmor: isPA }).find(
             (m) => m.id === craft.miscModId,
           )?.label
         : null;
@@ -125,7 +162,7 @@ export default function ChassisBayColumn({
     return (
       <div
         className={cn(
-          "pip-terminal-panel w-full p-2.5 rounded-lg border text-left transition-all duration-200 group relative flex flex-col justify-between font-mono",
+          "pip-terminal-panel w-full min-w-0 p-2.5 rounded-lg border text-left transition-all duration-200 group relative flex flex-col justify-between font-mono",
           isEquipped
             ? "border-accent/40 bg-accent/[0.02] shadow-[0_0_8px_color-mix(in_srgb,var(--color-accent)_10%,transparent)]"
             : "border-border/15 opacity-35 bg-background/10 hover:opacity-60 hover:border-border/30",
@@ -171,7 +208,7 @@ export default function ChassisBayColumn({
                     (r) =>
                       r.key ===
                       (payload.armorPieceSetKeys?.[payloadIndex] ||
-                        piece.armorSetKey ||
+                        activeChassisPiece.armorSetKey ||
                         "civil-engineer"),
                   )?.label || "Armor Piece"}
                 </div>
@@ -181,16 +218,16 @@ export default function ChassisBayColumn({
                   className="w-full text-2xs bg-background/90 border border-border/40 rounded px-1 py-0.5 font-mono uppercase text-accent font-bold cursor-pointer hover:border-accent"
                   value={
                     payload.armorPieceSetKeys?.[payloadIndex] ||
-                    piece.armorSetKey ||
+                    activeChassisPiece.armorSetKey ||
                     "civil-engineer"
                   }
                   onChange={(e) => {
                     const currentKeys = payload.armorPieceSetKeys || [
-                      piece.armorSetKey || "civil-engineer",
-                      piece.armorSetKey || "civil-engineer",
-                      piece.armorSetKey || "civil-engineer",
-                      piece.armorSetKey || "civil-engineer",
-                      piece.armorSetKey || "civil-engineer",
+                      activeChassisPiece.armorSetKey || "civil-engineer",
+                      activeChassisPiece.armorSetKey || "civil-engineer",
+                      activeChassisPiece.armorSetKey || "civil-engineer",
+                      activeChassisPiece.armorSetKey || "civil-engineer",
+                      activeChassisPiece.armorSetKey || "civil-engineer",
                     ];
                     const nextKeys = [...currentKeys];
                     nextKeys[payloadIndex] = e.target.value;
@@ -248,7 +285,7 @@ export default function ChassisBayColumn({
                       setArmorCraftingField(payloadIndex, "miscModId", e.target.value)
                     }
                   >
-                    {listArmorMiscModOptions(piece.armorSetKey ?? null, payloadIndex, {
+                    {listArmorMiscModOptions(activeChassisPiece.armorSetKey ?? null, payloadIndex, {
                       powerArmor: isPA,
                     }).map((o) => (
                       <option key={o.id} value={o.id}>
@@ -329,25 +366,95 @@ export default function ChassisBayColumn({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 min-w-0">
       {/* Interactive Silhouette Repair Frame / Chassis Bay schematic */}
       <div className="pip-terminal-panel p-4 rounded-xl space-y-4 font-mono relative min-h-[500px] flex flex-col justify-between">
         <div className="crt-scanline" />
 
         <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-accent border-b border-border/20 pb-2 relative z-10">
           <span>[ Chassis Bay schematic ]</span>
-          <span className="text-2xs text-foreground/40 font-normal flex items-center gap-1.5">
-            <span>Active frame: {activeChassisPiece.label}</span>
-            {activeChassisPiece.kind === "powerArmor" ? (
-              <span className="text-3xs px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
-                LVL {getPowerArmorMaxLevel(activeChassisPiece.id)} (MAX)
-              </span>
-            ) : (
-              <span className="text-3xs px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
-                LVL {getArmorSetMaxLevel(activeChassisPiece.armorSetKey || activeChassisPiece.id)} (MAX)
+          <div
+            role="group"
+            aria-label="Armor mode"
+            className="flex items-center gap-1 rounded-lg border border-border/30 bg-background/40 p-0.5"
+          >
+            {(["regular", "powerArmor"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                aria-pressed={armorMode === mode}
+                disabled={readOnly}
+                onClick={() => setArmorMode(mode)}
+                className={cn(
+                  "min-h-7 touch:min-h-11 px-2.5 rounded text-2xs font-black uppercase tracking-wider transition-all",
+                  armorMode === mode
+                    ? mode === "powerArmor"
+                      ? "bg-amber-500 text-slate-950"
+                      : "bg-accent text-accent-foreground"
+                    : "text-foreground/50 hover:text-foreground disabled:opacity-60",
+                )}
+              >
+                {mode === "powerArmor" ? "🦾 " : "🛡️ "}
+                {ARMOR_MODE_LABEL[mode]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Active frame row: the only place the chassis changes */}
+        <div className="flex flex-wrap items-center justify-between gap-2 relative z-10 rounded-lg border border-accent/30 bg-background/30 px-3 py-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-base" aria-hidden="true">
+              {isPA ? "🦾" : "🛡️"}
+            </span>
+            <div className="min-w-0">
+              <div className="text-xs font-black uppercase tracking-wider text-accent truncate">
+                {cleanGearLabel(activeChassisPiece.label)}
+              </div>
+              <div className="text-3xs text-foreground/45 uppercase truncate">
+                {isPA ? "Power armor frame" : "5-piece armor set"} · LVL {frameMaxLevel} (MAX)
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+            {isPA && (
+              <span
+                className={cn(
+                  "text-3xs px-1.5 py-0.5 rounded border font-bold tracking-wider",
+                  paCompletion.equipped === paCompletion.total
+                    ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
+                    : "bg-amber-500/15 border-amber-500/40 text-amber-300",
+                )}
+              >
+                {paCompletion.equipped === paCompletion.total
+                  ? "FULL SET 6/6"
+                  : `PARTIAL ${paCompletion.equipped}/6`}
               </span>
             )}
-          </span>
+            {isPA && paCompletion.equipped < paCompletion.total && !readOnly && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-7 touch:h-11 text-2xs font-mono uppercase font-bold text-amber-300 border-amber-500/40 hover:border-amber-400 hover:bg-amber-500/10"
+                onClick={completePowerArmorSet}
+              >
+                Complete set
+              </Button>
+            )}
+            {!readOnly && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-7 touch:h-11 text-2xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
+                aria-label={`Change ${isPA ? "power armor frame" : "armor set"}: ${cleanGearLabel(activeChassisPiece.label)}`}
+                onClick={() => openPicker(isPA ? "powerArmor" : "armor")}
+              >
+                Change {isPA ? "frame" : "set"}
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="space-y-3 relative z-10">
@@ -365,39 +472,18 @@ export default function ChassisBayColumn({
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {readOnly ? (
-                  <span className="h-7 flex items-center text-xs font-mono bg-slate-950 border border-amber-500/40 text-amber-300 rounded px-2.5 max-w-[170px] sm:max-w-[240px] truncate shadow-inner font-bold">
-                    {activeWeaponPiece.label}
-                  </span>
-                ) : (
-                  <select
-                    value={activeWeaponPiece.id}
-                    onChange={(e) => selectActiveWeapon(e.target.value)}
-                    className="h-7 text-xs font-mono bg-slate-950 border border-amber-500/40 text-amber-300 rounded px-2 focus:ring-1 focus:ring-accent outline-none cursor-pointer max-w-[170px] sm:max-w-[240px] truncate shadow-inner"
-                    title="Switch Active Weapon Chassis"
+              <div className="flex flex-wrap items-center justify-end gap-1.5 shrink-0 max-w-[60%]">
+                {!readOnly && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-7 touch:h-11 text-2xs font-mono uppercase font-bold text-amber-300 border-amber-500/40 hover:border-amber-400 hover:bg-amber-500/10"
+                    aria-label={`Change weapon: ${activeWeaponPiece.label}`}
+                    onClick={() => openPicker("weapon")}
                   >
-                    {groupedWeaponCategories.map((group) => (
-                      <optgroup
-                        key={group.categoryKey}
-                        label={`── ${group.categoryLabel.toUpperCase()} ──`}
-                        className="bg-slate-950 text-emerald-400 font-bold"
-                      >
-                        {group.options.map((opt) => (
-                          <option
-                            key={opt.id}
-                            value={opt.id}
-                            className={cn(
-                              "bg-slate-900 text-slate-100",
-                              opt.isVariant && "text-amber-200",
-                            )}
-                          >
-                            {opt.isVariant ? `\u00A0\u00A0↳ ${opt.label}` : opt.label}
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
+                    Change weapon
+                  </Button>
                 )}
                 <span className="text-3xs px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-bold tracking-wider">
                   LVL {getWeaponMaxLevel(activeWeaponPiece.id)} (MAX)
@@ -406,6 +492,21 @@ export default function ChassisBayColumn({
                   ACTIVE WEAPON
                 </span>
               </div>
+            </div>
+
+            {/* Synergy hints for the readied weapon */}
+            <div className="flex flex-wrap items-center gap-1.5 text-2xs font-mono">
+              <span className="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                <Sparkle className="h-3 w-3" aria-hidden="true" />
+                Synergies
+              </span>
+              {weaponSynergies.map((syn) => (
+                <RollHelperTooltip key={syn.id} title={syn.name} kind="perk" cardId={syn.id}>
+                  <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold">
+                    {syn.name} ({syn.boostLabel})
+                  </span>
+                </RollHelperTooltip>
+              ))}
             </div>
 
             {/* UNIQUE INNATE EFFECT (read-only reference from the Patch 70 truth pack) */}
@@ -858,19 +959,19 @@ export default function ChassisBayColumn({
             <div className="w-full max-w-lg grid grid-cols-3 gap-2.5 relative z-10">
               {/* Row 1: Helmet (Center) */}
               <div className="col-span-3 flex justify-center mb-1.5">
-                <div className="w-1/2 min-w-[130px]">
+                <div className="w-1/2 min-w-0">
                   {renderGearSlotCard("helmet", isPA ? "PA Helmet" : "Helmet", isPA ? 0 : null)}
                 </div>
               </div>
 
               {/* Row 2: Left Arm, Torso, Right Arm */}
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center min-w-0">
                 {renderGearSlotCard("leftArm", "Left Arm", isPA ? 2 : 1)}
               </div>
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center min-w-0">
                 {renderGearSlotCard("torso", "Torso Chassis", isPA ? 1 : 0)}
               </div>
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center min-w-0">
                 {renderGearSlotCard("rightArm", "Right Arm", isPA ? 3 : 2)}
               </div>
 
@@ -890,48 +991,150 @@ export default function ChassisBayColumn({
             </div>
           </div>
 
-          {/* SECTION C: ACTIVE UNDERARMOR SUBSYSTEM STATUS CHIP */}
-          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-2xs">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-sm">👕</span>
-              <div className="min-w-0">
-                <div className="font-bold text-slate-200 truncate">
-                  {findUnderarmorOption(UNDERARMOR_SHELLS, payload.underarmor.shellId)?.label ||
-                    "Underarmor"}
-                </div>
-                <div className="text-3xs text-slate-400 truncate">
-                  Lining:{" "}
-                  <span className="text-cyan-300 font-bold">
-                    {findUnderarmorOption(UNDERARMOR_LININGS, payload.underarmor.liningId)?.label
-                      ?.split("(")[0]
-                      ?.trim() || "None"}
-                  </span>{" "}
-                  · Style:{" "}
-                  <span className="text-amber-300 font-bold">
-                    {findUnderarmorOption(UNDERARMOR_STYLES, payload.underarmor.styleId)?.label
-                      ?.split("(")[0]
-                      ?.trim() || "None"}
+          {/* SECTION C: UNDERARMOR (regular armor only; power armor removes it) */}
+          {!isPA && (
+            <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 space-y-2 font-mono text-2xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-sm" aria-hidden="true">
+                    👕
                   </span>
+                  <div className="min-w-0">
+                    <div className="font-bold text-slate-200 truncate">{shellLabel}</div>
+                    <div className="text-3xs text-slate-400 truncate">
+                      Underarmor · lining sets resistances, style sets S.P.E.C.I.A.L.
+                    </div>
+                  </div>
                 </div>
+                {!readOnly && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-7 touch:h-11 text-2xs font-mono uppercase font-bold text-slate-200 border-slate-700 hover:border-slate-500 hover:bg-slate-800"
+                    aria-label={`Change underarmor shell: ${shellLabel}`}
+                    onClick={() => openPicker("underarmor")}
+                  >
+                    Change shell
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <label className="flex flex-col gap-1">
+                  <span className="text-3xs uppercase tracking-wider text-cyan-300 font-bold">
+                    Lining (resistances)
+                  </span>
+                  {readOnly ? (
+                    <span className="min-h-8 flex items-center rounded bg-slate-950 border border-slate-800 px-2 text-xs text-slate-200 truncate">
+                      {liningLabel}
+                    </span>
+                  ) : (
+                    <select
+                      className="w-full min-h-8 touch:min-h-11 rounded bg-slate-950 border border-slate-800 px-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-400"
+                      value={payload.underarmor.liningId ?? "none"}
+                      onChange={(e) =>
+                        setPayload((p) => ({
+                          ...p,
+                          underarmor: {
+                            ...p.underarmor,
+                            liningId: e.target.value === "none" ? null : e.target.value,
+                          },
+                        }))
+                      }
+                    >
+                      {UNDERARMOR_LININGS.map((o) => (
+                        <option key={o.id} value={o.id} className="bg-slate-950 text-slate-200">
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="text-3xs uppercase tracking-wider text-amber-300 font-bold">
+                    Style (S.P.E.C.I.A.L.)
+                  </span>
+                  {readOnly ? (
+                    <span className="min-h-8 flex items-center rounded bg-slate-950 border border-slate-800 px-2 text-xs text-slate-200 truncate">
+                      {styleLabel}
+                    </span>
+                  ) : (
+                    <select
+                      className="w-full min-h-8 touch:min-h-11 rounded bg-slate-950 border border-slate-800 px-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-amber-400"
+                      value={payload.underarmor.styleId ?? "none"}
+                      onChange={(e) =>
+                        setPayload((p) => ({
+                          ...p,
+                          underarmor: {
+                            ...p.underarmor,
+                            styleId: e.target.value === "none" ? null : e.target.value,
+                          },
+                        }))
+                      }
+                    >
+                      {UNDERARMOR_STYLES.map((o) => (
+                        <option key={o.id} value={o.id} className="bg-slate-950 text-slate-200">
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </label>
               </div>
             </div>
-
-            <div className="shrink-0">
-              {isPA ? (
-                <span className="text-3xs px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-500/30 font-bold">
-                  ⚠️ SUPPRESSED IN PA
-                </span>
-              ) : (
-                <span className="text-3xs px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 font-bold">
-                  ✓ ACTIVE WITH ARMOR
-                </span>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
-        <div className="text-2xs text-foreground/30 uppercase tracking-widest leading-relaxed border-t border-border/10 pt-2 text-center mt-2">
-          Telemetric calculations updated instant client-side. Cloudflare 0ms CPU load.
+        {/* Loadout actions */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-border/10 pt-3 mt-2 relative z-10 min-w-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-9 touch:h-11 text-xs font-mono uppercase font-bold text-accent border-accent/40 hover:border-accent hover:bg-accent/10"
+            onClick={() =>
+              exportBuilderLoadoutCard({
+                piece,
+                payload,
+                totals,
+                groupedEffects: groupedLegendaryEffects,
+                modRows: mods,
+                shoppingLines: shopping.lines,
+                underarmorLabels: {
+                  shell: isPA ? "Removed (power armor)" : shellLabel,
+                  lining: isPA ? "Removed (power armor)" : liningLabel,
+                  style: isPA ? "Removed (power armor)" : styleLabel,
+                },
+                mutationSummary:
+                  payload.mutationIds.length > 0
+                    ? getSortedMutationLabels(payload.mutationIds).join(" · ")
+                    : null,
+              })
+            }
+          >
+            Export card (PNG)
+          </Button>
+          <Link
+            href={guideHref(activeChassisPiece.label)}
+            className="h-9 touch:h-11 flex items-center justify-center gap-1.5 text-xs font-mono uppercase font-bold text-amber-400 border border-amber-500/40 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 rounded px-2 transition-all"
+          >
+            📖 {isPA ? "Frame" : "Armor"} guide ↗
+          </Link>
+          <Link
+            href={guideHref(activeWeaponPiece.label)}
+            className="h-9 touch:h-11 flex items-center justify-center gap-1.5 text-xs font-mono uppercase font-bold text-amber-400 border border-amber-500/40 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 rounded px-2 transition-all"
+          >
+            📖 Weapon guide ↗
+          </Link>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-9 touch:h-11 text-xs font-mono uppercase font-bold text-cyan-400 border-cyan-500/40 hover:border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20"
+            onClick={() => setIsComparisonOpen(true)}
+          >
+            📊 Gear &amp; PA comparison
+          </Button>
         </div>
       </div>
     </div>

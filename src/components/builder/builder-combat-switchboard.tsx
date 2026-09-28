@@ -196,6 +196,13 @@ interface BuilderCombatSwitchboardProps {
   onSpeciesChange?: (isGhoul: boolean) => void;
   activeMutations?: string[];
   onMutationsChange?: (mutations: string[]) => void;
+  /**
+   * Armor mode owned by the Gear tab (derived from the equipped chassis). When given, the
+   * "Armor frame" button mirrors it and asks the Gear tab to switch instead of flipping the
+   * switchboard's own flag, so both tabs always agree.
+   */
+  armorModeIsPA?: boolean;
+  onArmorModeChange?: (isPA: boolean) => void;
   hasStrangeInNumbers?: boolean;
   onStrangeInNumbersChange?: (enabled: boolean) => void;
   ignoreMutationPenalties?: boolean;
@@ -215,6 +222,8 @@ export default function BuilderCombatSwitchboard({
   isGhoul = false,
   onSpeciesChange,
   activeMutations = [],
+  armorModeIsPA,
+  onArmorModeChange,
   hasStrangeInNumbers = false,
   onStrangeInNumbersChange,
   onStateChange,
@@ -610,14 +619,22 @@ export default function BuilderCombatSwitchboard({
               <span className="text-xs text-slate-400 font-bold uppercase">Armor Frame:</span>
               <button
                 type="button"
-                onClick={() => updateField("inPowerArmor", !switchboard.inPowerArmor)}
+                aria-pressed={armorModeIsPA ?? switchboard.inPowerArmor}
+                onClick={() => {
+                  const nextPA = !(armorModeIsPA ?? switchboard.inPowerArmor);
+                  if (onArmorModeChange) {
+                    onArmorModeChange(nextPA);
+                  } else {
+                    updateField("inPowerArmor", nextPA);
+                  }
+                }}
                 className={`text-xs px-3 py-1 rounded font-bold uppercase tracking-wider transition-all border cursor-pointer ${
-                  switchboard.inPowerArmor
+                  (armorModeIsPA ?? switchboard.inPowerArmor)
                     ? "bg-amber-500 text-slate-950 border-amber-400 font-black"
                     : "bg-slate-800 text-slate-200 border-slate-700"
                 }`}
               >
-                {switchboard.inPowerArmor ? "🦾 POWER ARMOR" : "🛡️ REGULAR ARMOR"}
+                {(armorModeIsPA ?? switchboard.inPowerArmor) ? "🦾 POWER ARMOR" : "🛡️ REGULAR ARMOR"}
               </button>
             </div>
 

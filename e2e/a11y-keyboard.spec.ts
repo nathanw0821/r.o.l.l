@@ -108,6 +108,32 @@ test.describe("keyboard", () => {
     await expect(dialog).toBeHidden();
   });
 
+  test("gear picker: opens from the armor-set button, equips on Enter, closes and returns focus", async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.goto("/build?tab=gear");
+    const change = page.getByRole("button", { name: /^Change armor set: / }).first();
+    await expect(change).toBeVisible({ timeout: 45_000 });
+    await change.focus();
+    await page.keyboard.press("Enter");
+    const dialog = page.getByRole("dialog", { name: /change armor set/i });
+    await expect(dialog).toBeVisible();
+    expect(await focusIsInside(page, '[role="dialog"]')).toBe(true);
+
+    // One category only: the picker never offers weapons or power armor here.
+    await expect(dialog.getByRole("button", { name: /^Equip The Fixer/ })).toHaveCount(0);
+    const option = dialog.getByRole("button", { name: /^Equip Civil Engineer/ });
+    await option.focus();
+    await page.keyboard.press("Enter");
+    await expect(dialog).toBeHidden();
+
+    // The frame row, the per-slot dropdowns and focus all follow the pick.
+    const changed = page.getByRole("button", { name: /^Change armor set: Civil Engineer/ });
+    await expect(changed).toBeVisible();
+    await expect(changed).toBeFocused();
+    await expect(page.getByLabel("Armor set for Torso Chassis")).toHaveValue("civil-engineer");
+    await expect(page.getByLabel("Armor set for Left Leg")).toHaveValue("civil-engineer");
+  });
+
   test("guides reader: the contents list is keyboard reachable and jumps to the heading", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium", "The desktop contents rail; phones use the disclosure.");
     await page.goto("/wiki?id=193");
