@@ -278,8 +278,14 @@
     "moddable": true,
     "fourthStar": true,
     "introducedIn": 70,
-    "model": null,
-    "modelNote": "Reference only: the firepower engine has no weak-spot or hit-location input."
+    "model": {
+      "kind": "weak-spot-per-kill-streak",
+      "perUnit": 0.03,
+      "maxUnits": 10,
+      "condition": "per kill on the current Kill Streak, max 10; weak-point hits only",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (official Slasher notes): +3% Weak Spot Damage per Kill while on a Kill Streak (Max 10)"
+    }
   },
   {
     "id": "cultist-piercer",
@@ -382,8 +388,13 @@
     "moddable": true,
     "fourthStar": true,
     "introducedIn": 70,
-    "model": null,
-    "modelNote": "Reference only: the firepower engine has no weak-spot or hit-location input."
+    "model": {
+      "kind": "weak-spot-damage",
+      "value": 0.1,
+      "condition": "always; adds to weak-spot damage when the hit lands on a weak point (melee weak points count)",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (official Slasher notes): +10% Damage to Weak Point"
+    }
   },
   {
     "id": "boiling-point",
@@ -554,8 +565,13 @@
     "moddable": true,
     "fourthStar": true,
     "introducedIn": 70,
-    "model": null,
-    "modelNote": "Reference only: the firepower engine has no weak-spot or hit-location input."
+    "model": {
+      "kind": "weak-spot-damage-while-aiming",
+      "value": 0.15,
+      "condition": "aiming down sights and the hit lands on a weak point",
+      "confidence": "verified",
+      "source": "Patch 70 unique-weapon innate text (official Slasher notes): +15% Damage to Weak Point While Aiming"
+    }
   },
   {
     "id": "v63-bertha",

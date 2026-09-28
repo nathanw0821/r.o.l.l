@@ -82,6 +82,8 @@ export type CombatSwitchboardState = {
     isStationary?: boolean;
     isInVats?: boolean;
     vatsCritEveryOtherShot?: boolean;
+    /** The shot lands on the target's head / weak point (body-part multiplier, weak-spot perks). */
+    isTargetingWeakSpot?: boolean;
   };
   caps?: number;
   /** Damage-taken preview: size of the incoming hit and its damage type. */
@@ -283,6 +285,8 @@ interface BuilderCombatSwitchboardProps {
   /** Live totals for the sticky band; omitted in read-only embeds. */
   statsBand?: StatsBandData;
   isCompactDensity?: boolean;
+  /** Live weak-spot state from the firepower engine (target part, multiplier, active bonuses). */
+  weakSpot?: { targeting: boolean; baseMultiplier: number | null; part: string; bonusPct: number; multiplier: number; breakdown: { source: string; value: string }[] } | null;
   isGhoul?: boolean;
   onSpeciesChange?: (isGhoul: boolean) => void;
   activeMutations?: string[];
@@ -320,6 +324,7 @@ export default function BuilderCombatSwitchboard({
   onIgnoreMutationPenaltiesChange,
   statsBand,
   isCompactDensity,
+  weakSpot,
   hasStrangeInNumbers = false,
   onStrangeInNumbersChange,
   onStateChange,
@@ -432,6 +437,7 @@ export default function BuilderCombatSwitchboard({
         isStationary: false,
         isInVats: false,
         vatsCritEveryOtherShot: false,
+        isTargetingWeakSpot: false,
       },
       caps: 30000,
       incomingDamage: 100,
@@ -463,6 +469,7 @@ export default function BuilderCombatSwitchboard({
         isStationary: initialState?.combatStance?.isStationary ?? false,
         isInVats: initialState?.combatStance?.isInVats ?? false,
         vatsCritEveryOtherShot: initialState?.combatStance?.vatsCritEveryOtherShot ?? false,
+        isTargetingWeakSpot: initialState?.combatStance?.isTargetingWeakSpot ?? false,
       },
       activeFoods: {
         ...defaults.activeFoods,
@@ -477,6 +484,18 @@ export default function BuilderCombatSwitchboard({
   }, [onStateChange]);
 
   const isInternalChangeRef = React.useRef(false);
+
+  // Hand the resolved defaults to the parent once on mount when it has no state of its own:
+  // until 2026-09-28 the combat tab computed with `switchboardState === null` (no chems, no
+  // bobblehead, 20 % HP) until the first Biometrics interaction pushed the whole default board.
+  const pushedInitialRef = React.useRef(false);
+  React.useEffect(() => {
+    if (pushedInitialRef.current || initialState) return;
+    pushedInitialRef.current = true;
+    isInternalChangeRef.current = true;
+    onStateChangeRef.current?.(switchboard);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   React.useEffect(() => {
     if (isInternalChangeRef.current) {
@@ -498,6 +517,7 @@ export default function BuilderCombatSwitchboard({
               isStationary: initialState.combatStance?.isStationary ?? prev.combatStance?.isStationary ?? false,
               isInVats: initialState.combatStance?.isInVats ?? prev.combatStance?.isInVats ?? false,
               vatsCritEveryOtherShot: initialState.combatStance?.vatsCritEveryOtherShot ?? prev.combatStance?.vatsCritEveryOtherShot ?? false,
+              isTargetingWeakSpot: initialState.combatStance?.isTargetingWeakSpot ?? prev.combatStance?.isTargetingWeakSpot ?? false,
             };
             if (JSON.stringify(nextStance) !== JSON.stringify(prev.combatStance)) {
               next.combatStance = nextStance;
@@ -1432,6 +1452,30 @@ export default function BuilderCombatSwitchboard({
                   </span>
                 </button>
 
+                {/* 2b. Targeting weak spot (head / weak point) */}
+                <button
+                  type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isTargetingWeakSpot)}
+                  onClick={() => updateStance("isTargetingWeakSpot", !switchboard.combatStance?.isTargetingWeakSpot)}
+                  className={`p-2.5 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isTargetingWeakSpot
+                      ? "bg-rose-950 border-rose-500 text-rose-200 shadow-[0_0_12px_rgba(244,63,94,0.35)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-rose-400">🎯</span>
+                    <span>{switchboard.combatStance?.isTargetingWeakSpot ? "Targeting weak spot" : "Target weak spot"}</span>
+                  </div>
+                  <span className="text-3xs font-normal text-dim">
+                    {switchboard.combatStance?.isTargetingWeakSpot
+                      ? weakSpot?.baseMultiplier
+                        ? `${weakSpot.part} ×${weakSpot.baseMultiplier}${weakSpot.bonusPct > 0 ? ` +${Math.round(weakSpot.bonusPct * 100)}% perks` : ""} = ×${weakSpot.multiplier.toFixed(2)}`
+                        : "No multiplier data for this target"
+                      : "Body shots (×1.00)"}
+                  </span>
+                </button>
+
                 {/* 3. V.A.T.S. Crit Every Other Shot */}
                 <button
                   type="button"
@@ -1507,6 +1551,9 @@ export default function BuilderCombatSwitchboard({
                     <span>💡 {critQualification.recommendation}</span>
                     <span className="text-dim shrink-0">
                       3★ Lucky: {critQualification.hasLucky15Fill ? "Active (-10 Luck)" : "Off"} · VATS Opt: {critQualification.hasVatsOptimized ? "Active (-35% AP)" : "Off"}
+                      {weakSpot?.targeting
+                        ? ` · Weak spot: ×${weakSpot.multiplier.toFixed(2)}${weakSpot.breakdown.length > 0 ? ` (${weakSpot.breakdown.map((b) => `${b.source} ${b.value}`).join(", ")})` : ""}`
+                        : ""}
                     </span>
                   </div>
                 </div>

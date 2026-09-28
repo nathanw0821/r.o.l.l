@@ -1,0 +1,18 @@
+{
+  "$comment": "Weak-spot (body-part) damage for the builder's 'Targeting weak spot' state. The base multiplier is the creature's head/weak-point body-part multiplier from fallout.wiki's Fallout 76 combat table ('Hitting any body part modifies the incoming damage with a body part multiplier; similar to a sneak attack, the damage dealt is multiplied by this number'). Perk and innate bonuses are fractions of that multiplier and add together before multiplying (approximate stacking model; Bethesda publishes no formula). Keys under `dummies` are the engine's target-dummy ids (combat-firepower-catalog.ts).",
+  "verifiedAt": "2026-09-28",
+  "source": "https://fallout.wiki/wiki/Fallout_76_combat (hit-location multiplier table); perk texts from src/data/perk-cards.json (Patch 70); innates from unique-items-official-p70.json",
+  "dummies": {
+    "raw-unarmored": { "multiplier": 2.0, "part": "Head (human / most creatures)", "confidence": "verified" },
+    "level-100-super-mutant": { "multiplier": 2.0, "part": "Head (Super mutant)", "confidence": "verified" },
+    "earle-williams": { "multiplier": 2.0, "part": "Head (Wendigo colossus)", "confidence": "verified" },
+    "scorchbeast-queen": { "multiplier": 1.5, "part": "Head (Scorchbeast row; the Queen is not listed separately)", "confidence": "approximate" },
+    "ultracite-titan": { "multiplier": null, "part": "Not in the wiki table", "confidence": "approximate" }
+  },
+  "perks": {
+    "gunslinger": { "byRank": [0.06, 0.09, 0.12], "condition": "ranged weapons", "note": "Patch 62 rework: Gunslinger is weak-spot damage, not flat pistol damage" },
+    "gunslinger-expert": { "perUnit": 0.01, "unit": "Onslaught stack", "condition": "ranged weapons; the card also raises the Onslaught cap by 3" },
+    "smart-shot": { "value": 0.25, "condition": "aiming down a scoped sight" },
+    "faulty-spots": { "value": 0.15, "condition": "Ghoul perk; any weapon" }
+  }
+}

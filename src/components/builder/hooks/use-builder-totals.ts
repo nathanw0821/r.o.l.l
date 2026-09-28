@@ -28,6 +28,8 @@ import {
 } from "@/lib/builder/underarmor";
 
 export interface UseBuilderTotalsParams {
+  /** SPECIAL from consumables, bobbleheads, magazines and C.A.M.P. furniture (buff-stacking-engine). */
+  buffSpecialTotals?: Record<"str" | "per" | "end" | "cha" | "int" | "agi" | "lck", number>;
   payload: BuilderPayload;
   mods: BuilderModDTO[];
   activeChassisPiece: BaseGearPiece;
@@ -48,6 +50,7 @@ export function useBuilderTotals({
   equippedPerkCards,
   switchboardState,
   isFiringHeavyGun = false,
+  buffSpecialTotals,
 }: UseBuilderTotalsParams) {
   const equippedModsOrdered = React.useMemo(
     () => listEquippedModsInBenchOrder(payload, mods),
@@ -171,8 +174,9 @@ export function useBuilderTotals({
       equippedMods: equippedModsOrdered,
       isGhoul: payload.ghoul,
       activeMutations: payload.mutationIds,
+      equippedPerkCards,
     });
-  }, [switchboardState, equippedModsOrdered, payload.ghoul, payload.mutationIds]);
+  }, [switchboardState, equippedModsOrdered, payload.ghoul, payload.mutationIds, equippedPerkCards]);
 
   const preDefenseLayers = React.useMemo(
     () => [
@@ -243,14 +247,16 @@ export function useBuilderTotals({
     const isOnTeam = (switchboardState?.teamState ?? "casual") !== "solo";
     return calculateDefensiveProfile(equippedPerkCards, {
       isPowerArmor: inPowerArmor,
+      // SPECIAL-scaled defensive perks read the same live SPECIAL the sheet shows: armor/mutation/
+      // stance layers plus consumable, bobblehead, magazine and C.A.M.P. bonuses.
       special: {
-        str: preDefenseTotals.str,
-        per: preDefenseTotals.per,
-        end: preDefenseTotals.end,
-        cha: preDefenseTotals.cha,
-        int: preDefenseTotals.int,
-        agi: preDefenseTotals.agi,
-        lck: preDefenseTotals.lck,
+        str: preDefenseTotals.str + (buffSpecialTotals?.str ?? 0),
+        per: preDefenseTotals.per + (buffSpecialTotals?.per ?? 0),
+        end: preDefenseTotals.end + (buffSpecialTotals?.end ?? 0),
+        cha: preDefenseTotals.cha + (buffSpecialTotals?.cha ?? 0),
+        int: preDefenseTotals.int + (buffSpecialTotals?.int ?? 0),
+        agi: preDefenseTotals.agi + (buffSpecialTotals?.agi ?? 0),
+        lck: preDefenseTotals.lck + (buffSpecialTotals?.lck ?? 0),
       },
       healthPct: switchboardState?.healthPct ?? 100,
       isOnTeam,
@@ -278,6 +284,7 @@ export function useBuilderTotals({
     equippedPerkCards,
     inPowerArmor,
     preDefenseTotals,
+    buffSpecialTotals,
     switchboardState,
     isFiringHeavyGun,
     payload.powerArmorPiecesEquipped,

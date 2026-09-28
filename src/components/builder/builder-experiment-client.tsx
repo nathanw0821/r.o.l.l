@@ -275,6 +275,7 @@ export default function BuilderExperimentClient({
     equippedPerkCards,
     switchboardState,
     isFiringHeavyGun: activeWeaponPiece?.weaponSub === "heavy",
+    buffSpecialTotals: buffSpecial.totals,
   });
 
   // Live totals for the Biometrics sticky band: the same numbers the Gear HUD shows.
@@ -313,9 +314,11 @@ export default function BuilderExperimentClient({
         activeMutations: payload.mutationIds,
       },
       playerStats: {
-        agility: totals.agi,
-        luck: totals.lck,
-        strength: totals.str,
+        // Live SPECIAL as the sheet shows it (armor, mutations, stances, perks, consumables,
+        // bobbleheads, magazines, C.A.M.P.): the crit cycle and AP pool read the same Luck/Agility.
+        agility: statsBand.special.agi,
+        luck: statsBand.special.lck,
+        strength: statsBand.special.str,
         healthPct: switchboardState?.healthPct ?? 20,
         caps: switchboardState?.caps ?? 30000,
         isPowerArmor: isPA,
@@ -328,6 +331,7 @@ export default function BuilderExperimentClient({
         isStationary: Boolean(switchboardState?.combatStance?.isStationary),
         isInVats: Boolean(switchboardState?.combatStance?.isInVats),
         vatsCritEveryOtherShot: Boolean(switchboardState?.combatStance?.vatsCritEveryOtherShot),
+        isTargetingWeakSpot: Boolean(switchboardState?.combatStance?.isTargetingWeakSpot),
         addictionsCount: switchboardState?.addictionsCount ?? 0,
         adrenalineStacks: switchboardState?.adrenalineStacks ?? 0,
         bulletStormStacks: switchboardState?.bulletStormStacks ?? 0,
@@ -351,9 +355,7 @@ export default function BuilderExperimentClient({
     switchboardState,
     payload.mutationIds,
     payload.hasStrangeInNumbers,
-    totals.agi,
-    totals.lck,
-    totals.str,
+    statsBand,
     isPA,
   ]);
 

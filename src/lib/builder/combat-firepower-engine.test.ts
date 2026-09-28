@@ -170,8 +170,10 @@ describe("combat-firepower-engine", () => {
       playerStats: { strength: 5, agility: 15, luck: 15 },
     });
 
-    // Base: 32 -> +60% Gunslinger -> 32 * 1.6 = 51.2 -> 51
-    expect(result.damagePerShot.normal).toBe(51);
+    // Since the Patch 62 rework Gunslinger is weak-spot damage, not flat pistol damage: a body
+    // shot stays at the base 32, a head shot gets ×2 × (1 + 12%) (see weak-spot.test.ts).
+    expect(result.damagePerShot.normal).toBe(32);
+    expect(result.damagePerShot.breakdown.some((b) => b.source === "Gunslinger Perks" && /weak-spot/.test(b.value))).toBe(true);
     // Tank Killer on Pistols provides 36% armor penetration
     expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(36);
   });

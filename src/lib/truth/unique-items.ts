@@ -30,7 +30,10 @@ export type UniqueEffectKind =
   | "grants-perk-rank"
   | "bullet-storm-min-stacks"
   | "bullet-storm-bonus-stacks-below-health"
-  | "flat-action-points";
+  | "flat-action-points"
+  | "weak-spot-damage"
+  | "weak-spot-damage-while-aiming"
+  | "weak-spot-per-kill-streak";
 
 export type UniqueEffectConfidence = "verified" | "datamined" | "approximate";
 
@@ -88,6 +91,9 @@ const EFFECT_KINDS = new Set<string>([
   "bullet-storm-min-stacks",
   "bullet-storm-bonus-stacks-below-health",
   "flat-action-points",
+  "weak-spot-damage",
+  "weak-spot-damage-while-aiming",
+  "weak-spot-per-kill-streak",
 ]);
 
 const EFFECT_CONFIDENCE = new Set<string>(["verified", "datamined", "approximate"]);
@@ -106,6 +112,9 @@ const EFFECT_REQUIRED_FIELDS: Record<string, readonly string[]> = {
   "bullet-storm-min-stacks": ["value"],
   "bullet-storm-bonus-stacks-below-health": ["value", "healthThreshold"],
   "flat-action-points": ["value"],
+  "weak-spot-damage": ["value"],
+  "weak-spot-damage-while-aiming": ["value"],
+  "weak-spot-per-kill-streak": ["perUnit", "maxUnits"],
 };
 
 function fail(message: string): never {

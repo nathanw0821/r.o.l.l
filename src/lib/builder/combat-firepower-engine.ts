@@ -7,6 +7,9 @@ import {
   calculatePaperDamage
 } from "@/lib/calculator/creation-engine-math";
 import { requireEffectNumber } from "@/lib/truth/legendary-effect-model";
+import { normalizeActiveBuffs } from "@/lib/builder/buff-id-normalize";
+import { getWeaponInnateModOption } from "@/lib/builder/weapon-piece-mods";
+import weakSpotTruth from "@/data/truth/weak-spot.json";
 import {
   resolveUniqueForBuilderId,
   type UniqueEffectKind,
@@ -322,6 +325,8 @@ export type CombatFirepowerCalculationInput = {
     feralPct?: number;
     foodState?: string;
     thirstState?: string;
+    /** Biometrics "Targeting weak spot": the hit lands on the target's head / weak point. */
+    isTargetingWeakSpot?: boolean;
   };
 };
 
@@ -361,6 +366,15 @@ export type CombatFirepowerResult = {
     breakdown: { source: string; value: string }[];
   };
   critCycle: VatsCritQualification;
+  /** Body-part multiplier state (src/data/truth/weak-spot.json); `multiplier` is 1 when not targeting. */
+  weakSpot: {
+    targeting: boolean;
+    baseMultiplier: number | null;
+    part: string;
+    bonusPct: number;
+    multiplier: number;
+    breakdown: { source: string; value: string }[];
+  };
   armorPenetration: {
     effectiveArmorPenetrationPct: number;
     breakdown: { source: string; value: string }[];
@@ -485,6 +499,9 @@ export function calculateCombatFirepower(
 ): CombatFirepowerResult {
   const base = getWeaponCombatBaseStats(input.weaponId);
   const innateMods = calculateWeaponInnateAggregate(input.weaponId, input.weaponCrafting);
+  // The switchboard stores catalog ids (chem-psychotats, bobble-small-guns, mag-gb3, brew-…);
+  // the rules below use the short names. Accept both.
+  const activeBuffs = normalizeActiveBuffs(input.activeBuffs);
   const effectiveIsAutomatic = innateMods.isAutomatic || base.isAutomatic;
   const rawHealth = input.playerStats.healthPct ?? 0.2;
   const healthPct = rawHealth > 1 ? rawHealth / 100 : rawHealth; // Seamlessly handles 0.2 and 20% format
@@ -635,13 +652,10 @@ export function calculateCombatFirepower(
     if (ifBonus > 0) breakdown.push({ source: `Iron Fist (Rank ${ifRank})`, value: `+${Math.round(ifBonus * 100)}%` });
     if (strBonus > 0) breakdown.push({ source: `Unarmed Strength 10% (${input.playerStats.strength})`, value: `+${Math.round(strBonus * 100)}%` });
   } else if (base.weaponClass === "gunslinger") {
-    const g1 = perkRanks.get("gunslinger") || 0;
-    const g2 = perkRanks.get("expert-gunslinger") || 0;
-    const g3 = perkRanks.get("master-gunslinger") || 0;
-    const total = (g1 > 0 ? 0.1 + (g1 - 1) * 0.05 : 0) + (g2 > 0 ? 0.1 + (g2 - 1) * 0.05 : 0) + (g3 > 0 ? 0.1 + (g3 - 1) * 0.05 : 0);
-    if (total > 0) {
-      additiveDamagePct += total;
-      breakdown.push({ source: "Gunslinger Perks", value: `+${Math.round(total * 100)}%` });
+    // Since the Patch 62 rework Gunslinger is weak-spot damage (+6/9/12%), not flat pistol
+    // damage: it is applied in the weak-spot block below and only when a weak spot is targeted.
+    if ((perkRanks.get("gunslinger") || 0) > 0) {
+      breakdown.push({ source: "Gunslinger Perks", value: "weak-spot damage only (see Weak spot)" });
     }
   } else if (base.weaponClass === "guerrilla") {
     const g1 = perkRanks.get("guerrilla") || 0;
@@ -809,7 +823,7 @@ export function calculateCombatFirepower(
         breakdown.push({ source: "Gourmand's (Fed & Hydrated)", value: `+${Math.round(gourmandBonus * 100)}%` });
       }
     } else if (slug === "mutants" || slug === "mutant-s") {
-      const mutationCount = Math.min(LEG.mutantsMaxMutations, input.activeBuffs?.activeMutations?.length || 0);
+      const mutationCount = Math.min(LEG.mutantsMaxMutations, activeBuffs?.activeMutations?.length || 0);
       const mutBonus = mutationCount * LEG.mutantsPerMutation;
       if (mutBonus > 0) {
         additiveDamagePct += mutBonus;
@@ -985,7 +999,7 @@ export function calculateCombatFirepower(
   }
 
   // 3. Consumable Buffs
-  const buffs = input.activeBuffs;
+  const buffs = activeBuffs;
   if (buffs) {
     if (buffs.activeDrug === "psychotats" || buffs.activeDrug === "psychobuff") {
       additiveDamagePct += 0.25;
@@ -1048,13 +1062,83 @@ export function calculateCombatFirepower(
     }
   }
 
+  // Weak spot (body-part multiplier), src/data/truth/weak-spot.json. Bonuses add together, then
+  // the creature's head multiplier is scaled by them; the whole thing multiplies the hit.
+  const WS = weakSpotTruth as {
+    dummies: Record<string, { multiplier: number | null; part: string }>;
+    perks: {
+      gunslinger: { byRank: number[] };
+      "gunslinger-expert": { perUnit: number };
+      "smart-shot": { value: number };
+      "faulty-spots": { value: number };
+    };
+  };
+  const targetingWeakSpot = Boolean(input.playerStats.isTargetingWeakSpot);
+  const weakSpotDummy = WS.dummies[input.targetDummyId || "scorchbeast-queen"] ?? null;
+  const weakSpotBreakdown: { source: string; value: string }[] = [];
+  let weakSpotBonusPct = 0;
+  const wsAiming = Boolean(input.playerStats.isAiming) && !Boolean(input.playerStats.isInVats);
+  const gunslingerRank = Math.min(3, perkRanks.get("gunslinger") || 0);
+  if (base.isRanged && gunslingerRank > 0) {
+    const v = WS.perks.gunslinger.byRank[gunslingerRank - 1] ?? 0;
+    weakSpotBonusPct += v;
+    weakSpotBreakdown.push({ source: `Gunslinger (Rank ${gunslingerRank})`, value: `+${Math.round(v * 100)}%` });
+  }
+  const gunslingerExpertRank = perkRanks.get("gunslinger-expert") || 0;
+  const wsOnslaught = Math.max(0, input.playerStats.onslaughtStacks || 0);
+  if (base.isRanged && gunslingerExpertRank > 0 && wsOnslaught > 0) {
+    const v = wsOnslaught * WS.perks["gunslinger-expert"].perUnit;
+    weakSpotBonusPct += v;
+    weakSpotBreakdown.push({ source: `Gunslinger Expert (${wsOnslaught} Onslaught)`, value: `+${Math.round(v * 100)}%` });
+  }
+  const smartShotRank = perkRanks.get("smart-shot") || 0;
+  const sightOption = getWeaponInnateModOption(input.weaponId, "sight", input.weaponCrafting?.sightId);
+  const hasScopedSight = /scope/i.test(`${sightOption?.id ?? ""} ${sightOption?.label ?? ""}`);
+  if (smartShotRank > 0 && wsAiming && hasScopedSight) {
+    weakSpotBonusPct += WS.perks["smart-shot"].value;
+    weakSpotBreakdown.push({ source: "Smart Shot (aiming a scope)", value: `+${Math.round(WS.perks["smart-shot"].value * 100)}%` });
+  }
+  if ((perkRanks.get("faulty-spots") || 0) > 0) {
+    weakSpotBonusPct += WS.perks["faulty-spots"].value;
+    weakSpotBreakdown.push({ source: "Faulty Spots", value: `+${Math.round(WS.perks["faulty-spots"].value * 100)}%` });
+  }
+  const wsFlatModel = uniqueModelOfKind(uniqueItem, "weak-spot-damage");
+  if (wsFlatModel?.value) {
+    weakSpotBonusPct += wsFlatModel.value;
+    weakSpotBreakdown.push({ source: `${uniqueName} (Innate)`, value: `+${Math.round(wsFlatModel.value * 100)}%` });
+  }
+  const wsAimModel = uniqueModelOfKind(uniqueItem, "weak-spot-damage-while-aiming");
+  if (wsAimModel?.value && wsAiming) {
+    weakSpotBonusPct += wsAimModel.value;
+    weakSpotBreakdown.push({ source: `${uniqueName} (Innate, aiming)`, value: `+${Math.round(wsAimModel.value * 100)}%` });
+  }
+  const wsKillModel = uniqueModelOfKind(uniqueItem, "weak-spot-per-kill-streak");
+  const wsKillStreak = Math.max(0, input.playerStats.killStreak || 0);
+  if (wsKillModel && wsKillStreak > 0) {
+    const kills = Math.min(wsKillModel.maxUnits ?? wsKillStreak, wsKillStreak);
+    const v = kills * (wsKillModel.perUnit ?? 0);
+    weakSpotBonusPct += v;
+    weakSpotBreakdown.push({ source: `${uniqueName} (${kills} Kill Streak)`, value: `+${Math.round(v * 100)}%` });
+  }
+  const weakSpotBase = weakSpotDummy?.multiplier ?? null;
+  const weakSpotMultiplier = targetingWeakSpot && weakSpotBase ? weakSpotBase * (1 + weakSpotBonusPct) : 1;
+  if (targetingWeakSpot) {
+    breakdown.push({
+      source: weakSpotBase ? `Weak spot: ${weakSpotDummy?.part}` : "Weak spot: no multiplier data for this target",
+      value: weakSpotBase ? `×${weakSpotMultiplier.toFixed(2)}` : "×1.00",
+    });
+  }
+
   // Normal Damage Per Shot Calculation
   // Post-Patch 22 rule via creation-engine-math: every perk, chem, mutation and legendary
   // primary in this engine adds to BASE (additiveDamagePct is a fraction; the calculator takes
   // percent). The multiplicative list is intentionally empty: sneak attack, Nocturnal and
   // Stalker's stay linearised into the additive pool for parity (tracked as a follow-up).
   const normalDamage = Math.round(
-    calculatePaperDamage(base.baseDamage, additiveDamagePct * 100, tenderizerMultiplier > 1 ? [(tenderizerMultiplier - 1) * 100] : [])
+    calculatePaperDamage(base.baseDamage, additiveDamagePct * 100, [
+      ...(tenderizerMultiplier > 1 ? [(tenderizerMultiplier - 1) * 100] : []),
+      ...(weakSpotMultiplier !== 1 ? [(weakSpotMultiplier - 1) * 100] : []),
+    ])
   );
 
   // Explosive Area Damage
@@ -1145,7 +1229,9 @@ export function calculateCombatFirepower(
     }
   }
 
-  const criticalDamage = normalDamage + Math.round(base.baseDamage * critBonusPct) + explosiveDamage;
+  // The body-part multiplier applies to the whole hit, so the crit bonus is scaled by it too;
+  // explosive splash is area damage and takes no body-part multiplier.
+  const criticalDamage = normalDamage + Math.round(base.baseDamage * critBonusPct * weakSpotMultiplier) + explosiveDamage;
 
   // 5. Fire Rate & DPS
   const innateFireRateFactor = 1.0 + innateMods.fireRatePct;
@@ -1382,6 +1468,14 @@ export function calculateCombatFirepower(
       breakdown: vatsBreakdown,
     },
     critCycle,
+    weakSpot: {
+      targeting: targetingWeakSpot,
+      baseMultiplier: weakSpotBase,
+      part: weakSpotDummy?.part ?? "Not in the wiki table",
+      bonusPct: Math.round(weakSpotBonusPct * 1000) / 1000,
+      multiplier: Math.round(weakSpotMultiplier * 1000) / 1000,
+      breakdown: weakSpotBreakdown,
+    },
     armorPenetration: {
       effectiveArmorPenetrationPct,
       breakdown: apBreakdown,

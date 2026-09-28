@@ -191,6 +191,41 @@ test.describe("guest smoke", () => {
     await expectPageSane(page);
   });
 
+  test("biometrics 'Target weak spot' doubles the head-shot damage on the combat tab", async ({ page }) => {
+    await page.goto("/build?tab=combat");
+    await expect(page.getByText("Showing damage for")).toBeVisible({ timeout: 45_000 });
+    const normalShot = page.locator("#main-content").getByText("Normal Shot:").locator("xpath=following-sibling::span[1]");
+    const readShot = async () => Number.parseInt((await normalShot.first().innerText()).replace(/[^0-9]/g, ""), 10);
+    // The guest's working build is restored from storage after mount: wait until the number holds still.
+    let before = await readShot();
+    for (let i = 0; i < 10; i += 1) {
+      await page.waitForTimeout(400);
+      const again = await readShot();
+      if (again === before && i >= 2) break;
+      before = again;
+    }
+    expect(before).toBeGreaterThan(0);
+    await expect(page.getByText("🎯 Weak spot")).toHaveCount(0);
+
+    await page.getByRole("tab", { name: /Biometrics/i }).or(page.getByRole("button", { name: /3\. Biometrics/i })).first().click();
+    const stances = page.getByRole("button", { name: /^Stances & V\.A\.T\.S\./ });
+    await expect(stances).toBeVisible({ timeout: 45_000 });
+    if ((await stances.getAttribute("aria-expanded")) === "false") await stances.click();
+    const toggle = page.getByRole("button", { name: /Target weak spot|Targeting weak spot/ });
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await expect(toggle).toContainText(/×/);
+
+    await page.getByRole("tab", { name: /Combat/i }).or(page.getByRole("button", { name: /4\. Combat/i })).first().click();
+    await expect(page.getByText("🎯 Weak spot")).toBeVisible({ timeout: 30_000 });
+    const after = Number.parseInt((await normalShot.first().innerText()).replace(/[^0-9]/g, ""), 10);
+    // Default dummy is the Scorchbeast Queen: head ×1.5 in the wiki table (paper damage is
+    // rounded once at the end, so allow one point either way).
+    expect(Math.abs(after - before * 1.5)).toBeLessThanOrEqual(1);
+    await expectPageSane(page);
+  });
+
   test("perks page can find Night Person via search and shows its effect text", async ({ page }) => {
     await page.goto("/perks");
 

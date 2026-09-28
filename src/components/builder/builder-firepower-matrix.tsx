@@ -148,6 +148,16 @@ export default function BuilderFirepowerMatrix({
                   {damagePerShot.critical}
                 </span>
               </div>
+              {firepower.weakSpot?.targeting && (
+                <div className="pt-1 border-t border-slate-800 text-2xs flex items-center justify-between gap-2">
+                  <span className="text-rose-300 font-bold">🎯 Weak spot</span>
+                  <span className="text-slate-200">
+                    {firepower.weakSpot.baseMultiplier
+                      ? `×${firepower.weakSpot.multiplier.toFixed(2)}${firepower.weakSpot.bonusPct > 0 ? ` (${firepower.weakSpot.part} ×${firepower.weakSpot.baseMultiplier} +${Math.round(firepower.weakSpot.bonusPct * 100)}%)` : ` (${firepower.weakSpot.part})`}`
+                      : "no multiplier data for this target"}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -222,6 +232,12 @@ export default function BuilderFirepowerMatrix({
                   {vats.maxShotsInPool} shots
                 </span>
               </div>
+              {critCycle.hasVatsOptimized && (
+                <div className="pt-1 border-t border-slate-800 text-2xs flex items-center justify-between gap-2">
+                  <span className="text-emerald-300 font-bold">V.A.T.S. Optimized 3★</span>
+                  <span className="text-slate-200">×0.65 AP cost (crit fill unchanged)</span>
+                </div>
+              )}
             </div>
           </div>
 

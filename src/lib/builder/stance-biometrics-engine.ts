@@ -22,6 +22,8 @@ export interface StanceBiometricsInput {
   equippedMods: BuilderModDTO[];
   isGhoul: boolean;
   activeMutations?: string[];
+  /** Equipped perk cards, for the cards whose SPECIAL bonus depends on the switchboard state. */
+  equippedPerkCards?: ReadonlyArray<{ cardId: string; rank: number }>;
 }
 
 export interface StanceBiometricsResult {
@@ -278,6 +280,49 @@ export function calculateStanceAndBiometricModifiers(
   }
   if (vatsCritEveryOtherShot) {
     activeTacticalTags.push("✨ 1:1 V.A.T.S. Crit Cycle Active");
+  }
+
+  // 9. Perk cards whose SPECIAL bonus depends on the state on this board. Until 2026-09-28 none of
+  //    these reached the character sheet (only the Legendary SPECIAL perks did, via aggregateEffectMath).
+  //    Numbers are the Patch 70 card texts (src/data/perk-cards.json).
+  const perkRank = (id: string): number =>
+    input.equippedPerkCards?.find((c) => c.cardId === id)?.rank ?? 0;
+  const addSpecial = (stat: "str" | "per" | "end" | "cha" | "int" | "agi" | "lck", val: number, source: string) => {
+    layer[stat] += val;
+    specialBreakdowns.push({ stat, source, val });
+  };
+  if (perkRank("night-person") > 0 && isNight) {
+    addSpecial("int", 5, "Night Person (6 p.m. – 6 a.m.)");
+    addSpecial("per", 5, "Night Person (6 p.m. – 6 a.m.)");
+    activeTacticalTags.push("Night Person (+5 INT, +5 PER · Night)");
+  }
+  if (perkRank("solar-powered") > 0 && !isNight) {
+    addSpecial("str", 5, "Solar Powered (6 a.m. – 6 p.m.)");
+    addSpecial("end", 5, "Solar Powered (6 a.m. – 6 p.m.)");
+    activeTacticalTags.push("Solar Powered (+5 STR, +5 END · Day)");
+  }
+  const radsPct = Math.max(0, Math.min(100, switchboard?.radsPct ?? 0));
+  if (perkRank("radicool") > 0 && radsPct > 0) {
+    // "The greater your Rads, the greater your Strength (max +5)": modelled as +1 STR per 20 % of
+    // the rad bar; the in-game curve is unpublished, so the source says approximate.
+    const bonus = Math.min(5, Math.floor(radsPct / 20));
+    if (bonus > 0) {
+      addSpecial("str", bonus, `Radicool (${radsPct}% rads, approx.)`);
+      activeTacticalTags.push(`Radicool (+${bonus} STR · ${radsPct}% Rads)`);
+    }
+  }
+  const happyGoLucky = perkRank("happy-go-lucky");
+  if (happyGoLucky > 0 && switchboard?.activeAlcohol) {
+    const bonus = happyGoLucky >= 2 ? 3 : 2;
+    addSpecial("lck", bonus, "Happy-Go-Lucky (alcohol active)");
+    activeTacticalTags.push(`Happy-Go-Lucky (+${bonus} LCK · Drinking)`);
+  }
+  const magnetic = perkRank("magnetic-personality");
+  const teammates = (switchboard?.teamState ?? "casual") === "solo" ? 0 : 3;
+  if (magnetic > 0 && teammates > 0) {
+    const bonus = (magnetic >= 2 ? 2 : 1) * teammates;
+    addSpecial("cha", bonus, `Magnetic Personality (${teammates} teammates)`);
+    activeTacticalTags.push(`Magnetic Personality (+${bonus} CHA · Team)`);
   }
 
   return {

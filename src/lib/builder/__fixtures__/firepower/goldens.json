@@ -139,6 +139,14 @@
         "summary": "QUALIFIED: 1:1 Crit Cycle active (33/33 Luck with Crit Savvy R3).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -302,6 +310,14 @@
         "fourLeafCloverRank": 0,
         "summary": "QUALIFIED: 1:1 Crit Cycle active (33/33 Luck with Crit Savvy R3).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -467,6 +483,14 @@
         "summary": "QUALIFIED: 1:1 Crit Cycle active (33/33 Luck with Crit Savvy R3).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -630,6 +654,14 @@
         "fourLeafCloverRank": 0,
         "summary": "QUALIFIED: 1:1 Crit Cycle active (33/33 Luck with Crit Savvy R3).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -795,6 +827,14 @@
         "summary": "QUALIFIED: 1:1 Crit Cycle active (33/33 Luck with Crit Savvy R3).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -916,6 +956,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1050,6 +1098,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
         "breakdown": [
@@ -1182,6 +1238,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1316,6 +1380,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
         "breakdown": [
@@ -1448,6 +1520,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 15, Missing: +48).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 81,
@@ -1592,6 +1672,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
         "breakdown": [
@@ -1724,6 +1812,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
@@ -1858,6 +1954,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
         "breakdown": [
@@ -1990,6 +2094,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
@@ -2124,6 +2236,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 24,
         "breakdown": [
@@ -2255,6 +2375,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
         "breakdown": [
@@ -2383,6 +2511,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
@@ -2513,6 +2649,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
         "breakdown": [
@@ -2642,6 +2786,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
         "breakdown": [
@@ -2770,6 +2922,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 45,
@@ -2910,6 +3070,14 @@
         "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
         "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
         "breakdown": [
@@ -3046,6 +3214,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
         "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
@@ -3184,6 +3360,14 @@
         "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
         "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
         "breakdown": [
@@ -3320,6 +3504,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
         "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
@@ -3458,6 +3650,14 @@
         "summary": "LOCKED: Need 33 Luck (Current: 20, Missing: +13).",
         "recommendation": "Add +13 Luck (via Unyielding armor, Legendary Luck perk, Underarmor, or Herd Mentality)."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 30,
         "breakdown": [
@@ -3592,6 +3792,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -3718,6 +3926,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -3846,6 +4062,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -3973,6 +4197,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -4099,6 +4331,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4230,6 +4470,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -4357,6 +4605,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4486,6 +4742,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -4613,6 +4877,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -4742,6 +5014,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -4787,11 +5067,11 @@
       "firingMode": "vats_standard",
       "firingModeLabel": "V.A.T.S. (Standard Target Lock)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 223,
+        "normal": 108,
+        "critical": 180,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 108,
+        "activeShotDamage": 108,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4799,7 +5079,7 @@
           },
           {
             "source": "Gunslinger Perks",
-            "value": "+60%"
+            "value": "weak-spot damage only (see Weak spot)"
           },
           {
             "source": "Junkie's (5 Addictions)",
@@ -4819,9 +5099,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 453,
-        "criticalCycleDPS": 561,
-        "activeDPS": 453,
+        "burstDPS": 324,
+        "criticalCycleDPS": 432,
+        "activeDPS": 324,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4867,6 +5147,19 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 33 Luck (Current: 23, Missing: +10).",
         "recommendation": "Add +10 Luck (via Unyielding armor, Legendary Luck, or buffs) or add a 3★ Lucky Hit weapon mod (-10 Luck requirement)."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0.12,
+        "multiplier": 1,
+        "breakdown": [
+          {
+            "source": "Gunslinger (Rank 3)",
+            "value": "+12%"
+          }
+        ]
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -4889,13 +5182,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 192,
-        "armorMitigationPct": 54,
-        "mitigationRatio": 0.4583,
-        "normalLanded": 21,
-        "criticalLanded": 35,
-        "burstDPSLanded": 63,
-        "criticalCycleDPSLanded": 84,
-        "activeDPSLanded": 63
+        "armorMitigationPct": 59,
+        "mitigationRatio": 0.4056,
+        "normalLanded": 13,
+        "criticalLanded": 26,
+        "burstDPSLanded": 39,
+        "criticalCycleDPSLanded": 59,
+        "activeDPSLanded": 39
       }
     },
     "earle-williams": {
@@ -4916,11 +5209,11 @@
       "firingMode": "vats_standard",
       "firingModeLabel": "V.A.T.S. (Standard Target Lock)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 223,
+        "normal": 108,
+        "critical": 180,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 108,
+        "activeShotDamage": 108,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -4928,7 +5221,7 @@
           },
           {
             "source": "Gunslinger Perks",
-            "value": "+60%"
+            "value": "weak-spot damage only (see Weak spot)"
           },
           {
             "source": "Junkie's (5 Addictions)",
@@ -4948,9 +5241,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 453,
-        "criticalCycleDPS": 561,
-        "activeDPS": 453,
+        "burstDPS": 324,
+        "criticalCycleDPS": 432,
+        "activeDPS": 324,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4996,6 +5289,19 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 33 Luck (Current: 23, Missing: +10).",
         "recommendation": "Add +10 Luck (via Unyielding armor, Legendary Luck, or buffs) or add a 3★ Lucky Hit weapon mod (-10 Luck requirement)."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0.12,
+        "multiplier": 1,
+        "breakdown": [
+          {
+            "source": "Gunslinger (Rank 3)",
+            "value": "+12%"
+          }
+        ]
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -5018,13 +5324,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 192,
-        "armorMitigationPct": 54,
-        "mitigationRatio": 0.4583,
-        "normalLanded": 14,
-        "criticalLanded": 24,
-        "burstDPSLanded": 42,
-        "criticalCycleDPSLanded": 57,
-        "activeDPSLanded": 42
+        "armorMitigationPct": 59,
+        "mitigationRatio": 0.4056,
+        "normalLanded": 9,
+        "criticalLanded": 18,
+        "burstDPSLanded": 27,
+        "criticalCycleDPSLanded": 41,
+        "activeDPSLanded": 27
       }
     },
     "ultracite-titan": {
@@ -5045,11 +5351,11 @@
       "firingMode": "vats_standard",
       "firingModeLabel": "V.A.T.S. (Standard Target Lock)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 223,
+        "normal": 108,
+        "critical": 180,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 108,
+        "activeShotDamage": 108,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -5057,7 +5363,7 @@
           },
           {
             "source": "Gunslinger Perks",
-            "value": "+60%"
+            "value": "weak-spot damage only (see Weak spot)"
           },
           {
             "source": "Junkie's (5 Addictions)",
@@ -5077,9 +5383,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 453,
-        "criticalCycleDPS": 561,
-        "activeDPS": 453,
+        "burstDPS": 324,
+        "criticalCycleDPS": 432,
+        "activeDPS": 324,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -5125,6 +5431,19 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 33 Luck (Current: 23, Missing: +10).",
         "recommendation": "Add +10 Luck (via Unyielding armor, Legendary Luck, or buffs) or add a 3★ Lucky Hit weapon mod (-10 Luck requirement)."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0.12,
+        "multiplier": 1,
+        "breakdown": [
+          {
+            "source": "Gunslinger (Rank 3)",
+            "value": "+12%"
+          }
+        ]
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -5147,13 +5466,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 224,
-        "armorMitigationPct": 57,
-        "mitigationRatio": 0.43329999999999996,
-        "normalLanded": 16,
-        "criticalLanded": 28,
-        "burstDPSLanded": 48,
-        "criticalCycleDPSLanded": 66,
-        "activeDPSLanded": 48
+        "armorMitigationPct": 62,
+        "mitigationRatio": 0.3834,
+        "normalLanded": 10,
+        "criticalLanded": 21,
+        "burstDPSLanded": 30,
+        "criticalCycleDPSLanded": 47,
+        "activeDPSLanded": 30
       }
     },
     "level-100-super-mutant": {
@@ -5174,11 +5493,11 @@
       "firingMode": "vats_standard",
       "firingModeLabel": "V.A.T.S. (Standard Target Lock)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 223,
+        "normal": 108,
+        "critical": 180,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 108,
+        "activeShotDamage": 108,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -5186,7 +5505,7 @@
           },
           {
             "source": "Gunslinger Perks",
-            "value": "+60%"
+            "value": "weak-spot damage only (see Weak spot)"
           },
           {
             "source": "Junkie's (5 Addictions)",
@@ -5206,9 +5525,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 453,
-        "criticalCycleDPS": 561,
-        "activeDPS": 453,
+        "burstDPS": 324,
+        "criticalCycleDPS": 432,
+        "activeDPS": 324,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -5254,6 +5573,19 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 33 Luck (Current: 23, Missing: +10).",
         "recommendation": "Add +10 Luck (via Unyielding armor, Legendary Luck, or buffs) or add a 3★ Lucky Hit weapon mod (-10 Luck requirement)."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0.12,
+        "multiplier": 1,
+        "breakdown": [
+          {
+            "source": "Gunslinger (Rank 3)",
+            "value": "+12%"
+          }
+        ]
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -5276,13 +5608,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 134,
-        "armorMitigationPct": 48,
-        "mitigationRatio": 0.5226,
-        "normalLanded": 79,
-        "criticalLanded": 134,
-        "burstDPSLanded": 237,
-        "criticalCycleDPSLanded": 320,
-        "activeDPSLanded": 237
+        "armorMitigationPct": 54,
+        "mitigationRatio": 0.4625,
+        "normalLanded": 50,
+        "criticalLanded": 100,
+        "burstDPSLanded": 150,
+        "criticalCycleDPSLanded": 225,
+        "activeDPSLanded": 150
       }
     },
     "raw-unarmored": {
@@ -5303,11 +5635,11 @@
       "firingMode": "vats_standard",
       "firingModeLabel": "V.A.T.S. (Standard Target Lock)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 223,
+        "normal": 108,
+        "critical": 180,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 108,
+        "activeShotDamage": 108,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -5315,7 +5647,7 @@
           },
           {
             "source": "Gunslinger Perks",
-            "value": "+60%"
+            "value": "weak-spot damage only (see Weak spot)"
           },
           {
             "source": "Junkie's (5 Addictions)",
@@ -5335,9 +5667,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 453,
-        "criticalCycleDPS": 561,
-        "activeDPS": 453,
+        "burstDPS": 324,
+        "criticalCycleDPS": 432,
+        "activeDPS": 324,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -5383,6 +5715,19 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 33 Luck (Current: 23, Missing: +10).",
         "recommendation": "Add +10 Luck (via Unyielding armor, Legendary Luck, or buffs) or add a 3★ Lucky Hit weapon mod (-10 Luck requirement)."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0.12,
+        "multiplier": 1,
+        "breakdown": [
+          {
+            "source": "Gunslinger (Rank 3)",
+            "value": "+12%"
+          }
+        ]
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -5407,11 +5752,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 149,
-        "criticalLanded": 221,
-        "burstDPSLanded": 447,
-        "criticalCycleDPSLanded": 555,
-        "activeDPSLanded": 447
+        "normalLanded": 107,
+        "criticalLanded": 178,
+        "burstDPSLanded": 321,
+        "criticalCycleDPSLanded": 428,
+        "activeDPSLanded": 321
       }
     }
   },
@@ -5522,6 +5867,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -5668,6 +6021,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
         "breakdown": [
@@ -5812,6 +6173,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -5958,6 +6327,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
         "breakdown": [
@@ -6102,6 +6479,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 8, Missing: +55).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 90,
@@ -6250,6 +6635,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
         "breakdown": [
@@ -6386,6 +6779,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
@@ -6524,6 +6925,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
         "breakdown": [
@@ -6660,6 +7069,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
@@ -6798,6 +7215,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 12, Missing: +51).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 75,
         "breakdown": [
@@ -6929,6 +7354,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
         "breakdown": [
@@ -7057,6 +7490,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -7187,6 +7628,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
         "breakdown": [
@@ -7316,6 +7765,14 @@
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
         "breakdown": [
@@ -7444,6 +7901,14 @@
         "fourLeafCloverRank": 0,
         "summary": "LOCKED: Need 63 Luck (Current: 10, Missing: +53).",
         "recommendation": "Equip Critical Savvy Rank 3 to lower Luck threshold from 63 down to 33, or add a 3★ Lucky Hit weapon to drop it to 23."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 36,
@@ -7576,6 +8041,14 @@
         "summary": "QUALIFIED: 1:1 Crit Cycle active (23/23 Luck with Crit Savvy R3 + 3★ Lucky Hit).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 1.5,
+        "part": "Head (Scorchbeast row; the Queen is not listed separately)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -7699,6 +8172,14 @@
         "fourLeafCloverRank": 0,
         "summary": "QUALIFIED: 1:1 Crit Cycle active (23/23 Luck with Crit Savvy R3 + 3★ Lucky Hit).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Wendigo colossus)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
@@ -7824,6 +8305,14 @@
         "summary": "QUALIFIED: 1:1 Crit Cycle active (23/23 Luck with Crit Savvy R3 + 3★ Lucky Hit).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": null,
+        "part": "Not in the wiki table",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -7948,6 +8437,14 @@
         "summary": "QUALIFIED: 1:1 Crit Cycle active (23/23 Luck with Crit Savvy R3 + 3★ Lucky Hit).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
       },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (Super mutant)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
+      },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,
         "breakdown": []
@@ -8071,6 +8568,14 @@
         "fourLeafCloverRank": 0,
         "summary": "QUALIFIED: 1:1 Crit Cycle active (23/23 Luck with Crit Savvy R3 + 3★ Lucky Hit).",
         "recommendation": "Optimal 1:1 crit loop achieved! Critical hits alternate every second shot."
+      },
+      "weakSpot": {
+        "targeting": false,
+        "baseMultiplier": 2,
+        "part": "Head (human / most creatures)",
+        "bonusPct": 0,
+        "multiplier": 1,
+        "breakdown": []
       },
       "armorPenetration": {
         "effectiveArmorPenetrationPct": 0,

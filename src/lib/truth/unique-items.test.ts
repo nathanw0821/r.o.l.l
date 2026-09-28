@@ -112,6 +112,9 @@ describe("unique-items innate models", () => {
     "bullet-storm-min-stacks": ["value"],
     "bullet-storm-bonus-stacks-below-health": ["value", "healthThreshold"],
     "flat-action-points": ["value"],
+    "weak-spot-damage": ["value"],
+    "weak-spot-damage-while-aiming": ["value"],
+    "weak-spot-per-kill-streak": ["perUnit", "maxUnits"],
   };
   const NUMERIC_FIELDS = ["value", "perUnit", "maxUnits", "cap", "healthThreshold", "perkRank"] as const;
   const CONFIDENCE = ["verified", "datamined", "approximate"];
@@ -144,8 +147,11 @@ describe("unique-items innate models", () => {
         "crushing-blow",
         "disorderly-conduct",
         "elders-mark",
+        "face-breaker",
         "foundations-vengeance",
         "resolute-veteran",
+        "sole-survivor",
+        "the-fact-finder",
         "the-guarantee",
         "the-quick-fix",
         "ticket-to-revenge",
@@ -165,6 +171,9 @@ describe("unique-items innate models", () => {
     expect(getUniqueEffectModel("resolute-veteran")).toMatchObject({ value: 5 });
     expect(getUniqueEffectModel("foundations-vengeance")).toMatchObject({ value: 5, healthThreshold: 0.25 });
     expect(getUniqueEffectModel("civil-unrest")).toMatchObject({ value: 50 });
+    expect(getUniqueEffectModel("face-breaker")).toMatchObject({ kind: "weak-spot-damage", value: 0.1 });
+    expect(getUniqueEffectModel("the-fact-finder")).toMatchObject({ kind: "weak-spot-damage-while-aiming", value: 0.15 });
+    expect(getUniqueEffectModel("sole-survivor")).toMatchObject({ kind: "weak-spot-per-kill-streak", perUnit: 0.03, maxUnits: 10 });
   });
 
   it("explains every reference-only innate that was considered", () => {
@@ -173,8 +182,9 @@ describe("unique-items innate models", () => {
     for (const item of considered) {
       expect(item.modelNote?.trim().length, item.id).toBeGreaterThan(0);
     }
-    // Spot-check the three reasons a numeric innate can still be reference-only.
-    expect(UNIQUE_ITEMS.find((item) => item.id === "face-breaker")?.modelNote).toContain("weak-spot");
+    // Spot-check the reasons a numeric innate can still be reference-only. (Weak-point innates
+    // stopped being reference-only on 2026-09-28: the engine now has a weak-spot input.)
+    expect(UNIQUE_ITEMS.find((item) => item.id === "face-breaker")?.model?.kind).toBe("weak-spot-damage");
     expect(UNIQUE_ITEMS.find((item) => item.id === "cryptid-jawbone-knife")?.modelNote).toContain("target-type");
     expect(UNIQUE_ITEMS.find((item) => item.id === "old-guard")?.modelNote).toContain("defensive-perks.json");
   });

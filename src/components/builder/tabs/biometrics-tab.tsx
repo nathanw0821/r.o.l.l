@@ -71,6 +71,7 @@ export default function BiometricsTab({
     onArmorModeChange={onArmorModeChange}
     statsBand={statsBand}
     isCompactDensity={isCompactDensity}
+    weakSpot={weaponFirepowerResult?.weakSpot ?? null}
   />
 </div>
   );

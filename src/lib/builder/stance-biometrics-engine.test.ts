@@ -388,3 +388,57 @@ describe("stance-biometrics-engine", () => {
     expect(none.activeTacticalTags.some((t) => t.startsWith("Mutant's"))).toBe(false);
   });
 });
+
+describe("perk-card SPECIAL bonuses on the character sheet", () => {
+  const board = (over: Partial<CombatSwitchboardState>): CombatSwitchboardState =>
+    ({
+      isGhoul: false,
+      healthPct: 100,
+      radsPct: 0,
+      inPowerArmor: false,
+      timeOfDay: "day",
+      teamState: "solo",
+      activeAlcohol: null,
+      activeFood: null,
+      activeFoods: {},
+      activeDrug: null,
+      activeBobblehead: null,
+      activeMagazine: null,
+      activeNukaCola: null,
+      activeCompanion: null,
+      activeCampBuffs: [],
+      targetEnemy: "superMutant",
+      ...over,
+    }) as CombatSwitchboardState;
+
+  const run = (switchboard: CombatSwitchboardState, cards: Array<{ cardId: string; rank: number }>) =>
+    calculateStanceAndBiometricModifiers({ switchboard, equippedMods: [], isGhoul: false, equippedPerkCards: cards });
+
+  it("Night Person and Solar Powered follow the time of day", () => {
+    const night = run(board({ timeOfDay: "night" }), [{ cardId: "night-person", rank: 1 }, { cardId: "solar-powered", rank: 1 }]);
+    expect(night.layer.int).toBe(5);
+    expect(night.layer.per).toBe(5);
+    expect(night.layer.str).toBe(0);
+    const day = run(board({ timeOfDay: "day" }), [{ cardId: "night-person", rank: 1 }, { cardId: "solar-powered", rank: 1 }]);
+    expect(day.layer.int).toBe(0);
+    expect(day.layer.str).toBe(5);
+    expect(day.layer.end).toBe(5);
+    expect(day.specialBreakdowns.map((b) => b.source)).toEqual(expect.arrayContaining([expect.stringContaining("Solar Powered")]));
+  });
+
+  it("Radicool scales with rads up to +5 STR, Happy-Go-Lucky needs a drink, Magnetic Personality needs a team", () => {
+    expect(run(board({ radsPct: 60 }), [{ cardId: "radicool", rank: 1 }]).layer.str).toBe(3);
+    expect(run(board({ radsPct: 100 }), [{ cardId: "radicool", rank: 1 }]).layer.str).toBe(5);
+    expect(run(board({ radsPct: 0 }), [{ cardId: "radicool", rank: 1 }]).layer.str).toBe(0);
+    expect(run(board({ activeAlcohol: "brew-ballistic-bock" }), [{ cardId: "happy-go-lucky", rank: 2 }]).layer.lck).toBe(3);
+    expect(run(board({ activeAlcohol: null }), [{ cardId: "happy-go-lucky", rank: 2 }]).layer.lck).toBe(0);
+    expect(run(board({ teamState: "casual" }), [{ cardId: "magnetic-personality", rank: 2 }]).layer.cha).toBe(6);
+    expect(run(board({ teamState: "solo" }), [{ cardId: "magnetic-personality", rank: 2 }]).layer.cha).toBe(0);
+  });
+
+  it("does nothing without perk cards (existing callers unchanged)", () => {
+    const r = calculateStanceAndBiometricModifiers({ switchboard: board({ timeOfDay: "night" }), equippedMods: [], isGhoul: false });
+    expect(r.layer.int).toBe(0);
+  });
+});
+
