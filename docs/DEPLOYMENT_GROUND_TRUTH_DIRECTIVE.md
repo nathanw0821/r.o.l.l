@@ -28,7 +28,7 @@ Every item in this directive has been verified against live Bethesda engine dump
 All legacy third-party wiki thumbnail URLs have been retired in favor of **100% locally-curated 1:1 in-game bitmapped cards** rendered with authentic Pip-Boy curves and textures.
 
 ### A. Asset Locations & Inventory
-* **Physical Directory**: [`public/images/in_game_cards/`](file:///home/nathanw/Creative%20Direction/R.O.L.L/public/images/in_game_cards)
+* **Physical Directory**: [`public/images/in_game_cards/`](/public/images/in_game_cards)
 * **Total Image Count**: **852 PNG files**
 * **Perk Card Coverage**:
   * Total Perk Cards: **274** (245 S.P.E.C.I.A.L. Standard + 29 Legendary Cards).
@@ -36,7 +36,7 @@ All legacy third-party wiki thumbnail URLs have been retired in favor of **100% 
   * File Naming Convention: `${clean_id}_r${rank}.png` (e.g., `bullet_storm_r1.png`, `bloody_mess_r3.png`, `legendary_strength_r4.png`).
   * Gender Variants: Distinct files for `action_boy` vs `action_girl`, `aquaboy` vs `aquagirl`, `party_boy` vs `party_girl`.
 
-### B. Database Schema ([`src/data/perk-cards.json`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/data/perk-cards.json))
+### B. Database Schema ([`src/data/perk-cards.json`](/src/data/perk-cards.json))
 Both root `imageUrl` and individual `ranks[n].imageUrl` point to local assets:
 ```json
 {
@@ -70,9 +70,9 @@ Both root `imageUrl` and individual `ranks[n].imageUrl` point to local assets:
 ```
 
 ### C. Runtime Resolution & Component Pipeline
-* **Helper Function**: `getInGamePerkCardImage(idOrName, rank, isFemale)` in [`src/lib/perks/clean-perk-assets.ts`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/lib/perks/clean-perk-assets.ts).
-* **Primary Visual Component**: [`InGamePerkCard`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/components/perks/in-game-perk-card.tsx).
-* **Wrapper Component**: [`PipBoyPerkCard`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/components/perks/pipboy-perk-card.tsx) delegates directly to `InGamePerkCard`.
+* **Helper Function**: `getInGamePerkCardImage(idOrName, rank, isFemale)` in [`src/lib/perks/clean-perk-assets.ts`](/src/lib/perks/clean-perk-assets.ts).
+* **Primary Visual Component**: [`InGamePerkCard`](/src/components/perks/in-game-perk-card.tsx).
+* **Wrapper Component**: [`PipBoyPerkCard`](/src/components/perks/pipboy-perk-card.tsx) delegates directly to `InGamePerkCard`.
 
 ---
 
@@ -80,7 +80,7 @@ Both root `imageUrl` and individual `ranks[n].imageUrl` point to local assets:
 
 To prevent obsolete guides from misleading players, retired mechanics are preserved with clear warning badges and automatic migration paths.
 
-### A. Catalog Definitions ([`src/lib/perks/catalog.ts`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/lib/perks/catalog.ts))
+### A. Catalog Definitions ([`src/lib/perks/catalog.ts`](/src/lib/perks/catalog.ts))
 * **`LEGACY_OUTDATED_PERKS`**: Canonical entries for retired cards (`heavy-gunner`, `expert-heavy-gunner`, `master-heavy-gunner`, `expert-slugger`, `master-slugger`).
   * Tagged with `isOutdated: true`.
   * Carries `outdatedMeta` explaining what patch changed it and linking directly to the modern card (`href: "/perks?q=bullet-storm"`).
@@ -92,16 +92,16 @@ To prevent obsolete guides from misleading players, retired mechanics are preser
 2. **Card Inspect Modal**:
    * Outdated perks render an amber Vault-Tec Advisory notice with an interactive button: `Equip / View Modern Perk: <Target> ➔`.
    * Modern reworked perks render an emerald `PATCH 69 LIVE GROUND TRUTH: Formerly <Old Name>` badge.
-3. **S.P.E.C.I.A.L. Loadout Builder ([`src/components/perks/perk-builder.tsx`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/components/perks/perk-builder.tsx))**:
+3. **S.P.E.C.I.A.L. Loadout Builder ([`src/components/perks/perk-builder.tsx`](/src/components/perks/perk-builder.tsx))**:
    * Clicking "Equip" on an outdated card automatically intercepts the action and equips the modern replacement card.
-4. **Community Wiki Codex ([`src/lib/wiki/outdated-articles.ts`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/lib/wiki/outdated-articles.ts))**:
+4. **Community Wiki Codex ([`src/lib/wiki/outdated-articles.ts`](/src/lib/wiki/outdated-articles.ts))**:
    * Articles tagged as Nuclear Winter, Vault 94 Raids, Legacy Explosives, or Pre-Milepost Zero Crafting render full-width Vault-Tec advisory banners linking to live equivalents.
 
 ---
 
 ## ⚡ 4. Ground-Truth Combat & Firepower Engine (Patch 69)
 
-All combat formulas in [`src/lib/builder/combat-firepower-engine.ts`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/lib/builder/combat-firepower-engine.ts) are strictly aligned with Patch 69:
+All combat formulas in [`src/lib/builder/combat-firepower-engine.ts`](/src/lib/builder/combat-firepower-engine.ts) are strictly aligned with Patch 69:
 
 ### A. Heavy Weapons: Bullet Storm System
 * Replaces legacy flat `+20% / +15% / +10%` Heavy Gunner perks.
@@ -141,7 +141,7 @@ All combat formulas in [`src/lib/builder/combat-firepower-engine.ts`](file:///ho
 
 ## 💰 5. Economy, Currencies & Crafting Ground Truth
 
-Documented across [`src/data/ground-truth/live/`](file:///home/nathanw/Creative%20Direction/R.O.L.L/src/data/ground-truth/live/):
+Documented across [`src/data/ground-truth/live/`](/src/data/ground-truth/live/):
 
 | System | Live Ground Truth | Source File |
 | :--- | :--- | :--- |
@@ -161,7 +161,7 @@ Documented across [`src/data/ground-truth/live/`](file:///home/nathanw/Creative%
 
 ## 📚 6. Truth Bible Volumes Navigation Matrix
 
-All Truth Bible chapters under [`docs/truth_bible/`](file:///home/nathanw/Creative%20Direction/R.O.L.L/docs/truth_bible) feature verified formulas, clean relative Markdown links, and zero broken paths:
+All Truth Bible chapters under [`docs/truth_bible/`](/docs/truth_bible) feature verified formulas, clean relative Markdown links, and zero broken paths:
 
 1. **[Master Index](README.md)**: Blueprint galleries and cross-volume navigation.
 2. **[01. Damage Calculation & Armor Mitigation Bible](01_Mechanics_and_Formulas/Damage_Calculation_Bible.md)**: The One Wasteland additive damage formula, 350 DR soft-cap, and flat mitigation stacking.

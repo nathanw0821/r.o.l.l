@@ -11,7 +11,7 @@ All perk cards across the R.O.L.L. ecosystem must render as **1:1 bitmapped, cur
 - **Aspect ratio**: Locked to `aspect-[310/490]` matching Pip-Boy screen proportions.
 - **Storage targets**:
   - `public/images/in_game_cards/{slug}_r{rank}.png` (Web application)
-  - `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/{slug}_r{rank}.png` (Desktop exchange)
+  - `<local Agent_Exchange mirror, outside this repo>/clean_perk_assets/in_game_cards/{slug}_r{rank}.png` (Desktop exchange)
 
 ---
 
@@ -93,7 +93,7 @@ python3 scripts/generate_all_standard_cards.py --force new-perk-id
 ```
 The script will automatically:
 - Render `new_perk_id_r1.png`, `new_perk_id_r2.png`, `new_perk_id_r3.png`, and `new_perk_id.png`.
-- Save all files to both `public/images/in_game_cards/` and `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`.
+- Save all files to both `public/images/in_game_cards/` and `<local Agent_Exchange mirror, outside this repo>/clean_perk_assets/in_game_cards/`.
 
 ### Step 4: Update Runtime Resolvers (If Aliased or Gender-Specific)
 - In `src/lib/perks/clean-perk-assets.ts`:

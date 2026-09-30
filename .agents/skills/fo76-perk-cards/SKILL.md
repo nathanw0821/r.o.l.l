@@ -16,7 +16,7 @@ This skill governs the visual rendering, asset resolution, mechanical calibratio
 
 - **MASTER DIRECTIVE**: All perk cards rendered across the platform (**Perk Builder**, **Inspect Modal**, **Punch Card Rack**, **Truth Wiki**, and **Discord Bot**) MUST use the official 1:1 bitmapped Pip-Boy curved/slanted cards from:
   - Application Directory: `public/images/in_game_cards/` (Served at `/images/in_game_cards/`)
-  - Desktop Exchange: `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`
+  - Desktop Exchange: `<local Agent_Exchange mirror, outside this repo>/clean_perk_assets/in_game_cards/`
 - **Primary Resolver**: `getInGamePerkCardImage(cardIdOrName, rank, isFemale)` in `src/lib/perks/clean-perk-assets.ts`.
 - **Display Frame**: Strict `aspect-[310/490]` container framing matching native Bethesda Pip-Boy screen geometry.
 - **NO SYNTHETIC OVERLAY BOXES**: Never draw flat color rectangles over title banners or badges when native Bethesda assets exist.
@@ -101,7 +101,7 @@ Fallout 76 includes three gender-specific perk cards that dynamically swap betwe
 
 Both asset directories must remain 100% identical at all times:
 1. `public/images/in_game_cards/` (Web application production assets)
-2. `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/` (Desktop agent exchange)
+2. `<local Agent_Exchange mirror, outside this repo>/clean_perk_assets/in_game_cards/` (Desktop agent exchange)
 
 Whenever a new card is generated or updated, write to both locations simultaneously:
 ```python

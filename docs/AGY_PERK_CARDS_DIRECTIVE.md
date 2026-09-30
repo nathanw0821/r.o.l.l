@@ -20,7 +20,7 @@ Legacy vector SVGs, unslanted wiki cutouts, and synthetic cover boxes are perman
 1. **Production Web Application**:  
    `public/images/in_game_cards/` (Served by Next.js at `/images/in_game_cards/`)
 2. **Desktop Prototype & Agent Exchange**:  
-   `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`
+   `<local Agent_Exchange mirror, outside this repo>/clean_perk_assets/in_game_cards/`
 
 ### 2.1a Derived WebP siblings (added 2026-09-28)
 `public/images/in_game_cards_webp/<name>.webp` are generated from the PNGs by `scripts/perks/build-card-webp.mjs` (320 px wide, quality 82, same pixels). They are a delivery optimisation only: `<InGamePerkCard>` renders `<picture><source type="image/webp"><img src=".png"></picture>`, so the PNG remains the asset of record and the fallback. Regenerate after any PNG change; the unit test `src/lib/perks/card-webp.test.ts` pins one sibling per PNG.
@@ -151,5 +151,5 @@ npm run build
 
 1. **Primary Asset Source**: Any UI displaying a perk card MUST query `getInGamePerkCardImage()` and display `/images/in_game_cards/${slug}_r${rank}.png`.
 2. **Never Overwrite with SVGs**: Do not replace `InGamePerkCard` with the legacy SVG radar box renderer.
-3. **Preserve Mechanical Storage Invariants**: In accordance with `sovereign-hdd-guard.md`, all card rendering and image generation scripts operate exclusively within the local project directory on the SSD (`/home/nathanw/Creative Direction/R.O.L.L/`). Never walk or write to `/run/media/nathanw/Library`.
-4. **Dual Output Sync**: Any script generating card assets must write to both `public/images/in_game_cards/` AND `/home/nathanw/Desktop/Agent_Exchange/clean_perk_assets/in_game_cards/`.
+3. **Preserve Mechanical Storage Invariants**: In accordance with `sovereign-hdd-guard.md`, all card rendering and image generation scripts operate exclusively within the local project directory on the SSD (this repository). Never walk or write to `/run/media/nathanw/Library`.
+4. **Dual Output Sync**: Any script generating card assets must write to both `public/images/in_game_cards/` AND `<local Agent_Exchange mirror, outside this repo>/clean_perk_assets/in_game_cards/`.
