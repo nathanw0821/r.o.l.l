@@ -1,0 +1,713 @@
+{
+ "$comment": "Numeric effects of named unique weapons exactly as printed in Bethesda's official Patch 70 release notes (the unique weapons table). `effect` is the official wording verbatim and is the value of record; `parsed` is a machine reading of it. `gameData` records where the client data (SeventySix.esm 2026-09-16) agrees or conflicts. `openConflicts` lists pre-release or other sources that differ; they never override the official note. 45 entries are numeric effects; 4 are perk-rank grants (kind 'perk-rank'). Nothing in the builder reads this file yet.",
+ "source": {
+  "name": "Fallout 76: The Slasher Release Notes (Bethesda)",
+  "url": "https://fallout.bethesda.net/en-US/news/fallout-76-the-slasher-release-notes",
+  "published": "2026-09-15",
+  "patch": 70,
+  "build": "1.7.26.13",
+  "capturedAt": "2026-10-01",
+  "confidence": "verified"
+ },
+ "uniques": {
+  "old-guard": {
+   "name": "Old Guard",
+   "kind": "numeric",
+   "effect": "+10% Deflect Chance",
+   "parsed": {
+    "value": 10,
+    "unit": "%",
+    "stat": "Deflect Chance"
+   }
+  },
+  "acceptable-overkill": {
+   "name": "Acceptable Overkill",
+   "kind": "perk-rank",
+   "effect": "+1 Rank to Perk Concentrated Fire",
+   "parsed": {
+    "value": 1,
+    "unit": "rank",
+    "perk": "Concentrated Fire"
+   }
+  },
+  "commanders-charge": {
+   "name": "Commander's Charge",
+   "kind": "numeric",
+   "effect": "30% Chance to Block Projectiles",
+   "parsed": {
+    "value": 30,
+    "unit": "%",
+    "stat": "chance to block projectiles"
+   }
+  },
+  "crushing-blow": {
+   "name": "Crushing Blow",
+   "kind": "numeric",
+   "effect": "+10% Damage per Crippled Limb Your Target Has",
+   "parsed": {
+    "value": 10,
+    "unit": "%",
+    "stat": "Damage",
+    "per": "Crippled Limb on target"
+   }
+  },
+  "disorderly-conduct": {
+   "name": "Disorderly Conduct",
+   "kind": "numeric",
+   "effect": "+20% Attack Speed",
+   "parsed": {
+    "value": 20,
+    "unit": "%",
+    "stat": "Attack Speed"
+   }
+  },
+  "kingfisher": {
+   "name": "Kingfisher",
+   "kind": "numeric",
+   "effect": "+10% Damage per Local Legend Challenge Completed",
+   "parsed": {
+    "value": 10,
+    "unit": "%",
+    "stat": "Damage",
+    "per": "Local Legend Challenge Completed"
+   }
+  },
+  "the-action-hero": {
+   "name": "The Action Hero",
+   "kind": "numeric",
+   "effect": "+1% Deflect Chance per Bullet Storm Stack",
+   "parsed": {
+    "value": 1,
+    "unit": "%",
+    "stat": "Deflect Chance",
+    "per": "Bullet Storm Stack"
+   }
+  },
+  "resolute-veteran": {
+   "name": "Resolute Veteran",
+   "kind": "numeric",
+   "effect": "Your Minimum Bullet Storm Stack Count is 5",
+   "parsed": {
+    "value": 5,
+    "unit": "stacks",
+    "stat": "Minimum Bullet Storm Stack Count"
+   },
+   "openConflicts": [
+    {
+     "source": "Nuka Knights PTS screenshot (pre-release)",
+     "note": "A pre-release Nuka Knights screenshot shows a percent where the official note gives a flat count; the official note stands."
+    }
+   ]
+  },
+  "the-guarantee": {
+   "name": "The Guarantee",
+   "kind": "perk-rank",
+   "effect": "Grants Demo Expert (Rank 3)",
+   "parsed": {
+    "rank": 3,
+    "perk": "Demolition Expert (printed \"Demo Expert\")"
+   }
+  },
+  "unstoppable-monster": {
+   "name": "Unstoppable Monster",
+   "kind": "numeric",
+   "effect": "Reduce Damage Taken by 5% and an Additional 1% per Killstreak (Max 10)",
+   "parsed": {
+    "value": 5,
+    "unit": "%",
+    "stat": "Damage Taken reduction",
+    "additional_value": 1,
+    "additional_unit": "%",
+    "per": "Killstreak",
+    "max": 10
+   }
+  },
+  "the-quick-fix": {
+   "name": "The Quick Fix",
+   "kind": "numeric",
+   "effect": "+5% Swing Speed per Addiction",
+   "parsed": {
+    "value": 5,
+    "unit": "%",
+    "stat": "Swing Speed",
+    "per": "Addiction"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "0.05 per Addiction (5%), 0.5 (50%) at 10; stored as fractions",
+    "curve": "uniquemods/bonus_quickfix",
+    "points": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      0.05
+     ],
+     [
+      10,
+      0.5
+     ]
+    ]
+   }
+  },
+  "whistle-in-the-dark": {
+   "name": "Whistle in the Dark",
+   "kind": "perk-rank",
+   "effect": "Grants Mister Sandman Perk Card (Rank 2)",
+   "parsed": {
+    "rank": 2,
+    "perk": "Mister Sandman"
+   }
+  },
+  "sole-survivor": {
+   "name": "Sole Survivor",
+   "kind": "numeric",
+   "effect": "+3% Weak Spot Damage per Kill while on a Kill Streak (Max 10)",
+   "parsed": {
+    "value": 3,
+    "unit": "%",
+    "stat": "Weak Spot Damage",
+    "per": "kill on Kill Streak",
+    "max": 10
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "3% per kill, 30% at 10 kills (matches Max 10)",
+    "curve": "uniquemods/bonusperkill_solesurvior",
+    "points": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      10,
+      30
+     ]
+    ]
+   }
+  },
+  "cultist-piercer": {
+   "name": "Cultist Piercer",
+   "kind": "numeric",
+   "effect": "+50% Armor Penetrations vs Cryptids",
+   "parsed": {
+    "value": 50,
+    "unit": "%",
+    "stat": "Armor Penetration",
+    "vs": "Cryptids"
+   }
+  },
+  "elders-mark": {
+   "name": "Elder's Mark",
+   "kind": "numeric",
+   "effect": "+2% V.A.T.S. Critical Damage per Onslaught Stack",
+   "parsed": {
+    "value": 2,
+    "unit": "%",
+    "stat": "V.A.T.S. Critical Damage",
+    "per": "Onslaught Stack"
+   }
+  },
+  "holy-fire": {
+   "name": "Holy Fire",
+   "kind": "numeric",
+   "effect": "You and Teammates Hit by Your Flame Gain +30% Damage and +50 DR for 15 Seconds",
+   "parsed": {
+    "damage_value": 30,
+    "damage_unit": "%",
+    "dr_value": 50,
+    "duration_s": 15,
+    "stat": "Damage and DR to you and teammates hit"
+   }
+  },
+  "lucas-switchblade": {
+   "name": "Lucas' Switchblade",
+   "kind": "numeric",
+   "effect": "+50% Explosive Damage",
+   "parsed": {
+    "value": 50,
+    "unit": "%",
+    "stat": "Explosive Damage"
+   }
+  },
+  "ogua-gauntlet": {
+   "name": "Ogua Gauntlet",
+   "kind": "numeric",
+   "effect": "+30% More Damage Blocked",
+   "parsed": {
+    "value": 30,
+    "unit": "%",
+    "stat": "More Damage Blocked"
+   }
+  },
+  "face-breaker": {
+   "name": "Face Breaker",
+   "kind": "numeric",
+   "effect": "+10% Damage to Weak Point",
+   "parsed": {
+    "value": 10,
+    "unit": "%",
+    "stat": "Damage to Weak Point"
+   }
+  },
+  "flatliner": {
+   "name": "Flatliner",
+   "kind": "numeric",
+   "effect": "Fully Charged Shots Deal 100% More Damage",
+   "parsed": {
+    "value": 100,
+    "unit": "%",
+    "stat": "More Damage",
+    "condition": "Fully Charged Shots"
+   }
+  },
+  "lickety-split": {
+   "name": "Lickety-Split",
+   "kind": "numeric",
+   "effect": "Railway Spikes Chain 2 Times",
+   "parsed": {
+    "value": 2,
+    "unit": "times",
+    "stat": "Railway Spike chains"
+   }
+  },
+  "boomstick": {
+   "name": "Boomstick",
+   "kind": "numeric",
+   "effect": "Fires 2 Additional Missiles",
+   "parsed": {
+    "value": 2,
+    "unit": "missiles",
+    "stat": "Additional Missiles"
+   }
+  },
+  "longshot": {
+   "name": "Longshot",
+   "kind": "numeric",
+   "effect": "+30% Damage to Far Targets While Aiming",
+   "parsed": {
+    "value": 30,
+    "unit": "%",
+    "stat": "Damage to Far Targets",
+    "condition": "While Aiming"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "no curve; corroborated by ESM-derived truth file",
+    "source": "unique-innate-effects-p70.json"
+   }
+  },
+  "overkill": {
+   "name": "Overkill",
+   "kind": "numeric",
+   "effect": "Kills Grant +5 Killstreak Count",
+   "parsed": {
+    "value": 5,
+    "unit": "count",
+    "stat": "Killstreak Count",
+    "per": "kill"
+   },
+   "openConflicts": [
+    {
+     "source": "Nuka Knights PTS screenshot (pre-release)",
+     "note": "A pre-release Nuka Knights screenshot words the +5 as a perk rank; the official note stands."
+    }
+   ]
+  },
+  "daisycutter": {
+   "name": "Daisycutter",
+   "kind": "numeric",
+   "effect": "+20% Damage for Every 1000 RAD Resistance",
+   "parsed": {
+    "value": 20,
+    "unit": "%",
+    "stat": "Damage",
+    "per": "1000 RAD Resistance"
+   }
+  },
+  "somerset-special": {
+   "name": "Somerset Special",
+   "kind": "numeric",
+   "effect": "+15% Damage to Distant Targets",
+   "parsed": {
+    "value": 15,
+    "unit": "%",
+    "stat": "Damage to Distant Targets"
+   }
+  },
+  "the-fact-finder": {
+   "name": "The Fact Finder",
+   "kind": "numeric",
+   "effect": "+15% Damage to Weak Point While Aiming",
+   "parsed": {
+    "value": 15,
+    "unit": "%",
+    "stat": "Damage to Weak Point",
+    "condition": "While Aiming"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "no curve; corroborated by ESM-derived truth file",
+    "source": "unique-innate-effects-p70.json"
+   }
+  },
+  "bunker-buster": {
+   "name": "Bunker Buster",
+   "kind": "numeric",
+   "effect": "+25% Explosive Radius",
+   "parsed": {
+    "value": 25,
+    "unit": "%",
+    "stat": "Explosive Radius"
+   },
+   "openConflicts": [
+    {
+     "source": "Nuka Knights PTS screenshot (pre-release)",
+     "note": "A pre-release Nuka Knights screenshot shows different text for this weapon; the official note stands."
+    }
+   ]
+  },
+  "final-word": {
+   "name": "Final Word",
+   "kind": "numeric",
+   "effect": "Gain 1 Bullet Storm Stack on Kill",
+   "parsed": {
+    "value": 1,
+    "unit": "stack",
+    "stat": "Bullet Storm Stack",
+    "per": "kill"
+   }
+  },
+  "the-v-a-t-s-unknown": {
+   "name": "The V.A.T.S. Unknown",
+   "kind": "numeric",
+   "effect": "V.A.T.S. Criticals Deal Between 20% to 200% Damage",
+   "parsed": {
+    "min": 20,
+    "max": 200,
+    "unit": "%",
+    "stat": "V.A.T.S. Critical damage"
+   }
+  },
+  "slug-buster": {
+   "name": "Slug Buster",
+   "kind": "numeric",
+   "effect": "Replenish 60 Action Points with Each Kill",
+   "parsed": {
+    "value": 60,
+    "unit": "AP",
+    "per": "kill"
+   },
+   "openConflicts": [
+    {
+     "source": "Nuka Knights PTS screenshot (pre-release)",
+     "note": "A pre-release Nuka Knights screenshot shows a percent where the official note gives a flat count; the official note stands."
+    }
+   ]
+  },
+  "oathbreaker": {
+   "name": "Oathbreaker",
+   "kind": "perk-rank",
+   "effect": "+1 Rank to Perk Bloody Mess",
+   "parsed": {
+    "value": 1,
+    "unit": "rank",
+    "perk": "Bloody Mess"
+   }
+  },
+  "stimpike": {
+   "name": "Stimpike",
+   "kind": "numeric",
+   "effect": "Attacks will Heal Friendly Targets by 10% Health",
+   "parsed": {
+    "value": 10,
+    "unit": "%",
+    "stat": "Health healed on friendly targets"
+   }
+  },
+  "love-tap": {
+   "name": "Love Tap",
+   "kind": "numeric",
+   "effect": "Bashing Grants You and Teammates +30% Damage for 30 Seconds",
+   "parsed": {
+    "value": 30,
+    "unit": "%",
+    "stat": "Damage",
+    "duration_s": 30,
+    "applies_to": "you and teammates, on bash"
+   },
+   "gameData": {
+    "relation": "conflicts",
+    "note": "Curve = 10% per kill to 100% at 10 kills; official = flat +30% Damage for 30 Seconds. Not resolved.",
+    "curve": "uniquemods/bonusperkill_lovetap",
+    "points": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      10
+     ],
+     [
+      10,
+      100
+     ]
+    ]
+   },
+   "openConflicts": [
+    {
+     "source": "client data curve uniquemods/bonusperkill_lovetap",
+     "note": "The game data has 10% per kill to 100% at 10 kills; the official note says a flat +30% for 30 seconds. Unresolved: the curve may be a leftover of an earlier version."
+    }
+   ]
+  },
+  "doctors-orders": {
+   "name": "Doctor's Orders",
+   "kind": "numeric",
+   "effect": "Attacks Against Weak Points Have 30% Chance to Reset a Revive Effect Cooldown",
+   "parsed": {
+    "value": 30,
+    "unit": "%",
+    "stat": "chance to reset Revive Effect cooldown",
+    "condition": "attacks against weak points"
+   }
+  },
+  "foundations-vengeance": {
+   "name": "Foundation's Vengeance",
+   "kind": "numeric",
+   "effect": "Foundations Vengeance: +5 Bullet Storm Stacks While Under 25% HP",
+   "parsed": {
+    "value": 5,
+    "unit": "stacks",
+    "stat": "Bullet Storm Stacks",
+    "condition": "under 25% HP",
+    "threshold_pct": 25
+   },
+   "openConflicts": [
+    {
+     "source": "Nuka Knights PTS screenshot (pre-release)",
+     "note": "A pre-release Nuka Knights screenshot says \"max\" stacks; the official note stands."
+    }
+   ]
+  },
+  "pirate-punch": {
+   "name": "Pirate Punch",
+   "kind": "numeric",
+   "effect": "+5% Damage per Lockpick Skill",
+   "parsed": {
+    "value": 5,
+    "unit": "%",
+    "stat": "Damage",
+    "per": "Lockpick Skill"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "5% per Lockpick point, 100% at 20",
+    "curve": "uniquemods/piratepunchbonus",
+    "points": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      20,
+      100
+     ]
+    ]
+   }
+  },
+  "the-debilitator": {
+   "name": "The Debilitator",
+   "kind": "numeric",
+   "effect": "+2% Limb Damage per STR",
+   "parsed": {
+    "value": 2,
+    "unit": "%",
+    "stat": "Limb Damage",
+    "per": "STR"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "2% per STR, 200 at 100",
+    "curve": "uniquemods/debilitator_bonus",
+    "points": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      100,
+      200
+     ]
+    ]
+   }
+  },
+  "tone-death": {
+   "name": "Tone Death",
+   "kind": "numeric",
+   "effect": "+20% Damage while Well Tuned",
+   "parsed": {
+    "value": 20,
+    "unit": "%",
+    "stat": "Damage",
+    "condition": "while Well Tuned"
+   }
+  },
+  "mind-over-matter": {
+   "name": "Mind Over Matter",
+   "kind": "numeric",
+   "effect": "+1 INT per kill during a kill streak",
+   "parsed": {
+    "value": 1,
+    "unit": "INT",
+    "per": "kill during kill streak"
+   }
+  },
+  "molerat-bat": {
+   "name": "Molerat Bat",
+   "kind": "numeric",
+   "effect": "+50% Damage to Molerats",
+   "parsed": {
+    "value": 50,
+    "unit": "%",
+    "stat": "Damage to Molerats"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "flat 50 (% vs Molerats)",
+    "curve": "enchantments/weapon_dmgvsmolerats",
+    "points": [
+     [
+      1,
+      50
+     ],
+     [
+      100,
+      50
+     ]
+    ]
+   }
+  },
+  "gunthers-big-iron": {
+   "name": "Gunther's Big Iron",
+   "kind": "numeric",
+   "effect": "+45% Reload Speed",
+   "parsed": {
+    "value": 45,
+    "unit": "%",
+    "stat": "Reload Speed"
+   }
+  },
+  "whacker-smacker": {
+   "name": "Whacker Smacker",
+   "kind": "numeric",
+   "effect": "+5% Power Attack Damage per Onslaught Stack",
+   "parsed": {
+    "value": 5,
+    "unit": "%",
+    "stat": "Power Attack Damage",
+    "per": "Onslaught Stack"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "5% per Onslaught stack, 500% at 100",
+    "curve": "uniquemods/powerattackperonslaught_whackersmacker",
+    "points": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      100,
+      500
+     ]
+    ]
+   }
+  },
+  "ticket-to-revenge": {
+   "name": "Ticket to Revenge",
+   "kind": "numeric",
+   "effect": "+3% Armor Penetration per Onslaught stack",
+   "parsed": {
+    "value": 3,
+    "unit": "%",
+    "stat": "Armor Penetration",
+    "per": "Onslaught stack"
+   }
+  },
+  "v63-olga": {
+   "name": "V63-OLGA",
+   "kind": "numeric",
+   "effect": "Projectiles Gain +63% Chance to Refract Towards a Nearby Target",
+   "parsed": {
+    "value": 63,
+    "unit": "%",
+    "stat": "chance to refract towards nearby target"
+   },
+   "gameData": {
+    "relation": "corroborates",
+    "note": "no curve; corroborated by ESM-derived truth file",
+    "source": "unique-innate-effects-p70.json"
+   }
+  },
+  "civil-unrest": {
+   "name": "Civil Unrest",
+   "kind": "numeric",
+   "effect": "+50 Action Points",
+   "parsed": {
+    "value": 50,
+    "unit": "AP",
+    "stat": "Action Points"
+   }
+  },
+  "all-rise": {
+   "name": "All Rise",
+   "kind": "numeric",
+   "effect": "+50 HP",
+   "parsed": {
+    "value": 50,
+    "unit": "HP"
+   }
+  },
+  "cryptid-jawbone-knife": {
+   "name": "Cryptid Jawbone Knife",
+   "kind": "numeric",
+   "effect": "+50% damage to Cryptids",
+   "parsed": {
+    "value": 50,
+    "unit": "%",
+    "stat": "Damage",
+    "vs": "Cryptids"
+   }
+  },
+  "xerxos-gamma-ray-gun": {
+   "name": "Xerxo's Gamma Ray Gun",
+   "kind": "numeric",
+   "effect": "Emits Radiation at 6 RAD/s",
+   "parsed": {
+    "value": 6,
+    "unit": "RAD/s",
+    "stat": "Radiation emitted"
+   }
+  }
+ }
+}
