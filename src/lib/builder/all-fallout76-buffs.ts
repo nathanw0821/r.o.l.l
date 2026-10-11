@@ -95,6 +95,11 @@ export const ALL_PLANT_FOODS: Fallout76BuffDef[] = sortAlphanumerically([
   { id: "plant-steeped-tattoo", label: "Steeped Tattoo Flower Tea", category: "food_plant", foodBuffType: "per", description: "+2 Perception (+5 Herbivore)", specialBonus: { per: 5 } },
   { id: "plant-steeped-thistle", label: "Steeped Thistle Tea", category: "food_plant", foodBuffType: "crit_damage", description: "+20% VATS Crit Dmg (+50% Herbivore)", damageMultiplier: 1.0 },
   { id: "plant-sweet-mutfruit-tea", label: "Sweet Mutfruit Tea", category: "food_plant", foodBuffType: "crit_damage", description: "+20% VATS Crit Dmg (+50% Herbivore)", damageMultiplier: 1.0 },
+  // Alcoholic tea (Daily: Strange Brew): +2 PER for 60 min; Party Boy/Girl 2 triples alcohol (+6),
+  // Herbivore doubles (+12), Strange in Numbers lifts it to +15. Stored at the Herbivore + SiN
+  // value like every plant row (the engine scales it ×0.4 unmutated, ×0.8 Herbivore), with the
+  // Party Boy tripling baked in like the brews. fallout.wiki, read 2026-10-11.
+  { id: "plant-sweetwater-special-blend", label: "Sweetwater Special Blend", category: "food_plant", foodBuffType: "per", description: "+2 Perception, 60 min (+6 Party Boy, +12 Herbivore, +15 with SiN)", specialBonus: { per: 15 } },
   { id: "plant-tato-juice", label: "Tato Juice", category: "food_plant", foodBuffType: "max_ap", description: "+10 Max AP (+25 Herbivore)" },
 ], (f) => f.label);
 
