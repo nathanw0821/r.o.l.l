@@ -966,7 +966,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 81,
+        "effectiveArmorPenetrationPct": 76,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -974,7 +974,7 @@
           },
           {
             "source": "Magazine Penetration (Perforating/Piercing)",
-            "value": "40% Penetration"
+            "value": "25% Penetration"
           },
           {
             "source": "Tank Killer (Rank 3)",
@@ -993,14 +993,14 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 57,
-        "armorMitigationPct": 50,
-        "mitigationRatio": 0.5035000000000001,
-        "normalLanded": 9,
-        "criticalLanded": 20,
-        "burstDPSLanded": 102,
-        "criticalCycleDPSLanded": 165,
-        "activeDPSLanded": 102
+        "effectiveDR": 72,
+        "armorMitigationPct": 54,
+        "mitigationRatio": 0.46240000000000003,
+        "normalLanded": 8,
+        "criticalLanded": 18,
+        "burstDPSLanded": 91,
+        "criticalCycleDPSLanded": 148,
+        "activeDPSLanded": 91
       }
     },
     "earle-williams": {
@@ -1107,7 +1107,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 81,
+        "effectiveArmorPenetrationPct": 76,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1115,7 +1115,7 @@
           },
           {
             "source": "Magazine Penetration (Perforating/Piercing)",
-            "value": "40% Penetration"
+            "value": "25% Penetration"
           },
           {
             "source": "Tank Killer (Rank 3)",
@@ -1134,14 +1134,14 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 57,
-        "armorMitigationPct": 50,
-        "mitigationRatio": 0.5035000000000001,
-        "normalLanded": 6,
-        "criticalLanded": 13,
-        "burstDPSLanded": 68,
-        "criticalCycleDPSLanded": 108,
-        "activeDPSLanded": 68
+        "effectiveDR": 72,
+        "armorMitigationPct": 54,
+        "mitigationRatio": 0.46240000000000003,
+        "normalLanded": 5,
+        "criticalLanded": 12,
+        "burstDPSLanded": 57,
+        "criticalCycleDPSLanded": 97,
+        "activeDPSLanded": 57
       }
     },
     "ultracite-titan": {
@@ -1248,7 +1248,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 81,
+        "effectiveArmorPenetrationPct": 76,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1256,7 +1256,7 @@
           },
           {
             "source": "Magazine Penetration (Perforating/Piercing)",
-            "value": "40% Penetration"
+            "value": "25% Penetration"
           },
           {
             "source": "Tank Killer (Rank 3)",
@@ -1275,14 +1275,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 67,
-        "armorMitigationPct": 53,
-        "mitigationRatio": 0.4747,
-        "normalLanded": 7,
-        "criticalLanded": 16,
-        "burstDPSLanded": 80,
-        "criticalCycleDPSLanded": 131,
-        "activeDPSLanded": 80
+        "effectiveDR": 84,
+        "armorMitigationPct": 56,
+        "mitigationRatio": 0.4371,
+        "normalLanded": 6,
+        "criticalLanded": 14,
+        "burstDPSLanded": 68,
+        "criticalCycleDPSLanded": 114,
+        "activeDPSLanded": 68
       }
     },
     "level-100-super-mutant": {
@@ -1389,7 +1389,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 81,
+        "effectiveArmorPenetrationPct": 76,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1397,7 +1397,7 @@
           },
           {
             "source": "Magazine Penetration (Perforating/Piercing)",
-            "value": "40% Penetration"
+            "value": "25% Penetration"
           },
           {
             "source": "Tank Killer (Rank 3)",
@@ -1416,14 +1416,14 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 40,
-        "armorMitigationPct": 43,
-        "mitigationRatio": 0.573,
-        "normalLanded": 33,
-        "criticalLanded": 76,
-        "burstDPSLanded": 375,
-        "criticalCycleDPSLanded": 620,
-        "activeDPSLanded": 375
+        "effectiveDR": 50,
+        "armorMitigationPct": 47,
+        "mitigationRatio": 0.5282,
+        "normalLanded": 31,
+        "criticalLanded": 70,
+        "burstDPSLanded": 353,
+        "criticalCycleDPSLanded": 574,
+        "activeDPSLanded": 353
       }
     },
     "raw-unarmored": {
@@ -1530,7 +1530,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 81,
+        "effectiveArmorPenetrationPct": 76,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1538,7 +1538,7 @@
           },
           {
             "source": "Magazine Penetration (Perforating/Piercing)",
-            "value": "40% Penetration"
+            "value": "25% Penetration"
           },
           {
             "source": "Tank Killer (Rank 3)",

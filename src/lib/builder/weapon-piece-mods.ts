@@ -396,17 +396,21 @@ export const BALLISTIC_STOCK_MODS: WeaponInnateModOption[] = [
   { id: "bruising-grip", label: "Bruising Grip / Stock", slot: "stock", description: "Heavy combat grip with superior bash damage.", effectMath: { damagePct: 0.05 } }
 ];
 
-// Shared rifle / shotgun magazine family. Nathan's call (2026-10-11): keep these at the values
-// the site shipped with; the Patch 70 client's figures (Large +100%, Swift/Stinging +50%, armor
-// penetration 25 on all three) are recorded in Agent_Exchange/ROLL_WEAPON_MODS_AUDIT_2026-10-11.md
-// for when he wants them. The Thompson .45 platform has its own list below (SMG_MAGAZINE_MODS).
+// Read from the Patch 70 client (SeventySix.esm 2026-09-16, OMOD property tables, 2026-10-11):
+// every rifle/SMG/shotgun magazine includes one of the generic parents, and those carry the numbers:
+// AmmoCapacity_Tier2 = +100% (Large / Drum: Elder's Mark 50 → 100), AmmoCapacity_Tier1 = +50%
+// (Swift = ammo + reload, Stinging = ammo + armor pen), ArmorPiercing Solo and Dual = 25 armor
+// penetration (Perforating, Piercing, Stinging alike), ReloadSpeed = reload only (Quick, Piercing,
+// Swift). nukesdragons.com agrees. AP-cost tweaks on Piercing and Drum are older guesses, left
+// for the decision list in ROLL_WEAPON_MODS_AUDIT_2026-10-11.md.
 export const BALLISTIC_MAGAZINE_MODS: WeaponInnateModOption[] = [
   { id: "standard-magazine", label: "Standard Magazine", slot: "magazine", description: "Standard ammunition capacity.", effectMath: {} },
-  { id: "perforating-magazine", label: "Perforating Magazine", slot: "magazine", description: "+40% Armor Penetration. Highest anti-armor multiplier in slot.", effectMath: { armorPenetrationPct: 40 } },
-  { id: "piercing-magazine", label: "Piercing Magazine", slot: "magazine", description: "+20% Armor Penetration and improved reload speed.", effectMath: { armorPenetrationPct: 20, apCostPct: -0.05 } },
-  { id: "stinging-magazine", label: "Stinging Magazine", slot: "magazine", description: "+20% Armor Penetration and +20% Ammo Capacity.", effectMath: { armorPenetrationPct: 20, magCapacityPct: 0.20 } },
-  { id: "swift-magazine", label: "Swift Magazine", slot: "magazine", description: "Rapid reload speed and -5% V.A.T.S. AP cost.", effectMath: { apCostPct: -0.05 } },
-  { id: "drum-magazine", label: "Drum Magazine", slot: "magazine", description: "+50% Ammo Capacity.", effectMath: { magCapacityPct: 0.50, apCostPct: 0.05 } }
+  { id: "quick-magazine", label: "Quick Magazine / Quick Eject Drum", slot: "magazine", description: "Faster reload, standard capacity.", effectMath: {} },
+  { id: "perforating-magazine", label: "Perforating Magazine", slot: "magazine", description: "+25 Armor Penetration.", effectMath: { armorPenetrationPct: 25 } },
+  { id: "piercing-magazine", label: "Piercing Magazine", slot: "magazine", description: "+25 Armor Penetration and faster reload.", effectMath: { armorPenetrationPct: 25, apCostPct: -0.05 } },
+  { id: "stinging-magazine", label: "Stinging Magazine", slot: "magazine", description: "+25 Armor Penetration and +50% Ammo Capacity.", effectMath: { armorPenetrationPct: 25, magCapacityPct: 0.50 } },
+  { id: "swift-magazine", label: "Swift Magazine / Large Quick Eject Drum", slot: "magazine", description: "+50% Ammo Capacity and faster reload.", effectMath: { magCapacityPct: 0.50 } },
+  { id: "drum-magazine", label: "Large Magazine / Large Drum", slot: "magazine", description: "+100% Ammo Capacity, slower reload.", effectMath: { magCapacityPct: 1.0, apCostPct: 0.05 } }
 ];
 
 // Thompson .45 submachine gun magazines (SeventySix.esm 2026-10-11: mod_SubmachineGun_Mag_Medium,
