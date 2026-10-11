@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BALLISTIC_MAGAZINE_MODS } from "./weapon-piece-mods";
+import { BALLISTIC_MAGAZINE_MODS, SMG_MAGAZINE_MODS, listWeaponInnateModOptions, resolveWeaponArchetype } from "./weapon-piece-mods";
 import { calculateCombatFirepower } from "./combat-firepower-engine";
 
 /**
@@ -21,6 +21,18 @@ describe("ballistic magazine mods", () => {
     expect(byId["quick-magazine"]?.magCapacityPct).toBeUndefined();
   });
 
+  it("gives the Thompson .45 platform its own four magazines and no armor-piercing ones", () => {
+    for (const id of ["submachine-gun", "elders-mark", "love-tap"]) {
+      expect(resolveWeaponArchetype(id)).toBe("smg");
+      expect(listWeaponInnateModOptions(id, "magazine")).toBe(SMG_MAGAZINE_MODS);
+    }
+    expect(resolveWeaponArchetype("10mm-smg")).not.toBe("smg");
+    expect(SMG_MAGAZINE_MODS.map((m) => m.id)).toEqual(["standard-magazine", "quick-magazine", "swift-magazine", "drum-magazine"]);
+    expect(listWeaponInnateModOptions("elders-mark", "magazine").some((m) => m.id === "perforating-magazine")).toBe(false);
+    // Other slots still come from the ballistic lists.
+    expect(listWeaponInnateModOptions("elders-mark", "receiver").length).toBeGreaterThan(0);
+  });
+
   it("takes Elder's Mark from 50 to 100 rounds with the large drum", () => {
     const mag = (magazineId?: string) =>
       calculateCombatFirepower({
@@ -32,8 +44,9 @@ describe("ballistic magazine mods", () => {
       }).magazineCapacity;
     expect(mag()).toMatchObject({ base: 50, effective: 50 });
     expect(mag("drum-magazine")).toMatchObject({ base: 50, effective: 100 });
-    expect(mag("swift-magazine").effective).toBe(75);
-    expect(mag("stinging-magazine").effective).toBe(75);
-    expect(mag("quick-magazine").effective).toBe(50);
+    expect(mag("swift-magazine").effective).toBe(75); // Large Quick Eject Drum
+    expect(mag("quick-magazine").effective).toBe(50); // Medium Quick Eject Drum
+    expect(mag("stinging-magazine").effective).toBe(50); // not an SMG magazine: ignored
+    expect(mag("perforating-magazine").effective).toBe(50);
   });
 });

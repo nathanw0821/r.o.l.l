@@ -50,6 +50,7 @@ export interface WeaponInnateModOption {
 
 export type WeaponModArchetype =
   | "ballistic-rifle"
+  | "smg"
   | "railway"
   | "black-powder"
   | "laser"
@@ -105,6 +106,12 @@ export function resolveWeaponArchetype(weaponPieceId: string): WeaponModArchetyp
   const basePiece = getBaseGearPiece(weaponPieceId);
   if (basePiece?.weaponSub === "melee") {
     return "melee-blunt-blade";
+  }
+
+  // 3b. Thompson .45 submachine gun platform (Elder's Mark, Love Tap): its own four magazines,
+  // no armor-piercing ones (SeventySix.esm OMODs, 2026-10-11). The 10mm SMG is a different platform.
+  if (normalized === "submachine-gun" || normalized === "elders-mark" || normalized === "love-tap") {
+    return "smg";
   }
 
   // 4. Railway Rifle
@@ -404,6 +411,16 @@ export const BALLISTIC_MAGAZINE_MODS: WeaponInnateModOption[] = [
   { id: "stinging-magazine", label: "Stinging Magazine", slot: "magazine", description: "+25 Armor Penetration and +50% Ammo Capacity.", effectMath: { armorPenetrationPct: 25, magCapacityPct: 0.50 } },
   { id: "swift-magazine", label: "Swift Magazine / Large Quick Eject Drum", slot: "magazine", description: "+50% Ammo Capacity and faster reload.", effectMath: { magCapacityPct: 0.50 } },
   { id: "drum-magazine", label: "Large Magazine / Large Drum", slot: "magazine", description: "+100% Ammo Capacity, slower reload.", effectMath: { magCapacityPct: 1.0, apCostPct: 0.05 } }
+];
+
+// Thompson .45 submachine gun magazines (SeventySix.esm 2026-10-11: mod_SubmachineGun_Mag_Medium,
+// _MediumQuick = ReloadSpeed_Solo, _Large = AmmoCapacity_Tier2, _LargeQuick = AmmoCapacity_Tier1 +
+// ReloadSpeed_Dual). Ids reuse the generic ones so builds saved with "drum-magazine" keep their drum.
+export const SMG_MAGAZINE_MODS: WeaponInnateModOption[] = [
+  { id: "standard-magazine", label: "Medium Magazine", slot: "magazine", description: "Standard 50-round magazine.", effectMath: {} },
+  { id: "quick-magazine", label: "Medium Quick Eject Drum", slot: "magazine", description: "Faster reload, standard capacity.", effectMath: {} },
+  { id: "swift-magazine", label: "Large Quick Eject Drum", slot: "magazine", description: "+50% Ammo Capacity (50 → 75) and faster reload.", effectMath: { magCapacityPct: 0.50 } },
+  { id: "drum-magazine", label: "Large Drum", slot: "magazine", description: "+100% Ammo Capacity (50 → 100), slower reload.", effectMath: { magCapacityPct: 1.0 } }
 ];
 
 export const BALLISTIC_SIGHT_MODS: WeaponInnateModOption[] = [
@@ -876,6 +893,15 @@ export function listWeaponInnateModOptions(
       if (slot === "muzzle") return BLACK_POWDER_MUZZLE_MODS;
       return [];
 
+    case "smg":
+      if (slot === "magazine") return SMG_MAGAZINE_MODS;
+      if (slot === "receiver") return BALLISTIC_RECEIVER_MODS;
+      if (slot === "barrel") return BALLISTIC_BARREL_MODS;
+      if (slot === "stock") return BALLISTIC_STOCK_MODS;
+      if (slot === "sight") return BALLISTIC_SIGHT_MODS;
+      if (slot === "muzzle") return BALLISTIC_MUZZLE_MODS;
+      return [];
+
     case "pistol-auto":
     case "combat-shotgun":
     case "ballistic-rifle":
@@ -1001,6 +1027,16 @@ export function defaultWeaponInnateCrafting(weaponPieceId: string): BuilderWeapo
         magazineId: "heavy-standard-mag",
         sightId: "heavy-gunner-sight",
         muzzleId: "heavy-none-muzzle"
+      };
+
+    case "smg":
+      return {
+        receiverId: "powerful-auto-receiver",
+        barrelId: "aligned-long-barrel",
+        stockId: "forceful-stock",
+        magazineId: "drum-magazine",
+        sightId: "reflex-sight-dot",
+        muzzleId: "suppressor"
       };
 
     case "pistol-auto":
