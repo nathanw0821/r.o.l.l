@@ -779,32 +779,26 @@ export default function PerkBuilder({
                   {/* Decorative vintage inner paper border */}
                   <div className="absolute inset-1 rounded-lg border border-[#e8dfc8]/20 pointer-events-none" />
 
-                  {/* Actual Official Fallout 76 WebP SPECIAL Letter Icon */}
-                  <div className="flex flex-col items-center gap-1 z-10 pt-1">
-                    <div className="relative h-20 w-20 flex items-center justify-center filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]">
-                      <img
-                        src={`/images/special/special_${(["S","P","E","C","I","A","L"].includes(stat) ? stat : "S")}.webp`}
-                        alt={`Official Fallout 76 ${theme.name} SPECIAL Letter`}
-                        width={80}
-                        height={80}
-                        fetchPriority="high"
-                        loading="eager"
-                        decoding="async"
-                        onError={(e) => {
-                          const safeStat = ["S","P","E","C","I","A","L"].includes(stat) ? stat : "S";
-                          e.currentTarget.src = `/images/special/special_${safeStat}.png`;
-                        }}
-                        className="h-20 w-20 object-contain transition-transform duration-200 hover:scale-105"
-                      />
-                    </div>
-                    <span className="text-2xs font-mono text-[#f3efe0] uppercase tracking-widest font-bold drop-shadow mt-1">
-                      {theme.name}
-                    </span>
+                  {/* Official punch-card letter: traced glyph, masked so the card colour shows around it */}
+                  <div className="flex flex-col items-center z-10 w-full pt-1.5">
                     {legBonus > 0 ? (
-                      <span className="mt-0.5 text-3xs font-mono px-2 py-0.5 bg-amber-950/90 text-amber-300 border border-amber-500/60 rounded-full font-bold shadow">
-                        +{legBonus}⭐ Legendary
+                      <span
+                        className="absolute top-2 right-2 text-3xs font-mono font-bold px-1.5 py-0.5 rounded-full bg-amber-950/90 text-amber-300 border border-amber-500/60 shadow"
+                        title={`+${legBonus} ${theme.name} from Legendary perk cards`}
+                      >
+                        +{legBonus}★
                       </span>
                     ) : null}
+                    <div className="w-full drop-shadow-[0_5px_10px_rgba(0,0,0,0.75)]">
+                      <span
+                        aria-hidden="true"
+                        className="special-glyph h-[5.75rem] w-full"
+                        style={{ "--special-glyph": `url(/images/special/glyph_${stat}.svg)` } as React.CSSProperties}
+                      />
+                    </div>
+                    <span className="text-2xs font-mono text-[#f3efe0] uppercase tracking-widest font-bold drop-shadow mt-2">
+                      {theme.name}
+                    </span>
                   </div>
 
                   {/* Point Adjuster */}
@@ -834,13 +828,11 @@ export default function PerkBuilder({
                     )}
                   </div>
 
-                  {/* Stat Total & Card Capacity Badge */}
-                  <div className="flex flex-col items-center gap-1 z-10 pb-0.5">
-                    {legBonus > 0 ? (
-                      <span className="text-3xs font-mono text-amber-200/90 font-semibold drop-shadow">
-                        Total Stat: {effectiveTotal}
-                      </span>
-                    ) : null}
+                  {/* Readout: effective total (base + Legendary), card capacity, picker */}
+                  <div className="flex flex-col items-center gap-1 z-10 pb-0.5 w-full">
+                    <span className="min-h-[1rem] whitespace-nowrap text-3xs font-mono text-amber-200/90 font-semibold drop-shadow">
+                      {legBonus > 0 ? `Total ${effectiveTotal}` : null}
+                    </span>
                     <span
                       className={cn(
                         "text-2xs font-mono font-bold px-2 py-0.5 rounded-full border shadow-sm",
@@ -861,7 +853,7 @@ export default function PerkBuilder({
                           freePoints === 0 ? "text-dim" : "text-[#f3efe0]",
                         )}
                       >
-                        + Add {theme.name} perks <span className={cn("font-normal normal-case tracking-normal", freePoints === 0 ? "text-dim" : "text-[#f3efe0]/70")}>{addHint}</span>
+                        + Add {theme.name} perks <span className={cn("block font-normal normal-case tracking-normal", freePoints === 0 ? "text-dim" : "text-[#f3efe0]/70")}>{addHint}</span>
                       </button>
                     )}
                   </div>
