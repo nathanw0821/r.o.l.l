@@ -127,12 +127,22 @@ export const ALL_ALCOHOL: Fallout76BuffDef[] = sortAlphanumerically([
 ], (a) => a.label);
 
 // 7. ALL NUKA-COLA BEVERAGES (Alphanumerically Sorted)
+// Values read from the Patch 70 client data (SeventySix.esm ALCH records, GLOB-resolved magnitudes,
+// 2026-10-11): restore amounts are rate × duration (Nuka-Cola heals 4 HP/s for 10 s = 40 HP), rads are
+// the drink's own dose. Cola Nut multiplies the drink's benefits ×2 / ×3 (rank 1 / 2); the engine
+// applies the base values. The Nuka-World mixer colas (Nuka-Love, Nuka-Void, …) are unused records
+// and stay out; Nukashine is a brew, Nuka-Dog is a food.
 export const ALL_NUKA_COLAS: Fallout76BuffDef[] = sortAlphanumerically([
-  { id: "nuka-cranberry", label: "Nuka-Cola Cranberry", category: "nuka_cola", description: "+10% XP Bonus", xpBonusPct: 10 },
-  { id: "nuka-dark", label: "Nuka-Dark", category: "nuka_cola", description: "+1 STR, +1 END (+6 STR with Cola Nut & Party Boy)", specialBonus: { str: 6, end: 6 }, damageMultiplier: 1.10 },
-  { id: "nuka-grape", label: "Nuka-Grape", category: "nuka_cola", description: "-1200 Rads, +100 HP" },
-  { id: "nuka-quantum", label: "Nuka-Quantum", category: "nuka_cola", description: "+200 HP, +100 AP" },
-  { id: "nuka-twist", label: "Nuka-Twist", category: "nuka_cola", description: "+2 Random SPECIAL Stats", specialBonus: { str: 2, per: 2, agi: 2 } },
+  { id: "nuka-cola", label: "Nuka-Cola", category: "nuka_cola", description: "+40 HP, +10 AP, +5 rads" },
+  { id: "nuka-cherry", label: "Nuka-Cherry", category: "nuka_cola", description: "+100 HP, +25 AP, +5 rads" },
+  { id: "nuka-cranberry", label: "Nuka-Cola Cranberry", category: "nuka_cola", description: "+40 HP, +2% XP for 30 min, +5 rads", xpBonusPct: 2 },
+  { id: "nuka-dark", label: "Nuka-Dark", category: "nuka_cola", description: "+1 STR, +1 END, -1 PER for 3 min, alcohol (+6 STR with Cola Nut & Party Boy)", specialBonus: { str: 6, end: 6 }, damageMultiplier: 1.10 },
+  { id: "nuka-grape", label: "Nuka-Grape", category: "nuka_cola", description: "+150 HP, +50 AP, -400 rads" },
+  { id: "nuka-orange", label: "Nuka-Orange", category: "nuka_cola", description: "+150 HP, +50 AP, +50 Rad Resist for 8 min" },
+  { id: "nuka-quantum", label: "Nuka-Cola Quantum", category: "nuka_cola", description: "+200 HP, +100 AP, +10 rads" },
+  { id: "nuka-twist", label: "Nuka-Cola Twist", category: "nuka_cola", description: "+40 HP, +10 AP, +2 to one random SPECIAL stat for 5 min, +5 rads" },
+  { id: "nuka-vaccinated", label: "Nuka-Cola Vaccinated", category: "nuka_cola", description: "+80 HP, -15% damage from Scorched for 10 min (also sold as Nuka-Cola Scorched / My Blood's In It)" },
+  { id: "nuka-wild", label: "Nuka-Cola Wild", category: "nuka_cola", description: "+40 HP, +25 AP, +5 rads" },
 ], (n) => n.label);
 
 // 8. ALL CAMP APPLIANCES & MACHINES (Alphanumerically Sorted)

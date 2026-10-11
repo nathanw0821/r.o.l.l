@@ -21,6 +21,7 @@ import {
   Skull,
   Shield,
   Dna,
+  CupSoda,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StateGroup from "@/components/builder/state-group";
@@ -36,6 +37,7 @@ import {
   ALL_PLANT_FOODS,
   ALL_MEAT_FOODS,
   ALL_ALCOHOL,
+  ALL_NUKA_COLAS,
   ALL_COMPANIONS,
   ALL_CAMP_APPLIANCES,
   type Fallout76BuffDef,
@@ -276,7 +278,7 @@ const STATE_GROUP_IDS = [
 ] as const;
 type StateGroupId = (typeof STATE_GROUP_IDS)[number];
 
-type ConsumableSlotField = "activeDrug" | "activeBobblehead" | "activeMagazine" | "activeAlcohol" | "activeCompanion";
+type ConsumableSlotField = "activeDrug" | "activeBobblehead" | "activeMagazine" | "activeAlcohol" | "activeNukaCola" | "activeCompanion";
 type PickerKind = "mutation" | "food" | "camp" | ConsumableSlotField;
 
 const SPECIAL_SHORT: Record<string, string> = { str: "STR", per: "PER", end: "END", cha: "CHA", int: "INT", agi: "AGI", lck: "LCK" };
@@ -311,6 +313,7 @@ const CONSUMABLE_SLOTS: Array<{
   { field: "activeBobblehead", label: "Bobblehead", items: ALL_BOBBLEHEADS, icon: <Sparkles className="h-3.5 w-3.5 text-amber-400" /> },
   { field: "activeMagazine", label: "Magazine", items: ALL_MAGAZINES, icon: <Book className="h-3.5 w-3.5 text-cyan-400" /> },
   { field: "activeAlcohol", label: "Brew / alcohol", items: ALL_ALCOHOL, icon: <Beer className="h-3.5 w-3.5 text-amber-500" /> },
+  { field: "activeNukaCola", label: "Nuka-Cola", items: ALL_NUKA_COLAS, icon: <CupSoda className="h-3.5 w-3.5 text-sky-400" /> },
   { field: "activeCompanion", label: "Camp companion", items: ALL_COMPANIONS, icon: <Home className="h-3.5 w-3.5 text-purple-400" /> },
 ];
 

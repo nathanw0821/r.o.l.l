@@ -174,3 +174,28 @@ describe("calculateAggregatedBuffSpecial", () => {
     expect(res.totals.end).toBe(5); // 3 + 2
   });
 });
+
+describe("Nuka-Cola slot", () => {
+  const base = {
+    activeCampBuffs: [] as string[],
+    activeDrug: null,
+    activeBobblehead: null,
+    activeMagazine: null,
+    activeAlcohol: null,
+    activeCompanion: null,
+  };
+
+  it("applies the active Nuka-Cola through the breakdown (Cranberry = +2% XP, no SPECIAL)", () => {
+    const res = calculateAggregatedBuffSpecial({ ...base, activeNukaCola: "nuka-cranberry" });
+    expect(res.breakdown.some((b) => b.source.startsWith("Nuka-Cola ("))).toBe(false);
+    expect(Object.values(res.totals).every((v) => v === 0)).toBe(true);
+  });
+
+  it("counts Nuka-Dark's SPECIAL once and ignores unknown ids", () => {
+    const dark = calculateAggregatedBuffSpecial({ ...base, activeNukaCola: "nuka-dark" });
+    expect(dark.totals.str).toBe(6);
+    expect(dark.breakdown.filter((b) => b.source.startsWith("Nuka-Cola (")).length).toBe(2);
+    const none = calculateAggregatedBuffSpecial({ ...base, activeNukaCola: "nuka-does-not-exist" });
+    expect(Object.values(none.totals).every((v) => v === 0)).toBe(true);
+  });
+});
