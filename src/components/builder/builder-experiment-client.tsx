@@ -208,6 +208,7 @@ export default function BuilderExperimentClient({
     setIsMounted,
     setPayload,
     setSavedLoadouts,
+    setSwitchboardState,
   });
 
   // Deep link `?piece=<baseGearId>` (e.g. from a linkified unique item name): selects that base

@@ -15,9 +15,10 @@ export const BUILDER_STORAGE_KEYS = {
   legendaryPerkIds: "roll_legendary_perk_ids",
   /** Transmissions this browser published, for ownership checks (localStorage). */
   myTransmissions: "roll_my_transmissions",
-  /** Snapshot keys read by the screenshot-assist flow (localStorage). */
+  /** Snapshot keys written by "Clone in Builder" on a shared build (localStorage). */
   activeBuilderPayload: "roll_active_builder_payload",
   equippedPerks: "roll_equipped_perks",
+  /** The sandbox's Biometrics switchboard (food buff stack, chems, stance); restored on load. */
   combatSwitchboardState: "roll_combat_switchboard_state"
 } as const;
 

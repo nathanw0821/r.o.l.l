@@ -388,6 +388,18 @@ export function useBuilderPayload({
     }
   }, [savedLoadouts, isMounted, readOnly]);
 
+  // The Biometrics switchboard (food buff stack, chems, stance) lives beside the payload, so it
+  // needs its own key: until 2026-10-11 only the payload survived a reload and the sandbox came
+  // back with the default board. `useBuilderBootstrap` reads this key on mount.
+  React.useEffect(() => {
+    if (isMounted && !readOnly && switchboardState) {
+      localStorage.setItem(
+        BUILDER_STORAGE_KEYS.combatSwitchboardState,
+        JSON.stringify(switchboardState),
+      );
+    }
+  }, [switchboardState, isMounted, readOnly]);
+
   React.useEffect(() => {
     if (!isMounted) return;
     if (internalUpdateRef.current) {

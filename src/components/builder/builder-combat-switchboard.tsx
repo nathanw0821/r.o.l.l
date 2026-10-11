@@ -530,10 +530,9 @@ export default function BuilderCombatSwitchboard({
         isSpendingGlow: initialState?.combatStance?.isSpendingGlow ?? false,
         wasHitRecently: initialState?.combatStance?.wasHitRecently ?? false,
       },
-      activeFoods: {
-        ...defaults.activeFoods,
-        ...(initialState?.activeFoods || {}),
-      },
+      // A saved or shared build's food stack is the whole stack: merging it over the diet defaults
+      // re-added recipes the player had removed before saving (2026-10-11).
+      activeFoods: initialState?.activeFoods ?? defaults.activeFoods,
     };
   });
 
@@ -593,7 +592,9 @@ export default function BuilderCombatSwitchboard({
               hasDiff = true;
             }
           } else if (k === "activeFoods") {
-            const nextFoods = { ...prev.activeFoods, ...(initialState.activeFoods || {}) };
+            // Loading a holotape slot or a transmission replaces the stack; a merge kept the
+            // sandbox's recipes alive under the loaded build (2026-10-11).
+            const nextFoods = { ...(initialState.activeFoods || {}) };
             if (JSON.stringify(nextFoods) !== JSON.stringify(prev.activeFoods)) {
               next.activeFoods = nextFoods;
               hasDiff = true;

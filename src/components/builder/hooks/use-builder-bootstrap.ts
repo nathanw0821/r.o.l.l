@@ -5,6 +5,7 @@ import { BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-
 import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
 import { normalizeBuilderPayload } from "@/lib/builder/normalize-builder-payload";
 import type { BuilderPayload } from "@/lib/builder/types";
+import type { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { useBuilderBetaAccess } from "@/components/builder/builder-beta-gate";
 import { LEGENDARY_PERK_CARDS } from "@/lib/builder/compatibility";
 
@@ -16,6 +17,9 @@ export interface UseBuilderBootstrapProps {
   setPayload: React.Dispatch<React.SetStateAction<BuilderPayload>>;
   setSavedLoadouts: React.Dispatch<
     React.SetStateAction<Array<{ id: string; name: string; payload: BuilderPayload }>>
+  >;
+  setSwitchboardState: React.Dispatch<
+    React.SetStateAction<CombatSwitchboardState | null>
   >;
 }
 
@@ -34,6 +38,7 @@ export function useBuilderBootstrap({
   setIsMounted,
   setPayload,
   setSavedLoadouts,
+  setSwitchboardState,
 }: UseBuilderBootstrapProps): UseBuilderBootstrapResult {
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } =
     useBuilderBetaAccess(isAdmin);
@@ -59,6 +64,16 @@ export function useBuilderBootstrap({
         const parsedSlots = JSON.parse(savedSlots);
         if (Array.isArray(parsedSlots)) {
           setSavedLoadouts(parsedSlots);
+        }
+      }
+
+      // Biometrics switchboard of the sandbox (food buff stack, chems, stance); written by
+      // `useBuilderPayload` on every change and by "Clone in Builder" on a shared build.
+      const savedSwitchboard = localStorage.getItem(BUILDER_STORAGE_KEYS.combatSwitchboardState);
+      if (savedSwitchboard) {
+        const parsedSwitchboard = JSON.parse(savedSwitchboard);
+        if (parsedSwitchboard && typeof parsedSwitchboard === "object" && !Array.isArray(parsedSwitchboard)) {
+          setSwitchboardState(parsedSwitchboard as CombatSwitchboardState);
         }
       }
 

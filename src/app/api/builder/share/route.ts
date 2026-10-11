@@ -3,14 +3,13 @@ import { randomBytes } from "node:crypto";
 import { createEditToken, EDIT_TOKEN_HASH_KEY, publicPayload } from "@/lib/builder/edit-token";
 import { safeRevalidateTag } from "@/lib/revalidate";
 import { z } from "zod";
+import { SHARE_PAYLOAD_MAX_BYTES, sharePayloadSchema } from "@/lib/builder/share-payload-schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { sharedBuildTagForSlug } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
-import { badRequest, ok, validationError } from "@/lib/api/responses";
-import { sanitizePowerArmorPiecesEquipped } from "@/lib/builder/power-armor-stats";
+import { badRequest, fail, ok, validationError } from "@/lib/api/responses";
 import type { BuilderPayload } from "@/lib/builder/types";
-import { sanitizeSandboxMutationIds } from "@/lib/builder/sandbox-mutations";
 
 
 
@@ -18,52 +17,11 @@ import { rateLimit } from "@/lib/rate-limit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { tooManyRequests } from "@/lib/api/responses";
 
-const underarmorSchema = z.object({
-  shellId: z.string().min(1),
-  liningId: z.string().nullable(),
-  styleId: z.string().nullable()
-});
-
-const armorCraftingRowSchema = z.object({
-  materialModId: z.string().min(1),
-  miscModId: z.string().min(1)
-});
-
-const payloadSchema = z
-  .object({
-    version: z.literal(5),
-    basePieceId: z.string().min(1),
-    equipmentKind: z.enum(["armor", "powerArmor", "weapon", "underarmor"]),
-    weaponSub: z.enum(["melee", "ranged", "energy"]).nullable(),
-    legendaryModIds: z.array(z.string().nullable()).length(4),
-    armorLegendaryModIds: z.array(z.array(z.string().nullable()).length(4)).length(5),
-    armorPieceCrafting: z.array(armorCraftingRowSchema).length(5),
-    ghoul: z.boolean(),
-    underarmor: underarmorSchema,
-    powerArmorHelmetId: z.string().nullable().optional(),
-    powerArmorHelmetCrafting: armorCraftingRowSchema.optional(),
-    powerArmorPiecesEquipped: z.array(z.boolean()).length(6).optional(),
-    mutationIds: z.array(z.string()).max(40).optional(),
-    ignoreMutationPenalties: z.boolean().optional(),
-    baseSpecial: z.record(z.number()).optional(),
-    legendaryPerkIds: z.array(z.string()).optional()
-  })
-  .transform((p) => ({
-    ...p,
-    powerArmorHelmetId: p.powerArmorHelmetId ?? null,
-    powerArmorHelmetCrafting: p.powerArmorHelmetCrafting ?? { materialModId: "none", miscModId: "none" },
-    powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(p.powerArmorPiecesEquipped),
-    mutationIds: sanitizeSandboxMutationIds(p.mutationIds ?? []),
-    ignoreMutationPenalties: p.ignoreMutationPenalties ?? false,
-    baseSpecial: p.baseSpecial ?? {},
-    legendaryPerkIds: p.legendaryPerkIds ?? []
-  }));
-
 const bodySchema = z.object({
   title: z.string().min(2).max(120),
   seoTitle: z.string().max(140).optional(),
   description: z.string().max(500).optional(),
-  payload: payloadSchema,
+  payload: sharePayloadSchema,
   turnstileToken: z.string().nullable().optional()
 });
 
@@ -93,6 +51,9 @@ export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     return validationError(parsed.error, "Invalid build payload.");
+  }
+  if (JSON.stringify(parsed.data.payload).length > SHARE_PAYLOAD_MAX_BYTES) {
+    return fail(413, "BAD_REQUEST", "Build is too large.");
   }
 
   // Signed-in users are already authenticated and rate limited; guests pass the anti-bot check.
