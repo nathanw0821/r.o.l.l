@@ -208,6 +208,8 @@ export default function BuilderExperimentClient({
     setPayload,
     setSavedLoadouts,
     setSwitchboardState,
+    setActiveWeaponId,
+    setActiveChassisId,
   });
 
   // Deep link `?piece=<baseGearId>` (e.g. from a linkified unique item name): selects that base

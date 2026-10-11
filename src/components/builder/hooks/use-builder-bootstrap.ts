@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { BUILDER_STORAGE_KEYS, perkLoadoutSlotKey } from "@/lib/builder/storage-keys";
-import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
+import { BASE_GEAR_PIECES, getBaseGearPiece } from "@/lib/builder/base-gear";
 import { normalizeBuilderPayload } from "@/lib/builder/normalize-builder-payload";
 import type { BuilderPayload } from "@/lib/builder/types";
 import type { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
@@ -21,6 +21,8 @@ export interface UseBuilderBootstrapProps {
   setSwitchboardState: React.Dispatch<
     React.SetStateAction<CombatSwitchboardState | null>
   >;
+  setActiveWeaponId: React.Dispatch<React.SetStateAction<string>>;
+  setActiveChassisId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface UseBuilderBootstrapResult {
@@ -39,6 +41,8 @@ export function useBuilderBootstrap({
   setPayload,
   setSavedLoadouts,
   setSwitchboardState,
+  setActiveWeaponId,
+  setActiveChassisId,
 }: UseBuilderBootstrapProps): UseBuilderBootstrapResult {
   const { hasAccess: hasBuilderAccess, accept: acceptBuilderBeta } =
     useBuilderBetaAccess(isAdmin);
@@ -56,6 +60,19 @@ export function useBuilderBootstrap({
         const norm = normalizeBuilderPayload(parsed) || parsed;
         if (norm && typeof norm === "object" && (norm.basePieceId || norm.equipmentKind)) {
           setPayload(norm as BuilderPayload);
+          // The active weapon and chassis are state beside the payload (same split as the
+          // switchboard); until 2026-10-11 a reload restored the payload but left the weapon on
+          // the default Fixer, so saves and publishes made afterwards carried the wrong weapon.
+          const restored = norm as BuilderPayload;
+          if (restored.activeWeaponPieceId && getBaseGearPiece(restored.activeWeaponPieceId)?.kind === "weapon") {
+            setActiveWeaponId(restored.activeWeaponPieceId);
+          }
+          const base = getBaseGearPiece(restored.basePieceId);
+          if (base?.kind === "weapon") {
+            setActiveWeaponId(base.id);
+          } else if (base?.kind === "armor" || base?.kind === "powerArmor") {
+            setActiveChassisId(base.id);
+          }
         }
       }
 
