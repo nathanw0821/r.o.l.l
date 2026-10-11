@@ -11,6 +11,9 @@ import {
   type BaseGearPiece,
 } from "@/lib/builder/base-gear";
 
+/** Stable empty default: a fresh `[]` per render would re-run the sync effect every render. */
+const NO_LEARNED_IDS: readonly string[] = [];
+
 export interface UseLearnedBasePiecesProps {
   initialLearnedBasePieceIds?: string[];
   isSignedIn: boolean;
@@ -26,7 +29,7 @@ export interface UseLearnedBasePiecesResult {
 }
 
 export function useLearnedBasePieces({
-  initialLearnedBasePieceIds = [],
+  initialLearnedBasePieceIds = NO_LEARNED_IDS as string[],
   isSignedIn,
   piece,
 }: UseLearnedBasePiecesProps): UseLearnedBasePiecesResult {
@@ -40,9 +43,13 @@ export function useLearnedBasePieces({
     string | null
   >(null);
 
+  // Re-sync from the server list by content, not array identity: the shared loadout page
+  // (`/l/[slug]`) passes no list, and an identity-keyed effect on a per-render `[]` set a new
+  // Set every render until React threw "Maximum update depth exceeded" (2026-10-10).
+  const initialLearnedKey = JSON.stringify(initialLearnedBasePieceIds);
   React.useEffect(() => {
-    setLearnedBasePieceIds(new Set(initialLearnedBasePieceIds));
-  }, [initialLearnedBasePieceIds]);
+    setLearnedBasePieceIds(new Set(JSON.parse(initialLearnedKey) as string[]));
+  }, [initialLearnedKey]);
 
   const currentBaseLearned =
     isTrackableBasePieceId(piece.id) &&

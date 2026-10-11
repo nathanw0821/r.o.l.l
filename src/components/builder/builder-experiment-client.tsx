@@ -78,7 +78,7 @@ export type BuilderExperimentClientProps = {
 };
 
 export default function BuilderExperimentClient({
-  initialLearnedBasePieceIds = [],
+  initialLearnedBasePieceIds,
   isAdmin = false,
   initialTab = "gear",
   readOnly = false,
