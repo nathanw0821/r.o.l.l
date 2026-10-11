@@ -13,34 +13,38 @@ import { getAppSession } from "@/lib/auth";
 import { RenameMainCharacterPrompt } from "@/components/rename-main-character-prompt";
 import ServiceWorkerRegister from "@/components/service-worker-register";
 
-import { VT323, Share_Tech_Mono, Oswald, Roboto_Condensed } from "next/font/google";
+import localFont from "next/font/local";
 import { resolveSeasonAttribute } from "@/lib/season";
 
-const fontVT323 = VT323({
+// The four faces are checked in under src/app/fonts (latin subsets, OFL licences alongside).
+// Until 2026-10-11 they came through next/font/google, which downloads the font CSS from Google
+// on every build; a throttled or odd answer from Google failed the CI build several times
+// ("Cannot read properties of null (reading '1')" in the google loader). No build-time network now.
+const fontVT323 = localFont({
+  src: "./fonts/vt323/VT323-Regular-latin.woff2",
   weight: "400",
-  subsets: ["latin"],
   variable: "--font-vt323",
   display: "swap",
 });
 
-const fontShareTechMono = Share_Tech_Mono({
+const fontShareTechMono = localFont({
+  src: "./fonts/share-tech-mono/ShareTechMono-Regular-latin.woff2",
   weight: "400",
-  subsets: ["latin"],
   variable: "--font-share-tech-mono",
   display: "swap",
 });
 
-// Perk card faces (in-game-perk-card.tsx). Self-hosted by next/font: no request to Google at runtime.
-const fontOswald = Oswald({
-  weight: ["500", "600", "700"],
-  subsets: ["latin"],
+// Perk card faces (in-game-perk-card.tsx): variable files covering the weights the cards use.
+const fontOswald = localFont({
+  src: "./fonts/oswald/Oswald-Variable-latin.woff2",
+  weight: "500 700",
   variable: "--font-oswald",
   display: "swap",
 });
 
-const fontRobotoCondensed = Roboto_Condensed({
-  weight: ["400", "700"],
-  subsets: ["latin"],
+const fontRobotoCondensed = localFont({
+  src: "./fonts/roboto-condensed/RobotoCondensed-Variable-latin.woff2",
+  weight: "400 700",
   variable: "--font-roboto-condensed",
   display: "swap",
 });
