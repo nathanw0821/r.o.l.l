@@ -3,22 +3,17 @@ import { BALLISTIC_MAGAZINE_MODS, SMG_MAGAZINE_MODS, listWeaponInnateModOptions,
 import { calculateCombatFirepower } from "./combat-firepower-engine";
 
 /**
- * Magazine numbers read from the Patch 70 client (SeventySix.esm 2026-09-16, OMOD parents
- * AmmoCapacity_Tier1 = +50%, Tier2 = +100%, ArmorPiercing Solo/Dual = 25). Nathan's report:
- * Elder's Mark 50 rounds must become 100 with the large drum, not 75.
+ * The Thompson .45 platform (Elder's Mark, Love Tap, submachine gun) has its own four magazines
+ * read from the Patch 70 client: Large Drum +100% (50 -> 100), Large Quick Eject Drum +50%.
+ * The shared rifle family stays at its shipped values by Nathan's decision (2026-10-11).
  */
 describe("ballistic magazine mods", () => {
   const byId = Object.fromEntries(BALLISTIC_MAGAZINE_MODS.map((m) => [m.id, m.effectMath]));
 
-  it("carries the Patch 70 capacity and armor penetration values", () => {
-    expect(byId["drum-magazine"]?.magCapacityPct).toBe(1.0);
-    expect(byId["swift-magazine"]?.magCapacityPct).toBe(0.5);
-    expect(byId["stinging-magazine"]).toMatchObject({ magCapacityPct: 0.5, armorPenetrationPct: 25 });
-    expect(byId["perforating-magazine"]).toMatchObject({ armorPenetrationPct: 25 });
-    expect(byId["perforating-magazine"]?.magCapacityPct).toBeUndefined();
-    expect(byId["piercing-magazine"]).toMatchObject({ armorPenetrationPct: 25 });
-    expect(byId["piercing-magazine"]?.magCapacityPct).toBeUndefined();
-    expect(byId["quick-magazine"]?.magCapacityPct).toBeUndefined();
+  it("leaves the shared rifle family at the values the site shipped with (Nathan, 2026-10-11)", () => {
+    expect(byId["drum-magazine"]?.magCapacityPct).toBe(0.5);
+    expect(byId["perforating-magazine"]).toMatchObject({ armorPenetrationPct: 40 });
+    expect(byId["quick-magazine"]).toBeUndefined();
   });
 
   it("gives the Thompson .45 platform its own four magazines and no armor-piercing ones", () => {
