@@ -310,7 +310,11 @@ export function aggregateEffectMath(
   }
 
   if (opts.legendaryPerkIds) {
-    for (const rawEntry of opts.legendaryPerkIds) {
+    // One entry per card: a bare id and an "id:rank" entry for the same card must not both
+    // count (the sandbox sync produced that pair until 2026-10-11; the ranked entry wins).
+    const oneEntryPerCard = new Map<string, string>();
+    for (const rawEntry of opts.legendaryPerkIds) oneEntryPerCard.set(rawEntry.split(":")[0], rawEntry);
+    for (const rawEntry of oneEntryPerCard.values()) {
       let id = rawEntry;
       let rank = 4;
       if (rawEntry.includes(":")) {

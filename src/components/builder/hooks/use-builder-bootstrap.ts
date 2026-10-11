@@ -127,7 +127,13 @@ export function useBuilderBootstrap({
                   }
                 }
                 if (legendaryEntries.length > 0) {
-                  next.legendaryPerkIds = Array.from(new Set([...(next.legendaryPerkIds || []), ...legendaryEntries]));
+                  // Merge by card id: the payload holds bare ids ("legendary-luck"), the perk slot
+                  // holds "id:rank". A string Set kept both, so every reload doubled each
+                  // legendary SPECIAL bonus (+10 instead of +5) until 2026-10-11.
+                  const byId = new Map<string, string>();
+                  for (const entry of next.legendaryPerkIds || []) byId.set(entry.split(":")[0], entry);
+                  for (const entry of legendaryEntries) byId.set(entry.split(":")[0], entry);
+                  next.legendaryPerkIds = Array.from(byId.values());
                 }
               }
               return next;
