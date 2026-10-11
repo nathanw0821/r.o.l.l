@@ -4,7 +4,7 @@ import { calculateAggregatedBuffSpecial } from "./buff-stacking-engine";
 describe("calculateAggregatedBuffSpecial", () => {
   it("deduplicates CAMP furniture taking only the single highest bonus per stat", () => {
     const res = calculateAggregatedBuffSpecial({
-      activeCampBuffs: ["camp-arm-wrestling", "camp-weight-bench"], // both give +2 STR
+      activeCampBuffs: ["camp-telescope", "camp-glove-box"], // both give +2 PER
       activeDrug: null,
       activeBobblehead: null,
       activeMagazine: null,
@@ -13,8 +13,36 @@ describe("calculateAggregatedBuffSpecial", () => {
       activeCompanion: null,
     });
     // Should NOT be 4, should be exactly 2
-    expect(res.totals.str).toBe(2);
-    expect(res.breakdown.filter((b) => b.stat === "str").length).toBe(1);
+    expect(res.totals.per).toBe(2);
+    expect(res.breakdown.filter((b) => b.stat === "per").length).toBe(1);
+  });
+
+  it("stacks CAMP stations whose stats differ and counts a shared stat once", () => {
+    const res = calculateAggregatedBuffSpecial({
+      // Pinball +2 AGI/+2 PER, claw machine +2 LCK/+2 PER, weight bench +2 STR
+      activeCampBuffs: ["camp-pinball-machine", "camp-claw-machine", "camp-weight-bench"],
+      activeDrug: null,
+      activeBobblehead: null,
+      activeMagazine: null,
+      activeAlcohol: null,
+      activeNukaCola: null,
+      activeCompanion: null,
+    });
+    expect(res.totals).toMatchObject({ str: 2, per: 2, agi: 2, lck: 2, cha: 0, end: 0, int: 0 });
+    expect(res.breakdown.filter((b) => b.stat === "per").length).toBe(1);
+  });
+
+  it("carries the wiki-sourced station corrections (arm wrestle is Charisma, phoropter has no SPECIAL)", () => {
+    const res = calculateAggregatedBuffSpecial({
+      activeCampBuffs: ["camp-arm-wrestling", "camp-phoropter"],
+      activeDrug: null,
+      activeBobblehead: null,
+      activeMagazine: null,
+      activeAlcohol: null,
+      activeNukaCola: null,
+      activeCompanion: null,
+    });
+    expect(res.totals).toMatchObject({ str: 0, per: 0, cha: 2 });
   });
 
   it("applies Herbivore + SiN 2.5x scaling to plant foods (Brain Bombs -> +8 INT)", () => {

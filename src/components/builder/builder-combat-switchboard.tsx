@@ -37,6 +37,7 @@ import {
   ALL_MEAT_FOODS,
   ALL_ALCOHOL,
   ALL_COMPANIONS,
+  ALL_CAMP_APPLIANCES,
   type Fallout76BuffDef,
 } from "@/lib/builder/all-fallout76-buffs";
 import type {
@@ -276,7 +277,29 @@ const STATE_GROUP_IDS = [
 type StateGroupId = (typeof STATE_GROUP_IDS)[number];
 
 type ConsumableSlotField = "activeDrug" | "activeBobblehead" | "activeMagazine" | "activeAlcohol" | "activeCompanion";
-type PickerKind = "mutation" | "food" | ConsumableSlotField;
+type PickerKind = "mutation" | "food" | "camp" | ConsumableSlotField;
+
+const SPECIAL_SHORT: Record<string, string> = { str: "STR", per: "PER", end: "END", cha: "CHA", int: "INT", agi: "AGI", lck: "LCK" };
+
+/** "+2 PER +2 AGI" for the picker badge and the station chips; empty for non-SPECIAL stations. */
+function campStatBadge(def: Fallout76BuffDef): string {
+  return Object.entries(def.specialBonus ?? {})
+    .filter(([, v]) => typeof v === "number" && v !== 0)
+    .map(([k, v]) => `${(v as number) > 0 ? "+" : ""}${v} ${SPECIAL_SHORT[k] ?? k.toUpperCase()}`)
+    .join(" ");
+}
+
+/** The stats the active stations resolve to after the one-per-stat rule, as "+2 PER" chips. */
+function resolveCampStats(ids: string[]): string[] {
+  const best: Record<string, number> = {};
+  for (const def of ALL_CAMP_APPLIANCES) {
+    if (!ids.includes(def.id)) continue;
+    for (const [k, v] of Object.entries(def.specialBonus ?? {})) {
+      if (typeof v === "number" && v > (best[k] ?? 0)) best[k] = v;
+    }
+  }
+  return ["str", "per", "end", "cha", "int", "agi", "lck"].filter((k) => best[k]).map((k) => `+${best[k]} ${SPECIAL_SHORT[k]}`);
+}
 
 const CONSUMABLE_SLOTS: Array<{
   field: ConsumableSlotField;
@@ -711,6 +734,19 @@ export default function BuilderCombatSwitchboard({
     onStateChangeRef.current?.(next);
   };
 
+  // C.A.M.P. buff stations: every station is its own toggle; the stacking engine keeps one bonus
+  // per SPECIAL stat, so two stations that boost the same stat count once and the rest stack.
+  const activeCampBuffs = switchboard.activeCampBuffs || [];
+  const handleToggleCampBuff = (id: string, on: boolean) => {
+    if (readOnly) return;
+    if (!ALL_CAMP_APPLIANCES.some((c) => c.id === id)) return;
+    const next = on
+      ? activeCampBuffs.includes(id) ? activeCampBuffs : [...activeCampBuffs, id]
+      : activeCampBuffs.filter((x) => x !== id);
+    if (next === activeCampBuffs) return;
+    updateField("activeCampBuffs", next);
+  };
+
   const handleRemoveFoodCategory = (categoryKey: string) => {
     if (readOnly) return;
     const nextFoods = { ...(switchboard.activeFoods || {}) };
@@ -763,6 +799,13 @@ export default function BuilderCombatSwitchboard({
         }))
       : picker === "food"
         ? eligibleFoods.map((f) => ({ id: f.id, label: f.label, description: f.description, badge: f.foodBuffType }))
+        : picker === "camp"
+          ? ALL_CAMP_APPLIANCES.filter((c) => !activeCampBuffs.includes(c.id)).map((c) => ({
+              id: c.id,
+              label: c.label,
+              description: c.description,
+              badge: campStatBadge(c),
+            }))
         : picker
           ? (CONSUMABLE_SLOTS.find((sl) => sl.field === picker)?.items ?? []).map((i) => ({
               id: i.id,
@@ -773,6 +816,8 @@ export default function BuilderCombatSwitchboard({
   const pickerActiveIds = new Set<string>(
     picker === "food"
       ? Object.values(switchboard.activeFoods || {})
+      : picker === "camp"
+        ? activeCampBuffs
       : picker && picker !== "mutation" && switchboard[picker]
         ? [switchboard[picker] as string]
         : [],
@@ -2297,7 +2342,7 @@ export default function BuilderCombatSwitchboard({
             id="consumables"
             title="Consumables & buffs"
             icon={<Utensils className="h-3.5 w-3.5" />}
-            summary={`${CONSUMABLE_SLOTS.filter((sl) => switchboard[sl.field]).length} of ${CONSUMABLE_SLOTS.length} slots · ${Object.keys(switchboard.activeFoods || {}).length} foods`}
+            summary={`${CONSUMABLE_SLOTS.filter((sl) => switchboard[sl.field]).length} of ${CONSUMABLE_SLOTS.length} slots · ${Object.keys(switchboard.activeFoods || {}).length} foods · ${activeCampBuffs.length} stations`}
             open={openGroups.has("consumables")}
             onToggle={() => toggleGroup("consumables")}
           >
@@ -2415,6 +2460,73 @@ export default function BuilderCombatSwitchboard({
               </div>
             </div>
           )}
+
+          {/* C.A.M.P. buff stations: one toggle per station, one bonus per SPECIAL stat */}
+          <div className="rounded-lg border border-slate-800 bg-slate-900/50 p-3 space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 font-bold uppercase">
+              <span className="flex items-center gap-1.5">
+                <Home className="h-3.5 w-3.5 text-emerald-400" /> C.A.M.P. buff stations ({activeCampBuffs.length})
+              </span>
+              {!readOnly && (
+                <span className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openPicker("camp")}
+                    className="min-h-8 touch:min-h-11 px-2.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-2xs font-bold uppercase text-emerald-300 hover:bg-emerald-500/20"
+                  >
+                    + Add station
+                  </button>
+                  {activeCampBuffs.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => updateField("activeCampBuffs", [])}
+                      className="text-2xs text-rose-400 hover:underline cursor-pointer normal-case"
+                    >
+                      Clear all stations
+                    </button>
+                  )}
+                </span>
+              )}
+            </div>
+            <div className="text-2xs text-slate-400">
+              Stations with different SPECIAL stats stack. Two stations that boost the same stat count once.
+            </div>
+            {activeCampBuffs.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {ALL_CAMP_APPLIANCES.filter((c) => activeCampBuffs.includes(c.id)).map((c) => {
+                  const badge = campStatBadge(c);
+                  return (
+                    <div
+                      key={c.id}
+                      title={c.description}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-950 border border-emerald-500/40 text-xs font-bold text-emerald-300"
+                    >
+                      <span>{c.label}</span>
+                      {badge ? <span className="text-3xs font-mono text-slate-300">{badge}</span> : null}
+                      {!readOnly && (
+                        <button
+                          type="button"
+                          aria-label={`Remove ${c.label}`}
+                          onClick={() => handleToggleCampBuff(c.id, false)}
+                          className="text-dim hover:text-rose-400 cursor-pointer"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-2xs text-dim italic">No stations active.</div>
+            )}
+            {resolveCampStats(activeCampBuffs).length > 0 && (
+              <div className="text-2xs text-slate-300">
+                <span className="text-slate-400">Resolved SPECIAL from stations:</span>{" "}
+                <span className="font-mono text-emerald-300">{resolveCampStats(activeCampBuffs).join(" · ")}</span>
+              </div>
+            )}
+          </div>
         </div>
           </StateGroup>
 
@@ -2467,6 +2579,8 @@ export default function BuilderCombatSwitchboard({
             ? "Add mutation"
             : picker === "food"
               ? "Add food buff"
+              : picker === "camp"
+                ? "Add C.A.M.P. buff station"
               : picker
                 ? `Change ${CONSUMABLE_SLOTS.find((sl) => sl.field === picker)?.label.toLowerCase() ?? "item"}`
                 : null
@@ -2476,6 +2590,8 @@ export default function BuilderCombatSwitchboard({
             ? "Benefits first, then penalties. Serum-style play hides the penalties with the toggle."
             : picker === "food"
               ? "One recipe per buff type; adding another of the same type replaces it."
+              : picker === "camp"
+                ? "Stations with different SPECIAL stats stack. Two stations that boost the same stat count once."
               : undefined
         }
         items={pickerItems}
@@ -2485,6 +2601,8 @@ export default function BuilderCombatSwitchboard({
             onMutationsChange?.([...activeMutations, id]);
           } else if (picker === "food") {
             handleSelectFood(id);
+          } else if (picker === "camp") {
+            handleToggleCampBuff(id, true);
           } else if (picker) {
             updateField(picker, id);
           }

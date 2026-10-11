@@ -131,18 +131,34 @@ export const ALL_NUKA_COLAS: Fallout76BuffDef[] = sortAlphanumerically([
 ], (n) => n.label);
 
 // 8. ALL CAMP APPLIANCES & MACHINES (Alphanumerically Sorted)
+// Buff stations: interact for 15 s, +2 to the named stat(s) for 30 min unless noted. Source: the
+// Fallout Wiki "Player Buff" variants table and each object's page (fallout.wiki, read 2026-10-11).
+// Same-stat stations do not stack (`calculateAggregatedBuffSpecial` keeps one per stat); stations
+// whose stats differ all apply. Reskins with an identical buff share one entry.
 export const ALL_CAMP_APPLIANCES: Fallout76BuffDef[] = sortAlphanumerically([
-  { id: "camp-arm-wrestling", label: "Arm Wrestling Machine", category: "camp_machine", description: "+2 Strength (30m)", specialBonus: { str: 2 }, damageMultiplier: 1.04 },
+  { id: "camp-arm-wrestling", label: "Arm Wrestle Machine (Poseidon / Vault Girl)", category: "camp_machine", description: "+2 Charisma (30m)", specialBonus: { cha: 2 } },
+  { id: "camp-atomic-rollers", label: "Atomic Rollers", category: "camp_machine", description: "+2 Agility & +2 Perception (30m)", specialBonus: { agi: 2, per: 2 } },
+  { id: "camp-bowling-arcade", label: "Bowling Arcade Machine (Rolling Stars / Stars and Strikes)", category: "camp_machine", description: "+2 Luck & +2 Perception (30m)", specialBonus: { lck: 2, per: 2 } },
   { id: "camp-bowling-lane", label: "Bowling Alley Lane", category: "camp_machine", description: "+2 Luck & +2 Charisma (30m)", specialBonus: { lck: 2, cha: 2 } },
-  { id: "camp-derby-machine", label: "Derby Machine", category: "camp_machine", description: "+2 Intelligence (+6% XP 30m)", specialBonus: { int: 2 }, xpBonusPct: 6 },
+  { id: "camp-claw-machine", label: "Camden Park Claw Machine", category: "camp_machine", description: "+2 Luck & +2 Perception (30m)", specialBonus: { lck: 2, per: 2 } },
+  { id: "camp-cosmic-capture", label: "Cosmic Capture", category: "camp_machine", description: "+2 Agility (30m)", specialBonus: { agi: 2 } },
+  { id: "camp-derby-machine", label: "Mechanical Derby Game", category: "camp_machine", description: "+2 Intelligence (+6% XP 30m)", specialBonus: { int: 2 }, xpBonusPct: 6 },
   { id: "camp-exercise-bike", label: "Exercise Bike", category: "camp_machine", description: "+2 Endurance (30m)", specialBonus: { end: 2 } },
+  { id: "camp-five-finger-filet", label: "Five Finger Filet Table", category: "camp_machine", description: "+2 Agility & +2 Luck (30m)", specialBonus: { agi: 2, lck: 2 } },
   { id: "camp-fortune-teller", label: "Fortune Teller Machine", category: "camp_machine", description: "+2 Luck (30m)", specialBonus: { lck: 2 } },
+  { id: "camp-glove-box", label: "Radiation Glove Box", category: "camp_machine", description: "+2 Perception (30m)", specialBonus: { per: 2 } },
   { id: "camp-love-seat", label: "Lethal Love Seat", category: "camp_machine", description: "+25% Chem Duration Increase (1 Hour)" },
   { id: "camp-lunchboxes", label: "Lunchboxes (x4)", category: "camp_machine", description: "Very Well Rested (+100% XP 1 hr)", xpBonusPct: 100 },
+  { id: "camp-motorcycle", label: "Motorcycle (Hot Shot)", category: "camp_machine", description: "+2 Endurance & +2 Charisma (30m)", specialBonus: { end: 2, cha: 2 } },
   { id: "camp-mothman-tome", label: "Mothman Tome", category: "camp_machine", description: "+5% XP Bonus (1 Hour)", xpBonusPct: 5 },
   { id: "camp-instrument", label: "Musical Instrument (Piano/Guitar)", category: "camp_machine", description: "Well Tuned (+25% AP Regen 1 hr)" },
-  { id: "camp-phoropter", label: "Phoropter VATS Chair", category: "camp_machine", description: "+2 Perception (30m)", specialBonus: { per: 2 } },
-  { id: "camp-speed-bag", label: "Speed Bag", category: "camp_machine", description: "+2 Agility (30m)", specialBonus: { agi: 2 } },
+  { id: "camp-phoropter", label: "Phoropter", category: "camp_machine", description: "+25% VATS accuracy (2h)" },
+  { id: "camp-pinball-machine", label: "Pinball Machine (Boardwalk Bonanza / Astro Attack / Rip Daring / Vault-Tec)", category: "camp_machine", description: "+2 Agility & +2 Perception (30m)", specialBonus: { agi: 2, per: 2 } },
+  { id: "camp-slot-machine", label: "West Virginia Slot Machine", category: "camp_machine", description: "+2 Luck (30m, not every spin)", specialBonus: { lck: 2 } },
+  { id: "camp-speed-bag", label: "Speed Bag (Raider / Antique)", category: "camp_machine", description: "+2 Agility (30m)", specialBonus: { agi: 2 } },
+  { id: "camp-summoning-circle", label: "Summoning Circle", category: "camp_machine", description: "+2 Intelligence (60m)", specialBonus: { int: 2 } },
+  { id: "camp-telescope", label: "Stargazer's Telescope", category: "camp_machine", description: "+2 Perception (30m)", specialBonus: { per: 2 } },
+  { id: "camp-vanity", label: "Vanity (Hollywood Vanity / Atomic Hair Dryer / Perfume Dispenser)", category: "camp_machine", description: "+2 Charisma (30m)", specialBonus: { cha: 2 } },
   { id: "camp-bed-kindred", label: "Vault Bed + Ally Station", category: "camp_machine", description: "Kindred Spirit Buff (+5% XP for 3 Hours)", xpBonusPct: 5 },
   { id: "camp-weight-bench", label: "Weight Bench", category: "camp_machine", description: "+2 Strength (30m)", specialBonus: { str: 2 }, damageMultiplier: 1.04 },
 ], (c) => c.label);
