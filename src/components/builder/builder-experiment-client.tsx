@@ -18,7 +18,6 @@ import {
   GitFork,
 } from "lucide-react";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
-import { BUILDER_STORAGE_KEYS } from "@/lib/builder/storage-keys";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
 import BuilderMasterTabNav from "@/components/builder/builder-master-tab-nav";
 import LegendaryModPickerDialog from "@/components/builder/legendary-mod-picker-dialog";
@@ -605,16 +604,12 @@ export default function BuilderExperimentClient({
                   type="button"
                   size="sm"
                   onClick={() => {
-                    try {
-                      if (typeof window !== "undefined") {
-                        window.localStorage.setItem(BUILDER_STORAGE_KEYS.activeBuilderPayload, JSON.stringify(payload));
-                        window.localStorage.setItem(BUILDER_STORAGE_KEYS.equippedPerks, JSON.stringify(equippedPerkCards));
-                        if (switchboardState) {
-                          window.localStorage.setItem(BUILDER_STORAGE_KEYS.combatSwitchboardState, JSON.stringify(switchboardState));
-                        }
-                      }
-                    } catch {}
-                    window.location.href = "/build";
+                    // `?load=` runs the share hook's transmission loader (gear, perks, switchboard,
+                    // ownership). Until 2026-10-11 this wrote snapshot keys that nothing read and
+                    // landed on whatever the sandbox already held.
+                    window.location.href = sharedTransmissionSlug
+                      ? `/build?load=${encodeURIComponent(sharedTransmissionSlug)}`
+                      : "/build";
                   }}
                   className="h-8 px-3 text-2xs font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all shrink-0 flex items-center gap-1.5 cursor-pointer"
                   title="Clone this loadout into your interactive B.U.I.L.D. workspace"
