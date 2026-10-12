@@ -236,7 +236,7 @@
     }
    ]
   },
-  "kabloom": {
+  "the-kabloom": {
    "name": "Kabloom",
    "officialEffect": "Poison Damage",
    "mod": "mod_custom_TheKabloom_Effect",

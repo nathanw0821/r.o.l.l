@@ -33,7 +33,9 @@ export type UniqueEffectKind =
   | "flat-action-points"
   | "weak-spot-damage"
   | "weak-spot-damage-while-aiming"
-  | "weak-spot-per-kill-streak";
+  | "weak-spot-per-kill-streak"
+  | "extra-projectiles"
+  | "conditional-damage-buff";
 
 export type UniqueEffectConfidence = "verified" | "datamined" | "approximate";
 
@@ -53,6 +55,8 @@ export type UniqueEffectModel = {
   perkId?: string;
   /** Rank of that perk card. */
   perkRank?: number;
+  /** How long a conditional buff lasts once triggered (Love Tap: 30 s). Display only. */
+  durationSeconds?: number;
   condition: string;
   confidence: UniqueEffectConfidence;
   source: string;
@@ -68,6 +72,12 @@ export type UniqueItem = {
   sourceNotes: string;
   moddable: true;
   fourthStar: true;
+  /**
+   * True for a builder unique that is not in the Patch 70 official unique table (Cold Shoulder,
+   * V63 Zweihänder): its `innateEffect` comes from the client data instead and is not checked
+   * against `unique-items-official-p70.json`.
+   */
+  notInOfficialTable?: true;
   /** Patch that introduced the item in its current form (70 = weapon rework, 66 = Backwoods armor). */
   introducedIn: number;
   /** Armor only: body slot the unique occupies. */
@@ -94,11 +104,13 @@ const EFFECT_KINDS = new Set<string>([
   "weak-spot-damage",
   "weak-spot-damage-while-aiming",
   "weak-spot-per-kill-streak",
+  "extra-projectiles",
+  "conditional-damage-buff",
 ]);
 
 const EFFECT_CONFIDENCE = new Set<string>(["verified", "datamined", "approximate"]);
 
-const EFFECT_NUMERIC_FIELDS = ["value", "perUnit", "maxUnits", "cap", "healthThreshold", "perkRank"] as const;
+const EFFECT_NUMERIC_FIELDS = ["value", "perUnit", "maxUnits", "cap", "healthThreshold", "perkRank", "durationSeconds"] as const;
 
 /** Numeric fields every kind must carry, so a typo fails at import instead of turning damage into NaN. */
 const EFFECT_REQUIRED_FIELDS: Record<string, readonly string[]> = {
@@ -115,6 +127,8 @@ const EFFECT_REQUIRED_FIELDS: Record<string, readonly string[]> = {
   "weak-spot-damage": ["value"],
   "weak-spot-damage-while-aiming": ["value"],
   "weak-spot-per-kill-streak": ["perUnit", "maxUnits"],
+  "extra-projectiles": ["value"],
+  "conditional-damage-buff": ["value"],
 };
 
 function fail(message: string): never {

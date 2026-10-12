@@ -173,7 +173,9 @@ export function resolveWeaponArchetype(weaponPieceId: string): WeaponModArchetyp
   if (
     normalized.includes("shotgun") ||
     normalized.includes("crowd-control") ||
-    normalized.includes("kabloom")
+    normalized.includes("kabloom") ||
+    // Civil Unrest is a Pump Shotgun unique; its id names no shotgun (2026-10-12 audit).
+    normalized.includes("civil-unrest")
   ) {
     return "combat-shotgun";
   }

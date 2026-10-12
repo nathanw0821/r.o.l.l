@@ -24,6 +24,9 @@ describe("weapon-piece-mods - Archetype & Slot Resolution", () => {
     expect(resolveWeaponArchetype("cold-shoulder")).toBe("double-barrel");
     expect(resolveWeaponArchetype("double-barrel")).toBe("double-barrel");
     expect(resolveWeaponArchetype("combat-shotgun")).toBe("combat-shotgun");
+    // Civil Unrest is a Pump Shotgun unique (its id names no shotgun): pump-shotgun mods, not rifle mods.
+    expect(resolveWeaponArchetype("civil-unrest")).toBe("combat-shotgun");
+    expect(resolveWeaponArchetype("the-kabloom")).toBe("combat-shotgun");
     expect(resolveWeaponArchetype("bow")).toBe("bow");
     expect(resolveWeaponArchetype("compound-bow")).toBe("bow");
     expect(resolveWeaponArchetype("chainsaw")).toBe("auto-melee");

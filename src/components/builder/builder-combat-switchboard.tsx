@@ -114,6 +114,8 @@ export type CombatSwitchboardState = {
     isSpendingGlow?: boolean;
     /** Ghoul: hit in the last 10 s (Science Monster). */
     wasHitRecently?: boolean;
+    /** The equipped unique's conditional innate is running (Love Tap: within 30 s of a bash). */
+    isUniqueBuffActive?: boolean;
   };
   caps?: number;
   /** Damage-taken preview: size of the incoming hit and its damage type. */
@@ -394,6 +396,11 @@ interface BuilderCombatSwitchboardProps {
   initialState?: Partial<CombatSwitchboardState>;
   /** Equipped perk card ids: the Vitals switches name the equipped cards they change. */
   equippedPerkIds?: string[];
+  /**
+   * The equipped unique's conditional innate (engine result `uniqueToggle`, Love Tap). When set,
+   * the Stances group shows a switch for it (stance key `isUniqueBuffActive`).
+   */
+  uniqueToggle?: { uniqueName: string; label: string; detail: string } | null;
 }
 
 export default function BuilderCombatSwitchboard({
@@ -418,6 +425,7 @@ export default function BuilderCombatSwitchboard({
   readOnly = false,
   initialState,
   equippedPerkIds = NO_PERK_IDS,
+  uniqueToggle = null,
 }: BuilderCombatSwitchboardProps) {
   const diseasedPerkNames = equippedSwitchPerkNames("diseased", equippedPerkIds);
   const overEncumberedPerkNames = equippedSwitchPerkNames("overEncumbered", equippedPerkIds);
@@ -555,6 +563,7 @@ export default function BuilderCombatSwitchboard({
         targetRange: resolveTargetRange(initialState?.combatStance),
         isSpendingGlow: initialState?.combatStance?.isSpendingGlow ?? false,
         wasHitRecently: initialState?.combatStance?.wasHitRecently ?? false,
+        isUniqueBuffActive: initialState?.combatStance?.isUniqueBuffActive ?? false,
       },
       // A saved or shared build's food stack is the whole stack: merging it over the diet defaults
       // re-added recipes the player had removed before saving (2026-10-11).
@@ -612,6 +621,8 @@ export default function BuilderCombatSwitchboard({
               targetRange: initialState.combatStance?.targetRange ?? prev.combatStance?.targetRange ?? "mid",
               isSpendingGlow: initialState.combatStance?.isSpendingGlow ?? prev.combatStance?.isSpendingGlow ?? false,
               wasHitRecently: initialState.combatStance?.wasHitRecently ?? prev.combatStance?.wasHitRecently ?? false,
+              isUniqueBuffActive:
+                initialState.combatStance?.isUniqueBuffActive ?? prev.combatStance?.isUniqueBuffActive ?? false,
             };
             if (JSON.stringify(nextStance) !== JSON.stringify(prev.combatStance)) {
               next.combatStance = nextStance;
@@ -1527,6 +1538,7 @@ export default function BuilderCombatSwitchboard({
               targetRange === "close" ? "Close range" : targetRange === "far" ? "Far range" : null,
               isGhoul && switchboard.combatStance?.isSpendingGlow ? "Spending Glow" : null,
               isGhoul && switchboard.combatStance?.wasHitRecently ? "Hit recently" : null,
+              uniqueToggle && switchboard.combatStance?.isUniqueBuffActive ? uniqueToggle.label : null,
             ].filter(Boolean).join(" · ")}
             open={openGroups.has("stances")}
             onToggle={() => toggleGroup("stances")}
@@ -1677,6 +1689,29 @@ export default function BuilderCombatSwitchboard({
                     </span>
                   </button>
                 </div>
+              </div>
+            )}
+
+            {/* Row 1c: the equipped unique's conditional innate (Love Tap), only for such a unique */}
+            {uniqueToggle && (
+              <div className="space-y-1">
+                <div className="text-2xs font-bold text-slate-400 uppercase tracking-wider">
+                  <span>Unique weapon</span>
+                </div>
+                <button
+                  disabled={readOnly}
+                  type="button"
+                  aria-pressed={Boolean(switchboard.combatStance?.isUniqueBuffActive)}
+                  onClick={() => updateStance("isUniqueBuffActive", !switchboard.combatStance?.isUniqueBuffActive)}
+                  className={`w-full p-2 touch:min-h-11 rounded border text-xs font-bold uppercase transition-all flex flex-col items-center gap-1 cursor-pointer text-center ${
+                    switchboard.combatStance?.isUniqueBuffActive
+                      ? "bg-pink-950 border-pink-500 text-pink-300 shadow-[0_0_10px_rgba(236,72,153,0.3)] font-black"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>{switchboard.combatStance?.isUniqueBuffActive ? `💗 ${uniqueToggle.label} on` : `${uniqueToggle.label} off`}</span>
+                  <span className="text-3xs font-normal text-dim normal-case">{uniqueToggle.detail}</span>
+                </button>
               </div>
             )}
 

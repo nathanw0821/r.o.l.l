@@ -183,9 +183,17 @@ describe("Onslaught stack limit (combat-conditions.json `onslaught`)", () => {
     expect(ws([...ge, { cardId: "gunslinger-master", rank: 1 }], 10)).toBeCloseTo(0.1, 6);
   });
 
-  it("unique innates keep their own pack maxUnits (no shared-limit clamp)", () => {
-    const em = calculateCombatFirepower(input({ weaponId: "elders-mark" }, { onslaughtStacks: 4 }));
-    expect(em.damagePerShot.breakdown.find((b) => b.source.startsWith("Elder's Mark"))?.value).toBe("+8% Crit");
+  it("Onslaught uniques count only the stacks the build can hold (Nathan, 2026-10-12)", () => {
+    const crit = (r: ReturnType<typeof calculateCombatFirepower>) =>
+      r.damagePerShot.breakdown.find((b) => b.source.startsWith("Elder's Mark"))?.value;
+    // No source raises the limit: the base limit is 0, so the slider's 4 stacks are not held.
+    expect(crit(calculateCombatFirepower(input({ weaponId: "elders-mark" }, { onslaughtStacks: 4 })))).toBeUndefined();
+    // Gunslinger Expert +3: 3 of the 4 are held.
+    const gse = [{ cardId: "gunslinger-expert", rank: 1 }];
+    expect(crit(calculateCombatFirepower(input({ weaponId: "elders-mark", equippedPerks: gse }, { onslaughtStacks: 4 })))).toBe("+6% Crit");
+    // Past the old 10-stack pack limit: Gunslinger Expert +3 and Master +10 hold 13.
+    const both = [...gse, { cardId: "gunslinger-master", rank: 1 }];
+    expect(crit(calculateCombatFirepower(input({ weaponId: "elders-mark", equippedPerks: both }, { onslaughtStacks: 40 })))).toBe("+26% Crit");
   });
 });
 

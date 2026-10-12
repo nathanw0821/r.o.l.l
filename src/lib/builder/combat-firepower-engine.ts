@@ -13,6 +13,7 @@ import weakSpotTruth from "@/data/truth/weak-spot.json";
 import combatConditionsTruth from "@/data/truth/combat-conditions.json";
 import characterStats from "@/data/truth/character-stats.json";
 import { readPerkCurve } from "@/lib/truth/perk-curves";
+import { getUniqueDot, type UniqueDot } from "@/lib/truth/unique-dot";
 import {
   resolveUniqueForBuilderId,
   type UniqueEffectKind,
@@ -408,6 +409,11 @@ export type CombatFirepowerCalculationInput = {
     isSpendingGlow?: boolean;
     /** Stances toggle: hit in the last 10 s (Science Monster). */
     wasHitRecently?: boolean;
+    /**
+     * Stances toggle: the equipped unique's conditional innate is running (Love Tap: within 30 s
+     * of a bash). Only a unique whose pack model is `conditional-damage-buff` reads it.
+     */
+    isUniqueBuffActive?: boolean;
     foodState?: string;
     thirstState?: string;
     /**
@@ -485,6 +491,19 @@ export type CombatFirepowerResult = {
    * least one did, so non-ghoul results (and their goldens) are untouched.
    */
   glow?: { cards: string[] };
+  /**
+   * The equipped unique's datamined damage over time (Patch 70 client data, `@/lib/truth/unique-dot`).
+   * Shown as its own line on the Combat DPS tab; never part of `damagePerShot` or the DPS figures.
+   * Present only for a unique that has one.
+   */
+  damageOverTime?: UniqueDot;
+  /**
+   * The equipped unique has a conditional innate the Stances tab can switch on (Love Tap).
+   * Present only for such a unique.
+   */
+  uniqueToggle?: { uniqueName: string; label: string; detail: string; active: boolean };
+  /** Perk cards the equipped unique grants at no point cost (Western Spirit: Gunslinger Master). */
+  grantedPerks?: { cardId: string; rank: number; uniqueName: string }[];
 };
 
 /**
@@ -715,6 +734,39 @@ export function calculateCombatFirepower(
   // weapon's own row counts; a shared chassis id never inherits a unique.
   const uniqueItem = resolveUniqueForBuilderId(input.weaponId);
   const uniqueName = uniqueItem?.name ?? "";
+
+  // Unique innate: a granted perk card (Western Spirit grants Gunslinger Master, The Guarantee
+  // Demolition Expert 3). The card counts as equipped at the granted rank, or the equipped rank
+  // when that is higher, for every branch below. `equippedPerkRanks` keeps the deck as built.
+  const equippedPerkRanks: ReadonlyMap<string, number> = new Map(perkRanks);
+  const grantedPerks: { cardId: string; rank: number; uniqueName: string }[] = [];
+  const grantModelForPerks = uniqueModelOfKind(uniqueItem, "grants-perk-rank");
+  if (grantModelForPerks?.perkId && (grantModelForPerks.perkRank ?? 0) > 0) {
+    const grantId = grantModelForPerks.perkId;
+    const grantRank = grantModelForPerks.perkRank ?? 0;
+    perkRanks.set(grantId, Math.max(perkRanks.get(grantId) || 0, grantRank));
+    grantedPerks.push({ cardId: grantId, rank: grantRank, uniqueName });
+  }
+
+  // Unique innate: extra projectiles per shot (Boomstick fires 2 additional missiles). Each one is
+  // taken to deal the shot's full damage, so the hit (crit part included) and its explosion scale
+  // by the projectile count.
+  const extraProjectilesModel = uniqueModelOfKind(uniqueItem, "extra-projectiles");
+  const projectileFactor = 1 + Math.max(0, extraProjectilesModel?.value ?? 0);
+  if (projectileFactor > 1) {
+    hitMultipliers.push(projectileFactor);
+    breakdown.push({ source: `${uniqueName} (${projectileFactor} projectiles per shot)`, value: `×${projectileFactor}` });
+  }
+
+  // Unique innate: a conditional additive damage buff behind a Stances toggle (Love Tap: +30 %
+  // for 30 s after a bash).
+  const conditionalBuffModel = uniqueModelOfKind(uniqueItem, "conditional-damage-buff");
+  const uniqueBuffActive = Boolean(conditionalBuffModel && input.playerStats.isUniqueBuffActive);
+  if (conditionalBuffModel && uniqueBuffActive) {
+    const v = conditionalBuffModel.value ?? 0;
+    additiveDamagePct += v;
+    breakdown.push({ source: `${uniqueName} (buff active)`, value: `+${Math.round(v * 100)}%` });
+  }
 
   // Bullet Storm stack grants: Resolute Veteran raises the floor, Foundation's
   // Vengeance adds stacks while the player is under its health threshold.
@@ -1025,9 +1077,10 @@ export function calculateCombatFirepower(
   // limit is 0 and every equipped source adds its "+N max stacks" to it, additively, so the
   // stacks a build can hold are min(slider, base + Σ raises). The card raises come from the
   // pack, Furious (+9) and Pounder's (+10) from legendary-effect-model.json `maxStacks`. The
-  // perk cards and the two legendary effects all count the same held stacks (no per-effect
-  // cap); unique innates keep their own pack `maxUnits` (their pack does not say whether the
-  // weapon itself lets the player hold stacks).
+  // perk cards, the two legendary effects and the Onslaught uniques (Elder's Mark, Ticket to
+  // Revenge, Whacker Smacker) all count the same held stacks, up to the game cap of 100 (Nathan,
+  // 2026-10-12). None of those uniques raises the limit itself (no "+N max stacks" in the Patch 70
+  // notes or their client mods), so they pass no `extraCapRaises`.
   const onslaughtStacks = Math.max(0, input.playerStats.onslaughtStacks || 0);
   const onslaughtModSlugs = new Set(
     (input.equippedMods || []).filter((m) => m && typeof m.slug === "string").map((m) => (m as { slug: string }).slug.toLowerCase())
@@ -1069,13 +1122,17 @@ export function calculateCombatFirepower(
     if ((perkRanks.get("gunslinger-master") || 0) > 0 && base.isRanged && onslaughtStacksHeld > 0) {
       const gsm = readPerkCurve("perks/gunslingermasterbonus", onslaughtStacksHeld) / 100;
       additiveDamagePct += gsm;
-      breakdown.push({ source: `Gunslinger Master (${onslaughtStacksHeld} Onslaught stacks)`, value: `+${Math.round(gsm * 100)}%` });
+      const gsmGrant = grantedPerks.find((g) => g.cardId === "gunslinger-master" && !(equippedPerkRanks.get("gunslinger-master") || 0));
+      breakdown.push({
+        source: `Gunslinger Master (${onslaughtStacksHeld} Onslaught stacks${gsmGrant ? `, provided from ${gsmGrant.uniqueName}` : ""})`,
+        value: `+${Math.round(gsm * 100)}%`,
+      });
     }
 
     // Unique innate: power-attack damage per Onslaught stack (Whacker Smacker).
     const powerAttackModel = uniqueModelOfKind(uniqueItem, "power-attack-damage-per-onslaught-stack");
     if (powerAttackModel && input.playerStats.isPowerAttacking) {
-      const st = Math.min(powerAttackModel.maxUnits ?? onslaughtStacks, onslaughtStacks);
+      const st = Math.min(powerAttackModel.maxUnits ?? onslaughtStacksHeld, onslaughtStacksHeld);
       const bonus = st * (powerAttackModel.perUnit ?? 0);
       if (bonus > 0) {
         additiveDamagePct += bonus;
@@ -1512,10 +1569,11 @@ export function calculateCombatFirepower(
     // Unique innate: a granted perk rank (The Guarantee grants Demolition Expert 3).
     const grantModel = uniqueModelOfKind(uniqueItem, "grants-perk-rank");
     const grantedDemoRank = grantModel?.perkId === "demolition-expert" ? (grantModel.perkRank ?? 0) : 0;
-    const equippedDemoRank = perkRanks.get("demolition-expert") || 0;
+    const equippedDemoRank = equippedPerkRanks.get("demolition-expert") || 0;
     const demoRank = Math.max(equippedDemoRank, grantedDemoRank);
     const demoScale = 1 + (demoRank > 0 ? byRank(CC.perks["demolition-expert"].byRank, demoRank) : 0);
-    explosiveDamage = Math.round(base.baseDamage * LEG.explosiveBaseFraction * demoScale);
+    // Every projectile explodes (Boomstick: 3 missiles).
+    explosiveDamage = Math.round(base.baseDamage * LEG.explosiveBaseFraction * demoScale * projectileFactor);
     breakdown.push({
       source: grantedDemoRank > 0 && equippedDemoRank < grantedDemoRank
         ? `Explosive Impact (${uniqueName}: Demo Exp Rank ${grantedDemoRank})`
@@ -1530,8 +1588,8 @@ export function calculateCombatFirepower(
 
   // Unique innate: V.A.T.S. critical damage per Onslaught stack (Elder's Mark, +2% each).
   const critStackModel = uniqueModelOfKind(uniqueItem, "crit-damage-per-onslaught-stack");
-  if (critStackModel && onslaughtStacks > 0) {
-    const st = Math.min(critStackModel.maxUnits ?? onslaughtStacks, onslaughtStacks);
+  if (critStackModel && onslaughtStacksHeld > 0) {
+    const st = Math.min(critStackModel.maxUnits ?? onslaughtStacksHeld, onslaughtStacksHeld);
     const emBonus = st * (critStackModel.perUnit ?? 0);
     critBonusPct += emBonus;
     breakdown.push({ source: `${uniqueName} (${st} Onslaught stacks)`, value: `+${Math.round(emBonus * 100)}% Crit` });
@@ -1770,8 +1828,8 @@ export function calculateCombatFirepower(
 
   // Unique innate: armor penetration per Onslaught stack (Ticket to Revenge, +3 points each).
   const penStackModel = uniqueModelOfKind(uniqueItem, "armor-pen-per-onslaught-stack");
-  if (penStackModel && onslaughtStacks > 0) {
-    const st = Math.min(penStackModel.maxUnits ?? onslaughtStacks, onslaughtStacks);
+  if (penStackModel && onslaughtStacksHeld > 0) {
+    const st = Math.min(penStackModel.maxUnits ?? onslaughtStacksHeld, onslaughtStacksHeld);
     const ttrPen = st * (penStackModel.perUnit ?? 0);
     penetrationSourcesPct.push(ttrPen);
     apBreakdown.push({ source: `${uniqueName} (${st} Onslaught stacks)`, value: `${ttrPen}% Penetration` });
@@ -1892,6 +1950,9 @@ export function calculateCombatFirepower(
     },
   };
 
+  // Datamined damage over time of the equipped unique, at the weapon's item level (its own line).
+  const uniqueDot = uniqueItem ? getUniqueDot(uniqueItem.id, base.maxLevel || 50) : null;
+
   const targetDummy = calculateTargetMitigation(
     intermediateFirepower,
     input.targetDummyId ?? "scorchbeast-queen"
@@ -1905,6 +1966,20 @@ export function calculateCombatFirepower(
     ...intermediateFirepower,
     targetDummy,
     ...(glowCards.length > 0 ? { glow: { cards: glowCards } } : {}),
+    ...(uniqueDot ? { damageOverTime: uniqueDot } : {}),
+    ...(conditionalBuffModel
+      ? {
+          uniqueToggle: {
+            uniqueName,
+            label: `${uniqueName} buff`,
+            detail: `+${Math.round((conditionalBuffModel.value ?? 0) * 100)}% damage${
+              conditionalBuffModel.durationSeconds ? ` for ${conditionalBuffModel.durationSeconds} s` : ""
+            } (${uniqueItem?.innateEffect ?? ""})`,
+            active: uniqueBuffActive,
+          },
+        }
+      : {}),
+    ...(grantedPerks.length > 0 ? { grantedPerks } : {}),
   };
 }
 

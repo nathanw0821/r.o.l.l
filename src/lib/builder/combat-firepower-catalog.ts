@@ -285,15 +285,15 @@ export const WEAPON_COMBAT_BASE_CATALOG: Record<string, WeaponCombatBaseStats> =
     "isEnergy": false,
     "isExplosiveInherent": true
   },
-  // official Patch 70 notes: innate Poison Damage (unique-items-official-p70.json); amount is the catalog's, unverified (weapon-stats-wiki.json)
+  // Innate Poison Damage is damage over time from the Patch 70 client data (unique-innate-effects-p70.json,
+  // shown on its own line by the engine's `damageOverTime`); the old per-shot 40 poison from
+  // weapon-stats-wiki.json was removed on 2026-10-12 (unverified, and not the client data's shape).
   "the-kabloom": {
     "id": "the-kabloom",
     "label": "The Kabloom (Pump Shotgun · Unique)",
     "maxLevel": 45,
     "baseDamage": 95,
-    "secondaryDamage": 40,
     "damageType": "ballistic",
-    "secondaryDamageType": "poison",
     "fireRate": 2,
     "baseVatsApCost": 32,
     "magazineSize": 8,

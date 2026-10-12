@@ -76,6 +76,7 @@ export default function BiometricsTab({
     isCompactDensity={isCompactDensity}
     equippedPerkIds={equippedPerkIds}
     weakSpot={weaponFirepowerResult?.weakSpot ?? null}
+    uniqueToggle={weaponFirepowerResult?.uniqueToggle ?? null}
   />
 </div>
   );

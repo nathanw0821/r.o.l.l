@@ -12,6 +12,7 @@ import { Sparkles, Link2, ChevronDown } from "lucide-react";
 import PerkLevelingRoadmap from "@/components/perks/perk-leveling-roadmap";
 import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
 import PipBoyPerkAccordionColumn from "@/components/perks/pipboy-perk-accordion-column";
+import GrantedCardTag from "@/components/perks/granted-card-tag";
 import PipBoyLegendaryRack from "@/components/perks/pipboy-legendary-rack";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import PerkPickerDialog, { type PerkPickerScope } from "@/components/perks/perk-picker-dialog";
@@ -44,6 +45,12 @@ interface PerkBuilderProps {
     isGhoul?: boolean;
   }) => void;
   externalImport?: { build: NukesDragonsParsedBuild; timestamp: number } | null;
+  /**
+   * Cards the active weapon grants (Western Spirit: Gunslinger Master). They show in their SPECIAL
+   * column with `source` as a tag and cost no perk points, whether or not the player also equipped
+   * them. They are never written into the saved loadout.
+   */
+  grantedCards?: Array<{ cardId: string; rank: number; source: string }>;
 }
 
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
@@ -105,6 +112,8 @@ function PerkBuilderUrlSync({ onQueryChange }: { onQueryChange: (q: string) => v
 }
 
 
+const NO_GRANTED_CARDS: NonNullable<PerkBuilderProps["grantedCards"]> = [];
+
 export default function PerkBuilder({
   characterId,
   characterName,
@@ -115,6 +124,7 @@ export default function PerkBuilder({
   initialLegendaryPerks,
   onLoadoutChange,
   externalImport,
+  grantedCards = NO_GRANTED_CARDS,
 }: PerkBuilderProps) {
   const { data: session } = useSession();
   const isSignedIn = Boolean(session?.user?.id);
@@ -264,7 +274,25 @@ export default function PerkBuilder({
       .filter((item): item is EquippedItem => item !== null);
   }, [equippedCards]);
 
-  const usedSpecialCapacity = React.useMemo(() => calculateSpecialCapacity(safeEquippedCards), [safeEquippedCards]);
+  // Granted cards (weapon innates) cost no points: they leave the budget even when also equipped.
+  const grantedSources = React.useMemo(() => {
+    const map: Record<string, { source: string; grantOnly: boolean }> = {};
+    for (const g of grantedCards) {
+      map[g.cardId] = { source: g.source, grantOnly: !safeEquippedCards.some((c) => c.cardId === g.cardId) };
+    }
+    return map;
+  }, [grantedCards, safeEquippedCards]);
+  const grantedOnlyCards = React.useMemo(
+    () =>
+      grantedCards
+        .filter((g) => getPerkCardById(g.cardId) && !safeEquippedCards.some((c) => c.cardId === g.cardId))
+        .map((g) => ({ cardId: g.cardId, rank: g.rank })),
+    [grantedCards, safeEquippedCards],
+  );
+  const usedSpecialCapacity = React.useMemo(
+    () => calculateSpecialCapacity(safeEquippedCards.filter((c) => !(c.cardId in grantedSources))),
+    [safeEquippedCards, grantedSources],
+  );
   const legendaryBonuses = React.useMemo(() => calculateLegendarySpecialBonuses(safeEquippedCards), [safeEquippedCards]);
 
   const equippedLegendaryCards = React.useMemo(() => {
@@ -299,14 +327,14 @@ export default function PerkBuilder({
       L: [],
       LEGENDARY: [],
     };
-    safeEquippedCards.forEach((item) => {
+    [...safeEquippedCards, ...grantedOnlyCards].forEach((item) => {
       const card = getPerkCardById(item.cardId);
       if (card && map[card.special]) {
         map[card.special].push(item);
       }
     });
     return map;
-  }, [safeEquippedCards]);
+  }, [safeEquippedCards, grantedOnlyCards]);
 
   // Universal Hard Cap of 15 for perk card slot capacity across all modes
   const effectiveCapacities = React.useMemo(() => {
@@ -1036,6 +1064,7 @@ export default function PerkBuilder({
                     <PipBoyPerkAccordionColumn
                       special={stat}
                       equippedCards={equippedBySpecial[stat]}
+                      grantedSources={grantedSources}
                       capacity={effectiveCapacities[stat]}
                       basePoints={specials[stat]}
                       legendaryBonus={legendaryBonuses[stat] || 0}
@@ -1050,17 +1079,19 @@ export default function PerkBuilder({
                 ))}
               </div>
             </div>
-          ) : safeEquippedCards.length === 0 ? (
+          ) : safeEquippedCards.length === 0 && grantedOnlyCards.length === 0 ? (
             <div className="py-10 text-center text-xs font-mono text-dim border border-dashed border-slate-800 rounded-lg">
               No perk cards equipped in this loadout yet. Select cards below from the Vault-Tec catalog!
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
-              {safeEquippedCards.map((item) => {
+              {[...safeEquippedCards, ...grantedOnlyCards].map((item) => {
                 const card = getPerkCardById(item.cardId);
                 if (!card) return null;
                 const activeRankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];
                 const isOverflowStat = overCapacityStats.some((o) => o.stat === card.special);
+                const grantSource = grantedSources[card.id]?.source;
+                const isGrantedOnly = Boolean(grantedSources[card.id]?.grantOnly);
 
                 return (
                   <PipBoyPerkCard
@@ -1078,8 +1109,9 @@ export default function PerkBuilder({
                     isOutdated={card.isOutdated}
                     outdatedMeta={card.outdatedMeta}
                     reworkedFrom={card.reworkedFrom}
-                    onUnequip={readOnly ? undefined : () => handleUnequipCard(card.id)}
-                    onRankChange={readOnly ? undefined : (newRank) => handleEquipCard(card, newRank)}
+                    footerExtra={grantSource ? <GrantedCardTag source={grantSource} /> : undefined}
+                    onUnequip={readOnly || isGrantedOnly ? undefined : () => handleUnequipCard(card.id)}
+                    onRankChange={readOnly || isGrantedOnly ? undefined : (newRank) => handleEquipCard(card, newRank)}
                   />
                 );
               })}

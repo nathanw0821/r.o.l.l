@@ -102,8 +102,8 @@
         "secondaryDamageType": "poison"
       },
       "verdict": "official-p70",
-      "secondaryKept": true,
-      "note": "fallout.wiki prints no damage figure for this unique, but the page predates its Patch 70 rework; the official Patch 70 notes (unique-items-official-p70.json, mirrored in unique-items.json with sourceNotes 'Reworked in Patch 70') give it innate Poison Damage, so the secondary stays. Its amount (40) is the catalog's and unverified: a newer source only.",
+      "secondaryKept": false,
+      "note": "fallout.wiki prints no damage figure for this unique. The official Patch 70 notes give it innate Poison Damage; the Patch 70 client data has it as poison damage over time (unique-innate-effects-p70.json), which the engine shows as its own damageOverTime line since 2026-10-12, so the catalog's unverified per-shot 40 poison secondary was removed.",
       "officialSource": {
         "file": "src/data/truth/unique-items-official-p70.json",
         "quote": "Kabloom: Poison Damage",

@@ -75,11 +75,13 @@ describe("weapon-stats-wiki truth file", () => {
     expect(WEAPON_COMBAT_BASE_CATALOG["plasma-gun"].secondaryDamage).toBe(42);
   });
 
-  it("the two mod-only secondaries are off; the two Patch 70 reworked uniques keep theirs from the official notes", () => {
-    for (const id of ["the-kabloom", "v63-shock-baton"]) {
-      expect(entries[id].verdict, id).toBe("official-p70");
-      expect(WEAPON_COMBAT_BASE_CATALOG[id].secondaryDamage, id).toBeGreaterThan(0);
-    }
+  it("the two mod-only secondaries are off; the Shock Baton keeps its official Patch 70 secondary, the Kabloom's poison is over time", () => {
+    expect(entries["v63-shock-baton"].verdict).toBe("official-p70");
+    expect(WEAPON_COMBAT_BASE_CATALOG["v63-shock-baton"].secondaryDamage).toBeGreaterThan(0);
+    // 2026-10-12: The Kabloom's poison is the client data's damage over time (engine `damageOverTime`).
+    expect(entries["the-kabloom"].verdict).toBe("official-p70");
+    expect(entries["the-kabloom"].secondaryKept).toBe(false);
+    expect(WEAPON_COMBAT_BASE_CATALOG["the-kabloom"].secondaryDamage).toBeUndefined();
     expect(truth.rule.noOlderSources).toMatch(/never|only to a source at least as new/i);
     for (const id of ["gauss-minigun", "gamma-gun"]) {
       expect(entries[id].secondaryKept, id).toBe(false);

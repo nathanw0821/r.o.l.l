@@ -363,6 +363,7 @@ export default function BuilderExperimentClient({
         glowPct: switchboardState?.glowPct ?? 0,
         isSpendingGlow: Boolean(switchboardState?.combatStance?.isSpendingGlow),
         wasHitRecently: Boolean(switchboardState?.combatStance?.wasHitRecently),
+        isUniqueBuffActive: Boolean(switchboardState?.combatStance?.isUniqueBuffActive),
         foodState: switchboardState?.foodState,
         thirstState: switchboardState?.thirstState,
       },
@@ -380,6 +381,18 @@ export default function BuilderExperimentClient({
     statsBand,
     isPA,
   ]);
+
+  // Cards the active weapon grants (Western Spirit: Gunslinger Master): the perk deck tags them and
+  // takes them off the SPECIAL budget; the engine already counts them (`grantedPerks`).
+  const grantedPerkCards = React.useMemo(
+    () =>
+      (weaponFirepowerResult?.grantedPerks ?? []).map((g) => ({
+        cardId: g.cardId,
+        rank: g.rank,
+        source: `Provided from ${g.uniqueName}`,
+      })),
+    [weaponFirepowerResult?.grantedPerks],
+  );
 
 
   // Card ids the switchboard's Diseased / Over-encumbered hints look up (names only when equipped).
@@ -885,6 +898,7 @@ export default function BuilderExperimentClient({
         legendaryPerkIds={payload.legendaryPerkIds}
         importedBuildForPerkBuilder={importedBuildForPerkBuilder}
         handlePerkLoadoutChange={handlePerkLoadoutChange}
+        grantedCards={grantedPerkCards}
       />
 
 

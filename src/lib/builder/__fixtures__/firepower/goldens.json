@@ -2992,6 +2992,21 @@
         "burstDPSLanded": 99,
         "criticalCycleDPSLanded": 219,
         "activeDPSLanded": 99
+      },
+      "damageOverTime": {
+        "uniqueId": "red-terror",
+        "uniqueName": "Red Terror",
+        "damageType": "fire",
+        "label": "Burn",
+        "perSecond": 17,
+        "durationSeconds": 3,
+        "total": 51,
+        "itemLevel": 50,
+        "effect": "dtFireFlameEffectChanceAlways",
+        "curve": "CT_Player_Damage_Universal_Tier09",
+        "variantsIgnored": 0,
+        "confidence": "datamined",
+        "source": "unique-innate-effects-p70.json (SeventySix.esm 2026-09-16)"
       }
     },
     "earle-williams": {
@@ -3128,6 +3143,21 @@
         "burstDPSLanded": 60,
         "criticalCycleDPSLanded": 139,
         "activeDPSLanded": 60
+      },
+      "damageOverTime": {
+        "uniqueId": "red-terror",
+        "uniqueName": "Red Terror",
+        "damageType": "fire",
+        "label": "Burn",
+        "perSecond": 17,
+        "durationSeconds": 3,
+        "total": 51,
+        "itemLevel": 50,
+        "effect": "dtFireFlameEffectChanceAlways",
+        "curve": "CT_Player_Damage_Universal_Tier09",
+        "variantsIgnored": 0,
+        "confidence": "datamined",
+        "source": "unique-innate-effects-p70.json (SeventySix.esm 2026-09-16)"
       }
     },
     "ultracite-titan": {
@@ -3264,6 +3294,21 @@
         "burstDPSLanded": 80,
         "criticalCycleDPSLanded": 169,
         "activeDPSLanded": 80
+      },
+      "damageOverTime": {
+        "uniqueId": "red-terror",
+        "uniqueName": "Red Terror",
+        "damageType": "fire",
+        "label": "Burn",
+        "perSecond": 17,
+        "durationSeconds": 3,
+        "total": 51,
+        "itemLevel": 50,
+        "effect": "dtFireFlameEffectChanceAlways",
+        "curve": "CT_Player_Damage_Universal_Tier09",
+        "variantsIgnored": 0,
+        "confidence": "datamined",
+        "source": "unique-innate-effects-p70.json (SeventySix.esm 2026-09-16)"
       }
     },
     "level-100-super-mutant": {
@@ -3400,6 +3445,21 @@
         "burstDPSLanded": 378,
         "criticalCycleDPSLanded": 815,
         "activeDPSLanded": 378
+      },
+      "damageOverTime": {
+        "uniqueId": "red-terror",
+        "uniqueName": "Red Terror",
+        "damageType": "fire",
+        "label": "Burn",
+        "perSecond": 17,
+        "durationSeconds": 3,
+        "total": 51,
+        "itemLevel": 50,
+        "effect": "dtFireFlameEffectChanceAlways",
+        "curve": "CT_Player_Damage_Universal_Tier09",
+        "variantsIgnored": 0,
+        "confidence": "datamined",
+        "source": "unique-innate-effects-p70.json (SeventySix.esm 2026-09-16)"
       }
     },
     "raw-unarmored": {
@@ -3536,6 +3596,21 @@
         "burstDPSLanded": 1193,
         "criticalCycleDPSLanded": 2027,
         "activeDPSLanded": 1193
+      },
+      "damageOverTime": {
+        "uniqueId": "red-terror",
+        "uniqueName": "Red Terror",
+        "damageType": "fire",
+        "label": "Burn",
+        "perSecond": 17,
+        "durationSeconds": 3,
+        "total": 51,
+        "itemLevel": 50,
+        "effect": "dtFireFlameEffectChanceAlways",
+        "curve": "CT_Player_Damage_Universal_Tier09",
+        "variantsIgnored": 0,
+        "confidence": "datamined",
+        "source": "unique-innate-effects-p70.json (SeventySix.esm 2026-09-16)"
       }
     }
   },

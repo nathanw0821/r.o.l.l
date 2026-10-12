@@ -4,6 +4,7 @@ import * as React from "react";
 import { SpecialCategory, getPerkCardById, PerkCard } from "@/lib/perks/catalog";
 import { OFFICIAL_SPECIAL_THEMES as SPECIAL_THEMES } from "@/lib/perks/special-theme";
 import PipBoyPerkCard from "@/components/perks/pipboy-perk-card";
+import GrantedCardTag from "@/components/perks/granted-card-tag";
 import { Plus, AlertTriangle } from "lucide-react";
 
 export interface PipBoyPerkAccordionColumnProps {
@@ -18,7 +19,15 @@ export interface PipBoyPerkAccordionColumnProps {
   onUnequipCard: (cardId: string) => void;
   onFilterSpecial?: (special: SpecialCategory) => void;
   readOnly?: boolean;
+  /**
+   * Cards the active weapon grants, by card id: `source` is the tag ("Provided from Western
+   * Spirit"). They cost no points here; `grantOnly` (the player did not equip it) locks the card's
+   * unequip and rank controls.
+   */
+  grantedSources?: Record<string, { source: string; grantOnly: boolean }>;
 }
+
+const NO_GRANTS: Record<string, { source: string; grantOnly: boolean }> = {};
 
 export default function PipBoyPerkAccordionColumn({
   special,
@@ -30,6 +39,7 @@ export default function PipBoyPerkAccordionColumn({
   onUnequipCard,
   onFilterSpecial,
   readOnly = false,
+  grantedSources = NO_GRANTS,
 }: PipBoyPerkAccordionColumnProps) {
   const theme = SPECIAL_THEMES[special] || SPECIAL_THEMES.S;
   const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
@@ -39,11 +49,12 @@ export default function PipBoyPerkAccordionColumn({
   const pointsUsed = React.useMemo(() => {
     return equippedCards.reduce((total, item) => {
       const card = getPerkCardById(item.cardId);
-      if (!card) return total;
+      if (!card || item.cardId in grantedSources) return total;
       const rankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];
       return total + (rankObj?.cost ?? item.rank);
     }, 0);
-  }, [equippedCards]);
+  }, [equippedCards, grantedSources]);
+  const grantedHere = equippedCards.filter((item) => item.cardId in grantedSources);
 
   const activeCardId = hoveredCardId ?? selectedCardId;
 
@@ -99,6 +110,20 @@ export default function PipBoyPerkAccordionColumn({
         )}
       </div>
 
+      {/* Cards the active weapon grants: tagged here, above the stack, so no card art is covered */}
+      {grantedHere.length > 0 && (
+        <div className="px-2 pt-2 space-y-1">
+          {grantedHere.map((item) => (
+            <div key={item.cardId} className="space-y-0.5">
+              <span className="block truncate text-center font-mono text-3xs text-slate-300">
+                {getPerkCardById(item.cardId)?.name ?? item.cardId}
+              </span>
+              <GrantedCardTag source={grantedSources[item.cardId].source} />
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Accordion Deck Stack Area */}
       <div className="p-2 relative flex flex-col items-center w-full min-h-[300px] overflow-visible">
         {equippedCards.length === 0 ? (
@@ -137,6 +162,7 @@ export default function PipBoyPerkAccordionColumn({
               if (!card) return null;
               const activeRankObj = card.ranks.find((r) => r.rank === item.rank) || card.ranks[0];
               const isForefront = activeCardId === item.cardId;
+              const isGrantedOnly = Boolean(grantedSources[item.cardId]?.grantOnly);
 
               return (
                 <div
@@ -172,12 +198,12 @@ export default function PipBoyPerkAccordionColumn({
                     onSelect={() => {
                       setSelectedCardId((prev) => (prev === item.cardId ? null : item.cardId));
                     }}
-                    onUnequip={readOnly ? undefined : () => {
+                    onUnequip={readOnly || isGrantedOnly ? undefined : () => {
                       onUnequipCard(card.id);
                       if (selectedCardId === item.cardId) setSelectedCardId(null);
                       if (hoveredCardId === item.cardId) setHoveredCardId(null);
                     }}
-                    onRankChange={readOnly ? undefined : (newRank) => onEquipCard(card, newRank)}
+                    onRankChange={readOnly || isGrantedOnly ? undefined : (newRank) => onEquipCard(card, newRank)}
                   />
                 </div>
               );

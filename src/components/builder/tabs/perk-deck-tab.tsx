@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 type PerkBuilderProps = React.ComponentProps<typeof PerkBuilder>;
 
 /**
- * Master tab 2: Perk deck & S.P.E.C.I.A.L. The seven props forwarded to
+ * Master tab 2: Perk deck & S.P.E.C.I.A.L. The eight props forwarded to
  * <PerkBuilder> are typed from its own props so they cannot drift.
  */
 export type PerkDeckTabProps = {
@@ -17,6 +17,8 @@ export type PerkDeckTabProps = {
   legendaryPerkIds: PerkBuilderProps["initialLegendaryPerks"];
   importedBuildForPerkBuilder: PerkBuilderProps["externalImport"];
   handlePerkLoadoutChange: PerkBuilderProps["onLoadoutChange"];
+  /** Cards the active weapon grants (Western Spirit: Gunslinger Master), free of point cost. */
+  grantedCards?: PerkBuilderProps["grantedCards"];
 };
 
 export default function PerkDeckTab({
@@ -27,6 +29,7 @@ export default function PerkDeckTab({
   legendaryPerkIds,
   importedBuildForPerkBuilder,
   handlePerkLoadoutChange,
+  grantedCards,
 }: PerkDeckTabProps) {
   return (
 <div className={cn("space-y-4 animate-in fade-in duration-200", active ? "block" : "hidden")}>
@@ -38,6 +41,7 @@ export default function PerkDeckTab({
     initialLegendaryPerks={legendaryPerkIds}
     externalImport={importedBuildForPerkBuilder}
     onLoadoutChange={handlePerkLoadoutChange}
+    grantedCards={grantedCards}
   />
 </div>
   );

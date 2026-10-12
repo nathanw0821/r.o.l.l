@@ -583,14 +583,16 @@ describe("combat-firepower-engine", () => {
     it("gives +3% armor penetration per Onslaught stack on Ticket to Revenge and +2% crit per stack on Elder's Mark", () => {
       const ttr = calculateCombatFirepower({
         weaponId: "ticket-to-revenge",
-        equippedMods: [],
+        // Furious raises the Onslaught limit to 9, so the 4 stacks are held.
+        equippedMods: [{ slug: "furious" }],
         equippedPerks: [],
         playerStats: { agility: 10, luck: 10, strength: 10, onslaughtStacks: 4 },
       });
       expect(ttr.armorPenetration.breakdown.find((x) => x.source.startsWith("Ticket to Revenge"))?.value).toBe("12% Penetration");
       const em = calculateCombatFirepower({
         weaponId: "elders-mark",
-        equippedMods: [],
+        // Furious raises the Onslaught limit to 9, so the 4 stacks are held.
+        equippedMods: [{ slug: "furious" }],
         equippedPerks: [],
         playerStats: { agility: 10, luck: 10, strength: 10, onslaughtStacks: 4 },
       });
@@ -767,13 +769,15 @@ describe("unique innate effects (src/data/truth/unique-items.json)", () => {
     expect(damageRow(crushing, "Crushing Blow Innate (2 Crippled Limbs)")?.value).toBe("+20%");
     expect(crushing.damagePerShot.normal).toBe(54);
 
-    const ticket = run("ticket-to-revenge", { onslaughtStacks: 4 });
+    // Guerrilla Master raises the Onslaught limit to 5 (no damage at mid range), so 4 stacks are held.
+    const holdFive = [{ cardId: "guerrilla-master", rank: 1 }];
+    const ticket = run("ticket-to-revenge", { onslaughtStacks: 4 }, [], holdFive);
     expect(
       ticket.armorPenetration.breakdown.find((row) => row.source.startsWith("Ticket to Revenge (4 Onslaught stacks)"))?.value
     ).toBe("12% Penetration");
     expect(ticket.armorPenetration.effectiveArmorPenetrationPct).toBe(12);
 
-    const elders = run("elders-mark", { onslaughtStacks: 4 });
+    const elders = run("elders-mark", { onslaughtStacks: 4 }, [], holdFive);
     expect(damageRow(elders, "Elder's Mark (4 Onslaught stacks)")?.value).toBe("+8% Crit");
     expect(elders.damagePerShot.critical).toBe(79);
 
@@ -791,13 +795,21 @@ describe("unique innate effects (src/data/truth/unique-items.json)", () => {
     expect(damageRow(guaranteeWithPerk, "Explosive Impact (Demo Exp Rank 3)")?.value).toBe("+14");
   });
 
-  it("adds Whacker Smacker power-attack damage per Onslaught stack, capped at 10", () => {
-    const powerAttack = run("whacker-smacker", { onslaughtStacks: 4, isPowerAttacking: true });
+  it("adds Whacker Smacker power-attack damage per held Onslaught stack (no 10-stack cap since 2026-10-12)", () => {
+    // Guerrilla Master (+5) holds the 4 stacks and adds nothing to a melee weapon.
+    const holdFive = [{ cardId: "guerrilla-master", rank: 1 }];
+    const powerAttack = run("whacker-smacker", { onslaughtStacks: 4, isPowerAttacking: true }, [], holdFive);
     expect(damageRow(powerAttack, "Whacker Smacker (4 Onslaught stacks, Power Attack)")?.value).toBe("+20%");
     expect(powerAttack.damagePerShot.normal).toBe(187);
 
-    const capped = run("whacker-smacker", { onslaughtStacks: 14, isPowerAttacking: true });
-    expect(damageRow(capped, "Whacker Smacker (10 Onslaught stacks, Power Attack)")?.value).toBe("+50%");
+    // No source holds stacks: nothing.
+    const unheld = run("whacker-smacker", { onslaughtStacks: 4, isPowerAttacking: true });
+    expect(damageRow(unheld, "Whacker Smacker")).toBeUndefined();
+
+    // Pounder's +10 and Guerrilla Master +5 hold 15 of 20, past the old 10-stack limit:
+    // 15 × 5 % = +75 % (Pounder's adds its own +10 % per stack on its own row).
+    const many = run("whacker-smacker", { onslaughtStacks: 20, isPowerAttacking: true }, [{ slug: "pounders" }], holdFive);
+    expect(damageRow(many, "Whacker Smacker (15 Onslaught stacks, Power Attack)")?.value).toBe("+75%");
 
     // No power attack, no row and no damage.
     const swinging = run("whacker-smacker", { onslaughtStacks: 4 });
@@ -817,6 +829,59 @@ describe("unique innate effects (src/data/truth/unique-items.json)", () => {
     const clean = run("the-quick-fix", { addictionsCount: 0 });
     expect(dpsRow(clean, "The Quick Fix")).toBeUndefined();
     expect(clean.fireRate.fireRateMultiplier).toBe(1);
+  });
+
+  it("fires Boomstick's 2 additional missiles: the whole hit and its explosion ×3 (official Patch 70 text)", () => {
+    const boom = run("boomstick");
+    expect(damageRow(boom, "Boomstick (3 projectiles per shot)")?.value).toBe("×3");
+    // 175 base × 3 missiles; each explodes (inherent explosive: 175 × 0.2 × 3 = 105).
+    expect(boom.damagePerShot.normal).toBe(525);
+    expect(boom.damagePerShot.explosiveBonus).toBe(105);
+    // The crit bonus part scales too: 525 + 175 × 1.0 × 3 + 105.
+    expect(boom.damagePerShot.critical).toBe(1155);
+  });
+
+  it("adds Love Tap's +30% only while its Stances toggle is on, and reports the toggle", () => {
+    const off = run("love-tap");
+    expect(damageRow(off, "Love Tap")).toBeUndefined();
+    expect(off.uniqueToggle).toMatchObject({ uniqueName: "Love Tap", active: false });
+    const on = run("love-tap", { isUniqueBuffActive: true });
+    expect(damageRow(on, "Love Tap (buff active)")?.value).toBe("+30%");
+    expect(on.damagePerShot.normal).toBe(Math.round(off.damagePerShot.normal * 1.3));
+    expect(on.uniqueToggle?.active).toBe(true);
+    // Any other weapon ignores the toggle and reports none.
+    const other = run("submachine-gun", { isUniqueBuffActive: true });
+    expect(other.uniqueToggle).toBeUndefined();
+    expect(other.damagePerShot.normal).toBe(run("submachine-gun").damagePerShot.normal);
+  });
+
+  it("grants Gunslinger Master while Western Spirit is the weapon: +10 Onslaught limit and its per-stack bonus", () => {
+    const ws = run("western-spirit", { onslaughtStacks: 12 });
+    expect(ws.grantedPerks).toEqual([{ cardId: "gunslinger-master", rank: 1, uniqueName: "Western Spirit" }]);
+    // Limit 10 (the card's +10), so 10 of 12 are held: perks/gunslingermasterbonus 3 % per stack.
+    expect(damageRow(ws, "Gunslinger Master (10 Onslaught stacks, provided from Western Spirit)")?.value).toBe("+30%");
+    // Already equipped: same numbers, plain label.
+    const equipped = run("western-spirit", { onslaughtStacks: 12 }, [], [{ cardId: "gunslinger-master", rank: 1 }]);
+    expect(damageRow(equipped, "Gunslinger Master (10 Onslaught stacks)")?.value).toBe("+30%");
+    expect(equipped.damagePerShot.normal).toBe(ws.damagePerShot.normal);
+    // Another lever action gets nothing.
+    const plain = run("lever-action", { onslaughtStacks: 12 });
+    expect(plain.grantedPerks).toBeUndefined();
+    expect(damageRow(plain, "Gunslinger Master")).toBeUndefined();
+  });
+
+  it("reports the datamined damage over time of the elemental uniques as its own figure, outside the per-shot number", () => {
+    const dot = (id: string) => run(id).damageOverTime;
+    // Curve value at the weapon's item level (CT_Player_Damage_Universal_Tier09/10), per second × duration.
+    expect(dot("red-terror")).toMatchObject({ label: "Burn", perSecond: 17, durationSeconds: 3, total: 51, itemLevel: 50, confidence: "datamined" });
+    expect(dot("the-gutter")).toMatchObject({ label: "Poison", perSecond: 18, durationSeconds: 10, total: 180, itemLevel: 45 });
+    expect(dot("shattered-grounds")).toMatchObject({ label: "Bleed", perSecond: 15, durationSeconds: 10, total: 150 });
+    expect(dot("crowd-control")).toMatchObject({ label: "Bleed", perSecond: 17, durationSeconds: 10, total: 170 });
+    // The Kabloom: four client effects; the level-scaled one with the longest duration (7 s).
+    expect(dot("the-kabloom")).toMatchObject({ label: "Poison", perSecond: 18, durationSeconds: 7, total: 126, variantsIgnored: 3 });
+    // Not folded into the hit: the Kabloom no longer carries a per-shot poison secondary.
+    expect(run("the-kabloom").damagePerShot.secondary).toBeUndefined();
+    expect(dot("submachine-gun")).toBeUndefined();
   });
 
   it("adds Civil Unrest's +50 action points to the V.A.T.S. pool", () => {

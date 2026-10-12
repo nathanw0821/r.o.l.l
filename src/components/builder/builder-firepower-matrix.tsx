@@ -347,6 +347,37 @@ export default function BuilderFirepowerMatrix({
           </div>
         </div>
 
+        {/* Unique damage over time (datamined, Patch 70 client data): its own line, never part of
+            the per-shot or DPS figures above */}
+        {firepower.damageOverTime && (
+          <div className="rounded-lg border border-orange-500/40 bg-orange-950/20 p-3 space-y-1 font-mono">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 text-xs">
+              <span className="font-bold uppercase tracking-wider text-orange-300 flex items-center gap-1">
+                <Flame className="h-3.5 w-3.5" aria-hidden="true" /> {firepower.damageOverTime.label} (damage over time)
+              </span>
+              <span className="rounded border border-orange-500/50 px-1.5 py-0.5 text-3xs font-bold uppercase text-orange-200">
+                Datamined
+              </span>
+            </div>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <span className="text-sm text-slate-200">
+                {firepower.damageOverTime.label}: <span className="font-black text-white">{firepower.damageOverTime.total}</span> over{" "}
+                {firepower.damageOverTime.durationSeconds} s
+              </span>
+              <span className="text-xs text-orange-200">{firepower.damageOverTime.perSecond} per second</span>
+            </div>
+            <p className="text-2xs text-slate-400">
+              {firepower.damageOverTime.uniqueName} innate at item level {firepower.damageOverTime.itemLevel}, from the Patch 70
+              client data ({firepower.damageOverTime.effect}
+              {firepower.damageOverTime.curve ? `, ${firepower.damageOverTime.curve}` : ""}). Not included in the damage per shot or
+              DPS above, and not scaled by perks; the per-second reading is not confirmed in game.
+              {firepower.damageOverTime.variantsIgnored > 0
+                ? ` ${firepower.damageOverTime.variantsIgnored} other client variants with undecoded conditions are not shown.`
+                : ""}
+            </p>
+          </div>
+        )}
+
         {/* Boss Combat Mitigation & Landed DPS Matrix */}
         <div className="rounded-lg border border-slate-800 bg-slate-900/50 p-3.5 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">

@@ -15,10 +15,14 @@ import {
 describe("unique-items truth pack", () => {
   // The Patch 70 weapon list supplied for this dataset has 83 rows (the release
   // notes headline says 85; two names could not be sourced and were not invented).
-  it("has 83 weapons and 8 armor pieces", () => {
-    expect(getUniqueItems("weapon")).toHaveLength(83);
+  // Plus two builder uniques that are not in that table (Cold Shoulder, V63 Zweihänder, added
+  // 2026-10-12 with their client-data text so the gear card and engine resolve them).
+  it("has 83 official weapons, 2 builder-only weapons and 8 armor pieces", () => {
+    const weapons = getUniqueItems("weapon");
+    expect(weapons.filter((item) => !item.notInOfficialTable)).toHaveLength(83);
+    expect(weapons.filter((item) => item.notInOfficialTable).map((item) => item.id).sort()).toEqual(["cold-shoulder", "v63-zweihander"]);
     expect(getUniqueItems("armor")).toHaveLength(8);
-    expect(UNIQUE_ITEMS).toHaveLength(91);
+    expect(UNIQUE_ITEMS).toHaveLength(93);
   });
 
   it("has unique kebab-case ids and non-empty effects", () => {
@@ -71,6 +75,10 @@ describe("unique-items truth pack", () => {
     const fold = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "");
     expect(official.size).toBe(83);
     for (const item of getUniqueItems("weapon")) {
+      if (item.notInOfficialTable) {
+        expect(official.has(item.name), item.name).toBe(false);
+        continue;
+      }
       const expected = normalised[item.name] ?? official.get(item.name);
       expect(expected, `${item.name} is not in the official table`).toBeDefined();
       expect(fold(item.innateEffect), item.name).toBe(fold(expected!));
@@ -115,8 +123,10 @@ describe("unique-items innate models", () => {
     "weak-spot-damage": ["value"],
     "weak-spot-damage-while-aiming": ["value"],
     "weak-spot-per-kill-streak": ["perUnit", "maxUnits"],
+    "extra-projectiles": ["value"],
+    "conditional-damage-buff": ["value"],
   };
-  const NUMERIC_FIELDS = ["value", "perUnit", "maxUnits", "cap", "healthThreshold", "perkRank"] as const;
+  const NUMERIC_FIELDS = ["value", "perUnit", "maxUnits", "cap", "healthThreshold", "perkRank", "durationSeconds"] as const;
   const CONFIDENCE = ["verified", "datamined", "approximate"];
 
   it("validates every model against the schema", () => {
@@ -143,18 +153,21 @@ describe("unique-items innate models", () => {
     expect(modelled.length).toBeGreaterThanOrEqual(8);
     expect(modelled.map((item) => item.id).sort()).toEqual(
       [
+        "boomstick",
         "civil-unrest",
         "crushing-blow",
         "disorderly-conduct",
         "elders-mark",
         "face-breaker",
         "foundations-vengeance",
+        "love-tap",
         "resolute-veteran",
         "sole-survivor",
         "the-fact-finder",
         "the-guarantee",
         "the-quick-fix",
         "ticket-to-revenge",
+        "western-spirit",
         "whacker-smacker",
       ].sort()
     );
@@ -162,9 +175,13 @@ describe("unique-items innate models", () => {
 
   it("pins the modelled numbers the engine reads", () => {
     expect(getUniqueEffectModel("crushing-blow")).toMatchObject({ perUnit: 0.1, maxUnits: 4, cap: 0.4 });
-    expect(getUniqueEffectModel("ticket-to-revenge")).toMatchObject({ perUnit: 3, maxUnits: 10 });
-    expect(getUniqueEffectModel("elders-mark")).toMatchObject({ perUnit: 0.02, maxUnits: 10 });
-    expect(getUniqueEffectModel("whacker-smacker")).toMatchObject({ perUnit: 0.05, maxUnits: 10 });
+    // Onslaught uniques: the game cap (100); the engine counts only the stacks the build holds.
+    expect(getUniqueEffectModel("ticket-to-revenge")).toMatchObject({ perUnit: 3, maxUnits: 100 });
+    expect(getUniqueEffectModel("elders-mark")).toMatchObject({ perUnit: 0.02, maxUnits: 100 });
+    expect(getUniqueEffectModel("whacker-smacker")).toMatchObject({ perUnit: 0.05, maxUnits: 100 });
+    expect(getUniqueEffectModel("boomstick")).toMatchObject({ kind: "extra-projectiles", value: 2 });
+    expect(getUniqueEffectModel("love-tap")).toMatchObject({ kind: "conditional-damage-buff", value: 0.3, durationSeconds: 30 });
+    expect(getUniqueEffectModel("western-spirit")).toMatchObject({ kind: "grants-perk-rank", perkId: "gunslinger-master", perkRank: 1 });
     expect(getUniqueEffectModel("the-guarantee")).toMatchObject({ perkId: "demolition-expert", perkRank: 3 });
     expect(getUniqueEffectModel("disorderly-conduct")).toMatchObject({ value: 1.2 });
     expect(getUniqueEffectModel("the-quick-fix")).toMatchObject({ perUnit: 0.05, cap: 1 });
@@ -194,6 +211,10 @@ describe("unique-items innate models", () => {
     expect(resolveUniqueForBuilderId("Crushing_Blow")?.name).toBe("Crushing Blow");
     // Molerat Bat is built on the Baseball Bat; equipping the plain bat must not inherit its innate.
     expect(resolveUniqueForBuilderId("baseball-bat")).toBeUndefined();
+    // The Kabloom's pack id is its builder id since 2026-10-12 (it was "kabloom").
+    expect(resolveUniqueForBuilderId("the-kabloom")?.name).toBe("Kabloom");
+    expect(resolveUniqueForBuilderId("cold-shoulder")?.name).toBe("Cold Shoulder");
+    expect(resolveUniqueForBuilderId("v63-zweihander")?.name).toBe("V63 Zweihänder");
     expect(getUniqueEffectModel("the-fixer")).toBeNull();
     expect(getUniqueEffectModel("molerat-bat")).toBeNull();
   });
