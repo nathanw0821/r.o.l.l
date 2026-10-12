@@ -15,8 +15,8 @@
   "scrapSource": "https://fallout.wiki/wiki/Perk_Coin: 'Two perk coins are received for scrapping each rank of a perk card. Higher-ranked cards will yield a number of coins corresponding to the card's rank.'",
   "unequipCostCoins": 1,
   "unequipSource": "https://fallout.wiki/wiki/Perk_Coin: removing an equipped legendary perk costs 1 coin.",
-  "slotUnlockLevels": [50, 75, 100, 150, 200, 300],
-  "slotUnlockSource": "https://fallout.wiki/wiki/Legendary_perks: 'The first legendary slot unlocking at level 50, and new ones at certain level milestones onward at 75, 100, 150, 200, and 300.'",
+  "slotUnlockLevels": [50, 100, 150, 200, 250, 300],
+  "slotUnlockSource": "Nathan's in-game reading, Patch 70 (2026-10-12): slots unlock at 50, 100, 150, 200, 250 and 300. The fallout.wiki Legendary perks page still lists the pre-rework 50/75/100/150/200/300 and is older than the game.",
   "coinsPerLevelUp": null,
   "coinsPerLevelUpSource": "Not stated on either wiki page; the UI does not show a level-up estimate."
 }

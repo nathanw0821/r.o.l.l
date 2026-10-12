@@ -8,6 +8,7 @@ import {
   LEGENDARY_PERK_COSTS_SOURCE,
   rank1CardsScrappedFor,
   totalLegendaryPerkCoins,
+  LEGENDARY_SLOT_UNLOCK_LEVELS,
 } from "@/lib/perks/legendary-perk-costs";
 
 export interface PipBoyLegendaryRackProps {
@@ -19,7 +20,6 @@ export interface PipBoyLegendaryRackProps {
   readOnly?: boolean;
 }
 
-const LEGENDARY_UNLOCK_LEVELS = [50, 75, 100, 150, 200, 300];
 
 export default function PipBoyLegendaryRack({
   equippedLegendaryCards,
@@ -60,7 +60,7 @@ export default function PipBoyLegendaryRack({
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
         {Array.from({ length: 6 }, (_, index) => {
           const item = equippedLegendaryCards[index];
-          const unlockLevel = LEGENDARY_UNLOCK_LEVELS[index];
+          const unlockLevel = LEGENDARY_SLOT_UNLOCK_LEVELS[index];
 
           if (item) {
             const card = getPerkCardById(item.cardId);

@@ -8,6 +8,7 @@ import {
   perkCardCostText,
   rank1CardsScrappedFor,
   totalLegendaryPerkCoins,
+  LEGENDARY_SLOT_UNLOCK_LEVELS,
 } from "./legendary-perk-costs";
 
 describe("legendary perk Perk Coin costs (fallout.wiki)", () => {
@@ -51,5 +52,12 @@ describe("legendary perk Perk Coin costs (fallout.wiki)", () => {
   it("keeps the truth file sourced", () => {
     expect(costs.source).toMatch(/^https:\/\/fallout\.wiki\//);
     expect(costs.coinsPerLevelUp).toBeNull();
+  });
+});
+
+describe("legendary perk slot unlock levels", () => {
+  it("unlock at 50, then every 50 levels to 300 (Nathan's in-game reading, Patch 70, 2026-10-12)", () => {
+    expect([...LEGENDARY_SLOT_UNLOCK_LEVELS]).toEqual([50, 100, 150, 200, 250, 300]);
+    expect(costs.slotUnlockLevels).toEqual([...LEGENDARY_SLOT_UNLOCK_LEVELS]);
   });
 });
