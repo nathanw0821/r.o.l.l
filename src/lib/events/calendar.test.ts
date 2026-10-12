@@ -11,6 +11,8 @@ import {
   entryDays,
   monthGrid,
   monthKeyFor,
+  yearMonthKeys,
+  CALENDAR_YEAR,
 } from "./calendar";
 
 describe("season calendar", () => {
@@ -65,6 +67,18 @@ describe("month grid", () => {
     // 03:00Z on Oct 1 is still 23:00 EDT on Sep 30.
     expect(monthKeyFor(new Date("2026-10-01T03:00:00Z"))).toBe("2026-09");
     expect(monthKeyFor(new Date("2026-10-01T05:00:00Z"))).toBe("2026-10");
+  });
+
+  it("spans the whole calendar year, and an empty month still gets a grid", () => {
+    expect(CALENDAR_YEAR).toBe(2026);
+    const keys = yearMonthKeys();
+    expect(keys[0]).toBe("2026-01");
+    expect(keys[11]).toBe("2026-12");
+    expect(keys.length).toBe(12);
+    const jan = monthGrid("2026-01");
+    expect(jan.entries).toEqual([]);
+    expect(jan.weeks.length).toBe(5);
+    expect(jan.weeks.every((w) => w.laneCount === 0)).toBe(true);
   });
 
   it("covers every month from the first start to the last end", () => {

@@ -2,18 +2,19 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CalendarDays, CalendarPlus, ChevronRight } from "lucide-react";
+import { CalendarDays, CalendarPlus, ChevronRight, History } from "lucide-react";
 import {
   CALENDAR_ENTRIES,
   CALENDAR_SOURCE,
   CALENDAR_TITLE,
   EVENT_KIND_LABEL,
-  calendarMonthKeys,
+  CALENDAR_YEAR,
   entryDays,
   entryStatus,
   entryWindowUtc,
   monthGrid,
   monthKeyFor,
+  yearMonthKeys,
   type CalendarEntry,
   type CalendarGrid,
   type EntryStatus,
@@ -255,7 +256,7 @@ function EventCard({ entry, card, now, zone }: { entry: CalendarEntry; card: Act
 
 function monthSummary(grid: CalendarGrid): string {
   const n = grid.entries.length;
-  return `${n} event${n === 1 ? "" : "s"}`;
+  return n === 0 ? "no events recorded" : `${n} event${n === 1 ? "" : "s"}`;
 }
 
 export default function SeasonCalendar() {
@@ -266,7 +267,7 @@ export default function SeasonCalendar() {
   const zone = useViewerZone();
   const currentKey = monthKeyFor(now ?? requestNow);
 
-  const grids = React.useMemo(() => calendarMonthKeys(CALENDAR_ENTRIES).map((key) => monthGrid(key, CALENDAR_ENTRIES)), []);
+  const grids = React.useMemo(() => yearMonthKeys(CALENDAR_YEAR).map((key) => monthGrid(key, CALENDAR_ENTRIES)), []);
   const current = grids.filter((g) => g.key >= currentKey);
   const earlier = grids.filter((g) => g.key < currentKey);
 
@@ -356,10 +357,18 @@ export default function SeasonCalendar() {
       ) : null}
 
       {earlier.length > 0 ? (
-        <section aria-labelledby="earlier-months" className="space-y-2">
-          <h2 id="earlier-months" className="text-3xs uppercase tracking-widest text-dim px-1">
-            Earlier months
-          </h2>
+        <section aria-labelledby="previous-months" className="space-y-3 pt-4">
+          <div className="flex items-center gap-3" role="presentation">
+            <div className="h-px flex-1 bg-border/60" aria-hidden="true" />
+            <h2 id="previous-months" className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-foreground/80">
+              <History className="h-4 w-4 text-accent" aria-hidden="true" />
+              Previous months
+            </h2>
+            <div className="h-px flex-1 bg-border/60" aria-hidden="true" />
+          </div>
+          <p className="text-2xs text-dim text-center">
+            {earlier.length} ended month{earlier.length === 1 ? "" : "s"} of {CALENDAR_YEAR}, newest first. Open one to see its grid.
+          </p>
           {earlier
             .slice()
             .reverse()
@@ -368,9 +377,12 @@ export default function SeasonCalendar() {
                 <summary className="list-none cursor-pointer flex items-center gap-2 px-4 py-3 min-h-11 text-sm font-bold text-foreground/80 hover:text-foreground [&::-webkit-details-marker]:hidden">
                   <ChevronRight className="h-4 w-4 text-dim transition-transform group-open:rotate-90" aria-hidden="true" />
                   <span id={`month-${grid.key}`}>{grid.label}</span>
-                  <span className="text-2xs text-dim font-normal">{monthSummary(grid)}, ended</span>
+                  <span className="text-2xs text-dim font-normal">{monthSummary(grid)}{grid.entries.length ? ", ended" : ""}</span>
                 </summary>
                 <div className="px-4 pb-4 sm:px-5">
+                  {grid.entries.length === 0 ? (
+                    <p className="text-2xs text-dim pb-2">Nothing from the community calendar is recorded for this month.</p>
+                  ) : null}
                   <MonthGrid grid={grid} now={now} hover={hover} activeDays={activeDays} />
                 </div>
               </details>

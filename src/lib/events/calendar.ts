@@ -124,6 +124,14 @@ export function calendarMonthKeys(entries: CalendarEntry[] = CALENDAR_ENTRIES): 
   return out;
 }
 
+/** The year the calendar covers: every month of it gets a grid, event or not. */
+export const CALENDAR_YEAR = Number.parseInt((CALENDAR_ENTRIES[0]?.start ?? "2026").slice(0, 4), 10);
+
+/** `YYYY-01` … `YYYY-12`. */
+export function yearMonthKeys(year: number = CALENDAR_YEAR): string[] {
+  return Array.from({ length: 12 }, (_, i) => `${year}-${String(i + 1).padStart(2, "0")}`);
+}
+
 export type GridDay = {
   iso: string;
   day: number;
