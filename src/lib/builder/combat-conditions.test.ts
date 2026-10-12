@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { calculateCombatFirepower, interpolateByInt, WEAPON_COMBAT_BASE_CATALOG, type CombatFirepowerCalculationInput } from "./combat-firepower-engine";
+import {
+  availableOnslaughtStacks,
+  calculateCombatFirepower,
+  interpolateByInt,
+  ONSLAUGHT_GAME_CAP,
+  WEAPON_COMBAT_BASE_CATALOG,
+  type CombatFirepowerCalculationInput,
+} from "./combat-firepower-engine";
 import truth from "@/data/truth/combat-conditions.json";
 import perkCards from "@/data/perk-cards.json";
 
@@ -118,10 +125,11 @@ describe("target range", () => {
     expectPlusPct(input({ equippedPerks: gm }, { onslaughtStacks: 12, targetRange: "close" }), 5 * per);
     expect(sources(input({ equippedPerks: gm }, { onslaughtStacks: 12, targetRange: "close" }))).toContain("Guerrilla Master (5 Onslaught stacks, close range)");
     expect(sources(input({ equippedPerks: gm }, { onslaughtStacks: 12, targetRange: "close" }))).toContain("Onslaught stack limit");
-    // With Gunslinger Master (+10) the limit is 15: all 12 stacks count, 20 set → 15 held.
+    // With Gunslinger Master (+10) the limit is 15: all 12 stacks count, 20 set → 15 held. Gunslinger
+    // Master itself adds +3 % per held stack (perk-curves-p70.json perks/gunslingermasterbonus).
     const both = [...gm, { cardId: "gunslinger-master", rank: 1 }];
-    expectPlusPct(input({ equippedPerks: both }, { onslaughtStacks: 12, targetRange: "close" }), 12 * per);
-    expectPlusPct(input({ equippedPerks: both }, { onslaughtStacks: 20, targetRange: "close" }), 15 * per);
+    expectPlusPct(input({ equippedPerks: both }, { onslaughtStacks: 12, targetRange: "close" }), 12 * per + 12 * 0.03);
+    expectPlusPct(input({ equippedPerks: both }, { onslaughtStacks: 20, targetRange: "close" }), 15 * per + 15 * 0.03);
     // Nothing set: no limit line either.
     expect(sources(input({ equippedPerks: both }, { onslaughtStacks: 5, targetRange: "close" }))).not.toContain("Onslaught stack limit");
   });
@@ -554,5 +562,31 @@ describe("Ghoul Glow cards", () => {
     expect(r.glow?.cards).toEqual(["Mad Scientist", "Radiation Power", "Radioactive Strength", "Science Monster", "Glowing Criticals"]);
     // Every additive Glow card lands in the same base pool: 10 + 10 + 50 + 5 = +75 %.
     expect(r.damagePerShot.normal).toBe(Math.round(baseDamage("holy-fire") * 1.75));
+  });
+});
+
+describe("Onslaught follow-ups (2026-10-12, batch 2)", () => {
+  it("Gunslinger Master adds +3% per held Onslaught stack (perks/gunslingermasterbonus), ranged only", () => {
+    const gsm = [{ cardId: "gunslinger-master", rank: 1 }];
+    // Its own +10 max stacks: 6 set → 6 held → +18%; 14 set → 10 held → +30%.
+    expectPlusPct(input({ equippedPerks: gsm }, { onslaughtStacks: 6 }), 0.18);
+    expectPlusPct(input({ equippedPerks: gsm }, { onslaughtStacks: 14 }), 0.3);
+    expect(normal(input({ weaponId: "chainsaw", equippedPerks: gsm }, { onslaughtStacks: 6 }))).toBe(normal(input({ weaponId: "chainsaw" })));
+  });
+
+  it("availableOnslaughtStacks sums the build's own raises and holds at most that many", () => {
+    const ranks = new Map([["gunslinger-expert", 1], ["guerrilla-master", 1]]);
+    const r = availableOnslaughtStacks({ requested: 30, perkRanks: ranks, modSlugs: new Set(["furious"]) });
+    expect(r.cap).toBe(3 + 5 + 9);
+    expect(r.held).toBe(17);
+    expect(availableOnslaughtStacks({ requested: 30, perkRanks: new Map(), modSlugs: new Set() }).held).toBe(0);
+    const big = availableOnslaughtStacks({ requested: 500, perkRanks: new Map(), modSlugs: new Set(), extraCapRaises: [{ id: "x", raise: 400 }] });
+    expect(big.cap).toBe(ONSLAUGHT_GAME_CAP);
+  });
+
+  it("Bullet Storm works on every ranged weapon, not only heavy guns (Nathan's answer, Patch 70 card 3/6/9% per stack)", () => {
+    const bs = [{ cardId: "bullet-storm", rank: 3 }];
+    expectPlusPct(input({ equippedPerks: bs }, { bulletStormStacks: 10 }), 0.9);
+    expect(normal(input({ weaponId: "chainsaw", equippedPerks: bs }, { bulletStormStacks: 10 }))).toBe(normal(input({ weaponId: "chainsaw" })));
   });
 });

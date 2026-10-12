@@ -394,7 +394,7 @@ export default function BuilderExperimentClient({
       special: statsBand.special,
       perkCards: equippedPerkCards,
       totals: { hp: totals.hp, apRegen: totals.apRegen, carryWeight: totals.carryWeight },
-      lifegiverMaxHpPct: defensiveProfile?.maxHpPct ?? 0,
+
       engineApPool: weaponFirepowerResult?.vats.totalApPool ?? null,
       isGhoul: payload.ghoul,
       isPowerArmor: isPA,
@@ -409,7 +409,7 @@ export default function BuilderExperimentClient({
       isDiseased: Boolean(switchboardState?.isDiseased),
       isOverEncumbered: Boolean(switchboardState?.isOverEncumbered),
     });
-  }, [equippedModsOrdered, statsBand.special, equippedPerkCards, totals.hp, totals.apRegen, totals.carryWeight, defensiveProfile, weaponFirepowerResult, payload.ghoul, isPA, switchboardState, activeWeaponPiece.weaponSub]);
+  }, [equippedModsOrdered, statsBand.special, equippedPerkCards, totals.hp, totals.apRegen, totals.carryWeight, weaponFirepowerResult, payload.ghoul, isPA, switchboardState, activeWeaponPiece.weaponSub]);
   const statsBandWithVitals = React.useMemo(
     () => ({ ...statsBand, maxHp: vitals.maxHp, maxAp: vitals.maxAp, carryWeight: vitals.carryWeight }),
     [statsBand, vitals],

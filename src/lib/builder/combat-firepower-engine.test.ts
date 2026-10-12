@@ -303,7 +303,8 @@ describe("combat-firepower-engine", () => {
       },
       playerStats: { strength: 1, agility: 15, luck: 15, hasStrangeInNumbers: true },
     });
-    // Base Fixer: 48. Base crit: +100%. Blight Soup Herbivore+SiN: +125%. Total crit bonus = +225% -> 48 * 2.25 = 108. Total crit = normal (48) + 108 = 156
+    // Base Fixer: 48. Base crit: +100%. Blight Soup Herbivore+SiN: +125% (2.5× the +50% base buff;
+    // Nathan confirmed +125% in game, 2026-10-12). Total crit bonus = +225% -> 48 * 2.25 = 108. Total crit = normal (48) + 108 = 156
     expect(herbivoreRes.damagePerShot.critical).toBe(156);
 
     // Carnivore Blight Soup: 0% crit bonus

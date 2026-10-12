@@ -595,6 +595,63 @@ function uniqueModelOfKind(item: UniqueItem | undefined, kind: UniqueEffectKind)
   return model && model.kind === kind ? model : null;
 }
 
+/** The game's hard Onslaught limit (Nathan, in game, 2026-10-12). The sources below sum to 40 today. */
+export const ONSLAUGHT_GAME_CAP = 100;
+
+export type AvailableOnslaughtStacks = {
+  /** Stacks the build can hold: min(requested, cap). */
+  held: number;
+  /** The build's own limit: Σ "+N max stacks" of its sources, at most ONSLAUGHT_GAME_CAP. */
+  cap: number;
+  /** One "id +N" label per counted source. */
+  sources: string[];
+};
+
+/**
+ * Onslaught stacks a build can actually accumulate from its own sources. The base limit is 0
+ * (fallout.wiki Onslaught page); each source adds its "+N max stacks", additively. Counted today:
+ * - perk cards: Guerrilla Expert +3, Guerrilla Master +5, Gunslinger Expert +3, Gunslinger Master +10
+ *   (combat-conditions.json `onslaught.capRaises`, Patch 70 card texts);
+ * - legendary effects: Furious +9, Pounder's +10 (legendary-effect-model.json `maxStacks`);
+ * - weapon innates / other sources: `extraCapRaises` (none in the unique pack yet; the unique-weapon
+ *   work for Elder's Mark, Ticket to Revenge and Whacker Smacker passes theirs here).
+ * Effects that read Onslaught (Guerrilla Master, Gunslinger Expert/Master, Furious, Pounder's) all
+ * count these same held stacks.
+ */
+export function availableOnslaughtStacks(params: {
+  requested: number;
+  perkRanks: ReadonlyMap<string, number>;
+  modSlugs: ReadonlySet<string>;
+  extraCapRaises?: ReadonlyArray<{ id: string; raise: number }>;
+}): AvailableOnslaughtStacks {
+  const { perkRanks, modSlugs } = params;
+  const sources: string[] = [];
+  let cap = CC.onslaught.baseCap;
+  for (const [cardId, raise] of Object.entries(CC.onslaught.capRaises)) {
+    const rank = cardId === "guerrilla-master"
+      ? perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0
+      : perkRanks.get(cardId) || 0;
+    if (rank <= 0) continue;
+    cap += raise;
+    sources.push(`${cardId} +${raise}`);
+  }
+  if (modSlugs.has("furious")) {
+    cap += LEG.furiousMaxStacks;
+    sources.push(`furious +${LEG.furiousMaxStacks}`);
+  }
+  if (modSlugs.has("pounders")) {
+    cap += LEG.poundersMaxStacks;
+    sources.push(`pounders +${LEG.poundersMaxStacks}`);
+  }
+  for (const extra of params.extraCapRaises ?? []) {
+    if (extra.raise <= 0) continue;
+    cap += extra.raise;
+    sources.push(`${extra.id} +${extra.raise}`);
+  }
+  cap = Math.min(ONSLAUGHT_GAME_CAP, cap);
+  return { held: Math.min(Math.max(0, params.requested), cap), cap, sources };
+}
+
 /**
  * Calculates complete Live Weapon Firepower, Damage per Shot, Burst/Sustained DPS,
  * and V.A.T.S. AP Cost in strict adherence to Fallout 76 live patch mechanics.
@@ -677,12 +734,15 @@ export function calculateCombatFirepower(
   // Shotgunner, Gladiator, Archer, their Expert/Master tiers, Expert/Master Slugger) are not in the
   // Patch 70 catalog (src/data/perk-cards.json) and are gone from the game (Nathan, 2026-10-12), so
   // they no longer have branches here; an old saved build that still lists them gets nothing.
-  if (base.weaponClass === "heavy") {
+  // Bullet Storm (Patch 70 card: "Gain 3% damage per 30 ammo spent. 10 max stacks"): every gun that
+  // spends ammo, not only heavy guns (Nathan, 2026-10-12), so ranged weapons. 3/6/9 % per stack.
+  if (base.isRanged) {
     const bulletStormRank = perkRanks.get("bullet-storm") || 0;
     const hasBigGuns = (perkRanks.get("bringing-the-big-guns") || 0) > 0;
 
-    // Bullet Storm: 3%/6%/9% per 30 rounds fired, 10 max stacks (doubled to 20 with Bringing the Big Guns)
-    // Modeled as mid-combat sustained bonus (60% of max stacks) when not explicitly provided
+    // 10 max stacks, 20 with Bringing the Big Guns ("+10"). With no slider value (API callers only;
+    // the builder always passes one) it is modelled as a sustained fight at 60 % of the limit: an
+    // engine default with no game source.
     const maxStacks = hasBigGuns ? 20 : 10;
     const minStacks = uniqueMinBulletStormStacks;
     const rawStacks = (input.playerStats.bulletStormStacks !== undefined
@@ -698,7 +758,9 @@ export function calculateCombatFirepower(
         value: `+${Math.round(bulletStormBonus * 100)}%`,
       });
     }
-  } else if (base.weaponClass === "melee") {
+  }
+
+  if (base.weaponClass === "melee") {
     // Slugger (Patch 70 card: melee +10%/+20%/+30% damage to crippled targets)
     const sluggerRank = perkRanks.get("slugger") || 0;
     const sluggerActive = input.playerStats.targetCrippledLimbs !== undefined
@@ -971,25 +1033,11 @@ export function calculateCombatFirepower(
     (input.equippedMods || []).filter((m) => m && typeof m.slug === "string").map((m) => (m as { slug: string }).slug.toLowerCase())
   );
   const hasGuerrillaMaster = (perkRanks.get("master-guerrilla") || perkRanks.get("guerrilla-master") || 0) > 0;
-  const onslaughtCapSources: string[] = [];
-  let onslaughtCap = CC.onslaught.baseCap;
-  for (const [cardId, raise] of Object.entries(CC.onslaught.capRaises)) {
-    const equipped = cardId === "guerrilla-master" ? hasGuerrillaMaster : (perkRanks.get(cardId) || 0) > 0;
-    if (!equipped) continue;
-    onslaughtCap += raise;
-    onslaughtCapSources.push(`${cardId} +${raise}`);
-  }
-  if (onslaughtModSlugs.has("furious")) {
-    onslaughtCap += LEG.furiousMaxStacks;
-    onslaughtCapSources.push(`furious +${LEG.furiousMaxStacks}`);
-  }
-  if (onslaughtModSlugs.has("pounders")) {
-    onslaughtCap += LEG.poundersMaxStacks;
-    onslaughtCapSources.push(`pounders +${LEG.poundersMaxStacks}`);
-  }
-  onslaughtCap = Math.min(CC.onslaught.maxCap, onslaughtCap);
+  const onslaughtAvail = availableOnslaughtStacks({ requested: onslaughtStacks, perkRanks, modSlugs: onslaughtModSlugs });
+  const onslaughtCap = onslaughtAvail.cap;
+  const onslaughtCapSources = onslaughtAvail.sources;
   /** Stacks the build can actually hold: the slider clamped to the additive limit. */
-  const onslaughtStacksHeld = Math.min(onslaughtStacks, onslaughtCap);
+  const onslaughtStacksHeld = onslaughtAvail.held;
   if (onslaughtStacks > 0 && onslaughtCap > 0 && onslaughtStacks > onslaughtCap) {
     breakdown.push({ source: "Onslaught stack limit", value: `${onslaughtCap} (${onslaughtCapSources.join(", ")}); ${onslaughtStacks} set` });
   }
@@ -1012,6 +1060,16 @@ export function calculateCombatFirepower(
       const gm = st * CC.perks["guerrilla-master"].perUnit;
       additiveDamagePct += gm;
       breakdown.push({ source: `Guerrilla Master (${st} Onslaught stacks, close range)`, value: `+${Math.round(gm * 100)}%` });
+    }
+
+    // Gunslinger Master (Patch 70 card: "Gain Onslaught stacks over time and spend them on attacks,
+    // +10 max stacks"): perk-curves-p70.json perks/gunslingermasterbonus, +3 % per stack HELD when the
+    // hit lands (Nathan, 2026-10-12: spending stacks does not lower it). Ranged weapons, like the
+    // other Gunslinger cards ("Your ranged weapons").
+    if ((perkRanks.get("gunslinger-master") || 0) > 0 && base.isRanged && onslaughtStacksHeld > 0) {
+      const gsm = readPerkCurve("perks/gunslingermasterbonus", onslaughtStacksHeld) / 100;
+      additiveDamagePct += gsm;
+      breakdown.push({ source: `Gunslinger Master (${onslaughtStacksHeld} Onslaught stacks)`, value: `+${Math.round(gsm * 100)}%` });
     }
 
     // Unique innate: power-attack damage per Onslaught stack (Whacker Smacker).

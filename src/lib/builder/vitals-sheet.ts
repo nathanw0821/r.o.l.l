@@ -33,8 +33,7 @@ export type VitalsInput = {
   perkCards: ReadonlyArray<{ cardId: string; rank: number }>;
   /** Flat HP / AP regen / carry weight already summed from mods and mutations (aggregateEffectMath). */
   totals: { hp: number; apRegen: number; carryWeight: number };
-  /** Life Giver's percentage from the defensive profile (END-scaled, approximate). */
-  lifegiverMaxHpPct: number;
+
   /** The firepower engine's AP pool when a weapon is loaded (includes unique innates and Thirst Quencher). */
   engineApPool?: number | null;
   isGhoul: boolean;
@@ -64,10 +63,13 @@ export function calculateVitalsSheet(input: VitalsInput): VitalsSheet {
   const hpBase = stats.hp.base + Math.max(0, input.special.end - stats.hp.enduranceOffset) * stats.hp.perEndurance;
   lines.maxHp.push({ source: `Base (${stats.hp.formula}, END ${input.special.end})`, value: `${hpBase}` });
   let maxHp = hpBase;
-  if (input.lifegiverMaxHpPct > 0) {
-    const add = Math.round(hpBase * (input.lifegiverMaxHpPct / 100));
+  // Lifegiver (Patch 70 card: "Gain more max HP per point in END"): flat HP from perk-curves-p70.json
+  // perks/lifegiverbonus read at the live END (10 at END 1, 120 at 15, 180 at 30; Nathan confirmed
+  // about +120 at END 15 in game, 2026-10-12). Until then it was modelled as +0..45 % of base HP.
+  if (rank(input.perkCards, "lifegiver") > 0) {
+    const add = Math.round(readPerkCurve("perks/lifegiverbonus", input.special.end));
     maxHp += add;
-    lines.maxHp.push({ source: `Lifegiver (+${input.lifegiverMaxHpPct}% of base, END-scaled, approx.)`, value: `+${add}` });
+    lines.maxHp.push({ source: `Lifegiver (END ${input.special.end})`, value: `+${add}` });
   }
   const nocturnal = byRank(P["nocturnal-fortitude"].byRank, rank(input.perkCards, "nocturnal-fortitude"));
   if (nocturnal > 0 && input.timeOfDay === "night") {

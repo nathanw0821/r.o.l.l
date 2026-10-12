@@ -5,7 +5,6 @@ const base = (over: Partial<VitalsInput> = {}): VitalsInput => ({
   special: { str: 1, per: 1, end: 1, cha: 1, int: 1, agi: 1, lck: 1 },
   perkCards: [],
   totals: { hp: 0, apRegen: 0, carryWeight: 0 },
-  lifegiverMaxHpPct: 0,
   engineApPool: null,
   isGhoul: false,
   isPowerArmor: false,
@@ -34,15 +33,17 @@ describe("calculateVitalsSheet", () => {
 
   it("adds the HP sources with their conditions", () => {
     const night = calculateVitalsSheet(base({
-      perkCards: [{ cardId: "nocturnal-fortitude", rank: 2 }, { cardId: "photosynthetic", rank: 2 }],
+      perkCards: [{ cardId: "nocturnal-fortitude", rank: 2 }, { cardId: "photosynthetic", rank: 2 }, { cardId: "lifegiver", rank: 1 }],
       timeOfDay: "night",
       foodState: "fully_fed",
       overeatersPieces: 5,
-      lifegiverMaxHpPct: 20,
       totals: { hp: 40, apRegen: 0, carryWeight: 0 },
     }));
-    // 250 + 20 % Lifegiver (50) + 100 Nocturnal + 35 Fully Fed + 200 Overeater's + 40 totals
-    expect(night.maxHp).toBe(675);
+    // 250 + Lifegiver at END 1 (perks/lifegiverbonus = 10) + 100 Nocturnal + 35 Fully Fed + 200 Overeater's + 40 totals
+    expect(night.maxHp).toBe(635);
+    // Lifegiver at END 15: +120 flat (perk-curves-p70.json; Nathan's in-game check 2026-10-12). Base 250 + 14 × 5 = 320.
+    const end15 = calculateVitalsSheet(base({ perkCards: [{ cardId: "lifegiver", rank: 1 }], special: { str: 1, per: 1, end: 15, cha: 1, int: 1, agi: 1, lck: 1 } }));
+    expect(end15.maxHp).toBe(440);
     expect(night.hpRegenPerSecond).toBe(0); // Photosynthetic is daytime only
     expect(night.lines.maxHp.map((l) => l.source)).toEqual(expect.arrayContaining([expect.stringContaining("Nocturnal Fortitude")]));
     const day = calculateVitalsSheet(base({ perkCards: [{ cardId: "photosynthetic", rank: 1 }, { cardId: "battle-genes", rank: 2 }] }));
