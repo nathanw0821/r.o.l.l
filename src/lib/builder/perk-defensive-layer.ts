@@ -169,6 +169,8 @@ const TRUTH = defensiveTruth as unknown as {
       perMutationPct?: number;
       basePct?: number;
       perKillStreakPct?: number;
+      /** Kill-streak count the reducer stops growing at (Unstoppable Monster: 10, official Patch 70 notes). */
+      maxKillStreak?: number;
       perPiecePct?: number;
       evadeToReductionMultiplier?: number;
       perBulletStormStackPct?: number;
@@ -498,7 +500,8 @@ export function calculateDefensiveProfile(
 
   if (hasSlug(slugs, "unstoppable-monster") && mods["unstoppable-monster"]) {
     const m = mods["unstoppable-monster"];
-    const pct = (m.basePct ?? 0) + Math.max(0, killStreak) * (m.perKillStreakPct ?? 0);
+    const streak = Math.min(Math.max(0, killStreak), m.maxKillStreak ?? Number.POSITIVE_INFINITY);
+    const pct = (m.basePct ?? 0) + streak * (m.perKillStreakPct ?? 0);
     reducers.push({ id: "unstoppable-monster", label: `Unstoppable Monster${APPROX_SUFFIX}`, pct, condition: "always", approximate: true });
   }
 

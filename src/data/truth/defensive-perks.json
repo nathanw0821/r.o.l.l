@@ -371,8 +371,9 @@
       "condition": "always",
       "basePct": 5,
       "perKillStreakPct": 1,
-      "confidence": "approximate",
-      "source": "5% damage reduction plus 1% per kill-streak stack; cap unpublished, modelled uncapped."
+      "maxKillStreak": 10,
+      "confidence": "verified",
+      "source": "Official Patch 70 notes (unique-items-official-p70.json): 'Reduce Damage Taken by 5% and an Additional 1% per Killstreak (Max 10)', so 15% at most."
     },
     "reflex": {
       "id": "reflex",

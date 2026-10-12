@@ -314,7 +314,9 @@ export function useBuilderTotals({
       isDiseased: Boolean(switchboardState?.isDiseased),
       // Ironclad multiplies the worn armor's own DR/ER (base table + crafting + PA frame).
       baseArmor: { dr: intrinsicBenchTotals.dr, er: intrinsicBenchTotals.er },
-      equippedModSlugs: armorModSlugs,
+      // The active weapon's id joins the armor slugs so the weapon-unique defensive innates
+      // (Unstoppable Monster, The Action Hero, Old Guard) reach the layer (2026-10-12 audit §1).
+      equippedModSlugs: payload.activeWeaponPieceId ? [...armorModSlugs, payload.activeWeaponPieceId] : armorModSlugs,
       mutationCount: payload.mutationIds.length,
       bulletStormStacks: switchboardState?.bulletStormStacks ?? 0,
       killStreak: switchboardState?.killStreak ?? switchboardState?.adrenalineStacks ?? 0,
@@ -338,6 +340,7 @@ export function useBuilderTotals({
     intrinsicBenchTotals.dr,
     intrinsicBenchTotals.er,
     armorModSlugs,
+    payload.activeWeaponPieceId,
     wornUniqueArmor,
     rageStacks,
     rageTakenPct,
