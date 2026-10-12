@@ -65,6 +65,3 @@ export function rank1CardsScrappedFor(coins: number): number {
 
 export const LEGENDARY_PERK_COSTS_SOURCE = costs.source;
 export const LEGENDARY_MAX_RANK_TOTAL_COINS = costs.maxRankTotalCoins;
-
-/** Character levels at which legendary perk slots 1–6 unlock (truth pack `slotUnlockLevels`). */
-export const LEGENDARY_SLOT_UNLOCK_LEVELS: readonly number[] = costs.slotUnlockLevels;
