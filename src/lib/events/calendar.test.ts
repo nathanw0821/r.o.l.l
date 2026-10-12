@@ -7,6 +7,10 @@ import {
   entryStatus,
   entryWindowUtc,
   tuesdaysInMonth,
+  calendarMonthKeys,
+  entryDays,
+  monthGrid,
+  monthKeyFor,
 } from "./calendar";
 
 describe("season calendar", () => {
@@ -53,5 +57,51 @@ describe("season calendar", () => {
     expect(ics).toContain("UID:scrip-surplus-sep-s26@fallout76.wiki");
     expect(ics).toContain("URL:https://fallout76.wiki/calendar#scrip-surplus-sep");
     for (const line of ics.split("\r\n")) expect(line.length).toBeLessThanOrEqual(71);
+  });
+});
+
+describe("month grid", () => {
+  it("names the Eastern month of an instant", () => {
+    // 03:00Z on Oct 1 is still 23:00 EDT on Sep 30.
+    expect(monthKeyFor(new Date("2026-10-01T03:00:00Z"))).toBe("2026-09");
+    expect(monthKeyFor(new Date("2026-10-01T05:00:00Z"))).toBe("2026-10");
+  });
+
+  it("covers every month from the first start to the last end", () => {
+    expect(calendarMonthKeys()).toEqual(["2026-09", "2026-10", "2026-11", "2026-12"]);
+    expect(calendarMonthKeys([{ id: "x", start: "2026-11-20", end: "2027-01-02", kind: "seasonal", name: "x", note: "" }])).toEqual(["2026-11", "2026-12", "2027-01"]);
+  });
+
+  it("lays September 2026 out Sunday to Saturday with the entries in stable lanes", () => {
+    const grid = monthGrid("2026-09");
+    expect(grid.label).toBe("September 2026");
+    expect(grid.weeks.length).toBe(5);
+    expect(grid.weeks[0]!.days.map((d) => d.day)).toEqual([30, 31, 1, 2, 3, 4, 5]);
+    expect(grid.weeks[0]!.days[0]!.inMonth).toBe(false);
+    expect(grid.weeks[0]!.days[2]!.tuesday).toBe(true);
+    // Sep 10 – 14 (Thu to Mon) holds Scrip Surplus and Double Mutations side by side across two rows.
+    const w2 = grid.weeks[1]!;
+    const scrip = w2.segments.find((s) => s.entry.id === "scrip-surplus-sep")!;
+    const dm = w2.segments.find((s) => s.entry.id === "double-mutations-sep-1")!;
+    expect([scrip.startCol, scrip.endCol, scrip.continuesAfter, scrip.first]).toEqual([4, 6, true, true]);
+    expect(dm.lane).not.toBe(scrip.lane);
+    const w3 = grid.weeks[2]!;
+    const scrip2 = w3.segments.find((s) => s.entry.id === "scrip-surplus-sep")!;
+    expect([scrip2.startCol, scrip2.endCol, scrip2.continuesBefore, scrip2.first, scrip2.lane]).toEqual([0, 1, true, false, scrip.lane]);
+    // The Slasher update is a single day: one column.
+    const upd = w3.segments.find((s) => s.entry.id === "slasher-update")!;
+    expect([upd.startCol, upd.endCol]).toEqual([2, 2]);
+  });
+
+  it("carries an entry that straddles two months into both grids", () => {
+    const sep = monthGrid("2026-09");
+    const oct = monthGrid("2026-10");
+    const inSep = sep.weeks.at(-1)!.segments.find((s) => s.entry.id === "mutated-public-events-oct")!;
+    const inOct = oct.weeks[0]!.segments.find((s) => s.entry.id === "mutated-public-events-oct")!;
+    expect(inSep.continuesAfter).toBe(true);
+    // October's first row starts on Sunday Sep 27, so the bar begins on its own day there (Tuesday, column 2).
+    expect([inOct.startCol, inOct.continuesBefore, inOct.endCol, inOct.continuesAfter]).toEqual([2, false, 6, true]);
+    expect(oct.entries.some((e) => e.id === "mutated-public-events-oct")).toBe(true);
+    expect(entryDays({ start: "2026-09-29", end: "2026-10-02" })).toEqual(["2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02"]);
   });
 });

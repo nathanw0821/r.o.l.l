@@ -94,6 +94,139 @@ export function calendarMonths(entries: CalendarEntry[] = CALENDAR_ENTRIES): Cal
   return Array.from(byKey.values()).sort((a, b) => a.key.localeCompare(b.key));
 }
 
+/** `YYYY-MM` of the instant in Eastern time, the zone the calendar is written in. */
+export function monthKeyFor(now: Date): string {
+  const p = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", year: "numeric", month: "2-digit" }).formatToParts(now);
+  const y = p.find((x) => x.type === "year")?.value ?? "1970";
+  const m = p.find((x) => x.type === "month")?.value ?? "01";
+  return `${y}-${m}`;
+}
+
+export function monthLabel(key: string): string {
+  const [y, m] = parts(`${key}-01`);
+  return `${MONTH_NAMES[m - 1]} ${y}`;
+}
+
+/** Every month from the first entry's start to the last entry's end, so a quiet month still has a grid. */
+export function calendarMonthKeys(entries: CalendarEntry[] = CALENDAR_ENTRIES): string[] {
+  if (entries.length === 0) return [];
+  const first = entries.reduce((a, e) => (e.start < a ? e.start : a), entries[0]!.start).slice(0, 7);
+  const last = entries.reduce((a, e) => (e.end > a ? e.end : a), entries[0]!.end).slice(0, 7);
+  const out: string[] = [];
+  let [y, m] = parts(`${first}-01`);
+  for (;;) {
+    const key = `${y}-${String(m).padStart(2, "0")}`;
+    out.push(key);
+    if (key >= last) break;
+    m += 1;
+    if (m > 12) { m = 1; y += 1; }
+  }
+  return out;
+}
+
+export type GridDay = {
+  iso: string;
+  day: number;
+  inMonth: boolean;
+  /** Weekly update day. */
+  tuesday: boolean;
+};
+
+/** One entry's run inside one week row: columns 0 (Sunday) to 6 (Saturday), inclusive. */
+export type GridSegment = {
+  entry: CalendarEntry;
+  startCol: number;
+  endCol: number;
+  /** Row below the day numbers; the same entry keeps its lane for the whole month. */
+  lane: number;
+  continuesBefore: boolean;
+  continuesAfter: boolean;
+  /** First segment of this entry in this month (carries the anchor id and the label). */
+  first: boolean;
+};
+
+export type GridWeek = { days: GridDay[]; segments: GridSegment[]; laneCount: number };
+
+export type CalendarGrid = { key: string; label: string; weeks: GridWeek[]; entries: CalendarEntry[] };
+
+function isoOf(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * A regular month grid (Sunday to Saturday rows) with every entry that overlaps the month laid out as
+ * bars. Lanes are assigned per month, lowest free lane first, so an entry keeps its row across weeks.
+ */
+export function monthGrid(key: string, entries: CalendarEntry[] = CALENDAR_ENTRIES): CalendarGrid {
+  const [y, m] = parts(`${key}-01`);
+  const firstOfMonth = new Date(Date.UTC(y, m - 1, 1));
+  const lastOfMonth = new Date(Date.UTC(y, m, 0));
+  const monthStart = isoOf(firstOfMonth);
+  const monthEnd = isoOf(lastOfMonth);
+  const overlapping = entries
+    .filter((e) => e.start <= monthEnd && e.end >= monthStart)
+    .sort((a, b) => (a.start === b.start ? b.end.localeCompare(a.end) : a.start.localeCompare(b.start)));
+
+  // Lane per entry: the lowest lane with no other entry on any of its days inside this month.
+  const laneByDay = new Map<string, Set<number>>();
+  const laneOf = new Map<string, number>();
+  for (const e of overlapping) {
+    const from = e.start < monthStart ? monthStart : e.start;
+    const to = e.end > monthEnd ? monthEnd : e.end;
+    const days: string[] = [];
+    for (let d = new Date(from + "T00:00:00Z"); isoOf(d) <= to; d.setUTCDate(d.getUTCDate() + 1)) days.push(isoOf(d));
+    let lane = 0;
+    while (days.some((day) => laneByDay.get(day)?.has(lane))) lane += 1;
+    for (const day of days) {
+      if (!laneByDay.has(day)) laneByDay.set(day, new Set());
+      laneByDay.get(day)!.add(lane);
+    }
+    laneOf.set(e.id, lane);
+  }
+
+  const weeks: GridWeek[] = [];
+  const cursor = new Date(firstOfMonth);
+  cursor.setUTCDate(cursor.getUTCDate() - cursor.getUTCDay());
+  const seen = new Set<string>();
+  while (cursor <= lastOfMonth) {
+    const days: GridDay[] = [];
+    for (let i = 0; i < 7; i += 1) {
+      const iso = isoOf(cursor);
+      days.push({ iso, day: cursor.getUTCDate(), inMonth: cursor.getUTCMonth() === m - 1, tuesday: cursor.getUTCDay() === 2 });
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+    const weekStart = days[0]!.iso;
+    const weekEnd = days[6]!.iso;
+    const segments: GridSegment[] = [];
+    for (const e of overlapping) {
+      if (e.start > weekEnd || e.end < weekStart) continue;
+      const startCol = e.start <= weekStart ? 0 : days.findIndex((d) => d.iso === e.start);
+      const endCol = e.end >= weekEnd ? 6 : days.findIndex((d) => d.iso === e.end);
+      const first = !seen.has(e.id);
+      seen.add(e.id);
+      segments.push({
+        entry: e,
+        startCol,
+        endCol,
+        lane: laneOf.get(e.id) ?? 0,
+        continuesBefore: e.start < weekStart,
+        continuesAfter: e.end > weekEnd,
+        first,
+      });
+    }
+    const laneCount = segments.reduce((n, s) => Math.max(n, s.lane + 1), 0);
+    weeks.push({ days, segments, laneCount });
+  }
+  return { key, label: monthLabel(key), weeks, entries: overlapping };
+}
+
+/** Every ISO day an entry covers, for highlighting its period in the grid. */
+export function entryDays(entry: Pick<CalendarEntry, "start" | "end">): string[] {
+  const out: string[] = [];
+  for (let d = new Date(entry.start + "T00:00:00Z"); isoOf(d) <= entry.end; d.setUTCDate(d.getUTCDate() + 1)) out.push(isoOf(d));
+  return out;
+}
+
 function icsStamp(d: Date): string {
   return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
 }
