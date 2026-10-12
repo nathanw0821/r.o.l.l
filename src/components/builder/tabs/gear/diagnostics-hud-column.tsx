@@ -41,6 +41,7 @@ import { sandboxLegendaryDescription } from "@/lib/builder/sandbox-mod-descripti
 import type { AggregatedBuffSpecial } from "@/lib/builder/buff-stacking-engine";
 import type { UseBuilderTotalsResult } from "@/components/builder/hooks/use-builder-totals";
 import type { VitalsSheet, VitalsLine } from "@/lib/builder/vitals-sheet";
+import { hasHiddenFraction, pipboySpecial } from "@/lib/builder/pipboy-special";
 
 export interface DiagnosticsHudColumnProps {
   /** Vitals rows (Max HP, AP, carry weight…) from vitals-sheet.ts. */
@@ -197,7 +198,10 @@ export default function DiagnosticsHudColumn({
           <div className="space-y-3">
             {BUILDER_SPECIAL_KEYS.map((key) => {
               const bBonus = buffSpecial.totals[key] || 0;
-              const live = totals[key] + bBonus;
+              // The engine keeps the exact value (mutation scaling leaves fractions); the sheet
+              // prints it the way the Pip-Boy does, as a whole number.
+              const exact = totals[key] + bBonus;
+              const live = pipboySpecial(exact);
               const base = payload.baseSpecial[key] || 1;
               const delta = live - base;
               const percent = Math.min(100, Math.max(5, (live / 20) * 100));
@@ -290,6 +294,11 @@ export default function DiagnosticsHudColumn({
                           <span>{SPECIAL_FULL_NAMES[key] || key.toUpperCase()}</span>
                           <span>Total: {live}</span>
                         </div>
+                        {hasHiddenFraction(exact) ? (
+                          <p className="text-[0.7rem] text-foreground/60">
+                            Exact value {exact}; the Pip-Boy shows {live}. Derived stats use the exact value.
+                          </p>
+                        ) : null}
                         <div className="space-y-1 text-foreground/80 text-[0.75rem]">
                           {bLines.map((b, i) => (
                             <div key={i} className="flex justify-between gap-3">

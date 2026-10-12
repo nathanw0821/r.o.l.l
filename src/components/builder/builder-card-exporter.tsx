@@ -6,6 +6,7 @@ import type { BuilderEffectTotals, BuilderSpecialKey } from "@/lib/builder/compa
 import { ARMOR_SET_SLOT_LABELS } from "@/lib/builder/armor-sets";
 import { findArmorMaterialMod, findArmorMiscMod } from "@/lib/builder/armor-piece-mods";
 import { getSortedMutationLabels } from "@/lib/builder/sandbox-mutations";
+import { pipboySpecial } from "@/lib/builder/pipboy-special";
 
 export type ExportGroupedEffect = {
   mod: BuilderModDTO;
@@ -88,7 +89,7 @@ export async function exportBuilderLoadoutCard(params: {
     const specialHtml = specialKeys.map(({ key, label }) => `
       <div style="background: rgba(18, 24, 30, 0.9); padding: 8px 4px; border-radius: 6px; border: 1px solid rgba(76, 195, 138, 0.2); text-align: center;">
         <div style="font-size: 9px; font-weight: 800; color: #a0aec0;">${label}</div>
-        <div style="font-size: 16px; font-weight: 900; color: #4cc38a; margin-top: 2px;">${totals[key] ?? 0}</div>
+        <div style="font-size: 16px; font-weight: 900; color: #4cc38a; margin-top: 2px;">${pipboySpecial(totals[key] ?? 0)}</div>
       </div>
     `).join("");
 
