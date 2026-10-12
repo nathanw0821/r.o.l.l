@@ -52,8 +52,10 @@ import { BASE_GEAR_PIECES } from "@/lib/builder/base-gear";
 import BuilderGearComparisonModal from "@/components/builder/builder-gear-comparison-modal";
 import {
   buildShoppingList,
+  listEquippedModsInBenchOrder,
   stripGhoulBlockedLegendarySelections,
 } from "@/lib/builder/compatibility";
+import { applyUniqueArmorLocks, stripFixedUniqueArmorStars } from "@/lib/builder/unique-armor";
 import {
   type BuilderPayload,
 } from "@/lib/builder/types";
@@ -264,6 +266,22 @@ export default function BuilderExperimentClient({
     );
   }, [isPA, setSwitchboardState]);
 
+  // A unique armor slot's stars are fixed (unique-armor.ts): re-assert them after any edit that
+  // cleared or overwrote them (Clear all, clear piece, a loaded loadout slot). No-op when they hold.
+  const activeChassisSetKey = activeChassisPiece.armorSetKey ?? null;
+  React.useEffect(() => {
+    if (readOnly || isPA) return;
+    setPayload((p) => applyUniqueArmorLocks(p, activeChassisSetKey));
+  }, [
+    payload.armorLegendaryModIds,
+    payload.uniqueArmorPieceIds,
+    payload.armorPieceSetKeys,
+    activeChassisSetKey,
+    isPA,
+    readOnly,
+    setPayload,
+  ]);
+
 
   const {
     equippedModsOrdered,
@@ -273,6 +291,8 @@ export default function BuilderExperimentClient({
     intrinsicBenchTotals,
     stanceAndBiometricsLayer,
     totals,
+    armorPieceSetKeys: effectiveArmorSetKeys,
+    rageStacks,
   } = useBuilderTotals({
     payload,
     mods,
@@ -349,6 +369,7 @@ export default function BuilderExperimentClient({
         adrenalineStacks: switchboardState?.adrenalineStacks ?? 0,
         bulletStormStacks: switchboardState?.bulletStormStacks ?? 0,
         onslaughtStacks: switchboardState?.onslaughtStacks ?? 0,
+        rageStacks,
         killStreak: switchboardState?.killStreak ?? switchboardState?.adrenalineStacks ?? 0,
         tenderizerStacks: switchboardState?.tenderizerStacks ?? 0,
         targetBleeding: Boolean(switchboardState?.targetBleeding),
@@ -377,6 +398,7 @@ export default function BuilderExperimentClient({
     payload.ghoul,
     statsBand,
     isPA,
+    rageStacks,
   ]);
 
 
@@ -413,15 +435,24 @@ export default function BuilderExperimentClient({
     [statsBand, vitals],
   );
 
+  // A unique armor piece ships with its stars, so only rolled stars go on the shopping list.
   const shopping = React.useMemo(
     () =>
-      buildShoppingList(equippedModsOrdered, {
-        underarmor: payload.underarmor,
-        pieceKind: piece.kind,
-        isMultiPiece,
-        isUnique: isUniqueBaseItem(piece.id),
-      }),
-    [equippedModsOrdered, payload.underarmor, piece.kind, piece.id, isMultiPiece],
+      buildShoppingList(
+        isPA
+          ? equippedModsOrdered
+          : listEquippedModsInBenchOrder(
+              stripFixedUniqueArmorStars(payload, activeChassisPiece.armorSetKey ?? null),
+              mods,
+            ),
+        {
+          underarmor: payload.underarmor,
+          pieceKind: piece.kind,
+          isMultiPiece,
+          isUnique: isUniqueBaseItem(piece.id),
+        },
+      ),
+    [equippedModsOrdered, isPA, payload, activeChassisPiece.armorSetKey, mods, piece.kind, piece.id, isMultiPiece],
   );
 
   const {
@@ -895,7 +926,7 @@ export default function BuilderExperimentClient({
         weaponFirepowerResult={weaponFirepowerResult}
         payload={payload}
         setPayload={setPayload}
-        activeTacticalTags={[...stanceAndBiometricsLayer.activeTacticalTags, ...getArmorSetBonusTags(payload.armorPieceSetKeys)]}
+        activeTacticalTags={[...stanceAndBiometricsLayer.activeTacticalTags, ...getArmorSetBonusTags(effectiveArmorSetKeys)]}
         defensiveProfile={defensiveProfile}
         playerResists={{ dr: totals.dr, er: totals.er }}
         armorModeIsPA={isPA}

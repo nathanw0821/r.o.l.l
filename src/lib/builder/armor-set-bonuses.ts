@@ -1,6 +1,9 @@
+import { ARMOR_SET_ROWS } from "@/lib/builder/armor-sets";
+
 /**
  * Full-set bonuses printed on the armor item card in game (5 matching pieces).
  * Verified 2026-09-18 (item card text). Add sets here as they are confirmed.
+ * Unique sets (Secret Settler) bring their bonus text from `ARMOR_SET_ROWS[].unique.setBonus`.
  */
 export type ArmorSetBonus = { setKey: string; label: string; effects: string[] };
 
@@ -10,6 +13,9 @@ export const ARMOR_SET_BONUSES: ArmorSetBonus[] = [
     label: "Civil Engineer set",
     effects: ["Weapons break 35% slower", "10% chance to deal 150 fire damage to melee attackers"],
   },
+  ...ARMOR_SET_ROWS.flatMap((row) =>
+    row.unique ? [{ setKey: row.key, label: `${row.label} set`, effects: [row.unique.setBonus] }] : [],
+  ),
 ];
 
 /** Tags for the Biometrics tab when every worn piece belongs to the same set with a known bonus. */

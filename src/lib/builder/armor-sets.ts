@@ -12,7 +12,20 @@ export type ArmorSetStats = {
   rr: number;
 };
 
-export type ArmorSetRow = { key: string; label: string; stats: ArmorSetStats };
+/**
+ * A unique set whose pieces ship with fixed legendary stars (Secret Settler). Every body piece
+ * of the set carries `legendaryModSlugs` (catalog slugs, star 1 first) and cannot be re-rolled.
+ */
+export type ArmorSetUnique = {
+  legendaryModSlugs: string[];
+  /** Set bonus text; shown, not modelled. */
+  setBonus: string;
+  source: string;
+};
+
+export type ArmorSetRow = { key: string; label: string; stats: ArmorSetStats; unique?: ArmorSetUnique };
+
+const SECRET_SERVICE_STATS: ArmorSetStats = { dr: 278, er: 200, fr: 35, cr: 35, pr: 35, rr: 248 };
 
 /** Body slot order in payload: chest → arms → legs (matches UI). */
 export const ARMOR_SET_SLOT_LABELS = [
@@ -25,7 +38,7 @@ export const ARMOR_SET_SLOT_LABELS = [
 
 /** Resistances for a complete five-piece set at max tier (article values). */
 export const ARMOR_SET_ROWS: ArmorSetRow[] = [
-  { key: "secret-service", label: "Secret Service", stats: { dr: 278, er: 200, fr: 35, cr: 35, pr: 35, rr: 248 } },
+  { key: "secret-service", label: "Secret Service", stats: SECRET_SERVICE_STATS },
   { key: "civil-engineer", label: "Civil Engineer", stats: { dr: 155, er: 305, fr: 66, cr: 155, pr: 52, rr: 194 } },
   { key: "bos-recon", label: "Brotherhood Recon", stats: { dr: 346, er: 130, fr: 52, cr: 133, pr: 66, rr: 130 } },
   { key: "covert-scout", label: "Covert Scout", stats: { dr: 155, er: 155, fr: 82, cr: 52, pr: 52, rr: 82 } },
@@ -52,7 +65,20 @@ export const ARMOR_SET_ROWS: ArmorSetRow[] = [
   { key: "light-leather", label: "Light leather", stats: { dr: 52, er: 150, fr: 55, cr: 42, pr: 113, rr: 52 } },
   { key: "heavy-robot", label: "Heavy robot", stats: { dr: 318, er: 134, fr: 54, cr: 82, pr: 82, rr: 108 } },
   { key: "sturdy-robot", label: "Sturdy robot", stats: { dr: 248, er: 105, fr: 42, cr: 64, pr: 64, rr: 84 } },
-  { key: "light-robot", label: "Light robot", stats: { dr: 194, er: 82, fr: 35, cr: 52, pr: 52, rr: 66 } }
+  { key: "light-robot", label: "Light robot", stats: { dr: 194, er: 82, fr: 35, cr: 52, pr: 52, rr: 66 } },
+  {
+    key: "secret-settler",
+    label: "Secret Settler",
+    // The Settler mods sit on Secret Service pieces (P62_Mod_Custom_SecretServiceDrifter_*), so the
+    // resistances are the Secret Service row's; no Settler-specific resistance table is sourced.
+    stats: SECRET_SERVICE_STATS,
+    unique: {
+      legendaryModSlugs: ["bolstering", "hardy", "adamantium", "sawboness"],
+      setBonus: "25% of damage received is returned to the attacker",
+      source:
+        "Patch 70 client data (SeventySix.esm, 2026-09-16 build): P62_Mod_Custom_SecretServiceDrifter_* 007FFF18-007FFF20; every body piece Bolstering / Hardy / Adamantium / Sawbones, Buttressed, untradeable; the chest carries the set bonus"
+    }
+  }
 ];
 
 const byKey = new Map(ARMOR_SET_ROWS.map((r) => [r.key, r]));

@@ -78,7 +78,50 @@ export type UniqueItem = {
   model?: UniqueEffectModel | null;
   /** Why a reference-only innate has no model. */
   modelNote?: string;
+  /** Armor only: the body slot the piece occupies. */
+  armorSlot?: UniqueArmorSlot;
+  /** Armor only: catalog slugs of `legendaryMods`, star 1 first (legendary-mod-catalog-seeds.ts). */
+  legendaryModSlugs?: string[];
+  /** Armor only: machine-readable innate, or `null` when it is shown as text. */
+  armorModel?: UniqueArmorEffectModel | null;
+  /** Armor only: why the innate is text only, or what applies it elsewhere. */
+  armorModelNote?: string;
 };
+
+/** Machine-readable innates of the unique armor pieces (applied by `src/lib/builder/unique-armor.ts`). */
+export type UniqueArmorEffectKind = "rage-stacks" | "armor-resist-bonus" | "dr-per-move-speed";
+
+export type UniqueArmorEffectModel = {
+  kind: UniqueArmorEffectKind;
+  /** `armor-resist-bonus`: fraction added to the piece's own resistances; `dr-per-move-speed`: DR at the top of the curve. */
+  value?: number;
+  /** `rage-stacks`: damage dealt per stack (fraction). */
+  perUnit?: number;
+  /** `rage-stacks`: damage taken per stack (fraction). */
+  perUnitTaken?: number;
+  /** `rage-stacks`: most stacks counted. */
+  maxUnits?: number;
+  /** `dr-per-move-speed`: movement speed (percent of base) where the bonus is 0. */
+  minSpeedPct?: number;
+  /** `dr-per-move-speed`: movement speed (percent of base) where the bonus reaches `value` and stops. */
+  maxSpeedPct?: number;
+  condition: string;
+  confidence: UniqueEffectConfidence;
+  source: string;
+};
+
+/** Armor body slot, payload order: chest, left arm, right arm, left leg, right leg. */
+export type UniqueArmorSlot = "chest" | "leftArm" | "rightArm" | "leftLeg" | "rightLeg";
+
+const ARMOR_SLOTS = new Set<string>(["chest", "leftArm", "rightArm", "leftLeg", "rightLeg"]);
+
+const ARMOR_EFFECT_REQUIRED_FIELDS: Record<UniqueArmorEffectKind, readonly string[]> = {
+  "rage-stacks": ["perUnit", "perUnitTaken", "maxUnits"],
+  "armor-resist-bonus": ["value"],
+  "dr-per-move-speed": ["value", "minSpeedPct", "maxSpeedPct"],
+};
+
+const ARMOR_EFFECT_NUMERIC_FIELDS = ["value", "perUnit", "perUnitTaken", "maxUnits", "minSpeedPct", "maxSpeedPct"] as const;
 
 const EFFECT_KINDS = new Set<string>([
   "damage-per-crippled-limb",
@@ -121,6 +164,49 @@ function fail(message: string): never {
   throw new Error(`unique-items.json is malformed: ${message}`);
 }
 
+/** Armor rows: a real slot, one slug per fixed legendary mod, and a well-formed `armorModel` when present. */
+function validateArmorFields(id: string, item: Record<string, unknown>): void {
+  if (item.kind !== "armor") {
+    if (item.armorSlot !== undefined || item.armorModel !== undefined || item.legendaryModSlugs !== undefined) {
+      fail(`"${id}" is not armor but carries armor fields`);
+    }
+    return;
+  }
+  if (typeof item.armorSlot !== "string" || !ARMOR_SLOTS.has(item.armorSlot)) {
+    fail(`"${id}" has armorSlot "${String(item.armorSlot)}"`);
+  }
+  const slugs = item.legendaryModSlugs;
+  const names = item.legendaryMods;
+  if (!Array.isArray(slugs) || !Array.isArray(names) || slugs.length !== names.length) {
+    fail(`"${id}" needs one legendaryModSlugs entry per legendaryMods name`);
+  }
+  if (!(slugs as unknown[]).every((s) => typeof s === "string" && s.length > 0)) {
+    fail(`"${id}" has an empty legendary mod slug`);
+  }
+  if (item.armorModelNote !== undefined && typeof item.armorModelNote !== "string") {
+    fail(`"${id}" has a non-string armorModelNote`);
+  }
+  const model = item.armorModel;
+  if (model === null || model === undefined) return;
+  if (typeof model !== "object") fail(`"${id}" has a non-object armorModel`);
+  const m = model as Record<string, unknown>;
+  const required = ARMOR_EFFECT_REQUIRED_FIELDS[m.kind as UniqueArmorEffectKind];
+  if (!required) fail(`"${id}" has armorModel kind "${String(m.kind)}"`);
+  if (typeof m.condition !== "string" || m.condition.length === 0) fail(`"${id}" has no armorModel condition`);
+  if (typeof m.confidence !== "string" || !EFFECT_CONFIDENCE.has(m.confidence)) {
+    fail(`"${id}" has armorModel confidence "${String(m.confidence)}"`);
+  }
+  if (typeof m.source !== "string" || m.source.length === 0) fail(`"${id}" has no armorModel source`);
+  for (const field of ARMOR_EFFECT_NUMERIC_FIELDS) {
+    const num = m[field];
+    if (num === undefined) continue;
+    if (typeof num !== "number" || !Number.isFinite(num)) fail(`"${id}" armorModel field "${field}" is not a finite number`);
+  }
+  for (const field of required) {
+    if (m[field] === undefined) fail(`"${id}" armorModel kind "${String(m.kind)}" needs "${field}"`);
+  }
+}
+
 function validateItems(raw: unknown): UniqueItem[] {
   if (!Array.isArray(raw)) fail("the pack is not an array");
 
@@ -128,6 +214,7 @@ function validateItems(raw: unknown): UniqueItem[] {
     if (!value || typeof value !== "object") fail("an entry is not an object");
     const item = value as Record<string, unknown>;
     const id = typeof item.id === "string" ? item.id : "(no id)";
+    validateArmorFields(id, item);
 
     if (item.model === undefined || item.model === null) {
       if (item.modelNote !== undefined && typeof item.modelNote !== "string") {

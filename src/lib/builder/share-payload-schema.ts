@@ -49,6 +49,22 @@ export const sharePayloadSchema = z
     weaponCrafting: weaponCraftingSchema.optional(),
     armorPieceCrafting: z.array(armorCraftingRowSchema).length(5),
     armorPieceSetKeys: z.array(z.string().nullable()).max(6).optional(),
+    /** Unique armor per body slot (`{ chest: "bulwark" }`); ids are checked by `normalizeBuilderPayload`. */
+    uniqueArmorPieceIds: z
+      .object({
+        chest: z.string().min(1).max(64).optional(),
+        leftArm: z.string().min(1).max(64).optional(),
+        rightArm: z.string().min(1).max(64).optional(),
+        leftLeg: z.string().min(1).max(64).optional(),
+        rightLeg: z.string().min(1).max(64).optional()
+      })
+      .optional(),
+    uniqueArmorConditions: z
+      .object({
+        rageStacks: z.number().min(0).max(1000).optional(),
+        movementSpeedPct: z.number().min(0).max(1000).optional()
+      })
+      .optional(),
     ghoul: z.boolean(),
     underarmor: underarmorSchema,
     powerArmorHelmetId: z.string().nullable().optional(),

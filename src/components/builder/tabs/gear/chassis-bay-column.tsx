@@ -41,6 +41,12 @@ import {
   type WeaponInnateAggregateEffects,
 } from "@/lib/builder/weapon-piece-mods";
 import { resolveUniqueForBuilderId } from "@/lib/truth/unique-items";
+import {
+  armorSlotLocks,
+  getUniqueArmorPiece,
+  transitionUniqueArmorLocks,
+} from "@/lib/builder/unique-armor";
+import UniqueArmorPanel from "@/components/builder/tabs/gear/unique-armor-panel";
 import LinkifiedText from "@/components/linkified-text";
 import type { BuilderEquipmentKind, BuilderModDTO, BuilderPayload } from "@/lib/builder/types";
 import type { BuilderEffectTotals } from "@/lib/builder/compatibility";
@@ -137,6 +143,13 @@ export default function ChassisBayColumn({
     [activeWeaponPiece.id],
   );
 
+  // Regular armor: per-slot fixed stars of a unique piece or a unique set (Secret Settler).
+  const chassisSetKey = isPA ? null : activeChassisPiece.armorSetKey ?? null;
+  const slotLocks = React.useMemo(
+    () => (isPA ? [] : armorSlotLocks(payload, chassisSetKey)),
+    [isPA, payload, chassisSetKey],
+  );
+
   // Gear schematic card generator for multi-piece view
   function renderGearSlotCard(
     slotKey: "helmet" | "leftArm" | "torso" | "rightArm" | "leftLeg" | "rightLeg",
@@ -146,6 +159,8 @@ export default function ChassisBayColumn({
     const isEquipped = isPA && payloadIndex !== null ? payload.powerArmorPiecesEquipped[payloadIndex] : true;
     const isPAHelmet = isPA && slotKey === "helmet";
     const isRegularHelmet = !isPA && slotKey === "helmet";
+    const slotLock = !isPA && payloadIndex !== null ? slotLocks[payloadIndex] ?? null : null;
+    const slotUnique = slotLock?.kind === "unique-piece" ? getUniqueArmorPiece(slotLock.id) : undefined;
 
     const craft = payloadIndex !== null ? payload.armorPieceCrafting[payloadIndex] : null;
     const material =
@@ -202,7 +217,15 @@ export default function ChassisBayColumn({
           {/* Per-Slot Armor Piece Selector for Mixed Sets */}
           {!isPA && payloadIndex !== null && (
             <div className="mb-1.5">
-              {readOnly ? (
+              {slotUnique ? (
+                // A unique piece fills this slot: its base set is fixed, change it in the Unique armor panel.
+                <div
+                  className="w-full text-2xs bg-background/90 border border-amber-500/40 rounded px-1.5 py-0.5 font-mono uppercase text-amber-300 font-bold truncate"
+                  title={`${slotUnique.name} (unique, ${ARMOR_SET_ROWS.find((r) => r.key === slotUnique.baseSetKey)?.label ?? slotUnique.baseSetKey})`}
+                >
+                  {slotUnique.name} · Unique
+                </div>
+              ) : readOnly ? (
                 <div className="w-full text-2xs bg-background/90 border border-border/30 rounded px-1.5 py-0.5 font-mono uppercase text-accent font-bold truncate">
                   {ARMOR_SET_ROWS.find(
                     (r) =>
@@ -231,7 +254,14 @@ export default function ChassisBayColumn({
                     ];
                     const nextKeys = [...currentKeys];
                     nextKeys[payloadIndex] = e.target.value;
-                    setPayload((p) => ({ ...p, armorPieceSetKeys: nextKeys }));
+                    // Into or out of a unique set (Secret Settler) locks or releases the slot's fixed stars.
+                    setPayload((p) =>
+                      transitionUniqueArmorLocks(
+                        p,
+                        { ...p, armorPieceSetKeys: nextKeys },
+                        { prev: chassisSetKey, next: chassisSetKey },
+                      ),
+                    );
                   }}
                 >
                   {ARMOR_SET_ROWS.map((row) => (
@@ -307,6 +337,24 @@ export default function ChassisBayColumn({
                     {SLOT_LABELS.map((starLabel, starIndex) => {
                       const id = payload.armorLegendaryModIds[payloadIndex]?.[starIndex];
                       const mod = findModByIdOrSlug(mods, id, starIndex + 1);
+                      const isFixed = Boolean(slotLock && starIndex < slotLock.legendaryModSlugs.length);
+                      if (isFixed && slotLock) {
+                        // Unique piece or unique set: the star ships with the item and cannot be re-rolled.
+                        return (
+                          <div
+                            key={starIndex}
+                            className="flex items-center justify-between gap-1 text-2xs rounded px-1.5 py-0.5 border border-amber-500/40 bg-amber-500/[0.06] text-foreground/90"
+                          >
+                            <span className="min-h-6 min-w-0 flex-1 truncate font-bold flex items-center">
+                              {starIndex + 1}★ {mod ? mod.name : slotLock.legendaryModSlugs[starIndex]}
+                              <span className="sr-only">, fixed by {slotLock.name}</span>
+                            </span>
+                            <span className="text-3xs uppercase tracking-wider text-amber-300 shrink-0" aria-hidden="true">
+                              fixed
+                            </span>
+                          </div>
+                        );
+                      }
                       return (
                         <div
                           key={starIndex}
@@ -456,6 +504,16 @@ export default function ChassisBayColumn({
             )}
           </div>
         </div>
+
+        {/* Unique chest / left arm beside the set (regular armor only; power armor has no uniques) */}
+        {!isPA && (
+          <UniqueArmorPanel
+            payload={payload}
+            setPayload={setPayload}
+            chassisSetKey={chassisSetKey}
+            readOnly={readOnly}
+          />
+        )}
 
         <div className="space-y-3 relative z-10">
           {/* SECTION A: ACTIVE PRIMARY WEAPON BAY */}
