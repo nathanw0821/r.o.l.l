@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CalendarDays, CalendarPlus, ChevronRight, History } from "lucide-react";
 import {
   CALENDAR_ENTRIES,
+  CALENDAR_SEASONS,
   CALENDAR_SOURCE,
   CALENDAR_TITLE,
   EVENT_KIND_LABEL,
@@ -50,6 +51,18 @@ const CARD_HEIGHT_GUESS = 240;
 const ET_DATE = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", weekday: "short" });
 const ET_TIME = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit", timeZoneName: "short" });
 const ET_DAY = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" });
+
+const ET_MONTH_DAY = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", month: "short", day: "numeric" });
+
+/** "Dec 2 – Mar 2" for a season's calendar days, or "from Sep 15" while it is still running. */
+function seasonSpan(season: { start: string; end: string | null }): string {
+  const noon = (iso: string) => {
+    const [y, m, d] = iso.split("-").map((n) => Number.parseInt(n, 10));
+    return new Date(Date.UTC(y, m - 1, d, 17));
+  };
+  const from = ET_MONTH_DAY.format(noon(season.start));
+  return season.end ? `${from} – ${ET_MONTH_DAY.format(noon(season.end))}` : `from ${from}`;
+}
 
 function etRange(entry: CalendarEntry): string {
   const { startUtc, endUtc } = entryWindowUtc(entry);
@@ -321,6 +334,13 @@ export default function SeasonCalendar() {
               Eastern; once the page knows your zone it shows your local times as well.
               {now && liveCount > 0 ? ` ${liveCount} event${liveCount === 1 ? " is" : "s are"} live now.` : ""}
             </p>
+            <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-2xs text-dim" aria-label="Seasons on this calendar">
+              {CALENDAR_SEASONS.map((s) => (
+                <li key={s.number}>
+                  <span className="font-bold text-foreground/80">Season {s.number}</span> {s.title} · {seasonSpan(s)}
+                </li>
+              ))}
+            </ul>
           </div>
           <a
             href="/calendar.ics"

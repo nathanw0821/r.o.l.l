@@ -167,11 +167,21 @@ test.describe("guest smoke", () => {
   test("season calendar lists the months from the truth pack and offers an .ics feed", async ({ page }) => {
     await page.goto("/calendar");
     await expectPageSane(page);
-    await expect(page.getByRole("heading", { level: 1, name: /Season 26/ })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 2, name: "September 2026" })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 2, name: "December 2026" })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 3, name: "Treasure Hunter" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "Guides about Treasure Hunter" }).first()).toHaveAttribute("href", /\/wiki\?q=Treasure/);
+    await expect(page.getByRole("heading", { level: 1, name: /2026 event calendar/ })).toBeVisible();
+    // Every month of the year has a labelled grid: open months as headings, months already over as
+    // collapsed disclosures under "Previous months". Open those so each month's bars are on screen.
+    const summaries = page.locator("details > summary");
+    for (let i = 0; i < (await summaries.count()); i += 1) await summaries.nth(i).click();
+    await expect(page.locator("#month-2026-01")).toBeVisible();
+    await expect(page.locator("#month-2026-09")).toBeVisible();
+    await expect(page.locator("#month-2026-12")).toBeVisible();
+    // Tapping an event bar opens its card with the exact window and a guide link.
+    await page.getByRole("button", { name: /Treasure Hunter/ }).first().click();
+    const card = page.getByRole("tooltip");
+    await expect(card).toBeVisible();
+    await expect(card).toContainText("Treasure Hunter");
+    await expect(card).toContainText(/reset to reset/);
+    await expect(card.getByRole("link", { name: "Guides about Treasure Hunter" })).toHaveAttribute("href", /\/wiki\?q=Treasure/);
     const ics = page.getByRole("link", { name: /Subscribe/ });
     await expect(ics).toHaveAttribute("href", "/calendar.ics");
     const res = await page.request.get("/calendar.ics");

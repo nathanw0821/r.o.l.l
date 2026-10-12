@@ -38,19 +38,29 @@ describe("season calendar", () => {
   it("knows what is live on a given day from the truth pack", () => {
     const names = activeEntries(new Date("2026-09-26T12:00:00Z")).map((e) => e.name).sort();
     expect(names).toEqual(["Double Mutations", "Seasonal Fish Run", "Treasure Hunter"]);
-    expect(activeEntries(new Date("2026-08-01T00:00:00Z"))).toEqual([]);
+    const aug = activeEntries(new Date("2026-08-01T00:00:00Z")).map((e) => e.name).sort();
+    expect(aug).toEqual(["Caps-a-Plenty", "Fasnacht", "Summer Sock Hop Mini Season"]);
+    // Jan 20 – 26: Treasure Hunter has reset out and Mothman Equinox has not started.
+    expect(activeEntries(new Date("2026-01-22T00:00:00Z"))).toEqual([]);
   });
 
   it("groups by start month with the month's Tuesdays", () => {
     const months = calendarMonths();
-    expect(months.map((m) => m.key)).toEqual(["2026-09", "2026-10", "2026-11", "2026-12"]);
-    expect(months[0]!.tuesdays).toEqual(["2026-09-01", "2026-09-08", "2026-09-15", "2026-09-22", "2026-09-29"]);
+    // Holiday Scorched starts in December 2025 and runs into the year; everything else is 2026.
+    const keys = months.map((m) => m.key);
+    expect(keys[0]).toBe("2025-12");
+    expect(keys.slice(1)).toEqual(["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12"]);
+    expect(months.find((m) => m.key === "2026-09")!.tuesdays).toEqual(["2026-09-01", "2026-09-08", "2026-09-15", "2026-09-22", "2026-09-29"]);
     expect(tuesdaysInMonth(2026, 10)).toEqual(["2026-10-06", "2026-10-13", "2026-10-20", "2026-10-27"]);
-    expect(CALENDAR_ENTRIES.length).toBe(30);
+    expect(CALENDAR_ENTRIES.length).toBe(97);
+    // Four seasons, every entry tagged with the one it was published under.
+    expect(new Set(CALENDAR_ENTRIES.map((e) => e.season))).toEqual(new Set([23, 24, 25, 26]));
+    expect(CALENDAR_ENTRIES.filter((e) => e.season === 26).length).toBe(30);
   });
 
   it("emits one timed VEVENT per entry with UTC instants and folded lines", () => {
-    const ics = buildIcs(CALENDAR_ENTRIES.slice(0, 2), { siteUrl: "https://fallout76.wiki", generatedAt: new Date("2026-09-28T00:00:00Z") });
+    const septemberPair = CALENDAR_ENTRIES.filter((e) => e.id === "scrip-surplus-sep" || e.id === "double-mutations-sep-1");
+    const ics = buildIcs(septemberPair, { siteUrl: "https://fallout76.wiki", generatedAt: new Date("2026-09-28T00:00:00Z") });
     expect(ics.startsWith("BEGIN:VCALENDAR\r\n")).toBe(true);
     expect(ics.endsWith("END:VCALENDAR\r\n")).toBe(true);
     expect((ics.match(/BEGIN:VEVENT/g) ?? []).length).toBe(2);
@@ -75,15 +85,22 @@ describe("month grid", () => {
     expect(keys[0]).toBe("2026-01");
     expect(keys[11]).toBe("2026-12");
     expect(keys.length).toBe(12);
+    // January's first row (Sun Dec 28 – Sat Jan 3) carries Holiday Scorched in from December.
     const jan = monthGrid("2026-01");
-    expect(jan.entries).toEqual([]);
     expect(jan.weeks.length).toBe(5);
-    expect(jan.weeks.every((w) => w.laneCount === 0)).toBe(true);
+    const carried = jan.weeks[0]!.segments.find((s) => s.entry.id === "holiday-scorched-jan")!;
+    expect([carried.startCol, carried.continuesBefore, carried.continuesAfter]).toEqual([0, true, true]);
+    // A month outside the data still lays out, with no lanes.
+    const empty = monthGrid("2027-02");
+    expect(empty.entries).toEqual([]);
+    expect(empty.weeks.length).toBeGreaterThanOrEqual(4);
+    expect(empty.weeks.every((w) => w.laneCount === 0)).toBe(true);
   });
 
   it("covers every month from the first start to the last end", () => {
-    expect(calendarMonthKeys()).toEqual(["2026-09", "2026-10", "2026-11", "2026-12"]);
-    expect(calendarMonthKeys([{ id: "x", start: "2026-11-20", end: "2027-01-02", kind: "seasonal", name: "x", note: "" }])).toEqual(["2026-11", "2026-12", "2027-01"]);
+    const all = calendarMonthKeys();
+    expect([all[0], all.at(-1), all.length]).toEqual(["2025-12", "2026-12", 13]);
+    expect(calendarMonthKeys([{ id: "x", season: 26, start: "2026-11-20", end: "2027-01-02", kind: "seasonal", name: "x", note: "" }])).toEqual(["2026-11", "2026-12", "2027-01"]);
   });
 
   it("lays September 2026 out Sunday to Saturday with the entries in stable lanes", () => {

@@ -2,8 +2,8 @@ import events from "@/data/truth/events.json";
 import { easternToUtc } from "@/lib/discord/vault-intel";
 
 /**
- * Season calendar from the truth pack (`src/data/truth/events.json`, transcribed from Bethesda's
- * official community calendar). Event days run from daily reset to daily reset, noon Eastern,
+ * Event calendar from the truth pack (`src/data/truth/events.json`, transcribed from Bethesda's
+ * official community calendars, one per season). Event days run from daily reset to daily reset, noon Eastern,
  * so an entry "Sep 24 – Sep 28" is live from Sep 24 12:00 ET until Sep 29 12:00 ET. Everything
  * here is pure so the page, the `.ics` feed and the tests share one clock.
  */
@@ -11,6 +11,8 @@ export type EventKind = keyof typeof events.kinds;
 
 export type CalendarEntry = {
   id: string;
+  /** Season the entry was published under; part of the `.ics` UID, so it never changes once shipped. */
+  season: number;
   /** Inclusive calendar days, ISO `YYYY-MM-DD`, Eastern time. */
   start: string;
   end: string;
@@ -24,6 +26,15 @@ export type EntryStatus = "past" | "active" | "upcoming";
 export const EVENT_KIND_LABEL: Record<EventKind, string> = events.kinds;
 export const CALENDAR_TITLE = events.title;
 export const CALENDAR_SOURCE = events.source;
+
+export type CalendarSeason = {
+  number: number;
+  title: string;
+  /** First day, ISO `YYYY-MM-DD`; `end` is null while the season is still running. */
+  start: string;
+  end: string | null;
+};
+export const CALENDAR_SEASONS: CalendarSeason[] = events.seasons;
 export const CALENDAR_ENTRIES: CalendarEntry[] = (events.entries as CalendarEntry[])
   .slice()
   .sort((a, b) => (a.start === b.start ? a.end.localeCompare(b.end) : a.start.localeCompare(b.start)));
@@ -125,7 +136,7 @@ export function calendarMonthKeys(entries: CalendarEntry[] = CALENDAR_ENTRIES): 
 }
 
 /** The year the calendar covers: every month of it gets a grid, event or not. */
-export const CALENDAR_YEAR = Number.parseInt((CALENDAR_ENTRIES[0]?.start ?? "2026").slice(0, 4), 10);
+export const CALENDAR_YEAR: number = events.year;
 
 /** `YYYY-01` … `YYYY-12`. */
 export function yearMonthKeys(year: number = CALENDAR_YEAR): string[] {
@@ -278,7 +289,7 @@ export function buildIcs(
     const { startUtc, endUtc } = entryWindowUtc(e);
     lines.push(
       "BEGIN:VEVENT",
-      `UID:${e.id}-s${events.season}@fallout76.wiki`,
+      `UID:${e.id}-s${e.season}@fallout76.wiki`,
       `DTSTAMP:${stamp}`,
       `DTSTART:${icsStamp(startUtc)}`,
       `DTEND:${icsStamp(endUtc)}`,
