@@ -1,25 +1,38 @@
 import { describe, expect, it } from "vitest";
 import { sanitizeMutationIds } from "./sandbox-mutations";
-import { sandboxMutationMathLayer, strangeInNumbersBenefitMultiplier } from "./sandbox-mutations";
+import { isStrangeInNumbersActive, sandboxMutationMathLayer, strangeInNumbersBenefitMultiplier } from "./sandbox-mutations";
 
+// Patch 70 card: "Positive mutation effects are +25% stronger if teammates are mutated too."
+// One qualifying teammate gives the full, flat bonus (Nathan, 2026-10-12).
 describe("strangeInNumbersBenefitMultiplier", () => {
   it("is 1 with zero teammates", () => {
     expect(strangeInNumbersBenefitMultiplier(0)).toBe(1);
   });
-  it("is 2 with four mutated teammates", () => {
-    expect(strangeInNumbersBenefitMultiplier(4)).toBe(2);
+  it("is a flat 1.25 with one mutated teammate", () => {
+    expect(strangeInNumbersBenefitMultiplier(1)).toBe(1.25);
   });
-  it("clamps above four", () => {
-    expect(strangeInNumbersBenefitMultiplier(99)).toBe(2);
+  it("does not grow with more teammates", () => {
+    expect(strangeInNumbersBenefitMultiplier(4)).toBe(1.25);
+    expect(strangeInNumbersBenefitMultiplier(99)).toBe(1.25);
+  });
+});
+
+describe("isStrangeInNumbersActive", () => {
+  const card = [{ cardId: "strange-in-numbers", rank: 1 }];
+  it("needs the card, a mutated teammate and a mutation of your own", () => {
+    expect(isStrangeInNumbersActive(card, true, ["egg-head"])).toBe(true);
+    expect(isStrangeInNumbersActive([], true, ["egg-head"])).toBe(false);
+    expect(isStrangeInNumbersActive(card, false, ["egg-head"])).toBe(false);
+    expect(isStrangeInNumbersActive(card, true, [])).toBe(false);
   });
 });
 
 describe("sandboxMutationMathLayer + Strange in Numbers", () => {
-  it("doubles Egg Head INT benefit with four SiN teammates", () => {
+  it("scales Egg Head INT benefit by 1.25", () => {
     const noSin = sandboxMutationMathLayer(["egg-head"], false, {});
-    const sin = sandboxMutationMathLayer(["egg-head"], false, { strangeInNumbersMutatedTeammates: 4 });
+    const sin = sandboxMutationMathLayer(["egg-head"], false, { strangeInNumbersMutatedTeammates: 1 });
     expect(noSin?.int).toBe(6);
-    expect(sin?.int).toBe(12);
+    expect(sin?.int).toBe(7.5);
   });
 
   it("does not scale penalties", () => {

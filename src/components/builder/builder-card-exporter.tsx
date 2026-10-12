@@ -170,7 +170,7 @@ export async function exportBuilderLoadoutCard(params: {
     const perksHtml = payload.legendaryPerkIds.length > 0
       ? payload.legendaryPerkIds.map((id) => `
         <div style="background: rgba(18, 24, 30, 0.85); border: 1px solid rgba(76, 195, 138, 0.2); border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 800; color: #f0ece7; text-transform: uppercase;">
-          ${id.replace(/-/g, " ")}
+          ${id.split(":")[0].replace(/-/g, " ")}
         </div>
       `).join("")
       : `<div style="color: rgba(240, 236, 231, 0.4); font-style: italic; font-size: 11px;">No legendary perks equipped.</div>`;

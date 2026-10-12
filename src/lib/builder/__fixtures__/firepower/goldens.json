@@ -18,27 +18,23 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 191,
-        "critical": 413,
+        "normal": 172,
+        "critical": 394,
         "explosiveBonus": 0,
-        "totalPerShot": 191,
-        "activeShotDamage": 302,
+        "totalPerShot": 172,
+        "activeShotDamage": 283,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Bloody Mess (Rank 3)",
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Nerd Rage (<20% HP)",
-            "value": "+20%"
+            "source": "Nerd Rage (20% HP)",
+            "value": "+40%"
           },
           {
             "source": "Bloodied (80% Missing HP)",
@@ -90,9 +86,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1738,
-        "criticalCycleDPS": 2748,
-        "activeDPS": 2748,
+        "burstDPS": 1565,
+        "criticalCycleDPS": 2575,
+        "activeDPS": 2575,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -163,13 +159,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4243,
-        "normalLanded": 24,
-        "criticalLanded": 70,
-        "burstDPSLanded": 218,
-        "criticalCycleDPSLanded": 428,
-        "activeDPSLanded": 428
+        "armorMitigationPct": 59,
+        "mitigationRatio": 0.40840000000000004,
+        "normalLanded": 21,
+        "criticalLanded": 65,
+        "burstDPSLanded": 191,
+        "criticalCycleDPSLanded": 391,
+        "activeDPSLanded": 391
       }
     },
     "earle-williams": {
@@ -190,27 +186,23 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 191,
-        "critical": 413,
+        "normal": 172,
+        "critical": 394,
         "explosiveBonus": 0,
-        "totalPerShot": 191,
-        "activeShotDamage": 302,
+        "totalPerShot": 172,
+        "activeShotDamage": 283,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Bloody Mess (Rank 3)",
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Nerd Rage (<20% HP)",
-            "value": "+20%"
+            "source": "Nerd Rage (20% HP)",
+            "value": "+40%"
           },
           {
             "source": "Bloodied (80% Missing HP)",
@@ -262,9 +254,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1738,
-        "criticalCycleDPS": 2748,
-        "activeDPS": 2748,
+        "burstDPS": 1565,
+        "criticalCycleDPS": 2575,
+        "activeDPS": 2575,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -335,13 +327,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4243,
-        "normalLanded": 16,
-        "criticalLanded": 46,
-        "burstDPSLanded": 146,
-        "criticalCycleDPSLanded": 282,
-        "activeDPSLanded": 282
+        "armorMitigationPct": 59,
+        "mitigationRatio": 0.40840000000000004,
+        "normalLanded": 14,
+        "criticalLanded": 44,
+        "burstDPSLanded": 127,
+        "criticalCycleDPSLanded": 264,
+        "activeDPSLanded": 264
       }
     },
     "ultracite-titan": {
@@ -362,27 +354,23 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 191,
-        "critical": 413,
+        "normal": 172,
+        "critical": 394,
         "explosiveBonus": 0,
-        "totalPerShot": 191,
-        "activeShotDamage": 302,
+        "totalPerShot": 172,
+        "activeShotDamage": 283,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Bloody Mess (Rank 3)",
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Nerd Rage (<20% HP)",
-            "value": "+20%"
+            "source": "Nerd Rage (20% HP)",
+            "value": "+40%"
           },
           {
             "source": "Bloodied (80% Missing HP)",
@@ -434,9 +422,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1738,
-        "criticalCycleDPS": 2748,
-        "activeDPS": 2748,
+        "burstDPS": 1565,
+        "criticalCycleDPS": 2575,
+        "activeDPS": 2575,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -507,13 +495,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 60,
-        "mitigationRatio": 0.4011,
-        "normalLanded": 19,
-        "criticalLanded": 55,
-        "burstDPSLanded": 173,
-        "criticalCycleDPSLanded": 337,
-        "activeDPSLanded": 337
+        "armorMitigationPct": 61,
+        "mitigationRatio": 0.3861,
+        "normalLanded": 17,
+        "criticalLanded": 51,
+        "burstDPSLanded": 155,
+        "criticalCycleDPSLanded": 309,
+        "activeDPSLanded": 309
       }
     },
     "level-100-super-mutant": {
@@ -534,27 +522,23 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 191,
-        "critical": 413,
+        "normal": 172,
+        "critical": 394,
         "explosiveBonus": 0,
-        "totalPerShot": 191,
-        "activeShotDamage": 302,
+        "totalPerShot": 172,
+        "activeShotDamage": 283,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Bloody Mess (Rank 3)",
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Nerd Rage (<20% HP)",
-            "value": "+20%"
+            "source": "Nerd Rage (20% HP)",
+            "value": "+40%"
           },
           {
             "source": "Bloodied (80% Missing HP)",
@@ -606,9 +590,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1738,
-        "criticalCycleDPS": 2748,
-        "activeDPS": 2748,
+        "burstDPS": 1565,
+        "criticalCycleDPS": 2575,
+        "activeDPS": 2575,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -679,13 +663,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 52,
-        "mitigationRatio": 0.4833,
-        "normalLanded": 92,
-        "criticalLanded": 265,
-        "burstDPSLanded": 837,
-        "criticalCycleDPSLanded": 1624,
-        "activeDPSLanded": 1624
+        "armorMitigationPct": 53,
+        "mitigationRatio": 0.46520000000000006,
+        "normalLanded": 80,
+        "criticalLanded": 248,
+        "burstDPSLanded": 728,
+        "criticalCycleDPSLanded": 1492,
+        "activeDPSLanded": 1492
       }
     },
     "raw-unarmored": {
@@ -706,27 +690,23 @@
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 191,
-        "critical": 413,
+        "normal": 172,
+        "critical": 394,
         "explosiveBonus": 0,
-        "totalPerShot": 191,
-        "activeShotDamage": 302,
+        "totalPerShot": 172,
+        "activeShotDamage": 283,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Bloody Mess (Rank 3)",
             "value": "Bleed Corpse Explosion (LCK Scaled)"
           },
           {
-            "source": "Nerd Rage (<20% HP)",
-            "value": "+20%"
+            "source": "Nerd Rage (20% HP)",
+            "value": "+40%"
           },
           {
             "source": "Bloodied (80% Missing HP)",
@@ -778,9 +758,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1738,
-        "criticalCycleDPS": 2748,
-        "activeDPS": 2748,
+        "burstDPS": 1565,
+        "criticalCycleDPS": 2575,
+        "activeDPS": 2575,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -853,11 +833,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 189,
-        "criticalLanded": 409,
-        "burstDPSLanded": 1720,
-        "criticalCycleDPSLanded": 2721,
-        "activeDPSLanded": 2721
+        "normalLanded": 170,
+        "criticalLanded": 390,
+        "burstDPSLanded": 1547,
+        "criticalCycleDPSLanded": 2548,
+        "activeDPSLanded": 2548
       }
     }
   },
@@ -880,19 +860,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 58,
-        "critical": 106,
+        "normal": 48,
+        "critical": 96,
         "explosiveBonus": 0,
-        "totalPerShot": 58,
-        "activeShotDamage": 58,
+        "totalPerShot": 48,
+        "activeShotDamage": 48,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
-          },
-          {
-            "source": "Commando Perks",
-            "value": "+20%"
           }
         ]
       },
@@ -908,9 +884,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 660,
-        "criticalCycleDPS": 933,
-        "activeDPS": 660,
+        "burstDPS": 546,
+        "criticalCycleDPS": 819,
+        "activeDPS": 546,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -966,7 +942,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 76,
+        "effectiveArmorPenetrationPct": 78,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -977,8 +953,8 @@
             "value": "25% Penetration"
           },
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -993,14 +969,14 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 72,
-        "armorMitigationPct": 54,
-        "mitigationRatio": 0.46240000000000003,
-        "normalLanded": 8,
-        "criticalLanded": 18,
-        "burstDPSLanded": 91,
-        "criticalCycleDPSLanded": 148,
-        "activeDPSLanded": 91
+        "effectiveDR": 66,
+        "armorMitigationPct": 55,
+        "mitigationRatio": 0.4454,
+        "normalLanded": 6,
+        "criticalLanded": 17,
+        "burstDPSLanded": 68,
+        "criticalCycleDPSLanded": 131,
+        "activeDPSLanded": 68
       }
     },
     "earle-williams": {
@@ -1021,19 +997,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 58,
-        "critical": 106,
+        "normal": 48,
+        "critical": 96,
         "explosiveBonus": 0,
-        "totalPerShot": 58,
-        "activeShotDamage": 58,
+        "totalPerShot": 48,
+        "activeShotDamage": 48,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
-          },
-          {
-            "source": "Commando Perks",
-            "value": "+20%"
           }
         ]
       },
@@ -1049,9 +1021,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 660,
-        "criticalCycleDPS": 933,
-        "activeDPS": 660,
+        "burstDPS": 546,
+        "criticalCycleDPS": 819,
+        "activeDPS": 546,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1107,7 +1079,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 76,
+        "effectiveArmorPenetrationPct": 78,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1118,8 +1090,8 @@
             "value": "25% Penetration"
           },
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -1134,14 +1106,14 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 72,
-        "armorMitigationPct": 54,
-        "mitigationRatio": 0.46240000000000003,
-        "normalLanded": 5,
-        "criticalLanded": 12,
-        "burstDPSLanded": 57,
-        "criticalCycleDPSLanded": 97,
-        "activeDPSLanded": 57
+        "effectiveDR": 66,
+        "armorMitigationPct": 55,
+        "mitigationRatio": 0.4454,
+        "normalLanded": 4,
+        "criticalLanded": 11,
+        "burstDPSLanded": 46,
+        "criticalCycleDPSLanded": 85,
+        "activeDPSLanded": 46
       }
     },
     "ultracite-titan": {
@@ -1162,19 +1134,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 58,
-        "critical": 106,
+        "normal": 48,
+        "critical": 96,
         "explosiveBonus": 0,
-        "totalPerShot": 58,
-        "activeShotDamage": 58,
+        "totalPerShot": 48,
+        "activeShotDamage": 48,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
-          },
-          {
-            "source": "Commando Perks",
-            "value": "+20%"
           }
         ]
       },
@@ -1190,9 +1158,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 660,
-        "criticalCycleDPS": 933,
-        "activeDPS": 660,
+        "burstDPS": 546,
+        "criticalCycleDPS": 819,
+        "activeDPS": 546,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1248,7 +1216,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 76,
+        "effectiveArmorPenetrationPct": 78,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1259,8 +1227,8 @@
             "value": "25% Penetration"
           },
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -1275,14 +1243,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 84,
-        "armorMitigationPct": 56,
-        "mitigationRatio": 0.4371,
-        "normalLanded": 6,
-        "criticalLanded": 14,
-        "burstDPSLanded": 68,
-        "criticalCycleDPSLanded": 114,
-        "activeDPSLanded": 68
+        "effectiveDR": 77,
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4211,
+        "normalLanded": 5,
+        "criticalLanded": 13,
+        "burstDPSLanded": 57,
+        "criticalCycleDPSLanded": 102,
+        "activeDPSLanded": 57
       }
     },
     "level-100-super-mutant": {
@@ -1303,19 +1271,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 58,
-        "critical": 106,
+        "normal": 48,
+        "critical": 96,
         "explosiveBonus": 0,
-        "totalPerShot": 58,
-        "activeShotDamage": 58,
+        "totalPerShot": 48,
+        "activeShotDamage": 48,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
-          },
-          {
-            "source": "Commando Perks",
-            "value": "+20%"
           }
         ]
       },
@@ -1331,9 +1295,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 660,
-        "criticalCycleDPS": 933,
-        "activeDPS": 660,
+        "burstDPS": 546,
+        "criticalCycleDPS": 819,
+        "activeDPS": 546,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1389,7 +1353,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 76,
+        "effectiveArmorPenetrationPct": 78,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1400,8 +1364,8 @@
             "value": "25% Penetration"
           },
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -1416,14 +1380,14 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 50,
-        "armorMitigationPct": 47,
-        "mitigationRatio": 0.5282,
-        "normalLanded": 31,
-        "criticalLanded": 70,
-        "burstDPSLanded": 353,
-        "criticalCycleDPSLanded": 574,
-        "activeDPSLanded": 353
+        "effectiveDR": 46,
+        "armorMitigationPct": 49,
+        "mitigationRatio": 0.5082,
+        "normalLanded": 24,
+        "criticalLanded": 63,
+        "burstDPSLanded": 273,
+        "criticalCycleDPSLanded": 495,
+        "activeDPSLanded": 273
       }
     },
     "raw-unarmored": {
@@ -1444,19 +1408,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 58,
-        "critical": 106,
+        "normal": 48,
+        "critical": 96,
         "explosiveBonus": 0,
-        "totalPerShot": 58,
-        "activeShotDamage": 58,
+        "totalPerShot": 48,
+        "activeShotDamage": 48,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
-          },
-          {
-            "source": "Commando Perks",
-            "value": "+20%"
           }
         ]
       },
@@ -1472,9 +1432,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 660,
-        "criticalCycleDPS": 933,
-        "activeDPS": 660,
+        "burstDPS": 546,
+        "criticalCycleDPS": 819,
+        "activeDPS": 546,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1530,7 +1490,7 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 76,
+        "effectiveArmorPenetrationPct": 78,
         "breakdown": [
           {
             "source": "Anti-Armor 1★",
@@ -1541,8 +1501,8 @@
             "value": "25% Penetration"
           },
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -1560,11 +1520,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 57,
-        "criticalLanded": 105,
-        "burstDPSLanded": 648,
-        "criticalCycleDPSLanded": 921,
-        "activeDPSLanded": 648
+        "normalLanded": 48,
+        "criticalLanded": 95,
+        "burstDPSLanded": 546,
+        "criticalCycleDPSLanded": 813,
+        "activeDPSLanded": 546
       }
     }
   },
@@ -1587,19 +1547,15 @@
       "firingMode": "aiming_ads",
       "firingModeLabel": "Aiming Down Sights (ADS)",
       "damagePerShot": {
-        "normal": 182,
-        "critical": 252,
+        "normal": 140,
+        "critical": 210,
         "explosiveBonus": 0,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 140,
+        "activeShotDamage": 140,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "70"
-          },
-          {
-            "source": "Rifleman Perks",
-            "value": "+60%"
           },
           {
             "source": "Aristocrat's (29k+ Caps)",
@@ -1627,9 +1583,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 218,
-        "criticalCycleDPS": 260,
-        "activeDPS": 218,
+        "burstDPS": 168,
+        "criticalCycleDPS": 210,
+        "activeDPS": 168,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -1681,11 +1637,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 24,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
             "source": "Tank Killer (Rank 2)",
-            "value": "24% Penetration"
+            "value": "40% Penetration"
           }
         ]
       },
@@ -1700,14 +1656,14 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 228,
+        "effectiveDR": 180,
         "armorMitigationPct": 54,
-        "mitigationRatio": 0.4608,
-        "normalLanded": 25,
-        "criticalLanded": 39,
-        "burstDPSLanded": 30,
-        "criticalCycleDPSLanded": 38,
-        "activeDPSLanded": 30
+        "mitigationRatio": 0.45649999999999996,
+        "normalLanded": 19,
+        "criticalLanded": 33,
+        "burstDPSLanded": 23,
+        "criticalCycleDPSLanded": 31,
+        "activeDPSLanded": 23
       }
     },
     "earle-williams": {
@@ -1728,19 +1684,15 @@
       "firingMode": "aiming_ads",
       "firingModeLabel": "Aiming Down Sights (ADS)",
       "damagePerShot": {
-        "normal": 182,
-        "critical": 252,
+        "normal": 140,
+        "critical": 210,
         "explosiveBonus": 0,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 140,
+        "activeShotDamage": 140,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "70"
-          },
-          {
-            "source": "Rifleman Perks",
-            "value": "+60%"
           },
           {
             "source": "Aristocrat's (29k+ Caps)",
@@ -1768,9 +1720,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 218,
-        "criticalCycleDPS": 260,
-        "activeDPS": 218,
+        "burstDPS": 168,
+        "criticalCycleDPS": 210,
+        "activeDPS": 168,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -1822,11 +1774,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 24,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
             "source": "Tank Killer (Rank 2)",
-            "value": "24% Penetration"
+            "value": "40% Penetration"
           }
         ]
       },
@@ -1841,14 +1793,14 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 228,
+        "effectiveDR": 180,
         "armorMitigationPct": 54,
-        "mitigationRatio": 0.4608,
-        "normalLanded": 17,
-        "criticalLanded": 26,
-        "burstDPSLanded": 20,
-        "criticalCycleDPSLanded": 26,
-        "activeDPSLanded": 20
+        "mitigationRatio": 0.45649999999999996,
+        "normalLanded": 13,
+        "criticalLanded": 22,
+        "burstDPSLanded": 16,
+        "criticalCycleDPSLanded": 21,
+        "activeDPSLanded": 16
       }
     },
     "ultracite-titan": {
@@ -1869,19 +1821,15 @@
       "firingMode": "aiming_ads",
       "firingModeLabel": "Aiming Down Sights (ADS)",
       "damagePerShot": {
-        "normal": 182,
-        "critical": 252,
+        "normal": 140,
+        "critical": 210,
         "explosiveBonus": 0,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 140,
+        "activeShotDamage": 140,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "70"
-          },
-          {
-            "source": "Rifleman Perks",
-            "value": "+60%"
           },
           {
             "source": "Aristocrat's (29k+ Caps)",
@@ -1909,9 +1857,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 218,
-        "criticalCycleDPS": 260,
-        "activeDPS": 218,
+        "burstDPS": 168,
+        "criticalCycleDPS": 210,
+        "activeDPS": 168,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -1963,11 +1911,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 24,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
             "source": "Tank Killer (Rank 2)",
-            "value": "24% Penetration"
+            "value": "40% Penetration"
           }
         ]
       },
@@ -1982,14 +1930,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 266,
-        "armorMitigationPct": 56,
-        "mitigationRatio": 0.43560000000000004,
-        "normalLanded": 20,
-        "criticalLanded": 31,
-        "burstDPSLanded": 24,
-        "criticalCycleDPSLanded": 31,
-        "activeDPSLanded": 24
+        "effectiveDR": 210,
+        "armorMitigationPct": 57,
+        "mitigationRatio": 0.4315,
+        "normalLanded": 15,
+        "criticalLanded": 26,
+        "burstDPSLanded": 18,
+        "criticalCycleDPSLanded": 25,
+        "activeDPSLanded": 18
       }
     },
     "level-100-super-mutant": {
@@ -2010,19 +1958,15 @@
       "firingMode": "aiming_ads",
       "firingModeLabel": "Aiming Down Sights (ADS)",
       "damagePerShot": {
-        "normal": 182,
-        "critical": 252,
+        "normal": 140,
+        "critical": 210,
         "explosiveBonus": 0,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 140,
+        "activeShotDamage": 140,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "70"
-          },
-          {
-            "source": "Rifleman Perks",
-            "value": "+60%"
           },
           {
             "source": "Aristocrat's (29k+ Caps)",
@@ -2050,9 +1994,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 218,
-        "criticalCycleDPS": 260,
-        "activeDPS": 218,
+        "burstDPS": 168,
+        "criticalCycleDPS": 210,
+        "activeDPS": 168,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -2104,11 +2048,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 24,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
             "source": "Tank Killer (Rank 2)",
-            "value": "24% Penetration"
+            "value": "40% Penetration"
           }
         ]
       },
@@ -2123,14 +2067,14 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 160,
+        "effectiveDR": 126,
         "armorMitigationPct": 48,
-        "mitigationRatio": 0.5244,
-        "normalLanded": 95,
-        "criticalLanded": 149,
-        "burstDPSLanded": 114,
-        "criticalCycleDPSLanded": 146,
-        "activeDPSLanded": 114
+        "mitigationRatio": 0.52,
+        "normalLanded": 73,
+        "criticalLanded": 127,
+        "burstDPSLanded": 88,
+        "criticalCycleDPSLanded": 120,
+        "activeDPSLanded": 88
       }
     },
     "raw-unarmored": {
@@ -2151,19 +2095,15 @@
       "firingMode": "aiming_ads",
       "firingModeLabel": "Aiming Down Sights (ADS)",
       "damagePerShot": {
-        "normal": 182,
-        "critical": 252,
+        "normal": 140,
+        "critical": 210,
         "explosiveBonus": 0,
-        "totalPerShot": 182,
-        "activeShotDamage": 182,
+        "totalPerShot": 140,
+        "activeShotDamage": 140,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "70"
-          },
-          {
-            "source": "Rifleman Perks",
-            "value": "+60%"
           },
           {
             "source": "Aristocrat's (29k+ Caps)",
@@ -2191,9 +2131,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 218,
-        "criticalCycleDPS": 260,
-        "activeDPS": 218,
+        "burstDPS": 168,
+        "criticalCycleDPS": 210,
+        "activeDPS": 168,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -2245,11 +2185,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 24,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
             "source": "Tank Killer (Rank 2)",
-            "value": "24% Penetration"
+            "value": "40% Penetration"
           }
         ]
       },
@@ -2267,11 +2207,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 180,
-        "criticalLanded": 249,
-        "burstDPSLanded": 216,
-        "criticalCycleDPSLanded": 257,
-        "activeDPSLanded": 216
+        "normalLanded": 139,
+        "criticalLanded": 208,
+        "burstDPSLanded": 167,
+        "criticalCycleDPSLanded": 208,
+        "activeDPSLanded": 167
       }
     }
   },
@@ -2294,19 +2234,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 232,
+        "normal": 81,
+        "critical": 197,
         "explosiveBonus": 0,
-        "totalPerShot": 116,
-        "activeShotDamage": 116,
+        "totalPerShot": 81,
+        "activeShotDamage": 81,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "58"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Junkie's (4 Addictions)",
@@ -2330,9 +2266,9 @@
         "isQuad": true
       },
       "dps": {
-        "burstDPS": 1056,
-        "criticalCycleDPS": 1583,
-        "activeDPS": 1056,
+        "burstDPS": 737,
+        "criticalCycleDPS": 1265,
+        "activeDPS": 737,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -2384,13 +2320,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 45,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 3)",
-            "value": "45% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -2403,14 +2334,14 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 165,
-        "armorMitigationPct": 56,
-        "mitigationRatio": 0.44,
-        "normalLanded": 15,
-        "criticalLanded": 39,
-        "burstDPSLanded": 137,
-        "criticalCycleDPSLanded": 246,
-        "activeDPSLanded": 137
+        "effectiveDR": 300,
+        "armorMitigationPct": 69,
+        "mitigationRatio": 0.3103,
+        "normalLanded": 8,
+        "criticalLanded": 25,
+        "burstDPSLanded": 73,
+        "criticalCycleDPSLanded": 150,
+        "activeDPSLanded": 73
       }
     },
     "earle-williams": {
@@ -2431,19 +2362,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 232,
+        "normal": 81,
+        "critical": 197,
         "explosiveBonus": 0,
-        "totalPerShot": 116,
-        "activeShotDamage": 116,
+        "totalPerShot": 81,
+        "activeShotDamage": 81,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "58"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Junkie's (4 Addictions)",
@@ -2467,9 +2394,9 @@
         "isQuad": true
       },
       "dps": {
-        "burstDPS": 1056,
-        "criticalCycleDPS": 1583,
-        "activeDPS": 1056,
+        "burstDPS": 737,
+        "criticalCycleDPS": 1265,
+        "activeDPS": 737,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -2521,13 +2448,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 45,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 3)",
-            "value": "45% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -2540,14 +2462,14 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 165,
-        "armorMitigationPct": 56,
-        "mitigationRatio": 0.44,
-        "normalLanded": 10,
-        "criticalLanded": 26,
-        "burstDPSLanded": 91,
-        "criticalCycleDPSLanded": 164,
-        "activeDPSLanded": 91
+        "effectiveDR": 300,
+        "armorMitigationPct": 69,
+        "mitigationRatio": 0.3103,
+        "normalLanded": 5,
+        "criticalLanded": 17,
+        "burstDPSLanded": 46,
+        "criticalCycleDPSLanded": 100,
+        "activeDPSLanded": 46
       }
     },
     "ultracite-titan": {
@@ -2568,19 +2490,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 232,
+        "normal": 81,
+        "critical": 197,
         "explosiveBonus": 0,
-        "totalPerShot": 116,
-        "activeShotDamage": 116,
+        "totalPerShot": 81,
+        "activeShotDamage": 81,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "58"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Junkie's (4 Addictions)",
@@ -2604,9 +2522,9 @@
         "isQuad": true
       },
       "dps": {
-        "burstDPS": 1056,
-        "criticalCycleDPS": 1583,
-        "activeDPS": 1056,
+        "burstDPS": 737,
+        "criticalCycleDPS": 1265,
+        "activeDPS": 737,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -2658,13 +2576,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 45,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 3)",
-            "value": "45% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -2677,14 +2590,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 193,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4155,
-        "normalLanded": 12,
-        "criticalLanded": 31,
-        "burstDPSLanded": 109,
-        "criticalCycleDPSLanded": 196,
-        "activeDPSLanded": 109
+        "effectiveDR": 350,
+        "armorMitigationPct": 71,
+        "mitigationRatio": 0.2933,
+        "normalLanded": 6,
+        "criticalLanded": 20,
+        "burstDPSLanded": 55,
+        "criticalCycleDPSLanded": 118,
+        "activeDPSLanded": 55
       }
     },
     "level-100-super-mutant": {
@@ -2705,19 +2618,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 232,
+        "normal": 81,
+        "critical": 197,
         "explosiveBonus": 0,
-        "totalPerShot": 116,
-        "activeShotDamage": 116,
+        "totalPerShot": 81,
+        "activeShotDamage": 81,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "58"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Junkie's (4 Addictions)",
@@ -2741,9 +2650,9 @@
         "isQuad": true
       },
       "dps": {
-        "burstDPS": 1056,
-        "criticalCycleDPS": 1583,
-        "activeDPS": 1056,
+        "burstDPS": 737,
+        "criticalCycleDPS": 1265,
+        "activeDPS": 737,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -2795,13 +2704,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 45,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 3)",
-            "value": "45% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -2814,14 +2718,14 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 116,
-        "armorMitigationPct": 50,
-        "mitigationRatio": 0.5003,
-        "normalLanded": 58,
-        "criticalLanded": 150,
-        "burstDPSLanded": 528,
-        "criticalCycleDPSLanded": 946,
-        "activeDPSLanded": 528
+        "effectiveDR": 210,
+        "armorMitigationPct": 65,
+        "mitigationRatio": 0.35340000000000005,
+        "normalLanded": 29,
+        "criticalLanded": 96,
+        "burstDPSLanded": 264,
+        "criticalCycleDPSLanded": 569,
+        "activeDPSLanded": 264
       }
     },
     "raw-unarmored": {
@@ -2842,19 +2746,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 116,
-        "critical": 232,
+        "normal": 81,
+        "critical": 197,
         "explosiveBonus": 0,
-        "totalPerShot": 116,
-        "activeShotDamage": 116,
+        "totalPerShot": 81,
+        "activeShotDamage": 81,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "58"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Junkie's (4 Addictions)",
@@ -2878,9 +2778,9 @@
         "isQuad": true
       },
       "dps": {
-        "burstDPS": 1056,
-        "criticalCycleDPS": 1583,
-        "activeDPS": 1056,
+        "burstDPS": 737,
+        "criticalCycleDPS": 1265,
+        "activeDPS": 737,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -2932,13 +2832,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 45,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 3)",
-            "value": "45% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -2954,11 +2849,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 115,
-        "criticalLanded": 230,
-        "burstDPSLanded": 1047,
-        "criticalCycleDPSLanded": 1570,
-        "activeDPSLanded": 1047
+        "normalLanded": 80,
+        "criticalLanded": 195,
+        "burstDPSLanded": 728,
+        "criticalCycleDPSLanded": 1251,
+        "activeDPSLanded": 728
       }
     }
   },
@@ -2981,19 +2876,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 86,
-        "critical": 170,
+        "normal": 61,
+        "critical": 145,
         "explosiveBonus": 0,
-        "totalPerShot": 86,
-        "activeShotDamage": 86,
+        "totalPerShot": 61,
+        "activeShotDamage": 61,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "42"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Juggernaut's (100% HP)",
@@ -3021,9 +2912,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1709,
-        "criticalCycleDPS": 2544,
-        "activeDPS": 1709,
+        "burstDPS": 1212,
+        "criticalCycleDPS": 2047,
+        "activeDPS": 1212,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -3079,13 +2970,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 30,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 2)",
-            "value": "30% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -3098,14 +2984,14 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 210,
-        "armorMitigationPct": 64,
-        "mitigationRatio": 0.36119999999999997,
-        "normalLanded": 9,
-        "criticalLanded": 24,
-        "burstDPSLanded": 179,
-        "criticalCycleDPSLanded": 328,
-        "activeDPSLanded": 179
+        "effectiveDR": 300,
+        "armorMitigationPct": 72,
+        "mitigationRatio": 0.2797,
+        "normalLanded": 5,
+        "criticalLanded": 17,
+        "burstDPSLanded": 99,
+        "criticalCycleDPSLanded": 219,
+        "activeDPSLanded": 99
       }
     },
     "earle-williams": {
@@ -3126,19 +3012,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 86,
-        "critical": 170,
+        "normal": 61,
+        "critical": 145,
         "explosiveBonus": 0,
-        "totalPerShot": 86,
-        "activeShotDamage": 86,
+        "totalPerShot": 61,
+        "activeShotDamage": 61,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "42"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Juggernaut's (100% HP)",
@@ -3166,9 +3048,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1709,
-        "criticalCycleDPS": 2544,
-        "activeDPS": 1709,
+        "burstDPS": 1212,
+        "criticalCycleDPS": 2047,
+        "activeDPS": 1212,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -3224,13 +3106,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 30,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 2)",
-            "value": "30% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -3243,14 +3120,14 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 210,
-        "armorMitigationPct": 64,
-        "mitigationRatio": 0.36119999999999997,
-        "normalLanded": 6,
-        "criticalLanded": 16,
-        "burstDPSLanded": 119,
-        "criticalCycleDPSLanded": 219,
-        "activeDPSLanded": 119
+        "effectiveDR": 300,
+        "armorMitigationPct": 72,
+        "mitigationRatio": 0.2797,
+        "normalLanded": 3,
+        "criticalLanded": 11,
+        "burstDPSLanded": 60,
+        "criticalCycleDPSLanded": 139,
+        "activeDPSLanded": 60
       }
     },
     "ultracite-titan": {
@@ -3271,19 +3148,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 86,
-        "critical": 170,
+        "normal": 61,
+        "critical": 145,
         "explosiveBonus": 0,
-        "totalPerShot": 86,
-        "activeShotDamage": 86,
+        "totalPerShot": 61,
+        "activeShotDamage": 61,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "42"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Juggernaut's (100% HP)",
@@ -3311,9 +3184,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1709,
-        "criticalCycleDPS": 2544,
-        "activeDPS": 1709,
+        "burstDPS": 1212,
+        "criticalCycleDPS": 2047,
+        "activeDPS": 1212,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -3369,13 +3242,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 30,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 2)",
-            "value": "30% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -3388,14 +3256,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 245,
-        "armorMitigationPct": 66,
-        "mitigationRatio": 0.3414,
-        "normalLanded": 7,
-        "criticalLanded": 19,
-        "burstDPSLanded": 139,
-        "criticalCycleDPSLanded": 258,
-        "activeDPSLanded": 139
+        "effectiveDR": 350,
+        "armorMitigationPct": 74,
+        "mitigationRatio": 0.2644,
+        "normalLanded": 4,
+        "criticalLanded": 13,
+        "burstDPSLanded": 80,
+        "criticalCycleDPSLanded": 169,
+        "activeDPSLanded": 80
       }
     },
     "level-100-super-mutant": {
@@ -3416,19 +3284,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 86,
-        "critical": 170,
+        "normal": 61,
+        "critical": 145,
         "explosiveBonus": 0,
-        "totalPerShot": 86,
-        "activeShotDamage": 86,
+        "totalPerShot": 61,
+        "activeShotDamage": 61,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "42"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Juggernaut's (100% HP)",
@@ -3456,9 +3320,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1709,
-        "criticalCycleDPS": 2544,
-        "activeDPS": 1709,
+        "burstDPS": 1212,
+        "criticalCycleDPS": 2047,
+        "activeDPS": 1212,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -3514,13 +3378,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 30,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 2)",
-            "value": "30% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -3533,14 +3392,14 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 147,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.4114,
-        "normalLanded": 35,
-        "criticalLanded": 90,
-        "burstDPSLanded": 696,
-        "criticalCycleDPSLanded": 1242,
-        "activeDPSLanded": 696
+        "effectiveDR": 210,
+        "armorMitigationPct": 68,
+        "mitigationRatio": 0.3186,
+        "normalLanded": 19,
+        "criticalLanded": 63,
+        "burstDPSLanded": 378,
+        "criticalCycleDPSLanded": 815,
+        "activeDPSLanded": 378
       }
     },
     "raw-unarmored": {
@@ -3561,19 +3420,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 86,
-        "critical": 170,
+        "normal": 61,
+        "critical": 145,
         "explosiveBonus": 0,
-        "totalPerShot": 86,
-        "activeShotDamage": 86,
+        "totalPerShot": 61,
+        "activeShotDamage": 61,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "42"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+60%"
           },
           {
             "source": "Juggernaut's (100% HP)",
@@ -3601,9 +3456,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1709,
-        "criticalCycleDPS": 2544,
-        "activeDPS": 1709,
+        "burstDPS": 1212,
+        "criticalCycleDPS": 2047,
+        "activeDPS": 1212,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -3659,13 +3514,8 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 30,
-        "breakdown": [
-          {
-            "source": "Stabilized in PA (Rank 2)",
-            "value": "30% Penetration"
-          }
-        ]
+        "effectiveArmorPenetrationPct": 0,
+        "breakdown": []
       },
       "targetDummy": {
         "dummy": {
@@ -3681,11 +3531,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 85,
-        "criticalLanded": 168,
-        "burstDPSLanded": 1689,
-        "criticalCycleDPSLanded": 2514,
-        "activeDPSLanded": 1689
+        "normalLanded": 60,
+        "criticalLanded": 144,
+        "burstDPSLanded": 1193,
+        "criticalCycleDPSLanded": 2027,
+        "activeDPSLanded": 1193
       }
     }
   },
@@ -3711,20 +3561,16 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 429,
-        "secondary": 273,
-        "critical": 535,
+        "normal": 385,
+        "secondary": 245,
+        "critical": 491,
         "explosiveBonus": 26,
-        "totalPerShot": 455,
-        "activeShotDamage": 455,
+        "totalPerShot": 411,
+        "activeShotDamage": 411,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "80"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+20%"
           },
           {
             "source": "Two Shot (+75% Base, Patch 60)",
@@ -3732,7 +3578,7 @@
           },
           {
             "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
-            "value": "+273"
+            "value": "+245"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3752,9 +3598,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 683,
-        "criticalCycleDPS": 743,
-        "activeDPS": 683,
+        "burstDPS": 617,
+        "criticalCycleDPS": 677,
+        "activeDPS": 617,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3821,13 +3667,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 42,
-        "mitigationRatio": 0.5825,
-        "normalLanded": 80,
-        "criticalLanded": 99,
-        "burstDPSLanded": 120,
-        "criticalCycleDPSLanded": 134,
-        "activeDPSLanded": 120
+        "armorMitigationPct": 44,
+        "mitigationRatio": 0.5613,
+        "normalLanded": 69,
+        "criticalLanded": 88,
+        "burstDPSLanded": 104,
+        "criticalCycleDPSLanded": 118,
+        "activeDPSLanded": 104
       }
     },
     "earle-williams": {
@@ -3851,20 +3697,16 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 429,
-        "secondary": 273,
-        "critical": 535,
+        "normal": 385,
+        "secondary": 245,
+        "critical": 491,
         "explosiveBonus": 26,
-        "totalPerShot": 455,
-        "activeShotDamage": 455,
+        "totalPerShot": 411,
+        "activeShotDamage": 411,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "80"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+20%"
           },
           {
             "source": "Two Shot (+75% Base, Patch 60)",
@@ -3872,7 +3714,7 @@
           },
           {
             "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
-            "value": "+273"
+            "value": "+245"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -3892,9 +3734,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 683,
-        "criticalCycleDPS": 743,
-        "activeDPS": 683,
+        "burstDPS": 617,
+        "criticalCycleDPS": 677,
+        "activeDPS": 617,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -3961,13 +3803,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 42,
-        "mitigationRatio": 0.5825,
-        "normalLanded": 53,
-        "criticalLanded": 66,
-        "burstDPSLanded": 80,
-        "criticalCycleDPSLanded": 89,
-        "activeDPSLanded": 80
+        "armorMitigationPct": 44,
+        "mitigationRatio": 0.5613,
+        "normalLanded": 46,
+        "criticalLanded": 59,
+        "burstDPSLanded": 69,
+        "criticalCycleDPSLanded": 79,
+        "activeDPSLanded": 69
       }
     },
     "ultracite-titan": {
@@ -3991,20 +3833,16 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 429,
-        "secondary": 273,
-        "critical": 535,
+        "normal": 385,
+        "secondary": 245,
+        "critical": 491,
         "explosiveBonus": 26,
-        "totalPerShot": 455,
-        "activeShotDamage": 455,
+        "totalPerShot": 411,
+        "activeShotDamage": 411,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "80"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+20%"
           },
           {
             "source": "Two Shot (+75% Base, Patch 60)",
@@ -4012,7 +3850,7 @@
           },
           {
             "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
-            "value": "+273"
+            "value": "+245"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -4032,9 +3870,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 683,
-        "criticalCycleDPS": 743,
-        "activeDPS": 683,
+        "burstDPS": 617,
+        "criticalCycleDPS": 677,
+        "activeDPS": 617,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4101,13 +3939,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 45,
-        "mitigationRatio": 0.5506,
-        "normalLanded": 63,
-        "criticalLanded": 78,
-        "burstDPSLanded": 95,
-        "criticalCycleDPSLanded": 106,
-        "activeDPSLanded": 95
+        "armorMitigationPct": 47,
+        "mitigationRatio": 0.5306000000000001,
+        "normalLanded": 55,
+        "criticalLanded": 70,
+        "burstDPSLanded": 83,
+        "criticalCycleDPSLanded": 94,
+        "activeDPSLanded": 83
       }
     },
     "level-100-super-mutant": {
@@ -4131,20 +3969,16 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 429,
-        "secondary": 273,
-        "critical": 535,
+        "normal": 385,
+        "secondary": 245,
+        "critical": 491,
         "explosiveBonus": 26,
-        "totalPerShot": 455,
-        "activeShotDamage": 455,
+        "totalPerShot": 411,
+        "activeShotDamage": 411,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "80"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+20%"
           },
           {
             "source": "Two Shot (+75% Base, Patch 60)",
@@ -4152,7 +3986,7 @@
           },
           {
             "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
-            "value": "+273"
+            "value": "+245"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -4172,9 +4006,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 683,
-        "criticalCycleDPS": 743,
-        "activeDPS": 683,
+        "burstDPS": 617,
+        "criticalCycleDPS": 677,
+        "activeDPS": 617,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4241,13 +4075,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 34,
-        "mitigationRatio": 0.6635,
-        "normalLanded": 302,
-        "criticalLanded": 377,
-        "burstDPSLanded": 453,
-        "criticalCycleDPSLanded": 509,
-        "activeDPSLanded": 453
+        "armorMitigationPct": 36,
+        "mitigationRatio": 0.6393,
+        "normalLanded": 263,
+        "criticalLanded": 335,
+        "burstDPSLanded": 395,
+        "criticalCycleDPSLanded": 449,
+        "activeDPSLanded": 395
       }
     },
     "raw-unarmored": {
@@ -4271,20 +4105,16 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 429,
-        "secondary": 273,
-        "critical": 535,
+        "normal": 385,
+        "secondary": 245,
+        "critical": 491,
         "explosiveBonus": 26,
-        "totalPerShot": 455,
-        "activeShotDamage": 455,
+        "totalPerShot": 411,
+        "activeShotDamage": 411,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "80"
-          },
-          {
-            "source": "Heavy Gunner Perks (Legacy)",
-            "value": "+20%"
           },
           {
             "source": "Two Shot (+75% Base, Patch 60)",
@@ -4292,7 +4122,7 @@
           },
           {
             "source": "Secondary fire damage (140 base, same additive pool, no body-part or crit multiplier)",
-            "value": "+273"
+            "value": "+245"
           },
           {
             "source": "Explosive Impact (Demo Exp Rank 5)",
@@ -4312,9 +4142,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 683,
-        "criticalCycleDPS": 743,
-        "activeDPS": 683,
+        "burstDPS": 617,
+        "criticalCycleDPS": 677,
+        "activeDPS": 617,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4383,11 +4213,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 450,
-        "criticalLanded": 530,
-        "burstDPSLanded": 675,
-        "criticalCycleDPSLanded": 735,
-        "activeDPSLanded": 675
+        "normalLanded": 407,
+        "criticalLanded": 486,
+        "burstDPSLanded": 611,
+        "criticalCycleDPSLanded": 670,
+        "activeDPSLanded": 611
       }
     }
   },
@@ -4410,19 +4240,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 234,
-        "critical": 324,
+        "normal": 180,
+        "critical": 270,
         "explosiveBonus": 0,
-        "totalPerShot": 234,
-        "activeShotDamage": 234,
+        "totalPerShot": 180,
+        "activeShotDamage": 180,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "90"
-          },
-          {
-            "source": "Shotgunner Perks",
-            "value": "+60%"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -4450,9 +4276,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 819,
-        "criticalCycleDPS": 977,
-        "activeDPS": 819,
+        "burstDPS": 630,
+        "criticalCycleDPS": 788,
+        "activeDPS": 630,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4519,13 +4345,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 54,
-        "mitigationRatio": 0.457,
-        "normalLanded": 32,
-        "criticalLanded": 50,
-        "burstDPSLanded": 112,
-        "criticalCycleDPSLanded": 144,
-        "activeDPSLanded": 112
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4152,
+        "normalLanded": 22,
+        "criticalLanded": 39,
+        "burstDPSLanded": 77,
+        "criticalCycleDPSLanded": 107,
+        "activeDPSLanded": 77
       }
     },
     "earle-williams": {
@@ -4546,19 +4372,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 234,
-        "critical": 324,
+        "normal": 180,
+        "critical": 270,
         "explosiveBonus": 0,
-        "totalPerShot": 234,
-        "activeShotDamage": 234,
+        "totalPerShot": 180,
+        "activeShotDamage": 180,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "90"
-          },
-          {
-            "source": "Shotgunner Perks",
-            "value": "+60%"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -4586,9 +4408,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 819,
-        "criticalCycleDPS": 977,
-        "activeDPS": 819,
+        "burstDPS": 630,
+        "criticalCycleDPS": 788,
+        "activeDPS": 630,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4655,13 +4477,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 54,
-        "mitigationRatio": 0.457,
-        "normalLanded": 21,
-        "criticalLanded": 33,
-        "burstDPSLanded": 74,
-        "criticalCycleDPSLanded": 95,
-        "activeDPSLanded": 74
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4152,
+        "normalLanded": 15,
+        "criticalLanded": 26,
+        "burstDPSLanded": 53,
+        "criticalCycleDPSLanded": 72,
+        "activeDPSLanded": 53
       }
     },
     "ultracite-titan": {
@@ -4682,19 +4504,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 234,
-        "critical": 324,
+        "normal": 180,
+        "critical": 270,
         "explosiveBonus": 0,
-        "totalPerShot": 234,
-        "activeShotDamage": 234,
+        "totalPerShot": 180,
+        "activeShotDamage": 180,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "90"
-          },
-          {
-            "source": "Shotgunner Perks",
-            "value": "+60%"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -4722,9 +4540,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 819,
-        "criticalCycleDPS": 977,
-        "activeDPS": 819,
+        "burstDPS": 630,
+        "criticalCycleDPS": 788,
+        "activeDPS": 630,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4791,13 +4609,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 57,
-        "mitigationRatio": 0.43200000000000005,
-        "normalLanded": 25,
-        "criticalLanded": 39,
-        "burstDPSLanded": 88,
-        "criticalCycleDPSLanded": 112,
-        "activeDPSLanded": 88
+        "armorMitigationPct": 61,
+        "mitigationRatio": 0.3925,
+        "normalLanded": 18,
+        "criticalLanded": 31,
+        "burstDPSLanded": 63,
+        "criticalCycleDPSLanded": 86,
+        "activeDPSLanded": 63
       }
     },
     "level-100-super-mutant": {
@@ -4818,19 +4636,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 234,
-        "critical": 324,
+        "normal": 180,
+        "critical": 270,
         "explosiveBonus": 0,
-        "totalPerShot": 234,
-        "activeShotDamage": 234,
+        "totalPerShot": 180,
+        "activeShotDamage": 180,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "90"
-          },
-          {
-            "source": "Shotgunner Perks",
-            "value": "+60%"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -4858,9 +4672,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 819,
-        "criticalCycleDPS": 977,
-        "activeDPS": 819,
+        "burstDPS": 630,
+        "criticalCycleDPS": 788,
+        "activeDPS": 630,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -4927,13 +4741,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 48,
-        "mitigationRatio": 0.5205,
-        "normalLanded": 122,
-        "criticalLanded": 190,
-        "burstDPSLanded": 427,
-        "criticalCycleDPSLanded": 546,
-        "activeDPSLanded": 427
+        "armorMitigationPct": 53,
+        "mitigationRatio": 0.473,
+        "normalLanded": 85,
+        "criticalLanded": 148,
+        "burstDPSLanded": 298,
+        "criticalCycleDPSLanded": 408,
+        "activeDPSLanded": 298
       }
     },
     "raw-unarmored": {
@@ -4954,19 +4768,15 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 234,
-        "critical": 324,
+        "normal": 180,
+        "critical": 270,
         "explosiveBonus": 0,
-        "totalPerShot": 234,
-        "activeShotDamage": 234,
+        "totalPerShot": 180,
+        "activeShotDamage": 180,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "90"
-          },
-          {
-            "source": "Shotgunner Perks",
-            "value": "+60%"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -4994,9 +4804,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 819,
-        "criticalCycleDPS": 977,
-        "activeDPS": 819,
+        "burstDPS": 630,
+        "criticalCycleDPS": 788,
+        "activeDPS": 630,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -5065,11 +4875,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 232,
-        "criticalLanded": 321,
-        "burstDPSLanded": 812,
-        "criticalCycleDPSLanded": 968,
-        "activeDPSLanded": 812
+        "normalLanded": 178,
+        "criticalLanded": 267,
+        "burstDPSLanded": 623,
+        "criticalCycleDPSLanded": 779,
+        "activeDPSLanded": 623
       }
     }
   },
@@ -5187,11 +4997,11 @@
         ]
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -5206,13 +5016,13 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 192,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.4056,
+        "effectiveDR": 180,
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4152,
         "normalLanded": 13,
-        "criticalLanded": 26,
+        "criticalLanded": 27,
         "burstDPSLanded": 39,
-        "criticalCycleDPSLanded": 59,
+        "criticalCycleDPSLanded": 60,
         "activeDPSLanded": 39
       }
     },
@@ -5329,11 +5139,11 @@
         ]
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -5348,9 +5158,9 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 192,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.4056,
+        "effectiveDR": 180,
+        "armorMitigationPct": 58,
+        "mitigationRatio": 0.4152,
         "normalLanded": 9,
         "criticalLanded": 18,
         "burstDPSLanded": 27,
@@ -5471,11 +5281,11 @@
         ]
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -5490,14 +5300,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 224,
-        "armorMitigationPct": 62,
-        "mitigationRatio": 0.3834,
-        "normalLanded": 10,
+        "effectiveDR": 210,
+        "armorMitigationPct": 61,
+        "mitigationRatio": 0.3925,
+        "normalLanded": 11,
         "criticalLanded": 21,
-        "burstDPSLanded": 30,
-        "criticalCycleDPSLanded": 47,
-        "activeDPSLanded": 30
+        "burstDPSLanded": 33,
+        "criticalCycleDPSLanded": 48,
+        "activeDPSLanded": 33
       }
     },
     "level-100-super-mutant": {
@@ -5613,11 +5423,11 @@
         ]
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -5632,14 +5442,14 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 134,
-        "armorMitigationPct": 54,
-        "mitigationRatio": 0.4625,
-        "normalLanded": 50,
-        "criticalLanded": 100,
-        "burstDPSLanded": 150,
-        "criticalCycleDPSLanded": 225,
-        "activeDPSLanded": 150
+        "effectiveDR": 126,
+        "armorMitigationPct": 53,
+        "mitigationRatio": 0.473,
+        "normalLanded": 51,
+        "criticalLanded": 103,
+        "burstDPSLanded": 153,
+        "criticalCycleDPSLanded": 231,
+        "activeDPSLanded": 153
       }
     },
     "raw-unarmored": {
@@ -5755,11 +5565,11 @@
         ]
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Tank Killer (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Tank Killer (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -5804,11 +5614,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 189,
+        "normal": 136,
+        "critical": 174,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 136,
+        "activeShotDamage": 136,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -5817,10 +5627,6 @@
           {
             "source": "Slugger (Rank 3 vs Crippled)",
             "value": "+30%"
-          },
-          {
-            "source": "Legacy Slugger Perks",
-            "value": "+40%"
           },
           {
             "source": "Strength (30)",
@@ -5848,9 +5654,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1208,
-        "criticalCycleDPS": 1360,
-        "activeDPS": 1208,
+        "burstDPS": 1088,
+        "criticalCycleDPS": 1240,
+        "activeDPS": 1088,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -5930,13 +5736,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 30,
-        "armorMitigationPct": 10,
-        "mitigationRatio": 0.9025,
-        "normalLanded": 41,
-        "criticalLanded": 56,
-        "burstDPSLanded": 328,
-        "criticalCycleDPSLanded": 388,
-        "activeDPSLanded": 328
+        "armorMitigationPct": 13,
+        "mitigationRatio": 0.8687,
+        "normalLanded": 35,
+        "criticalLanded": 50,
+        "burstDPSLanded": 280,
+        "criticalCycleDPSLanded": 340,
+        "activeDPSLanded": 280
       }
     },
     "earle-williams": {
@@ -5957,11 +5763,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 189,
+        "normal": 136,
+        "critical": 174,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 136,
+        "activeShotDamage": 136,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -5970,10 +5776,6 @@
           {
             "source": "Slugger (Rank 3 vs Crippled)",
             "value": "+30%"
-          },
-          {
-            "source": "Legacy Slugger Perks",
-            "value": "+40%"
           },
           {
             "source": "Strength (30)",
@@ -6001,9 +5803,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1208,
-        "criticalCycleDPS": 1360,
-        "activeDPS": 1208,
+        "burstDPS": 1088,
+        "criticalCycleDPS": 1240,
+        "activeDPS": 1088,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -6083,13 +5885,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 30,
-        "armorMitigationPct": 10,
-        "mitigationRatio": 0.9025,
-        "normalLanded": 27,
-        "criticalLanded": 37,
-        "burstDPSLanded": 216,
-        "criticalCycleDPSLanded": 256,
-        "activeDPSLanded": 216
+        "armorMitigationPct": 13,
+        "mitigationRatio": 0.8687,
+        "normalLanded": 24,
+        "criticalLanded": 33,
+        "burstDPSLanded": 192,
+        "criticalCycleDPSLanded": 228,
+        "activeDPSLanded": 192
       }
     },
     "ultracite-titan": {
@@ -6110,11 +5912,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 189,
+        "normal": 136,
+        "critical": 174,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 136,
+        "activeShotDamage": 136,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -6123,10 +5925,6 @@
           {
             "source": "Slugger (Rank 3 vs Crippled)",
             "value": "+30%"
-          },
-          {
-            "source": "Legacy Slugger Perks",
-            "value": "+40%"
           },
           {
             "source": "Strength (30)",
@@ -6154,9 +5952,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1208,
-        "criticalCycleDPS": 1360,
-        "activeDPS": 1208,
+        "burstDPS": 1088,
+        "criticalCycleDPS": 1240,
+        "activeDPS": 1088,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -6236,13 +6034,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 35,
-        "armorMitigationPct": 15,
-        "mitigationRatio": 0.8531,
-        "normalLanded": 32,
-        "criticalLanded": 44,
-        "burstDPSLanded": 256,
-        "criticalCycleDPSLanded": 304,
-        "activeDPSLanded": 256
+        "armorMitigationPct": 18,
+        "mitigationRatio": 0.8212,
+        "normalLanded": 28,
+        "criticalLanded": 39,
+        "burstDPSLanded": 224,
+        "criticalCycleDPSLanded": 268,
+        "activeDPSLanded": 224
       }
     },
     "level-100-super-mutant": {
@@ -6263,11 +6061,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 189,
+        "normal": 136,
+        "critical": 174,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 136,
+        "activeShotDamage": 136,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -6276,10 +6074,6 @@
           {
             "source": "Slugger (Rank 3 vs Crippled)",
             "value": "+30%"
-          },
-          {
-            "source": "Legacy Slugger Perks",
-            "value": "+40%"
           },
           {
             "source": "Strength (30)",
@@ -6307,9 +6101,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1208,
-        "criticalCycleDPS": 1360,
-        "activeDPS": 1208,
+        "burstDPS": 1088,
+        "criticalCycleDPS": 1240,
+        "activeDPS": 1088,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -6390,12 +6184,12 @@
         },
         "effectiveDR": 21,
         "armorMitigationPct": 1,
-        "mitigationRatio": 0.99,
-        "normalLanded": 149,
-        "criticalLanded": 187,
-        "burstDPSLanded": 1192,
-        "criticalCycleDPSLanded": 1344,
-        "activeDPSLanded": 1192
+        "mitigationRatio": 0.9895,
+        "normalLanded": 135,
+        "criticalLanded": 172,
+        "burstDPSLanded": 1080,
+        "criticalCycleDPSLanded": 1228,
+        "activeDPSLanded": 1080
       }
     },
     "raw-unarmored": {
@@ -6416,11 +6210,11 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 151,
-        "critical": 189,
+        "normal": 136,
+        "critical": 174,
         "explosiveBonus": 0,
-        "totalPerShot": 151,
-        "activeShotDamage": 151,
+        "totalPerShot": 136,
+        "activeShotDamage": 136,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
@@ -6429,10 +6223,6 @@
           {
             "source": "Slugger (Rank 3 vs Crippled)",
             "value": "+30%"
-          },
-          {
-            "source": "Legacy Slugger Perks",
-            "value": "+40%"
           },
           {
             "source": "Strength (30)",
@@ -6460,9 +6250,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1208,
-        "criticalCycleDPS": 1360,
-        "activeDPS": 1208,
+        "burstDPS": 1088,
+        "criticalCycleDPS": 1240,
+        "activeDPS": 1088,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -6544,11 +6334,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 149,
-        "criticalLanded": 187,
-        "burstDPSLanded": 1192,
-        "criticalCycleDPSLanded": 1344,
-        "activeDPSLanded": 1192
+        "normalLanded": 135,
+        "criticalLanded": 172,
+        "burstDPSLanded": 1080,
+        "criticalCycleDPSLanded": 1228,
+        "activeDPSLanded": 1080
       }
     }
   },
@@ -6571,19 +6361,19 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 264,
-        "critical": 353,
+        "normal": 253,
+        "critical": 342,
         "explosiveBonus": 0,
-        "totalPerShot": 264,
-        "activeShotDamage": 264,
+        "totalPerShot": 253,
+        "activeShotDamage": 253,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "55"
           },
           {
-            "source": "Iron Fist (Rank 3)",
-            "value": "+20%"
+            "source": "Iron Fist",
+            "value": "needs Damage Resistance"
           },
           {
             "source": "Unarmed Strength 10% (35)",
@@ -6615,9 +6405,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 528,
-        "criticalCycleDPS": 617,
-        "activeDPS": 528,
+        "burstDPS": 506,
+        "criticalCycleDPS": 595,
+        "activeDPS": 506,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -6689,13 +6479,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 75,
-        "armorMitigationPct": 21,
-        "mitigationRatio": 0.7920999999999999,
-        "normalLanded": 63,
-        "criticalLanded": 93,
-        "burstDPSLanded": 126,
-        "criticalCycleDPSLanded": 156,
-        "activeDPSLanded": 126
+        "armorMitigationPct": 22,
+        "mitigationRatio": 0.7798999999999999,
+        "normalLanded": 59,
+        "criticalLanded": 89,
+        "burstDPSLanded": 118,
+        "criticalCycleDPSLanded": 148,
+        "activeDPSLanded": 118
       }
     },
     "earle-williams": {
@@ -6716,19 +6506,19 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 264,
-        "critical": 353,
+        "normal": 253,
+        "critical": 342,
         "explosiveBonus": 0,
-        "totalPerShot": 264,
-        "activeShotDamage": 264,
+        "totalPerShot": 253,
+        "activeShotDamage": 253,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "55"
           },
           {
-            "source": "Iron Fist (Rank 3)",
-            "value": "+20%"
+            "source": "Iron Fist",
+            "value": "needs Damage Resistance"
           },
           {
             "source": "Unarmed Strength 10% (35)",
@@ -6760,9 +6550,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 528,
-        "criticalCycleDPS": 617,
-        "activeDPS": 528,
+        "burstDPS": 506,
+        "criticalCycleDPS": 595,
+        "activeDPS": 506,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -6834,13 +6624,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 75,
-        "armorMitigationPct": 21,
-        "mitigationRatio": 0.7920999999999999,
-        "normalLanded": 42,
-        "criticalLanded": 62,
-        "burstDPSLanded": 84,
-        "criticalCycleDPSLanded": 104,
-        "activeDPSLanded": 84
+        "armorMitigationPct": 22,
+        "mitigationRatio": 0.7798999999999999,
+        "normalLanded": 39,
+        "criticalLanded": 60,
+        "burstDPSLanded": 78,
+        "criticalCycleDPSLanded": 99,
+        "activeDPSLanded": 78
       }
     },
     "ultracite-titan": {
@@ -6861,19 +6651,19 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 264,
-        "critical": 353,
+        "normal": 253,
+        "critical": 342,
         "explosiveBonus": 0,
-        "totalPerShot": 264,
-        "activeShotDamage": 264,
+        "totalPerShot": 253,
+        "activeShotDamage": 253,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "55"
           },
           {
-            "source": "Iron Fist (Rank 3)",
-            "value": "+20%"
+            "source": "Iron Fist",
+            "value": "needs Damage Resistance"
           },
           {
             "source": "Unarmed Strength 10% (35)",
@@ -6905,9 +6695,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 528,
-        "criticalCycleDPS": 617,
-        "activeDPS": 528,
+        "burstDPS": 506,
+        "criticalCycleDPS": 595,
+        "activeDPS": 506,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -6979,13 +6769,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 88,
-        "armorMitigationPct": 25,
-        "mitigationRatio": 0.7472,
-        "normalLanded": 49,
-        "criticalLanded": 73,
-        "burstDPSLanded": 98,
-        "criticalCycleDPSLanded": 122,
-        "activeDPSLanded": 98
+        "armorMitigationPct": 26,
+        "mitigationRatio": 0.7356999999999999,
+        "normalLanded": 47,
+        "criticalLanded": 70,
+        "burstDPSLanded": 94,
+        "criticalCycleDPSLanded": 117,
+        "activeDPSLanded": 94
       }
     },
     "level-100-super-mutant": {
@@ -7006,19 +6796,19 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 264,
-        "critical": 353,
+        "normal": 253,
+        "critical": 342,
         "explosiveBonus": 0,
-        "totalPerShot": 264,
-        "activeShotDamage": 264,
+        "totalPerShot": 253,
+        "activeShotDamage": 253,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "55"
           },
           {
-            "source": "Iron Fist (Rank 3)",
-            "value": "+20%"
+            "source": "Iron Fist",
+            "value": "needs Damage Resistance"
           },
           {
             "source": "Unarmed Strength 10% (35)",
@@ -7050,9 +6840,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 528,
-        "criticalCycleDPS": 617,
-        "activeDPS": 528,
+        "burstDPS": 506,
+        "criticalCycleDPS": 595,
+        "activeDPS": 506,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -7124,13 +6914,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 53,
-        "armorMitigationPct": 10,
-        "mitigationRatio": 0.8991,
-        "normalLanded": 237,
-        "criticalLanded": 349,
-        "burstDPSLanded": 474,
-        "criticalCycleDPSLanded": 586,
-        "activeDPSLanded": 474
+        "armorMitigationPct": 11,
+        "mitigationRatio": 0.8852,
+        "normalLanded": 224,
+        "criticalLanded": 338,
+        "burstDPSLanded": 448,
+        "criticalCycleDPSLanded": 562,
+        "activeDPSLanded": 448
       }
     },
     "raw-unarmored": {
@@ -7151,19 +6941,19 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 264,
-        "critical": 353,
+        "normal": 253,
+        "critical": 342,
         "explosiveBonus": 0,
-        "totalPerShot": 264,
-        "activeShotDamage": 264,
+        "totalPerShot": 253,
+        "activeShotDamage": 253,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "55"
           },
           {
-            "source": "Iron Fist (Rank 3)",
-            "value": "+20%"
+            "source": "Iron Fist",
+            "value": "needs Damage Resistance"
           },
           {
             "source": "Unarmed Strength 10% (35)",
@@ -7195,9 +6985,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 528,
-        "criticalCycleDPS": 617,
-        "activeDPS": 528,
+        "burstDPS": 506,
+        "criticalCycleDPS": 595,
+        "activeDPS": 506,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -7271,11 +7061,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 261,
-        "criticalLanded": 349,
-        "burstDPSLanded": 522,
-        "criticalCycleDPSLanded": 610,
-        "activeDPSLanded": 522
+        "normalLanded": 250,
+        "criticalLanded": 339,
+        "burstDPSLanded": 500,
+        "criticalCycleDPSLanded": 589,
+        "activeDPSLanded": 500
       }
     }
   },
@@ -7298,27 +7088,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 396,
-        "critical": 506,
+        "normal": 660,
+        "critical": 1320,
         "explosiveBonus": 0,
-        "totalPerShot": 396,
-        "activeShotDamage": 396,
+        "totalPerShot": 660,
+        "activeShotDamage": 660,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "110"
           },
           {
-            "source": "Archer Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Stalker's (Crouched / Stealthed)",
-            "value": "+100% Sneak Attack"
+            "value": "×2.00 Sneak Attack"
           },
           {
-            "source": "Sneak Attack (2× Multiplier)",
-            "value": "+100%"
+            "source": "Sneak Attack (Ninja 2)",
+            "value": "×3"
           }
         ]
       },
@@ -7334,9 +7120,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 317,
-        "criticalCycleDPS": 361,
-        "activeDPS": 317,
+        "burstDPS": 528,
+        "criticalCycleDPS": 792,
+        "activeDPS": 528,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -7388,11 +7174,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Bow Before Me (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Bow Before Me (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -7407,14 +7193,14 @@
           "flatDamageReductionPct": 0.7,
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
-        "effectiveDR": 192,
-        "armorMitigationPct": 35,
-        "mitigationRatio": 0.6517000000000001,
-        "normalLanded": 77,
-        "criticalLanded": 108,
-        "burstDPSLanded": 62,
-        "criticalCycleDPSLanded": 74,
-        "activeDPSLanded": 62
+        "effectiveDR": 180,
+        "armorMitigationPct": 20,
+        "mitigationRatio": 0.804,
+        "normalLanded": 159,
+        "criticalLanded": 392,
+        "burstDPSLanded": 127,
+        "criticalCycleDPSLanded": 220,
+        "activeDPSLanded": 127
       }
     },
     "earle-williams": {
@@ -7435,27 +7221,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 396,
-        "critical": 506,
+        "normal": 660,
+        "critical": 1320,
         "explosiveBonus": 0,
-        "totalPerShot": 396,
-        "activeShotDamage": 396,
+        "totalPerShot": 660,
+        "activeShotDamage": 660,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "110"
           },
           {
-            "source": "Archer Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Stalker's (Crouched / Stealthed)",
-            "value": "+100% Sneak Attack"
+            "value": "×2.00 Sneak Attack"
           },
           {
-            "source": "Sneak Attack (2× Multiplier)",
-            "value": "+100%"
+            "source": "Sneak Attack (Ninja 2)",
+            "value": "×3"
           }
         ]
       },
@@ -7471,9 +7253,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 317,
-        "criticalCycleDPS": 361,
-        "activeDPS": 317,
+        "burstDPS": 528,
+        "criticalCycleDPS": 792,
+        "activeDPS": 528,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -7525,11 +7307,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Bow Before Me (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Bow Before Me (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -7544,14 +7326,14 @@
           "flatDamageReductionPct": 0.8,
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
-        "effectiveDR": 192,
-        "armorMitigationPct": 35,
-        "mitigationRatio": 0.6517000000000001,
-        "normalLanded": 52,
-        "criticalLanded": 72,
-        "burstDPSLanded": 42,
-        "criticalCycleDPSLanded": 50,
-        "activeDPSLanded": 42
+        "effectiveDR": 180,
+        "armorMitigationPct": 20,
+        "mitigationRatio": 0.804,
+        "normalLanded": 106,
+        "criticalLanded": 261,
+        "burstDPSLanded": 85,
+        "criticalCycleDPSLanded": 147,
+        "activeDPSLanded": 85
       }
     },
     "ultracite-titan": {
@@ -7572,27 +7354,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 396,
-        "critical": 506,
+        "normal": 660,
+        "critical": 1320,
         "explosiveBonus": 0,
-        "totalPerShot": 396,
-        "activeShotDamage": 396,
+        "totalPerShot": 660,
+        "activeShotDamage": 660,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "110"
           },
           {
-            "source": "Archer Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Stalker's (Crouched / Stealthed)",
-            "value": "+100% Sneak Attack"
+            "value": "×2.00 Sneak Attack"
           },
           {
-            "source": "Sneak Attack (2× Multiplier)",
-            "value": "+100%"
+            "source": "Sneak Attack (Ninja 2)",
+            "value": "×3"
           }
         ]
       },
@@ -7608,9 +7386,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 317,
-        "criticalCycleDPS": 361,
-        "activeDPS": 317,
+        "burstDPS": 528,
+        "criticalCycleDPS": 792,
+        "activeDPS": 528,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -7662,11 +7440,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Bow Before Me (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Bow Before Me (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -7681,14 +7459,14 @@
           "flatDamageReductionPct": 0.75,
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
-        "effectiveDR": 224,
-        "armorMitigationPct": 38,
-        "mitigationRatio": 0.616,
-        "normalLanded": 61,
-        "criticalLanded": 85,
-        "burstDPSLanded": 49,
-        "criticalCycleDPSLanded": 58,
-        "activeDPSLanded": 49
+        "effectiveDR": 210,
+        "armorMitigationPct": 24,
+        "mitigationRatio": 0.76,
+        "normalLanded": 125,
+        "criticalLanded": 323,
+        "burstDPSLanded": 100,
+        "criticalCycleDPSLanded": 179,
+        "activeDPSLanded": 100
       }
     },
     "level-100-super-mutant": {
@@ -7709,27 +7487,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 396,
-        "critical": 506,
+        "normal": 660,
+        "critical": 1320,
         "explosiveBonus": 0,
-        "totalPerShot": 396,
-        "activeShotDamage": 396,
+        "totalPerShot": 660,
+        "activeShotDamage": 660,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "110"
           },
           {
-            "source": "Archer Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Stalker's (Crouched / Stealthed)",
-            "value": "+100% Sneak Attack"
+            "value": "×2.00 Sneak Attack"
           },
           {
-            "source": "Sneak Attack (2× Multiplier)",
-            "value": "+100%"
+            "source": "Sneak Attack (Ninja 2)",
+            "value": "×3"
           }
         ]
       },
@@ -7745,9 +7519,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 317,
-        "criticalCycleDPS": 361,
-        "activeDPS": 317,
+        "burstDPS": 528,
+        "criticalCycleDPS": 792,
+        "activeDPS": 528,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -7799,11 +7573,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Bow Before Me (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Bow Before Me (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -7818,14 +7592,14 @@
           "flatDamageReductionPct": 0,
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
-        "effectiveDR": 134,
-        "armorMitigationPct": 26,
-        "mitigationRatio": 0.7431,
-        "normalLanded": 294,
-        "criticalLanded": 411,
-        "burstDPSLanded": 235,
-        "criticalCycleDPSLanded": 282,
-        "activeDPSLanded": 235
+        "effectiveDR": 126,
+        "armorMitigationPct": 8,
+        "mitigationRatio": 0.9157,
+        "normalLanded": 604,
+        "criticalLanded": 1307,
+        "burstDPSLanded": 483,
+        "criticalCycleDPSLanded": 764,
+        "activeDPSLanded": 483
       }
     },
     "raw-unarmored": {
@@ -7846,27 +7620,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 396,
-        "critical": 506,
+        "normal": 660,
+        "critical": 1320,
         "explosiveBonus": 0,
-        "totalPerShot": 396,
-        "activeShotDamage": 396,
+        "totalPerShot": 660,
+        "activeShotDamage": 660,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "110"
           },
           {
-            "source": "Archer Perks",
-            "value": "+60%"
-          },
-          {
             "source": "Stalker's (Crouched / Stealthed)",
-            "value": "+100% Sneak Attack"
+            "value": "×2.00 Sneak Attack"
           },
           {
-            "source": "Sneak Attack (2× Multiplier)",
-            "value": "+100%"
+            "source": "Sneak Attack (Ninja 2)",
+            "value": "×3"
           }
         ]
       },
@@ -7882,9 +7652,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 317,
-        "criticalCycleDPS": 361,
-        "activeDPS": 317,
+        "burstDPS": 528,
+        "criticalCycleDPS": 792,
+        "activeDPS": 528,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -7936,11 +7706,11 @@
         "breakdown": []
       },
       "armorPenetration": {
-        "effectiveArmorPenetrationPct": 36,
+        "effectiveArmorPenetrationPct": 40,
         "breakdown": [
           {
-            "source": "Bow Before Me (Rank 3)",
-            "value": "36% Penetration"
+            "source": "Bow Before Me (Rank 2)",
+            "value": "40% Penetration"
           }
         ]
       },
@@ -7958,11 +7728,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 392,
-        "criticalLanded": 501,
-        "burstDPSLanded": 314,
-        "criticalCycleDPSLanded": 357,
-        "activeDPSLanded": 314
+        "normalLanded": 653,
+        "criticalLanded": 1307,
+        "burstDPSLanded": 522,
+        "criticalCycleDPSLanded": 784,
+        "activeDPSLanded": 522
       }
     }
   },
@@ -7985,27 +7755,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 190,
-        "critical": 238,
+        "normal": 252,
+        "critical": 504,
         "explosiveBonus": 0,
-        "totalPerShot": 190,
-        "activeShotDamage": 190,
+        "totalPerShot": 252,
+        "activeShotDamage": 252,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+20%"
-          },
-          {
             "source": "Nocturnal (Crouched / Stealthed)",
-            "value": "+50%"
+            "value": "×1.50"
           },
           {
-            "source": "Sneak Attack (Mister Sandman (Silenced) 3.25× Multiplier)",
-            "value": "+225%"
+            "source": "Sneak Attack (Covert Operative 3, Mister Sandman 2 (Silenced))",
+            "value": "×3.5"
           }
         ]
       },
@@ -8021,9 +7787,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1729,
-        "criticalCycleDPS": 1947,
-        "activeDPS": 1729,
+        "burstDPS": 2293,
+        "criticalCycleDPS": 3440,
+        "activeDPS": 2293,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -8090,13 +7856,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4235,
-        "normalLanded": 24,
-        "criticalLanded": 33,
-        "burstDPSLanded": 218,
-        "criticalCycleDPSLanded": 259,
-        "activeDPSLanded": 218
+        "armorMitigationPct": 53,
+        "mitigationRatio": 0.46950000000000003,
+        "normalLanded": 35,
+        "criticalLanded": 91,
+        "burstDPSLanded": 319,
+        "criticalCycleDPSLanded": 573,
+        "activeDPSLanded": 319
       }
     },
     "earle-williams": {
@@ -8117,27 +7883,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 190,
-        "critical": 238,
+        "normal": 252,
+        "critical": 504,
         "explosiveBonus": 0,
-        "totalPerShot": 190,
-        "activeShotDamage": 190,
+        "totalPerShot": 252,
+        "activeShotDamage": 252,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+20%"
-          },
-          {
             "source": "Nocturnal (Crouched / Stealthed)",
-            "value": "+50%"
+            "value": "×1.50"
           },
           {
-            "source": "Sneak Attack (Mister Sandman (Silenced) 3.25× Multiplier)",
-            "value": "+225%"
+            "source": "Sneak Attack (Covert Operative 3, Mister Sandman 2 (Silenced))",
+            "value": "×3.5"
           }
         ]
       },
@@ -8153,9 +7915,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1729,
-        "criticalCycleDPS": 1947,
-        "activeDPS": 1729,
+        "burstDPS": 2293,
+        "criticalCycleDPS": 3440,
+        "activeDPS": 2293,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -8222,13 +7984,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4235,
-        "normalLanded": 16,
-        "criticalLanded": 22,
-        "burstDPSLanded": 146,
-        "criticalCycleDPSLanded": 173,
-        "activeDPSLanded": 146
+        "armorMitigationPct": 53,
+        "mitigationRatio": 0.46950000000000003,
+        "normalLanded": 24,
+        "criticalLanded": 61,
+        "burstDPSLanded": 218,
+        "criticalCycleDPSLanded": 387,
+        "activeDPSLanded": 218
       }
     },
     "ultracite-titan": {
@@ -8249,27 +8011,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 190,
-        "critical": 238,
+        "normal": 252,
+        "critical": 504,
         "explosiveBonus": 0,
-        "totalPerShot": 190,
-        "activeShotDamage": 190,
+        "totalPerShot": 252,
+        "activeShotDamage": 252,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+20%"
-          },
-          {
             "source": "Nocturnal (Crouched / Stealthed)",
-            "value": "+50%"
+            "value": "×1.50"
           },
           {
-            "source": "Sneak Attack (Mister Sandman (Silenced) 3.25× Multiplier)",
-            "value": "+225%"
+            "source": "Sneak Attack (Covert Operative 3, Mister Sandman 2 (Silenced))",
+            "value": "×3.5"
           }
         ]
       },
@@ -8285,9 +8043,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1729,
-        "criticalCycleDPS": 1947,
-        "activeDPS": 1729,
+        "burstDPS": 2293,
+        "criticalCycleDPS": 3440,
+        "activeDPS": 2293,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -8354,13 +8112,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 60,
-        "mitigationRatio": 0.4003,
-        "normalLanded": 19,
-        "criticalLanded": 26,
-        "burstDPSLanded": 173,
-        "criticalCycleDPSLanded": 205,
-        "activeDPSLanded": 173
+        "armorMitigationPct": 56,
+        "mitigationRatio": 0.44380000000000003,
+        "normalLanded": 28,
+        "criticalLanded": 72,
+        "burstDPSLanded": 255,
+        "criticalCycleDPSLanded": 455,
+        "activeDPSLanded": 255
       }
     },
     "level-100-super-mutant": {
@@ -8381,27 +8139,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 190,
-        "critical": 238,
+        "normal": 252,
+        "critical": 504,
         "explosiveBonus": 0,
-        "totalPerShot": 190,
-        "activeShotDamage": 190,
+        "totalPerShot": 252,
+        "activeShotDamage": 252,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+20%"
-          },
-          {
             "source": "Nocturnal (Crouched / Stealthed)",
-            "value": "+50%"
+            "value": "×1.50"
           },
           {
-            "source": "Sneak Attack (Mister Sandman (Silenced) 3.25× Multiplier)",
-            "value": "+225%"
+            "source": "Sneak Attack (Covert Operative 3, Mister Sandman 2 (Silenced))",
+            "value": "×3.5"
           }
         ]
       },
@@ -8417,9 +8171,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1729,
-        "criticalCycleDPS": 1947,
-        "activeDPS": 1729,
+        "burstDPS": 2293,
+        "criticalCycleDPS": 3440,
+        "activeDPS": 2293,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -8486,13 +8240,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 52,
-        "mitigationRatio": 0.4824,
-        "normalLanded": 92,
-        "criticalLanded": 125,
-        "burstDPSLanded": 837,
-        "criticalCycleDPSLanded": 987,
-        "activeDPSLanded": 837
+        "armorMitigationPct": 47,
+        "mitigationRatio": 0.5347999999999999,
+        "normalLanded": 135,
+        "criticalLanded": 347,
+        "burstDPSLanded": 1229,
+        "criticalCycleDPSLanded": 2193,
+        "activeDPSLanded": 1229
       }
     },
     "raw-unarmored": {
@@ -8513,27 +8267,23 @@
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 190,
-        "critical": 238,
+        "normal": 252,
+        "critical": 504,
         "explosiveBonus": 0,
-        "totalPerShot": 190,
-        "activeShotDamage": 190,
+        "totalPerShot": 252,
+        "activeShotDamage": 252,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
             "value": "48"
           },
           {
-            "source": "Commando Perks",
-            "value": "+20%"
-          },
-          {
             "source": "Nocturnal (Crouched / Stealthed)",
-            "value": "+50%"
+            "value": "×1.50"
           },
           {
-            "source": "Sneak Attack (Mister Sandman (Silenced) 3.25× Multiplier)",
-            "value": "+225%"
+            "source": "Sneak Attack (Covert Operative 3, Mister Sandman 2 (Silenced))",
+            "value": "×3.5"
           }
         ]
       },
@@ -8549,9 +8299,9 @@
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1729,
-        "criticalCycleDPS": 1947,
-        "activeDPS": 1729,
+        "burstDPS": 2293,
+        "criticalCycleDPS": 3440,
+        "activeDPS": 2293,
         "breakdown": [
           {
             "source": "Base Fire Rate",
@@ -8620,11 +8370,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 188,
-        "criticalLanded": 236,
-        "burstDPSLanded": 1711,
-        "criticalCycleDPSLanded": 1929,
-        "activeDPSLanded": 1711
+        "normalLanded": 249,
+        "criticalLanded": 499,
+        "burstDPSLanded": 2266,
+        "criticalCycleDPSLanded": 3403,
+        "activeDPSLanded": 2266
       }
     }
   }

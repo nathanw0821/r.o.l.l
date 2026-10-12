@@ -170,6 +170,60 @@
       "source": "Card text (Patch 70): 'While you have Glow, gain 5% bonus damage for 10 seconds upon getting hit.' Card text is the only source (the plan's '+5/15 %' skipped the 10 % middle rank).",
       "note": "The engine has no combat timeline, so 'upon getting hit' is a manual toggle rather than a timer.",
       "confidence": "card-text"
+    },
+    "tank-killer": {
+      "kind": "armor-penetration",
+      "byRank": [20, 40],
+      "unit": "percent of the target's armor ignored",
+      "condition": "ranged weapons (any class, in or out of Power Armor); capped with every other penetration source at 90 % by creation-engine-math",
+      "source": "Card text (Patch 70): 'Your ranged weapons ignore 20% armor.' Card text is the only source.",
+      "note": "Until 2026-10-12 the engine used the pre-rework three-rank 12/24/36 %, limited to rifle/pistol classes and switched off in Power Armor; none of that is on the Patch 70 card.",
+      "confidence": "card-text"
+    },
+    "bow-before-me": {
+      "kind": "armor-penetration",
+      "byRank": [20, 40],
+      "unit": "percent of the target's armor ignored",
+      "condition": "bows and crossbows (catalog class `bow`); the stagger chance is not modelled",
+      "source": "Card text (Patch 70): 'Your bows and crossbows ignore 20% armor and have a 5% chance to stagger.' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "demolition-expert": {
+      "kind": "explosive-damage",
+      "byRank": [0.2, 0.4, 0.6],
+      "condition": "explosive damage; the engine has an explosive number only for the Explosive legendary / inherently explosive splash, so that is where it applies",
+      "source": "Card text (Patch 70): 'Your explosives do +20% damage.' Card text is the only source.",
+      "note": "Until 2026-10-12 the engine used 20/30/40 %.",
+      "confidence": "card-text"
+    },
+    "heavy-hitter": {
+      "value": 0.25,
+      "condition": "melee and unarmed weapons; Stances 'Power Attack' toggle. The '(No Power Tools)' exclusion is not modelled: the weapon catalog has no power-tool flag.",
+      "source": "Card text (Patch 70): 'Melee weapons deal +25% power attack damage. (No Power Tools)' Card text is the only source.",
+      "confidence": "card-text"
+    },
+    "covert-operative": {
+      "kind": "sneak-attack",
+      "byRank": [0.15, 0.3, 0.5],
+      "condition": "ranged weapons; sneaking. Added to the base sneak attack multiplier (x2.0), which multiplies the whole hit",
+      "source": "Card text (Patch 70): 'Your ranged attacks do an additional 15% sneak attack damage.' Card text is the only source; rank 3 = x2.5 confirmed by Nathan's test shot 2026-10-12.",
+      "confidence": "card-text"
+    },
+    "mister-sandman": {
+      "kind": "sneak-attack",
+      "byRank": [0.5, 1.0],
+      "condition": "silenced weapons (suppressor muzzle); sneaking; no time-of-day condition on the Patch 70 card",
+      "source": "Card text (Patch 70): 'Your silenced weapons do an additional 50% sneak attack damage.' Card text is the only source.",
+      "note": "Until 2026-10-12 the engine gave +25 % per rank and only at night (pre-rework card).",
+      "confidence": "card-text"
+    },
+    "ninja": {
+      "kind": "sneak-attack",
+      "byRank": [0.5, 1.0],
+      "condition": "bows, throwing and melee weapons (catalog classes `bow`, `melee`, `unarmed`); sneaking",
+      "source": "Card text (Patch 70): 'Bows, throwing, and melee weapons do +50% sneak attack damage.' Card text is the only source.",
+      "note": "Until 2026-10-12 the engine gave melee x3.0 at any rank and nothing to bows.",
+      "confidence": "card-text"
     }
   }
 }

@@ -68,7 +68,7 @@ describe("stance-biometrics-engine", () => {
     expect(res.specialBreakdowns.some((b) => b.stat === "per" && b.val === 20)).toBe(true);
     expect(res.specialBreakdowns.some((b) => b.stat === "agi" && b.val === 20)).toBe(true);
     expect(res.activeTacticalTags).toContain("Nocturnal (+20 PER, +20 AGI)");
-    expect(res.activeTacticalTags).toContain("Sneak Attack Multiplier (2.0×–2.5×)");
+    expect(res.activeTacticalTags).toContain("Sneak Attack (×2.0, + Covert Operative / Mister Sandman / Ninja)");
   });
 
   it("does not apply Nocturnal SPECIAL bonuses during daytime when standing upright", () => {

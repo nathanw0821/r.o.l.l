@@ -17,7 +17,7 @@ describe("combat-firepower-engine", () => {
     expect(WEAPON_COMBAT_BASE_CATALOG["cremator"]).toBeDefined();
   });
 
-  it("calculates Bloodied Commando Fixer damage and criticals accurately", () => {
+  it("calculates Bloodied Fixer damage and criticals accurately (legacy Commando cards add nothing since Patch 70)", () => {
     const result = calculateCombatFirepower({
       weaponId: "the-fixer",
       equippedMods: [
@@ -51,9 +51,11 @@ describe("combat-firepower-engine", () => {
     });
 
     // Base: 48
-    // Commando (+60%) + Bloody Mess (+15%) + Nerd Rage (+20%) + Bloodied (+109% at 20% HP, cap +130%) + Psychotats (+25%) + Small Guns (+20%) + Adrenal Reaction (+63%) = +283%
-    // Normal damage ~ 48 * (1 + 2.83) ≈ 184
-    expect(result.damagePerShot.normal).toBeGreaterThan(150);
+    // Commando cards are gone (Patch 70 catalog); Bloody Mess has no damage number.
+    // Nerd Rage (+40% at 20% HP, perks/nerdragedamagebonus) + Bloodied (+109% at 20% HP, cap +130%)
+    // + Psychotats (+25%) + Small Guns (+20%) + Adrenal Reaction (+63%) = +257.5% -> 48 * 3.575 ≈ 172
+    expect(result.damagePerShot.normal).toBe(172);
+    expect(result.damagePerShot.breakdown.some((b) => b.source.startsWith("Commando"))).toBe(false);
 
     // Critical damage includes Better Crits (+100%), Vital (+50%), Blight Soup (+125%), G&B 3 (+100%), Eagle Eyes (+62.5%) = ~437.5%
     expect(result.damagePerShot.critical).toBeGreaterThan(result.damagePerShot.normal * 2);
@@ -76,7 +78,7 @@ describe("combat-firepower-engine", () => {
         { slug: "anti-armor" },
       ],
       equippedPerks: [
-        { cardId: "tank-killer", rank: 3 },
+        { cardId: "tank-killer", rank: 2 },
       ],
       playerStats: {
         agility: 15,
@@ -86,8 +88,34 @@ describe("combat-firepower-engine", () => {
       },
     });
 
-    // Anti-Armor 50% + Tank Killer 36% -> (1 - (0.5 * 0.64)) = 68% penetration
-    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(68);
+    // Anti-Armor 50% + Tank Killer r2 40% (Patch 70 card: "Your ranged weapons ignore 40% armor")
+    // -> (1 - (0.5 * 0.6)) = 70% penetration
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(70);
+  });
+
+  it("applies Tank Killer to every ranged weapon, in Power Armor too, and caps it at the card's two ranks", () => {
+    const run = (weaponId: string, rank: number, isPowerArmor: boolean) =>
+      calculateCombatFirepower({
+        weaponId,
+        equippedMods: [],
+        equippedPerks: [{ cardId: "tank-killer", rank }],
+        playerStats: { agility: 10, luck: 10, strength: 5, isPowerArmor },
+      }).armorPenetration.effectiveArmorPenetrationPct;
+    // Patch 70 card: 20% / 40%, "Your ranged weapons" (no class or Power Armor condition).
+    expect(run("handmade-rifle", 1, false)).toBe(20);
+    expect(run("handmade-rifle", 2, true)).toBe(40);
+    expect(run("handmade-rifle", 3, false)).toBe(40);
+    expect(run("v63-zweihander", 2, false)).toBe(0);
+  });
+
+  it("gives Stabilized no armor penetration (Patch 70 card: accuracy only)", () => {
+    const result = calculateCombatFirepower({
+      weaponId: "red-terror",
+      equippedMods: [],
+      equippedPerks: [{ cardId: "stabilized", rank: 1 }],
+      playerStats: { agility: 10, luck: 10, strength: 5, isPowerArmor: true },
+    });
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(0);
   });
 
   it("validates 3★ Lucky 15% fill lowering Luck threshold to 23", () => {
@@ -157,7 +185,20 @@ describe("combat-firepower-engine", () => {
     expect(result.damagePerShot.breakdown.some((b) => b.source.includes("Strength (20)"))).toBe(true);
   });
 
-  it("calculates Pistol damage and Tank Killer 36% armor penetration", () => {
+  it("adds Heavy Hitter's +25% to melee power attacks only", () => {
+    const run = (perks: { cardId: string; rank: number }[], isPowerAttacking: boolean) =>
+      calculateCombatFirepower({
+        weaponId: "power-fist",
+        equippedMods: [],
+        equippedPerks: perks,
+        playerStats: { agility: 10, luck: 10, strength: 1, isPowerAttacking },
+      }).damagePerShot.normal;
+    // Patch 70 card: "Melee weapons deal +25% power attack damage." Power Fist base 58, 1 STR unarmed +10%.
+    expect(run([{ cardId: "heavy-hitter", rank: 1 }], true)).toBe(Math.round(58 * (1 + 0.1 + 0.25)));
+    expect(run([{ cardId: "heavy-hitter", rank: 1 }], false)).toBe(run([], false));
+  });
+
+  it("calculates Pistol damage and Tank Killer 40% armor penetration", () => {
     const result = calculateCombatFirepower({
       weaponId: "alien-blaster",
       equippedMods: [],
@@ -165,7 +206,7 @@ describe("combat-firepower-engine", () => {
         { cardId: "gunslinger", rank: 3 },
         { cardId: "expert-gunslinger", rank: 3 },
         { cardId: "master-gunslinger", rank: 3 },
-        { cardId: "tank-killer", rank: 3 },
+        { cardId: "tank-killer", rank: 2 },
       ],
       playerStats: { strength: 5, agility: 15, luck: 15 },
     });
@@ -174,11 +215,11 @@ describe("combat-firepower-engine", () => {
     // shot stays at the base 32, a head shot gets ×2 × (1 + 12%) (see weak-spot.test.ts).
     expect(result.damagePerShot.normal).toBe(32);
     expect(result.damagePerShot.breakdown.some((b) => b.source === "Gunslinger Perks" && /weak-spot/.test(b.value))).toBe(true);
-    // Tank Killer on Pistols provides 36% armor penetration
-    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(36);
+    // Tank Killer r2 on a ranged weapon: 40% (Patch 70 card text)
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(40);
   });
 
-  it("calculates Bow damage and Bow Before Me 36% armor penetration", () => {
+  it("calculates Bow damage and Bow Before Me 40% armor penetration", () => {
     const result = calculateCombatFirepower({
       weaponId: "compound-bow",
       equippedMods: [],
@@ -186,14 +227,16 @@ describe("combat-firepower-engine", () => {
         { cardId: "archer", rank: 3 },
         { cardId: "expert-archer", rank: 3 },
         { cardId: "master-archer", rank: 3 },
-        { cardId: "bow-before-me", rank: 3 },
+        { cardId: "bow-before-me", rank: 2 },
       ],
       playerStats: { strength: 5, agility: 15, luck: 15 },
     });
 
-    // Base: 110 -> +60% Archer -> 110 * 1.6 = 176
-    expect(result.damagePerShot.normal).toBe(176);
-    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(36);
+    // Base: 110. Archer / Expert Archer are not in the Patch 70 catalog and Master Archer is
+    // "arrows pierce": no damage bonus.
+    expect(result.damagePerShot.normal).toBe(110);
+    // Bow Before Me r2: "Your bows and crossbows ignore 40% armor" (Patch 70 card)
+    expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(40);
   });
 
   it("calculates Unarmed weapon 10% Strength scaling and Iron Fist", () => {
@@ -204,13 +247,14 @@ describe("combat-firepower-engine", () => {
         { cardId: "iron-fist", rank: 3 },
         { cardId: "incisor", rank: 3 },
       ],
-      playerStats: { strength: 20, agility: 10, luck: 15 },
+      playerStats: { strength: 20, agility: 10, luck: 15, damageResistance: 300 },
     });
 
     // Base: 58
-    // Iron Fist 3 (+20%) + 20 STR * 10% (+200%) = +220%
-    // 58 * (1 + 2.20) = 185.6 -> 186
-    expect(result.damagePerShot.normal).toBe(186);
+    // Iron Fist at 300 DR: perks/ironfistbonus [[0,0],[1000,100]] -> +30% (perk-curves-p70.json)
+    // + 20 STR * 10% (+200%) = +230% -> 58 * 3.3 = 191.4 -> 191
+    expect(result.damagePerShot.normal).toBe(191);
+    expect(result.damagePerShot.breakdown).toContainEqual({ source: "Iron Fist (300 DR)", value: "+30%" });
     expect(result.armorPenetration.effectiveArmorPenetrationPct).toBe(75);
     expect(result.damagePerShot.breakdown.some((b) => b.source.includes("Unarmed Strength 10% (20)"))).toBe(true);
   });
@@ -291,19 +335,19 @@ describe("combat-firepower-engine", () => {
     // 80% flat reduction means landed damage is heavily suppressed compared to sheet damage
     expect(withoutAA.targetDummy.normalLanded).toBeLessThan(withoutAA.damagePerShot.normal * 0.15);
 
-    // Now test with Anti-Armor mod + Tank Killer rank 3:
-    // Anti-Armor 50% + Tank Killer 36% -> 68% total armor penetration
+    // Now test with Anti-Armor mod + Tank Killer rank 2:
+    // Anti-Armor 50% + Tank Killer 40% (Patch 70 card) -> 70% total armor penetration
     const withAA = calculateCombatFirepower({
       weaponId: "the-fixer",
       equippedMods: [{ slug: "anti-armor" }],
-      equippedPerks: [{ cardId: "tank-killer", rank: 3 }],
+      equippedPerks: [{ cardId: "tank-killer", rank: 2 }],
       targetDummyId: "earle-williams",
       playerStats: { strength: 1, agility: 15, luck: 15 },
     });
 
-    // 300 DR * (1 - 0.68) = 96 Effective DR
-    expect(withAA.targetDummy.effectiveDR).toBe(96);
-    // Landed damage with 68% AP must be substantially higher than without AP
+    // 300 DR * (1 - 0.70) = 90 Effective DR
+    expect(withAA.targetDummy.effectiveDR).toBe(90);
+    // Landed damage with 70% AP must be substantially higher than without AP
     expect(withAA.targetDummy.normalLanded).toBeGreaterThan(withoutAA.targetDummy.normalLanded);
   });
 
@@ -733,8 +777,9 @@ describe("unique innate effects (src/data/truth/unique-items.json)", () => {
     expect(elders.damagePerShot.critical).toBe(79);
 
     const guarantee = run("the-guarantee", {}, [{ slug: "explosive" }]);
-    expect(damageRow(guarantee, "Explosive Impact (The Guarantee: Demo Exp Rank 3)")?.value).toBe("+13");
-    expect(guarantee.damagePerShot.totalPerShot).toBe(58);
+    // Demolition Expert r3 = +60% (Patch 70 card text): 45 × 0.2 × 1.6 = 14.4 -> 14
+    expect(damageRow(guarantee, "Explosive Impact (The Guarantee: Demo Exp Rank 3)")?.value).toBe("+14");
+    expect(guarantee.damagePerShot.totalPerShot).toBe(59);
 
     const disorderly = run("disorderly-conduct", {}, [{ slug: "rapid" }]);
     expect(dpsRow(disorderly, "Disorderly Conduct (+20% Attack Speed)")?.value).toBe("+20% Fire Rate");
@@ -742,7 +787,7 @@ describe("unique innate effects (src/data/truth/unique-items.json)", () => {
 
     // An equipped Demolition Expert 3 keeps the plain label (the grant adds nothing).
     const guaranteeWithPerk = run("the-guarantee", {}, [{ slug: "explosive" }], [{ cardId: "demolition-expert", rank: 3 }]);
-    expect(damageRow(guaranteeWithPerk, "Explosive Impact (Demo Exp Rank 3)")?.value).toBe("+13");
+    expect(damageRow(guaranteeWithPerk, "Explosive Impact (Demo Exp Rank 3)")?.value).toBe("+14");
   });
 
   it("adds Whacker Smacker power-attack damage per Onslaught stack, capped at 10", () => {
@@ -803,5 +848,106 @@ describe("unique innate effects (src/data/truth/unique-items.json)", () => {
     const plainBat = run("baseball-bat", { onslaughtStacks: 10, targetCrippledLimbs: 4, isPowerAttacking: true });
     expect(molerat.damagePerShot.breakdown.some((row) => row.source.includes("Molerat"))).toBe(false);
     expect(plainBat.damagePerShot.breakdown.some((row) => row.source.includes("Molerat"))).toBe(false);
+  });
+});
+
+describe("Tenderizer multiplies the whole hit, crits included (target debuff, 2026-10-12)", () => {
+  it("doubles the crit bonus part at the +100% cap", () => {
+    const r = calculateCombatFirepower({
+      weaponId: "handmade",
+      equippedMods: [],
+      equippedPerks: [{ cardId: "tenderizer", rank: 1 }],
+      targetDummyId: "raw-unarmored",
+      playerStats: { agility: 10, luck: 10, strength: 1, healthPct: 1, tenderizerStacks: 1000 },
+    });
+    // Handmade base 45: normal 45 × 2 = 90; crit bonus 45 × 1.0 × 2 = 90 → 180 (was 135 before the fix).
+    expect(r.damagePerShot.normal).toBe(90);
+    expect(r.damagePerShot.critical).toBe(180);
+  });
+});
+
+describe("sneak attack multiplies the whole hit (2026-10-12, Patch 70 card texts)", () => {
+  const run = (
+    weaponId: string,
+    perks: { cardId: string; rank: number }[],
+    stats: Partial<Parameters<typeof calculateCombatFirepower>[0]["playerStats"]> = {},
+    mods: { slug: string }[] = [],
+  ) =>
+    calculateCombatFirepower({
+      weaponId,
+      equippedMods: mods,
+      equippedPerks: perks,
+      targetDummyId: "raw-unarmored",
+      playerStats: { agility: 10, luck: 10, strength: 1, healthPct: 1, isCrouched: true, ...stats },
+    });
+
+  it("Covert Operative adds 15/30/50% to the ×2 ranged sneak multiplier by rank", () => {
+    // Card: "Your ranged attacks do an additional 15% / 30% / 50% sneak attack damage." Handmade base 45.
+    expect(run("handmade", []).damagePerShot.normal).toBe(90);
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 1 }]).damagePerShot.normal).toBe(Math.round(45 * 2.15));
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 2 }]).damagePerShot.normal).toBe(104); // 45 × 2.3 = 103.5
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 3 }]).damagePerShot.normal).toBe(Math.round(45 * 2.5));
+  });
+
+  it("multiplies the buffed hit instead of joining the additive pool (Nathan's test shot: r3 ≈ 2.5× the buffed hit)", () => {
+    const bloodied = run("handmade", [{ cardId: "covert-operative", rank: 3 }], { healthPct: 0.2 }, [{ slug: "bloodied" }]);
+    const standing = run("handmade", [], { healthPct: 0.2, isCrouched: false }, [{ slug: "bloodied" }]);
+    // Within one point of rounding: 45 × (1 + Bloodied 1.095) × 2.5 = 235.7 (additive pool would give 162).
+    expect(Math.abs(bloodied.damagePerShot.normal - standing.damagePerShot.normal * 2.5)).toBeLessThanOrEqual(1.5);
+    expect(bloodied.damagePerShot.normal).toBe(236);
+    // The crit bonus part is multiplied too: base crit +100% → 45 × 1.0 × 2.5.
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 3 }]).damagePerShot.critical).toBe(113 + Math.round(45 * 2.5));
+  });
+
+  it("Mister Sandman needs a silenced weapon but no night; Ninja covers melee and bows by rank", () => {
+    // Card: "Your silenced weapons do an additional 50% / 100% sneak attack damage." No suppressor → plain ×2.
+    expect(run("handmade", [{ cardId: "mister-sandman", rank: 2 }], { timeOfDay: "night" }).damagePerShot.normal).toBe(90);
+    // Card: "Bows, throwing, and melee weapons do +50% / +100% sneak attack damage." Power Fist 58, 1 STR +10%.
+    expect(run("power-fist", [{ cardId: "ninja", rank: 1 }]).damagePerShot.normal).toBe(Math.round(58 * 1.1 * 2.5));
+    expect(run("power-fist", [{ cardId: "ninja", rank: 2 }]).damagePerShot.normal).toBe(Math.round(58 * 1.1 * 3.0));
+    expect(run("compound-bow", [{ cardId: "ninja", rank: 2 }]).damagePerShot.breakdown).toContainEqual({ source: "Sneak Attack (Ninja 2)", value: "×3" });
+    expect(run("handmade", [{ cardId: "ninja", rank: 2 }]).damagePerShot.normal).toBe(90);
+  });
+});
+
+describe("perk curves read at the live value (perk-curves-p70.json, 2026-10-12)", () => {
+  const run = (
+    weaponId: string,
+    perks: { cardId: string; rank: number }[],
+    stats: Partial<Parameters<typeof calculateCombatFirepower>[0]["playerStats"]> = {},
+  ) =>
+    calculateCombatFirepower({
+      weaponId,
+      equippedMods: [],
+      equippedPerks: perks,
+      targetDummyId: "raw-unarmored",
+      playerStats: { agility: 10, luck: 10, strength: 1, healthPct: 1, ...stats },
+    });
+
+  it("Nerd Rage follows perks/nerdragedamagebonus: +40% at 20% HP, +80% at 5%, about +20% at 50%, 0 at full", () => {
+    const nr = [{ cardId: "nerd-rage", rank: 1 }];
+    expect(run("handmade", nr, { healthPct: 0.2 }).damagePerShot.normal).toBe(63); // 45 × 1.4
+    expect(run("handmade", nr, { healthPct: 0.05 }).damagePerShot.normal).toBe(81); // 45 × 1.8
+    expect(run("handmade", nr, { healthPct: 0.5 }).damagePerShot.normal).toBe(54); // 45 × 1.205
+    expect(run("handmade", nr, { healthPct: 1 }).damagePerShot.normal).toBe(45);
+  });
+
+  it("Science follows perks/sciencebonus at the live INT (22% at INT 15)", () => {
+    const base = run("laser-rifle", []).damagePerShot.normal;
+    const at15 = run("laser-rifle", [{ cardId: "science", rank: 1 }], { intelligence: 15 });
+    expect(at15.damagePerShot.breakdown).toContainEqual({ source: "Science (INT 15)", value: "+22%" });
+    expect(at15.damagePerShot.normal).toBe(Math.round(at15.baseStats.baseDamage * 1.22));
+    expect(run("laser-rifle", [{ cardId: "science", rank: 1 }]).damagePerShot.normal).toBe(base);
+  });
+
+  it("Thirst Quencher adds perks/thirstquencherbonus max AP at the live END (78 at END 15)", () => {
+    const plain = run("handmade", [], { endurance: 15 });
+    const tq = run("handmade", [{ cardId: "thirst-quencher", rank: 1 }], { endurance: 15 });
+    expect(tq.vats.totalApPool - plain.vats.totalApPool).toBe(78);
+  });
+
+  it("Four Leaf Clover is a line only, without the old per-rank refill numbers", () => {
+    const r = run("handmade", [{ cardId: "four-leaf-clover", rank: 1 }]);
+    expect(r.vats.breakdown).toContainEqual({ source: "Four Leaf Clover", value: "V.A.T.S. misses fill the crit meter by LCK (not modelled)" });
   });
 });

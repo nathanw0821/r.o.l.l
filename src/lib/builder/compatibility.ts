@@ -205,8 +205,28 @@ export type LegendaryPerkDef = {
   category: "special" | "combat" | "utility";
   desc: string;
   specialBonus?: Partial<Record<BuilderSpecialKey, number>>;
-  resBonus?: Partial<Record<"fr" | "pr" | "dr" | "er" | "rr" | "cr", number>>;
+  /** Flat resistance by rank (index 0 = rank 1), Patch 70 card text. */
+  resByRank?: Partial<Record<"fr" | "pr" | "dr" | "er" | "rr" | "cr", readonly number[]>>;
+  /** The card's resistance only counts with a matching armor set ("when wearing a matching set of armor"). */
+  requiresMatchingSet?: boolean;
 };
+
+/**
+ * Resistance a legendary perk card adds at `rank` (1-4), or 0 when its condition is not met.
+ * Numbers are the Patch 70 card texts in src/data/perk-cards.json.
+ */
+export function legendaryPerkResistBonus(
+  perk: LegendaryPerkDef | undefined,
+  rank: number,
+  key: "fr" | "pr" | "dr" | "er" | "rr" | "cr",
+  matchingSet: boolean
+): number {
+  const values = perk?.resByRank?.[key];
+  if (!values || values.length === 0) return 0;
+  if (perk?.requiresMatchingSet && !matchingSet) return 0;
+  const idx = Math.max(1, Math.min(values.length, Math.round(rank) || values.length)) - 1;
+  return values[idx] ?? 0;
+}
 
 export const LEGENDARY_PERK_CARDS: Record<string, LegendaryPerkDef> = {
   // SPECIAL Attribute Cards (7)
@@ -219,7 +239,7 @@ export const LEGENDARY_PERK_CARDS: Record<string, LegendaryPerkDef> = {
   "legendary-luck": { id: "legendary-luck", label: "Legendary Luck (+5)", category: "special", desc: "+5 Luck & +5 Perk Points", specialBonus: { lck: 5 } },
 
   // Combat & Damage Cards (9)
-  "blood-sacrifice": { id: "blood-sacrifice", label: "Blood Sacrifice", category: "combat", desc: "Teammates gain +40 DR & heal over 10s upon your death", resBonus: { dr: 40 } },
+  "blood-sacrifice": { id: "blood-sacrifice", label: "Blood Sacrifice", category: "combat", desc: "Using AP in V.A.T.S. consumes HP instead (150% / 125% / 100% / 50% more cost by rank)" },
   "collateral-damage": { id: "collateral-damage", label: "Collateral Damage", category: "combat", desc: "Melee kills have a 20% chance to cause an explosion" },
   "detonation-contagion": { id: "detonation-contagion", label: "Detonation Contagion", category: "combat", desc: "Thrown explosive kills have a 20% chance to cause an explosion" },
   "exploding-palm": { id: "exploding-palm", label: "Exploding Palm", category: "combat", desc: "Unarmed attacks have a 20% chance to trigger an explosion" },
@@ -233,12 +253,12 @@ export const LEGENDARY_PERK_CARDS: Record<string, LegendaryPerkDef> = {
   "ammo-factory": { id: "ammo-factory", label: "Ammo Factory", category: "utility", desc: "Produce +150% more rounds when crafting ammo" },
   "brawling-chemist": { id: "brawling-chemist", label: "Brawling Chemist", category: "utility", desc: "Generates 1 combat-enhancing chem every 40 seconds" },
   "electric-absorption": { id: "electric-absorption", label: "Electric Absorption", category: "utility", desc: "20% chance energy attacks recharge PA Fusion Core & heal HP" },
-  "funky-duds": { id: "funky-duds", label: "Funky Duds (+200 PR)", category: "utility", desc: "+200 Poison Resistance with matching armor set", resBonus: { pr: 200 } },
+  "funky-duds": { id: "funky-duds", label: "Funky Duds (+50/100/150/200 PR)", category: "utility", desc: "+50 / 100 / 150 / 200 Poison Resistance when wearing a matching set of armor", resByRank: { pr: [50, 100, 150, 200] }, requiresMatchingSet: true },
   "master-infiltrator": { id: "master-infiltrator", label: "Master Infiltrator", category: "utility", desc: "Auto-unlock lvl 3 locks & terminals (+3 Lockpick & Hack)" },
-  "what-rads": { id: "what-rads", label: "What Rads? (+300 RR)", category: "utility", desc: "+300 Radiation Resistance and restore +6 Rads per second", resBonus: { rr: 300 } },
+  "what-rads": { id: "what-rads", label: "What Rads? (+50/75/100/300 RR)", category: "utility", desc: "+50 / 75 / 100 / 300 Radiation Resistance and restore 1 / 2 / 3 / 6 Rads per second", resByRank: { rr: [50, 75, 100, 300] } },
   "power-armor-reboot": { id: "power-armor-reboot", label: "Power Armor Reboot", category: "utility", desc: "40% chance to auto-revive with full health in PA" },
   "power-sprinter": { id: "power-sprinter", label: "Power Sprinter", category: "utility", desc: "Sprinting in PA consumes 50% less AP" },
-  "sizzling-style": { id: "sizzling-style", label: "Sizzling Style (+200 FR)", category: "utility", desc: "+200 Fire Resistance with matching armor set", resBonus: { fr: 200 } },
+  "sizzling-style": { id: "sizzling-style", label: "Sizzling Style (+50/100/150/200 FR)", category: "utility", desc: "+50 / 100 / 150 / 200 Fire Resistance when wearing a matching set of armor", resByRank: { fr: [50, 100, 150, 200] }, requiresMatchingSet: true },
   "survival-shortcut": { id: "survival-shortcut", label: "Survival Shortcut", category: "utility", desc: "Generates 1 Survival Syringe every 15 minutes" },
 };
 
@@ -253,6 +273,8 @@ export function aggregateEffectMath(
     armorPieceSetKeys?: (string | null)[];
     baseSpecial?: Record<string, number>;
     legendaryPerkIds?: string[];
+    /** Wearing a matching armor set (Funky Duds / Sizzling Style). */
+    matchingSet?: boolean;
   }
 ): BuilderEffectTotals {
   const acc: BuilderEffectTotals = {
@@ -313,7 +335,11 @@ export function aggregateEffectMath(
     // One entry per card: a bare id and an "id:rank" entry for the same card must not both
     // count (the sandbox sync produced that pair until 2026-10-11; the ranked entry wins).
     const oneEntryPerCard = new Map<string, string>();
-    for (const rawEntry of opts.legendaryPerkIds) oneEntryPerCard.set(rawEntry.split(":")[0], rawEntry);
+    for (const rawEntry of opts.legendaryPerkIds) {
+      const id = rawEntry.split(":")[0];
+      if (!rawEntry.includes(":") && oneEntryPerCard.get(id)?.includes(":")) continue;
+      oneEntryPerCard.set(id, rawEntry);
+    }
     for (const rawEntry of oneEntryPerCard.values()) {
       let id = rawEntry;
       let rank = 4;
@@ -335,14 +361,8 @@ export function aggregateEffectMath(
           if (perk.specialBonus.agi) acc.agi += bonus;
           if (perk.specialBonus.lck) acc.lck += bonus;
         }
-        if (perk.resBonus) {
-          const resScale = rank / 4;
-          if (perk.resBonus.dr) acc.dr += Math.round((perk.resBonus.dr || 0) * resScale);
-          if (perk.resBonus.er) acc.er += Math.round((perk.resBonus.er || 0) * resScale);
-          if (perk.resBonus.fr) acc.fr += Math.round((perk.resBonus.fr || 0) * resScale);
-          if (perk.resBonus.cr) acc.cr += Math.round((perk.resBonus.cr || 0) * resScale);
-          if (perk.resBonus.pr) acc.pr += Math.round((perk.resBonus.pr || 0) * resScale);
-          if (perk.resBonus.rr) acc.rr += Math.round((perk.resBonus.rr || 0) * resScale);
+        for (const key of ["dr", "er", "fr", "cr", "pr", "rr"] as const) {
+          acc[key] += legendaryPerkResistBonus(perk, rank, key, Boolean(opts.matchingSet));
         }
       }
     }

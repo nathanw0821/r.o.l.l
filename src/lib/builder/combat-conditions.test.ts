@@ -266,13 +266,13 @@ describe("crippled target", () => {
 });
 
 describe("Number Cruncher", () => {
-  it("adds 2 % per point of the resolved V.A.T.S. AP cost, so V.A.T.S. Optimized lowers it", () => {
+  it("gives 2 % per point of the resolved V.A.T.S. AP cost, so V.A.T.S. Optimized lowers it", () => {
     const perks = [{ cardId: "number-cruncher", rank: 1 }];
     const plain = calculateCombatFirepower(input({ equippedPerks: perks }));
     expect(plain.damagePerShot.normal).toBe(Math.round(plain.baseStats.baseDamage * (1 + plain.vats.apCostPerShot * truth.perks["number-cruncher"].perUnit)));
     expect(plain.damagePerShot.breakdown).toContainEqual({
       source: `Number Cruncher (${plain.vats.apCostPerShot} AP per shot)`,
-      value: `+${Math.round(plain.vats.apCostPerShot * 2)}%`,
+      value: `×${(1 + plain.vats.apCostPerShot * truth.perks["number-cruncher"].perUnit).toFixed(2)}`,
     });
     const optimized = calculateCombatFirepower(input({ equippedPerks: perks, equippedMods: [{ slug: "vats-optimized" }] }));
     expect(optimized.vats.apCostPerShot).toBeLessThan(plain.vats.apCostPerShot);
@@ -282,6 +282,16 @@ describe("Number Cruncher", () => {
     );
     // The AP pool math still uses the same cost.
     expect(optimized.vats.maxShotsInPool).toBe(Math.floor(optimized.vats.totalApPool / optimized.vats.apCostPerShot));
+  });
+
+  it("multiplies the rest of the pool instead of adding to it (Nathan's test shot, 2026-10-12)", () => {
+    // Bloodied at 20% HP on the Fixer: additive would be base × (1 + B + NC); multiplicative is base × (1 + B) × (1 + NC).
+    const stats = { healthPct: 0.2 };
+    const mods = [{ slug: "bloodied" }];
+    const withNc = calculateCombatFirepower(input({ equippedPerks: [{ cardId: "number-cruncher", rank: 1 }], equippedMods: mods }, stats));
+    const without = calculateCombatFirepower(input({ equippedMods: mods }, stats));
+    const nc = 1 + withNc.vats.apCostPerShot * truth.perks["number-cruncher"].perUnit;
+    expect(Math.abs(withNc.damagePerShot.normal - without.damagePerShot.normal * nc)).toBeLessThanOrEqual(1);
   });
 
   it("applies to melee too (the card says 'your weapons')", () => {

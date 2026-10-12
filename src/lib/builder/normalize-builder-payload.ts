@@ -150,14 +150,20 @@ function readLegendaryPerkIds(raw: unknown): string[] {
   if (!raw || typeof raw !== "object") return [];
   const o = raw as Record<string, unknown>;
   if (Array.isArray(o.legendaryPerkIds)) {
-    const set = new Set<string>();
+    // One entry per card, keeping an "id:rank" suffix when present (a bare id counts as rank 4 in
+    // aggregateEffectMath, so stripping the rank turned a rank-1 Legendary SPECIAL into +5).
+    const byId = new Map<string, string>();
     for (const x of o.legendaryPerkIds) {
       if (typeof x === "string" && x.trim()) {
-        const base = x.split(":")[0]?.trim() || x.trim();
-        set.add(base);
+        const entry = x.trim();
+        const base = entry.split(":")[0]?.trim() || entry;
+        const rank = Number.parseInt(entry.split(":")[1] ?? "", 10);
+        const prev = byId.get(base);
+        if (Number.isFinite(rank) && rank > 0) byId.set(base, `${base}:${rank}`);
+        else if (!prev) byId.set(base, base);
       }
     }
-    return Array.from(set);
+    return Array.from(byId.values());
   }
   return [];
 }

@@ -13,6 +13,7 @@
 
 import defensiveTruth from "@/data/truth/defensive-perks.json";
 import { calculateMitigatedDamage } from "@/lib/calculator/creation-engine-math";
+import { readPerkCurve, type PerkCurveName } from "@/lib/truth/perk-curves";
 
 export interface EquippedPerkCardItem {
   cardId: string;
@@ -133,6 +134,8 @@ type TruthPerk = {
   /** Pre-Patch 62 rank values kept for note-only cards whose END curve is unpublished. */
   legacyValues?: number[];
   ghoul?: boolean;
+  /** Datamined Patch 70 curve (perk-curves-p70.json) read at the live SPECIAL; wins over min/max. */
+  curve?: PerkCurveName;
 };
 
 const TRUTH = defensiveTruth as unknown as {
@@ -182,6 +185,15 @@ export function lerpSpecial(special: number, min: number, max: number): number {
   const { min: lo, max: hi } = TRUTH.specialRange;
   const s = clamp(Number.isFinite(special) ? special : lo, lo, hi);
   return min + ((max - min) * (s - lo)) / (hi - lo);
+}
+
+/**
+ * A SPECIAL-scaled perk's value at the live stat: the datamined curve when the pack names one
+ * (read at the real stat, so boosts above 15 keep climbing), else the linear min..max model.
+ */
+function scaledValue(perk: TruthPerk, special: number): number {
+  if (perk.curve) return readPerkCurve(perk.curve, special);
+  return lerpSpecial(special, perk.min ?? 0, perk.max ?? 0);
 }
 
 function rankValue(perk: TruthPerk, rank: number): number {
@@ -289,7 +301,7 @@ export function calculateDefensiveProfile(
         break;
       }
       case "barbarian": {
-        let dr = Math.round(lerpSpecial(special.str, perk.min ?? 0, perk.max ?? 0));
+        let dr = Math.round(scaledValue(perk, special.str));
         if (wearingNoArmor && !isPowerArmor) dr *= perk.unarmoredMultiplier ?? 2;
         flat.dr += dr;
         notes.push(`${label}: +${dr} DR from STR ${special.str}${wearingNoArmor && !isPowerArmor ? " (no armor, doubled)" : ""}`);
@@ -300,7 +312,7 @@ export function calculateDefensiveProfile(
           notes.push("Evasive is off while over-encumbered");
           break;
         }
-        const chance = round1(lerpSpecial(special.agi, perk.min ?? 0, perk.max ?? 0));
+        const chance = round1(scaledValue(perk, special.agi));
         evadeChance += chance;
         notes.push(`${label}: +${chance}% Evade from AGI ${special.agi}`);
         break;
@@ -320,13 +332,13 @@ export function calculateDefensiveProfile(
       }
       case "serendipity": {
         if (hp >= (perk.healthBelowPct ?? 30)) break;
-        const chance = round1(lerpSpecial(special.lck, perk.min ?? 0, perk.max ?? 0));
+        const chance = round1(scaledValue(perk, special.lck));
         evadeChance += chance;
         notes.push(`${label}: +${chance}% Evade from LCK ${special.lck} below ${perk.healthBelowPct}% HP`);
         break;
       }
       case "ricochet": {
-        const chance = round1(lerpSpecial(special.lck, perk.min ?? 0, perk.max ?? 0));
+        const chance = round1(scaledValue(perk, special.lck));
         deflectChance += chance;
         notes.push(`${label}: +${chance}% Deflect from LCK ${special.lck}`);
         break;
@@ -343,14 +355,17 @@ export function calculateDefensiveProfile(
           notes.push("Lone Wanderer is off while on a team");
           break;
         }
-        const pct = round1(lerpSpecial(special.cha, perk.min ?? 0, perk.max ?? 0));
+        // The curve is the incoming-damage multiplier (0.99 at CHA 1, 0.90 at 15); the reducer is 1 − it.
+        const pct = perk.curve
+          ? round1((1 - readPerkCurve(perk.curve, special.cha)) * 100)
+          : round1(scaledValue(perk, special.cha));
         reducers.push({ id, label, pct, condition: "solo", approximate: approx });
         break;
       }
       case "bodyguards": {
         const count = Math.min(perk.maxTeammates ?? 3, Math.max(0, teammates));
         if (!isOnTeam || count === 0) break;
-        const perTeammate = lerpSpecial(special.cha, perk.min ?? 0, perk.max ?? 0);
+        const perTeammate = scaledValue(perk, special.cha);
         const total = Math.round(perTeammate * count);
         flat.dr += total;
         flat.er += total;
@@ -358,27 +373,27 @@ export function calculateDefensiveProfile(
         break;
       }
       case "refractor": {
-        const er = Math.round(lerpSpecial(special.per, perk.min ?? 0, perk.max ?? 0));
+        const er = Math.round(scaledValue(perk, special.per));
         flat.er += er;
         notes.push(`${label}: +${er} ER from PER ${special.per}`);
         break;
       }
       case "rad-resistant": {
-        const rr = Math.round(lerpSpecial(special.end, perk.min ?? 0, perk.max ?? 0));
+        const rr = Math.round(scaledValue(perk, special.end));
         flat.rr += rr;
         notes.push(`${label}: +${rr} rad resistance from END ${special.end}`);
         break;
       }
       case "junk-shield": {
         if (!holdingJunk) break;
-        const v = Math.round(lerpSpecial(special.lck, perk.min ?? 0, perk.max ?? 0));
+        const v = Math.round(scaledValue(perk, special.lck));
         flat.dr += v;
         flat.er += v;
         notes.push(`${label}: +${v} DR/ER from LCK ${special.lck} while carrying junk`);
         break;
       }
       case "lifegiver": {
-        const pct = Math.round(lerpSpecial(special.end, perk.min ?? 0, perk.max ?? 0));
+        const pct = Math.round(scaledValue(perk, special.end));
         maxHpPct += pct;
         notes.push(`${label}: +${pct}% max HP from END ${special.end}`);
         break;
@@ -388,7 +403,7 @@ export function calculateDefensiveProfile(
           notes.push("Iron Stomach is off while diseased");
           break;
         }
-        const v = Math.round(lerpSpecial(special.end, perk.min ?? 0, perk.max ?? 0));
+        const v = Math.round(scaledValue(perk, special.end));
         flat.dr += v;
         flat.er += v;
         notes.push(`${label}: +${v} DR/ER from END ${special.end} while not diseased`);
@@ -399,7 +414,7 @@ export function calculateDefensiveProfile(
           notes.push("Natural Resistance is off while diseased");
           break;
         }
-        const v = Math.round(lerpSpecial(special.end, perk.min ?? 0, perk.max ?? 0));
+        const v = Math.round(scaledValue(perk, special.end));
         flat.fr += v;
         flat.cr += v;
         flat.pr += v;

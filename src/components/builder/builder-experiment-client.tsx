@@ -32,7 +32,7 @@ import AuxLogisticsColumn from "@/components/builder/tabs/gear/aux-logistics-col
 import ArmoryMatrixSection from "@/components/builder/tabs/gear/armory-matrix-section";
 import GearPickerDialog from "@/components/builder/gear-picker-dialog";
 import { underarmorBasePieceIdForShell } from "@/lib/builder/loadout-mode";
-import { sanitizeMutationIds } from "@/lib/builder/sandbox-mutations";
+import { isStrangeInNumbersActive, sanitizeMutationIds } from "@/lib/builder/sandbox-mutations";
 import { calculateVitalsSheet } from "@/lib/builder/vitals-sheet";
 import type { BuilderEquipmentKind } from "@/lib/builder/types";
 import { useBuilderModCatalog } from "@/components/builder/hooks/use-builder-mod-catalog";
@@ -272,6 +272,7 @@ export default function BuilderExperimentClient({
     defensiveProfile,
     intrinsicBenchTotals,
     stanceAndBiometricsLayer,
+    matchingSet,
     totals,
   } = useBuilderTotals({
     payload,
@@ -328,11 +329,12 @@ export default function BuilderExperimentClient({
         luck: statsBand.special.lck,
         strength: statsBand.special.str,
         endurance: statsBand.special.end,
+        damageResistance: statsBand.dr,
         isDiseased: Boolean(switchboardState?.isDiseased),
         healthPct: switchboardState?.healthPct ?? 20,
         caps: switchboardState?.caps ?? 30000,
         isPowerArmor: isPA,
-        hasStrangeInNumbers: payload.hasStrangeInNumbers,
+        hasStrangeInNumbers: isStrangeInNumbersActive(equippedPerkCards, payload.hasStrangeInNumbers, payload.mutationIds),
         timeOfDay: switchboardState?.timeOfDay ?? "day",
         isCrouched: Boolean(switchboardState?.combatStance?.isCrouched || switchboardState?.combatStance?.isSneaking),
         isAiming: Boolean(switchboardState?.combatStance?.isAiming),
@@ -947,6 +949,7 @@ export default function BuilderExperimentClient({
           groupedLegendaryEffects={groupedLegendaryEffects}
           mods={mods}
           piece={piece}
+          matchingSet={matchingSet}
         />
         </div>
 

@@ -14,7 +14,7 @@ import {
   getPowerArmorEquippedFlatStats,
   powerArmorFrameIntrinsicEffectMath,
 } from "@/lib/builder/power-armor-stats";
-import { sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
+import { isStrangeInNumbersActive, sandboxMutationMathLayer } from "@/lib/builder/sandbox-mutations";
 import {
   calculateDefensiveProfile,
   type EquippedPerkCardItem,
@@ -130,10 +130,14 @@ export function useBuilderTotals({
         payload.mutationIds,
         payload.ignoreMutationPenalties,
         {
-          strangeInNumbersMutatedTeammates:
-            payload.hasStrangeInNumbers && payload.mutationIds.length > 0
-              ? 4
-              : 0,
+          // Flat ×1.25 from one mutated teammate, only with the card in the deck.
+          strangeInNumbersMutatedTeammates: isStrangeInNumbersActive(
+            equippedPerkCards,
+            payload.hasStrangeInNumbers,
+            payload.mutationIds,
+          )
+            ? 1
+            : 0,
           classFreakRank: cfRank,
         },
       );
@@ -196,6 +200,17 @@ export function useBuilderTotals({
     ],
   );
 
+  const matchingSet = React.useMemo(() => {
+    if (activeChassisPiece.kind === "powerArmor") {
+      return payload.powerArmorPiecesEquipped.every(Boolean);
+    }
+    if (activeChassisPiece.kind === "armor") {
+      const setKey = activeChassisPiece.armorSetKey;
+      if (!setKey) return false;
+      return (payload.armorPieceSetKeys ?? []).every((k) => !k || k === setKey);
+    }
+    return false;
+  }, [activeChassisPiece, payload.powerArmorPiecesEquipped, payload.armorPieceSetKeys]);
   /**
    * Totals before the perk deck's defensive layer: the SPECIAL-scaled defensive
    * perks (Barbarian, Evasive, Lone Wanderer, ...) read the buffed SPECIAL from
@@ -210,11 +225,13 @@ export function useBuilderTotals({
         armorPieceSetKeys: payload.armorPieceSetKeys,
         baseSpecial: payload.baseSpecial,
         legendaryPerkIds: payload.legendaryPerkIds,
+        matchingSet,
       }),
     [
       equippedModsOrdered,
       payload.ghoul,
       preDefenseLayers,
+      matchingSet,
       baseArmorStats,
       payload.armorPieceSetKeys,
       payload.baseSpecial,
@@ -230,17 +247,6 @@ export function useBuilderTotals({
     [equippedModsOrdered],
   );
 
-  const matchingSet = React.useMemo(() => {
-    if (activeChassisPiece.kind === "powerArmor") {
-      return payload.powerArmorPiecesEquipped.every(Boolean);
-    }
-    if (activeChassisPiece.kind === "armor") {
-      const setKey = activeChassisPiece.armorSetKey;
-      if (!setKey) return false;
-      return (payload.armorPieceSetKeys ?? []).every((k) => !k || k === setKey);
-    }
-    return false;
-  }, [activeChassisPiece, payload.powerArmorPiecesEquipped, payload.armorPieceSetKeys]);
 
   const defensiveProfile = React.useMemo(() => {
     const stance = switchboardState?.combatStance;
@@ -317,11 +323,13 @@ export function useBuilderTotals({
         armorPieceSetKeys: payload.armorPieceSetKeys,
         baseSpecial: payload.baseSpecial,
         legendaryPerkIds: payload.legendaryPerkIds,
+        matchingSet,
       }),
     [
       equippedModsOrdered,
       payload.ghoul,
       preDefenseLayers,
+      matchingSet,
       perkDeckDefensiveLayer,
       baseArmorStats,
       payload.armorPieceSetKeys,
@@ -343,6 +351,7 @@ export function useBuilderTotals({
     defensiveProfile,
     intrinsicBenchTotals,
     stanceAndBiometricsLayer,
+    matchingSet,
     totals,
   };
 }

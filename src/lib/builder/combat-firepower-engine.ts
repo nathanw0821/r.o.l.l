@@ -12,7 +12,7 @@ import { getWeaponInnateModOption } from "@/lib/builder/weapon-piece-mods";
 import weakSpotTruth from "@/data/truth/weak-spot.json";
 import combatConditionsTruth from "@/data/truth/combat-conditions.json";
 import characterStats from "@/data/truth/character-stats.json";
-import { lerpSpecial } from "@/lib/builder/perk-defensive-layer";
+import { readPerkCurve } from "@/lib/truth/perk-curves";
 import {
   resolveUniqueForBuilderId,
   type UniqueEffectKind,
@@ -287,6 +287,13 @@ const CC = combatConditionsTruth as {
     "radiation-power": { byRank: number[] };
     "radioactive-strength": { byRank: number[] };
     "science-monster": { byRank: number[] };
+    "tank-killer": { byRank: number[] };
+    "bow-before-me": { byRank: number[] };
+    "demolition-expert": { byRank: number[] };
+    "heavy-hitter": { value: number };
+    "covert-operative": { byRank: number[] };
+    "mister-sandman": { byRank: number[] };
+    ninja: { byRank: number[] };
   };
   glow: { highThresholdPct: number };
   /** Onslaught stack limit: base cap plus the "+N max stacks" of each equipped card (fallout.wiki Onslaught page). */
@@ -364,6 +371,8 @@ export type CombatFirepowerCalculationInput = {
     strength: number;
     /** Live Endurance; Thirst Quencher adds END-scaled max AP to the pool when given. */
     endurance?: number;
+    /** Live Damage Resistance from the sheet; Iron Fist scales with it (perks/ironfistbonus). */
+    damageResistance?: number;
     isDiseased?: boolean;
     healthPct?: number; // 0.2 for 20% bloodied
     caps?: number; // for Aristocrat's
@@ -603,7 +612,6 @@ export function calculateCombatFirepower(
   const healthPct = rawHealth > 1 ? rawHealth / 100 : rawHealth; // Seamlessly handles 0.2 and 20% format
   const caps = input.playerStats.caps ?? 30000; // Default max caps for Aristocrat's
   const hasSIN = Boolean(input.playerStats.hasStrangeInNumbers);
-  const isPA = Boolean(input.playerStats.isPowerArmor);
 
   const breakdown: { source: string; value: string }[] = [];
   const dpsBreakdown: { source: string; value: string }[] = [];
@@ -614,6 +622,13 @@ export function calculateCombatFirepower(
 
   // 1. Additive Damage Modifiers Pool
   let additiveDamagePct = 0;
+  /**
+   * Whole-hit multipliers (factors, e.g. 2.5 for a sneak attack): they multiply the paper damage
+   * after the additive pool, the crit bonus part of a critical, and the secondary damage. Sneak
+   * attack, Nocturnal and Stalker's moved here on 2026-10-12 (Nathan's test shot: Covert Operative
+   * rank 3 sneak ≈ 2.5× the fully buffed hit).
+   */
+  const hitMultipliers: number[] = [];
 
   if (innateMods.damagePct !== 0) {
     additiveDamagePct += innateMods.damagePct;
@@ -658,32 +673,13 @@ export function calculateCombatFirepower(
     });
   }
 
-  // Weapon Class Perks
-  if (base.weaponClass === "commando" && effectiveIsAutomatic) {
-    const c1 = perkRanks.get("commando") || 0;
-    const c2 = perkRanks.get("expert-commando") || 0;
-    const c3 = perkRanks.get("master-commando") || 0;
-    const total = (c1 > 0 ? 0.1 + (c1 - 1) * 0.05 : 0) + (c2 > 0 ? 0.1 + (c2 - 1) * 0.05 : 0) + (c3 > 0 ? 0.1 + (c3 - 1) * 0.05 : 0);
-    if (total > 0) {
-      additiveDamagePct += total;
-      breakdown.push({ source: "Commando Perks", value: `+${Math.round(total * 100)}%` });
-    }
-  } else if (base.weaponClass === "rifleman" || (!effectiveIsAutomatic && base.weaponClass === "commando")) {
-    const r1 = perkRanks.get("rifleman") || 0;
-    const r2 = perkRanks.get("expert-rifleman") || 0;
-    const r3 = perkRanks.get("master-rifleman") || 0;
-    const total = (r1 > 0 ? 0.1 + (r1 - 1) * 0.05 : 0) + (r2 > 0 ? 0.1 + (r2 - 1) * 0.05 : 0) + (r3 > 0 ? 0.1 + (r3 - 1) * 0.05 : 0);
-    if (total > 0) {
-      additiveDamagePct += total;
-      breakdown.push({ source: "Rifleman Perks", value: `+${Math.round(total * 100)}%` });
-    }
-  } else if (base.weaponClass === "heavy") {
+  // Weapon-class perks. The pre-rework class damage cards (Commando, Rifleman, Heavy Gunner,
+  // Shotgunner, Gladiator, Archer, their Expert/Master tiers, Expert/Master Slugger) are not in the
+  // Patch 70 catalog (src/data/perk-cards.json) and are gone from the game (Nathan, 2026-10-12), so
+  // they no longer have branches here; an old saved build that still lists them gets nothing.
+  if (base.weaponClass === "heavy") {
     const bulletStormRank = perkRanks.get("bullet-storm") || 0;
     const hasBigGuns = (perkRanks.get("bringing-the-big-guns") || 0) > 0;
-    const h1 = perkRanks.get("heavy-gunner") || 0;
-    const h2 = perkRanks.get("expert-heavy-gunner") || 0;
-    const h3 = perkRanks.get("master-heavy-gunner") || 0;
-    const legacyTotal = (h1 > 0 ? 0.1 + (h1 - 1) * 0.05 : 0) + (h2 > 0 ? 0.1 + (h2 - 1) * 0.05 : 0) + (h3 > 0 ? 0.1 + (h3 - 1) * 0.05 : 0);
 
     // Bullet Storm: 3%/6%/9% per 30 rounds fired, 10 max stacks (doubled to 20 with Bringing the Big Guns)
     // Modeled as mid-combat sustained bonus (60% of max stacks) when not explicitly provided
@@ -695,67 +691,43 @@ export function calculateCombatFirepower(
     const activeStacks = Math.max(minStacks, Math.min(maxStacks, rawStacks));
     const bulletStormBonus = bulletStormRank > 0 ? (bulletStormRank * 0.03) * activeStacks : 0;
 
-    const total = bulletStormBonus > 0 ? bulletStormBonus : legacyTotal;
-    if (total > 0) {
-      additiveDamagePct += total;
+    if (bulletStormBonus > 0) {
+      additiveDamagePct += bulletStormBonus;
       breakdown.push({
-        source: bulletStormBonus > 0
-          ? (input.playerStats.bulletStormStacks !== undefined ? `Bullet Storm (${activeStacks} Stacks)` : "Bullet Storm (Heavy Sustained)")
-          : "Heavy Gunner Perks (Legacy)",
-        value: `+${Math.round(total * 100)}%`,
+        source: input.playerStats.bulletStormStacks !== undefined ? `Bullet Storm (${activeStacks} Stacks)` : "Bullet Storm (Heavy Sustained)",
+        value: `+${Math.round(bulletStormBonus * 100)}%`,
       });
     }
-  } else if (base.weaponClass === "shotgunner") {
-    const s1 = perkRanks.get("shotgunner") || 0;
-    const s2 = perkRanks.get("expert-shotgunner") || 0;
-    const s3 = perkRanks.get("master-shotgunner") || 0;
-    const total = (s1 > 0 ? 0.1 + (s1 - 1) * 0.05 : 0) + (s2 > 0 ? 0.1 + (s2 - 1) * 0.05 : 0) + (s3 > 0 ? 0.1 + (s3 - 1) * 0.05 : 0);
-    if (total > 0) {
-      additiveDamagePct += total;
-      breakdown.push({ source: "Shotgunner Perks", value: `+${Math.round(total * 100)}%` });
-    }
   } else if (base.weaponClass === "melee") {
-    // 1-Handed Gladiator Perks
-    const g1 = perkRanks.get("gladiator") || 0;
-    const g2 = perkRanks.get("expert-gladiator") || 0;
-    const g3 = perkRanks.get("master-gladiator") || 0;
-    const gladTotal = (g1 > 0 ? 0.1 + (g1 - 1) * 0.05 : 0) + (g2 > 0 ? 0.1 + (g2 - 1) * 0.05 : 0) + (g3 > 0 ? 0.1 + (g3 - 1) * 0.05 : 0);
-
-    // 2-Handed Slugger (Patch 62+ Rework: bonus damage against crippled targets: +10%/+20%/+30%)
+    // Slugger (Patch 70 card: melee +10%/+20%/+30% damage to crippled targets)
     const sluggerRank = perkRanks.get("slugger") || 0;
     const sluggerActive = input.playerStats.targetCrippledLimbs !== undefined
       ? input.playerStats.targetCrippledLimbs > 0
       : true;
     const sluggerBonus = (sluggerRank > 0 && sluggerActive) ? sluggerRank * 0.10 : 0;
 
-    // Legacy Slugger support (Expert & Master Slugger if equipped in legacy loadouts)
-    const legS2 = perkRanks.get("expert-slugger") || 0;
-    const legS3 = perkRanks.get("master-slugger") || 0;
-    const legacySluggerTotal = (legS2 > 0 ? 0.1 + (legS2 - 1) * 0.05 : 0) + (legS3 > 0 ? 0.1 + (legS3 - 1) * 0.05 : 0);
-
-    // Modern Rework Perks: Heavy Hitter & Knee-Capper
-    const heavyHitterRank = perkRanks.get("heavy-hitter") || 0;
+    // Knee-Capper is limb damage only (no limb model): a breakdown line. Heavy Hitter is below.
     const kneeCapperRank = perkRanks.get("knee-capper") || 0;
 
-    const totalMeleePerks = gladTotal + sluggerBonus + legacySluggerTotal;
     // Strength bonus: 5% per point of STR
     const strBonus = input.playerStats.strength * 0.05;
-    additiveDamagePct += totalMeleePerks + strBonus;
+    additiveDamagePct += sluggerBonus + strBonus;
 
-    if (gladTotal > 0) breakdown.push({ source: "Gladiator Perks", value: `+${Math.round(gladTotal * 100)}%` });
     if (sluggerBonus > 0) breakdown.push({ source: `Slugger (Rank ${sluggerRank} vs Crippled)`, value: `+${Math.round(sluggerBonus * 100)}%` });
-    if (legacySluggerTotal > 0) breakdown.push({ source: "Legacy Slugger Perks", value: `+${Math.round(legacySluggerTotal * 100)}%` });
-    if (heavyHitterRank > 0) breakdown.push({ source: "Heavy Hitter", value: "+25% Power Attack Dmg" });
     if (kneeCapperRank > 0) breakdown.push({ source: "Knee-Capper", value: "+50% Limb Dmg" });
     if (strBonus > 0) breakdown.push({ source: `Strength (${input.playerStats.strength})`, value: `+${Math.round(strBonus * 100)}%` });
   } else if (base.weaponClass === "unarmed") {
+    // Iron Fist (Patch 70 card: "Your Fists deal more damage based on your DR"): perk-curves-p70.json
+    // perks/ironfistbonus, [[0, 0], [1000, 100]] read at the live Damage Resistance as a percent.
     const ifRank = perkRanks.get("iron-fist") || 0;
-    const ifBonus = ifRank > 0 ? 0.1 + (ifRank - 1) * 0.05 : 0;
+    const playerDr = input.playerStats.damageResistance;
+    const ifBonus = ifRank > 0 && playerDr !== undefined ? readPerkCurve("perks/ironfistbonus", playerDr) / 100 : 0;
     // Unarmed attacks uniquely scale at +10% base damage per point of Strength (double standard melee +5%)
     const strBonus = input.playerStats.strength * 0.10;
     additiveDamagePct += ifBonus + strBonus;
 
-    if (ifBonus > 0) breakdown.push({ source: `Iron Fist (Rank ${ifRank})`, value: `+${Math.round(ifBonus * 100)}%` });
+    if (ifRank > 0 && playerDr === undefined) breakdown.push({ source: "Iron Fist", value: "needs Damage Resistance" });
+    if (ifBonus > 0) breakdown.push({ source: `Iron Fist (${Math.round(playerDr ?? 0)} DR)`, value: `+${Math.round(ifBonus * 1000) / 10}%` });
     if (strBonus > 0) breakdown.push({ source: `Unarmed Strength 10% (${input.playerStats.strength})`, value: `+${Math.round(strBonus * 100)}%` });
   } else if (base.weaponClass === "gunslinger") {
     // Since the Patch 62 rework Gunslinger is weak-spot damage (+6/9/12%), not flat pistol
@@ -763,26 +735,30 @@ export function calculateCombatFirepower(
     if ((perkRanks.get("gunslinger") || 0) > 0) {
       breakdown.push({ source: "Gunslinger Perks", value: "weak-spot damage only (see Weak spot)" });
     }
-  } else if (base.weaponClass === "bow") {
-    const a1 = perkRanks.get("archer") || 0;
-    const a2 = perkRanks.get("expert-archer") || 0;
-    const a3 = perkRanks.get("master-archer") || 0;
-    const total = (a1 > 0 ? 0.1 + (a1 - 1) * 0.05 : 0) + (a2 > 0 ? 0.1 + (a2 - 1) * 0.05 : 0) + (a3 > 0 ? 0.1 + (a3 - 1) * 0.05 : 0);
-    if (total > 0) {
-      additiveDamagePct += total;
-      breakdown.push({ source: "Archer Perks", value: `+${Math.round(total * 100)}%` });
+  }
+
+  // Science (Patch 70 card: "Increase energy damage based on your INT"): perk-curves-p70.json
+  // perks/sciencebonus read at the live Intelligence (5 % at INT 1, 22 % at 15, 35 % at 30).
+  if (base.isEnergy && (perkRanks.get("science") || 0) > 0) {
+    const int = input.playerStats.intelligence;
+    if (int === undefined) {
+      breakdown.push({ source: "Science", value: "needs Intelligence" });
+    } else {
+      const sci = readPerkCurve("perks/sciencebonus", int);
+      additiveDamagePct += sci;
+      breakdown.push({ source: `Science (INT ${int})`, value: `+${Math.round(sci * 1000) / 10}%` });
     }
   }
 
-  // Energy Science Perks
-  if (base.isEnergy) {
-    const sc1 = perkRanks.get("science") || 0;
-    const sc2 = perkRanks.get("expert-science") || 0;
-    const sc3 = perkRanks.get("master-science") || 0;
-    const total = (sc1 > 0 ? 0.05 + sc1 * 0.05 : 0) + (sc2 > 0 ? 0.05 + sc2 * 0.05 : 0) + (sc3 > 0 ? 0.05 + sc3 * 0.05 : 0);
-    if (total > 0) {
-      additiveDamagePct += total;
-      breakdown.push({ source: "Science Energy Perks", value: `+${Math.round(total * 100)}%` });
+  // Heavy Hitter (combat-conditions.json, Patch 70 card): melee power attacks +25%, additive like
+  // the other card bonuses. Unarmed weapons are melee weapons in the game's classes (see Martial Artist).
+  if ((perkRanks.get("heavy-hitter") || 0) > 0 && (base.weaponClass === "melee" || base.weaponClass === "unarmed")) {
+    if (input.playerStats.isPowerAttacking) {
+      const hh = CC.perks["heavy-hitter"].value;
+      additiveDamagePct += hh;
+      breakdown.push({ source: "Heavy Hitter (Power Attack)", value: `+${Math.round(hh * 100)}%` });
+    } else {
+      breakdown.push({ source: "Heavy Hitter", value: "power attacks only" });
     }
   }
 
@@ -793,14 +769,16 @@ export function calculateCombatFirepower(
     breakdown.push({ source: `Bloody Mess (Rank ${bloodyMessRank})`, value: "Bleed Corpse Explosion (LCK Scaled)" });
   }
 
-  // Nerd Rage! (single rank since the Patch 62 rework): damage scales from 0 to +80% as
-  // health falls below 20% (Nukes & Dragons range; exact curve unpublished, modelled linearly).
+  // Nerd Rage! (single rank since the Patch 62 rework): perk-curves-p70.json
+  // perks/nerdragedamagebonus read at the health fraction: +80 % at 5 % HP, +40 % at 20 %,
+  // +1 % at 80 %, 0 at full health (linear between the points).
   const nerdRageRank = perkRanks.get("nerd-rage") || 0;
-  if (nerdRageRank > 0 && healthPct <= 0.2) {
-    // Floor +20% at the 20% line (matches the pre-rework top rank), rising to +80% at 0 HP.
-    const nr = 0.2 + 0.6 * Math.min(1, Math.max(0, (0.2 - healthPct) / 0.2));
-    additiveDamagePct += nr;
-    breakdown.push({ source: `Nerd Rage (<20% HP)`, value: `+${Math.round(nr * 100)}%` });
+  if (nerdRageRank > 0) {
+    const nr = readPerkCurve("perks/nerdragedamagebonus", healthPct) / 100;
+    if (nr > 0) {
+      additiveDamagePct += nr;
+      breakdown.push({ source: `Nerd Rage (${Math.round(healthPct * 100)}% HP)`, value: `+${Math.round(nr * 100)}%` });
+    }
   }
 
   // Kill Streak (Burning Springs): Adrenaline perk (single rank) and the Adrenal 1★ weapon mod each
@@ -867,17 +845,17 @@ export function calculateCombatFirepower(
       const isNight = input.playerStats.timeOfDay === "night";
       const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
       if (isNight || isCrouched) {
-        additiveDamagePct += LEG.nocturnal;
+        hitMultipliers.push(1 + LEG.nocturnal);
         breakdown.push({
           source: isCrouched ? "Nocturnal (Crouched / Stealthed)" : "Nocturnal (Nighttime)",
-          value: `+${Math.round(LEG.nocturnal * 100)}%`
+          value: `×${(1 + LEG.nocturnal).toFixed(2)}`
         });
       }
     } else if (slug === "stalkers" || slug === "stalker-s") {
       const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
       if (isCrouched) {
-        additiveDamagePct += LEG.stalkers;
-        breakdown.push({ source: "Stalker's (Crouched / Stealthed)", value: `+${Math.round(LEG.stalkers * 100)}% Sneak Attack` });
+        hitMultipliers.push(1 + LEG.stalkers);
+        breakdown.push({ source: "Stalker's (Crouched / Stealthed)", value: `×${(1 + LEG.stalkers).toFixed(2)} Sneak Attack` });
       }
     } else if (slug === "hitmans" || slug === "hitman-s" || slug.includes("damage-while-aiming")) {
       const isInVats = Boolean(input.playerStats.isInVats);
@@ -935,29 +913,37 @@ export function calculateCombatFirepower(
     }
   }
 
-  // Sneak Attack Multiplier (when Crouched / Stealthed)
+  // Sneak attack (when Crouched / Stealthed): base ×2.0, plus the Patch 70 card bonuses
+  // (combat-conditions.json) added to that multiplier, which then multiplies the whole hit:
+  // Covert Operative +15/30/50% (ranged), Mister Sandman +50/100% (silenced weapons, any time of
+  // day), Ninja +50/100% (bows, throwing and melee weapons).
   const isCrouched = Boolean(input.playerStats.isCrouched || input.playerStats.isSneaking);
   if (isCrouched) {
     const ninjaRank = perkRanks.get("ninja") || 0;
     const covertRank = perkRanks.get("covert-operative") || 0;
     const sandmanRank = perkRanks.get("mister-sandman") || 0;
-    const isNight = input.playerStats.timeOfDay === "night";
     const isSuppressed = innateMods.isSuppressed;
+    const sneakCards: string[] = [];
 
     let sneakMultiplier = 2.0;
-    if (base.weaponClass === "melee" || base.weaponClass === "unarmed") {
-      sneakMultiplier = ninjaRank > 0 ? 3.0 : 2.0;
-    } else {
-      if (covertRank > 0) sneakMultiplier = 2.5;
-      if (isNight && sandmanRank > 0 && isSuppressed) {
-        sneakMultiplier += sandmanRank * 0.25;
-      }
+    if (covertRank > 0 && base.isRanged) {
+      sneakMultiplier += byRank(CC.perks["covert-operative"].byRank, covertRank);
+      sneakCards.push(`Covert Operative ${Math.min(covertRank, CC.perks["covert-operative"].byRank.length)}`);
     }
+    if (sandmanRank > 0 && isSuppressed) {
+      sneakMultiplier += byRank(CC.perks["mister-sandman"].byRank, sandmanRank);
+      sneakCards.push(`Mister Sandman ${Math.min(sandmanRank, CC.perks["mister-sandman"].byRank.length)} (Silenced)`);
+    }
+    if (ninjaRank > 0 && (base.weaponClass === "melee" || base.weaponClass === "unarmed" || base.weaponClass === "bow")) {
+      sneakMultiplier += byRank(CC.perks.ninja.byRank, ninjaRank);
+      sneakCards.push(`Ninja ${Math.min(ninjaRank, CC.perks.ninja.byRank.length)}`);
+    }
+    sneakMultiplier = Math.round(sneakMultiplier * 100) / 100;
 
-    additiveDamagePct += (sneakMultiplier - 1.0);
+    hitMultipliers.push(sneakMultiplier);
     breakdown.push({
-      source: `Sneak Attack (${isNight && sandmanRank > 0 && isSuppressed ? "Mister Sandman (Silenced) " : ""}${sneakMultiplier}× Multiplier)`,
-      value: `+${Math.round((sneakMultiplier - 1.0) * 100)}%`
+      source: `Sneak Attack${sneakCards.length > 0 ? ` (${sneakCards.join(", ")})` : ""}`,
+      value: `×${sneakMultiplier}`,
     });
   }
 
@@ -1048,6 +1034,8 @@ export function calculateCombatFirepower(
   const tenderizerHits = Math.max(0, input.playerStats.tenderizerStacks || 0);
   const tenderizerMultiplier = (perkRanks.get("tenderizer") || 0) > 0 && tenderizerHits > 0 ? 1 + Math.min(1.0, tenderizerHits * 0.001) : 1;
   if (tenderizerMultiplier > 1) {
+    // A target debuff: it multiplies the whole hit, the crit bonus part included.
+    hitMultipliers.push(tenderizerMultiplier);
     breakdown.push({
       source: `Tenderizer (${tenderizerHits} hits)`,
       value: `×${tenderizerMultiplier.toFixed(3)} target debuff`,
@@ -1259,10 +1247,12 @@ export function calculateCombatFirepower(
   // (it depends only on the base weapon, the attachments and the V.A.T.S. Optimized star, all
   // known by now); §7 reuses the same value for the AP pool.
   const vatsApCost = resolveVatsApCost(base.baseVatsApCost, innateMods.apCostPct, hasVatsOptimized);
+  // It multiplies the whole hit (Nathan's test shot 2026-10-12: it multiplies with Bloodied) and
+  // reads the modified AP cost (a V.A.T.S. Optimized copy gains less).
   if ((perkRanks.get("number-cruncher") || 0) > 0) {
     const v = vatsApCost * CC.perks["number-cruncher"].perUnit;
-    additiveDamagePct += v;
-    breakdown.push({ source: `Number Cruncher (${vatsApCost} AP per shot)`, value: `+${Math.round(v * 100)}%` });
+    hitMultipliers.push(1 + v);
+    breakdown.push({ source: `Number Cruncher (${vatsApCost} AP per shot)`, value: `×${(1 + v).toFixed(2)}` });
   }
 
   // Damage type (Pyro-Technician, Cryologist): INT-scaled bonus to the damage of the matching
@@ -1422,22 +1412,24 @@ export function calculateCombatFirepower(
   }
 
   // Normal Damage Per Shot Calculation
-  // Post-Patch 22 rule via creation-engine-math: every perk, chem, mutation and legendary
-  // primary in this engine adds to BASE (additiveDamagePct is a fraction; the calculator takes
-  // percent). The multiplicative list is intentionally empty: sneak attack, Nocturnal and
-  // Stalker's stay linearised into the additive pool for parity (tracked as a follow-up).
+  // Post-Patch 22 rule via creation-engine-math: perks, chems, mutations and legendary primaries
+  // add to BASE (additiveDamagePct is a fraction; the calculator takes percent). Whole-hit
+  // multipliers (`hitMultipliers`: sneak attack, Nocturnal, Stalker's, Number Cruncher, the
+  // Tenderizer target debuff) and the body-part multiplier multiply the result.
+  const hitMultiplierPcts = hitMultipliers.map((f) => (f - 1) * 100);
+  const hitMultiplierProduct = hitMultipliers.reduce((p, f) => p * f, 1);
   const primaryDamage = Math.round(
     calculatePaperDamage(base.baseDamage, additiveDamagePct * 100, [
-      ...(tenderizerMultiplier > 1 ? [(tenderizerMultiplier - 1) * 100] : []),
+      ...hitMultiplierPcts,
       ...(weakSpotMultiplier !== 1 ? [(weakSpotMultiplier - 1) * 100] : []),
     ])
   );
 
   // Secondary damage (catalog `secondaryDamage`: Cremator burn, Shishkebab fire, Cold Shoulder
   // cryo …), rule in combat-conditions.json `secondaryDamage`. It is a second BASE: it takes the
-  // same additive pool as the primary (class perks, legendary primaries, chems, mutations,
-  // sneak) with the INT damage-type perk swapped for its own type, and the Tenderizer target
-  // debuff. It takes no body-part multiplier (the weak-spot table is a hit-location multiplier;
+  // same additive pool as the primary (class perks, legendary primaries, chems, mutations)
+  // with the INT damage-type perk swapped for its own type, the whole-hit multipliers (sneak …)
+  // and the Tenderizer target debuff. It takes no body-part multiplier (the weak-spot table is a hit-location multiplier;
   // the secondary is elemental / over-time damage the engine cannot place on a limb), no crit
   // bonus (the engine's V.A.T.S. crit bonus is base × critBonusPct on the primary only) and no
   // explosive fraction. Each base is rounded once, then they add up into `normal`.
@@ -1446,7 +1438,7 @@ export function calculateCombatFirepower(
     const secondaryPool = additiveDamagePct - primaryIntTypeBonus + secondaryIntTypeBonus;
     secondaryDamage = Math.round(
       calculatePaperDamage(base.secondaryDamage ?? 0, secondaryPool * 100, [
-        ...(tenderizerMultiplier > 1 ? [(tenderizerMultiplier - 1) * 100] : []),
+        ...hitMultiplierPcts,
       ])
     );
     breakdown.push({
@@ -1464,7 +1456,7 @@ export function calculateCombatFirepower(
     const grantedDemoRank = grantModel?.perkId === "demolition-expert" ? (grantModel.perkRank ?? 0) : 0;
     const equippedDemoRank = perkRanks.get("demolition-expert") || 0;
     const demoRank = Math.max(equippedDemoRank, grantedDemoRank);
-    const demoScale = 1 + (demoRank > 0 ? 0.2 + (demoRank - 1) * 0.1 : 0);
+    const demoScale = 1 + (demoRank > 0 ? byRank(CC.perks["demolition-expert"].byRank, demoRank) : 0);
     explosiveDamage = Math.round(base.baseDamage * LEG.explosiveBaseFraction * demoScale);
     breakdown.push({
       source: grantedDemoRank > 0 && equippedDemoRank < grantedDemoRank
@@ -1560,7 +1552,10 @@ export function calculateCombatFirepower(
   // The body-part multiplier applies to the whole hit, so the crit bonus is scaled by it too;
   // explosive splash is area damage and takes no body-part multiplier. The crit bonus is on the
   // primary base only: the secondary damage inside `normalDamage` earns no crit bonus.
-  const criticalDamage = normalDamage + Math.round(base.baseDamage * critBonusPct * weakSpotMultiplier) + explosiveDamage;
+  // Whole-hit multipliers (sneak attack, Nocturnal, Stalker's, Number Cruncher, Tenderizer) scale
+  // the crit bonus part as well.
+  const criticalDamage =
+    normalDamage + Math.round(base.baseDamage * critBonusPct * weakSpotMultiplier * hitMultiplierProduct) + explosiveDamage;
 
   // 5. Fire Rate & DPS
   const innateFireRateFactor = 1.0 + innateMods.fireRatePct;
@@ -1657,14 +1652,15 @@ export function calculateCombatFirepower(
   const uniqueApPoolBonus = apPoolModel?.value ?? 0;
 
   // `vatsApCost` was resolved in §3b (Number Cruncher reads it).
-  // Thirst Quencher: END-scaled max AP (approximate range, character-stats.json), not while diseased.
+  // Thirst Quencher: max AP from the datamined curve read at the live END (character-stats.json
+  // names it), not while diseased.
   const thirstQuencherAp =
     (perkRanks.get("thirst-quencher") || 0) > 0 && input.playerStats.endurance !== undefined && !input.playerStats.isDiseased
-      ? Math.round(lerpSpecial(input.playerStats.endurance, characterStats.perks["thirst-quencher"].min, characterStats.perks["thirst-quencher"].max))
+      ? Math.round(readPerkCurve("perks/thirstquencherbonus", input.playerStats.endurance))
       : 0;
   const totalApPool = characterStats.ap.base + input.playerStats.agility * characterStats.ap.perAgility + uniqueApPoolBonus + thirstQuencherAp;
   if (thirstQuencherAp > 0) {
-    vatsBreakdown.push({ source: `Thirst Quencher (END ${input.playerStats.endurance}, approx.)`, value: `+${thirstQuencherAp} AP` });
+    vatsBreakdown.push({ source: `Thirst Quencher (END ${input.playerStats.endurance})`, value: `+${thirstQuencherAp} AP` });
   }
   const maxShotsInPool = Math.floor(totalApPool / vatsApCost);
 
@@ -1686,11 +1682,12 @@ export function calculateCombatFirepower(
     fourLeafCloverRank,
   });
 
+  // Four Leaf Clover (Patch 70, one rank): "Misses in V.A.T.S. now contribute to the Critical Meter
+  // based on your LCK". The engine has no hit/miss model, so it is a line only.
   if (fourLeafCloverRank > 0) {
-    const cloverChance = fourLeafCloverRank === 3 ? 13.5 : fourLeafCloverRank === 2 ? 10.5 : 7.5;
     vatsBreakdown.push({
-      source: `Four Leaf Clover (Rank ${fourLeafCloverRank})`,
-      value: `~${cloverChance}% Instant Crit Refill on Hit`,
+      source: "Four Leaf Clover",
+      value: "V.A.T.S. misses fill the crit meter by LCK (not modelled)",
     });
   }
 
@@ -1722,25 +1719,21 @@ export function calculateCombatFirepower(
     apBreakdown.push({ source: `${uniqueName} (${st} Onslaught stacks)`, value: `${ttrPen}% Penetration` });
   }
 
+  // Tank Killer / Bow Before Me (combat-conditions.json, Patch 70 card texts): two ranks, 20/40 %.
+  // Tank Killer covers every ranged weapon, in or out of Power Armor. Stabilized is an accuracy
+  // card since the rework and adds no penetration.
   const tankKillerRank = perkRanks.get("tank-killer") || 0;
-  if (tankKillerRank > 0 && !isPA && (base.weaponClass === "rifleman" || base.weaponClass === "commando" || base.weaponClass === "gunslinger" || base.weaponClass === "guerrilla")) {
-    const tkPen = tankKillerRank === 3 ? 0.36 : tankKillerRank === 2 ? 0.24 : 0.12;
-    penetrationSourcesPct.push(tkPen * 100);
-    apBreakdown.push({ source: `Tank Killer (Rank ${tankKillerRank})`, value: `${Math.round(tkPen * 100)}% Penetration` });
+  if (tankKillerRank > 0 && base.isRanged) {
+    const tkPen = byRank(CC.perks["tank-killer"].byRank, tankKillerRank);
+    penetrationSourcesPct.push(tkPen);
+    apBreakdown.push({ source: `Tank Killer (Rank ${Math.min(tankKillerRank, CC.perks["tank-killer"].byRank.length)})`, value: `${tkPen}% Penetration` });
   }
 
   const bowBeforeMeRank = perkRanks.get("bow-before-me") || 0;
   if (bowBeforeMeRank > 0 && base.weaponClass === "bow") {
-    const bowPen = bowBeforeMeRank === 3 ? 0.36 : bowBeforeMeRank === 2 ? 0.24 : 0.12;
-    penetrationSourcesPct.push(bowPen * 100);
-    apBreakdown.push({ source: `Bow Before Me (Rank ${bowBeforeMeRank})`, value: `${Math.round(bowPen * 100)}% Penetration` });
-  }
-
-  const stabilizedRank = perkRanks.get("stabilized") || 0;
-  if (stabilizedRank > 0 && isPA && base.weaponClass === "heavy") {
-    const stabPen = stabilizedRank === 3 ? 0.45 : stabilizedRank === 2 ? 0.3 : 0.15;
-    penetrationSourcesPct.push(stabPen * 100);
-    apBreakdown.push({ source: `Stabilized in PA (Rank ${stabilizedRank})`, value: `${Math.round(stabPen * 100)}% Penetration` });
+    const bowPen = byRank(CC.perks["bow-before-me"].byRank, bowBeforeMeRank);
+    penetrationSourcesPct.push(bowPen);
+    apBreakdown.push({ source: `Bow Before Me (Rank ${Math.min(bowBeforeMeRank, CC.perks["bow-before-me"].byRank.length)})`, value: `${bowPen}% Penetration` });
   }
 
   const exterminatorRank = perkRanks.get("exterminator") || 0;

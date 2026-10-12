@@ -3,9 +3,10 @@
  * `effectMath` into positives vs negatives so “Ignore mutation penalties” can
  * approximate serum (removes downsides only — not Class Freak).
  *
- * **Strange in Numbers** (from N&D `p=` when token `ce` is present): optional
- * `strangeInNumbersMutatedTeammates` (0–4) scales **positive** benefit numbers by
- * `1 + 0.25 × teammates` (in-game cap at four mutated teammates = ×2.0).
+ * **Strange in Numbers** (Patch 70 card: "Positive mutation effects are +25% stronger if
+ * teammates are mutated too"): when the card is equipped and at least one teammate is mutated,
+ * **positive** benefit numbers are scaled by a flat ×1.25. One qualifying teammate gives the full
+ * bonus; more teammates add nothing (Nathan, 2026-10-12; until then this file used ×(1 + 0.25 × n)).
  */
 export type SandboxMutationDef = {
   id: string;
@@ -164,15 +165,33 @@ export function sanitizeMutationIds(ids: ReadonlyArray<string | null | undefined
   return out;
 }
 
-/** In-game SiN: +25% positive mutation effects per mutated teammate, max four (+100%). */
+/** Strange in Numbers positive-effect multiplier (Patch 70 card text, "+25% stronger"). */
+export const STRANGE_IN_NUMBERS_MULTIPLIER = 1.25;
+
+/** In-game SiN: a flat ×1.25 to positive mutation effects once any teammate is mutated. */
 export function strangeInNumbersBenefitMultiplier(mutatedTeammateCount: number): number {
-  const n = Math.max(0, Math.min(4, Math.floor(mutatedTeammateCount)));
-  return 1 + 0.25 * n;
+  return Math.floor(mutatedTeammateCount) >= 1 ? STRANGE_IN_NUMBERS_MULTIPLIER : 1;
+}
+
+/**
+ * Strange in Numbers applies when the card is in the perk deck, the player carries a mutation and
+ * the Team switch says a teammate is mutated (`payload.hasStrangeInNumbers`, "Mutated Teammates").
+ */
+export function isStrangeInNumbersActive(
+  equippedPerkCards: ReadonlyArray<{ cardId: string; rank: number }>,
+  hasMutatedTeammate: boolean | undefined,
+  mutationIds: readonly string[] | undefined
+): boolean {
+  return (
+    Boolean(hasMutatedTeammate) &&
+    (mutationIds?.length ?? 0) > 0 &&
+    equippedPerkCards.some((c) => c.cardId === "strange-in-numbers" && c.rank > 0)
+  );
 }
 
 export type SandboxMutationLayerOpts = {
   /**
-   * Count of **other** mutated teammates (0–4) for Strange in Numbers.
+   * Count of **other** mutated teammates for Strange in Numbers: any count ≥ 1 gives the flat ×1.25.
    * When omitted or 0, no SiN scaling is applied.
    */
   strangeInNumbersMutatedTeammates?: number;

@@ -16,6 +16,10 @@
 import type { BuilderModDTO } from "./types";
 import type { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { calculateDefensiveProfile } from "./perk-defensive-layer";
+import { requireEffectNumber } from "@/lib/truth/legendary-effect-model";
+
+/** Weapon-tag numbers come from the same pack the firepower engine reads, so the two cannot disagree. */
+const pct = (id: string, key: "value" | "cap") => Math.round(requireEffectNumber(id, key) * 100);
 
 export interface StanceBiometricsInput {
   switchboard: CombatSwitchboardState | null;
@@ -255,25 +259,25 @@ export function calculateStanceAndBiometricModifiers(
 
   // 8. Compute Weapon Tactical Stance & Biometric Tags
   if (hasNocturnalWeapon && nocturnalActive) {
-    activeTacticalTags.push("Nocturnal (+50% Weapon Dmg · Stealthed/Night)");
+    activeTacticalTags.push(`Nocturnal (×${(1 + pct("nocturnal", "value") / 100).toFixed(1)} Weapon Dmg · Stealthed/Night)`);
   }
   if (hasHitmansWeapon && isAiming) {
-    activeTacticalTags.push("Hitman's (+25% Weapon Dmg · Aiming ADS)");
+    activeTacticalTags.push(`Hitman's (+${pct("hitmans", "value")}% Weapon Dmg · Aiming ADS)`);
   }
   if (hasHeavyHittersWeapon && isPowerAttacking) {
-    activeTacticalTags.push("Heavy Hitter's (+40% Power Attack Dmg)");
+    activeTacticalTags.push(`Heavy Hitter's (+${pct("heavy-hitters", "value")}% Power Attack Dmg)`);
   }
   if (hasSteadyWeapon && isStationary) {
-    activeTacticalTags.push("Steady (+25% Stationary Melee Dmg)");
+    activeTacticalTags.push(`Steady (+${pct("steady", "value")}% Weapon Dmg · Not Moving)`);
   }
   if (hasStalkersWeapon && isCrouched) {
-    activeTacticalTags.push("Stalker's (+100% Sneak VATS Hit)");
+    activeTacticalTags.push(`Stalker's (×${(1 + pct("stalkers", "value") / 100).toFixed(1)} Weapon Dmg · Sneaking)`);
   }
   if (hasBloodiedWeapon && healthPct <= 20) {
-    activeTacticalTags.push("Bloodied (+80% Weapon Dmg · Low HP)");
+    activeTacticalTags.push(`Bloodied (up to +${pct("bloodied", "cap")}% Weapon Dmg · Low HP)`);
   }
   if (isCrouched) {
-    activeTacticalTags.push("Sneak Attack Multiplier (2.0×–2.5×)");
+    activeTacticalTags.push("Sneak Attack (×2.0, + Covert Operative / Mister Sandman / Ninja)");
   }
   if (isInVats) {
     activeTacticalTags.push("🎯 In V.A.T.S. (Target Lock Active)");

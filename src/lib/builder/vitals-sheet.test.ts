@@ -61,7 +61,8 @@ describe("calculateVitalsSheet", () => {
     // 6 × (1 + 0.45 + 0.35 + 0.25 − 0.20) = 11.1
     expect(r.apRegenPerSecond).toBe(11.1);
     const noEngine = calculateVitalsSheet(base({ perkCards: [{ cardId: "thirst-quencher", rank: 1 }], special: { str: 1, per: 1, end: 15, cha: 1, int: 1, agi: 1, lck: 1 } }));
-    expect(noEngine.maxAp).toBe(110 + 90);
+    // Thirst Quencher at END 15: perks/thirstquencherbonus = 78 (perk-curves-p70.json)
+    expect(noEngine.maxAp).toBe(110 + 78);
   });
 
   it("carry weight and movement speed follow the perks and their conditions", () => {

@@ -52,7 +52,7 @@ import {
 } from "@/lib/builder/weapon-piece-mods";
 import type { CombatSwitchboardState } from "@/components/builder/builder-combat-switchboard";
 import { areEquippedCardsEqual } from "@/lib/perks/catalog";
-import { sanitizeMutationIds } from "@/lib/builder/sandbox-mutations";
+import { isStrangeInNumbersActive, sanitizeMutationIds } from "@/lib/builder/sandbox-mutations";
 import type { NukesDragonsParsedBuild } from "@/lib/perks/nukes-dragons-parser";
 
 export interface UseBuilderPayloadProps {
@@ -231,9 +231,10 @@ export function useBuilderPayload({
       activeNukaCola: switchboardState.activeNukaCola,
       activeCompanion: switchboardState.activeCompanion,
       activeMutations: payload.mutationIds,
-      hasStrangeInNumbers: payload.hasStrangeInNumbers,
+      // Strange in Numbers needs the card in the deck as well as a mutated teammate.
+      hasStrangeInNumbers: isStrangeInNumbersActive(equippedPerkCards, payload.hasStrangeInNumbers, payload.mutationIds),
     });
-  }, [switchboardState, payload.mutationIds, payload.hasStrangeInNumbers]);
+  }, [switchboardState, payload.mutationIds, payload.hasStrangeInNumbers, equippedPerkCards]);
 
   // Synchronize state when initialPayload is passed (e.g. read-only shared build view)
   React.useEffect(() => {
@@ -672,7 +673,8 @@ export function useBuilderPayload({
         };
         const nextLegPerks =
           data.legendaryPerks && data.legendaryPerks.length > 0
-            ? data.legendaryPerks.map((lp) => lp.id)
+            ? // Keep the rank ("id:rank"): aggregateEffectMath reads a bare id as rank 4 (+5 SPECIAL).
+              data.legendaryPerks.map((lp) => `${lp.id}:${lp.rank}`)
             : prev.legendaryPerkIds;
         const nextGhoul =
           data.isGhoul !== undefined ? data.isGhoul : prev.ghoul;
@@ -732,7 +734,7 @@ export function useBuilderPayload({
       setPayload((prev) => ({
         ...prev,
         baseSpecial: { ...build.specials },
-        legendaryPerkIds: finalLegCards.map((p) => p.cardId),
+        legendaryPerkIds: finalLegCards.map((p) => `${p.cardId}:${p.rank}`),
         ghoul: build.isGhoul ? true : prev.ghoul,
         mutationIds: importedMutations.length > 0 ? importedMutations : prev.mutationIds,
       }));

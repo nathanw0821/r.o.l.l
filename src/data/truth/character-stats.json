@@ -25,7 +25,7 @@
     "confidence": "verified"
   },
   "perks": {
-    "thirst-quencher": { "model": "max-ap-flat-by-end", "min": 0, "max": 90, "condition": "not diseased", "confidence": "approximate", "source": "Card text 'Increased Max AP based on END while not diseased'; legacy ranks were +30/60/90, range unpublished since Patch 62" },
+    "thirst-quencher": { "model": "max-ap-flat-by-end", "min": 7, "max": 200, "curve": "perks/thirstquencherbonus", "condition": "not diseased", "confidence": "datamine", "source": "Card text 'Increased Max AP based on END while not diseased'; amount from perk-curves-p70.json perks/thirstquencherbonus read at the live END (1 → 7, 15 → 78, 30 → 125, 60 → 175, 100 → 200). Until 2026-10-12 modelled as 0..90 over END 1..15." },
     "strong-back": { "model": "carry-flat-by-str", "min": 10, "max": 40, "confidence": "approximate", "source": "Card text 'Gain more carry weight based on your STR'; legacy ranks were +10/20/30/40 (fallout.wiki)" },
     "nocturnal-fortitude": { "model": "max-hp-flat-at-night", "byRank": [50, 100], "confidence": "verified", "source": "Card text (Patch 70)" },
     "photosynthetic": { "model": "hp-regen-per-second-by-day", "byRank": [3, 6], "confidence": "verified", "source": "Card text (Patch 70)" },

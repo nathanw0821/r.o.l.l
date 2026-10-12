@@ -85,8 +85,9 @@ describe("secondary damage", () => {
     const kebab = run({ weaponId: "shishkebab", equippedPerks: pyro }, { intelligence: 20 });
     expect(kebab.damagePerShot.secondary).toBe(Math.round(30 * (1 + v)));
     expect(kebab.damagePerShot.normal).toBe(45 + Math.round(30 * (1 + v)));
-    // A class perk (Gladiator, one-handed melee) reaches both Shishkebab halves; Pyro only the fire half.
-    const kebabGlad = run({ weaponId: "shishkebab", equippedPerks: [...pyro, { cardId: "gladiator", rank: 1 }] }, { intelligence: 20 });
+    // A melee card in the shared pool (Slugger r1, +10% vs crippled, Patch 70 card; Gladiator is gone
+    // since Patch 70) reaches both Shishkebab halves; Pyro only the fire half.
+    const kebabGlad = run({ weaponId: "shishkebab", equippedPerks: [...pyro, { cardId: "slugger", rank: 1 }] }, { intelligence: 20, targetCrippledLimbs: 1 });
     expect(kebabGlad.damagePerShot.normal).toBe(Math.round(45 * 1.1) + Math.round(30 * (1.1 + v)));
   });
 

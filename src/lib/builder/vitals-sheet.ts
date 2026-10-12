@@ -1,5 +1,6 @@
 import stats from "@/data/truth/character-stats.json";
 import { lerpSpecial } from "@/lib/builder/perk-defensive-layer";
+import { readPerkCurve } from "@/lib/truth/perk-curves";
 
 /**
  * The character sheet's vitals rows: Max HP, HP regen, Max AP, AP regen, carry weight and
@@ -113,11 +114,11 @@ export function calculateVitalsSheet(input: VitalsInput): VitalsSheet {
     lines.maxAp.push({ source: "Weapon innates & Thirst Quencher (firepower engine)", value: `${input.engineApPool - apBase > 0 ? "+" : ""}${input.engineApPool - apBase}` });
   } else if (input.engineApPool == null) {
     const tq = rank(input.perkCards, "thirst-quencher") > 0 && !input.isDiseased
-      ? Math.round(lerpSpecial(input.special.end, P["thirst-quencher"].min, P["thirst-quencher"].max))
+      ? Math.round(readPerkCurve("perks/thirstquencherbonus", input.special.end))
       : 0;
     if (tq > 0) {
       maxAp += tq;
-      lines.maxAp.push({ source: `Thirst Quencher (END ${input.special.end}, approx.)`, value: `+${tq}` });
+      lines.maxAp.push({ source: `Thirst Quencher (END ${input.special.end})`, value: `+${tq}` });
     }
   }
 

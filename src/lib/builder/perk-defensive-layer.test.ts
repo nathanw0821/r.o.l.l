@@ -22,7 +22,8 @@ describe("calculatePerkDeckDefensiveLayer (legacy flat layer)", () => {
       isPowerArmor: false,
       strVal: 15,
     });
-    expect(result).toEqual({ dr: 175, er: 0, fr: 0, cr: 0, pr: 0, rr: 0 });
+    // perks/barbarianbonus at STR 15 = 61 (perk-curves-p70.json)
+    expect(result).toEqual({ dr: 61, er: 0, fr: 0, cr: 0, pr: 0, rr: 0 });
   });
 
   it("no longer models Fireproof: Hardy has no fire resistance", () => {
@@ -76,20 +77,24 @@ describe("calculateDefensiveProfile", () => {
     expect(pa.notes.some((n) => n.includes("Thick Skin") && n.includes("Power Armor"))).toBe(true);
   });
 
-  it("Barbarian scales DR linearly from +18 at STR 1 to +175 at STR 15 and doubles unarmored", () => {
+  // Source for the SPECIAL-scaled values below: perk-curves-p70.json (Patch 70 client data), read at the live stat.
+  it("Barbarian follows perks/barbarianbonus (+18 at STR 1, +61 at STR 15, +96 at STR 30) and doubles unarmored", () => {
     const str1 = calculateDefensiveProfile([{ cardId: "barbarian", rank: 1 }], { isPowerArmor: false, special: { str: 1 } });
     expect(str1.flat.dr).toBe(18);
     const str15 = calculateDefensiveProfile([{ cardId: "barbarian", rank: 1 }], { isPowerArmor: false, special: { str: 15 } });
-    expect(str15.flat.dr).toBe(175);
+    expect(str15.flat.dr).toBe(61);
     const str8 = calculateDefensiveProfile([{ cardId: "barbarian", rank: 1 }], { isPowerArmor: false, special: { str: 8 } });
-    expect(str8.flat.dr).toBe(97); // 18 + 157 * 7/14 = 96.5 rounded
+    expect(str8.flat.dr).toBe(40); // 18 + 43 * 7/14 = 39.5 rounded
+    // A boosted STR keeps reading the curve instead of clamping at 15.
+    const str30 = calculateDefensiveProfile([{ cardId: "barbarian", rank: 1 }], { isPowerArmor: false, special: { str: 30 } });
+    expect(str30.flat.dr).toBe(96);
     const naked = calculateDefensiveProfile([{ cardId: "barbarian", rank: 1 }], {
       isPowerArmor: false,
       special: { str: 15 },
       wearingNoArmor: true,
     });
-    expect(naked.flat.dr).toBe(350);
-    expect(naked.notes.some((n) => n.includes("approx."))).toBe(true);
+    expect(naked.flat.dr).toBe(122);
+    expect(naked.notes.some((n) => n.includes("approx."))).toBe(false);
   });
 
   it("clamps SPECIAL-scaled perks at the published SPECIAL 15 ceiling", () => {
@@ -97,9 +102,9 @@ describe("calculateDefensiveProfile", () => {
     expect(lerpSpecial(0, 18, 175)).toBe(18);
   });
 
-  it("Evasive gives 2% Evade at AGI 1 and 14% at AGI 15; off in PA or over-encumbered", () => {
+  it("Evasive gives 2% Evade at AGI 1 and 6% at AGI 15 (perks/evasivebonus); off in PA or over-encumbered", () => {
     expect(calculateDefensiveProfile([{ cardId: "evasive", rank: 1 }], { isPowerArmor: false, special: { agi: 1 } }).evadeChance).toBe(2);
-    expect(calculateDefensiveProfile([{ cardId: "evasive", rank: 1 }], { isPowerArmor: false, special: { agi: 15 } }).evadeChance).toBe(14);
+    expect(calculateDefensiveProfile([{ cardId: "evasive", rank: 1 }], { isPowerArmor: false, special: { agi: 15 } }).evadeChance).toBe(6);
     expect(calculateDefensiveProfile([{ cardId: "evasive", rank: 1 }], { isPowerArmor: true, special: { agi: 15 } }).evadeChance).toBe(0);
     expect(
       calculateDefensiveProfile([{ cardId: "evasive", rank: 1 }], { isPowerArmor: false, special: { agi: 15 }, isOverEncumbered: true }).evadeChance,
@@ -117,19 +122,19 @@ describe("calculateDefensiveProfile", () => {
     expect(calculateDefensiveProfile([{ cardId: "dodgy", rank: 1 }], { isPowerArmor: false }).evadeChance).toBe(5);
   });
 
-  it("Serendipity only counts below 30% HP and is labelled approximate", () => {
+  it("Serendipity only counts below 30% HP (perks/serendipitybonus: 16% at LCK 15)", () => {
     const cards = [{ cardId: "serendipity", rank: 1 }];
     expect(calculateDefensiveProfile(cards, { isPowerArmor: false, special: { lck: 15 }, healthPct: 50 }).evadeChance).toBe(0);
     const low = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { lck: 15 }, healthPct: 20 });
-    expect(low.evadeChance).toBe(15);
-    expect(low.notes.some((n) => n.startsWith("Serendipity (approx.)"))).toBe(true);
+    expect(low.evadeChance).toBe(16);
+    expect(low.notes.some((n) => n.startsWith("Serendipity:"))).toBe(true);
   });
 
-  it("Lone Wanderer is a solo-only reducer: x0.80 at CHA 15, x0.99 at CHA 1, none on a team", () => {
+  it("Lone Wanderer is a solo-only reducer: x0.90 at CHA 15, x0.99 at CHA 1 (perks/lonewandererdrbonus), none on a team", () => {
     const cards = [{ cardId: "lone-wanderer", rank: 1 }];
     const cha15 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { cha: 15 }, isOnTeam: false });
     expect(cha15.reducers).toHaveLength(1);
-    expect(cha15.reducers[0]).toMatchObject({ id: "lone-wanderer", pct: 20, condition: "solo" });
+    expect(cha15.reducers[0]).toMatchObject({ id: "lone-wanderer", pct: 10, condition: "solo" });
     const cha1 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { cha: 1 }, isOnTeam: false });
     expect(cha1.reducers[0].pct).toBe(1);
     const team = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { cha: 15 }, isOnTeam: true });
@@ -143,16 +148,16 @@ describe("calculateDefensiveProfile", () => {
     expect(calculateDefensiveProfile(cards, { isPowerArmor: true, isFiringHeavyGun: true }).deflectChance).toBe(22.5);
   });
 
-  it("Bodyguards uses the old 6..12 per teammate curve (approximate), max 3 teammates, team only", () => {
+  it("Bodyguards reads perks/bodyguardsbonus per teammate (4 at CHA 1, 15 at CHA 15), max 3 teammates, team only", () => {
     const cards = [{ cardId: "bodyguards", rank: 1 }];
     const full = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { cha: 15 }, isOnTeam: true, teammates: 3 });
-    expect(full.flat.dr).toBe(36);
-    expect(full.flat.er).toBe(36);
+    expect(full.flat.dr).toBe(45);
+    expect(full.flat.er).toBe(45);
     expect(calculateDefensiveProfile(cards, { isPowerArmor: false, special: { cha: 15 }, isOnTeam: false }).flat.dr).toBe(0);
-    expect(calculateDefensiveProfile(cards, { isPowerArmor: false, special: { cha: 1 }, isOnTeam: true, teammates: 5 }).flat.dr).toBe(18);
+    expect(calculateDefensiveProfile(cards, { isPowerArmor: false, special: { cha: 1 }, isOnTeam: true, teammates: 5 }).flat.dr).toBe(12);
   });
 
-  it("Refractor / Rad Resistant / Junk Shield / Lifegiver interpolate their approximate ranges", () => {
+  it("Refractor / Rad Resistant read their curves (61 at 15); Junk Shield / Lifegiver keep their approximate ranges", () => {
     const p = calculateDefensiveProfile(
       [
         { cardId: "refractor", rank: 1 },
@@ -162,39 +167,39 @@ describe("calculateDefensiveProfile", () => {
       ],
       { isPowerArmor: false, special: SPECIAL_ALL(15) },
     );
-    expect(p.flat.er).toBe(40 + 30);
-    expect(p.flat.rr).toBe(40);
+    expect(p.flat.er).toBe(61 + 30);
+    expect(p.flat.rr).toBe(61);
     expect(p.flat.dr).toBe(30);
     expect(p.maxHpPct).toBe(45);
     const noJunk = calculateDefensiveProfile([{ cardId: "junk-shield", rank: 1 }], { isPowerArmor: false, special: SPECIAL_ALL(15), holdingJunk: false });
     expect(noJunk.flat.dr).toBe(0);
   });
 
-  it("Iron Stomach adds 0..30 DR/ER by END (approximate) and is off while diseased", () => {
+  it("Iron Stomach adds DR/ER by END from perks/ironstomachbonus (18 at END 1, 61 at 15) and is off while diseased", () => {
     const cards = [{ cardId: "iron-stomach", rank: 1 }];
     const end1 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 1 } });
-    expect(end1.flat.dr).toBe(0);
-    expect(end1.flat.er).toBe(0);
+    expect(end1.flat.dr).toBe(18);
+    expect(end1.flat.er).toBe(18);
     const end15 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 } });
-    expect(end15.flat.dr).toBe(30);
-    expect(end15.flat.er).toBe(30);
+    expect(end15.flat.dr).toBe(61);
+    expect(end15.flat.er).toBe(61);
     expect(end15.flat.fr).toBe(0);
-    expect(end15.notes.some((n) => n.startsWith("Iron Stomach (approx.)") && n.includes("END 15"))).toBe(true);
+    expect(end15.notes.some((n) => n.startsWith("Iron Stomach:") && n.includes("END 15"))).toBe(true);
     const end8 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 8 } });
-    expect(end8.flat.dr).toBe(15); // 0 + 30 * 7/14
+    expect(end8.flat.dr).toBe(40); // 18 + 43 * 7/14 = 39.5
     const diseased = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 }, isDiseased: true });
     expect(diseased.flat.dr).toBe(0);
     expect(diseased.flat.er).toBe(0);
     expect(diseased.notes).toContain("Iron Stomach is off while diseased");
   });
 
-  it("Natural Resistance adds 0..30 fire/cryo/poison by END (approximate), never DR/ER/RR, off while diseased", () => {
+  it("Natural Resistance adds fire/cryo/poison by END from perks/naturalresistancebonus (10 at 1, 35 at 15), never DR/ER/RR, off while diseased", () => {
     const cards = [{ cardId: "natural-resistance", rank: 1 }];
     const end1 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 1 } });
-    expect(end1.flat).toEqual({ dr: 0, er: 0, fr: 0, cr: 0, pr: 0, rr: 0 });
+    expect(end1.flat).toEqual({ dr: 0, er: 0, fr: 10, cr: 10, pr: 10, rr: 0 });
     const end15 = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 } });
-    expect(end15.flat).toEqual({ dr: 0, er: 0, fr: 30, cr: 30, pr: 30, rr: 0 });
-    expect(end15.notes.some((n) => n.startsWith("Natural Resistance (approx.)"))).toBe(true);
+    expect(end15.flat).toEqual({ dr: 0, er: 0, fr: 35, cr: 35, pr: 35, rr: 0 });
+    expect(end15.notes.some((n) => n.startsWith("Natural Resistance:"))).toBe(true);
     const diseased = calculateDefensiveProfile(cards, { isPowerArmor: false, special: { end: 15 }, isDiseased: true });
     expect(diseased.flat.fr).toBe(0);
     expect(diseased.flat.cr).toBe(0);
@@ -209,12 +214,12 @@ describe("calculateDefensiveProfile", () => {
       { cardId: "rad-resistant", rank: 1 },
     ];
     expect(calculatePerkDeckDefensiveLayer(cards, { isPowerArmor: false, special: { end: 15 } })).toEqual({
-      dr: 30,
-      er: 30,
-      fr: 30,
-      cr: 30,
-      pr: 30,
-      rr: 40,
+      dr: 61,
+      er: 61,
+      fr: 35,
+      cr: 35,
+      pr: 35,
+      rr: 61,
     });
     expect(calculatePerkDeckDefensiveLayer(cards, { isPowerArmor: false, special: { end: 15 }, isDiseased: true })).toEqual({
       dr: 0,
@@ -222,7 +227,7 @@ describe("calculateDefensiveProfile", () => {
       fr: 0,
       cr: 0,
       pr: 0,
-      rr: 40,
+      rr: 61,
     });
   });
 
@@ -318,9 +323,9 @@ describe("calculateDamageTaken (Patch 66 order of operations)", () => {
     const curve = calculateMitigatedDamage(1000, 300, 0);
     expect(result.afterCurve).toBe(curve.finalDamage);
     expect(result.afterCurve).toBeCloseTo(776.47, 2);
-    // Then x (1 - 0.20) x (1 - 0.10) = x0.72
-    expect(result.delivered).toBeCloseTo(559.06, 2);
-    expect(result.totalReducerPct).toBe(28);
+    // Then x (1 - 0.10 Lone Wanderer at CHA 15, perks/lonewandererdrbonus) x (1 - 0.10 Vanguard's) = x0.81
+    expect(result.delivered).toBeCloseTo(628.94, 1);
+    expect(result.totalReducerPct).toBe(19);
     expect(result.appliedReducers.map((r) => r.id)).toEqual(["lone-wanderer", "vanguards"]);
   });
 
@@ -340,7 +345,7 @@ describe("truth file", () => {
     expect(defensiveTruth.perks.ironclad.values).toEqual([15, 20, 25]);
     expect(defensiveTruth.perks.hardy.values).toEqual([15, 30, 45]);
     expect(defensiveTruth.perks["thick-skin"].values).toEqual([4, 6, 10]);
-    expect(defensiveTruth.perks.barbarian).toMatchObject({ min: 18, max: 175, confidence: "approximate" });
+    expect(defensiveTruth.perks.barbarian).toMatchObject({ min: 18, max: 175, curve: "perks/barbarianbonus", confidence: "datamine" });
     expect(defensiveTruth.perks["lone-wanderer"]).toMatchObject({ min: 1, max: 20 });
     expect(defensiveTruth.legendaryMods.cavaliers.pct).toBe(10);
     expect(defensiveTruth.legendaryMods.sentinels.pct).toBe(5);
@@ -353,10 +358,9 @@ describe("truth file", () => {
         model: "special-scaled",
         special: "end",
         condition: "not-diseased",
-        min: 0,
-        max: 30,
-        confidence: "approximate",
+        confidence: "datamine",
       });
+      expect(defensiveTruth.perks[id].curve).toMatch(/^perks\//);
       expect(defensiveTruth.perks[id].source).toContain("while not diseased");
     }
     expect(defensiveTruth.perks["iron-stomach"].resists).toEqual(["dr", "er"]);

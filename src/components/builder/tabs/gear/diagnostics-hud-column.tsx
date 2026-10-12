@@ -22,11 +22,16 @@ import {
   SPECIAL_FULL_NAMES,
   RESIST_FULL_NAMES,
   LEGENDARY_PERK_CARDS,
+  legendaryPerkResistBonus,
   readEffectMathNumber,
   type BuilderEffectTotals,
 } from "@/lib/builder/compatibility";
 import { isGhoulBlockedLegendarySlug } from "@/lib/builder/ghoul-legendary-rules";
-import { SANDBOX_MUTATIONS, strangeInNumbersBenefitMultiplier } from "@/lib/builder/sandbox-mutations";
+import {
+  isStrangeInNumbersActive,
+  SANDBOX_MUTATIONS,
+  strangeInNumbersBenefitMultiplier,
+} from "@/lib/builder/sandbox-mutations";
 import {
   findUnderarmorOption,
   UNDERARMOR_LININGS,
@@ -50,6 +55,8 @@ export interface DiagnosticsHudColumnProps {
   groupedLegendaryEffects: UseBuilderTotalsResult["groupedLegendaryEffects"];
   mods: BuilderModDTO[];
   piece: BaseGearPiece;
+  /** Wearing a matching armor set (Funky Duds / Sizzling Style), from use-builder-totals. */
+  matchingSet?: boolean;
 }
 
 
@@ -93,6 +100,7 @@ function resistanceBreakdownLines({
   groupedLegendaryEffects,
   perkDeckDefensiveLayer,
   stanceBreakdowns,
+  matchingSet,
 }: {
   key: ResistKey;
   live: number;
@@ -102,6 +110,7 @@ function resistanceBreakdownLines({
   groupedLegendaryEffects: UseBuilderTotalsResult["groupedLegendaryEffects"];
   perkDeckDefensiveLayer: UseBuilderTotalsResult["perkDeckDefensiveLayer"];
   stanceBreakdowns: UseBuilderTotalsResult["stanceAndBiometricsLayer"]["resistanceBreakdowns"];
+  matchingSet: boolean;
 }): BreakdownLine[] {
   const lines: BreakdownLine[] = [];
   const push = (source: string, val: number) => {
@@ -123,8 +132,8 @@ function resistanceBreakdownLines({
     const [id, rankStr] = rawEntry.split(":");
     const rank = rawEntry.includes(":") ? parseInt(rankStr, 10) || 4 : 4;
     const perk = LEGENDARY_PERK_CARDS[id];
-    const bonus = perk?.resBonus?.[key];
-    if (bonus) push(`Legendary perk: ${perk.label.split(" (")[0]}`, Math.round(bonus * (rank / 4)));
+    const bonus = legendaryPerkResistBonus(perk, rank, key, matchingSet);
+    if (perk && bonus) push(`Legendary perk: ${perk.label.split(" (")[0]}`, bonus);
   });
 
   // 4. Legendary armor / weapon effects (one line per effect, × pieces carrying it).
@@ -143,10 +152,9 @@ function resistanceBreakdownLines({
 
   // 7. Mutations at their listed values (Strange in Numbers applied; Class Freak's
   //    penalty reduction is not known here and lands in the remainder).
-  const sinMult =
-    payload.hasStrangeInNumbers && payload.mutationIds.length > 0
-      ? strangeInNumbersBenefitMultiplier(4)
-      : 1;
+  const sinMult = isStrangeInNumbersActive(payload.equippedPerkCards ?? [], payload.hasStrangeInNumbers, payload.mutationIds)
+    ? strangeInNumbersBenefitMultiplier(1)
+    : 1;
   for (const id of payload.mutationIds) {
     const def = SANDBOX_MUTATIONS.find((m) => m.id === id);
     if (!def) continue;
@@ -175,6 +183,7 @@ export default function DiagnosticsHudColumn({
   groupedLegendaryEffects,
   mods,
   piece,
+  matchingSet = false,
 }: DiagnosticsHudColumnProps) {
   return (
     <div className="space-y-4">
@@ -423,6 +432,7 @@ export default function DiagnosticsHudColumn({
                 groupedLegendaryEffects,
                 perkDeckDefensiveLayer,
                 stanceBreakdowns: stanceAndBiometricsLayer.resistanceBreakdowns,
+                matchingSet,
               });
 
               return (
