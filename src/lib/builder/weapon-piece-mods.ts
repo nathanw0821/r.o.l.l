@@ -45,11 +45,21 @@ export interface WeaponInnateModOption {
     isAutomatic?: boolean;
     isSuppressed?: boolean;
     durabilityPct?: number;
+    /**
+     * Multiplier on the weapon record's own attack damage (OMOD property 28, "AttackDamage" MA):
+     * it changes the card's base damage before perks, unlike `damagePct` which joins the additive
+     * pool. Automatic rifle receivers carry ×0.70 here.
+     */
+    baseDamageMult?: number;
+    /** Replaces the base fire rate outright (rounds per second as the Pip-Boy card shows ÷ 10). */
+    fireRateRps?: number;
   };
 }
 
 export type WeaponModArchetype =
   | "ballistic-rifle"
+  | "fixer"
+  | "handmade"
   | "smg"
   | "railway"
   | "black-powder"
@@ -107,6 +117,12 @@ export function resolveWeaponArchetype(weaponPieceId: string): WeaponModArchetyp
   if (basePiece?.weaponSub === "melee") {
     return "melee-blunt-blade";
   }
+
+  // 3a. The Fixer and the Handmade rifle: their receivers were read from the Patch 70 client
+  // (SeventySix.esm 2026-09-16, OMOD property tables, 2026-10-12) and the base rows carry the
+  // standard-receiver card, so they get their own tables instead of the generic ballistic ones.
+  if (normalized === "fixer" || normalized === "the-fixer") return "fixer";
+  if (normalized === "handmade" || normalized === "handmade-rifle") return "handmade";
 
   // 3b. Thompson .45 submachine gun platform (Elder's Mark, Love Tap): its own four magazines,
   // no armor-piercing ones (SeventySix.esm OMODs, 2026-10-11). The 10mm SMG is a different platform.
@@ -380,6 +396,101 @@ export const BALLISTIC_RECEIVER_MODS: WeaponInnateModOption[] = [
   { id: "severe-beta-wave-receiver", label: "Severe Beta Wave Tuner", slot: "receiver", description: "Adds burning fire damage and +50% critical damage multiplier.", effectMath: { damagePct: 0.15, critDamagePct: 0.50 } },
   { id: "hair-trigger-receiver", label: "Hair Trigger Receiver", slot: "receiver", description: "Superior rate of fire (+25% Fire Rate, -10% AP Cost).", effectMath: { fireRatePct: 0.25, apCostPct: -0.10 } }
 ];
+
+// ==========================================
+// 1a. THE FIXER / HANDMADE RIFLE RECEIVERS
+// Read from the Patch 70 client (SeventySix.esm 2026-09-16, OMOD property tables, 2026-10-12).
+// Both weapons attach the same generic receiver templates, so the numbers are identical and only
+// the names (and the Fixer's .38 conversions) differ. Standard receiver = the card's base row
+// (The Fixer 103 dmg / 16 AP / 20 rounds at 50; Handmade 84 / 16 / 20 at 45; semi-automatic).
+//   damage bonus (prop 106, ADD)      → damagePct (additive pool, as before)
+//   attack damage (prop 28, ×0.70)    → baseDamageMult (the automatic family only)
+//   attack delay −25% (Hair Trigger)  → fireRatePct +33% (1 / 0.75)
+//   speed −10% (Prime)                → fireRatePct −10%
+//   AP cost (prop 79, MA)             → apCostPct; Severe stacks +10% and +20% → +32%
+//   crit damage mult (prop 90)        → critDamagePct (+0.5 ADD; automatic ×0.8 of the ×2 base = −0.4)
+//   ammo capacity +50% (automatic)    → magCapacityPct 0.50 (multiplies with the magazine's own)
+// Automatic fire rate: the client stores an animation speed (0.8248 Fixer, 0.8617 Handmade), not a
+// rate; 9.1 rps is the Pip-Boy's 91 for the automatic Fixer and is kept for both until an in-game
+// Handmade reading says otherwise. Tweaked Automatic's crit (×0.8 then +0.5) is the inferred order.
+// Scorched bonuses (+65 / +50 vs Scorched) are text only: the engine has no Scorched target.
+// ==========================================
+type ReceiverSpec = { id: string; description: string; effectMath: WeaponInnateModOption["effectMath"] };
+const AUTO_RECEIVER_BASE: WeaponInnateModOption["effectMath"] = {
+  isAutomatic: true,
+  fireRateRps: 9.1,
+  baseDamageMult: 0.7,
+  critDamagePct: -0.4,
+  magCapacityPct: 0.5,
+};
+const COMMANDO_RIFLE_RECEIVER_SPECS: ReceiverSpec[] = [
+  { id: "standard-receiver", description: "Standard factory configuration (the card's base numbers).", effectMath: {} },
+  { id: "hardened-receiver", description: "+35% Damage, +15% V.A.T.S. AP cost.", effectMath: { damagePct: 0.35, apCostPct: 0.15 } },
+  { id: "calibrated-receiver", description: "+50% Critical damage, +20% V.A.T.S. AP cost.", effectMath: { critDamagePct: 0.5, apCostPct: 0.2 } },
+  { id: "hair-trigger-receiver", description: "Attack delay −25% (+33% Fire Rate).", effectMath: { fireRatePct: 1 / 0.75 - 1 } },
+  { id: "true-receiver", description: "Better hip-fire accuracy; no damage, speed or AP change.", effectMath: {} },
+  { id: "refined-receiver", description: "+25% Damage, +10% V.A.T.S. AP cost, better hip-fire accuracy.", effectMath: { damagePct: 0.25, apCostPct: 0.1 } },
+  { id: "severe-receiver", description: "+25% Damage, +50% Critical damage, +32% V.A.T.S. AP cost.", effectMath: { damagePct: 0.25, critDamagePct: 0.5, apCostPct: 0.32 } },
+  { id: "vigorous-receiver", description: "+25% Damage, attack delay −25% (+33% Fire Rate), +10% V.A.T.S. AP cost.", effectMath: { damagePct: 0.25, fireRatePct: 1 / 0.75 - 1, apCostPct: 0.1 } },
+  { id: "snappy-receiver", description: "+50% Critical damage, attack delay −25% (+33% Fire Rate), +20% V.A.T.S. AP cost.", effectMath: { critDamagePct: 0.5, fireRatePct: 1 / 0.75 - 1, apCostPct: 0.2 } },
+  { id: "vicious-receiver", description: "+50% Critical damage, +20% V.A.T.S. AP cost, better hip-fire accuracy.", effectMath: { critDamagePct: 0.5, apCostPct: 0.2 } },
+  { id: "steadfast-receiver", description: "Attack delay −25% (+33% Fire Rate), better hip-fire accuracy.", effectMath: { fireRatePct: 1 / 0.75 - 1 } },
+  { id: "automatic-receiver", description: "Fully automatic (91 fire rate): base damage ×0.70, crit ×0.80, +50% magazine, −10% reload, −17.5% range.", effectMath: { ...AUTO_RECEIVER_BASE } },
+  { id: "powerful-auto-receiver", description: "Fully automatic (91 fire rate) with +25% Damage: base ×0.70, crit ×0.80, +50% magazine, +10% V.A.T.S. AP cost.", effectMath: { ...AUTO_RECEIVER_BASE, damagePct: 0.25, apCostPct: 0.1 } },
+  { id: "tweaked-auto-receiver", description: "Fully automatic (91 fire rate) with +50% Critical damage on top of the automatic ×0.80: base ×0.70, +50% magazine, +20% V.A.T.S. AP cost.", effectMath: { ...AUTO_RECEIVER_BASE, critDamagePct: 0.1, apCostPct: 0.2 } },
+  { id: "focused-auto-receiver", description: "Fully automatic (91 fire rate) with better hip-fire accuracy: base ×0.70, crit ×0.80, +50% magazine.", effectMath: { ...AUTO_RECEIVER_BASE } },
+  { id: "prime-receiver", description: "+35% Damage, +65 damage vs Scorched, speed −10%, +15% V.A.T.S. AP cost. Uses Ultracite ammo.", effectMath: { damagePct: 0.35, fireRatePct: -0.1, apCostPct: 0.15 } },
+  { id: "prime-auto-receiver", description: "Fully automatic with +35% Damage and +65 vs Scorched: base ×0.70, crit ×0.80, speed −10% (8.2 fire rate), +50% magazine, +15% V.A.T.S. AP cost. Uses Ultracite ammo.", effectMath: { ...AUTO_RECEIVER_BASE, fireRateRps: 9.1 * 0.9, damagePct: 0.35, apCostPct: 0.15 } },
+  { id: "scorched-killers-receiver", description: "+50 damage vs Scorched, base damage ×0.80 against everything else.", effectMath: { baseDamageMult: 0.8 } },
+];
+const FIXER_38_RECEIVER_SPECS: ReceiverSpec[] = [
+  { id: "38-receiver", description: "Converts to .38 rounds: −15% Damage, −10% range.", effectMath: { damagePct: -0.15 } },
+  { id: "precise-38-receiver", description: ".38 rounds (−15% Damage, −10% range) with better hip-fire accuracy.", effectMath: { damagePct: -0.15 } },
+  { id: "automatic-38-receiver", description: ".38 rounds, fully automatic (91 fire rate): −15% Damage, base ×0.70, crit ×0.80, +50% magazine.", effectMath: { ...AUTO_RECEIVER_BASE, damagePct: -0.15 } },
+  { id: "critical-38-receiver", description: ".38 rounds (−15% Damage) with +50% Critical damage, +20% V.A.T.S. AP cost.", effectMath: { damagePct: -0.15, critDamagePct: 0.5, apCostPct: 0.2 } },
+  { id: "refined-38-receiver", description: ".38 rounds with +25% Damage (−15% from the conversion: +10% net), +10% V.A.T.S. AP cost.", effectMath: { damagePct: 0.1, apCostPct: 0.1 } },
+  { id: "hasty-38-receiver", description: ".38 rounds (−15% Damage), attack delay −25% (+33% Fire Rate).", effectMath: { damagePct: -0.15, fireRatePct: 1 / 0.75 - 1 } },
+];
+function receiverTable(specs: ReceiverSpec[], names: Record<string, string>): WeaponInnateModOption[] {
+  return specs.map((spec) => ({ id: spec.id, label: names[spec.id] ?? spec.id, slot: "receiver", description: spec.description, effectMath: spec.effectMath }));
+}
+const COMMANDO_RIFLE_RECEIVER_NAMES: Record<string, string> = {
+  "standard-receiver": "Standard Receiver",
+  "hardened-receiver": "Hardened Receiver",
+  "calibrated-receiver": "Calibrated Receiver",
+  "hair-trigger-receiver": "Hair Trigger Receiver",
+  "true-receiver": "True Receiver",
+  "refined-receiver": "Refined Receiver",
+  "severe-receiver": "Severe Receiver",
+  "vigorous-receiver": "Vigorous Receiver",
+  "snappy-receiver": "Snappy Receiver",
+  "vicious-receiver": "Vicious Receiver",
+  "steadfast-receiver": "Steadfast Receiver",
+  "automatic-receiver": "Automatic Receiver",
+  "powerful-auto-receiver": "Powerful Automatic Receiver",
+  "tweaked-auto-receiver": "Tweaked Automatic Receiver",
+  "focused-auto-receiver": "Focused Automatic Receiver",
+  "prime-receiver": "Prime Receiver",
+  "prime-auto-receiver": "Prime Automatic Receiver",
+  "scorched-killers-receiver": "Scorched Killer's Receiver",
+  "38-receiver": ".38 Receiver",
+  "precise-38-receiver": "Precise .38 Receiver",
+  "automatic-38-receiver": "Automatic .38 Receiver",
+  "critical-38-receiver": "Critical .38 Receiver",
+  "refined-38-receiver": "Refined .38 Receiver",
+  "hasty-38-receiver": "Hasty .38 Receiver",
+};
+export const FIXER_RECEIVER_MODS: WeaponInnateModOption[] = receiverTable(
+  [...COMMANDO_RIFLE_RECEIVER_SPECS, ...FIXER_38_RECEIVER_SPECS],
+  COMMANDO_RIFLE_RECEIVER_NAMES,
+);
+// The Handmade names its three Hair-Trigger combinations differently (same numbers).
+export const HANDMADE_RECEIVER_MODS: WeaponInnateModOption[] = receiverTable(COMMANDO_RIFLE_RECEIVER_SPECS, {
+  ...COMMANDO_RIFLE_RECEIVER_NAMES,
+  "vigorous-receiver": "Tuned Receiver",
+  "snappy-receiver": "Fierce Receiver",
+  "steadfast-receiver": "Speedy Receiver",
+});
 
 export const BALLISTIC_BARREL_MODS: WeaponInnateModOption[] = [
   { id: "standard-barrel", label: "Standard Long Barrel", slot: "barrel", description: "Standard factory barrel length.", effectMath: {} },
@@ -904,6 +1015,16 @@ export function listWeaponInnateModOptions(
       if (slot === "muzzle") return BALLISTIC_MUZZLE_MODS;
       return [];
 
+    case "fixer":
+    case "handmade":
+      if (slot === "receiver") return archetype === "fixer" ? FIXER_RECEIVER_MODS : HANDMADE_RECEIVER_MODS;
+      if (slot === "barrel") return BALLISTIC_BARREL_MODS;
+      if (slot === "stock") return BALLISTIC_STOCK_MODS;
+      if (slot === "magazine") return BALLISTIC_MAGAZINE_MODS;
+      if (slot === "sight") return BALLISTIC_SIGHT_MODS;
+      if (slot === "muzzle") return BALLISTIC_MUZZLE_MODS;
+      return [];
+
     case "pistol-auto":
     case "combat-shotgun":
     case "ballistic-rifle":
@@ -1076,6 +1197,10 @@ export type WeaponInnateAggregateEffects = {
   isAutomatic: boolean;
   isSuppressed: boolean;
   durabilityPct: number;
+  /** Product of every installed mod's `baseDamageMult`; 1 when none. */
+  baseDamageMult: number;
+  /** The last installed `fireRateRps`, or null to keep the base row's rate. */
+  fireRateRps: number | null;
   installedMods: { slot: WeaponInnateSlotKey; label: string; description: string }[];
 };
 
@@ -1093,10 +1218,15 @@ export function calculateWeaponInnateAggregate(
     isAutomatic: false,
     isSuppressed: false,
     durabilityPct: 0,
+    baseDamageMult: 1,
+    fireRateRps: null,
     installedMods: []
   };
 
   if (!crafting) return result;
+  // Magazine capacity multiplies the way the game's MultAdd properties do (automatic receiver
+  // +50% on a Large Magazine +100% = ×3), so it is folded as a product and stored as pct − 1.
+  let magCapacityMult = 1;
 
   // Only aggregate mods for slots that physically exist on this weapon archetype
   const availableSlots = listWeaponAvailableSlots(weaponPieceId).map((s) => s.key);
@@ -1130,12 +1260,15 @@ export function calculateWeaponInnateAggregate(
     if (m.fireRatePct) result.fireRatePct += m.fireRatePct;
     if (m.apCostPct) result.apCostPct += m.apCostPct;
     if (m.armorPenetrationPct) result.armorPenetrationPct += m.armorPenetrationPct;
-    if (m.magCapacityPct) result.magCapacityPct += m.magCapacityPct;
+    if (m.magCapacityPct) magCapacityMult *= 1 + m.magCapacityPct;
     if (m.critDamagePct) result.critDamagePct += m.critDamagePct;
     if (m.isAutomatic) result.isAutomatic = true;
     if (m.isSuppressed) result.isSuppressed = true;
     if (m.durabilityPct) result.durabilityPct += m.durabilityPct;
+    if (m.baseDamageMult !== undefined) result.baseDamageMult *= m.baseDamageMult;
+    if (m.fireRateRps !== undefined) result.fireRateRps = m.fireRateRps;
   }
+  result.magCapacityPct = magCapacityMult - 1;
 
   return result;
 }

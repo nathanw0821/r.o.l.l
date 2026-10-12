@@ -7,6 +7,7 @@ import {
   WEAPON_COMBAT_BASE_CATALOG,
 } from "./combat-firepower-engine";
 import { WEAPON_BASE_PIECES } from "./base-gear";
+import { getWeaponInnateModOption } from "./weapon-piece-mods";
 
 describe("combat-firepower-engine", () => {
   it("contains catalog entries for standard meta weapons", () => {
@@ -50,22 +51,22 @@ describe("combat-firepower-engine", () => {
       },
     });
 
-    // Base: 48
+    // Base: 103 (The Fixer's standard-receiver card at level 50)
     // Commando cards are gone (Patch 70 catalog); Bloody Mess has no damage number.
     // Nerd Rage (+40% at 20% HP, perks/nerdragedamagebonus) + Bloodied (+109% at 20% HP, cap +130%)
-    // + Psychotats (+25%) + Small Guns (+20%) + Adrenal Reaction (+63%) = +257.5% -> 48 * 3.575 ≈ 172
-    expect(result.damagePerShot.normal).toBe(172);
+    // + Psychotats (+25%) + Small Guns (+20%) + Adrenal Reaction (+63%) = +257.5% -> 103 * 3.575 ≈ 368
+    expect(result.damagePerShot.normal).toBe(368);
     expect(result.damagePerShot.breakdown.some((b) => b.source.startsWith("Commando"))).toBe(false);
 
     // Critical damage includes Better Crits (+100%), Vital (+50%), Blight Soup (+125%), G&B 3 (+100%), Eagle Eyes (+62.5%) = ~437.5%
     expect(result.damagePerShot.critical).toBeGreaterThan(result.damagePerShot.normal * 2);
 
-    // VATS AP cost: 25 * 0.65 = 16.25 -> 16 AP
-    expect(result.vats.apCostPerShot).toBe(16);
+    // VATS AP cost: 16 (client DNAM) * 0.65 = 10.4 -> 10 AP
+    expect(result.vats.apCostPerShot).toBe(10);
 
-    // Agility 25 -> Total AP = 100 + 250 = 350 AP -> 21 shots at 16 AP
+    // Agility 25 -> Total AP = 100 + 250 = 350 AP -> 35 shots at 10 AP
     expect(result.vats.totalApPool).toBe(350);
-    expect(result.vats.maxShotsInPool).toBe(21);
+    expect(result.vats.maxShotsInPool).toBe(35);
 
     // Luck 33 + Critical Savvy 3 -> Every 2nd shot ready
     expect(result.critCycle.everySecondShotReady).toBe(true);
@@ -303,9 +304,9 @@ describe("combat-firepower-engine", () => {
       },
       playerStats: { strength: 1, agility: 15, luck: 15, hasStrangeInNumbers: true },
     });
-    // Base Fixer: 48. Base crit: +100%. Blight Soup Herbivore+SiN: +125% (2.5× the +50% base buff;
-    // Nathan confirmed +125% in game, 2026-10-12). Total crit bonus = +225% -> 48 * 2.25 = 108. Total crit = normal (48) + 108 = 156
-    expect(herbivoreRes.damagePerShot.critical).toBe(156);
+    // Base Fixer: 103 (standard receiver card). Base crit: +100%. Blight Soup Herbivore+SiN: +125% (2.5× the +50% base buff;
+    // Nathan confirmed +125% in game, 2026-10-12). Total crit bonus = +225% -> 103 * 2.25 = 231.75 ≈ 232. Total crit = normal (103) + 232 = 335
+    expect(herbivoreRes.damagePerShot.critical).toBe(335);
 
     // Carnivore Blight Soup: 0% crit bonus
     const carnivoreRes = calculateCombatFirepower({
@@ -318,8 +319,8 @@ describe("combat-firepower-engine", () => {
       },
       playerStats: { strength: 1, agility: 15, luck: 15, hasStrangeInNumbers: true },
     });
-    // Base crit only: +100% -> 48 * 1 = 48. Total crit = 48 + 48 = 96
-    expect(carnivoreRes.damagePerShot.critical).toBe(96);
+    // Base crit only: +100% -> 103 * 1 = 103. Total crit = 103 + 103 = 206
+    expect(carnivoreRes.damagePerShot.critical).toBe(206);
   });
 
   it("calculates boss target dummy mitigation against Earle Williams (300 DR, 80% flat reduction)", () => {
@@ -490,13 +491,13 @@ describe("combat-firepower-engine", () => {
   });
 
   it("verifies alias resolution between canonical base-gear keys and hyphenated aliases", () => {
-    expect(getWeaponCombatBaseStats("fixer").baseDamage).toBe(48);
-    expect(getWeaponCombatBaseStats("the-fixer").baseDamage).toBe(48);
+    expect(getWeaponCombatBaseStats("fixer").baseDamage).toBe(103);
+    expect(getWeaponCombatBaseStats("the-fixer").baseDamage).toBe(103);
     expect(getWeaponMaxLevel("fixer")).toBe(50);
     expect(getWeaponMaxLevel("the-fixer")).toBe(50);
 
-    expect(getWeaponCombatBaseStats("handmade").baseDamage).toBe(45);
-    expect(getWeaponCombatBaseStats("handmade-rifle").baseDamage).toBe(45);
+    expect(getWeaponCombatBaseStats("handmade").baseDamage).toBe(84);
+    expect(getWeaponCombatBaseStats("handmade-rifle").baseDamage).toBe(84);
     expect(getWeaponMaxLevel("handmade")).toBe(45);
     expect(getWeaponMaxLevel("handmade-rifle")).toBe(45);
 
@@ -926,9 +927,9 @@ describe("Tenderizer multiplies the whole hit, crits included (target debuff, 20
       targetDummyId: "raw-unarmored",
       playerStats: { agility: 10, luck: 10, strength: 1, healthPct: 1, tenderizerStacks: 1000 },
     });
-    // Handmade base 45: normal 45 × 2 = 90; crit bonus 45 × 1.0 × 2 = 90 → 180 (was 135 before the fix).
-    expect(r.damagePerShot.normal).toBe(90);
-    expect(r.damagePerShot.critical).toBe(180);
+    // Handmade base 84: normal 84 × 2 = 168; crit bonus 84 × 1.0 × 2 = 168 → 336.
+    expect(r.damagePerShot.normal).toBe(168);
+    expect(r.damagePerShot.critical).toBe(336);
   });
 });
 
@@ -948,31 +949,31 @@ describe("sneak attack multiplies the whole hit (2026-10-12, Patch 70 card texts
     });
 
   it("Covert Operative adds 15/30/50% to the ×2 ranged sneak multiplier by rank", () => {
-    // Card: "Your ranged attacks do an additional 15% / 30% / 50% sneak attack damage." Handmade base 45.
-    expect(run("handmade", []).damagePerShot.normal).toBe(90);
-    expect(run("handmade", [{ cardId: "covert-operative", rank: 1 }]).damagePerShot.normal).toBe(Math.round(45 * 2.15));
-    expect(run("handmade", [{ cardId: "covert-operative", rank: 2 }]).damagePerShot.normal).toBe(104); // 45 × 2.3 = 103.5
-    expect(run("handmade", [{ cardId: "covert-operative", rank: 3 }]).damagePerShot.normal).toBe(Math.round(45 * 2.5));
+    // Card: "Your ranged attacks do an additional 15% / 30% / 50% sneak attack damage." Handmade base 84.
+    expect(run("handmade", []).damagePerShot.normal).toBe(168);
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 1 }]).damagePerShot.normal).toBe(Math.round(84 * 2.15));
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 2 }]).damagePerShot.normal).toBe(Math.round(84 * 2.3));
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 3 }]).damagePerShot.normal).toBe(Math.round(84 * 2.5));
   });
 
   it("multiplies the buffed hit instead of joining the additive pool (Nathan's test shot: r3 ≈ 2.5× the buffed hit)", () => {
     const bloodied = run("handmade", [{ cardId: "covert-operative", rank: 3 }], { healthPct: 0.2 }, [{ slug: "bloodied" }]);
     const standing = run("handmade", [], { healthPct: 0.2, isCrouched: false }, [{ slug: "bloodied" }]);
-    // Within one point of rounding: 45 × (1 + Bloodied 1.095) × 2.5 = 235.7 (additive pool would give 162).
+    // Within one point of rounding: 84 × (1 + Bloodied 1.095) × 2.5 = 440.0 (additive pool would give 302).
     expect(Math.abs(bloodied.damagePerShot.normal - standing.damagePerShot.normal * 2.5)).toBeLessThanOrEqual(1.5);
-    expect(bloodied.damagePerShot.normal).toBe(236);
-    // The crit bonus part is multiplied too: base crit +100% → 45 × 1.0 × 2.5.
-    expect(run("handmade", [{ cardId: "covert-operative", rank: 3 }]).damagePerShot.critical).toBe(113 + Math.round(45 * 2.5));
+    expect(bloodied.damagePerShot.normal).toBe(440);
+    // The crit bonus part is multiplied too: base crit +100% → 84 × 1.0 × 2.5.
+    expect(run("handmade", [{ cardId: "covert-operative", rank: 3 }]).damagePerShot.critical).toBe(210 + Math.round(84 * 2.5));
   });
 
   it("Mister Sandman needs a silenced weapon but no night; Ninja covers melee and bows by rank", () => {
     // Card: "Your silenced weapons do an additional 50% / 100% sneak attack damage." No suppressor → plain ×2.
-    expect(run("handmade", [{ cardId: "mister-sandman", rank: 2 }], { timeOfDay: "night" }).damagePerShot.normal).toBe(90);
+    expect(run("handmade", [{ cardId: "mister-sandman", rank: 2 }], { timeOfDay: "night" }).damagePerShot.normal).toBe(168);
     // Card: "Bows, throwing, and melee weapons do +50% / +100% sneak attack damage." Power Fist 58, 1 STR +10%.
     expect(run("power-fist", [{ cardId: "ninja", rank: 1 }]).damagePerShot.normal).toBe(Math.round(58 * 1.1 * 2.5));
     expect(run("power-fist", [{ cardId: "ninja", rank: 2 }]).damagePerShot.normal).toBe(Math.round(58 * 1.1 * 3.0));
     expect(run("compound-bow", [{ cardId: "ninja", rank: 2 }]).damagePerShot.breakdown).toContainEqual({ source: "Sneak Attack (Ninja 2)", value: "×3" });
-    expect(run("handmade", [{ cardId: "ninja", rank: 2 }]).damagePerShot.normal).toBe(90);
+    expect(run("handmade", [{ cardId: "ninja", rank: 2 }]).damagePerShot.normal).toBe(168);
   });
 });
 
@@ -992,10 +993,10 @@ describe("perk curves read at the live value (perk-curves-p70.json, 2026-10-12)"
 
   it("Nerd Rage follows perks/nerdragedamagebonus: +40% at 20% HP, +80% at 5%, about +20% at 50%, 0 at full", () => {
     const nr = [{ cardId: "nerd-rage", rank: 1 }];
-    expect(run("handmade", nr, { healthPct: 0.2 }).damagePerShot.normal).toBe(63); // 45 × 1.4
-    expect(run("handmade", nr, { healthPct: 0.05 }).damagePerShot.normal).toBe(81); // 45 × 1.8
-    expect(run("handmade", nr, { healthPct: 0.5 }).damagePerShot.normal).toBe(54); // 45 × 1.205
-    expect(run("handmade", nr, { healthPct: 1 }).damagePerShot.normal).toBe(45);
+    expect(run("handmade", nr, { healthPct: 0.2 }).damagePerShot.normal).toBe(118); // 84 × 1.4
+    expect(run("handmade", nr, { healthPct: 0.05 }).damagePerShot.normal).toBe(151); // 84 × 1.8
+    expect(run("handmade", nr, { healthPct: 0.5 }).damagePerShot.normal).toBe(101); // 84 × 1.205
+    expect(run("handmade", nr, { healthPct: 1 }).damagePerShot.normal).toBe(84);
   });
 
   it("Science follows perks/sciencebonus at the live INT (22% at INT 15)", () => {
@@ -1015,5 +1016,62 @@ describe("perk curves read at the live value (perk-curves-p70.json, 2026-10-12)"
   it("Four Leaf Clover is a line only, without the old per-rank refill numbers", () => {
     const r = run("handmade", [{ cardId: "four-leaf-clover", rank: 1 }]);
     expect(r.vats.breakdown).toContainEqual({ source: "Four Leaf Clover", value: "V.A.T.S. misses fill the crit meter by LCK (not modelled)" });
+  });
+});
+
+describe("The Fixer and Handmade receivers rewrite the Pip-Boy card (SeventySix.esm OMODs, 2026-10-12)", () => {
+  const fixer = (receiverId?: string, magazineId?: string) =>
+    calculateCombatFirepower({
+      weaponId: "the-fixer",
+      equippedMods: [],
+      equippedPerks: [],
+      targetDummyId: "raw-unarmored",
+      weaponCrafting: { receiverId, magazineId },
+      playerStats: { agility: 10, luck: 10, strength: 1, healthPct: 1 },
+    });
+
+  it("standard receiver is the client card: 103 damage, 3.6 rps, 20 rounds, 16 AP, semi-automatic", () => {
+    const r = fixer("standard-receiver", "standard-magazine");
+    expect(r.damagePerShot.normal).toBe(103);
+    expect(r.fireRate.rps).toBeCloseTo(3.6, 5);
+    expect(r.fireRate.isAutomatic).toBe(false);
+    expect(r.magazineCapacity.effective).toBe(20);
+    expect(r.vats.apCostPerShot).toBe(16);
+  });
+
+  it("Powerful Automatic: attack damage ×0.70 on the card, +25% in the pool, 9.1 rps, +50% magazine, +10% AP", () => {
+    const r = fixer("powerful-auto-receiver", "standard-magazine");
+    expect(r.baseStats.baseDamage).toBe(72); // 103 × 0.7 = 72.1
+    expect(r.damagePerShot.normal).toBe(90); // 72 × 1.25
+    expect(r.fireRate.rps).toBeCloseTo(9.1, 5);
+    expect(r.fireRate.isAutomatic).toBe(true);
+    expect(r.magazineCapacity.effective).toBe(30);
+    expect(r.vats.apCostPerShot).toBe(18); // 16 × 1.1 = 17.6
+    // Capacity multiplies with the magazine's own bonus the way the game's MultAdd does: 20 × 1.5 × 2.
+    expect(fixer("powerful-auto-receiver", "drum-magazine").magazineCapacity.effective).toBe(60);
+  });
+
+  it("Hardened adds +35% damage and +15% AP; Hair Trigger cuts the attack delay by a quarter", () => {
+    const hardened = fixer("hardened-receiver", "standard-magazine");
+    expect(hardened.damagePerShot.normal).toBe(139); // 103 × 1.35 = 139.05
+    expect(hardened.vats.apCostPerShot).toBe(18); // 16 × 1.15 = 18.4
+    expect(fixer("hair-trigger-receiver", "standard-magazine").fireRate.rps).toBeCloseTo(4.8, 5); // 3.6 / 0.75
+  });
+
+  it("Handmade shares the numbers under its own names and carries the level-45 card (84 damage, 4.0 rps)", () => {
+    const r = calculateCombatFirepower({
+      weaponId: "handmade",
+      equippedMods: [],
+      equippedPerks: [],
+      targetDummyId: "raw-unarmored",
+      weaponCrafting: { receiverId: "vigorous-receiver", magazineId: "standard-magazine" },
+      playerStats: { agility: 10, luck: 10, strength: 1, healthPct: 1 },
+    });
+    expect(r.damagePerShot.normal).toBe(105); // 84 × 1.25
+    expect(r.fireRate.rps).toBeCloseTo(4.0 / 0.75, 5);
+    expect(r.magazineCapacity.effective).toBe(20);
+    expect(getWeaponInnateModOption("handmade", "receiver", "vigorous-receiver")?.label).toBe("Tuned Receiver");
+    expect(getWeaponInnateModOption("the-fixer", "receiver", "vigorous-receiver")?.label).toBe("Vigorous Receiver");
+    expect(getWeaponInnateModOption("handmade", "receiver", "38-receiver")).toBeUndefined();
   });
 });

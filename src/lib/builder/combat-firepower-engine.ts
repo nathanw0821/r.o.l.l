@@ -681,8 +681,19 @@ export function availableOnslaughtStacks(params: {
 export function calculateCombatFirepower(
   input: CombatFirepowerCalculationInput
 ): CombatFirepowerResult {
-  const base = getWeaponCombatBaseStats(input.weaponId);
+  const catalogBase = getWeaponCombatBaseStats(input.weaponId);
   const innateMods = calculateWeaponInnateAggregate(input.weaponId, input.weaponCrafting);
+  // A receiver can rewrite the card itself: automatic rifle receivers scale the record's attack
+  // damage (×0.70) and set the automatic fire rate outright. Everything below reads the rewritten
+  // card, exactly as perks read the Pip-Boy's number in game.
+  const base =
+    innateMods.baseDamageMult !== 1 || innateMods.fireRateRps !== null
+      ? {
+          ...catalogBase,
+          baseDamage: Math.round(catalogBase.baseDamage * innateMods.baseDamageMult),
+          fireRate: innateMods.fireRateRps ?? catalogBase.fireRate,
+        }
+      : catalogBase;
   // The switchboard stores catalog ids (chem-psychotats, bobble-small-guns, mag-gb3, brew-…);
   // the rules below use the short names. Accept both.
   const activeBuffs = normalizeActiveBuffs(input.activeBuffs);
@@ -698,6 +709,12 @@ export function calculateCombatFirepower(
   const apBreakdown: { source: string; value: string }[] = [];
 
   breakdown.push({ source: `Base Weapon Damage (Lvl ${base.maxLevel || 50})`, value: `${base.baseDamage}` });
+  if (innateMods.baseDamageMult !== 1) {
+    breakdown.push({
+      source: "Receiver base damage",
+      value: `${catalogBase.baseDamage} × ${innateMods.baseDamageMult.toFixed(2)} = ${base.baseDamage}`,
+    });
+  }
 
   // 1. Additive Damage Modifiers Pool
   let additiveDamagePct = 0;

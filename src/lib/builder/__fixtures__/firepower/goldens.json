@@ -5,28 +5,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 172,
-        "critical": 394,
+        "normal": 368,
+        "critical": 844,
         "explosiveBonus": 0,
-        "totalPerShot": 172,
-        "activeShotDamage": 283,
+        "totalPerShot": 368,
+        "activeShotDamage": 606,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -75,34 +75,34 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1565,
-        "criticalCycleDPS": 2575,
-        "activeDPS": 2575,
+        "burstDPS": 1325,
+        "criticalCycleDPS": 2182,
+        "activeDPS": 2182,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 16,
-        "maxShotsInPool": 21,
+        "apCostPerShot": 10,
+        "maxShotsInPool": 35,
         "totalApPool": 350,
         "breakdown": [
           {
@@ -111,7 +111,7 @@
           },
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -159,13 +159,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.40840000000000004,
-        "normalLanded": 21,
-        "criticalLanded": 65,
-        "burstDPSLanded": 191,
-        "criticalCycleDPSLanded": 391,
-        "activeDPSLanded": 391
+        "armorMitigationPct": 46,
+        "mitigationRatio": 0.5390999999999999,
+        "normalLanded": 60,
+        "criticalLanded": 185,
+        "burstDPSLanded": 216,
+        "criticalCycleDPSLanded": 441,
+        "activeDPSLanded": 441
       }
     },
     "earle-williams": {
@@ -173,28 +173,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 172,
-        "critical": 394,
+        "normal": 368,
+        "critical": 844,
         "explosiveBonus": 0,
-        "totalPerShot": 172,
-        "activeShotDamage": 283,
+        "totalPerShot": 368,
+        "activeShotDamage": 606,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -243,34 +243,34 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1565,
-        "criticalCycleDPS": 2575,
-        "activeDPS": 2575,
+        "burstDPS": 1325,
+        "criticalCycleDPS": 2182,
+        "activeDPS": 2182,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 16,
-        "maxShotsInPool": 21,
+        "apCostPerShot": 10,
+        "maxShotsInPool": 35,
         "totalApPool": 350,
         "breakdown": [
           {
@@ -279,7 +279,7 @@
           },
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -327,13 +327,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 59,
-        "mitigationRatio": 0.40840000000000004,
-        "normalLanded": 14,
-        "criticalLanded": 44,
-        "burstDPSLanded": 127,
-        "criticalCycleDPSLanded": 264,
-        "activeDPSLanded": 264
+        "armorMitigationPct": 46,
+        "mitigationRatio": 0.5390999999999999,
+        "normalLanded": 40,
+        "criticalLanded": 123,
+        "burstDPSLanded": 144,
+        "criticalCycleDPSLanded": 293,
+        "activeDPSLanded": 293
       }
     },
     "ultracite-titan": {
@@ -341,28 +341,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 172,
-        "critical": 394,
+        "normal": 368,
+        "critical": 844,
         "explosiveBonus": 0,
-        "totalPerShot": 172,
-        "activeShotDamage": 283,
+        "totalPerShot": 368,
+        "activeShotDamage": 606,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -411,34 +411,34 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1565,
-        "criticalCycleDPS": 2575,
-        "activeDPS": 2575,
+        "burstDPS": 1325,
+        "criticalCycleDPS": 2182,
+        "activeDPS": 2182,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 16,
-        "maxShotsInPool": 21,
+        "apCostPerShot": 10,
+        "maxShotsInPool": 35,
         "totalApPool": 350,
         "breakdown": [
           {
@@ -447,7 +447,7 @@
           },
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -495,13 +495,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 61,
-        "mitigationRatio": 0.3861,
-        "normalLanded": 17,
-        "criticalLanded": 51,
-        "burstDPSLanded": 155,
-        "criticalCycleDPSLanded": 309,
-        "activeDPSLanded": 309
+        "armorMitigationPct": 49,
+        "mitigationRatio": 0.5096,
+        "normalLanded": 47,
+        "criticalLanded": 146,
+        "burstDPSLanded": 169,
+        "criticalCycleDPSLanded": 347,
+        "activeDPSLanded": 347
       }
     },
     "level-100-super-mutant": {
@@ -509,28 +509,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 172,
-        "critical": 394,
+        "normal": 368,
+        "critical": 844,
         "explosiveBonus": 0,
-        "totalPerShot": 172,
-        "activeShotDamage": 283,
+        "totalPerShot": 368,
+        "activeShotDamage": 606,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -579,34 +579,34 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1565,
-        "criticalCycleDPS": 2575,
-        "activeDPS": 2575,
+        "burstDPS": 1325,
+        "criticalCycleDPS": 2182,
+        "activeDPS": 2182,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 16,
-        "maxShotsInPool": 21,
+        "apCostPerShot": 10,
+        "maxShotsInPool": 35,
         "totalApPool": 350,
         "breakdown": [
           {
@@ -615,7 +615,7 @@
           },
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -663,13 +663,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 53,
-        "mitigationRatio": 0.46520000000000006,
-        "normalLanded": 80,
-        "criticalLanded": 248,
-        "burstDPSLanded": 728,
-        "criticalCycleDPSLanded": 1492,
-        "activeDPSLanded": 1492
+        "armorMitigationPct": 39,
+        "mitigationRatio": 0.614,
+        "normalLanded": 226,
+        "criticalLanded": 702,
+        "burstDPSLanded": 814,
+        "criticalCycleDPSLanded": 1670,
+        "activeDPSLanded": 1670
       }
     },
     "raw-unarmored": {
@@ -677,28 +677,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "vats_crit_cycle",
       "firingModeLabel": "V.A.T.S. (1:1 Crit Every 2nd Shot)",
       "damagePerShot": {
-        "normal": 172,
-        "critical": 394,
+        "normal": 368,
+        "critical": 844,
         "explosiveBonus": 0,
-        "totalPerShot": 172,
-        "activeShotDamage": 283,
+        "totalPerShot": 368,
+        "activeShotDamage": 606,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Bloody Mess (Rank 3)",
@@ -747,34 +747,34 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 1565,
-        "criticalCycleDPS": 2575,
-        "activeDPS": 2575,
+        "burstDPS": 1325,
+        "criticalCycleDPS": 2182,
+        "activeDPS": 2182,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 16,
-        "maxShotsInPool": 21,
+        "apCostPerShot": 10,
+        "maxShotsInPool": 35,
         "totalApPool": 350,
         "breakdown": [
           {
@@ -783,7 +783,7 @@
           },
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -833,11 +833,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 170,
-        "criticalLanded": 390,
-        "burstDPSLanded": 1547,
-        "criticalCycleDPSLanded": 2548,
-        "activeDPSLanded": 2548
+        "normalLanded": 364,
+        "criticalLanded": 836,
+        "burstDPSLanded": 1310,
+        "criticalCycleDPSLanded": 2160,
+        "activeDPSLanded": 2160
       }
     }
   },
@@ -847,46 +847,46 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 48,
-        "critical": 96,
+        "normal": 103,
+        "critical": 206,
         "explosiveBonus": 0,
-        "totalPerShot": 48,
-        "activeShotDamage": 48,
+        "totalPerShot": 103,
+        "activeShotDamage": 103,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           }
         ]
       },
       "fireRate": {
-        "rps": 11.375,
-        "rpm": 683,
-        "isAutomatic": true,
+        "rps": 4.5,
+        "rpm": 270,
+        "isAutomatic": false,
         "fireRateMultiplier": 1.25
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 546,
-        "criticalCycleDPS": 819,
-        "activeDPS": 546,
+        "burstDPS": 464,
+        "criticalCycleDPS": 695,
+        "activeDPS": 464,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -894,22 +894,22 @@
           },
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "11.4 rps (683 rpm)"
+            "value": "4.5 rps (270 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 10,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 15,
         "totalApPool": 250,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -970,13 +970,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 66,
-        "armorMitigationPct": 55,
-        "mitigationRatio": 0.4454,
-        "normalLanded": 6,
-        "criticalLanded": 17,
-        "burstDPSLanded": 68,
-        "criticalCycleDPSLanded": 131,
-        "activeDPSLanded": 68
+        "armorMitigationPct": 41,
+        "mitigationRatio": 0.5886,
+        "normalLanded": 18,
+        "criticalLanded": 47,
+        "burstDPSLanded": 81,
+        "criticalCycleDPSLanded": 146,
+        "activeDPSLanded": 81
       }
     },
     "earle-williams": {
@@ -984,46 +984,46 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 48,
-        "critical": 96,
+        "normal": 103,
+        "critical": 206,
         "explosiveBonus": 0,
-        "totalPerShot": 48,
-        "activeShotDamage": 48,
+        "totalPerShot": 103,
+        "activeShotDamage": 103,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           }
         ]
       },
       "fireRate": {
-        "rps": 11.375,
-        "rpm": 683,
-        "isAutomatic": true,
+        "rps": 4.5,
+        "rpm": 270,
+        "isAutomatic": false,
         "fireRateMultiplier": 1.25
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 546,
-        "criticalCycleDPS": 819,
-        "activeDPS": 546,
+        "burstDPS": 464,
+        "criticalCycleDPS": 695,
+        "activeDPS": 464,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1031,22 +1031,22 @@
           },
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "11.4 rps (683 rpm)"
+            "value": "4.5 rps (270 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 10,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 15,
         "totalApPool": 250,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -1107,13 +1107,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 66,
-        "armorMitigationPct": 55,
-        "mitigationRatio": 0.4454,
-        "normalLanded": 4,
-        "criticalLanded": 11,
-        "burstDPSLanded": 46,
-        "criticalCycleDPSLanded": 85,
-        "activeDPSLanded": 46
+        "armorMitigationPct": 41,
+        "mitigationRatio": 0.5886,
+        "normalLanded": 12,
+        "criticalLanded": 31,
+        "burstDPSLanded": 54,
+        "criticalCycleDPSLanded": 97,
+        "activeDPSLanded": 54
       }
     },
     "ultracite-titan": {
@@ -1121,46 +1121,46 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 48,
-        "critical": 96,
+        "normal": 103,
+        "critical": 206,
         "explosiveBonus": 0,
-        "totalPerShot": 48,
-        "activeShotDamage": 48,
+        "totalPerShot": 103,
+        "activeShotDamage": 103,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           }
         ]
       },
       "fireRate": {
-        "rps": 11.375,
-        "rpm": 683,
-        "isAutomatic": true,
+        "rps": 4.5,
+        "rpm": 270,
+        "isAutomatic": false,
         "fireRateMultiplier": 1.25
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 546,
-        "criticalCycleDPS": 819,
-        "activeDPS": 546,
+        "burstDPS": 464,
+        "criticalCycleDPS": 695,
+        "activeDPS": 464,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1168,22 +1168,22 @@
           },
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "11.4 rps (683 rpm)"
+            "value": "4.5 rps (270 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 10,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 15,
         "totalApPool": 250,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -1244,13 +1244,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 77,
-        "armorMitigationPct": 58,
-        "mitigationRatio": 0.4211,
-        "normalLanded": 5,
-        "criticalLanded": 13,
-        "burstDPSLanded": 57,
-        "criticalCycleDPSLanded": 102,
-        "activeDPSLanded": 57
+        "armorMitigationPct": 44,
+        "mitigationRatio": 0.5564,
+        "normalLanded": 14,
+        "criticalLanded": 37,
+        "burstDPSLanded": 63,
+        "criticalCycleDPSLanded": 115,
+        "activeDPSLanded": 63
       }
     },
     "level-100-super-mutant": {
@@ -1258,46 +1258,46 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 48,
-        "critical": 96,
+        "normal": 103,
+        "critical": 206,
         "explosiveBonus": 0,
-        "totalPerShot": 48,
-        "activeShotDamage": 48,
+        "totalPerShot": 103,
+        "activeShotDamage": 103,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           }
         ]
       },
       "fireRate": {
-        "rps": 11.375,
-        "rpm": 683,
-        "isAutomatic": true,
+        "rps": 4.5,
+        "rpm": 270,
+        "isAutomatic": false,
         "fireRateMultiplier": 1.25
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 546,
-        "criticalCycleDPS": 819,
-        "activeDPS": 546,
+        "burstDPS": 464,
+        "criticalCycleDPS": 695,
+        "activeDPS": 464,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1305,22 +1305,22 @@
           },
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "11.4 rps (683 rpm)"
+            "value": "4.5 rps (270 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 10,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 15,
         "totalApPool": 250,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -1381,13 +1381,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 46,
-        "armorMitigationPct": 49,
-        "mitigationRatio": 0.5082,
-        "normalLanded": 24,
-        "criticalLanded": 63,
-        "burstDPSLanded": 273,
-        "criticalCycleDPSLanded": 495,
-        "activeDPSLanded": 273
+        "armorMitigationPct": 33,
+        "mitigationRatio": 0.6715000000000001,
+        "normalLanded": 69,
+        "criticalLanded": 178,
+        "burstDPSLanded": 311,
+        "criticalCycleDPSLanded": 556,
+        "activeDPSLanded": 311
       }
     },
     "raw-unarmored": {
@@ -1395,46 +1395,46 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 48,
-        "critical": 96,
+        "normal": 103,
+        "critical": 206,
         "explosiveBonus": 0,
-        "totalPerShot": 48,
-        "activeShotDamage": 48,
+        "totalPerShot": 103,
+        "activeShotDamage": 103,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           }
         ]
       },
       "fireRate": {
-        "rps": 11.375,
-        "rpm": 683,
-        "isAutomatic": true,
+        "rps": 4.5,
+        "rpm": 270,
+        "isAutomatic": false,
         "fireRateMultiplier": 1.25
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 546,
-        "criticalCycleDPS": 819,
-        "activeDPS": 546,
+        "burstDPS": 464,
+        "criticalCycleDPS": 695,
+        "activeDPS": 464,
         "breakdown": [
           {
             "source": "Rapid 2★ Weapon Speed",
@@ -1442,22 +1442,22 @@
           },
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "11.4 rps (683 rpm)"
+            "value": "4.5 rps (270 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 10,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 15,
         "totalApPool": 250,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -1520,11 +1520,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 48,
-        "criticalLanded": 95,
-        "burstDPSLanded": 546,
-        "criticalCycleDPSLanded": 813,
-        "activeDPSLanded": 546
+        "normalLanded": 102,
+        "criticalLanded": 204,
+        "burstDPSLanded": 459,
+        "criticalCycleDPSLanded": 689,
+        "activeDPSLanded": 459
       }
     }
   },
@@ -7817,28 +7817,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 252,
-        "critical": 504,
+        "normal": 541,
+        "critical": 1082,
         "explosiveBonus": 0,
-        "totalPerShot": 252,
-        "activeShotDamage": 252,
+        "totalPerShot": 541,
+        "activeShotDamage": 541,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Nocturnal (Crouched / Stealthed)",
@@ -7851,39 +7851,39 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 2293,
-        "criticalCycleDPS": 3440,
-        "activeDPS": 2293,
+        "burstDPS": 1948,
+        "criticalCycleDPS": 2921,
+        "activeDPS": 1948,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 12,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 18,
         "totalApPool": 300,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -7931,13 +7931,13 @@
           "description": "Endgame Nuke Boss (300 DR, 70% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 53,
-        "mitigationRatio": 0.46950000000000003,
-        "normalLanded": 35,
-        "criticalLanded": 91,
-        "burstDPSLanded": 319,
-        "criticalCycleDPSLanded": 573,
-        "activeDPSLanded": 319
+        "armorMitigationPct": 38,
+        "mitigationRatio": 0.6204999999999999,
+        "normalLanded": 101,
+        "criticalLanded": 259,
+        "burstDPSLanded": 364,
+        "criticalCycleDPSLanded": 648,
+        "activeDPSLanded": 364
       }
     },
     "earle-williams": {
@@ -7945,28 +7945,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 252,
-        "critical": 504,
+        "normal": 541,
+        "critical": 1082,
         "explosiveBonus": 0,
-        "totalPerShot": 252,
-        "activeShotDamage": 252,
+        "totalPerShot": 541,
+        "activeShotDamage": 541,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Nocturnal (Crouched / Stealthed)",
@@ -7979,39 +7979,39 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 2293,
-        "criticalCycleDPS": 3440,
-        "activeDPS": 2293,
+        "burstDPS": 1948,
+        "criticalCycleDPS": 2921,
+        "activeDPS": 1948,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 12,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 18,
         "totalApPool": 300,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -8059,13 +8059,13 @@
           "description": "Deep Mine Colossus Boss (300 DR, 80% flat damage reduction)"
         },
         "effectiveDR": 300,
-        "armorMitigationPct": 53,
-        "mitigationRatio": 0.46950000000000003,
-        "normalLanded": 24,
-        "criticalLanded": 61,
-        "burstDPSLanded": 218,
-        "criticalCycleDPSLanded": 387,
-        "activeDPSLanded": 218
+        "armorMitigationPct": 38,
+        "mitigationRatio": 0.6204999999999999,
+        "normalLanded": 67,
+        "criticalLanded": 173,
+        "burstDPSLanded": 241,
+        "criticalCycleDPSLanded": 432,
+        "activeDPSLanded": 241
       }
     },
     "ultracite-titan": {
@@ -8073,28 +8073,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 252,
-        "critical": 504,
+        "normal": 541,
+        "critical": 1082,
         "explosiveBonus": 0,
-        "totalPerShot": 252,
-        "activeShotDamage": 252,
+        "totalPerShot": 541,
+        "activeShotDamage": 541,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Nocturnal (Crouched / Stealthed)",
@@ -8107,39 +8107,39 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 2293,
-        "criticalCycleDPS": 3440,
-        "activeDPS": 2293,
+        "burstDPS": 1948,
+        "criticalCycleDPS": 2921,
+        "activeDPS": 1948,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 12,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 18,
         "totalApPool": 300,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -8187,13 +8187,13 @@
           "description": "Ash Heap Behemoth Boss (350 DR, 75% flat damage reduction)"
         },
         "effectiveDR": 350,
-        "armorMitigationPct": 56,
-        "mitigationRatio": 0.44380000000000003,
-        "normalLanded": 28,
-        "criticalLanded": 72,
-        "burstDPSLanded": 255,
-        "criticalCycleDPSLanded": 455,
-        "activeDPSLanded": 255
+        "armorMitigationPct": 41,
+        "mitigationRatio": 0.5866,
+        "normalLanded": 79,
+        "criticalLanded": 204,
+        "burstDPSLanded": 284,
+        "criticalCycleDPSLanded": 509,
+        "activeDPSLanded": 284
       }
     },
     "level-100-super-mutant": {
@@ -8201,28 +8201,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 252,
-        "critical": 504,
+        "normal": 541,
+        "critical": 1082,
         "explosiveBonus": 0,
-        "totalPerShot": 252,
-        "activeShotDamage": 252,
+        "totalPerShot": 541,
+        "activeShotDamage": 541,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Nocturnal (Crouched / Stealthed)",
@@ -8235,39 +8235,39 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 2293,
-        "criticalCycleDPS": 3440,
-        "activeDPS": 2293,
+        "burstDPS": 1948,
+        "criticalCycleDPS": 2921,
+        "activeDPS": 1948,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 12,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 18,
         "totalApPool": 300,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -8315,13 +8315,13 @@
           "description": "High-tier Appalachian standard target (210 DR, 0% flat reduction)"
         },
         "effectiveDR": 210,
-        "armorMitigationPct": 47,
-        "mitigationRatio": 0.5347999999999999,
-        "normalLanded": 135,
-        "criticalLanded": 347,
-        "burstDPSLanded": 1229,
-        "criticalCycleDPSLanded": 2193,
-        "activeDPSLanded": 1229
+        "armorMitigationPct": 29,
+        "mitigationRatio": 0.7068000000000001,
+        "normalLanded": 382,
+        "criticalLanded": 985,
+        "burstDPSLanded": 1375,
+        "criticalCycleDPSLanded": 2461,
+        "activeDPSLanded": 1375
       }
     },
     "raw-unarmored": {
@@ -8329,28 +8329,28 @@
         "id": "the-fixer",
         "label": "The Fixer",
         "maxLevel": 50,
-        "baseDamage": 48,
+        "baseDamage": 103,
         "damageType": "ballistic",
-        "fireRate": 9.1,
-        "baseVatsApCost": 25,
-        "magazineSize": 25,
+        "fireRate": 3.6,
+        "baseVatsApCost": 16,
+        "magazineSize": 20,
         "weaponClass": "commando",
-        "isAutomatic": true,
+        "isAutomatic": false,
         "isRanged": true,
         "isEnergy": false
       },
       "firingMode": "hip_fire",
       "firingModeLabel": "Hip Fire (Standard Spread)",
       "damagePerShot": {
-        "normal": 252,
-        "critical": 504,
+        "normal": 541,
+        "critical": 1082,
         "explosiveBonus": 0,
-        "totalPerShot": 252,
-        "activeShotDamage": 252,
+        "totalPerShot": 541,
+        "activeShotDamage": 541,
         "breakdown": [
           {
             "source": "Base Weapon Damage (Lvl 50)",
-            "value": "48"
+            "value": "103"
           },
           {
             "source": "Nocturnal (Crouched / Stealthed)",
@@ -8363,39 +8363,39 @@
         ]
       },
       "fireRate": {
-        "rps": 9.1,
-        "rpm": 546,
-        "isAutomatic": true,
+        "rps": 3.6,
+        "rpm": 216,
+        "isAutomatic": false,
         "fireRateMultiplier": 1
       },
       "magazineCapacity": {
-        "base": 25,
-        "effective": 25,
+        "base": 20,
+        "effective": 20,
         "isQuad": false
       },
       "dps": {
-        "burstDPS": 2293,
-        "criticalCycleDPS": 3440,
-        "activeDPS": 2293,
+        "burstDPS": 1948,
+        "criticalCycleDPS": 2921,
+        "activeDPS": 1948,
         "breakdown": [
           {
             "source": "Base Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           },
           {
             "source": "Effective Fire Rate",
-            "value": "9.1 rps (546 rpm)"
+            "value": "3.6 rps (216 rpm)"
           }
         ]
       },
       "vats": {
-        "apCostPerShot": 25,
-        "maxShotsInPool": 12,
+        "apCostPerShot": 16,
+        "maxShotsInPool": 18,
         "totalApPool": 300,
         "breakdown": [
           {
             "source": "Base VATS AP Cost",
-            "value": "25 AP"
+            "value": "16 AP"
           },
           {
             "source": "Total Action Points",
@@ -8445,11 +8445,11 @@
         "effectiveDR": 0,
         "armorMitigationPct": 1,
         "mitigationRatio": 0.99,
-        "normalLanded": 249,
-        "criticalLanded": 499,
-        "burstDPSLanded": 2266,
-        "criticalCycleDPSLanded": 3403,
-        "activeDPSLanded": 2266
+        "normalLanded": 536,
+        "criticalLanded": 1071,
+        "burstDPSLanded": 1930,
+        "criticalCycleDPSLanded": 2893,
+        "activeDPSLanded": 1930
       }
     }
   }

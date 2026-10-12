@@ -11,8 +11,12 @@ import { calculateCombatFirepower } from "./combat-firepower-engine";
 
 describe("weapon-piece-mods - Archetype & Slot Resolution", () => {
   it("resolves authentic weapon archetypes correctly", () => {
-    expect(resolveWeaponArchetype("fixer")).toBe("ballistic-rifle");
-    expect(resolveWeaponArchetype("handmade")).toBe("ballistic-rifle");
+    // The Fixer and the Handmade carry their own client-read receiver tables (2026-10-12).
+    expect(resolveWeaponArchetype("fixer")).toBe("fixer");
+    expect(resolveWeaponArchetype("the-fixer")).toBe("fixer");
+    expect(resolveWeaponArchetype("handmade")).toBe("handmade");
+    expect(resolveWeaponArchetype("handmade-rifle")).toBe("handmade");
+    expect(resolveWeaponArchetype("combat-rifle")).toBe("ballistic-rifle");
     expect(resolveWeaponArchetype("railway")).toBe("railway");
     expect(resolveWeaponArchetype("ticket-to-revenge")).toBe("railway");
     expect(resolveWeaponArchetype("the-dragon")).toBe("black-powder");
