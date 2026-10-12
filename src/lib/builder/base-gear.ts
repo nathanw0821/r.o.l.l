@@ -26,9 +26,10 @@ export type BaseGearPiece = {
 
 const ARMOR_SET_PIECES: BaseGearPiece[] = ARMOR_SET_ROWS.map((row) => ({
   id: basePieceIdForArmorSet(row.key),
-  label: `${row.label} (full set)`,
+  label: row.unique ? `${row.label} · Unique (full set)` : `${row.label} (full set)`,
   kind: "armor" as const,
-  armorSetKey: row.key
+  armorSetKey: row.key,
+  ...(row.unique ? { isUnique: true as const } : {})
 }));
 
 /**

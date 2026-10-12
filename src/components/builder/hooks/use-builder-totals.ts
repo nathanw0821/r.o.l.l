@@ -21,6 +21,13 @@ import {
 } from "@/lib/builder/perk-defensive-layer";
 import { calculateStanceAndBiometricModifiers } from "@/lib/builder/stance-biometrics-engine";
 import {
+  activeRageStacks,
+  effectiveArmorPieceSetKeys,
+  rageDamageTakenPct,
+  uniqueArmorEffectLayer,
+  wornUniqueArmorPieces,
+} from "@/lib/builder/unique-armor";
+import {
   findUnderarmorOption,
   UNDERARMOR_LININGS,
   UNDERARMOR_SHELLS,
@@ -69,6 +76,29 @@ export function useBuilderTotals({
 
   const inPowerArmor =
     isPA || activeChassisPiece.kind === "powerArmor" || piece.kind === "powerArmor";
+
+  // Unique armor (unique-armor.ts): worn pieces, the per-slot set keys their base sets imply, and
+  // the innates that land on numbers (Bulwark resists, Stand Fast DR, Rage stacks, Last Stand).
+  const wornUniqueArmor = React.useMemo(
+    () => (inPowerArmor ? [] : wornUniqueArmorPieces(payload)),
+    [inPowerArmor, payload],
+  );
+  const armorPieceSetKeys = React.useMemo(
+    () =>
+      inPowerArmor
+        ? payload.armorPieceSetKeys
+        : effectiveArmorPieceSetKeys(
+            payload,
+            activeChassisPiece.kind === "armor" ? activeChassisPiece.armorSetKey ?? null : null,
+          ),
+    [inPowerArmor, payload, activeChassisPiece],
+  );
+  const uniqueArmorLayer = React.useMemo(
+    () => (inPowerArmor ? null : uniqueArmorEffectLayer(payload)),
+    [inPowerArmor, payload],
+  );
+  const rageStacks = React.useMemo(() => (inPowerArmor ? 0 : activeRageStacks(payload)), [inPowerArmor, payload]);
+  const rageTakenPct = React.useMemo(() => (inPowerArmor ? 0 : rageDamageTakenPct(payload)), [inPowerArmor, payload]);
 
   const underLayers = React.useMemo(() => {
     // Underarmor resistances (lining) and SPECIAL bonuses (style) are strictly SUPPRESSED when in Power Armor!
@@ -188,6 +218,7 @@ export function useBuilderTotals({
       ...armorCraftingLayers,
       ...(powerArmorFrameIntrinsicLayer ? [powerArmorFrameIntrinsicLayer] : []),
       ...(mutationLayer ? [mutationLayer] : []),
+      ...(uniqueArmorLayer ? [uniqueArmorLayer] : []),
       stanceAndBiometricsLayer.layer,
     ],
     [
@@ -196,6 +227,7 @@ export function useBuilderTotals({
       armorCraftingLayers,
       powerArmorFrameIntrinsicLayer,
       mutationLayer,
+      uniqueArmorLayer,
       stanceAndBiometricsLayer.layer,
     ],
   );
@@ -222,7 +254,7 @@ export function useBuilderTotals({
         ghoul: payload.ghoul,
         extraLayers: preDefenseLayers,
         baseArmorStats,
-        armorPieceSetKeys: payload.armorPieceSetKeys,
+        armorPieceSetKeys,
         baseSpecial: payload.baseSpecial,
         legendaryPerkIds: payload.legendaryPerkIds,
         matchingSet,
@@ -233,7 +265,7 @@ export function useBuilderTotals({
       preDefenseLayers,
       matchingSet,
       baseArmorStats,
-      payload.armorPieceSetKeys,
+      armorPieceSetKeys,
       payload.baseSpecial,
       payload.legendaryPerkIds,
     ],
@@ -288,6 +320,9 @@ export function useBuilderTotals({
       killStreak: switchboardState?.killStreak ?? switchboardState?.adrenalineStacks ?? 0,
       // Unverified innate PA reduction: 0 unless the switchboard toggle sets it.
       powerArmorInnatePct: switchboardState?.powerArmorInnatePct ?? 0,
+      // Worn unique pieces (Last Stand converts Evade) and Rage's extra damage taken.
+      uniqueArmorIds: wornUniqueArmor.map((p) => p.id),
+      damageTakenIncreases: rageTakenPct > 0 ? [{ id: "rage", label: `Rage (${rageStacks} stacks)`, pct: rageTakenPct }] : [],
     });
   }, [
     equippedPerkCards,
@@ -303,6 +338,9 @@ export function useBuilderTotals({
     intrinsicBenchTotals.dr,
     intrinsicBenchTotals.er,
     armorModSlugs,
+    wornUniqueArmor,
+    rageStacks,
+    rageTakenPct,
   ]);
 
   /** Flat resist adds from the perk deck (old shape kept for the HUD breakdown). */
@@ -320,7 +358,7 @@ export function useBuilderTotals({
           ...(perkDeckDefensiveLayer ? [perkDeckDefensiveLayer] : []),
         ],
         baseArmorStats,
-        armorPieceSetKeys: payload.armorPieceSetKeys,
+        armorPieceSetKeys,
         baseSpecial: payload.baseSpecial,
         legendaryPerkIds: payload.legendaryPerkIds,
         matchingSet,
@@ -332,7 +370,7 @@ export function useBuilderTotals({
       matchingSet,
       perkDeckDefensiveLayer,
       baseArmorStats,
-      payload.armorPieceSetKeys,
+      armorPieceSetKeys,
       payload.baseSpecial,
       payload.legendaryPerkIds,
     ],
@@ -353,6 +391,11 @@ export function useBuilderTotals({
     stanceAndBiometricsLayer,
     matchingSet,
     totals,
+    wornUniqueArmor,
+    /** Per-slot set keys after unique pieces (what the resistance maths and set bonuses read). */
+    armorPieceSetKeys,
+    uniqueArmorLayer,
+    rageStacks,
   };
 }
 

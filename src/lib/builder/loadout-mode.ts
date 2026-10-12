@@ -5,8 +5,10 @@ import {
 } from "@/lib/builder/base-gear";
 import { defaultArmorPieceCrafting } from "@/lib/builder/armor-piece-mods";
 import { emptyArmorLegendaryGrid } from "@/lib/builder/normalize-builder-payload";
+import { applyUniqueArmorLocks, transitionUniqueArmorLocks } from "@/lib/builder/unique-armor";
 import {
   DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
+  type ArmorSlot,
   type BuilderArmorPieceCrafting,
   type BuilderPayload,
   type BuilderPowerArmorHelmetCrafting,
@@ -33,6 +35,8 @@ export function armorModeOf(chassis: Pick<BaseGearPiece, "kind">): ArmorMode {
 export type RegularLoadoutSnapshot = {
   chassisId: string;
   armorPieceSetKeys?: (string | null)[];
+  /** Unique pieces worn per slot (power armor wears none, so they park with the regular loadout). */
+  uniqueArmorPieceIds?: Partial<Record<ArmorSlot, string>>;
   armorLegendaryModIds: (string | null)[][];
   armorPieceCrafting: BuilderArmorPieceCrafting[];
 };
@@ -54,6 +58,7 @@ export function snapshotRegularLoadout(
   return {
     chassisId,
     armorPieceSetKeys: payload.armorPieceSetKeys ? [...payload.armorPieceSetKeys] : undefined,
+    uniqueArmorPieceIds: payload.uniqueArmorPieceIds ? { ...payload.uniqueArmorPieceIds } : undefined,
     armorLegendaryModIds: payload.armorLegendaryModIds.map((row) => [...row]),
     armorPieceCrafting: payload.armorPieceCrafting.map((row) => ({ ...row })),
   };
@@ -93,8 +98,11 @@ export function applyChassisSelection(payload: BuilderPayload, next: BaseGearPie
   if (next.kind !== "armor" && next.kind !== "powerArmor") return payload;
   const isNextPA = next.kind === "powerArmor";
   const slotCount = isNextPA ? 6 : 5;
-  return {
+  // Unique pieces stay on across regular sets (they carry their own base set) and leave with power
+  // armor; a unique set (Secret Settler) locks or releases its slots' fixed stars here.
+  const selected: BuilderPayload = {
     ...payload,
+    uniqueArmorPieceIds: isNextPA ? undefined : payload.uniqueArmorPieceIds,
     basePieceId: next.id,
     equipmentKind: next.kind,
     armorLegendaryModIds:
@@ -115,6 +123,7 @@ export function applyChassisSelection(payload: BuilderPayload, next: BaseGearPie
       ? payload.powerArmorPiecesEquipped
       : DEFAULT_POWER_ARMOR_PIECES_EQUIPPED,
   };
+  return transitionUniqueArmorLocks(payload, selected);
 }
 
 /** Restore a regular loadout (chassis + its per-slot state) on top of `payload`. */
@@ -126,14 +135,15 @@ export function applyRegularSnapshot(
   const base = chassis && chassis.kind === "armor"
     ? applyChassisSelection(payload, chassis)
     : applyChassisSelection(payload, getBaseGearPiece(defaultChassisIdForMode("regular"))!);
-  return {
+  return applyUniqueArmorLocks({
     ...base,
     armorPieceSetKeys: snap.armorPieceSetKeys ?? base.armorPieceSetKeys,
+    uniqueArmorPieceIds: snap.uniqueArmorPieceIds ?? base.uniqueArmorPieceIds,
     armorLegendaryModIds:
       snap.armorLegendaryModIds.length === 5 ? snap.armorLegendaryModIds : base.armorLegendaryModIds,
     armorPieceCrafting:
       snap.armorPieceCrafting.length === 5 ? snap.armorPieceCrafting : base.armorPieceCrafting,
-  };
+  });
 }
 
 /** Restore a power armor loadout (frame + pieces) on top of `payload`. */

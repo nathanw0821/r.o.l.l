@@ -15,6 +15,7 @@ import characterStats from "@/data/truth/character-stats.json";
 import { readPerkCurve } from "@/lib/truth/perk-curves";
 import { getUniqueDot, type UniqueDot } from "@/lib/truth/unique-dot";
 import {
+  getUniqueItemById,
   resolveUniqueForBuilderId,
   type UniqueEffectKind,
   type UniqueEffectModel,
@@ -392,6 +393,8 @@ export type CombatFirepowerCalculationInput = {
     adrenalineStacks?: number;
     bulletStormStacks?: number;
     onslaughtStacks?: number;
+    /** Rage stacks held; only non-zero while the Rage unique chest is worn. */
+    rageStacks?: number;
     killStreak?: number;
     tenderizerStacks?: number;
     targetBleeding?: boolean;
@@ -712,6 +715,16 @@ export function calculateCombatFirepower(
       source: "Weapon Innate Mods (Receiver/Attachments)",
       value: `${innateMods.damagePct > 0 ? "+" : ""}${Math.round(innateMods.damagePct * 100)}%`,
     });
+  }
+
+  // Rage (unique chest): +damage dealt per stack, per unique-items.json rage.armorModel. The caller
+  // passes 0 unless Rage is worn (unique-armor.ts activeRageStacks).
+  const rageModel = getUniqueItemById("rage")?.armorModel;
+  const rageStacks = Math.min(rageModel?.maxUnits ?? 0, Math.max(0, input.playerStats.rageStacks ?? 0));
+  if (rageModel?.kind === "rage-stacks" && rageStacks > 0) {
+    const rageBonus = rageStacks * (rageModel.perUnit ?? 0);
+    additiveDamagePct += rageBonus;
+    breakdown.push({ source: `Rage (${rageStacks} stacks)`, value: `+${Math.round(rageBonus * 100)}%` });
   }
 
   // Perk Card Scaling

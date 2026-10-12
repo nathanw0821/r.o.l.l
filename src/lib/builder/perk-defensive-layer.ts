@@ -54,7 +54,17 @@ export interface DefensiveProfile {
   blockPct: number;
   /** Lifegiver max-HP bonus in percent. */
   maxHpPct: number;
+  /** Extra damage taken in percent (Rage stacks); multiplies delivered damage by 1 + pct / 100. */
+  damageTakenIncreasePct: number;
   notes: string[];
+}
+
+/** A source that makes the wearer take more damage (Rage: +1% per stack). */
+export interface DamageTakenIncrease {
+  id: string;
+  label: string;
+  /** Percent added to damage taken (0..). */
+  pct: number;
 }
 
 export interface DefensiveProfileOptions {
@@ -90,6 +100,10 @@ export interface DefensiveProfileOptions {
    * at 0 and the UI exposes it as a toggle labelled unverified.
    */
   powerArmorInnatePct?: number;
+  /** Unique armor pieces worn (unique-items.json ids, e.g. "last-stand"); their innates read like mod slugs. */
+  uniqueArmorIds?: string[];
+  /** Sources of extra damage taken (Rage stacks); summed into `damageTakenIncreasePct`. */
+  damageTakenIncreases?: DamageTakenIncrease[];
 }
 
 /** Legacy option shape kept for `calculatePerkDeckDefensiveLayer` callers. */
@@ -259,7 +273,9 @@ export function calculateDefensiveProfile(
     lck: options.special?.lck ?? 1,
   };
 
-  const slugs = (options.equippedModSlugs ?? []).map((s) => (s || "").toLowerCase());
+  const slugs = [...(options.equippedModSlugs ?? []), ...(options.uniqueArmorIds ?? [])].map((s) =>
+    (s || "").toLowerCase(),
+  );
   // Same 0..1 vs 0..100 tolerance as the stance engine.
   const hp = clamp(healthPct > 1 ? healthPct : healthPct * 100, 0, 100);
 
@@ -523,6 +539,13 @@ export function calculateDefensiveProfile(
     notes.push(`Deflect chance x${TRUTH.evadeDeflect.deflectHeavyArmorMultiplier} in heavy armor / Power Armor`);
   }
 
+  let damageTakenIncreasePct = 0;
+  for (const increase of options.damageTakenIncreases ?? []) {
+    if (!(increase.pct > 0)) continue;
+    damageTakenIncreasePct += increase.pct;
+    notes.push(`${increase.label}: +${round1(increase.pct)}% damage taken`);
+  }
+
   return {
     flat,
     reducers,
@@ -530,6 +553,7 @@ export function calculateDefensiveProfile(
     deflectChance: round1(clamp(deflectChance, 0, cap)),
     blockPct,
     maxHpPct,
+    damageTakenIncreasePct: round1(damageTakenIncreasePct),
     notes,
   };
 }
@@ -574,7 +598,8 @@ export function selectApplicableReducers(
 
 /**
  * Patch-66 order of operations: armor curve (with the boss flat reduction),
- * then every applicable reducer multiplied together.
+ * then every applicable reducer multiplied together. `damageTakenIncreasePct`
+ * (Rage stacks) scales the delivered damage up and is not counted as a reducer.
  */
 export function calculateDamageTaken(
   rawDamage: number,
@@ -582,14 +607,16 @@ export function calculateDamageTaken(
   bossFlatReductionPct: number,
   reducers: DefensiveReducer[],
   damageType: IncomingDamageType,
+  damageTakenIncreasePct = 0,
 ): DamageTakenResult {
   const curve = calculateMitigatedDamage(rawDamage, effectiveDr, bossFlatReductionPct);
   const applied = selectApplicableReducers(reducers, damageType);
   let multiplier = 1;
   for (const r of applied) multiplier *= 1 - clamp(r.pct, 0, 100) / 100;
+  const increase = 1 + Math.max(0, damageTakenIncreasePct) / 100;
   return {
     afterCurve: curve.finalDamage,
-    delivered: Math.round(curve.finalDamage * multiplier * 100) / 100,
+    delivered: Math.round(curve.finalDamage * multiplier * increase * 100) / 100,
     damageCoefficientPct: curve.damageCoefficientPct,
     appliedReducers: applied,
     totalReducerPct: round1((1 - multiplier) * 100),

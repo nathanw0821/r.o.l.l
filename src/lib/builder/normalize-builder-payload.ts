@@ -1,4 +1,9 @@
-import { basePieceIdForArmorSet } from "@/lib/builder/armor-sets";
+import { basePieceIdForArmorSet, getArmorSetRow } from "@/lib/builder/armor-sets";
+import {
+  applyUniqueArmorLocks,
+  sanitizeUniqueArmorConditions,
+  sanitizeUniqueArmorPieceIds,
+} from "@/lib/builder/unique-armor";
 import { defaultArmorPieceCrafting, sanitizeArmorPieceCraftingJetpack } from "@/lib/builder/armor-piece-mods";
 import { BASE_GEAR_PIECES, canonicalBasePieceId, getBaseGearPiece, isPowerArmorHelmetBasePiece } from "@/lib/builder/base-gear";
 import { UNDERARMOR_SHELLS } from "@/lib/builder/underarmor";
@@ -187,6 +192,17 @@ function readSwitchboardState(raw: Record<string, unknown>): Record<string, unkn
   return raw.switchboardState as Record<string, unknown>;
 }
 
+/**
+ * Per-slot mixed-set keys. Until 2026-10-12 normalisation dropped them, so a reloaded or shared
+ * mixed set fell back to the chassis set; unknown keys become null.
+ */
+function readArmorPieceSetKeys(raw: Record<string, unknown>): (string | null)[] | undefined {
+  if (!Array.isArray(raw.armorPieceSetKeys)) return undefined;
+  return raw.armorPieceSetKeys
+    .slice(0, 6)
+    .map((key) => (typeof key === "string" && getArmorSetRow(key) ? key : null));
+}
+
 function readActiveWeaponPieceId(raw: Record<string, unknown>, basePieceId: string, equipmentKind: string): string | undefined {
   if (typeof raw.activeWeaponPieceId === "string" && raw.activeWeaponPieceId.trim()) {
     return canonicalBasePieceId(raw.activeWeaponPieceId.trim()) || raw.activeWeaponPieceId.trim();
@@ -224,6 +240,9 @@ function buildPayloadV5(fields: {
   armorLegendaryModIds: (string | null)[][];
   weaponCrafting?: BuilderWeaponInnateCrafting;
   armorPieceCrafting: BuilderArmorPieceCrafting[];
+  armorPieceSetKeys?: (string | null)[];
+  uniqueArmorPieceIds?: BuilderPayload["uniqueArmorPieceIds"];
+  uniqueArmorConditions?: BuilderPayload["uniqueArmorConditions"];
   powerArmorHelmetId: string | null;
   powerArmorHelmetCrafting: BuilderPowerArmorHelmetCrafting;
   powerArmorPiecesEquipped: BuilderPayload["powerArmorPiecesEquipped"];
@@ -238,7 +257,7 @@ function buildPayloadV5(fields: {
   hasStrangeInNumbers?: boolean;
   ndUrl?: string;
 }): BuilderPayload {
-  return {
+  const payload: BuilderPayload = {
     version: 5,
     basePieceId: fields.basePieceId,
     activeWeaponPieceId: fields.activeWeaponPieceId,
@@ -262,6 +281,11 @@ function buildPayloadV5(fields: {
     hasStrangeInNumbers: fields.hasStrangeInNumbers ?? false,
     ndUrl: fields.ndUrl
   };
+  if (fields.armorPieceSetKeys) payload.armorPieceSetKeys = fields.armorPieceSetKeys;
+  if (fields.uniqueArmorPieceIds) payload.uniqueArmorPieceIds = fields.uniqueArmorPieceIds;
+  if (fields.uniqueArmorConditions) payload.uniqueArmorConditions = fields.uniqueArmorConditions;
+  // A unique slot's stars are its fixed mods, whatever the stored grid says.
+  return applyUniqueArmorLocks(payload);
 }
 
 /** Accept v1–v5 JSON and return canonical v5, or null if invalid. */
@@ -305,6 +329,9 @@ export function normalizeBuilderPayload(raw: unknown): BuilderPayload | null {
       armorLegendaryModIds: grid,
       weaponCrafting: readWeaponInnateCrafting(v, effectiveWeaponId),
       armorPieceCrafting: crafting,
+      armorPieceSetKeys: readArmorPieceSetKeys(v),
+      uniqueArmorPieceIds: isPA ? undefined : sanitizeUniqueArmorPieceIds(v.uniqueArmorPieceIds),
+      uniqueArmorConditions: sanitizeUniqueArmorConditions(v.uniqueArmorConditions),
       powerArmorHelmetId: helmetRaw,
       powerArmorHelmetCrafting: readPowerArmorHelmetCrafting(v),
       powerArmorPiecesEquipped: sanitizePowerArmorPiecesEquipped(v.powerArmorPiecesEquipped),

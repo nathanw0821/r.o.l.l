@@ -50,6 +50,16 @@ export const DEFAULT_POWER_ARMOR_PIECES_EQUIPPED: PowerArmorPiecesEquipped = [
   true
 ];
 
+/** Regular armor body slot; payload index order is chest 0, left arm 1, right arm 2, left leg 3, right leg 4. */
+export type ArmorSlot = "chest" | "leftArm" | "rightArm" | "leftLeg" | "rightLeg";
+
+export type UniqueArmorConditions = {
+  /** Rage stacks held (0–100); default 0. */
+  rageStacks?: number;
+  /** Movement speed in percent of base (100 = base, 200 = base plus a 100% bonus); default 100. */
+  movementSpeedPct?: number;
+};
+
 export type BuilderPayload = {
   /** Live game patch the build was shared on (set server-side at share time). */
   gamePatch?: number;
@@ -76,6 +86,14 @@ export type BuilderPayload = {
   armorPieceCrafting: BuilderArmorPieceCrafting[];
   /** Optional individual armor set key per slot for mixed-set builds e.g. ["civil-engineer", "secret-service", "heavy-raider", "botsmith", "civil-engineer"]. */
   armorPieceSetKeys?: (string | null)[];
+  /**
+   * Regular armor only: the unique piece worn in a body slot (`unique-items.json` armor id), e.g.
+   * `{ chest: "bulwark" }`. A slot with a unique uses the unique's base set and its fixed
+   * legendary stars (`src/lib/builder/unique-armor.ts`). Absent or empty = no unique pieces.
+   */
+  uniqueArmorPieceIds?: Partial<Record<ArmorSlot, string>>;
+  /** Inputs the unique armor innates read: Rage stacks (0–100) and movement speed for Stand Fast (100–200%). */
+  uniqueArmorConditions?: UniqueArmorConditions;
   /**
    * When base is a PA torso/chest, optional helmet row for sandbox resists + helmet crafting.
    * Null when no helmet selected or when base is not a PA torso.

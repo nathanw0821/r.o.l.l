@@ -796,7 +796,14 @@ export default function BuilderCombatSwitchboard({
     const resist = incomingDamageType === "energy" ? playerResists?.er ?? 0 : playerResists?.dr ?? 0;
     return {
       resist,
-      ...calculateDamageTaken(incomingDamage, resist, 0, defensiveProfile.reducers, incomingDamageType),
+      ...calculateDamageTaken(
+        incomingDamage,
+        resist,
+        0,
+        defensiveProfile.reducers,
+        incomingDamageType,
+        defensiveProfile.damageTakenIncreasePct,
+      ),
     };
   }, [defensiveProfile, incomingDamage, incomingDamageType, playerResists?.dr, playerResists?.er]);
 
@@ -2011,6 +2018,11 @@ export default function BuilderCombatSwitchboard({
                     </span>
                   ) : (
                     <span>No reducers apply to this hit</span>
+                  )}
+                  {defensiveProfile.damageTakenIncreasePct > 0 && (
+                    <span className="text-amber-300">
+                      Rage: +{defensiveProfile.damageTakenIncreasePct}% damage taken
+                    </span>
                   )}
                 </div>
               )}

@@ -1139,6 +1139,21 @@
       "Pain Killer",
       "Burning"
     ],
+    "armorSlot": "chest",
+    "legendaryModSlugs": [
+      "auto-stim",
+      "pain-killer",
+      "burning"
+    ],
+    "armorModel": {
+      "kind": "rage-stacks",
+      "perUnit": 0.01,
+      "perUnitTaken": 0.01,
+      "maxUnits": 100,
+      "condition": "Per Rage stack held (gained when hit); the builder takes the stack count as an input",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm, 2026-09-16 build): mod_Custom_Rage 008A418C, max 100 stacks; the per-stack 1% is the mod's description text (its actor value is unresolved)"
+    },
     "sourceNotes": "Patch 66 Backwoods unique Raider chest; fixed legendary mods. Source: A Colossal Problem (5%). baseItemId maps to the heavy weight-class set row (weight class is best-effort).",
     "moddable": true,
     "fourthStar": true,
@@ -1156,6 +1171,20 @@
       "Elementalist",
       "Adamantium"
     ],
+    "armorSlot": "chest",
+    "legendaryModSlugs": [
+      "assassins",
+      "elementalist",
+      "adamantium"
+    ],
+    "armorModel": {
+      "kind": "armor-resist-bonus",
+      "value": 0.35,
+      "condition": "Always: the chest piece's own six resistances x1.35",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm, 2026-09-16 build): mod_Custom_Bulwark 008A418B, all six resistances mult+add 0.35, weight x2"
+    },
+    "armorModelNote": "Weight x2 is not modelled: the builder has no armor weight figure.",
     "sourceNotes": "Patch 66 Backwoods unique Secret Service chest; fixed legendary mods. Source: Neurological Warfare (5%).",
     "moddable": true,
     "fourthStar": true,
@@ -1173,6 +1202,14 @@
       "Perception",
       "Thru-hiker's"
     ],
+    "armorSlot": "chest",
+    "legendaryModSlugs": [
+      "hunters",
+      "perception-2",
+      "thru-hikers"
+    ],
+    "armorModel": null,
+    "armorModelNote": "Text only: the firepower engine has no thrown-weapon damage path.",
     "sourceNotes": "Patch 66 Backwoods unique Metal chest; fixed legendary mods. Source: Bureau of Tourism / Lode Baring (100%). baseItemId maps to the heavy weight-class set row (weight class is best-effort).",
     "moddable": true,
     "fourthStar": true,
@@ -1184,13 +1221,28 @@
     "kind": "armor",
     "baseItemId": "armor-set-heavy-combat",
     "slot": "Combat chest",
-    "innateEffect": "Armor increases up to +50 as movement speed increases (max at 150%)",
+    "innateEffect": "Damage Resistance increases with movement speed: +0 at 100% up to +100 at 200% (capped)",
     "legendaryMods": [
       "Chameleon",
       "Hardy",
       "Sentinel's"
     ],
-    "sourceNotes": "Patch 66 Backwoods unique Combat chest; fixed legendary mods. Source: One Violent Night (80%) / Early Warning (100%). baseItemId maps to the heavy weight-class set row (weight class is best-effort).",
+    "armorSlot": "chest",
+    "legendaryModSlugs": [
+      "chameleon",
+      "hardy",
+      "sentinels"
+    ],
+    "armorModel": {
+      "kind": "dr-per-move-speed",
+      "value": 100,
+      "minSpeedPct": 100,
+      "maxSpeedPct": 200,
+      "condition": "Linear from +0 DR at 100% movement speed (base) to +100 DR at 200% (base plus a 100% bonus), capped",
+      "confidence": "datamined",
+      "source": "Patch 70 client data (SeventySix.esm, 2026-09-16 build): mod_Custom_StandFast 00471888 curve; replaces the earlier +50 at 150% text"
+    },
+    "sourceNotes": "Patch 66 Backwoods unique Combat chest; fixed legendary mods. Source: One Violent Night (80%) / Early Warning (100%). baseItemId maps to the heavy weight-class set row (weight class is best-effort). Innate per the Patch 70 client data (mod_Custom_StandFast 00471888); the earlier text said +50, max at 150%.",
     "moddable": true,
     "fourthStar": true,
     "introducedIn": 66
@@ -1207,6 +1259,14 @@
       "Endurance",
       "Belted"
     ],
+    "armorSlot": "chest",
+    "legendaryModSlugs": [
+      "life-saving",
+      "endurance-2",
+      "belted"
+    ],
+    "armorModel": null,
+    "armorModelNote": "Text only: the builder has no damage-reflection figure (the game value is Damage Reflection +10).",
     "sourceNotes": "Patch 66 Backwoods unique Leather chest; fixed legendary mods. Source: Tentative Plans (100%) / Breach and Clear (10%). baseItemId maps to the heavy weight-class set row (weight class is best-effort).",
     "moddable": true,
     "fourthStar": true,
@@ -1224,6 +1284,14 @@
       "Luck",
       "Durability"
     ],
+    "armorSlot": "chest",
+    "legendaryModSlugs": [
+      "bolstering",
+      "luck-2",
+      "durability"
+    ],
+    "armorModel": null,
+    "armorModelNote": "Text only: the firepower engine has no accuracy figure.",
     "sourceNotes": "Patch 66 Backwoods unique Urban Scout chest; fixed legendary mods. Source: Officer on Deck (100%) / Enclave activities (5%).",
     "moddable": true,
     "fourthStar": true,
@@ -1241,6 +1309,14 @@
       "Agility",
       "Reflex"
     ],
+    "armorSlot": "chest",
+    "legendaryModSlugs": [
+      "zealots",
+      "agility-2",
+      "reflex"
+    ],
+    "armorModel": null,
+    "armorModelNote": "Applied by the defensive layer from defensive-perks.json (last-stand): 50% of Evade becomes damage reduction and Evade is off.",
     "sourceNotes": "Patch 66 Backwoods unique Brotherhood Recon chest; fixed legendary mods. Source: Seismic Activity (5%).",
     "moddable": true,
     "fourthStar": true,
@@ -1258,6 +1334,14 @@
       "Glutton",
       "Thru-hiker's"
     ],
+    "armorSlot": "leftArm",
+    "legendaryModSlugs": [
+      "overeaters",
+      "glutton",
+      "thru-hikers"
+    ],
+    "armorModel": null,
+    "armorModelNote": "Text only: eating corpses is a scripted perk with no number.",
     "sourceNotes": "Patch 66 Backwoods unique Trapper left arm; fixed legendary mods. Source: Meat Week (50%).",
     "moddable": true,
     "fourthStar": true,
