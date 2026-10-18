@@ -51,7 +51,8 @@
     "ws": "$ws",
     "mysql2": "^3.23.1",
     "deepmerge-ts": "^8.0.0",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "postcss-selector-parser": "^7.1.6"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
