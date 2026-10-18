@@ -26,11 +26,11 @@ export default function AtomicShopCard() {
         <h2 id="atomic-shop-heading" className="text-base font-bold text-foreground">
           Atomic Shop
         </h2>
-        <span className="text-3xs uppercase tracking-wider px-2 py-0.5 rounded border border-accent/30 bg-accent/10 text-accent font-bold">
+        <span className="text-xs uppercase tracking-wider px-2 py-0.5 rounded border border-accent/30 bg-accent/10 text-accent font-bold">
           Out-of-Band Telemetry
         </span>
       </div>
-      <p className="mt-1.5 text-xs text-foreground/70 leading-relaxed">
+      <p className="mt-1.5 text-sm text-foreground/80 leading-relaxed font-sans">
         Atomic Shop live asset tracker. Features real-time validation of weekly bundles, limited-time discounts, and historic cosmetic drop tables.
       </p>
       <ul className="mt-3 space-y-2">

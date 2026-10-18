@@ -655,25 +655,46 @@ interface AccountLinksResponse {
                   </a>{" "}
                   and Fair Use (17 U.S.C. § 107). This utility is 100% free, non-commercial, and possesses no official endorsement or commercial affiliation with Bethesda Softworks or ZeniMax Media.
                 </div>
-                <div className="pt-1.5 border-t border-slate-800/80 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono text-slate-400">
-                  <span className="font-bold text-slate-300">Outbound Telemetry Pillars:</span>
-                  <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                <div className="pt-2 border-t border-slate-800/80 flex flex-wrap items-center gap-2 text-xs font-mono text-slate-400">
+                  <span className="font-bold text-slate-300 mr-1">Outbound Telemetry Pillars:</span>
+                  <a
+                    href="https://nukaknights.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center min-h-[28px] px-2.5 py-1 rounded-md bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-amber-300 hover:border-amber-400/40 transition-colors"
+                  >
                     Nuka Knights
                   </a>
-                  <span>•</span>
-                  <a href="https://theduchessflame.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                  <a
+                    href="https://theduchessflame.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center min-h-[28px] px-2.5 py-1 rounded-md bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-amber-300 hover:border-amber-400/40 transition-colors"
+                  >
                     TheDuchessFlame
                   </a>
-                  <span>•</span>
-                  <a href="https://nukesdragons.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                  <a
+                    href="https://nukesdragons.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center min-h-[28px] px-2.5 py-1 rounded-md bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-amber-300 hover:border-amber-400/40 transition-colors"
+                  >
                     Nukes & Dragons
                   </a>
-                  <span>•</span>
-                  <a href="https://fallout.fandom.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                  <a
+                    href="https://fallout.fandom.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center min-h-[28px] px-2.5 py-1 rounded-md bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-amber-300 hover:border-amber-400/40 transition-colors"
+                  >
                     Fallout Fandom Wiki
                   </a>
-                  <span>•</span>
-                  <a href="https://uf.atomicshop.fyi" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                  <a
+                    href="https://uf.atomicshop.fyi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center min-h-[28px] px-2.5 py-1 rounded-md bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-amber-300 hover:border-amber-400/40 transition-colors"
+                  >
                     Unofficial Atomic Shop Tracker
                   </a>
                 </div>

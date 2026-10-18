@@ -55,8 +55,10 @@ export default function CombatMathTool() {
       {/* Inputs Grid */}
       <div className="grid grid-cols-2 gap-3 text-xs">
         <div>
-          <label className="block text-foreground/60 mb-1">Base Weapon Damage</label>
+          <label htmlFor="combat-base-damage" className="block text-foreground/60 mb-1">Base Weapon Damage</label>
           <input
+            id="combat-base-damage"
+            aria-label="Base Weapon Damage"
             type="number"
             min={1}
             max={2000}
@@ -67,8 +69,10 @@ export default function CombatMathTool() {
         </div>
 
         <div>
-          <label className="block text-foreground/60 mb-1">Additive Bonus (%)</label>
+          <label htmlFor="combat-additive-bonus" className="block text-foreground/60 mb-1">Additive Bonus (%)</label>
           <input
+            id="combat-additive-bonus"
+            aria-label="Additive Bonus (%)"
             type="number"
             min={0}
             max={1000}
@@ -79,8 +83,10 @@ export default function CombatMathTool() {
         </div>
 
         <div>
-          <label className="block text-foreground/60 mb-1">Target DR / ER</label>
+          <label htmlFor="combat-target-dr" className="block text-foreground/60 mb-1">Target DR / ER</label>
           <input
+            id="combat-target-dr"
+            aria-label="Target DR / ER"
             type="number"
             min={0}
             max={5000}
@@ -91,8 +97,10 @@ export default function CombatMathTool() {
         </div>
 
         <div>
-          <label className="block text-foreground/60 mb-1">Boss Reduction</label>
+          <label htmlFor="combat-boss-reduction" className="block text-foreground/60 mb-1">Boss Reduction</label>
           <select
+            id="combat-boss-reduction"
+            aria-label="Boss Reduction"
             value={bossMitigationPct}
             onChange={(e) => setBossMitigationPct(Number(e.target.value))}
             className="w-full rounded bg-slate-900 border border-border px-2 py-1.5 text-xs text-foreground font-mono focus:border-cyan-400 focus:outline-none"

@@ -137,20 +137,22 @@ export default function IrisBuildAuditor() {
               >
                 <span className="text-xs font-bold text-purple-400">{stat}</span>
                 <span className="text-xs font-bold text-foreground my-0.5">{special[stat]}</span>
-                <div className="flex gap-0.5 mt-0.5">
+                <div className="flex gap-1 mt-1">
                   <button
                     type="button"
+                    aria-label={`Decrease ${stat}`}
                     onClick={() => handleSpecialChange(stat, -1)}
                     disabled={special[stat] <= 1}
-                    className="h-4 w-4 flex items-center justify-center rounded bg-slate-800 text-xs text-foreground/70 hover:bg-slate-700 disabled:opacity-30"
+                    className="h-6 w-6 min-h-[24px] min-w-[24px] flex items-center justify-center rounded bg-slate-800 text-xs font-bold text-foreground/80 hover:bg-slate-700 disabled:opacity-30 transition-colors"
                   >
                     -
                   </button>
                   <button
                     type="button"
+                    aria-label={`Increase ${stat}`}
                     onClick={() => handleSpecialChange(stat, 1)}
                     disabled={special[stat] >= 15}
-                    className="h-4 w-4 flex items-center justify-center rounded bg-slate-800 text-xs text-foreground/70 hover:bg-slate-700 disabled:opacity-30"
+                    className="h-6 w-6 min-h-[24px] min-w-[24px] flex items-center justify-center rounded bg-slate-800 text-xs font-bold text-foreground/80 hover:bg-slate-700 disabled:opacity-30 transition-colors"
                   >
                     +
                   </button>
@@ -173,7 +175,7 @@ export default function IrisBuildAuditor() {
                   type="button"
                   key={perk.id}
                   onClick={() => togglePerk(perk.id)}
-                  className={`px-2 py-1 rounded text-xs border transition-colors flex items-center gap-1 ${
+                  className={`px-2.5 py-1 min-h-[28px] rounded text-xs border transition-colors flex items-center gap-1 ${
                     active
                       ? "border-purple-400 bg-purple-500/20 text-purple-200"
                       : "border-border/40 bg-slate-900/60 text-foreground/50 hover:border-purple-500/40"
@@ -200,7 +202,7 @@ export default function IrisBuildAuditor() {
                   type="button"
                   key={mutation}
                   onClick={() => toggleMutation(mutation)}
-                  className={`px-2 py-0.5 rounded-full text-xs border transition-colors ${
+                  className={`px-2.5 py-1 min-h-[28px] rounded-full text-xs border transition-colors ${
                     active
                       ? "border-cyan-400 bg-cyan-500/20 text-cyan-200"
                       : "border-border/30 bg-slate-900/40 text-foreground/40 hover:border-cyan-500/30"
@@ -221,7 +223,7 @@ export default function IrisBuildAuditor() {
               <button
                 type="button"
                 onClick={() => setCombatStance("low-health")}
-                className={`py-1 rounded border text-center transition ${
+                className={`py-1.5 min-h-[28px] rounded border text-center transition ${
                   combatStance === "low-health"
                     ? "border-amber-400 bg-amber-500/20 text-amber-300 font-bold"
                     : "border-border/40 bg-slate-900 text-foreground/60"
@@ -232,7 +234,7 @@ export default function IrisBuildAuditor() {
               <button
                 type="button"
                 onClick={() => setCombatStance("full-health")}
-                className={`py-1 rounded border text-center transition ${
+                className={`py-1.5 min-h-[28px] rounded border text-center transition ${
                   combatStance === "full-health"
                     ? "border-emerald-400 bg-emerald-500/20 text-emerald-300 font-bold"
                     : "border-border/40 bg-slate-900 text-foreground/60"
@@ -249,7 +251,7 @@ export default function IrisBuildAuditor() {
               <button
                 type="button"
                 onClick={() => setArmorClass("standard")}
-                className={`py-1 rounded border text-center transition ${
+                className={`py-1.5 min-h-[28px] rounded border text-center transition ${
                   armorClass === "standard"
                     ? "border-purple-400 bg-purple-500/20 text-purple-300 font-bold"
                     : "border-border/40 bg-slate-900 text-foreground/60"
@@ -260,7 +262,7 @@ export default function IrisBuildAuditor() {
               <button
                 type="button"
                 onClick={() => setArmorClass("power-armor")}
-                className={`py-1 rounded border text-center transition ${
+                className={`py-1.5 min-h-[28px] rounded border text-center transition ${
                   armorClass === "power-armor"
                     ? "border-cyan-400 bg-cyan-500/20 text-cyan-300 font-bold"
                     : "border-border/40 bg-slate-900 text-foreground/60"
