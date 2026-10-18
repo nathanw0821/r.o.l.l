@@ -43,17 +43,17 @@ export default function CombatMathTool() {
             Clean-Room Combat Calculator
           </h3>
         </div>
-        <span className="text-3xs uppercase px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-400 font-bold">
+        <span className="text-xs uppercase px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-400 font-bold">
           0.15 / 0.365 Curve
         </span>
       </div>
 
-      <p className="text-3xs text-foreground/70 font-sans leading-relaxed">
+      <p className="text-sm text-foreground/80 font-sans leading-relaxed">
         Deterministic reverse-engineered Creation Engine damage pipeline. Pure math, zero network latency.
       </p>
 
       {/* Inputs Grid */}
-      <div className="grid grid-cols-2 gap-3 text-3xs">
+      <div className="grid grid-cols-2 gap-3 text-xs">
         <div>
           <label className="block text-foreground/60 mb-1">Base Weapon Damage</label>
           <input
@@ -106,10 +106,10 @@ export default function CombatMathTool() {
 
       {/* Penetration Stacking Toggles */}
       <div className="space-y-1.5 pt-1">
-        <span className="text-3xs uppercase font-bold text-foreground/60">
+        <span className="text-xs uppercase font-bold text-foreground/60">
           Armor Penetration Sources (Multiplicative)
         </span>
-        <div className="flex flex-wrap gap-2 text-3xs">
+        <div className="flex flex-wrap gap-2 text-xs">
           <label className="flex items-center gap-1.5 cursor-pointer rounded border border-border/50 bg-slate-900/60 px-2 py-1 hover:border-cyan-400">
             <input
               type="checkbox"
@@ -144,17 +144,17 @@ export default function CombatMathTool() {
       <div className="rounded-lg border border-cyan-500/40 bg-cyan-950/20 p-3 space-y-2">
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div>
-            <span className="text-3xs text-foreground/50 block">Paper Damage</span>
+            <span className="text-xs text-foreground/50 block">Paper Damage</span>
             <span className="text-sm font-bold text-foreground">{paperDamage}</span>
           </div>
           <div>
-            <span className="text-3xs text-foreground/50 block">
+            <span className="text-xs text-foreground/50 block">
               Effective DR ({armorResult.totalPenetrationPct}% pen)
             </span>
             <span className="text-sm font-bold text-amber-300">
               {armorResult.effectiveDr}
               {armorResult.totalPenetrationPct >= MAX_ARMOR_PENETRATION * 100 && (
-                <span className="ml-1 text-3xs text-amber-500 uppercase font-normal">(90% Cap)</span>
+                <span className="ml-1 text-xs text-amber-500 uppercase font-normal">(90% Cap)</span>
               )}
             </span>
           </div>
@@ -162,13 +162,13 @@ export default function CombatMathTool() {
 
         <div className="pt-2 border-t border-cyan-500/20 flex items-center justify-between">
           <div>
-            <span className="text-3xs text-foreground/50 block">Bethesda Curve Efficiency</span>
+            <span className="text-xs text-foreground/50 block">Bethesda Curve Efficiency</span>
             <span className="text-xs font-mono text-cyan-300">
               {mitigationResult.damageCoefficientPct.toFixed(1)}% delivered
             </span>
           </div>
           <div className="text-right">
-            <span className="text-3xs uppercase font-bold text-cyan-400 block">Delivered Damage</span>
+            <span className="text-xs uppercase font-bold text-cyan-400 block">Delivered Damage</span>
             <span className="text-lg font-bold text-emerald-400">
               {Math.round(mitigationResult.finalDamage)}
             </span>

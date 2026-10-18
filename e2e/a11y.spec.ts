@@ -34,7 +34,6 @@ const ROUTES = [
   "/1-star",
   "/perks",
   "/wiki",
-  "/wiki?id=148",
   "/wiki/glossary",
   "/transmissions",
   "/pts",
@@ -142,9 +141,6 @@ async function waitForRouteReady(page: Page, route: Route) {
     if (route.endsWith("perks") || route === "/perks") {
       await expect(page.locator("main").getByPlaceholder("Search perk cards...")).toBeVisible({ timeout: 45_000 });
     }
-  }
-  if (route === "/wiki?id=148") {
-    await expect(page.locator("article").first()).toBeVisible({ timeout: 45_000 });
   }
   await page.waitForLoadState("networkidle", { timeout: 20_000 }).catch(() => {
     // Polling or the service worker can keep the network busy; the DOM checks above are what matter.

@@ -638,12 +638,12 @@ interface AccountLinksResponse {
               </div>
 
               {/* Official Bethesda Fan Content & Legal Attribution Banner */}
-              <div className="p-3.5 rounded-lg bg-slate-950/80 border border-slate-800 text-3xs text-slate-400 leading-relaxed font-sans space-y-2">
-                <div className="flex items-center justify-between text-2xs font-mono text-amber-400/90 font-bold uppercase tracking-wider">
+              <div className="p-3.5 rounded-lg bg-slate-950/80 border border-slate-800 text-xs text-slate-400 leading-relaxed font-sans space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono text-amber-400/90 font-bold uppercase tracking-wider">
                   <span>ZENIMAX MEDIA COMPLIANCE & FAN CONTENT POLICY</span>
                   <span className="text-emerald-400">100% NON-COMMERCIAL / FAIR USE</span>
                 </div>
-                <p>
+                <div className="text-xs text-slate-400 leading-relaxed">
                   Fallout, Fallout 76, Vault-Tec, S.P.E.C.I.A.L., and related trademarks, logos, and game artwork are registered trademarks and copyrighted property of Bethesda Softworks LLC / ZeniMax Media Inc. R.O.L.L. is an independent community project created in strict alignment with the{" "}
                   <a
                     href="https://bethesda.net/en/article/3bT1311026040859557027/zenimax-media-freedom-of-use-policy"
@@ -654,8 +654,8 @@ interface AccountLinksResponse {
                     ZeniMax Media Freedom of Use Policy
                   </a>{" "}
                   and Fair Use (17 U.S.C. § 107). This utility is 100% free, non-commercial, and possesses no official endorsement or commercial affiliation with Bethesda Softworks or ZeniMax Media.
-                </p>
-                <div className="pt-1.5 border-t border-slate-800/80 flex flex-wrap items-center gap-x-3 gap-y-1 text-3xs font-mono text-slate-400">
+                </div>
+                <div className="pt-1.5 border-t border-slate-800/80 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono text-slate-400">
                   <span className="font-bold text-slate-300">Outbound Telemetry Pillars:</span>
                   <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
                     Nuka Knights

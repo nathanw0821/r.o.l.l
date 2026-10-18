@@ -110,19 +110,19 @@ export default function IrisBuildAuditor() {
             Iris Build Auditor
           </h3>
         </div>
-        <span className="text-3xs uppercase px-2 py-0.5 rounded bg-purple-950 border border-purple-800 text-purple-400 font-bold">
+        <span className="text-xs uppercase px-2 py-0.5 rounded bg-purple-950 border border-purple-800 text-purple-400 font-bold">
           UI Staging Layer
         </span>
       </div>
 
-      <p className="text-3xs text-foreground/70 font-sans leading-relaxed">
+      <p className="text-sm text-foreground/80 font-sans leading-relaxed">
         Localized build verification interface. Formulate your S.P.E.C.I.A.L. array, active perks, and mutations for deep synergy analysis.
       </p>
 
       <form onSubmit={handleSubmitAudit} className="space-y-4">
         {/* S.P.E.C.I.A.L. Distribution Sliders/Buttons */}
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-3xs font-bold uppercase text-foreground/60">
+          <div className="flex items-center justify-between text-xs font-bold uppercase text-foreground/60">
             <span>S.P.E.C.I.A.L. Allocation</span>
             <span className={totalSpecial === 56 ? "text-emerald-400" : "text-amber-400"}>
               Points: {totalSpecial} / 56
@@ -135,14 +135,14 @@ export default function IrisBuildAuditor() {
                 key={stat}
                 className="flex flex-col items-center rounded border border-border/60 bg-slate-900/80 p-1.5"
               >
-                <span className="text-3xs font-bold text-purple-400">{stat}</span>
+                <span className="text-xs font-bold text-purple-400">{stat}</span>
                 <span className="text-xs font-bold text-foreground my-0.5">{special[stat]}</span>
                 <div className="flex gap-0.5 mt-0.5">
                   <button
                     type="button"
                     onClick={() => handleSpecialChange(stat, -1)}
                     disabled={special[stat] <= 1}
-                    className="h-4 w-4 flex items-center justify-center rounded bg-slate-800 text-3xs text-foreground/70 hover:bg-slate-700 disabled:opacity-30"
+                    className="h-4 w-4 flex items-center justify-center rounded bg-slate-800 text-xs text-foreground/70 hover:bg-slate-700 disabled:opacity-30"
                   >
                     -
                   </button>
@@ -150,7 +150,7 @@ export default function IrisBuildAuditor() {
                     type="button"
                     onClick={() => handleSpecialChange(stat, 1)}
                     disabled={special[stat] >= 15}
-                    className="h-4 w-4 flex items-center justify-center rounded bg-slate-800 text-3xs text-foreground/70 hover:bg-slate-700 disabled:opacity-30"
+                    className="h-4 w-4 flex items-center justify-center rounded bg-slate-800 text-xs text-foreground/70 hover:bg-slate-700 disabled:opacity-30"
                   >
                     +
                   </button>
@@ -162,7 +162,7 @@ export default function IrisBuildAuditor() {
 
         {/* Perk Selection Badges */}
         <div className="space-y-1.5">
-          <span className="text-3xs font-bold uppercase text-foreground/60 block">
+          <span className="text-xs font-bold uppercase text-foreground/60 block">
             Core Perk Synergy Deck ({selectedPerks.length} Selected)
           </span>
           <div className="flex flex-wrap gap-1.5">
@@ -173,14 +173,14 @@ export default function IrisBuildAuditor() {
                   type="button"
                   key={perk.id}
                   onClick={() => togglePerk(perk.id)}
-                  className={`px-2 py-1 rounded text-3xs border transition-colors flex items-center gap-1 ${
+                  className={`px-2 py-1 rounded text-xs border transition-colors flex items-center gap-1 ${
                     active
                       ? "border-purple-400 bg-purple-500/20 text-purple-200"
                       : "border-border/40 bg-slate-900/60 text-foreground/50 hover:border-purple-500/40"
                   }`}
                 >
                   <span>{perk.name}</span>
-                  <span className="opacity-60 text-4xs">[{perk.stat}{perk.cost}]</span>
+                  <span className="opacity-60 text-xs">[{perk.stat}{perk.cost}]</span>
                 </button>
               );
             })}
@@ -189,7 +189,7 @@ export default function IrisBuildAuditor() {
 
         {/* Mutations Selection */}
         <div className="space-y-1.5">
-          <span className="text-3xs font-bold uppercase text-foreground/60 block">
+          <span className="text-xs font-bold uppercase text-foreground/60 block">
             Mutation Serum Matrix ({selectedMutations.length} Active)
           </span>
           <div className="flex flex-wrap gap-1.5">
@@ -200,7 +200,7 @@ export default function IrisBuildAuditor() {
                   type="button"
                   key={mutation}
                   onClick={() => toggleMutation(mutation)}
-                  className={`px-2 py-0.5 rounded-full text-3xs border transition-colors ${
+                  className={`px-2 py-0.5 rounded-full text-xs border transition-colors ${
                     active
                       ? "border-cyan-400 bg-cyan-500/20 text-cyan-200"
                       : "border-border/30 bg-slate-900/40 text-foreground/40 hover:border-cyan-500/30"
@@ -214,7 +214,7 @@ export default function IrisBuildAuditor() {
         </div>
 
         {/* Combat Stance & Equipment */}
-        <div className="grid grid-cols-2 gap-2 text-3xs">
+        <div className="grid grid-cols-2 gap-2 text-xs">
           <div>
             <span className="text-foreground/60 block mb-1">Health Stance</span>
             <div className="grid grid-cols-2 gap-1">

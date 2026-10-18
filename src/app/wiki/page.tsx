@@ -22,14 +22,14 @@ export default function WikiGuidesPage() {
                 Guides & Community Telemetry Index
               </h1>
             </div>
-            <p className="text-xs text-foreground/70 font-sans max-w-3xl leading-relaxed">
+            <p className="text-sm text-foreground/80 font-sans max-w-3xl leading-relaxed">
               Curated <strong className="text-amber-400">Reference & Redirect</strong> architecture.
               Outbound programmatic bridges respect community research labor without third-party scraping,
               while proprietary combat math and build auditing execute strictly with localized data sovereignty.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 text-3xs font-mono">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
             <span className="rounded bg-emerald-500/10 px-2.5 py-1 text-emerald-400 border border-emerald-500/30 font-bold uppercase">
               100% Non-Commercial
             </span>
@@ -47,8 +47,12 @@ export default function WikiGuidesPage() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
           <input
             type="text"
+            aria-label="Search guides and tools directory"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setSearchQuery("");
+            }}
             placeholder="Search guides, calculators, drop tables, Minerva schedules, and build archetypes..."
             className="w-full rounded-xl bg-slate-900/90 border border-border/70 pl-10 pr-10 py-2.5 text-xs text-foreground placeholder:text-foreground/40 focus:border-amber-400 focus:outline-none transition shadow-inner font-mono"
           />

@@ -107,11 +107,11 @@ export default function DropTablesColumn({ searchQuery = "" }: { searchQuery?: s
               Drop Tables & Events
             </h2>
           </div>
-          <span className="rounded bg-emerald-500/10 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/30">
+          <span className="rounded bg-emerald-500/10 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/30">
             Semantic Index
           </span>
         </div>
-        <p className="mt-2 text-2xs text-foreground/70 leading-relaxed font-sans">
+        <p className="mt-2 text-sm text-foreground/80 leading-relaxed font-sans">
           Highly targeted deep-linking with semantic abstraction. In accordance with our{" "}
           <strong className="text-slate-200">Zero Scrape Invariant</strong>, external data arrays
           are never mirrored locally to honor community research labor and ensure authoritative telemetry.
@@ -127,20 +127,20 @@ export default function DropTablesColumn({ searchQuery = "" }: { searchQuery?: s
               Atomic Shop Asset Tracker
             </span>
           </div>
-          <span className="rounded bg-amber-500/20 px-2 py-0.5 text-3xs font-bold uppercase text-amber-300 border border-amber-500/40">
+          <span className="rounded bg-amber-500/20 px-2 py-0.5 text-xs font-bold uppercase text-amber-300 border border-amber-500/40">
             uf.atomicshop.fyi
           </span>
         </div>
-        <p className="mt-2 text-2xs text-foreground/80 leading-relaxed font-sans">
+        <p className="mt-2 text-sm text-foreground/80 leading-relaxed font-sans">
           Atomic Shop live asset tracker. Features real-time validation of weekly bundles, limited-time discounts, and historic cosmetic drop tables.
         </p>
         <div className="mt-3 flex items-center justify-between pt-2 border-t border-amber-500/20">
-          <span className="text-3xs text-foreground/50">Zero local DB overhead</span>
+          <span className="text-xs text-foreground/50">Zero local DB overhead</span>
           <a
             href="https://uf.atomicshop.fyi/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-amber-500 text-slate-950 font-bold text-3xs uppercase hover:bg-amber-400 transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-amber-500 text-slate-950 font-bold text-xs uppercase hover:bg-amber-400 transition"
           >
             <span>Launch Tracker</span>
             <ArrowUpRight className="h-3 w-3" />
@@ -150,7 +150,7 @@ export default function DropTablesColumn({ searchQuery = "" }: { searchQuery?: s
 
       {/* Semantic Deep Links List */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between px-1 text-3xs font-bold uppercase tracking-wider text-foreground/60">
+        <div className="flex items-center justify-between px-1 text-xs font-bold uppercase tracking-wider text-foreground/60">
           <span>Curated Community Data Tracking</span>
           <span>{filtered.length} Endpoints</span>
         </div>
@@ -165,7 +165,7 @@ export default function DropTablesColumn({ searchQuery = "" }: { searchQuery?: s
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <span className="text-3xs uppercase tracking-wider text-emerald-400 font-bold">
+                <span className="text-xs uppercase tracking-wider text-emerald-400 font-bold">
                   {item.provider}
                 </span>
                 <h3 className="text-xs font-bold text-foreground group-hover:text-emerald-300 transition-colors">
@@ -175,11 +175,11 @@ export default function DropTablesColumn({ searchQuery = "" }: { searchQuery?: s
               <ExternalLink className="h-3.5 w-3.5 shrink-0 text-foreground/40 group-hover:text-emerald-400 transition-colors" />
             </div>
 
-            <p className="mt-2 text-3xs text-foreground/70 font-sans leading-relaxed">
+            <p className="mt-2 text-sm text-foreground/80 font-sans leading-relaxed">
               {item.abstract}
             </p>
 
-            <div className="mt-2.5 flex items-center justify-between border-t border-border/30 pt-2 text-3xs text-foreground/50">
+            <div className="mt-2.5 flex items-center justify-between border-t border-border/30 pt-2 text-xs text-foreground/60">
               <span className="rounded bg-slate-800/80 px-1.5 py-0.5 text-slate-300">
                 {item.category}
               </span>

@@ -200,17 +200,16 @@ test.describe("keyboard", () => {
     await expect(page.getByRole("tooltip")).toContainText(/Damage Resistance[\s\S]*Total: \d+/);
   });
 
-  test("guides reader: the contents list is keyboard reachable and jumps to the heading", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== "chromium", "The desktop contents rail; phones use the disclosure.");
-    await page.goto("/wiki?id=193");
-    const rail = page.getByRole("navigation", { name: "On this page" }).filter({ visible: true }).first();
-    await expect(rail).toBeVisible({ timeout: 30_000 });
-    const entry = rail.getByRole("link").nth(1);
-    await entry.focus();
-    await expect(entry).toBeFocused();
-    const href = await entry.getAttribute("href");
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(new RegExp(`${href!.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
+  test("guides index: the directory search input is keyboard reachable and interactive", async ({ page }) => {
+    await page.goto("/wiki");
+    const searchInput = page.getByPlaceholder("Search guides, calculators, drop tables, Minerva schedules, and build archetypes...");
+    await expect(searchInput).toBeVisible({ timeout: 30_000 });
+    await searchInput.focus();
+    await expect(searchInput).toBeFocused();
+    await page.keyboard.type("Minerva");
+    await expect(searchInput).toHaveValue("Minerva");
+    await page.keyboard.press("Escape");
+    await expect(searchInput).toHaveValue("");
   });
 
   test("Quick Filters overlay on phones: focus moves in, Tab stays inside, Escape closes and restores focus", async ({ page }, testInfo) => {

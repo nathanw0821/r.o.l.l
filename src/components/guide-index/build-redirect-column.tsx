@@ -70,11 +70,11 @@ export default function BuildRedirectColumn({ searchQuery = "" }: { searchQuery?
               Combat & Builds
             </h2>
           </div>
-          <span className="rounded bg-amber-500/10 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-amber-400 border border-amber-500/30">
+          <span className="rounded bg-amber-500/10 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-amber-400 border border-amber-500/30">
             Outbound Telemetry
           </span>
         </div>
-        <p className="mt-2 text-2xs text-foreground/70 leading-relaxed font-sans">
+        <p className="mt-2 text-sm text-foreground/80 leading-relaxed font-sans">
           External programmatic routing to community character planners. Positioned as a{" "}
           <strong className="text-slate-200">comparative validation resource</strong> that users
           can cross-reference alongside our upcoming localized Iris Build Auditor module.
@@ -93,9 +93,9 @@ export default function BuildRedirectColumn({ searchQuery = "" }: { searchQuery?
                 <span>Nukes & Dragons Character Calculator</span>
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
-              <p className="text-3xs text-foreground/60 font-sans">
+              <div className="text-xs text-foreground/70 font-sans">
                 Full S.P.E.C.I.A.L. allocation, perk deck leveling roadmaps, and mutation planners.
-              </p>
+              </div>
             </div>
             <ExternalLink className="h-4 w-4 shrink-0 text-amber-400" />
           </a>
@@ -104,7 +104,7 @@ export default function BuildRedirectColumn({ searchQuery = "" }: { searchQuery?
 
       {/* Archetype Quick-Launch Templates */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between px-1 text-3xs font-bold uppercase tracking-wider text-foreground/60">
+        <div className="flex items-center justify-between px-1 text-xs font-bold uppercase tracking-wider text-foreground/60">
           <span>Meta Archetypes & Templates</span>
           <span>{filtered.length} Indexed</span>
         </div>
@@ -119,23 +119,23 @@ export default function BuildRedirectColumn({ searchQuery = "" }: { searchQuery?
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <span className="text-3xs uppercase tracking-wider text-accent font-bold">
+                <span className="text-xs uppercase tracking-wider text-accent font-bold">
                   {build.archetype}
                 </span>
                 <h3 className="text-xs font-bold text-foreground group-hover:text-amber-300 transition-colors">
                   {build.name}
                 </h3>
               </div>
-              <span className="rounded bg-slate-800 px-1.5 py-0.5 text-3xs text-slate-300 border border-slate-700">
+              <span className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-slate-300 border border-slate-700">
                 {build.tag}
               </span>
             </div>
 
-            <p className="mt-2 text-3xs text-foreground/70 font-sans leading-relaxed">
+            <p className="mt-2 text-sm text-foreground/80 font-sans leading-relaxed">
               {build.description}
             </p>
 
-            <div className="mt-2.5 flex items-center justify-between border-t border-border/30 pt-2 text-3xs text-foreground/50">
+            <div className="mt-2.5 flex items-center justify-between border-t border-border/30 pt-2 text-xs text-foreground/60">
               <span className="font-mono text-slate-400">{build.special}</span>
               <span className="flex items-center gap-1 text-accent group-hover:underline">
                 Launch in N&D <ArrowUpRight className="h-3 w-3" />
