@@ -638,21 +638,44 @@ interface AccountLinksResponse {
               </div>
 
               {/* Official Bethesda Fan Content & Legal Attribution Banner */}
-              <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 text-3xs text-slate-400 leading-relaxed font-sans space-y-1">
+              <div className="p-3.5 rounded-lg bg-slate-950/80 border border-slate-800 text-3xs text-slate-400 leading-relaxed font-sans space-y-2">
                 <div className="flex items-center justify-between text-2xs font-mono text-amber-400/90 font-bold uppercase tracking-wider">
-                  <span>OFFICIAL BETHESDA FAN CONTENT DISCLAIMER</span>
-                  <span>100% NON-COMMERCIAL / FAIR USE</span>
+                  <span>ZENIMAX MEDIA COMPLIANCE & FAN CONTENT POLICY</span>
+                  <span className="text-emerald-400">100% NON-COMMERCIAL / FAIR USE</span>
                 </div>
                 <p>
-                  Fallout, Fallout 76, Vault-Tec, S.P.E.C.I.A.L., and related trademarks, logos, and game artwork are registered trademarks and copyrighted property of Bethesda Softworks LLC / ZeniMax Media Inc. R.O.L.L. is an independent community tool created under Fair Use (17 U.S.C. § 107) and Bethesda Fan Content guidelines.
+                  Fallout, Fallout 76, Vault-Tec, S.P.E.C.I.A.L., and related trademarks, logos, and game artwork are registered trademarks and copyrighted property of Bethesda Softworks LLC / ZeniMax Media Inc. R.O.L.L. is an independent community project created in strict alignment with the{" "}
+                  <a
+                    href="https://bethesda.net/en/article/3bT1311026040859557027/zenimax-media-freedom-of-use-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 hover:text-amber-300 underline font-semibold transition-colors"
+                  >
+                    ZeniMax Media Freedom of Use Policy
+                  </a>{" "}
+                  and Fair Use (17 U.S.C. § 107). This utility is 100% free, non-commercial, and possesses no official endorsement or commercial affiliation with Bethesda Softworks or ZeniMax Media.
                 </p>
-                <div className="pt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-3xs font-mono text-slate-400">
-                  <span>Outbound Credits:</span>
-                  <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">NukaKnights Datamines</a>
+                <div className="pt-1.5 border-t border-slate-800/80 flex flex-wrap items-center gap-x-3 gap-y-1 text-3xs font-mono text-slate-400">
+                  <span className="font-bold text-slate-300">Outbound Telemetry Pillars:</span>
+                  <a href="https://nukaknights.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                    Nuka Knights
+                  </a>
                   <span>•</span>
-                  <a href="https://fallout.fandom.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">Fallout Wiki</a>
+                  <a href="https://theduchessflame.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                    TheDuchessFlame
+                  </a>
                   <span>•</span>
-                  <a href="https://uf.atomicshop.fyi" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline">Atomic Shop tracker (uf.atomicshop.fyi)</a>
+                  <a href="https://nukesdragons.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                    Nukes & Dragons
+                  </a>
+                  <span>•</span>
+                  <a href="https://fallout.fandom.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                    Fallout Fandom Wiki
+                  </a>
+                  <span>•</span>
+                  <a href="https://uf.atomicshop.fyi" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 underline transition-colors">
+                    Unofficial Atomic Shop Tracker
+                  </a>
                 </div>
               </div>
             </footer>

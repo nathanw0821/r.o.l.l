@@ -22,11 +22,16 @@ const LINKS = [
 export default function AtomicShopCard() {
   return (
     <section aria-labelledby="atomic-shop-heading" className="rounded-[var(--radius)] border border-border/40 bg-panel p-5 font-mono">
-      <h2 id="atomic-shop-heading" className="text-base font-bold text-foreground">
-        Atomic Shop
-      </h2>
-      <p className="mt-1 text-xs text-foreground/55">
-        We link out instead of copying the shop. Prices and offers are theirs to show; verify in game.
+      <div className="flex items-center justify-between gap-2">
+        <h2 id="atomic-shop-heading" className="text-base font-bold text-foreground">
+          Atomic Shop
+        </h2>
+        <span className="text-3xs uppercase tracking-wider px-2 py-0.5 rounded border border-accent/30 bg-accent/10 text-accent font-bold">
+          Out-of-Band Telemetry
+        </span>
+      </div>
+      <p className="mt-1.5 text-xs text-foreground/70 leading-relaxed">
+        Atomic Shop live asset tracker. Features real-time validation of weekly bundles, limited-time discounts, and historic cosmetic drop tables.
       </p>
       <ul className="mt-3 space-y-2">
         {LINKS.map((l) => (
