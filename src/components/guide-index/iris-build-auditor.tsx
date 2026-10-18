@@ -137,16 +137,7 @@ export default function IrisBuildAuditor() {
               >
                 <span className="text-xs font-bold text-purple-400">{stat}</span>
                 <span className="text-xs font-bold text-foreground my-0.5">{special[stat]}</span>
-                <div className="flex gap-1 mt-1">
-                  <button
-                    type="button"
-                    aria-label={`Decrease ${stat}`}
-                    onClick={() => handleSpecialChange(stat, -1)}
-                    disabled={special[stat] <= 1}
-                    className="h-6 w-6 min-h-[24px] min-w-[24px] flex items-center justify-center rounded bg-slate-800 text-xs font-bold text-foreground/80 hover:bg-slate-700 disabled:opacity-30 transition-colors"
-                  >
-                    -
-                  </button>
+                <div className="flex flex-col gap-1.5 mt-1.5 items-center">
                   <button
                     type="button"
                     aria-label={`Increase ${stat}`}
@@ -155,6 +146,15 @@ export default function IrisBuildAuditor() {
                     className="h-6 w-6 min-h-[24px] min-w-[24px] flex items-center justify-center rounded bg-slate-800 text-xs font-bold text-foreground/80 hover:bg-slate-700 disabled:opacity-30 transition-colors"
                   >
                     +
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Decrease ${stat}`}
+                    onClick={() => handleSpecialChange(stat, -1)}
+                    disabled={special[stat] <= 1}
+                    className="h-6 w-6 min-h-[24px] min-w-[24px] flex items-center justify-center rounded bg-slate-800 text-xs font-bold text-foreground/80 hover:bg-slate-700 disabled:opacity-30 transition-colors"
+                  >
+                    -
                   </button>
                 </div>
               </div>
