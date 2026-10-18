@@ -19,7 +19,8 @@ import {
 } from "lucide-react";
 import NukesDragonsImportModal from "@/components/perks/nukes-dragons-import-modal";
 import { useDensityCompact } from "@/lib/hooks/use-density-compact";
-import BuilderMasterTabNav from "@/components/builder/builder-master-tab-nav";
+import BuilderMasterTabNav, { type BuilderMasterTab } from "@/components/builder/builder-master-tab-nav";
+import IrisBuildAuditor from "@/components/guide-index/iris-build-auditor";
 import LegendaryModPickerDialog from "@/components/builder/legendary-mod-picker-dialog";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { modDeepLinkPick, resolveModParam } from "@/lib/links/cross-links";
@@ -69,7 +70,7 @@ import { triggerBuilderAchievement } from "@/actions/builder-achievements";
 export type BuilderExperimentClientProps = {
   initialLearnedBasePieceIds?: string[];
   isAdmin?: boolean;
-  initialTab?: "gear" | "perks" | "biometrics" | "combat";
+  initialTab?: BuilderMasterTab;
   readOnly?: boolean;
   initialPayload?: BuilderPayload;
   sharedTransmissionTitle?: string;
@@ -100,19 +101,19 @@ export default function BuilderExperimentClient({
   const loadSlug = searchParams?.get("load");
   const targetTransmissionSlug = editSlug || loadSlug;
 
-  const [masterTab, setMasterTab] = React.useState<"gear" | "perks" | "biometrics" | "combat">(
-    (tabParam === "gear" || tabParam === "perks" || tabParam === "biometrics" || tabParam === "combat")
-      ? tabParam
+  const [masterTab, setMasterTab] = React.useState<BuilderMasterTab>(
+    (tabParam === "gear" || tabParam === "perks" || tabParam === "biometrics" || tabParam === "combat" || tabParam === "iris")
+      ? (tabParam as BuilderMasterTab)
       : initialTab
   );
 
   React.useEffect(() => {
-    if (tabParam === "gear" || tabParam === "perks" || tabParam === "biometrics" || tabParam === "combat") {
-      setMasterTab(tabParam);
+    if (tabParam === "gear" || tabParam === "perks" || tabParam === "biometrics" || tabParam === "combat" || tabParam === "iris") {
+      setMasterTab(tabParam as BuilderMasterTab);
     }
   }, [tabParam]);
 
-  const switchTab = React.useCallback((newTab: "gear" | "perks" | "biometrics" | "combat") => {
+  const switchTab = React.useCallback((newTab: BuilderMasterTab) => {
     setMasterTab(newTab);
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
@@ -964,6 +965,36 @@ export default function BuilderExperimentClient({
         targetDummyId={targetDummyId}
         onTargetDummyChange={setTargetDummyId}
       />
+
+      {/* VIEWPORT: IRIS BUILD AUDITOR (TAB 5) */}
+      <div className={cn("space-y-4 animate-in fade-in duration-200", masterTab === "iris" ? "block" : "hidden")}>
+        <IrisBuildAuditor
+          activeSpecial={{
+            S: statsBand.special.str,
+            P: statsBand.special.per,
+            E: statsBand.special.end,
+            C: statsBand.special.cha,
+            I: statsBand.special.int,
+            A: statsBand.special.agi,
+            L: statsBand.special.lck,
+          }}
+          baseSpecial={{
+            S: payload.baseSpecial?.str ?? payload.baseSpecial?.S ?? 1,
+            P: payload.baseSpecial?.per ?? payload.baseSpecial?.P ?? 1,
+            E: payload.baseSpecial?.end ?? payload.baseSpecial?.E ?? 1,
+            C: payload.baseSpecial?.cha ?? payload.baseSpecial?.C ?? 1,
+            I: payload.baseSpecial?.int ?? payload.baseSpecial?.I ?? 1,
+            A: payload.baseSpecial?.agi ?? payload.baseSpecial?.A ?? 1,
+            L: payload.baseSpecial?.lck ?? payload.baseSpecial?.L ?? 1,
+          }}
+          activePerks={equippedPerkCards.map((c) => c.cardId)}
+          activeMutations={payload.mutationIds}
+          combatStance={switchboardState?.healthPct != null && switchboardState.healthPct <= 20 ? "low-health" : "full-health"}
+          armorClass={isPA ? "power-armor" : "standard"}
+          activeWeaponLabel={activeWeaponPiece?.label}
+          source="builder"
+        />
+      </div>
 
       {/* VIEWPORT: GEAR & ARMORY (TAB 1) */}
       <div className={cn("space-y-6 animate-in fade-in duration-200", masterTab === "gear" ? "block" : "hidden")}>
