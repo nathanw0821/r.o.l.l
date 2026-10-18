@@ -26,17 +26,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **CANONICAL MATH EXCEPTION**: The Creation Engine combat math formulas (`0.15`, `0.365`, etc.) live in TypeScript (`src/lib/calculator/creation-engine-math.ts`) as a self-contained, standalone implementation. They share mathematical constants by specification, not by runtime code-sharing.
 - **LOCAL AI NEVER TOUCHES THIS SITE**: local Ollama models, ComfyUI, Vera and other Sovereign Vault daemons must never call, scrape, deploy or post to fallout76.wiki, Cloudflare or Discord. Ideas from the Vault may be re-implemented here only in this repo's own stack.
 
-## 🚀 Deployment Pipeline Pacing Policy
-- **STRICT RULE**: NEVER push a new commit or trigger a new deployment while a previous Cloudflare / GitHub Actions deployment workflow is still running or pending.
-- **WAIT FOR COMPLETION**: Always wait for the ongoing deployment to finish and verify that the prior deployment is live before pushing any subsequent updates.
-- **NATHAN PUSHES**: `git push` is run by Nathan himself (the local guardrail hook blocks agents). Never route a push through another agent or tool.
-
-## 🔐 Secrets & Public-Repo Rules (this repository is PUBLIC)
-- **NO SECRETS IN TRACKED FILES**: `wrangler.toml` `[vars]` and every committed file are public. Secrets go through `npx wrangler secret put <NAME>` (and GitHub Actions secrets); `src/lib/wrangler-config.test.ts` fails on secret-looking vars. Editor/agent MCP configs (`.cursor/mcp.json`, `.mcp.json`, …) are git-ignored because one leaked a Neon key in 2026-03.
-- **ROTATE, DON'T JUST DELETE**: a secret that was ever committed stays in git history; rotate it at the provider. Record steps in `the maintainer's private secrets-reset plan (outside this repo)`.
-- **`NEXT_PUBLIC_*` IS BUILD-TIME**: public client values (e.g. the Turnstile site key) must be in the CI build env (`.github/workflows/deploy.yml`), not only in `wrangler.toml`.
-- **NEVER HOTLINK**: never embed or rehost images or other assets served by third-party sites; link to the source page instead.
-- **NO SIDE-DOOR DEPLOYS**: never deploy with `wrangler deploy`, the Cloudflare MCP or any path other than Nathan's push to `main` (CI deploys). The Cloudflare MCP / plugin is for docs, logs and observability only.
+## 🚀 Live Deployment Pipeline Policy (nathanw0821)
+- **CANONICAL PIPELINE**: All live production deployments to Cloudflare Workers are triggered via `git push origin main`, executing the GitHub Actions CI/CD deployment pipeline (`.github/workflows/deploy.yml`) which runs `opennextjs-cloudflare build` and deploys via `cloudflare/wrangler-action@v3`.
+- **COMMIT & PUSH IDENTITY**: Every commit and push must be authored and committed under Nathan's identity: `nathanw0821` (`nathanw <nathanw0821@gmail.com>`). Never include co-author, agent, or tool trailers (`Co-Authored-By`, `Claude-Session`, `Made-with`), strictly enforced by `.git/hooks/commit-msg` and `.git/hooks/pre-push`.
+- **DEPLOYMENT PACING**: NEVER push or trigger a deployment while a previous Cloudflare / GitHub Actions workflow is running or pending. Verify with `gh run list -R nathanw0821/r.o.l.l --limit 1` before pushing.
+- **PRE-FLIGHT GATE**: `npm run release:check` (lint → prisma validate → test → build → typecheck) must pass 100% locally before staging and pushing.
+- **NO DIRECT WRANGLER DEPLOYS**: Production deployments route exclusively through the verified GitHub Actions pipeline on `main`. Do not run `wrangler deploy` out-of-band.
 
 ## 🔎 Search & Client Performance Decisions (2026-09-19)
 - No in-browser ML models, no DuckDB-/SQLite-Wasm, no ONNX inside the Worker (3 MiB bundle limit, phone bandwidth). The data is small (149 mods, 268 perk cards, 3,158 guides): plain filtering is sub-millisecond.
