@@ -41,4 +41,17 @@ describe("Password Hashing & Verification", () => {
     const isValid = await verifyPassword(plainPassword, invalidHash);
     expect(isValid).toBe(false);
   });
+
+  it("should reject tampered or truncated PBKDF2 hashes safely", async () => {
+    const validHash = await hashPassword(plainPassword);
+    // Single character modification (tampered byte)
+    const lastChar = validHash.slice(-1);
+    const tamperedChar = lastChar === "a" ? "b" : "a";
+    const tamperedHash = validHash.slice(0, -1) + tamperedChar;
+    expect(await verifyPassword(plainPassword, tamperedHash)).toBe(false);
+
+    // Truncated hash length
+    const truncatedHash = validHash.slice(0, -5);
+    expect(await verifyPassword(plainPassword, truncatedHash)).toBe(false);
+  });
 });

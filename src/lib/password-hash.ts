@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { timingSafeEqual } from "node:crypto";
 
 /**
  * Hashes a password using the V8-native Web Crypto PBKDF2-SHA-256 algorithm.
@@ -63,7 +64,13 @@ export async function verifyPassword(password: string, storedHash: string): Prom
 
   const saltHex = parts[2];
   const rehashed = await hashPassword(password, saltHex);
-  return rehashed === storedHash;
+
+  const rehashedBuf = Buffer.from(rehashed, "utf8");
+  const storedBuf = Buffer.from(storedHash, "utf8");
+  if (rehashedBuf.length !== storedBuf.length) {
+    return false;
+  }
+  return timingSafeEqual(rehashedBuf, storedBuf);
 }
 
 /**
