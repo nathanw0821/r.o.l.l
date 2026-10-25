@@ -55,3 +55,7 @@ e2e/a11y-report
 .vscode/mcp.json
 .mcp.json
 .gemini/settings.json
+
+# Aider metadata & tag caches
+.aider*
+!.aiderignore

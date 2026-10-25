@@ -1,0 +1,18 @@
+# 🛡️ Sovereign Fortress Aider Scope Filter for R.O.L.L.
+# Exclude binary textures, audio, extracted game strings, and test artifacts
+clean_perk_assets/
+public/assets/
+data/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.svg
+*.mp3
+*.wav
+*.swf
+*.db
+*.sqlite
+e2e/.output/
+playwright-report/
+test-results/
