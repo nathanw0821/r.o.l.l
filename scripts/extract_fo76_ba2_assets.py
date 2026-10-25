@@ -13,7 +13,7 @@ import zlib
 BA2_PATH = "/home/nathanw/.local/share/Steam/steamapps/common/Fallout 76/Data/SeventySix - Interface.ba2"
 OUTPUT_DIR = "/home/nathanw/Creative Direction/R.O.L.L/data/extracted_swfs"
 EXISTING_SVG_DIR = "/home/nathanw/Creative Direction/R.O.L.L/public/images/perks_official"
-REPORT_PATH = "/home/nathanw/Creative Direction/R.O.L.L/docs/PERK_CARD_AUDIT_REPORT.md"
+REPORT_PATH = "/home/nathanw/Desktop/Agent_Exchange/PERK_CARD_AUDIT_REPORT.md"
 
 def extract_ba2_assets():
     if not os.path.exists(BA2_PATH):
