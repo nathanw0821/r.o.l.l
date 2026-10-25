@@ -7481,7 +7481,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Dino Peaks Mini Golf is a location in Fallout 76, introduced in the Burning Springs update. A pre-war mini Golf Course, the Abraxodyne Chemical company began hiding their chemical…",
     "main_image": "static/images/3b2ca2af4a83dd3f489f203b46b46599.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1243,
@@ -7988,7 +7989,8 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "category": "Vendors & Minerva Sales",
     "snippet": "Fort Steuben is a location in Fallout 76, introduced in the Burning Springs u…",
     "main_image": "static/images/b6a054eaa0b7ec9653b7d91bf51b6eb9.webp",
-    "content": ""
+    "content": "",
+    "sourceImages": true
   },
   {
     "id": 1291,
@@ -14900,6 +14902,7 @@ export const FALLBACK_WIKI_ARTICLES: WikiArticleItem[] = [
     "snippet": "Toxic Thrashers are creatures found in Appalachia. Image Name Appears…",
     "main_image": "static/images/9bb60eeda4d5e696d600ab5ca6b549ef.webp",
     "content": "",
+    "stub": true,
     "sourceImages": true
   },
   {

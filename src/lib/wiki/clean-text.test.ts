@@ -381,4 +381,70 @@ describe("cleaner regressions found in the guides list", () => {
     );
     expect(cleanBody("Chambered in .50 caliber , like the Fixer .")).toBe("Chambered in .50 caliber, like the Fixer.");
   });
+
+  describe("TokenJuice guides cleaners: MediaWiki artifacts and table columns", () => {
+    it("strips MediaWiki [[File:...]] and [[Image:...]] tags", () => {
+      const input = "Station at [[File:\\|35px]] Berkeley Springs. [[Image:map.png|200px]]";
+      expect(cleanSnippet(input)).toBe("Station at Berkeley Springs.");
+      expect(cleanBody(input)).toBe("Station at Berkeley Springs.");
+    });
+
+    it("unwraps MediaWiki internal links", () => {
+      const input = "Visit [[Fallout 76 quests|Quests]] or [[Appalachia]] for details.";
+      expect(cleanSnippet(input)).toBe("Visit Quests or Appalachia for details.");
+      expect(cleanBody(input)).toBe("Visit Quests or Appalachia for details.");
+    });
+
+    it("strips ghost icon/image column from table when header is Icon and cells are empty", () => {
+      const table = [
+        "| Icon | Name | Location | Reward |",
+        "| | Into the Mystery | Riverside Manor | Veil |",
+        "| | Initiate of Mysteries | Lewisburg | Secrets |",
+      ].join("\n");
+      const out = cleanBody(table);
+      expect(out).toBe([
+        "| Name | Location | Reward |",
+        "| Into the Mystery | Riverside Manor | Veil |",
+        "| Initiate of Mysteries | Lewisburg | Secrets |",
+      ].join("\n"));
+    });
+
+    it("strips middle image column when header is Image and cells are empty or dashed", () => {
+      const table = [
+        "| Station | Image | Crafting |",
+        "| Berkeley Springs | | Tinker's Workbench |",
+        "| Whitespring | - | Chemistry Station |",
+      ].join("\n");
+      const out = cleanBody(table);
+      expect(out).toBe([
+        "| Station | Crafting |",
+        "| Berkeley Springs | Tinker's Workbench |",
+        "| Whitespring | Chemistry Station |",
+      ].join("\n"));
+    });
+
+    it("preserves tables with legitimate data across all columns", () => {
+      const table = [
+        "| Weapon | Damage | Ammo |",
+        "| 10mm Pistol | 28 | 10mm |",
+        "| Fixer | 48 | .45 |",
+      ].join("\n");
+      const out = cleanBody(table);
+      expect(out).toBe(table);
+    });
+
+    it("preserves separator rows when present while stripping ghost columns", () => {
+      const table = [
+        "| Icon | Quest | XP |",
+        "|---|---|---|",
+        "| | Campfire Tales | 250 |",
+      ].join("\n");
+      const out = cleanBody(table);
+      expect(out).toBe([
+        "| Quest | XP |",
+        "| --- | --- |",
+        "| Campfire Tales | 250 |",
+      ].join("\n"));
+    });
+  });
 });

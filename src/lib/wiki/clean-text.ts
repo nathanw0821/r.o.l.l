@@ -227,6 +227,14 @@ function unwrapMarkdownLinks(text: string): string {
     .replace(/\[([^\]\n]*)\]\s*\([^)\n]*$/g, "$1");
 }
 
+/** Strips MediaWiki file/image embeds and unwraps wiki links [[Target|Label]] -> Label. */
+export function stripMediaWikiArtifacts(text: string): string {
+  return text
+    .replace(/\[\[(?:File|Image):[^\]\n]*\]\]/gi, " ")
+    .replace(/\[\[(?:[^|\]\n]*\\?\|)?([^\]\n]+)\]\]/g, "$1")
+    .replace(/\[\[\s*\]\]/g, "");
+}
+
 /** Drops image/upload URLs and bare asset paths, keeping ordinary prose links. */
 function stripAssetUrls(text: string): string {
   return text
@@ -309,6 +317,7 @@ const CHROME_LINE_PATTERNS: RegExp[] = [
   /^[-–—*]?\s*Duchess Flame\s*$/i,
   /^Image Credit\s*:?\s*.*$/i,
   /^[-–—*|\s]*$/,
+  /^\|[}-]\s*$/,
 ];
 
 /** Reference markers, edit links and the empty brackets the wiki scraper leaves behind. */
@@ -773,6 +782,7 @@ export function cleanSnippet(text: string, title?: string): string {
 
   out = out.replace(/<[^>]*>/g, " ");
   out = stripMarkdownImages(out);
+  out = stripMediaWikiArtifacts(out);
   out = unwrapMarkdownLinks(out);
   out = stripAssetUrls(out);
   out = stripReferenceMarkers(out);
@@ -804,12 +814,112 @@ function isTableRow(line: string): boolean {
   return line.trimStart().startsWith("|");
 }
 
+function cleanMarkdownTableBlock(tableLines: string[]): string[] {
+  if (tableLines.length < 2) return tableLines;
+
+  const parsedRows: string[][] = [];
+  for (const line of tableLines) {
+    const raw = line.trim();
+    const hasLeading = raw.startsWith("|");
+    const hasTrailing = raw.endsWith("|");
+    const inner = raw.slice(hasLeading ? 1 : 0, hasTrailing ? -1 : undefined);
+    parsedRows.push(inner.split("|").map((c) => c.trim()));
+  }
+
+  const isSep = (row: string[]) =>
+    row.length > 0 && row.every((c) => /^[:\s-]+$/.test(c) && c.includes("-"));
+
+  let sepIndex = -1;
+  if (parsedRows.length > 1 && isSep(parsedRows[1])) {
+    sepIndex = 1;
+  }
+
+  const header = parsedRows[0];
+  const bodyRows = parsedRows.filter((_, idx) => idx !== 0 && idx !== sepIndex);
+  if (bodyRows.length === 0) return tableLines;
+
+  const numCols = header.length;
+  if (numCols <= 1) return tableLines;
+
+  const isIconOrImageHeader = (cell: string) => {
+    const clean = cell.replace(/[*_`]/g, "").trim().toLowerCase();
+    return clean === "icon" || clean === "image" || clean === "bild" || clean === "symbol";
+  };
+
+  const isBlankOrDash = (cell: string) => {
+    const clean = cell.replace(/\\/g, "").trim();
+    return (
+      clean === "" ||
+      clean === "-" ||
+      clean === "—" ||
+      clean === "–" ||
+      clean === "n/a"
+    );
+  };
+
+  const dropIndices = new Set<number>();
+  for (let c = 0; c < numCols; c++) {
+    const h = header[c] ?? "";
+    const bodyCells = bodyRows.map((r) => (c < r.length ? r[c] : ""));
+
+    if (isIconOrImageHeader(h) && bodyCells.every(isBlankOrDash)) {
+      dropIndices.add(c);
+    } else if (c === 0 && h === "" && bodyCells.every((bc) => bc === "")) {
+      dropIndices.add(c);
+    } else if (h === "" && bodyCells.every((bc) => bc === "")) {
+      dropIndices.add(c);
+    }
+  }
+
+  if (dropIndices.size === 0 || dropIndices.size >= numCols) {
+    return tableLines;
+  }
+
+  return parsedRows.map((row, rIdx) => {
+    const remaining = row.filter((_, idx) => !dropIndices.has(idx));
+    if (rIdx === sepIndex) {
+      return `| ${remaining.map((c) => c || "---").join(" | ")} |`;
+    }
+    return `| ${remaining.join(" | ")} |`;
+  });
+}
+
+/**
+ * Removes ghost icon/image columns and empty columns from Markdown tables.
+ */
+export function cleanMarkdownTables(text: string): string {
+  const lines = text.split("\n");
+  const result: string[] = [];
+  let tableBuffer: string[] = [];
+
+  for (const line of lines) {
+    if (isTableRow(line)) {
+      tableBuffer.push(line);
+    } else {
+      if (tableBuffer.length > 0) {
+        result.push(...cleanMarkdownTableBlock(tableBuffer));
+        tableBuffer = [];
+      }
+      result.push(line);
+    }
+  }
+
+  if (tableBuffer.length > 0) {
+    result.push(...cleanMarkdownTableBlock(tableBuffer));
+  }
+
+  return result.join("\n");
+}
+
 /**
  * Whether a raw body references any image. Used to tell readers the original page has
  * pictures, because bodies no longer embed them (see `cleanBody`).
  */
 export function bodyHasImages(text: string): boolean {
-  return /!\[[^\]]*\]\([^)\s]+\)/.test(text || "");
+  return (
+    /!\[[^\]]*\]\([^)\s]+\)/.test(text || "") ||
+    /\[\[(?:File|Image):/i.test(text || "")
+  );
 }
 
 /**
@@ -832,12 +942,14 @@ export function cleanBody(text: string): string {
   out = out.replace(/<[^>]*>/g, " ");
 
   out = stripMarkdownImages(out);
+  out = stripMediaWikiArtifacts(out);
   out = unwrapMarkdownLinks(out);
   out = stripAssetUrls(out);
   out = stripReferenceMarkers(out);
   out = applyAll(out, MAINTENANCE_PATTERNS);
   out = applyAll(out, BYLINE_PATTERNS);
   out = applyAll(out, CHROME_PATTERNS);
+  out = cleanMarkdownTables(out);
 
   const kept: string[] = [];
   for (const rawLine of out.split("\n")) {
@@ -846,7 +958,8 @@ export function cleanBody(text: string): string {
     if (!table) line = line.replace(/[ \t]+([,.;:!?])(?!\d)/g, "$1");
     line = line.replace(/[ \t]+/g, " ").trimEnd();
     const probe = line.trim();
-    if (CHROME_LINE_PATTERNS.some((re) => re.test(probe))) {
+    const isTableSep = table && /^\|(?:\s*:?-+:?\s*\|)+\s*$/.test(probe);
+    if (!isTableSep && CHROME_LINE_PATTERNS.some((re) => re.test(probe))) {
       kept.push("");
       continue;
     }
