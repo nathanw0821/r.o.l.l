@@ -569,15 +569,6 @@ test.describe("guest smoke", () => {
     await expect(page.locator("[data-supersede-tag]")).toHaveCount(0);
   });
 
-  test("test server page shows the last shipped cycle", async ({ page }) => {
-    await page.goto("/pts");
-
-    await expect(page.getByRole("heading", { name: "Test server", level: 1 })).toBeVisible();
-    await expect(page.getByText("NO ACTIVE PTS")).toBeVisible();
-
-    await expectPageSane(page);
-  });
-
   test("tracker deep link ?q= pre-fills the search box", async ({ page }) => {
     await page.goto("/all-effects?q=Severing");
 

@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
  * Content-Security-Policy smoke test: every main page renders with a nonce-based CSP and the
  * browser reports no violations (a blocked script would silently break the page).
  */
-const ROUTES = ["/", "/build", "/all-effects", "/perks", "/wiki", "/wiki/glossary", "/transmissions", "/pts", "/summary", "/auth/sign-in", "/auth/sign-up"];
+const ROUTES = ["/", "/build", "/all-effects", "/perks", "/wiki", "/wiki/glossary", "/transmissions", "/summary", "/auth/sign-in", "/auth/sign-up"];
 
 for (const route of ROUTES) {
   test(`no CSP violations on ${route}`, async ({ page }) => {

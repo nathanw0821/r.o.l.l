@@ -11,7 +11,6 @@ const publicRoutes = [
   "/3-star",
   "/4-star",
   "/perks",
-  "/pts",
   "/calendar",
   "/transmissions",
   "/wiki",

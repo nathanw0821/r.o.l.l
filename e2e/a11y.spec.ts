@@ -36,7 +36,6 @@ const ROUTES = [
   "/wiki",
   "/wiki/glossary",
   "/transmissions",
-  "/pts",
   "/calendar",
   "/summary",
   "/screenshot-assist",

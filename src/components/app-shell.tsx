@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   BookOpen,
   Boxes,
-  FlaskConical,
   ListChecks,
   PanelLeftClose,
   PanelLeftOpen,
@@ -85,7 +84,6 @@ const trackingLinks: AppNavLink[] = [
     ]
   },
   { href: "/calendar", label: "Season calendar", icon: CalendarDays, activePrefixes: ["/calendar"] },
-  { href: "/pts", label: "Test server", ariaLabel: "Test server (P.T.S.)", icon: FlaskConical, activePrefixes: ["/pts"] },
   { href: "/screenshot-assist", label: "Screenshot import", ariaLabel: "Screenshot import (S.C.A.N.)", icon: Sparkles },
   { href: "/transmissions", label: "Shared builds", icon: Radio, activePrefixes: ["/transmissions"] },
   { href: "/overview/achievements", label: "Achievements", icon: Trophy, activePrefixes: ["/overview/achievements"] }

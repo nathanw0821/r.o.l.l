@@ -59,3 +59,9 @@ e2e/a11y-report
 # Aider metadata & tag caches
 .aider*
 !.aiderignore
+
+# PTS Test Server (archived to Agent_Exchange)
+src/app/pts/
+src/components/pts/
+src/lib/pts/
+src/data/pts-catalog.json

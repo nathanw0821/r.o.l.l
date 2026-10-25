@@ -90,6 +90,11 @@ const nextConfig = {
         source: "/legendary-mods",
         destination: "/all-effects",
         permanent: true
+      },
+      {
+        source: "/pts",
+        destination: "/",
+        permanent: false
       }
     ];
   },
