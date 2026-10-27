@@ -21,7 +21,6 @@ export function useGuestIdentity() {
       try {
         const newUuid = crypto.randomUUID();
         localStorage.setItem(GUEST_UUID_KEY, newUuid);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setGuestUuid(newUuid);
       } catch (error) {
         console.warn("Failed to generate guest UUID:", error);
