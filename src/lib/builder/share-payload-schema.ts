@@ -72,11 +72,11 @@ export const sharePayloadSchema = z
     powerArmorPiecesEquipped: z.array(z.boolean()).length(6).optional(),
     mutationIds: z.array(z.string()).max(40).optional(),
     ignoreMutationPenalties: z.boolean().optional(),
-    baseSpecial: z.record(z.number()).optional(),
+    baseSpecial: z.record(z.string(), z.number()).optional(),
     legendaryPerkIds: z.array(z.string()).optional(),
     equippedPerkCards: z.array(equippedPerkCardSchema).max(80).optional(),
     /** Free-form on purpose: the switchboard shape changes with every engine feature. */
-    switchboardState: z.record(z.unknown()).optional(),
+    switchboardState: z.record(z.string(), z.unknown()).optional(),
     hasStrangeInNumbers: z.boolean().optional(),
     ndUrl: z.string().max(2048).optional()
   })
