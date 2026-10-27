@@ -3,6 +3,8 @@ import { getEffectTiersByTierLabel } from "@/lib/data";
 import EffectTable from "@/components/effect-table";
 import { formatTierStars } from "@/lib/tier-format";
 
+export const dynamic = "force-dynamic";
+
 const tierLabel = "3 Star";
 
 export default async function TierThreePage() {

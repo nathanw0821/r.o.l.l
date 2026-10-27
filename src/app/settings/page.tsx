@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import AccountLinks from "@/components/account-links";
 
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   let session = null;
   try {

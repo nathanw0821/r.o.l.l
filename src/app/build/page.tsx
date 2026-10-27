@@ -4,6 +4,8 @@ import { getLearnedBasePieceIdsForUser } from "@/lib/base-gear-learned";
 import { LazyBuildPageClient } from "@/components/builder/dynamic-builder-wrapper";
 import { isAdminUser } from "@/lib/app-config";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "B.U.I.L.D | R.O.L.L",
   description:

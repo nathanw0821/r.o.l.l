@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import PageHeader from "@/components/page-header";
 import OverviewTabs from "@/components/overview-tabs";
 
+export const dynamic = "force-dynamic";
+
 export default async function OverviewLayout({
   children
 }: {

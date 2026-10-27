@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function SummaryPage() {
   const session = await getAppSession();
   const rows = await getAllEffectTiers(session?.user?.id);

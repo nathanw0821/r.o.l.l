@@ -14,6 +14,8 @@ import PatchChangesPanel from "@/components/patch-changes-panel";
 import SeasonBanner from "@/components/season-banner";
 import AtomicShopCard from "@/components/atomic-shop-card";
 
+export const dynamic = "force-dynamic";
+
 async function HomeSummaryOverview() {
   let session = null;
   try {
