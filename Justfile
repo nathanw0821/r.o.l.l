@@ -27,3 +27,14 @@ prisma:
 # Typecheck TypeScript definitions
 typecheck:
     npx tsc --noEmit
+
+# Create an isolated git worktree for parallel agent experiments
+worktree branch:
+    git worktree add -b {{branch}} ../worktrees-ROLL/{{branch}}
+    @echo "✅ Isolated worktree created: ../worktrees-ROLL/{{branch}}"
+
+# Remove an isolated git worktree
+worktree-rm branch:
+    git worktree remove ../worktrees-ROLL/{{branch}}
+    git branch -D {{branch}}
+    @echo "✅ Cleaned up worktree and branch {{branch}}."
